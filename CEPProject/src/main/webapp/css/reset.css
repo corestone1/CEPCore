@@ -1,0 +1,10 @@
+body,h1,h2,h3,h4,h5,h6,p,a,hr { padding:0; margin:0; }
+a { text-decoration: none; color: #fff; }
+ul { margin: 0; padding: 0; }
+li { list-style: none; margin: 0; padding: 0; }
+input { vertical-align: middle; }
+input[type="text"], input[type="password"] { -webkit-appearance: none; border: none; }
+input[type="checkbox"] { -webkit-appearance: checkbox; }
+input[type="radio"] { border: none; }
+button, input[type="button"], input[type="submit"], input[type="reset"], input[type="file"] { -webkit-appearance: button; }
+table { border-spacing: 0; }

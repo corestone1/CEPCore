@@ -22,4 +22,36 @@ public class ExampleController {
 		
 		return "example/exampleList";
 	}
+	
+	@RequestMapping(value="/example.forecastList.do")
+	public String selectForecast(ExampleVO exampleVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "example/forecastList";
+	}
+	
+	@RequestMapping(value="/example.writeForecast.do")
+	public String addForecast(ExampleVO exampleVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "example/writeForecast";
+	}
+	
+	@RequestMapping(value="/example.projectList.do")
+	public String selectProject(ExampleVO exampleVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "example/projectList";
+	}
+	
+	@RequestMapping(value="/example.projectDetail.do")
+	public String selectProjectDetail(ExampleVO exampleVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "example/projectDetail";
+	}
 }
