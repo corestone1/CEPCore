@@ -19,6 +19,27 @@
         <Logger name="org.springframework" level="INFO" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
+        <!-- SQL Logger -->
+		<Logger name="jdbc.sqltiming" additivity="false">
+			<level value="warn" />
+			<appender-ref ref="console"/> 
+		</Logger>
+		<Logger name="jdbc.sqlonly" additivity="false"> 
+			<level value="info"/> 
+			<appender-ref ref="console"/> 
+		</Logger>
+		<Logger name="jdbc.audit" additivity="false"> 
+			<level value="warn"/>  
+			<appender-ref ref="console"/> 
+		</Logger> 
+		<Logger name="jdbc.resultset" additivity="false">
+			<level value="warn" />
+			<appender-ref ref="console"/> 
+		</Logger>
+		<Logger name="jdbc.resultsettable" additivity="false"> 
+			<level value="info"/>  
+			<appender-ref ref="console"/> 
+		</Logger> 
         <Root level="INFO">
             <AppenderRef ref="console" />
         </Root>

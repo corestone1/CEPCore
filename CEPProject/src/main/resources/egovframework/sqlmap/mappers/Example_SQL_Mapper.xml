@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.example.service.impl.SampleMapper">
+
+	<resultMap id="sample" type="com.cep.example.vo.SampleVO">
+		<result property="seq" column="SEQ"/>
+		<result property="title" column="TITLE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="userName" column="USERNAME"/>
+		<result property="userId" column="USERID"/>
+		<result property="createDt" column="CREATEDT"/>
+	</resultMap>
+	
+	<insert id="insertSample" parameterType="sampleVO">
+
+		INSERT INTO EXAMPLE (
+			SEQ
+			, TITLE
+			, CONTENT
+			, USERNAME
+			, USERID
+			, CREATEDT
+		) VALUES (
+			(SELECT IFNULL(MAX(SEQ) + 1, 1) FROM EXAMPLE e)
+			, #{title}
+			, #{content}
+			, #{userName}
+			, #{userId}
+			, CURDATE()
+		);
+
+	</insert>
+
+	<update id="updateSample">
+
+			UPDATE EXAMPLE
+			SET TITLE=#{title}
+				, CONTENT=#{content}
+				, USERNAME=#{userName}
+				, USERID = #{userId}
+				  WHERE SEQ=#{seq}
+
+	</update>
+
+	<delete id="deleteSample">
+
+			DELETE FROM EXAMPLE
+			WHERE SEQ=#{seq}
+
+	</delete>
+
+	<select id="selectSample" resultMap="sample">
+
+			SELECT
+				SEQ, TITLE, CONTENT, USERNAME, USERID
+			FROM EXAMPLE
+			WHERE SEQ=#{seq}
+
+	</select>
+
+	<select id="selectSampleList" parameterType="searchVO" resultType="egovMap">
+
+			SELECT
+				SEQ, TITLE, CONTENT, USERNAME, USERID, CREATEDT
+			FROM EXAMPLE
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND	USERNAME LIKE CONCAT('%' , #{searchKeyword}, '%')
+				 	</when>
+		            <when test="searchCondition == 1">
+						AND	TITLE LIKE CONCAT('%' , #{searchKeyword}, '%')
+					</when>
+				</choose> 
+			</if>
+			ORDER BY SEQ ASC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+
+	<select id="selectSampleListTotCnt" parameterType="searchVO" resultType="int">
+
+			SELECT COUNT(*)
+			FROM EXAMPLE
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND	USERNAME LIKE CONCAT('%' , #{searchKeyword}, '%')
+					</when>
+		            <when test="searchCondition == 1">
+						AND	TITLE LIKE CONCAT('%' , #{searchKeyword}, '%')
+					</when>
+				</choose>
+			</if>
+	</select>
+
+</mapper>

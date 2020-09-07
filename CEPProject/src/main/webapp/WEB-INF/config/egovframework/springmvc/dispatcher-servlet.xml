@@ -3,10 +3,15 @@
         xmlns:p="http://www.springframework.org/schema/p"
         xmlns:context="http://www.springframework.org/schema/context"
         xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xmlns:util="http://www.springframework.org/schema/util"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/util
+                http://www.springframework.org/schema/util/spring-util-3.2.xsd
                 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
+	<mvc:annotation-driven />
+	
     <context:component-scan base-package="egovframework">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
@@ -21,7 +26,7 @@
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="webBindingInitializer">
-            <bean class="egovframework.example.cmmn.web.EgovBindingInitializer"/>
+            <bean class="com.cep.example.cmmn.web.EgovBindingInitializer"/>
         </property>
     </bean>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
@@ -49,13 +54,13 @@
             </props>
         </property>
     </bean>
-
+    
     <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="1"
 	    p:viewClass="org.springframework.web.servlet.view.JstlView"
 	    p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
 
     <!-- For Pagination Tag -->
-    <bean id="imageRenderer" class="egovframework.example.cmmn.web.EgovImgPaginationRenderer"/>
+    <bean id="imageRenderer" class="com.cep.example.cmmn.web.EgovImgPaginationRenderer"/>
 
     <bean id="paginationManager" class="egovframework.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
         <property name="rendererType">
@@ -64,7 +69,41 @@
             </map>
         </property>
     </bean>
+
+	<!--
+        - This bean processes annotated handler methods, applying Application-specific PropertyEditors
+        - for request parameter binding. It overrides the default AnnotationMethodHandlerAdapter.
+     -->
+	<!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" >
+		@ResponseBody를 사용하기 위해
+		jre : jackson-core, jackson-mapper 필요
+		<property name="messageConverters">
+			<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>
+		</property> 
+	</bean> -->
+	
+<!--
+        - This bean processes annotated handler methods, applying Application-specific PropertyEditors
+        - for request parameter binding. It overrides the default AnnotationMethodHandlerAdapter.
+     -->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+	    <property name="messageConverters">
+		    <list>    
+		        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		            <property name="supportedMediaTypes">
+		                <list>
+		                    <value>text/html;charset=UTF-8</value>
+		                    <value>application/json;charset=UTF-8</value>
+		                </list>
+		            </property>
+		        </bean>            
+		    </list>
+	    </property>                        
+	</bean>    
+
+
 	<!-- /For Pagination Tag -->
 
     <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
+    
 </beans>

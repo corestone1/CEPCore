@@ -7,13 +7,13 @@
 
     <formset>
         <form name="sampleVO">
-        	<field property="name" depends="required">
+        	<field property="title" depends="required">
         		<arg0 key="title.sample.name" />
 			</field>
-			<field property="description" depends="required">
+			<field property="content" depends="required">
                 <arg0 key="title.sample.description" />
             </field>
-        	<field property="regUser" depends="required">
+        	<field property="userId" depends="required">
         		<arg0 key="title.sample.regUser" />
 			</field>
         </form>

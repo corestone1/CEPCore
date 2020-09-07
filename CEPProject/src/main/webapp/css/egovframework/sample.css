@@ -55,9 +55,9 @@ a:hover { font-size:11px; font-family:"돋움"; color:#339999; text-decoration:n
 #sub .sub_menu_en dl {width:150px;}
 #sub .sub_menu_en dd {font-weight:bold; padding-left:0px; padding-right:0px; padding-bottom:0px; padding-top:10px; margin:0;}
 #sub .sub_menu_en dt {list-style:none;  padding-left:0px; padding-right:0px; padding-bottom:0px; padding-top:8px; margin:0px;}
-#content {float:left; text-align:left; /*overflow:hidden;*/width:680px; background-color:#FFFFFF; padding:10px 0px 10px 0px;}
+#content {float:left; text-align:left; /*overflow:hidden;*/width:560px; background-color:#FFFFFF; padding:10px 0px 10px 0px;}
 #content_pop {float:left; text-align:left; /*overflow:hidden;*/width:680px; background-color:#FFFFFF; padding:10px 10px 10px 10px;}
-#title {float:left; text-align:left; margin:0 0 10 0; padding:0; height:30px; border-bottom:1px solid #e5e5e5; width:680px;}
+#title {float:left; text-align:left; margin:0 0 10 0; padding:0; height:30px; border-bottom:1px solid #e5e5e5; width:560px;}
 #title ul {float:left; margin:0; padding:0;}
 #title li {list-style-type:none; width:200px; padding:3px 0px 2px 0px; float:left; font-family:"돋움"; font-size:16px; font-weight:bold; color:#000000;}
 #title .location {float:right; height:20px; margin:0; padding:5 0 0 0; font-family:"돋움"; font-size:11px;}
@@ -65,7 +65,7 @@ a:hover { font-size:11px; font-family:"돋움"; color:#339999; text-decoration:n
 #search {float:right; margin:0; padding:10px 0 10px 0; width:680px;}
 #search ul {margin:0; float:right;}
 #search li {list-style-type:none; float:left; margin:0 0 0 0; padding:0 0 0 3px;}
-#table {float:left; margin:0 0 10px 0; padding:0 0 0 0; width:680px;}
+#table {margin:0 0 10px 0; padding:0 0 0 0; width:680px;}
 #paging {padding:0 0 0 0; text-align:center; width:680px;}
 #paging ul {display:inline;}
 #paging li {display:inline; list-style-type:none; padding:0 10px 0 10px; font-family: Tahoma; font-size:11px; color: #333333;}
@@ -91,7 +91,7 @@ button {cursor:hand; border:0px solid #FFFFFF; padding:0px 0px 0px 0px; backgrou
 .btn_blue_r {float:left; background:url(../../images/egovframework/example/btn_bg_r.gif) 0 0 no-repeat; background-position:right; height:20px; font-family:"돋움"; font-size:11px; color:#000000; margin:0px 0px 0px 0px; padding-top:0px; _padding-top:0px; padding-left:10px; padding-right:10px; padding-bottom:0px; text-align:center;}
 input { height:20px; font-family:"돋움"; font-size:12px; color:#000000; padding:2px 2px 0px 2px; margin-top:0px; _margin-top:-1px;}
 select {font-family:'돋움'; font-size:12px; margin-top:0px; height:20px; padding-top:0px;}
-.tbtd_caption {font-weight:bold; color:#003366; background-color:#E5EDF3; text-align:right; padding:10px 10px 9px 5px; margin:0;}
+.tbtd_caption {font-weight:bold; color:#003366; background-color:#E5EDF3; text-align:left; padding:10px 10px 9px 5px; margin:0;}
 .tbtd_content {background-color:#F5F8FA; padding:7px 10px 5px 10px; margin:0;}
 .tbtd_caption_re {font-weight:bold; color:#666633; background-color:#F6F5E5; text-align:right; padding:10px 10px 9px 5px; margin:0;}
 .tbtd_content_re {background-color:#F9F9F2; padding:7px 10px 5px 10px; margin:0;}

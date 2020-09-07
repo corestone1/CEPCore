@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:egov-security="http://www.egovframe.go.kr/schema/egov-security"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.egovframe.go.kr/schema/egov-security http://www.egovframe.go.kr/schema/egov-security/egov-security-3.7.xsd">
+
+	<security:authentication-manager alias="authenticationManager" />
+
+	<!-- 인증예외처리 -->
+    <security:http pattern="/cmmn3th/**"     security="none" /> 
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/font/**" security="none"/>
+    <security:http pattern="/images/**" security="none"/>
+ 	<security:http pattern="/js/**" security="none"/>
+ 	<security:http pattern="/webeditor/**" security="none"/>
+ 	<security:http pattern="\A/WEB-INF/jsp/.*\Z" request-matcher="regex" security="none"/>
+    
+    <!-- 접근경로 권한처리 -->
+    <security:http use-expressions="true">
+      	<security:intercept-url pattern="/**"         access="hasRole('ANONYMOUS')" />
+        <security:intercept-url pattern="/mngr/login.do"   access="hasRole('ANONYMOUS')" />  
+        <security:intercept-url pattern="/mngr/v1/login.jsp"   access="hasRole('ANONYMOUS')" />
+        
+        <security:intercept-url pattern="/logout"         access="permitAll" />
+        
+     	<!-- 로그인 페이지 정보 -->
+        <security:form-login 
+            login-page="/mngr/login.do"
+            login-processing-url="/user/login"
+            username-parameter="userid"
+            password-parameter="password"
+            default-target-url="/main.do"
+            authentication-failure-url="/mngr/login.do.do?error=true"
+        />
+		
+		<!-- 로그아웃 페이지 정보 -->
+        <security:logout logout-url="/mngr/logout.do" />
+        <security:csrf disabled="false"/>
+    </security:http>
+
+	
+
+</beans>
