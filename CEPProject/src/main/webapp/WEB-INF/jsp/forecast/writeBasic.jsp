@@ -31,8 +31,8 @@
 			padding-left: 28px;
 			line-height: 47px;
 		}
-		.popContainer .left ul li.active,
-		.popContainer .left ul li:hover {
+		.popContainer .left ul li:hover,
+		.popContainer .left ul li.on {
 			background-color: #fff;
 			color: #32bc94;
 		}
@@ -84,6 +84,22 @@
 			margin-top: 25px;
 		}
 	</style>
+	<script>
+		function fn_addView(link){
+			if(link == "forecastList") {
+				location.href="<c:url value='/forecastList.do'/>";
+			} else {
+				var url = '/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+		
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
+			}
+		}
+	</script>
 </head>
 <body>
 	<div class="popContainer">
@@ -94,9 +110,9 @@
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li class="colorWhite cursorP">기본 정보</li>
-				<li class="colorWhite cursorP">매출/입 정보</li>
-				<li class="colorWhite cursorP">제품 및 진행사항</li>
+				<li class="colorWhite cursorP on">기본 정보</li>
+				<li class="colorWhite cursorP" onclick="javascript:fn_addView('writeFundInfo')">매출/입 정보</li>
+				<li class="colorWhite cursorP" onclick="javascript:fn_addView('writeProgress')">제품 및 진행사항</li>
 			</ul>
 		</div>
 		<div class="contents">
@@ -142,8 +158,8 @@
 				</table>
 			</div>
 			<div class="btnWrap">
-				<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-				<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				<button><img src="<c:url value='/images/btn_blank.png'/>" /></button>
+				<button onclick="javascript:fn_addView('writeFundInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 			</div>
 		</div>
 	</div>

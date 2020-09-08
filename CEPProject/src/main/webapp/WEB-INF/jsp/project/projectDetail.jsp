@@ -164,6 +164,7 @@
 				
 				$('form .contents > div:nth-child(2) .title ul li:nth-child('+index+')').css("background-image","url('./images/step_arrow.png')");
 				$('form .contents > div:nth-child(2) .title ul li:nth-child('+index+')').css("background-repeat","no-repeat");
+				
 		});
 	</script>
 </head>

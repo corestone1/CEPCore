@@ -23,12 +23,28 @@ public class ForecastController {
 		return "forecast/forecastList";
 	}
 	
-	@RequestMapping(value="/writeForecast.do")
-	public String addForecast(ForecastVO forecastVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/writeBasic.do")
+	public String addBasic(ForecastVO forecastVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "forecast/writeForecast";
+		return "forecast/writeBasic";
+	}
+	
+	@RequestMapping(value="/writeFundInfo.do")
+	public String addFundInfo(ForecastVO forecastVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "forecast/writeFundInfo";
+	}
+	
+	@RequestMapping(value="/writeProgress.do")
+	public String addProgress(ForecastVO forecastVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "forecast/writeProgress";
 	}
 	
 }
