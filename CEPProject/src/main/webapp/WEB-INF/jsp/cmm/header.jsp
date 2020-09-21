@@ -47,7 +47,8 @@
 				border-radius: 18px;
 				margin-top: 29px;
 			}
-			header ul li:hover {
+			header ul li:hover,
+			header ul li.on {
 				background-color: #9284d1;
 			}
 	</style>
