@@ -76,6 +76,8 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
+			width: 200px;
+			height: 40px;			
 			background-image: url('./images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;

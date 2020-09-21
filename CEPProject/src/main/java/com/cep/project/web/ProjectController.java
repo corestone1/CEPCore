@@ -38,4 +38,14 @@ public class ProjectController {
 		
 		return "project/writeProject";
 	}
+	
+
+	
+	@RequestMapping(value="/writeBasicInfo.do")
+	public String addBasicInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeBasicInfo";
+	}
 }
