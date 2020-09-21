@@ -172,10 +172,10 @@
 				<c:if test="${paginationInfo.prev}">
 					<a href="${paginationInfo.startPage - 1 }">이전</a>
 				</c:if>
-				<c:forEach var="num" begin="${paginationInfo.getFirstPageNo}" end="${paginationInfo.totalRecordCount }">
-					&nbsp;<a href="${num }">${num }</a>&nbsp;
+				<c:forEach var="num" begin="${paginationInfo.firstPageNo}" end="${paginationInfo.lastPageNo }">
+					&nbsp;<a href="${paginationInfo.firstPageNo }">${paginationInfo.firstPageNo }</a>&nbsp;
 				</c:forEach>
-				<p><c:out value="${paginationInfo }"></c:out></p>
+				<p><c:out value="${paginationInfo.firstPageNo}">${paginationInfo.firstPageNo}</c:out></p>
 				<c:if test="${paginationInfo.next}">
 					<a id="next" href="${paginationInfo.endPage + 1 }">다음</a>
 				</c:if>
