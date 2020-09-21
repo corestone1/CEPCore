@@ -125,7 +125,7 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">프로젝트 등록</div>
+				<div class="floatL ftw500">프로젝트 등록1</div>
 			</div>
 		</div>
 		<div class="left">
