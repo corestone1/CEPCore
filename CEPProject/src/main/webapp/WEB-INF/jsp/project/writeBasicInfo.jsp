@@ -18,8 +18,8 @@
 			padding-top: 43px;
 		}
 		.popContainer .left {
-			width: 178px;
-			height: 566px;
+			width: 201px;
+			height: 601px;
 			position: absolute;
 			top: 107px;
 			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
@@ -40,15 +40,19 @@
 			top: 107px;
 			right: 0;
 			z-index: 3;
+			background-color: #f6f7fc;
 		}
 		.popContainer .contents > div {
-			margin: 30px 0 0 244px;
+			margin: 9px 0 0 244px;
 			width: calc(100% - 244px);
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
 		}
+		/* .popContainer .contents > div > table tr:first-child td {
+			margin-bottom: 100px;
+		} */
 		.popContainer .contents select {
 			width: 200px;
 			height: 40px;
@@ -64,7 +68,7 @@
 			width: 135px;
 		}
 		.popContainer .contents input {
-			width: 788px;
+			width: 691px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -73,16 +77,17 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
-			width: 350px;
+			width: 177px;
 			height: 38px;
 			background-image: url('./images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
 		.popContainer .contents input[class="pname"] {
-			width: 70px;
+			width: 400px;
 			border : none;
 			outline: none;
+			background-color: #f6f7fc;
 		}
 		.popContainer .contents input[class="calendar"] {
 			width: 177px;
@@ -92,8 +97,8 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: 788px;
-			height: 170px;
+			width: 691px;
+			height: 160px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -105,27 +110,23 @@
 			margin-top: 19px;
 			margin-bottom: 27px;
 		}		
-		.popContainer .contents td.tdBtnWrap1 {
-			margin-top: 19px;
-			margin-bottom: 27px;
-			width: 150px;
-			border: 1px solid #e9e9e9;
-			background-color: #C4B73B;
+		.popContainer .contents td.btnFc {			
+			padding-bottom: 12px;
 		}		
-		.popContainer .contents > div > table > tr >td[class="tdBtnWrap2"] {
-			margin-top: 19px;
-			margin-bottom: 27px;
-			width: 350px;
-			border: 1px solid #e9e9e9;
-			background-color: #D9418C;
-		}
+		.popContainer .contents td.tdTitle {
+			margin-top: 11px;
+			width: 96px;
+		}				
+		.popContainer .contents td.tdContents {
+			width: 691px;
+		} 	
 	</style>
 </head>
 <body>
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">프로젝트 등록3</div>
+				<div class="floatL ftw500">프로젝트 등록</div>
 			</div>
 		</div>
 		<div class="left">
@@ -137,39 +138,53 @@
 			<div>
 				<table>
 					<tr>
-						<td><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+						<td class="btnFc" colspan="2"><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
 					</tr>
 					<tr>
-						<td><input type="text" placeholder="사업명" /></td>
+						<td class="tdTitle">프로젝트명</td>
+						<td class="tdContents"><input type="text"/></td>
 					</tr>
 					<tr>
-						<td>
-							<input type="text" placeholder="고객사" class="search" />							
-							<input type="text" placeholder="담당자1" class="pname" readonly/>
+						<td class="tdTitle">고객사</td>
+						<td class="tdContents">
+							<input type="text" class="search" />	
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td class="tdTitle">고객사담당자</td>
+						<td class="tdContents">
 							<select>
-								<option value="">영업담당자</option>
+								<option value="">홍길동</option>
+							</select>					
+							<input type="text" class="pname"  value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle">영업담당자</td>
+						<td class="tdContents">
+							<select>
+								<option value="">최재용</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td class="tdTitle">지원담당자</td>
+						<td class="tdContents">
 							<select>
-								<option value="">지원담당자</option>
+								<option value="">김규민</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
-						<td>
-							<input type="text" placeholder="from" class="calendar" />
+						<td class="tdTitle">사업기간</td>
+						<td class="tdContents">
+							<input type="text" placeholder="from" class="calendar" /> ~ 
 							<input type="text" placeholder="to" class="calendar" />
 						</td>
 					</tr>
 					<tr>
-						<td><textarea placeholder="비고"></textarea></td>
+						<td class="tdTitle veralignT">비고</td>
+						<td class="tdContents"><textarea></textarea></td>
 					</tr>
 					<%-- <tr>
 						<td>							
@@ -188,21 +203,29 @@
 						<div class="btnWrap">
 							<table width="788px">
 								<tr width="788px">
-									<td width="30%" align="left" border="1px" border-color="#7ccbe8"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-									<td width="70%" align="right"border="1px" border-color="solid #dcdcdc">
-										<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+									<td width="30%" align="left" border="1px" border-color="#7ccbe8">
+										<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
+									<td width="70%" align="right"border="1px" >
 										<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
 									</td>
 								</tr>
 							</table>
 						</div>					
-					</tr> --%>
+					</tr> --%>					
 				</table>
+				<%-- <table>
+					<tr width="788px" class="btnWrap">
+						<td  width="200">
+							<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
+						<td width="610"align="right">
+							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						</td>
+					</tr>
+				</table> --%>	
 			</div>
 			<div class="btnWrap">
-				<button><img src="<c:url value='/images/btn_file.png'/>" /></button>
-				<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-				<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				<div class="fl"><button ><img src="<c:url value='/images/btn_file.png'/>" /></button></div>
+				<div class="fr"><button ><img src="<c:url value='/images/btn_next.png'/>" /></button></div>
 			</div>
 <%-- 			<div class="btnWrap">
 				<table width="788px">
