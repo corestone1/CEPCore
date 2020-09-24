@@ -43,6 +43,9 @@ body * {
 .textalignC {
 	text-align: center;
 }
+.veralignT {
+	vertical-align: top;
+}
 .mgauto {
 	margin: 0 auto;
 }
