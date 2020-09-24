@@ -42,7 +42,7 @@
 		form .contents > div:first-child {
 			width: 45%;
 		}
-		form .contents > div:nth-child(2) {
+		form .contents > .fxd {
 			width: 55%;
 		}
 		form .contents .stitle {
@@ -80,52 +80,60 @@
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
 		}
-		form .contents ul li {
+		form .contents > .fxd .title ul li,
+		form .contents > .fxd .stitle ul li {
 			float: left;
 			text-align: center;
 			font-size: 17px;
 			cursor: pointer;
 		}
-		form .contents ul li:last-child {
+		form .contents > .fxd .title ul li:last-child,
+		form .contents > .fxd .stitle ul li:last-child {
 			clear: both;
 			float: none;
 			width: 0 !important;
 		}
-		form .contents > div:nth-child(2) .title ul {
+		form .contents > .fxd .title ul {
 			height: 46px;
 			width: 915px;
 			border-radius: 35px;
 		}
-		form .contents > div:nth-child(2) .title ul li {
+		form .contents > .fxd .title ul li {
 			width: 20%;
 			line-height: 46px;
-			color: #b1a5ec;
-			background-color: #4c3d92;
+			/* color: #b1a5ec; */
+			color: #777777;
+			background-color: #d3d3d3;
 		}
-		form .contents > div:nth-child(2) .title ul li:first-child {
+		.liArrow {
+			background-image: url('./images/step_arrow.png');
+			background-repeat: no-repeat;
+		}
+		form .contents > .fxd .title ul li:first-child {
 			border-radius: 35px 0 0 35px;
 		}
-		form .contents > div:nth-child(2) .title ul li:nth-last-child(2)  {
+		form .contents > .fxd .title ul li:nth-last-child(2)  {
 			border-radius: 0 35px 35px 0;
 		}
-		form .contents > div:nth-child(2) .title ul li.on  {
-			color: #fff;
-		} 
-		form .contents > div:nth-child(2) .stitle ul {
+		form .contents > .fxd .title ul li.on  {
+			color: #fff  !important;
+			background-color: #4c3d92;
+		}
+		#detailForm .stitle ul {
 			width: 915px;
 		}
-		form .contents > div:nth-child(2) .stitle ul li {
+		#detailForm .stitle ul li {
 			width: 150px;
 		}
-		form .contents > div:nth-child(2) .stitle ul li a {
+		#detailForm .stitle ul li a {
 			color: #a3a3a4;
 			padding-bottom: 10px;
 		}
-		form .contents > div:nth-child(2) .stitle ul li a:hover {
+		#detailForm .stitle ul li a:hover {
 			color: #000;
 			border-bottom: 4px solid #6a5bae;
 		}
-		form .contents > div:nth-child(2) .stitle ul li a.on {
+		#detailForm .stitle ul li a.on {
 			color: #000;
 			border-bottom: 4px solid #6a5bae;
 		}
@@ -155,17 +163,17 @@
 	</style>
 	<script>
 		$(document).ready(function() {
-				var index = $('form .contents > div:nth-child(2) .title ul li').index($('form .contents > div:nth-child(2) .title ul li.on')) + 2;
-				var length = $('form .contents > div:nth-child(2) .title ul li').length - 1;
-				for(var i = index; i <= length; i++) {
-					$('form .contents > div:nth-child(2) .title ul li:nth-child('+i+')').css('background','#d3d3d3');
-					$('form .contents > div:nth-child(2) .title ul li:nth-child('+i+')').css('color','#777777');
-				}
+			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
+			console.log('form .contents > .fxd .title ul li:nth-child(' + index + ')');
+			$('form .contents > .fxd .title ul li:nth-child(' + index + ')').toggleClass("liArrow");
+		
+			$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
+		
+			$('#modInfo').click(function() {
 				
-				$('form .contents > div:nth-child(2) .title ul li:nth-child('+index+')').css("background-image","url('./images/step_arrow.png')");
-				$('form .contents > div:nth-child(2) .title ul li:nth-child('+index+')').css("background-repeat","no-repeat");
-				
+			});
 		});
+		
 	</script>
 </head>
 <body>
@@ -214,75 +222,95 @@
 						</div>
 					</div>
 				</div>
-				<div class="floatR">
+				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li>입찰</li>
-							<li>계약</li>
+							<li id="LI_TOPBar_BD" class="on" title="/projectDetailBd.do">입찰</li>
+							<li id="LI_TOPBar_CT" title="/projectDetailCt.do">계약</li>
 							<li>발주</li>
-							<li class="on">수행</li>
+							<li>수행</li>
 							<li>완료</li>
 							<li></li>
 						</ul>
 					</div>
-					<div id="detailForm floatC">
+					<div id="detailForm">
 						<div class="stitle">
-							<ul>
-								<li><a>사전작업/납품</a></li>
-								<li><a class="on">설치/구축</a></li>
-								<li><a>수행 일지</a></li>
-								<li></li>
-							</ul>
+							입찰정보
 						</div>
 						<div class="floatC">
-							<table class="dtl">
+							<table class="dtl" id="selectTable">
 								<tr>
-									<td>설치장소</td>
-									<td>미래에셋 생명 데이터센터</td>
+									<td>입찰보증증권</td>
+									<td>Y / 보증기간 2019.09.12 ~ 2020.09.12</td>
 								</tr>
 								<tr>
-									<td>구분</td>
-									<td>신규</td>
+									<td>입찰서류</td>	
+									<td>
+										<ul>
+											<li>사업자등록증 1</li>
+											<li>법인등기부등본 2</li>
+											<li>법인인감증명서 1</li>
+											<li>사용인감계 2</li>
+											<li>위임장 1</li>
+											<li>대리인 명함 1</li>
+										</ul>
+									</td>
 								</tr>
 								<tr>
-									<td>모델명</td>
-									<td>VNX5400</td>
+									<td>입찰기한</td>
+									<td>2019.09.12 15:00</td>
 								</tr>
 								<tr>
-									<td>시리얼번호</td>
-									<td>CKM00144500261</td>
+									<td>제안서</td>
+									<td>Y / 접수마감 2019.09.12 15:00</td>
 								</tr>
 								<tr>
-									<td>납품일</td>
-									<td>2019.12.12 ~ 2020.12.12</td>
+									<td>제안발표</td>
+									<td>Y / 접수마감 2019.09.12 15:00</td>
 								</tr>
 								<tr>
-									<td>버전</td>
-									<td>05.33.006.5.102</td>
+									<td>첨부파일</td>
+									<td>첨부파일.txt</td>
+								</tr>
+							</table>
+							<table class="dtl" id="modTable">
+								<tr>
+									<td>입찰보증증권</td>
+									<td>
+										<label><input type="radio" name="bdgbyn" value="Y" />Y</label>
+										<label><input type="radio" name="bdgbyn" value="N"/>N</label>
+										<label>보증기간</label>
+										<input type="text" /> ~ <input type="text" />
+									</td>
 								</tr>
 								<tr>
-									<td>주요스펙</td>
-									<td>Disk: 400GB Flash Drives x 25EA DA: max 40EA</td>
+									<td>입찰서류</td>	
+									<td>
+										<ul>
+											<li><input type="radio" name="bdFileKindCd"  value=""/>사업자등록증 1 </li>
+											<li>법인등기부등본 2</li>
+											<li>법인인감증명서 1</li>
+											<li>사용인감계 2</li>
+											<li>위임장 1</li>
+											<li>대리인 명함 1</li>
+										</ul>
+									</td>
 								</tr>
 								<tr>
-									<td>캐쉬메모리</td>
-									<td>32GB</td>
+									<td>입찰기한</td>
+									<td>2019.09.12 15:00</td>
 								</tr>
 								<tr>
-									<td>포트정보</td>
-									<td>FC Ports: 8Gbps FC x 4 Ports</td>
+									<td>제안서</td>
+									<td>Y / 접수마감 2019.09.12 15:00</td>
 								</tr>
 								<tr>
-									<td>관리아이피</td>
-									<td>192.168.1.162.50, 192.168.162.52, 192.168.162.53</td>
+									<td>제안발표</td>
+									<td>Y / 접수마감 2019.09.12 15:00</td>
 								</tr>
 								<tr>
-									<td>장비유형</td>
-									<td>Block</td>
-								</tr>
-								<tr>
-									<td>기타</td>
-									<td>특이사항 없음</td>
+									<td>첨부파일</td>
+									<td>첨부파일.txt</td>
 								</tr>
 							</table>
 						</div>
@@ -290,7 +318,7 @@
 							<div class="floatR">
 								<button value="수행일지"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
 								<button value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
-								<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+								<button value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>

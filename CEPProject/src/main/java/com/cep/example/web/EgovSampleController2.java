@@ -83,6 +83,7 @@ public class EgovSampleController2 {
 		return "sample/egovSampleList2";
 	}
 	
+	
 	/**
 	 * 글 목록을 조회한다. (pageing)
 	 * @param searchVO - 조회할 정보가 담긴 SampleDefaultVO
@@ -94,11 +95,11 @@ public class EgovSampleController2 {
 	@RequestMapping(value = "/egovSampleList.do", method=RequestMethod.POST)
 	public Map<String, Object> selectSampleList(@RequestBody SampleVO searchVO, ModelMap model) throws Exception {
 
-		/** EgovPropertyService.sample */
+		//** EgovPropertyService.sample *//*
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
-		/** pageing setting */
+		//** pageing setting *//*
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
 		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());

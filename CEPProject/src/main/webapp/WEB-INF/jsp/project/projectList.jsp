@@ -200,7 +200,7 @@
 						}
 					}
 				}); */
-				location.href = "/projectDetail.do";
+				location.href = "/projectDetailBd.do";
 			});
 		});
 

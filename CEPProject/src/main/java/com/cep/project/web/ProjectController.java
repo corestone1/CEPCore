@@ -23,12 +23,28 @@ public class ProjectController {
 		return "project/projectList";
 	}
 	
-	@RequestMapping(value="/projectDetail.do")
-	public String selectProjectDetail(ProjectVO projectVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/projectDetailBd.do")
+	public String selectProjectDetailBd(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/projectDetail";
+		return "project/projectDetailBd";
+	}
+	
+	@RequestMapping(value="/projectDetailCt.do")
+	public String selectProjectDetailCt(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/projectDetailCt";
+	}
+	
+	@RequestMapping(value="/projectDetailOd.do")
+	public String selectProjectDetailOd(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/projectDetailOd";
 	}
 	
 	@RequestMapping(value="/writeProject.do")
