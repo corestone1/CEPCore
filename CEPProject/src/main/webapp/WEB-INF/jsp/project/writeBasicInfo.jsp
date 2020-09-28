@@ -73,7 +73,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			font-size: 15px;
+			font-size: 14px;
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
@@ -102,7 +102,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			font-size: 15px;
+			font-size: 14px;
 			margin-bottom: 0px;
 			resize: none;
 		}
@@ -116,9 +116,14 @@
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
 			width: 96px;
+			font-size: 14px;
 		}				
 		.popContainer .contents td.tdContents {
 			width: 691px;
+			font-size: 14px;
+		} 
+		.popContainer .contents .btnDiv {
+	  		margin-right: 82px;
 		} 	
 	</style>
 </head>
@@ -224,8 +229,13 @@
 				</table> --%>	
 			</div>
 			<div class="btnWrap">
-				<div class="fl"><button ><img src="<c:url value='/images/btn_file.png'/>" /></button></div>
-				<div class="fr"><button ><img src="<c:url value='/images/btn_next.png'/>" /></button></div>
+				<div class="floatL btnDiv">
+					<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
+				</div>
+				<div class="floatR btnDiv">
+					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				</div>
+				
 			</div>
 <%-- 			<div class="btnWrap">
 				<table width="788px">
