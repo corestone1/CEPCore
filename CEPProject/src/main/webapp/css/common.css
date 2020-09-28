@@ -113,9 +113,10 @@ input[class="tCheck"]+ label {
 	display: inline-block;
 	width: 26px;
 	height: 26px;
-	background-color: #e6e6e6;
+	background-color: #fff;
 	border: 1px solid #e7e7e7;
 	border-radius: 50%;
+	text-align: center;
 }
 input[class="tCheck"]+ label:before {
 	content: "";
