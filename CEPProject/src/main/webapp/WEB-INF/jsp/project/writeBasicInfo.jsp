@@ -126,6 +126,18 @@
 	  		margin-right: 82px;
 		} 	
 	</style>
+	<script>
+		function fn_addBiddingView(){
+			var url = '/writeBiddingInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+	
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+	</script>
 </head>
 <body>
 	<div class="popContainer">
@@ -232,7 +244,7 @@
 				<div class="floatL btnDiv">
 					<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 				</div>
-				<div class="floatR btnDiv">
+				<div class="floatR btnDiv" onclick="fn_addBiddingView();">
 					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
 				

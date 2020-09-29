@@ -204,7 +204,7 @@
 			});
 		});
 
-		function fn_addView(){
+		/* function fn_addView(){
 			var url = '/writeProject.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -213,9 +213,9 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-		}
+		} */
 		
-		function fn_addView2(){
+		function fn_addView(){
 			var url = '/writeBasicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -237,6 +237,17 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
+		function fn_addView4(){
+			var url = '/writeBuildInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
 	</script>
 </head>
 <body>
@@ -249,8 +260,8 @@
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">프로젝트 list</label></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView3();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<%-- <div class="addBtn floatL cursorP" onclick="fn_addView3();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView4();"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<select>

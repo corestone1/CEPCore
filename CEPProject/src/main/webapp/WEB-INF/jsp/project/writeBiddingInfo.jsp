@@ -160,11 +160,30 @@
 				} else {
 					document.getElementById("amount"+num1).value="";
 					document.getElementById("step"+num1+"-4").style.visibility = 'hidden';
-				}
-				
+				}				
+			}			
+		}
+		
+		function fn_addBuildView(){
+			var url = '/writeBuildInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+	
 			}
-
-			
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
+		function fn_preBaicView(){
+			var url = '/writeBasicInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+	
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 	</script>
 </head>
@@ -257,8 +276,8 @@
 				
 			<div class="btnWrap">
 				<div class="floatR btnDiv">
-					<button ><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					<button onclick="fn_preBaicView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
 			</div>
 			</div>
