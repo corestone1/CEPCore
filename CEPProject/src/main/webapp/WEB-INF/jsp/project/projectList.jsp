@@ -201,6 +201,18 @@
 					}
 				}); */
 				location.href = "/projectDetailBd.do";
+				/* if(event.target.nodeName=="TD"){
+					location.href = "/projectDetailBd.do";
+				} */ 
+				
+				
+				
+				/* if($(this).children().eq(0)){
+					alert("==>"+$(this).children().eq(0).children().eq(0).val()+"<==");
+				} else{
+					alert("bbbb");
+				} */
+				
 			});
 		});
 
@@ -226,7 +238,7 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
-		function fn_addView3(){
+		/* function fn_addView3(){
 			var url = '/writeBiddingInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -246,7 +258,7 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
+		} */
 		
 	</script>
 </head>
@@ -295,7 +307,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -307,7 +319,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -319,7 +331,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -331,7 +343,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -343,7 +355,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -355,7 +367,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -367,7 +379,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -379,7 +391,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -391,7 +403,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -403,7 +415,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -415,7 +427,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -427,7 +439,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -439,7 +451,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
