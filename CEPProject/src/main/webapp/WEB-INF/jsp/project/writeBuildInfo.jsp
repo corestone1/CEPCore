@@ -25,11 +25,15 @@
 			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
 			background-color: #32bc94;
 			z-index: 4;
+			font-size: 15px;
 		}
 		.popContainer .left ul li {
 			height: 47px;
 			padding-left: 28px;
 			line-height: 47px;
+		}
+		.popContainer .left ul li.on,
+		.popContainer .left ul li:hover {
 			background-color: #fff;
 			color: #32bc94;
 		}
@@ -50,25 +54,8 @@
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
 		}
-		/* .popContainer .contents > div > table tr:first-child td {
-			margin-bottom: 100px;
-		} */
-		.popContainer .contents select {
-			width: 200px;
-			height: 40px;
-			border: 1px solid #e9e9e9;
-			padding: 0 10px;
-			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
-			background-color: #fff;
-			color: #535353;
-			font-size: 15px;
-		}
-		.popContainer .contents select.wdts {
-			width: 135px;
-		}
 		.popContainer .contents input {
-			width: 691px;
+			width: 250px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -77,20 +64,18 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
-			width: 177px;
+			width: 250px;
 			height: 38px;
 			background-image: url('./images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
-		.popContainer .contents input[class="pname"] {
-			width: 400px;
-			border : none;
-			outline: none;
-			background-color: #f6f7fc;
+		.popContainer .contents input[class="portInfo"] {
+			width: 691px;
+			height: 38px;
 		}
 		.popContainer .contents input[class="calendar"] {
-			width: 177px;
+			width: 250px;
 			height: 40px;
 			background-image: url('./images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -98,7 +83,7 @@
 		}
 		.popContainer .contents textarea {
 			width: 691px;
-			height: 160px;
+			height: 100px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -116,19 +101,47 @@
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
 			width: 96px;
-			font-size: 14px;
+			font-size: 15px;
 		}				
 		.popContainer .contents td.tdContents {
 			width: 691px;
-			font-size: 14px;
+			font-size: 15px;
+			font-weight: 150;
 		} 
 		.popContainer .contents .btnDiv {
 	  		margin-right: 82px;
-		} 	
+		} 	 				
+		.popContainer .top div[class="subTitle"] {
+			height: 36px;
+			width: 124px;
+			border-radius: 35px;
+			color: #fff;
+			background-color: #9284d1;
+			margin-left: 150px;
+			text-align: center;
+			font-weight: 200;
+			
+		}  		
+		.popContainer .contents tr:first-child td { 
+			border-collapse: collapse;
+	  		border-spacing: 0 3px;	  			
+			padding-top: 25px;
+		}
 	</style>
 	<script>
-		function fn_addBiddingView(){
-			var url = '/writeAmountInfo.do';
+		function fn_addBuildView(){
+			var url = '/writeBuildInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+	
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
+		function fn_preBiddingView(){
+			var url = '/writeBiddingInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -144,64 +157,72 @@
 		<div class="top">
 			<div>
 				<div class="floatL ftw500">프로젝트 등록</div>
+				<div class="subTitle">수행</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li >기본정보</li>
+				<li class="colorWhite cursorP on">설치 및 구축(Install Base)</li>
+				<li class="colorWhite cursorP">수행일지</li>
 			</ul>
 		</div>
 		<div class="contents">
 			<div>
 				<table>
 					<tr>
-						<td class="btnFc" colspan="2"><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
-					</tr>
-					<tr>
-						<td class="tdTitle">프로젝트명</td>
+						<td class="tdTitle">설치장소</td>
 						<td class="tdContents"><input type="text"/></td>
 					</tr>
 					<tr>
-						<td class="tdTitle">고객사</td>
+						<td class="tdTitle">구분</td>
 						<td class="tdContents">
-							<input type="text" class="search" />	
+							<input type="radio" class="tCheck" name="gubun" id="gubun1" /><label for="gubun1" class="cursorP"></label>
+							&nbsp;&nbsp;&nbsp;신규&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tCheck" name="gubun" id="gubun2" /><label for="gubun2" class="cursorP"></label> 
+							&nbsp;&nbsp;&nbsp;증설&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tCheck" name="gubun" id="gubun3" /><label for="gubun3" class="cursorP"></label> 
+							&nbsp;&nbsp;&nbsp;기타
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">고객사담당자</td>
+						<td class="tdTitle">모델명</td>
 						<td class="tdContents">
-							<select>
-								<option value="">홍길동</option>
-							</select>					
-							<input type="text" class="pname"  value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
+							<input type="text" class="search" />
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">영업담당자</td>
+						<td class="tdTitle">시리얼번호</td>
 						<td class="tdContents">
-							<select>
-								<option value="">최재용</option>
-							</select>
+							<input type="text"/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">지원담당자</td>
+						<td class="tdTitle">납품일</td>
 						<td class="tdContents">
-							<select>
-								<option value="">김규민</option>
-							</select>
+							<input type="text" class="calendar" />
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">사업기간</td>
+						<td class="tdTitle">버전</td>
 						<td class="tdContents">
-							<input type="text" placeholder="from" class="calendar" /> ~ 
-							<input type="text" placeholder="to" class="calendar" />
+							<input type="text"/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle veralignT">비고</td>
+						<td class="tdTitle veralignT">주요스펙</td>
 						<td class="tdContents"><textarea></textarea></td>
+					</tr>
+					<tr>
+						<td class="tdTitle">캐쉬메모리</td>
+						<td class="tdContents">
+							<input type="text"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle">포트정보</td>
+						<td class="tdContents">
+							<input type="text" class="portInfo"/>
+						</td>
 					</tr>
 					<%-- <tr>
 						<td>							
@@ -241,11 +262,9 @@
 				</table> --%>	
 			</div>
 			<div class="btnWrap">
-				<div class="floatL btnDiv">
-					<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
-				</div>
-				<div class="floatR btnDiv" onclick="fn_addBiddingView();">
-					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				<div class="floatR btnDiv">
+					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
 				
 			</div>

@@ -201,10 +201,22 @@
 					}
 				}); */
 				location.href = "/projectDetailBd.do";
+				/* if(event.target.nodeName=="TD"){
+					location.href = "/projectDetailBd.do";
+				} */ 
+				
+				
+				
+				/* if($(this).children().eq(0)){
+					alert("==>"+$(this).children().eq(0).children().eq(0).val()+"<==");
+				} else{
+					alert("bbbb");
+				} */
+				
 			});
 		});
 
-		function fn_addView(){
+		/* function fn_addView(){
 			var url = '/writeProject.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -213,9 +225,9 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-		}
+		} */
 		
-		function fn_addView2(){
+		function fn_addView(){
 			var url = '/writeBasicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -223,8 +235,20 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px'); 
-		}
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}		
+		
+		/*
+		function fn_addView4(){
+			var url = '/writeBuildInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		} */
 		
 	</script>
 </head>
@@ -237,8 +261,8 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">프로젝트 list</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
+						<%-- <div class="addBtn floatL cursorP" onclick="fn_addView4();"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<select>
@@ -272,7 +296,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -284,7 +308,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -296,7 +320,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -308,7 +332,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -320,7 +344,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -332,7 +356,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -344,7 +368,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -356,7 +380,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -368,7 +392,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -380,7 +404,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -392,7 +416,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -404,7 +428,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
@@ -416,7 +440,7 @@
 								<td>홍길동차장</td>
 							</tr>
 							<tr>
-								<td></td>
+								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
 								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>

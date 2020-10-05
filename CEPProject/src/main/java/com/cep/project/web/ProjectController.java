@@ -64,4 +64,40 @@ public class ProjectController {
 		
 		return "project/writeBasicInfo";
 	}
+	
+	
+	@RequestMapping(value="/writeAmountInfo.do")
+	public String addAmountnfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeAmountInfo";
+	}
+	
+	
+	@RequestMapping(value="/writeBiddingInfo.do")
+	public String addBiddingInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeBiddingInfo";
+	}
+	
+	
+	@RequestMapping(value="/writeBuildInfo.do")
+	public String addBuildInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeBuildInfo";
+	}
+	
+	
+	@RequestMapping(value="/writeWorkInfo.do")
+	public String addWorkInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeWorkInfo";
+	}
 }
