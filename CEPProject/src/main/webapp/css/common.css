@@ -13,7 +13,7 @@ body {
 	width: 100%;
 	height: 969px;
 	background-color: #fff;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 body * {
 	white-space: -moz-pre-wrap;
@@ -116,9 +116,12 @@ input[class="tCheck"]+ label {
 	background-color: #e6e6e6;
 	border: 1px solid #e7e7e7;
 	border-radius: 50%;
+	text-align: center;
+	line-height: 1.7;
 }
 input[class="tCheck"]+ label:before {
 	content: "";
+	display: inline-block;
 }
 input[class="tCheck"]:checked+label {
 	background-color: #7764cb;

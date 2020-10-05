@@ -7,6 +7,9 @@
 <head>
 	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
 	<style>
+		.fl {
+			float: left;
+		}
 		.sfcnt {
 			height: 91px;
 		}
@@ -40,10 +43,10 @@
 			font-size: 26px;
 		}
 		form .contents > div:first-child {
-			width: 45%;
+			width: 37%;
 		}
 		form .contents > .fxd {
-			width: 55%;
+			width: 60%;
 		}
 		form .contents .stitle {
 			font-size: 18px;
@@ -62,7 +65,7 @@
 			padding: 13px 20px;
 		}
 		form .contents > div > div > div > table tr td:first-child {
-			width: 140px;
+			width: 130px;
 			font-weight: 400;
 		} 
 		form .contents > div > div > div > table tr td:last-child {
@@ -95,7 +98,7 @@
 		}
 		form .contents > .fxd .title ul {
 			height: 46px;
-			width: 915px;
+			width: 100%;
 			border-radius: 35px;
 		}
 		form .contents > .fxd .title ul li {
@@ -158,20 +161,168 @@
 			border-right: 1px solid #ebe9ee;
 		}
 		form .contents .dtl tr td:last-child {
-			width: 690px;
+			width: 784px;
+		}
+		form .contents .dtl input[type="text"] {
+		 	width: 177px;
+		    height: 34px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			background-color: #fff;
+			font-size: 15px;
+			margin-bottom: 4px;
+		}
+		form .contents .dtl input[class="calendar"] {
+		    background-image: url(./images/calendar_icon.png);
+		    background-repeat: no-repeat;
+		    background-position: 95% 50%;
+		}
+		form .contents .dtl select {
+			height: 37px;
+		    width: 130px;
+		    border: 1px solid #e9e9e9;
+		    padding: 0 10px;
+		    -webkit-appearance: none;
+		    background: url(./images/arrow_down.png) no-repeat 91% 50%;
+		    background-color: #fff;
+		    color: #535353;
+		    font-size: 15px;
+		}
+		form .contents .dtl label.title {
+			margin: 0 8px 0 20px;
+		}
+		form .contents .dtl span.cbspan {
+			display: inline-block;
+			vertical-align: top;
+			line-height: 1.8;
+			margin-left: 5px;
+		}
+		label.radio {
+		   overflow: hidden;
+		   position: relative;
+		   height: 26px;
+		   box-sizing: border-box;
+		   cursor: pointer;
+		   margin-right: 17px;
+		}
+		label.radio input[type='radio'] {
+			-webkit-appearance: none;
+			width: 26px;
+			height: 26px;
+			border: 1px solid #e6e6e6;
+			border-radius: 50%;
+			outline: none;
+			background: #e6e6e6;
+			margin: 0 15px 0 0;
+		}
+		label.radio input[type='radio']:before {
+			content:'';
+			display: block;
+			width: 60%;
+			height: 60%;
+			margin: 20% auto;  
+			border-radius: 50%;  
+		}
+		label.radio input[type='radio']:checked {
+			background: #7764cb;
+		}
+		label.radio input[type='radio']:checked:before {
+		  	content: "\2713";
+			color: #fff;
+			line-height: 1.2;
+			text-align: center;
+		}
+		form .contents .dtl#modTable ul li {
+			float: left;
+			width: 261px;		
+			line-height: 2;
+		}
+		form .contents .dtl#modTable ul li:last-child {
+			width: 465px;
+		}
+		form .contents .dtl#modTable ul li  > div:nth-child(1) {
+			width: 152px;
+		}
+		form .contents .dtl#modTable ul li  > div:nth-child(2) {
+			display: inline-block;
+			font-size: 0;
+		}
+		form .contents .dtl#modTable ul li  > div:nth-child(2) a {
+			background-color: #e4e6f0;
+			padding: 0px 10px;
+			border: 1px solid #dcdde3;
+			font-size: 16px;
+		}
+		form .contents .dtl#modTable ul li  > div:nth-child(2) label {
+			font-size: 16px;
+			display: inline-block;
+			width: 30px;
+			text-align: center;
+			border-top: 1px solid #dcdde3;
+			border-bottom: 1px solid #dcdde3;
+			line-height: 1.5;
+		}
+		form .contents .dtl#modTable ul li  > div:nth-child(2) input[type="text"] {
+			margin-right: 7px;
+		}
+		form .contents .dtl#modTable .fileName {
+			display: table-cell;
+			line-height: 32px;
 		}
 	</style>
 	<script>
 		$(document).ready(function() {
 			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
-			console.log('form .contents > .fxd .title ul li:nth-child(' + index + ')');
 			$('form .contents > .fxd .title ul li:nth-child(' + index + ')').toggleClass("liArrow");
 		
 			$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
-		
+			
+			var modCh = 1;
 			$('#modInfo').click(function() {
+				if(modCh % 2 == 1) {
+					$("#selectTable").css('display','none');
+					$('#modTable').css('display','block');
+				} else {
+					$("#selectTable").css('display','block');
+					$('#modTable').css('display','none');
+				}
+				modCh++;
+			});
+		
+			$('.decreaseQuantity').click(function(e){
+				e.preventDefault();
+				var stat = $(this).next().text();
+				var num = parseInt(stat,10);
+				num--;
+				if(num<=0){
+					$(this).parent().parent().children().eq(0).children().eq(0).prop('checked', false);
+				}
+				if(num<=-1) {
+					alert('더 이상 줄일 수 없습니다.');
+					num =0;
+				}
+				$(this).next().text(num);
+			});
+			$('.increaseQuantity').click(function(e){
+				e.preventDefault();
+				var stat = $(this).prev().text();
+				var num = parseInt(stat,10);
+				num++;
+	
+				$(this).prev().text(num);
+				$(this).parent().parent().children().eq(0).children().eq(0).prop('checked', true);
 				
 			});
+			
+			/* $('input[type="radio"]').click(function() {
+				var classNm = $(this).attr('name');
+				if($(this).val() == 'Y') {
+					$('.'+classNm).css('display','inline-block');
+				} else {
+					$('.'+classNm).css('display','none');
+				}	 
+			}); */
+			
 		});
 		
 	</script>
@@ -273,54 +424,190 @@
 									<td>첨부파일.txt</td>
 								</tr>
 							</table>
-							<table class="dtl" id="modTable">
+							<table class="dtl dpNone" id="modTable">
 								<tr>
 									<td>입찰보증증권</td>
 									<td>
-										<label><input type="radio" name="bdgbyn" value="Y" />Y</label>
-										<label><input type="radio" name="bdgbyn" value="N"/>N</label>
-										<label>보증기간</label>
-										<input type="text" /> ~ <input type="text" />
+										<label class="radio"><input type="radio" name="bond" value="Y" checked/><span class="ico"></span><span class="text">Y</span></label>
+										<label class="radio"><input type="radio" name="bond" value="N"/><span class="ico"></span><span class="text">N</span></label>
+										<span class="bond">
+											<label class="title">보증기간</label>
+											<input class="calendar" type="text" /> ~ <input class="calendar" type="text" />
+										</span>
 									</td>
 								</tr>
 								<tr>
 									<td>입찰서류</td>	
 									<td>
 										<ul>
-											<li><input type="radio" name="bdFileKindCd"  value=""/>사업자등록증 1 </li>
-											<li>법인등기부등본 2</li>
-											<li>법인인감증명서 1</li>
-											<li>사용인감계 2</li>
-											<li>위임장 1</li>
-											<li>대리인 명함 1</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind1" name=""  value=""/>
+													<label for="bdKind1" class="cursorP" ></label>
+													<span class="cbspan">사업자등록증</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind2" name=""  value=""/>
+													<label for="bdKind2" class="cursorP" ></label>
+													<span class="cbspan">법인등기부등본</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind3" name=""  value=""/>
+													<label for="bdKind3" class="cursorP" ></label>
+													<span class="cbspan">법인인감증명서</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind4" name=""  value=""/>
+													<label for="bdKind4" class="cursorP" ></label>
+													<span class="cbspan">사용인감계</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind5" name=""  value=""/>
+													<label for="bdKind5" class="cursorP" ></label>
+													<span class="cbspan">위임장</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind6" name=""  value=""/>
+													<label for="bdKind6" class="cursorP" ></label>
+													<span class="cbspan">대리인 명함</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
+											<li>
+												<div class="fl">
+													<input class="tCheck" type="checkbox" id ="bdKind7" name=""  value=""/>
+													<label for="bdKind7" class="cursorP" ></label>
+													<span class="cbspan">기타 서류</span>
+												</div>
+												<div>
+													<input type="text" />
+													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<label id="numberUpDown">0</label>
+													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+												</div>
+											</li>
 										</ul>
 									</td>
 								</tr>
 								<tr>
 									<td>입찰기한</td>
-									<td>2019.09.12 15:00</td>
+									<td>
+										<input class="calendar" type="text" />
+										<select>
+											<option>09:00</option>
+											<option>10:00</option>
+											<option>11:00</option>
+											<option>12:00</option>
+											<option>13:00</option>
+											<option>14:00</option>
+											<option>15:00</option>
+											<option>16:00</option>
+											<option>17:00</option>
+											<option>18:00</option>
+										</select>
+									</td>
 								</tr>
 								<tr>
 									<td>제안서</td>
-									<td>Y / 접수마감 2019.09.12 15:00</td>
+									<td>
+										<label class="radio"><input type="radio" name="bizPlan" value="Y" /><span class="ico"></span><span class="text">Y</span></label>
+										<label class="radio"><input type="radio" name="bizPlan" value="N"/><span class="ico"></span><span class="text">N</span></label>
+										<span class="bizPlan">
+											<label class="title">접수마감</label>
+											<input class="calendar" type="text" />
+											<select>
+												<option>09:00</option>
+												<option>10:00</option>
+												<option>11:00</option>
+												<option>12:00</option>
+												<option>13:00</option>
+												<option>14:00</option>
+												<option>15:00</option>
+												<option>16:00</option>
+												<option>17:00</option>
+												<option>18:00</option>
+											</select>
+										</span>
+									</td>
 								</tr>
 								<tr>
 									<td>제안발표</td>
-									<td>Y / 접수마감 2019.09.12 15:00</td>
+									<td>
+										<label class="radio"><input type="radio" name="announce" value="Y" /><span class="ico"></span><span class="text">Y</span></label>
+										<label class="radio"><input type="radio" name="announce" value="N"/><span class="ico"></span><span class="text">N</span></label>
+										<span class="announce">
+											<label class="title">접수마감</label>
+											<input class="calendar" type="text" />
+											<select>
+												<option>09:00</option>
+												<option>10:00</option>
+												<option>11:00</option>
+												<option>12:00</option>
+												<option>13:00</option>
+												<option>14:00</option>
+												<option>15:00</option>
+												<option>16:00</option>
+												<option>17:00</option>
+												<option>18:00</option>
+											</select>
+										</span>
+									</td>
 								</tr>
 								<tr>
 									<td>첨부파일</td>
-									<td>첨부파일.txt</td>
+									<td>
+										<button class="fl"><img src="./images/btn_file_upload.png" /></button>
+										<label class="fileName">기존첨부파일.txt</label>
+									</td>
 								</tr>
 							</table>
 						</div>
 						<div class="btnWrap rt">
 							<div class="floatR">
-								<button value="수행일지"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
-								<button value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
-								<button value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-								<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+								<button type="button" value="수행일지"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
+								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
+								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>
 					</div>
