@@ -176,7 +176,7 @@
 		}
 		
 		function fn_preBaicView(){
-			var url = '/writeBasicInfo.do';
+			var url = '/writeAmountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
