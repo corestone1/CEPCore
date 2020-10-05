@@ -66,6 +66,15 @@ public class ProjectController {
 	}
 	
 	
+	@RequestMapping(value="/writeAmountInfo.do")
+	public String addAmountnfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeAmountInfo";
+	}
+	
+	
 	@RequestMapping(value="/writeBiddingInfo.do")
 	public String addBiddingInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
