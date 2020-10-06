@@ -55,7 +55,7 @@
 	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents input {
-			width: 250px;
+			width: 712px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -63,27 +63,20 @@
 			font-size: 14px;
 			margin-bottom: 3px;
 		}
-		.popContainer .contents input[class="search"] {
-			width: 250px;
-			height: 38px;
-			background-image: url('./images/search_icon.png');
-			background-repeat: no-repeat;
-			background-position: 95% 50%;
-		}
-		.popContainer .contents input[class="portInfo"] {
-			width: 691px;
+		.popContainer .contents input[class="timeInfo"] {
+			width: 30px;
 			height: 38px;
 		}
 		.popContainer .contents input[class="calendar"] {
-			width: 250px;
+			width: 150px;
 			height: 40px;
 			background-image: url('./images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: 691px;
-			height: 100px;
+			width: 712px;
+			height: 90px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -100,13 +93,13 @@
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
-			width: 96px;
+			width: 80px;
 			font-size: 15px;
 		}				
 		.popContainer .contents td.tdContents {
-			width: 691px;
+			width: 712px;
 			font-size: 15px;
-			font-weight: 150;
+			font-weight: 200;
 		} 
 		.popContainer .contents .btnDiv {
 	  		margin-right: 82px;
@@ -125,7 +118,7 @@
 		.popContainer .contents tr:first-child td { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  			
-			padding-top: 25px;
+			padding-top: 30px;
 		}
 	</style>
 	<script>
@@ -141,7 +134,7 @@
 		}
 		
 		function fn_preBiddingView(){
-			var url = '/writeBiddingInfo.do';
+			var url = '/writeBuildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -162,104 +155,57 @@
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li class="colorWhite cursorP on">설치 및 구축(Install Base)</li>
-				<li class="colorWhite cursorP">수행일지</li>
+				<li class="colorWhite cursorP">설치 및 구축(Install Base)</li>
+				<li class="colorWhite cursorP on">수행일지</li>
 			</ul>
 		</div>
 		<div class="contents">
 			<div>
 				<table>
 					<tr>
-						<td class="tdTitle">설치장소</td>
-						<td class="tdContents"><input type="text"/></td>
-					</tr>
-					<tr>
 						<td class="tdTitle">구분</td>
 						<td class="tdContents">
 							<input type="radio" class="tCheck" name="gubun" id="gubun1" /><label for="gubun1" class="cursorP"></label>
-							&nbsp;&nbsp;&nbsp;신규&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;작업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="radio" class="tCheck" name="gubun" id="gubun2" /><label for="gubun2" class="cursorP"></label> 
-							&nbsp;&nbsp;&nbsp;증설&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;이슈&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="radio" class="tCheck" name="gubun" id="gubun3" /><label for="gubun3" class="cursorP"></label> 
-							&nbsp;&nbsp;&nbsp;기타
+							&nbsp;&nbsp;장애&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tCheck" name="gubun" id="gubun4" /><label for="gubun4" class="cursorP"></label> 
+							&nbsp;&nbsp;기타
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">모델명</td>
+						<td class="tdTitle">일시</td>
 						<td class="tdContents">
-							<input type="text" class="search" />
+							<input type="text" class="calendar" />&nbsp;&nbsp;
+							<input type="text" placeholder="" class="timeInfo"/> :00&nbsp;&nbsp;&nbsp;
+							소요시간 <input type="text" class="timeInfo"/> : <input type="text" placeholder="소요시간"  class="timeInfo" value="00"/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">시리얼번호</td>
-						<td class="tdContents">
-							<input type="text"/>
-						</td>
+						<td class="tdTitle">제목</td>
+						<td class="tdContents"><input type="text"/></td>
 					</tr>
 					<tr>
-						<td class="tdTitle">납품일</td>
-						<td class="tdContents">
-							<input type="text" class="calendar" />
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">버전</td>
-						<td class="tdContents">
-							<input type="text"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">주요스펙</td>
+						<td class="tdTitle veralignT">내용</td>
 						<td class="tdContents"><textarea></textarea></td>
 					</tr>
 					<tr>
-						<td class="tdTitle">캐쉬메모리</td>
-						<td class="tdContents">
-							<input type="text"/>
-						</td>
+						<td class="tdTitle veralignT">처리결과</td>
+						<td class="tdContents"><textarea></textarea></td>
 					</tr>
 					<tr>
-						<td class="tdTitle">포트정보</td>
+						<td class="tdTitle veralignT">기타</td>
+						<td class="tdContents"><textarea></textarea></td>
+					</tr>
+					<tr>
+						<td class="tdTitle">첨부파일</td>
 						<td class="tdContents">
-							<input type="text" class="portInfo"/>
+							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>
 						</td>
-					</tr>
-					<%-- <tr>
-						<td>							
-							<button><img src="<c:url value='/images/btn_file.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>							
-						</td>
-					</tr> --%>
-					<%-- <tr>
-						<td class="tdBtnWrap1"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td class="tdBtnWrap2">
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button><button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr> --%>
-					<%-- <tr>
-						<div class="btnWrap">
-							<table width="788px">
-								<tr width="788px">
-									<td width="30%" align="left" border="1px" border-color="#7ccbe8">
-										<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-									<td width="70%" align="right"border="1px" >
-										<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-									</td>
-								</tr>
-							</table>
-						</div>					
-					</tr> --%>					
+					</tr>			
 				</table>
-				<%-- <table>
-					<tr width="788px" class="btnWrap">
-						<td  width="200">
-							<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="610"align="right">
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table> --%>	
 			</div>
 			<div class="btnWrap">
 				<div class="floatR btnDiv">
@@ -268,17 +214,6 @@
 				</div>
 				
 			</div>
-<%-- 			<div class="btnWrap">
-				<table width="788px">
-					<tr width="788px">
-						<td width="30%" align="left" border="1px" border-color="#7ccbe8"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="70%" align="right"border="1px" border-color="solid #dcdcdc">
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table>
-			</div> --%>
 		</div>
 	</div>
 </body>
