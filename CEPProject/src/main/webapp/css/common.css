@@ -137,3 +137,18 @@ button {
 	border: none;
 	cursor: pointer;
 }
+input::placeholder {
+	color: #A4A4A4; 
+}
+input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+input:focus::-moz-placeholder {
+  color: transparent;
+}
+input:focus:-ms-input-placeholder {
+  color: transparent;
+}
+input:focus::-ms-input-placeholder {
+  color: transparent;
+}
