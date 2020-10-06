@@ -31,9 +31,6 @@
 			height: 47px;
 			padding-left: 28px;
 			line-height: 47px;
-		}
-		.popContainer .left ul li.on,
-		.popContainer .left ul li:hover {
 			background-color: #fff;
 			color: #32bc94;
 		}
@@ -52,10 +49,10 @@
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
-	  		border-spacing: 0 3px;
+	  		border-spacing: 0 5px;
 		}
 		.popContainer .contents input {
-			width: 712px;
+			width: 700px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -68,15 +65,15 @@
 			height: 38px;
 		}
 		.popContainer .contents input[class="calendar"] {
-			width: 150px;
+			width: 130px;
 			height: 40px;
 			background-image: url('./images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: 712px;
-			height: 90px;
+			width: 694px;
+			height: 270px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -97,9 +94,10 @@
 			font-size: 15px;
 		}				
 		.popContainer .contents td.tdContents {
-			width: 712px;
+			width: 135px;
 			font-size: 15px;
 			font-weight: 200;
+			padding-left: 15px;
 		} 
 		.popContainer .contents .btnDiv {
 	  		margin-right: 82px;
@@ -120,21 +118,17 @@
 	  		border-spacing: 0 3px;	  			
 			padding-top: 30px;
 		}
-	</style>
-	<script>
-		function fn_addBuildView(){
-			var url = '/writeFinishInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		.popContainer .contents input[class="pname"] {
+			width: 400px;
+			border : none;
+			outline: none;
+			background-color: #f6f7fc;
+			padding-left: 0px;
 		}
-		
-		function fn_preBiddingView(){
-			var url = '/writeBuildInfo.do';
+	</style>
+	<script>		
+		function fn_finish(){
+			var url = '/writeFinishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -150,67 +144,53 @@
 		<div class="top">
 			<div>
 				<div class="floatL ftw500">프로젝트 등록</div>
-				<div class="subTitle">수행</div>
+				<div class="subTitle">완료</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li class="colorWhite cursorP">설치 및 구축(Install Base)</li>
-				<li class="colorWhite cursorP on">수행일지</li>
+				<li >완료정보</li>
 			</ul>
 		</div>
 		<div class="contents">
 			<div>
 				<table>
 					<tr>
-						<td class="tdTitle">구분</td>
-						<td class="tdContents">
-							<input type="radio" class="tCheck" name="gubun" id="gubun1" /><label for="gubun1" class="cursorP"></label>
-							&nbsp;&nbsp;작업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="gubun" id="gubun2" /><label for="gubun2" class="cursorP"></label> 
-							&nbsp;&nbsp;이슈&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="gubun" id="gubun3" /><label for="gubun3" class="cursorP"></label> 
-							&nbsp;&nbsp;장애&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="gubun" id="gubun4" /><label for="gubun4" class="cursorP"></label> 
-							&nbsp;&nbsp;기타
+						<td class="tdTitle">고객사</td>
+						<td class="tdContents" colspan="2">
+							<input type="text" class="pname"  value="KB손해보험" readonly/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">일시</td>
-						<td class="tdContents">
-							<input type="text" class="calendar" />&nbsp;&nbsp;
-							<input type="text" placeholder="" class="timeInfo"/> :00&nbsp;&nbsp;&nbsp;
-							소요시간 <input type="text" class="timeInfo"/> : <input type="text" placeholder="소요시간"  class="timeInfo" value="00"/>
+						<td class="tdTitle">프로젝트명</td>
+						<td class="tdContents" colspan="2">
+							<input type="text" class="pname"  value="EDMS이미지 암호화" readonly/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">제목</td>
-						<td class="tdContents"><input type="text"/></td>
+						<td class="tdTitle">검수일</td>
+						<td class="tdContents" colspan="2">
+							<input type="text" class="calendar" value="2020-12-25"/>
+						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle veralignT">내용</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">처리결과</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">기타</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td class="tdTitle">첨부파일</td>
+						<td class="tdTitle">검수확인서</td>
 						<td class="tdContents">
 							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>
 						</td>
-					</tr>			
+						<td>
+							<input type="text" class="pname"  value="EDMS이미지 암호화 검수확인서.pdf" readonly/>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle veralignT">비고</td>
+						<td class="tdContents"  colspan="2"><textarea></textarea></td>
+					</tr>
 				</table>
 			</div>
 			<div class="btnWrap">
 				<div class="floatR btnDiv">
-					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_finish.png'/>" /></button>
 				</div>
 				
 			</div>

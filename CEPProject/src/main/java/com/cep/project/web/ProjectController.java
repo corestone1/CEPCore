@@ -100,4 +100,13 @@ public class ProjectController {
 		
 		return "project/writeWorkInfo";
 	}
+	
+	
+	@RequestMapping(value="/writeFinishInfo.do")
+	public String addFinishInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/writeFinishInfo";
+	}
 }
