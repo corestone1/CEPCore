@@ -3,8 +3,7 @@
 <%@include file="../cmm/inc.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-
+<head>	
 	<style>
 		.popContainer .top {
 			width: 100%;
@@ -74,7 +73,8 @@
 			width: 691px;
 		} 	
 		.popContainer .contents td:LAST-CHILD  {
-			padding-right: 0px !important;
+			padding-right: 0px !important;		
+			padding-left: 24px;
 		} 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
@@ -89,24 +89,23 @@
 		.popContainer .contents td.firstRow { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  			
-			padding-top: 35px;
+			padding-top: 34px;
 			font-size: 14px;				
 		}
 		.popContainer .contents .btnDiv {
-	  		margin-right: 110px;
+	  		margin-right: 61px;
 	  		margin-top: 10px;
 		}
 		.popContainer .contents select {
 			width: 200px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
-			padding: 0 36px;
+			padding: 0 10px;
 			-webkit-appearance: none;
 			background: url('./images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;	
-			text-align-last: right;
 		}
 		.popContainer .contents select option:first-child{
 		 	color: #A4A4A4;
@@ -118,6 +117,8 @@
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 15px;
+		}
+		.popContainer .contents input[class="amount"] {
 			text-align: right;
 		}
 		.popContainer .contents input[class="rateInfo"] {
@@ -127,20 +128,6 @@
 	</style>
 	<script>
 	
-		/* function fn_turnChange(){
-			
-			var turnVal = document.getElementById("turnInfo");
-			//alert(turnVal.value+"/"+turnVal.text);
-			var addTable = document.getElementById("addRow");
-			var addTbody = addTable.childNodes[0];
-			var addTr = document.createElement("TR"); 
-			addTable.appendChild(addTr);
-			var addTd = document.createElement("TD");			
-			addTr.appendChild(addTd);
-			addTd.innerHTML =turnVal.value+ "회차<input type=\"text\" placeholder=\""+turnVal.value+"회차 비율\" class=\"rateInfo\"/>&nbsp;%&nbsp;&nbsp; <input type=\"text\" placeholder=\""+turnVal.value+"회차 금액\" />&nbsp;원";
-			//addTd.innerHTML =turnVal.value+ "회차";
-		} */
-		
 	function fn_turnChange(){
 			
 			
@@ -154,9 +141,9 @@
 				for(i=0; i<calcuTurn; i++){
 					var rowItem = "<tr class='ftw100'>";
 					rowItem += "	<td>"+(beforeTurn+i+1)+ "회차 :&nbsp;";
-					rowItem += "<input type='text' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' class='rateInfo'/>";
+					rowItem += "<input type='text' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' numberOnly class='rateInfo'/>";
 					rowItem += "&nbsp;%&nbsp;&nbsp;&nbsp;";
-					rowItem += "<input type='text' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' />&nbsp;원 </td>";
+					rowItem += "<input type='text' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount' />&nbsp;원 </td>";
 					rowItem += "</tr>"
 					
 					$('#addRow').append(rowItem);
@@ -195,6 +182,36 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		
+		/* $(document).on("focus", "input:text[numberOnly]", function() {
+			
+		    var x = $(this).val();
+		    x = removeCommas(x);
+		    $(this).val(x);
+		}).on("focusout", "input:text[numberOnly]",function() {
+			
+		    var x = $(this).val();
+		    if(x && x.length > 0) {
+		        if(!$.isNumeric(x)) {
+		            x = x.replace(/[^0-9]/g,"");
+		        }
+		        x = addCommas(x);
+		        $(this).val(x);
+		    }
+		}).on("keyup", "input:text[numberOnly]",function() {
+			
+		    $(this).val($(this).val().replace(/[^0-9]/g,""));
+		});		
+
+		function addCommas(x) {
+		    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+		 
+		//모든 콤마 제거
+		function removeCommas(x) {
+		    if(!x || x.length == 0) return "";
+		    else return x.split(",").join("");
+		} */
 	</script>
 </head>
 <body>
@@ -216,12 +233,12 @@
 				<table>
 					<tr class="ftw100">
 						<td class="firstRow">
-							<input type="text" placeholder="계약금액"  /> &nbsp;원
+							<input type="text" numberOnly placeholder="계약금액"  class="amount" /> &nbsp;원
 						</td>
 					</tr>
 					<tr class="ftw100">
 						<td>
-							<input type="text" placeholder="청구일로 부터" /> &nbsp;이내
+							<input type="text" numberOnly placeholder="청구일로 부터" /> &nbsp;일 이내
 						</td>
 					</tr>
 					<tr class="ftw100">

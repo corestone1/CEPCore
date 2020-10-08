@@ -55,7 +55,7 @@
 	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents input {
-			width: 712px;
+			width: 708px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -75,7 +75,7 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: 712px;
+			width: 708px;
 			height: 90px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -95,6 +95,7 @@
 			margin-top: 11px;
 			width: 80px;
 			font-size: 15px;
+			padding-left: 23px;
 		}				
 		.popContainer .contents td.tdContents {
 			width: 712px;
@@ -102,7 +103,7 @@
 			font-weight: 200;
 		} 
 		.popContainer .contents .btnDiv {
-	  		margin-right: 82px;
+	  		margin-right: 61px;
 		} 	 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
@@ -179,8 +180,8 @@
 						<td class="tdTitle">일시</td>
 						<td class="tdContents">
 							<input type="text" class="calendar" />&nbsp;&nbsp;
-							<input type="text" placeholder="" class="timeInfo"/> :00&nbsp;&nbsp;&nbsp;
-							소요시간 <input type="text" class="timeInfo"/> : <input type="text" placeholder="소요시간"  class="timeInfo" value="00"/>
+							<input type="text" numberOnly class="timeInfo"/> :00&nbsp;&nbsp;&nbsp;
+							소요시간 <input type="text" numberOnly class="timeInfo"/> : <input type="text" placeholder="소요시간" numberOnly class="timeInfo" value="00"/>
 						</td>
 					</tr>
 					<tr>

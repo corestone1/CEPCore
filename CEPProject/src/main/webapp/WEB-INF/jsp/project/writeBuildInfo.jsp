@@ -83,7 +83,7 @@
 		}
 		.popContainer .contents textarea {
 			width: 691px;
-			height: 100px;
+			height: 93px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -102,6 +102,7 @@
 			margin-top: 11px;
 			width: 96px;
 			font-size: 15px;
+			padding-left: 23px;
 		}				
 		.popContainer .contents td.tdContents {
 			width: 691px;
@@ -109,7 +110,7 @@
 			font-weight: 150;
 		} 
 		.popContainer .contents .btnDiv {
-	  		margin-right: 82px;
+	  		margin-right: 60px;
 		} 	 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
@@ -125,7 +126,7 @@
 		.popContainer .contents tr:first-child td { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  			
-			padding-top: 25px;
+			padding-top: 35px;
 		}
 	</style>
 	<script>

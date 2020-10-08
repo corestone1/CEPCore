@@ -108,22 +108,25 @@
 		}
 		.popContainer .contents .btnWrap {
 			margin-top: 19px;
-			margin-bottom: 27px;
+			margin-bottom: 27px;			
+			padding-left: 18px;
 		}		
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
+			padding-left: 18px;
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
 			width: 96px;
-			font-size: 14px;
+			font-size: 14px;			
+			padding-left: 23px;
 		}				
 		.popContainer .contents td.tdContents {
 			width: 691px;
 			font-size: 14px;
 		} 
 		.popContainer .contents .btnDiv {
-	  		margin-right: 82px;
+	  		margin-right: 79px;
 		} 	
 	</style>
 	<script>

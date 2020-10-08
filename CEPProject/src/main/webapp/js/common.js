@@ -1,5 +1,5 @@
-function showModalPop() {
-	/*id, url, data, button, title, args) {*/
+/*function showModalPop() {
+	id, url, data, button, title, args) {
 	modal_layer_add(id);
 	
 	var resizable = false;
@@ -74,4 +74,43 @@ function modal_layer_add(div_id) {
 			$("body").prepend(modal_pop);
 		}
 	}
+}
+*/
+
+/*
+ * 숫자 필드 입력 function
+ * 숫자만 입력 되도록 on("keyup", "input:text[numberOnly]
+ * 해당 필드 클릭하면 숫자에서 컴마 제거 on("focus", "input:text[numberOnly]"
+ * 해당 숫자에 3자리 마다 컴마 삽입 on("focusout", "input:text[numberOnly]"
+ * input에 numberOnly 를 입력하면 해당 내용 적용.
+ * ex) <input type="text" numberOnly placeholder="계약금액"  class="amount" />
+ */
+$(document).on("focus", "input:text[numberOnly]", function() {
+	
+    var x = $(this).val();
+    x = removeCommas(x);
+    $(this).val(x);
+}).on("focusout", "input:text[numberOnly]",function() {
+	
+    var x = $(this).val();
+    if(x && x.length > 0) {
+        if(!$.isNumeric(x)) {
+            x = x.replace(/[^0-9]/g,"");
+        }
+        x = addCommas(x);
+        $(this).val(x);
+    }
+}).on("keyup", "input:text[numberOnly]",function() {
+	
+    $(this).val($(this).val().replace(/[^0-9]/g,""));
+});
+
+function addCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+ 
+//모든 콤마 제거
+function removeCommas(x) {
+    if(!x || x.length == 0) return "";
+    else return x.split(",").join("");
 }

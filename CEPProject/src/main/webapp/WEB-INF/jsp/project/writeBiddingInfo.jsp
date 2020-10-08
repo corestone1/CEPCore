@@ -39,7 +39,7 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 100%;
+			width: 98%;
 			height: 601px;
 			top: 107px;
 			right: 0;
@@ -53,7 +53,7 @@
 		.popContainer .contents > div > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
-	  		width: 789px;
+	  		width: 807px;
 		}
 		/* .popContainer .contents > div > table tr:first-child td {
 			margin-bottom: 100px;
@@ -106,7 +106,7 @@
 			font-weight: 200;
 		} 		
 		.popContainer .contents tr:nth-child(2) td {			
-			padding-top: 20px !important;
+			padding-top: 10px !important;
 		} 		
 		.popContainer .contents td:LAST-CHILD  {
 			padding-right: 0px !important;
@@ -115,7 +115,7 @@
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  		
 			border-bottom:2px solid #e5e5e5;				
-			padding-top: 20px;
+			padding-top: 30px;
 			padding-bottom: 7px;
 			font-size: 18px;
 			vertical-align: inherit;		
@@ -128,7 +128,11 @@
 		.popContainer .contents .btnDiv {
 	  		margin-right: 110px;
 	  		margin-top: 10px;
-		}	
+	  		margin-right: 63px;
+		}			
+		.popContainer .contents input[class="amount"] {
+			text-align: right;
+		}
 		/* .popContainer tr:nth-child(1) {
 			border-collapse: collapse;
 			border-bottom-color: #e5e5e5;			
@@ -207,7 +211,7 @@
 					<tr>
 						<td colspan="2" >1회차 일정</td>
 						<td  >
-							<input type="text" placeholder="계산서 예정일정" class="calendar" /> &nbsp;
+							<input type="text" placeholder="계산서 예정일정" class="calendar" />&nbsp;&nbsp;&nbsp;
 							<input type="text" placeholder="수금 예상 일정" class="calendar" />
 						</td>
 						<td colspan="3"></td>
@@ -226,7 +230,7 @@
 						</td>
 						<td id="step1-3" style="visibility:hidden">완료</td>
 						<td id="step1-4" style="visibility:hidden">
-							<input type="text" id="amount1" placeholder="금액" width="177px"/>
+							<input type="text" id="amount1" placeholder="금액" width="177px" numberOnly class="amount"/>
 						</td>
 					</tr>
 					<tr class="ftw100">
@@ -243,7 +247,7 @@
 						</td>
 						<td id="step2-3" style="visibility:hidden">완료</td>
 						<td id="step2-4" style="visibility:hidden">
-							<input type="text" id="amount2" placeholder="금액" width="177px"/>
+							<input type="text" id="amount2" placeholder="금액" width="177px" numberOnly class="amount"/>
 						</td>
 					</tr>
 					<tr class="ftw100">
@@ -260,7 +264,7 @@
 						</td>
 						<td id="step3-3" style="visibility:hidden">완료</td>
 						<td id="step3-4" style="visibility:hidden">
-							<input type="text" id="amount3" placeholder="금액" width="177px"/>
+							<input type="text" id="amount3" placeholder="금액" width="177px" numberOnly class="amount"/>
 						</td>
 					</tr>			
 				</table>
