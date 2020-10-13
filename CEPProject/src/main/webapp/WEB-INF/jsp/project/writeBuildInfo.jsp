@@ -7,7 +7,7 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #6a5bae;
 			position: absolute;
 			top: 0;
@@ -25,7 +25,6 @@
 			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
 			background-color: #32bc94;
 			z-index: 4;
-			font-size: 15px;
 		}
 		.popContainer .left ul li {
 			height: 47px;
@@ -39,16 +38,20 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 100%;
+			width: calc(100% - 201px);
 			height: 601px;
 			top: 107px;
-			right: 0;
+			left: 201px;
 			z-index: 3;
 			background-color: #f6f7fc;
+			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			margin: 9px 0 0 244px;
-			width: calc(100% - 244px);
+			width: calc(100% - 80px);
+			margin: 10px 40px 0 40px;
+		}
+		.popContainer .contents > div:first-child {
+			min-height: 529px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
@@ -71,8 +74,7 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents input[class="portInfo"] {
-			width: 691px;
-			height: 38px;
+			width: calc(100% - 20px);
 		}
 		.popContainer .contents input[class="calendar"] {
 			width: 250px;
@@ -82,7 +84,7 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: 691px;
+			width: calc(100% - 20px);
 			height: 100px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -91,26 +93,21 @@
 			margin-bottom: 0px;
 			resize: none;
 		}
-		.popContainer .contents .btnWrap {
-			margin-top: 19px;
-			margin-bottom: 27px;
-		}		
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
-			width: 96px;
-			font-size: 15px;
+			font-size: 14px;
+			color: #535353;
+			padding-right: 20px;
+			width: 99px;
 		}				
 		.popContainer .contents td.tdContents {
-			width: 691px;
-			font-size: 15px;
-			font-weight: 150;
+			width: 100%;
+			font-size: 14px;
+			font-weight: 200;
 		} 
-		.popContainer .contents .btnDiv {
-	  		margin-right: 82px;
-		} 	 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
 			width: 124px;
@@ -120,13 +117,7 @@
 			margin-left: 150px;
 			text-align: center;
 			font-weight: 200;
-			
 		}  		
-		.popContainer .contents tr:first-child td { 
-			border-collapse: collapse;
-	  		border-spacing: 0 3px;	  			
-			padding-top: 25px;
-		}
 	</style>
 	<script>
 		function fn_addBuildView(){
@@ -161,8 +152,8 @@
 			</div>
 		</div>
 		<div class="left">
-			<ul class="ftw300">
-				<li class="colorWhite cursorP on">설치 및 구축(Install Base)</li>
+			<ul class="ftw400">
+				<li class="colorWhite cursorP on">설치 및 구축</li>
 				<li class="colorWhite cursorP">수행일지</li>
 			</ul>
 		</div>
@@ -170,11 +161,11 @@
 			<div>
 				<table>
 					<tr>
-						<td class="tdTitle">설치장소</td>
+						<td class="tdTitle">설치 장소</td>
 						<td class="tdContents"><input type="text"/></td>
 					</tr>
 					<tr>
-						<td class="tdTitle">구분</td>
+						<td class="tdTitle">구&nbsp;&nbsp;분</td>
 						<td class="tdContents">
 							<input type="radio" class="tCheck" name="gubun" id="gubun1" /><label for="gubun1" class="cursorP"></label>
 							&nbsp;&nbsp;&nbsp;신규&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -209,7 +200,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle veralignT">주요스펙</td>
+						<td class="tdTitle veralignT">주요 스펙</td>
 						<td class="tdContents"><textarea></textarea></td>
 					</tr>
 					<tr>
@@ -219,7 +210,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">포트정보</td>
+						<td class="tdTitle wdt100">포트 정보</td>
 						<td class="tdContents">
 							<input type="text" class="portInfo"/>
 						</td>
@@ -262,11 +253,10 @@
 				</table> --%>	
 			</div>
 			<div class="btnWrap">
-				<div class="floatR btnDiv">
+				<div class="floatR">
 					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
-				
 			</div>
 <%-- 			<div class="btnWrap">
 				<table width="788px">

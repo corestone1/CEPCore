@@ -7,7 +7,7 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 103px;
+			height: 102px;
 			border-bottom: 4px solid #6a5bae;
 			position: absolute;
 			top: 0;
@@ -35,20 +35,16 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: calc(100% - 201px);
+			width: 100%;
 			height: 601px;
 			top: 107px;
-			left: 201px;			
+			right: 0;
 			z-index: 3;
 			background-color: #f6f7fc;
-			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			width: calc(100% - 80px);
-			margin: 10px 40px 0 40px;
-		}
-		.popContainer .contents > div:first-child {
-			min-height: 529px;
+			margin: 9px 0 0 244px;
+			width: calc(100% - 244px);
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
@@ -72,7 +68,7 @@
 			width: 135px;
 		}
 		.popContainer .contents input {
-			width: calc(100% - 20px);
+			width: 691px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -101,7 +97,7 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: calc(100% - 20px);
+			width: 691px;
 			height: 160px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -110,20 +106,26 @@
 			margin-bottom: 0px;
 			resize: none;
 		}
+		.popContainer .contents .btnWrap {
+			margin-top: 19px;
+			margin-bottom: 27px;
+		}		
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
+			width: 96px;
 			font-size: 14px;
-			color: #525252;
-			padding-right: 20px;
-			width: 99px;
+		    color: #525252;
 		}				
 		.popContainer .contents td.tdContents {
-			width: 100%;
+			width: 691px;
 			font-size: 14px;
 		} 
+		.popContainer .contents .btnDiv {
+	  		margin-right: 82px;
+		} 	
 	</style>
 	<script>
 		function fn_addBiddingView(){
@@ -146,7 +148,7 @@
 			</div>
 		</div>
 		<div class="left">
-			<ul class="ftw400">
+			<ul class="ftw500">
 				<li >기본정보</li>
 			</ul>
 		</div>
@@ -239,14 +241,14 @@
 					</tr>
 				</table> --%>	
 			</div>
-			<div class="btnWrap floatR">
-				<div class="floatL">
+			<div class="btnWrap">
+				<div class="floatL btnDiv">
 					<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 				</div>
-				<div class="floatR" onclick="fn_addBiddingView();">
+				<div class="floatR btnDiv" onclick="fn_addBiddingView();">
 					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
-				<div class="floatN floatC"></div>
+				
 			</div>
 <%-- 			<div class="btnWrap">
 				<table width="788px">

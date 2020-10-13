@@ -45,6 +45,9 @@
 		form .contents > div:first-child {
 			width: 37%;
 		}
+		form .contents > div:nth-child(2) {
+			margin-top: 51px;
+		}
 		form .contents > .fxd {
 			width: 60%;
 		}
@@ -122,15 +125,20 @@
 			color: #fff  !important;
 			background-color: #4c3d92;
 		}
+		#detailForm .stitle {
+			margin-bottom: 0;
+		}
 		#detailForm .stitle ul {
-			width: 915px;
+			width: 100%;
 		}
 		#detailForm .stitle ul li {
-			width: 150px;
+			width: 50%;
 		}
 		#detailForm .stitle ul li a {
 			color: #a3a3a4;
 			padding-bottom: 10px;
+			border-bottom: 4px solid #a3a3a4;
+			display: block;
 		}
 		#detailForm .stitle ul li a:hover {
 			color: #000;
@@ -141,7 +149,6 @@
 			border-bottom: 4px solid #6a5bae;
 		}
 		form .contents .dtl {
-			border-top: 4px solid #c3c3c3;;
 			overflow: hidden;
 		}
 		form .contents .dtl tbody {
@@ -160,11 +167,15 @@
 			background-color: #e1dff5;
 			border-right: 1px solid #ebe9ee;
 		}
+		form .contents .dtl tr:nth-child(9) td:first-child,
+		form .contents .dtl tr:last-child td:first-child {
+			background-color: #dddddd;
+		}
 		form .contents .dtl tr td:last-child {
 			width: 784px;
 		}
 		input[type="text"] {
-		 	width: 177px;
+		 	width: 191px;
 		    height: 34px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -179,7 +190,7 @@
 		}
 		select {
 			height: 37px;
-		    width: 130px;
+		    width: 213px;
 		    border: 1px solid #e9e9e9;
 		    padding: 0 10px;
 		    -webkit-appearance: none;
@@ -290,13 +301,30 @@
 		#modBasicTable select {
 			font-size: 14px;
 			width: 190px;
-		   color: #0e8a67;
+		   	color: #0e8a67;
 		}
 		#modBasicTable label {
 			margin-left: 15px;
 		}
-		#modBasicTable input[class="calendar"] {
-			width: 168px;
+		input[class="calendar"] {
+			width: 191px;
+		}
+		input[class="search"] {
+			width: 191px;
+			height: 38px;
+			background-image: url('./images/search_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
+		textarea {
+			width: calc(100% - 20px);
+			height: 160px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			background-color: #fff;
+			font-size: 14px;
+			margin-bottom: 0px;
+			resize: none;
 		}
 	</style>
 	<script>
@@ -355,7 +383,21 @@
 			}); */
 			
 		});
+		function fn_reqBill() {
+			var result = confirm('계산서 발행 요청하겠습니까?'); 
+			if(result) {
+				alert('요청되었습니다.');
+				location.href = "/projectDetailBd.do";
+			}
+		}
 		
+		function fn_endBill() {
+			var result = confirm('발행 완료 처리 하시겠습니까?'); 
+			if(result) {
+				alert('완료되었습니다.');
+				location.href = "/projectDetailBd.do";
+			}
+		}
 	</script>
 </head>
 <body>
@@ -365,34 +407,38 @@
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
-					<div class="title"><label class="ftw500">프로젝트 상세정보</label></div>
+					<div class="title"><label class="ftw500">계산서 발행요청</label></div>
 					<div>
 						<div class="stitle cg">기본정보</div>
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
-									<td>프로젝트명</td>
-									<td>VDI중요단말 환경구축 및 노후장비 교체</td>
-								</tr>
-								<tr>
 									<td>고객사</td>
-									<td>미래에셋생명 / 담당자: 홍길동</td>
+									<td>KB손해보험</td>
 								</tr>
 								<tr>
-									<td>영업담당자</td>
-									<td>홍길동</td>
+									<td>프로젝트명</td>
+									<td>EDMS 이미지 암호화</td>
 								</tr>
 								<tr>
-									<td>지원담당자</td>
-									<td>홍길동</td>
+									<td>계약금액</td>
+									<td>2,000,000,000 원(부가세 별도)</td>
 								</tr>
 								<tr>
-									<td>사업기간</td>
-									<td>2019.12.12 ~ 2020.12.12</td>
+									<td>기간</td>
+									<td>2017.06 ~ 2017.09</td>
 								</tr>
 								<tr>
-									<td>비고</td>
-									<td>비고 내용</td>
+									<td>수금계획</td>
+									<td>1회차 : 30%&nbsp;&nbsp;2회차 : 30%&nbsp;&nbsp;3회차 : 40%</td>
+								</tr>
+								<tr>
+									<td>기수금액</td>
+									<td>600,000,000 원</td>
+								</tr>
+								<tr>
+									<td>미수금액</td>
+									<td>1,400,000,000 원</td>
 								</tr>
 							</table>
 							<table class="bsc dpNone" id="modBasicTable">
@@ -449,63 +495,64 @@
 								</tr>
 							</table>
 						</div>
-						<div class="btnWrap lt">
-							<div class="floatL">
-								<a title="계산서 발행 요청" href="/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<button value="매입금 지급 요청"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></button>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="floatR dpBlock fxd">
-					<div class="title">
-						<ul>
-							<li id="LI_TOPBar_BD" class="on" title="/projectDetailBd.do">입찰</li>
-							<li id="LI_TOPBar_CT" title="/projectDetailCt.do">계약</li>
-							<li>발주</li>
-							<li>수행</li>
-							<li>완료</li>
-							<li></li>
-						</ul>
-					</div>
 					<div id="detailForm">
 						<div class="stitle">
-							입찰정보
+							<ul>
+								<li><a class="on">계산서 요청 정보</a></li>
+								<li><a>기존 계산서 정보</a></li>
+								<li></li>
+							</ul>
 						</div>
 						<div class="floatC">
 							<table class="dtl" id="selectTable">
 								<tr>
-									<td>입찰보증증권</td>
-									<td>Y / 보증기간 2019.09.12 ~ 2020.09.12</td>
-								</tr>
-								<tr>
-									<td>입찰서류</td>	
+									<td>금번회차</td>
 									<td>
-										<ul>
-											<li>사업자등록증 1</li>
-											<li>법인등기부등본 2</li>
-											<li>법인인감증명서 1</li>
-											<li>사용인감계 2</li>
-											<li>위임장 1</li>
-											<li>대리인 명함 1</li>
-										</ul>
+										<select>
+											<option>2회차</option>
+										</select>
 									</td>
 								</tr>
 								<tr>
-									<td>입찰기한</td>
-									<td>2019.09.12 15:00</td>
+									<td>금액</td>	
+									<td>
+										<input type="text" />
+									</td>
 								</tr>
 								<tr>
-									<td>제안서</td>
-									<td>Y / 접수마감 2019.09.12 15:00</td>
+									<td>담당자성명</td>
+									<td><input type="text" class="search" /></td>
 								</tr>
 								<tr>
-									<td>제안발표</td>
-									<td>Y / 접수마감 2019.09.12 15:00</td>
+									<td>연락처</td>
+									<td><input type="text" /></td>
 								</tr>
 								<tr>
-									<td>첨부파일</td>
-									<td>첨부파일.txt</td>
+									<td>발행일</td>
+									<td><input class="calendar" type="text" /></td>
+								</tr>
+								<tr>
+									<td>발행이메일</td>
+									<td><input type="text" /></td>
+								</tr>
+								<tr>
+									<td>발행이메일</td>
+									<td><input type="text" /></td>
+								</tr>
+								<tr>
+									<td>요청사항</td>
+									<td><textarea></textarea></td>
+								</tr>
+								<tr>
+									<td>계산서번호</td>
+									<td>20131289878909</td>
+								</tr>
+								<tr>
+									<td>발행일자</td>
+									<td>2020-12-12</td>
 								</tr>
 							</table>
 							<table class="dtl dpNone" id="modTable">
@@ -687,11 +734,8 @@
 						</div>
 						<div class="btnWrap rt">
 							<div class="floatR">
-								<button type="button" value="수행일지"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
-								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
-								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+								<button type="button" value="계산서 발행 요청" onclick="fn_reqBill();"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
+								<button type="button" value="발행 완료" onclick="fn_endBill();"><img class="cursorP" src="<c:url value='/images/btn_end_bill.png'/>" /></button>
 							</div>
 						</div>
 					</div>

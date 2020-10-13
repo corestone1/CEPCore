@@ -4,11 +4,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #6a5bae;
 			position: absolute;
 			top: 0;
@@ -39,21 +38,25 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 100%;
+			width: calc(100% - 201px);
 			height: 601px;
 			top: 107px;
-			right: 0;
+			left: 201px;
 			z-index: 3;
 			background-color: #f6f7fc;
+			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			margin: 9px 0 0 244px;
-			width: calc(100% - 244px);
+			width: calc(100% - 80px);
+			margin: 10px 40px 0 40px;
+		}
+		.popContainer .contents > div:first-child {
+			min-height: 529px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
-	  		width: 789px;
+	  		width: 100%;
 		}
 		/* .popContainer .contents > div > table tr:first-child td {
 			margin-bottom: 100px;
@@ -64,7 +67,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			font-size: 15px;
+			font-size: 14px;
 			margin-bottom: 3px;
 			padding-right: 18px;
 		}
@@ -81,10 +84,6 @@
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
-		.popContainer .contents .btnWrap {
-			margin-top: 19px;
-			margin-bottom: 27px;
-		}		
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
@@ -108,14 +107,13 @@
 		.popContainer .contents tr:nth-child(2) td {			
 			padding-top: 20px !important;
 		} 		
-		.popContainer .contents td:LAST-CHILD  {
+		.popContainer .contents td:last-child  {
 			padding-right: 0px !important;
 		} 		
 		.popContainer .contents tr:first-child td { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  		
 			border-bottom:2px solid #e5e5e5;				
-			padding-top: 20px;
 			padding-bottom: 7px;
 			font-size: 18px;
 			vertical-align: inherit;		
@@ -125,10 +123,6 @@
 			font-size: 14px;						
 			padding-right: 10px;
 		} 
-		.popContainer .contents .btnDiv {
-	  		margin-right: 110px;
-	  		margin-top: 10px;
-		}	
 		/* .popContainer tr:nth-child(1) {
 			border-collapse: collapse;
 			border-bottom-color: #e5e5e5;			
@@ -196,7 +190,7 @@
 			</div>
 		</div>
 		<div class="left">
-			<ul class="ftw300">
+			<ul class="ftw400">
 				<li class="colorWhite cursorP">금액</li>
 				<li class="colorWhite cursorP on">예상일정</li>
 			</ul>
@@ -212,7 +206,7 @@
 						</td>
 						<td colspan="3"></td>
 					</tr>
-					<tr class="ftw100">
+					<tr class="ftw200">
 						<td>
 							<input type="checkbox" class="tCheck" id="check1-1" onclick="check_click(1,1)"/><label for="check1-1" class="cursorP"></label>
 						</td>						
@@ -229,7 +223,7 @@
 							<input type="text" id="amount1" placeholder="금액" width="177px"/>
 						</td>
 					</tr>
-					<tr class="ftw100">
+					<tr class="ftw200">
 						<td>
 							<input type="checkbox" class="tCheck" id="check2-1" onclick="check_click(2,1)"/><label for="check2-1" class="cursorP"></label>
 						</td>
@@ -246,7 +240,7 @@
 							<input type="text" id="amount2" placeholder="금액" width="177px"/>
 						</td>
 					</tr>
-					<tr class="ftw100">
+					<tr class="ftw200">
 						<td>
 							<input type="checkbox" class="tCheck" id="check3-1" onclick="check_click(3,1)"/><label for="check3-1" class="cursorP"></label>
 						</td>
@@ -273,25 +267,14 @@
 						</td>
 					</tr>
 				</table> --%>	
-				
-			<div class="btnWrap">
-				<div class="floatR btnDiv">
+			</div>
+			<div class="btnWrap floatR">
+				<div class="floatR">
 					<button onclick="fn_preBaicView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
+				<div class="floatN floatC"></div>
 			</div>
-			</div>
-<%-- 			<div class="btnWrap">
-				<table width="788px">
-					<tr width="788px">
-						<td width="30%" align="left" border="1px" border-color="#7ccbe8"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="70%" align="right"border="1px" border-color="solid #dcdcdc">
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table>
-			</div> --%>
 		</div>
 	</div>
 </body>

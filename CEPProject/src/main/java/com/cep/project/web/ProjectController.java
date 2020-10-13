@@ -100,4 +100,12 @@ public class ProjectController {
 		
 		return "project/writeWorkInfo";
 	}
+	
+	@RequestMapping(value="/requestBill.do")
+	public String selectBillInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/requestBill";
+	}
 }

@@ -4,11 +4,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #6a5bae;
 			position: absolute;
 			top: 0;
@@ -39,17 +38,20 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 100%;
+			width: calc(100% - 201px);
 			height: 601px;
 			top: 107px;
-			right: 0;
+			left: 201px;
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			margin: 9px 0 0 244px;
-			width: calc(100% - 244px);
+			width: calc(100% - 80px);
+			margin: 10px 40px 0 40px;
+		}
+		.popContainer .contents > div:first-child {
+			min-height: 529px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
@@ -59,10 +61,6 @@
 		/* .popContainer .contents > div > table tr:first-child td {
 			margin-bottom: 100px;
 		} */
-		.popContainer .contents .btnWrap {
-			margin-top: 19px;
-			margin-bottom: 27px;
-		}		
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
@@ -73,7 +71,7 @@
 		.popContainer .contents td.tdContents {
 			width: 691px;
 		} 	
-		.popContainer .contents td:LAST-CHILD  {
+		.popContainer .contents td:last-child {
 			padding-right: 0px !important;
 		} 				
 		.popContainer .top div[class="subTitle"] {
@@ -89,12 +87,7 @@
 		.popContainer .contents td.firstRow { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  			
-			padding-top: 35px;
 			font-size: 14px;				
-		}
-		.popContainer .contents .btnDiv {
-	  		margin-right: 110px;
-	  		margin-top: 10px;
 		}
 		.popContainer .contents select {
 			width: 200px;
@@ -109,7 +102,7 @@
 			text-align-last: right;
 		}
 		.popContainer .contents select option:first-child{
-		 	color: #A4A4A4;
+		 	color: #a4a4a4;
 		}
 		.popContainer .contents input {
 			width: 179px;
@@ -117,7 +110,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			font-size: 15px;
+			font-size: 14px;
 			text-align: right;
 		}
 		.popContainer .contents input[class="rateInfo"] {
@@ -152,7 +145,7 @@
 			//alert(calcuTurn);
 			if(calcuTurn>0) {
 				for(i=0; i<calcuTurn; i++){
-					var rowItem = "<tr class='ftw100'>";
+					var rowItem = "<tr class='ftw200'>";
 					rowItem += "	<td>"+(beforeTurn+i+1)+ "회차 :&nbsp;";
 					rowItem += "<input type='text' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' class='rateInfo'/>";
 					rowItem += "&nbsp;%&nbsp;&nbsp;&nbsp;";
@@ -206,7 +199,7 @@
 			</div>
 		</div>
 		<div class="left">
-			<ul class="ftw300">
+			<ul class="ftw400">
 				<li class="colorWhite cursorP on">금액</li>
 				<li class="colorWhite cursorP">예상일정</li>
 			</ul>
@@ -214,17 +207,17 @@
 		<div class="contents">
 			<div>
 				<table>
-					<tr class="ftw100">
+					<tr class="ftw200">
 						<td class="firstRow">
 							<input type="text" placeholder="계약금액"  /> &nbsp;원
 						</td>
 					</tr>
-					<tr class="ftw100">
+					<tr class="ftw200">
 						<td>
 							<input type="text" placeholder="청구일로 부터" /> &nbsp;이내
 						</td>
 					</tr>
-					<tr class="ftw100">
+					<tr class="ftw200">
 						<td>
 							<input type="hidden" id="beforeTurn" value="0">
 							<select id="turnInfo" onchange="fn_turnChange()" placeholder="계약금액">
@@ -259,25 +252,14 @@
 						</td>
 					</tr>
 				</table> --%>	
-				
-			<div class="btnWrap">
-				<div class="floatR btnDiv">
+			</div>
+			<div class="btnWrap floatR">
+				<div class="floatR">
 					<button onclick="fn_preBaicView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 					<button onclick="fn_addBiddingView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
+				<div class="floatN floatC"></div>
 			</div>
-			</div>
-<%-- 			<div class="btnWrap">
-				<table width="788px">
-					<tr width="788px">
-						<td width="30%" align="left" border="1px" border-color="#7ccbe8"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="70%" align="right"border="1px" border-color="solid #dcdcdc">
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table>
-			</div> --%>
 		</div>
 	</div>
 </body>
