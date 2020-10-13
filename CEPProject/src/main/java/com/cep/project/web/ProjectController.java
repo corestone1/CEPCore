@@ -101,7 +101,6 @@ public class ProjectController {
 		return "project/writeWorkInfo";
 	}
 	
-	
 	@RequestMapping(value="/writeFinishInfo.do")
 	public String addFinishInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
@@ -110,12 +109,19 @@ public class ProjectController {
 		return "project/writeFinishInfo";
 	}
 	
-	
 	@RequestMapping(value="/writeLoseInfo.do")
 	public String addLoseInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
 		return "project/writeLoseInfo";
+	}
+	
+	@RequestMapping(value="/requestBill.do")
+	public String selectBillInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/requestBill";
 	}
 }
