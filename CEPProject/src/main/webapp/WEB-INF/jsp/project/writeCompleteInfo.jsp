@@ -46,6 +46,9 @@
 			margin: 9px 0 0 244px;
 			width: calc(100% - 244px);
 		}
+		.popContainer .contents > div:first-child {
+			min-height: 529px;
+		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;

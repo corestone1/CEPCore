@@ -99,7 +99,6 @@
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;	
-			text-align-last: right;
 		}
 		.popContainer .contents select option:first-child{
 		 	color: #a4a4a4;
@@ -111,11 +110,13 @@
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
-			text-align: right;
 		}
 		.popContainer .contents input[class="rateInfo"] {
 			width: 90px;
 			height: 38px;
+		}
+		.popContainer .contents input[class="amount"] {
+			text-align: right;
 		}
 	</style>
 	<script>
@@ -147,9 +148,9 @@
 				for(i=0; i<calcuTurn; i++){
 					var rowItem = "<tr class='ftw200'>";
 					rowItem += "	<td>"+(beforeTurn+i+1)+ "회차 :&nbsp;";
-					rowItem += "<input type='text' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' class='rateInfo'/>";
+					rowItem += "<input type='text' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' numberOnly class='rateInfo'/>";
 					rowItem += "&nbsp;%&nbsp;&nbsp;&nbsp;";
-					rowItem += "<input type='text' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' />&nbsp;원 </td>";
+					rowItem += "<input type='text' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount'/>&nbsp;원 </td>";
 					rowItem += "</tr>"
 					
 					$('#addRow').append(rowItem);
@@ -209,12 +210,12 @@
 				<table>
 					<tr class="ftw200">
 						<td class="firstRow">
-							<input type="text" placeholder="계약금액"  /> &nbsp;원
+							<input type="text" placeholder="계약금액"  numberOnly class="amount"/> &nbsp;원
 						</td>
 					</tr>
 					<tr class="ftw200">
 						<td>
-							<input type="text" placeholder="청구일로 부터" /> &nbsp;이내
+							<input type="text" placeholder="청구일로 부터" numberOnly /> &nbsp;이내
 						</td>
 					</tr>
 					<tr class="ftw200">

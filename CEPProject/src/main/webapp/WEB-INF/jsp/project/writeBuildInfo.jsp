@@ -85,7 +85,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 100px;
+			height: 130px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -121,7 +121,7 @@
 	</style>
 	<script>
 		function fn_addBuildView(){
-			var url = '/writeBuildInfo.do';
+			var url = '/writeWorkInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

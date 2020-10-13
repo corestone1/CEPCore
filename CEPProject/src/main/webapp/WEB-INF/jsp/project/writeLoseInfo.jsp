@@ -7,7 +7,7 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #6a5bae;
 			position: absolute;
 			top: 0;
@@ -25,7 +25,6 @@
 			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
 			background-color: #32bc94;
 			z-index: 4;
-			font-size: 15px;
 		}
 		.popContainer .left ul li {
 			height: 47px;
@@ -36,20 +35,24 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 100%;
+			width: calc(100% - 201px);
 			height: 601px;
 			top: 107px;
-			right: 0;
+			left: 201px;
 			z-index: 3;
 			background-color: #f6f7fc;
+			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			margin: 9px 0 0 244px;
-			width: calc(100% - 244px);
+			width: calc(100% - 80px);
+			margin: 10px 40px 0 40px;
+		}
+		.popContainer .contents > div:first-child {
+			min-height: 529px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
-	  		border-spacing: 0 5px;
+	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents input {
 			width: 700px;
@@ -61,37 +64,28 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents textarea {
-			width: 692px;
-			height: 380px;
+			width: calc(100% - 20px);
+			height: 410px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
 			resize: none;
-		}
-		.popContainer .contents .btnWrap {
-			margin-top: 19px;
-			margin-bottom: 27px;
-		}		
-		.popContainer .contents td.btnFc {			
-			padding-bottom: 12px;
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
-			width: 80px;
-			font-size: 15px;
-			padding-left: 23px;
+			font-size: 14px;
+			color: #535353;
+			padding-right: 20px;
+			width: 99px;
 		}				
 		.popContainer .contents td.tdContents {
-			width: 135px;
-			font-size: 15px;
+			width: 100%;
+			font-size: 14px;
 			font-weight: 200;
-			padding-left: 15px;
 		} 
-		.popContainer .contents .btnDiv {
-	  		margin-right: 60px;
-		} 	 				
+			 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
 			width: 124px;
@@ -103,11 +97,11 @@
 			font-weight: 200;
 			
 		}  		
-		.popContainer .contents tr:first-child td { 
+		/* .popContainer .contents tr:first-child td { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  			
 			padding-top: 20px;
-		}
+		} */
 		.popContainer .contents input[class="pname"] {
 			width: 400px;
 			border : none;
@@ -177,7 +171,7 @@
 				</table>
 			</div>
 			<div class="btnWrap">
-				<div class="floatR btnDiv">
+				<div class="floatR">
 					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>
 				
