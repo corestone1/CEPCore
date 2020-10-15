@@ -19,12 +19,13 @@
 		}
 		.popContainer .contents1 input[class="calendar"] {
 			width: 150px;
-			height: 32px;
+			height: 31px;
 			background-image: url('./images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 			font-size: 15px;
 			padding-left: 13px;
+			border: 1px solid #e9e9e9;
 		}
 				
 		.popContainer .subCalendar { 
