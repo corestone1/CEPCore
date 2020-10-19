@@ -259,6 +259,17 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+
+		function fn_addView3(){
+			var url = '/addOrderInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
 		
 	</script>
 </head>
@@ -273,7 +284,8 @@
 						<div class="title floatL"><label class="ftw500">프로젝트 list</label></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
 						<div class="addBtn floatL cursorP" onclick="fn_addView1();"><img src="<c:url value='/images/btn_add.png'/>" /></div>				
-						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>				
+						<div class="addBtn floatL cursorP" onclick="fn_addView3();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">
 						<select>

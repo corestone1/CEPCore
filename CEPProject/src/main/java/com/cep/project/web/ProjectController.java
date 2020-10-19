@@ -132,4 +132,12 @@ public class ProjectController {
 		
 		return "project/mappingBill";
 	}
+	
+	@RequestMapping(value="/addOrderInfo.do")
+	public String addOrderInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/addOrderInfo";
+	}
 }

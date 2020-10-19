@@ -208,9 +208,9 @@
 		
 		.popContainer .bottomBtn {
 			position: absolute;
-			width: 1064px;
+			width: 1104px;
 			height: 52px;
-			top: 622px;
+			top: 638px;
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: hidden;
@@ -381,13 +381,13 @@
 				</table>
 			</div>
 		</div>		
-		<dir class="bottomBtn">		
+		<div class="bottomBtn">		
 			<div class="btnWrap">
 				<div class="floatR">
 					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
 				</div>				
 			</div>
-		</dir>
+		</div>
 	</div>
 </body>
 </html>
