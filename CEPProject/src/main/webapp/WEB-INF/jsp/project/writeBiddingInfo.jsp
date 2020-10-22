@@ -122,6 +122,9 @@
 		.popContainer .contents tr > td {
 			font-size: 14px;						
 			padding-right: 10px;
+		}
+		.popContainer .contents input[class="amount"] {
+			text-align: right;
 		} 
 		/* .popContainer tr:nth-child(1) {
 			border-collapse: collapse;
@@ -220,7 +223,7 @@
 						</td>
 						<td id="step1-3" style="visibility:hidden">완료</td>
 						<td id="step1-4" style="visibility:hidden">
-							<input type="text" id="amount1" placeholder="금액" width="177px"/>
+							<input type="text" id="amount1" placeholder="금액" numberOnly class="amount" width="177px"/>
 						</td>
 					</tr>
 					<tr class="ftw200">
@@ -237,7 +240,7 @@
 						</td>
 						<td id="step2-3" style="visibility:hidden">완료</td>
 						<td id="step2-4" style="visibility:hidden">
-							<input type="text" id="amount2" placeholder="금액" width="177px"/>
+							<input type="text" id="amount2" placeholder="금액" numberOnly class="amount" width="177px"/>
 						</td>
 					</tr>
 					<tr class="ftw200">
@@ -254,7 +257,7 @@
 						</td>
 						<td id="step3-3" style="visibility:hidden">완료</td>
 						<td id="step3-4" style="visibility:hidden">
-							<input type="text" id="amount3" placeholder="금액" width="177px"/>
+							<input type="text" id="amount3" placeholder="금액" numberOnly class="amount" width="177px"/>
 						</td>
 					</tr>			
 				</table>
