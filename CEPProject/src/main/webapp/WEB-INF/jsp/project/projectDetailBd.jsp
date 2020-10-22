@@ -452,7 +452,7 @@
 						<div class="btnWrap lt">
 							<div class="floatL">
 								<a title="계산서 발행 요청" href="/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<button value="매입금 지급 요청"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></button>
+								<a title="매입금 지급 요청" href="/requestPurchase.do"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a>
 							</div>
 						</div>
 					</div>

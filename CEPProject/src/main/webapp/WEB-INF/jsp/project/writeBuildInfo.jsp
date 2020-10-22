@@ -8,7 +8,7 @@
 		.popContainer .top {
 			width: 100%;
 			height: 103px;
-			border-bottom: 4px solid #6a5bae;
+			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
 		}
@@ -48,10 +48,10 @@
 		}
 		.popContainer .contents > div {
 			width: calc(100% - 80px);
-			margin: 10px 40px 0 40px;
+			margin: 10px 40px 15px 40px;
 		}
 		.popContainer .contents > div:first-child {
-			min-height: 529px;
+			min-height: 519px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;

@@ -8,7 +8,7 @@
 		.popContainer .top {
 			width: 100%;
 			height: 102px;
-			border-bottom: 4px solid #6a5bae;
+			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
 		}

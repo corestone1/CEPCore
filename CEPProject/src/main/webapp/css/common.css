@@ -43,6 +43,12 @@ body * {
 .textalignC {
 	text-align: center;
 }
+.textalignL {
+	text-align: left;
+}
+.textalignR {
+	text-align: right;
+}
 .veralignT {
 	vertical-align: top;
 }

@@ -124,4 +124,12 @@ public class ProjectController {
 		
 		return "project/requestBill";
 	}
+	
+	@RequestMapping(value="/requestPurchase.do")
+	public String selectPurchaseInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "project/requestPurchase";
+	}
 }
