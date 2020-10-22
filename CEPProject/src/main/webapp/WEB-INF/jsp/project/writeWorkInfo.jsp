@@ -7,13 +7,8 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-<<<<<<< HEAD
 			height: 102px;
 			border-bottom: 4px solid #4b3a93;
-=======
-			height: 103px;
-			border-bottom: 4px solid #6a5bae;
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 			position: absolute;
 			top: 0;
 		}
