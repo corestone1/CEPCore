@@ -92,7 +92,15 @@
 				<li class="floatL textalignC cursorP"><a href="#">Dashboard</a></li>
 				<li class="floatL textalignC cursorP"><a href="/forecastList.do">Forecast</a></li>
 				<li class="floatL textalignC cursorP"><a href="/projectList.do">프로젝트</a></li>
-				<li class="floatL textalignC cursorP"><a href="#">유지보수</a></li>
+				<li class="floatL textalignC cursorP">
+					<a href="#">유지보수</a>
+					<div class="">
+						<ul>
+							<li><a href="/mtMainList.do">유지보수목록</a></li>
+							<li><a href="/mtWorkList.do">작업목록</a></li>
+						</ul>
+					</div>
+				</li>
 				<li class="floatL textalignC cursorP">
 					<a href="#">프로젝트관리</a>
 					<div class="">
