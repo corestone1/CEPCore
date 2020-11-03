@@ -6,5 +6,6 @@
 		<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
 		<typeAlias alias="searchVO" type="com.cep.example.vo.SampleDefaultVO"/>
 		<typeAlias alias="sampleVO" type="com.cep.example.vo.SampleVO" />
+		<typeAlias alias="empVO" type="com.cep.main.vo.EmpVO" />
     </typeAliases>
 </configuration>

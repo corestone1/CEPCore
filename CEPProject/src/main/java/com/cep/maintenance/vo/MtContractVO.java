@@ -3,6 +3,11 @@
  */
 package com.cep.maintenance.vo;
 
+import java.io.Serializable;
+
+import org.apache.ibatis.type.Alias;
+@SuppressWarnings("serial")
+@Alias("mtContractVO")
 /**
  * @File Name : MtContractVO.java
  * @Project   : CEPProject
@@ -18,6 +23,6 @@ package com.cep.maintenance.vo;
  *
  *  Copyright (C) by CORESTONE All right reserved.
  */
-public class MtContractVO {
+public class MtContractVO extends MaintenanceDefaultVO implements Serializable{
 
 }

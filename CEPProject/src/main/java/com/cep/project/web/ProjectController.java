@@ -10,41 +10,42 @@ import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
 
 @Controller
+@RequestMapping("/project")
 public class ProjectController {
 	
 	@Resource(name="projectService")
 	private ProjectService service;
 	
-	@RequestMapping(value="/projectList.do")
+	@RequestMapping(value="/list.do")
 	public String selectProject(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/projectList";
+		return "project/list";
 	}
 	
-	@RequestMapping(value="/projectDetailBd.do")
+	@RequestMapping(value="/detail/bidding.do")
 	public String selectProjectDetailBd(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/projectDetailBd";
+		return "project/detail/bidding";
 	}
 	
-	@RequestMapping(value="/projectDetailCt.do")
+	@RequestMapping(value="/detail/contract.do")
 	public String selectProjectDetailCt(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/projectDetailCt";
+		return "project/detail/contract";
 	}
 	
-	@RequestMapping(value="/projectDetailOd.do")
+	@RequestMapping(value="/detail/order.do")
 	public String selectProjectDetailOd(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/projectDetailOd";
+		return "project/detail/order";
 	}
 	
 	@RequestMapping(value="/writeProject.do")
@@ -54,8 +55,6 @@ public class ProjectController {
 		
 		return "project/writeProject";
 	}
-	
-
 	
 	@RequestMapping(value="/writeBasicInfo.do")
 	public String addBasicInfo(ProjectVO projectVO, ModelMap model) throws Exception {
@@ -133,19 +132,11 @@ public class ProjectController {
 		return "project/requestPurchase";
 	}
 	
-	@RequestMapping(value="/mappingBill.do")
-	public String mappingBill(ProjectVO projectVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/viewApproval.do")
+	public String selectApproval(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/mappingBill";
-	}
-	
-	@RequestMapping(value="/addOrderInfo.do")
-	public String addOrderInfo(ProjectVO projectVO, ModelMap model) throws Exception {
-		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
-		
-		return "project/addOrderInfo";
+		return "project/viewApproval";
 	}
 }

@@ -1,15 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
-<%@include file="../cmm/header.jsp" %>
+<%@include file="../../cmm/inc.jsp" %>
+<%@include file="../../cmm/header.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
 	<style>
-		.fl {
-			float: left;
-		}
 		.sfcnt {
 			height: 91px;
 		}
@@ -104,12 +101,43 @@
 		form .contents > .fxd .title ul li {
 			width: 20%;
 			line-height: 46px;
-			/* color: #b1a5ec; */
 			color: #777777;
 			background-color: #d3d3d3;
 		}
+		form .contents > .fxd .title ul li > label {
+			display: inline-block;
+    		width: 100%;
+    		cursor: pointer;
+		}
+		form .contents > .fxd .title ul li:after {
+		    border-color: #d3d3d3 #d3d3d3 #d3d3d3 #d3d3d3;
+		    border-style: solid;
+		    border-width: 23px 14px;
+		    width: 0;
+		    height: 0;
+		    display: inline-block;
+		    content: "";
+		    position: absolute;
+		    z-index: 0;
+		}
+		form .contents > .fxd .title ul li:nth-child(5):after,
+		form .contents > .fxd .title ul li:last-child:after {
+			display: none;
+		}
+		form .contents > .fxd .title ul li.on:after {
+			display: none;
+		}
+		form .contents > .fxd .title ul li:hover:after {
+			border-color: #d3d3d3 #d3d3d3 #d3d3d3 #b9b9b9;
+		}
+		.liAfter:after {
+			border-color: #b9b9b9 #b9b9b9 #b9b9b9 #b9b9b9 !important;
+		}
+		.liAfterNone:after {
+			display: none !important;
+		}
 		.liArrow {
-			background-image: url('./images/step_arrow.png');
+			background-image: url('http://172.10.122.10:8888/images/step_arrow.png');
 			background-repeat: no-repeat;
 		}
 		form .contents > .fxd .title ul li:first-child {
@@ -120,7 +148,7 @@
 		}
 		form .contents > .fxd .title ul li.on  {
 			color: #fff  !important;
-			background-color: #4c3d92;
+			background-color: #4c3d92 !important;
 		}
 		#detailForm .stitle ul {
 			width: 915px;
@@ -302,9 +330,41 @@
 	<script>
 		$(document).ready(function() {
 			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
+			var length = $('form .contents > .fxd .title ul li').length;
 			$('form .contents > .fxd .title ul li:nth-child(' + index + ')').toggleClass("liArrow");
 		
+			for(var i = 0; i < length; i++) {
+				if(i < index) {
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
+				}
+			}
+			
 			$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
+			
+			$('form .contents > .fxd .title ul li').mouseover(function(){ 
+				var index2 = $('form .contents > .fxd .title ul li').index(this);
+				for(var i = (index - 1); i <= index2; i++) {
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#b9b9b9');
+					} 
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').addClass('liAfter');
+					}
+				}
+			});
+			
+			$('form .contents > .fxd .title ul li').mouseout(function(){ 
+				var index2 = $('form .contents > .fxd .title ul li').index(this);
+				for(var i = (index - 1); i <= index2; i++) {
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#d3d3d3');
+					}
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
+					 	$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').removeClass('liAfter'); 
+					}
+				}
+			});
 			
 			var modCh = 1;
 			$('#modInfo').click(function() {
@@ -355,6 +415,21 @@
 			}); */
 			
 		});
+		
+		function fn_addView(link){
+			/* if(link == "forecastList") {
+				location.href="<c:url value='/forecastList.do'/>";
+			} else { */
+				var url = '/project/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+		
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+			/* } */
+		}
 		
 	</script>
 </head>
@@ -451,8 +526,9 @@
 						</div>
 						<div class="btnWrap lt">
 							<div class="floatL">
-								<a title="계산서 발행 요청" href="/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<a title="매입금 지급 요청" href="/requestPurchase.do"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a>
+								<a title="계산서 발행 요청" href="/project/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
+								<a title="매입금 지급 요청" href="/project/requestPurchase.do"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a>
+								<a title="판매 품의서" href="/project/viewApproval.do"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
 							</div>
 						</div>
 					</div>
@@ -460,11 +536,11 @@
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_BD" class="on" title="/projectDetailBd.do">입찰</li>
-							<li id="LI_TOPBar_CT" title="/projectDetailCt.do">계약</li>
-							<li>발주</li>
-							<li>수행</li>
-							<li>완료</li>
+							<li id="LI_TOPBar_BD" class="on" title="/project/detail/bidding.do"><label>입찰</label></li>
+							<li id="LI_TOPBar_CT" title="/project/detail/contract.do"><label>계약</label></li>
+							<li id="LI_TOPBar_OD" title="/project/detail/order.do"><label>발주</label></li>
+							<li><label>수행</label></li>
+							<li><label>완료</label></li>
 							<li></li>
 						</ul>
 					</div>
@@ -525,88 +601,88 @@
 									<td>
 										<ul>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind1" name=""  value=""/>
 													<label for="bdKind1" class="cursorP" ></label>
 													<span class="cbspan">사업자등록증</span>
 												</div>
 												<div>
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
 												</div>
 											</li>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind2" name=""  value=""/>
 													<label for="bdKind2" class="cursorP" ></label>
 													<span class="cbspan">법인등기부등본</span>
 												</div>
 												<div>
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
 												</div>
 											</li>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind3" name=""  value=""/>
 													<label for="bdKind3" class="cursorP" ></label>
 													<span class="cbspan">법인인감증명서</span>
 												</div>
 												<div>
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
 												</div>
 											</li>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind4" name=""  value=""/>
 													<label for="bdKind4" class="cursorP" ></label>
 													<span class="cbspan">사용인감계</span>
 												</div>
 												<div>
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
 												</div>
 											</li>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind5" name=""  value=""/>
 													<label for="bdKind5" class="cursorP" ></label>
 													<span class="cbspan">위임장</span>
 												</div>
 												<div>
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
 												</div>
 											</li>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind6" name=""  value=""/>
 													<label for="bdKind6" class="cursorP" ></label>
 													<span class="cbspan">대리인 명함</span>
 												</div>
 												<div>
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
 												</div>
 											</li>
 											<li>
-												<div class="fl">
+												<div class="floatL">
 													<input class="tCheck" type="checkbox" id ="bdKind7" name=""  value=""/>
 													<label for="bdKind7" class="cursorP" ></label>
 													<span class="cbspan">기타 서류</span>
 												</div>
 												<div>
 													<input type="text" />
-													<a href="#"  class="decreaseQuantity"><img src="./images/ic_minus.png" /></a>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
 													<label id="numberUpDown">0</label>
-													<a href="#"  class="increaseQuantity"><img src="./images/ic_plus.png" /></a>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>" /></a>
 												</div>
 											</li>
 										</ul>
@@ -679,7 +755,7 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<button class="fl"><img src="./images/btn_file_upload.png" /></button>
+										<button class="floatL"><img src="<c:url value='/images/btn_file_upload.png'/>"/></button>
 										<label class="fileName">기존첨부파일.txt</label>
 									</td>
 								</tr>
@@ -691,6 +767,7 @@
 								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
 								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

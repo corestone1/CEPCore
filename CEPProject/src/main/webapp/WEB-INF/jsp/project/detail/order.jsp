@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
-<%@include file="../cmm/header.jsp" %>
+<%@include file="../../cmm/inc.jsp" %>
+<%@include file="../../cmm/header.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -40,10 +40,10 @@
 			font-size: 26px;
 		}
 		form .contents > div:first-child {
-			width: 45%;
+			width: 37%;
 		}
 		form .contents > .fxd {
-			width: 55%;
+			width: 60%;
 		}
 		form .contents .stitle {
 			font-size: 18px;
@@ -62,8 +62,9 @@
 			padding: 13px 20px;
 		}
 		form .contents > div > div > div > table tr td:first-child {
-			width: 140px;
+			width: 124px;
 			font-weight: 400;
+			padding: 13px 20px 13px 45px;
 		} 
 		form .contents > div > div > div > table tr td:last-child {
 			width: 400px;
@@ -93,18 +94,48 @@
 		}
 		form .contents > .fxd .title ul {
 			height: 46px;
-			width: 915px;
+			width: 100%;
 			border-radius: 35px;
 		}
 		form .contents > .fxd .title ul li {
 			width: 20%;
 			line-height: 46px;
-			/* color: #b1a5ec; */
 			color: #777777;
 			background-color: #d3d3d3;
 		}
+		form .contents > .fxd .title ul li > label {
+			display: inline-block;
+    		width: 100%;
+    		cursor: pointer;
+		}
+		form .contents > .fxd .title ul li:after {
+		    border-color: #d3d3d3 #d3d3d3 #d3d3d3 #d3d3d3;
+		    border-style: solid;
+		    border-width: 23px 14px;
+		    width: 0;
+		    height: 0;
+		    display: inline-block;
+		    content: "";
+		    position: absolute;
+		}
+		form .contents > .fxd .title ul li:nth-child(5):after,
+		form .contents > .fxd .title ul li:last-child:after {
+			display: none;
+		}
+		form .contents > .fxd .title ul li.on:after {
+			display: none;
+		}
+		form .contents > .fxd .title ul li:hover:after {
+			border-color: #d3d3d3 #d3d3d3 #d3d3d3 #b9b9b9;
+		}
+		.liAfter:after {
+			border-color: #b9b9b9 #b9b9b9 #b9b9b9 #b9b9b9 !important;
+		}
+		.liAfterNone:after {
+			display: none !important;
+		}
 		.liArrow {
-			background-image: url('./images/step_arrow.png');
+			background-image: url('http://172.10.122.10:8888/images/step_arrow.png');
 			background-repeat: no-repeat;
 		}
 		form .contents > .fxd .title ul li:first-child {
@@ -118,14 +149,16 @@
 			background-color: #4c3d92;
 		}
 		#detailForm .stitle ul {
-			width: 915px;
+			width: 100%;
 		}
 		#detailForm .stitle ul li {
-			width: 150px;
+			width: 33.3%;
 		}
 		#detailForm .stitle ul li a {
 			color: #a3a3a4;
-			padding-bottom: 10px;
+			padding-bottom: 11px;
+			display: block;
+    		border-bottom: 4px solid #c3c3c3;
 		}
 		#detailForm .stitle ul li a:hover {
 			color: #000;
@@ -136,7 +169,6 @@
 			border-bottom: 4px solid #6a5bae;
 		}
 		form .contents .dtl {
-			border-top: 4px solid #c3c3c3;;
 			overflow: hidden;
 		}
 		form .contents .dtl tbody {
@@ -154,9 +186,10 @@
 		form .contents .dtl tr td:first-child {
 			background-color: #e1dff5;
 			border-right: 1px solid #ebe9ee;
+			color: #535353;
 		}
 		form .contents .dtl tr td:last-child {
-			width: 690px;
+			width: 757px;
 		}
 	</style>
 	<script>
@@ -168,11 +201,51 @@
 			for(var i = 0; i < length; i++) {
 				if(i < index) {
 					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
 				}
 			}
+			
 			$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
+			
+			$('form .contents > .fxd .title ul li').mouseover(function(){ 
+				var index2 = $('form .contents > .fxd .title ul li').index(this);
+				for(var i = (index - 1); i <= index2; i++) {
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#b9b9b9');
+					} 
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').addClass('liAfter');
+					}
+				}
+			});
+			
+			$('form .contents > .fxd .title ul li').mouseout(function(){ 
+				var index2 = $('form .contents > .fxd .title ul li').index(this);
+				for(var i = (index - 1); i <= index2; i++) {
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#d3d3d3');
+					}
+					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
+					 	$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').removeClass('liAfter'); 
+					}
+				}
+			});
 		});
 		
+		function fn_addView(link){
+			/* if(link == "forecastList") {
+				location.href="<c:url value='/forecastList.do'/>";
+			} else { */
+				var url = '/project/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+		
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+			/* } */
+		}
 	</script>
 </head>
 <body>
@@ -215,8 +288,9 @@
 						</div>
 						<div class="btnWrap lt">
 							<div class="floatL">
-								<a title="계산서 발행 요청" href="/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<button value="매입금 지급 요청"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></button>
+								<a title="계산서 발행 요청" href="/project/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
+								<a title="매입금 지급 요청" href="/project/requestPurchase.do"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a>
+								<a title="판매 품의서" href="/project/viewApproval.do"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
 							</div>
 						</div>
 					</div>
@@ -224,16 +298,16 @@
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_BD" title="/projectDetailBd.do">입찰</li>
-							<li id="LI_TOPBar_CT" title="/projectDetailCt.do">계약</li>
-							<li id="LI_TOPBar_OD" class="on" title="/projectDetailOd.do">발주</li>
-							<li>수행</li>
-							<li>완료</li>
+							<li id="LI_TOPBar_BD" title="/project/detail/bidding.do"><label>입찰</label></li>
+							<li id="LI_TOPBar_CT" title="/project/detail/contract.do"><label>계약</label></li>
+							<li id="LI_TOPBar_OD" class="on" title="/project/detail/order.do"><label>발주</label></li>
+							<li><label>수행</label></li>
+							<li><label>완료</label></li>
 							<li></li>
 						</ul>
 					</div>
 					<div id="detailForm">
-						<div class="stitle">
+						<div class="stitle mgb0">
 							<ul>
 								<li><a>사전작업/납품</a></li>
 								<li><a class="on">설치/구축</a></li>
@@ -299,6 +373,7 @@
 								<button value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
 								<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button>
 								<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

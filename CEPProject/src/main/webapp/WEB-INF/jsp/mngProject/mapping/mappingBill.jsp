@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
+<%@include file="../../cmm/inc.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -8,7 +8,7 @@
 		.popContainer .top {
 			width: 100%;
 			height: 103px;
-			border-bottom: 4px solid #6a5bae;
+			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
 		}
@@ -20,7 +20,7 @@
 		.popContainer .contents1 input[class="calendar"] {
 			width: 150px;
 			height: 31px;
-			background-image: url('./images/calendar_icon.png');
+			 background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 			font-size: 15px;
@@ -220,16 +220,16 @@
 		}	
 	</style>
 	<script>
-	$(document).ready(function() {
-				
-		$('#fl tr').each(function(index, item) {
-			if(index != 0) {
-				$(this).children().eq(0).append('<input type="radio" class="tCheck" name="gubun" id="popCheck'+ index +'"/><label for="popCheck'+index+'" class="cursorP"/>');
-			}
-		});
-	});	
+		$(document).ready(function() {
+					
+			$('#fl tr').each(function(index, item) {
+				if(index != 0) {
+					$(this).children().eq(0).append('<input type="radio" class="tCheck" name="gubun" id="popCheck'+ index +'"/><label for="popCheck'+index+'" class="cursorP"/>');
+				}
+			});
+		});	
 		function fn_addBuildView(){
-			var url = '/writeFinishInfo.do';
+			var url = '/project/writeFinishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -240,7 +240,7 @@
 		}
 		
 		function fn_preBiddingView(){
-			var url = '/writeBuildInfo.do';
+			var url = '/project/writeBuildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.main.service.impl.MainMapper">
+
+	<resultMap id="sample" type="com.cep.main.vo.EmpVO">
+		<result property="empKey" column="EMP_KEY"/>
+		<result property="empPw" column="EMP_PW"/>
+	</resultMap>
+	
+	<select id="selectEmp" resultType="int">
+
+		SELECT COUNT(*)
+		FROM SAMPLE
+		WHERE EMP_KEY=#{empKey}		
+		AND EMP_PW=#{empPw}
+
+	</select>
+</mapper>

@@ -121,7 +121,7 @@
 	</style>
 	<script>
 		function fn_addBuildView(){
-			var url = '/writeWorkInfo.do';
+			var url = '/project/writeWorkInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -132,7 +132,7 @@
 		}
 		
 		function fn_preBiddingView(){
-			var url = '/writeBiddingInfo.do';
+			var url = '/project/writeBiddingInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

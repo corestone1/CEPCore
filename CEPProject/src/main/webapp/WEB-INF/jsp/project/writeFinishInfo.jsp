@@ -7,7 +7,7 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
@@ -125,7 +125,7 @@
 	</style>
 	<script>	
 		function fn_preBiddingView(){
-			var url = '/writeWorkInfo.do';
+			var url = '/project/writeWorkInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -135,7 +135,7 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}	
 		function fn_finish(){
-			var url = '/writeFinishInfo.do';
+			var url = '/project/writeFinishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

@@ -7,7 +7,7 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
@@ -132,7 +132,7 @@
 	</style>
 	<script>
 		function fn_addBiddingView(){
-			var url = '/writeAmountInfo.do';
+			var url = '/project/writeAmountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
