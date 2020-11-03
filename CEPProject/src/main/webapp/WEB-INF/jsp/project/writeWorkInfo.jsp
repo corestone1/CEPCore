@@ -7,7 +7,7 @@
 	<style>
 		.popContainer .top {
 			width: 100%;
-			height: 102px;
+			height: 103px;
 			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
@@ -119,7 +119,7 @@
 	</style>
 	<script>
 		function fn_addBuildView(){
-			var url = '/writeFinishInfo.do';
+			var url = '/project/writeFinishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -130,7 +130,7 @@
 		}
 		
 		function fn_preBiddingView(){
-			var url = '/writeBuildInfo.do';
+			var url = '/project/writeBuildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

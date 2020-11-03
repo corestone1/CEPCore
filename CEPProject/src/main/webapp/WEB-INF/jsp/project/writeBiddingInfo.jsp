@@ -162,7 +162,7 @@
 		}
 		
 		function fn_addBuildView(){
-			var url = '/writeBuildInfo.do';
+			var url = '/project/writeBuildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -173,7 +173,7 @@
 		}
 		
 		function fn_preBaicView(){
-			var url = '/writeAmountInfo.do';
+			var url = '/project/writeAmountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

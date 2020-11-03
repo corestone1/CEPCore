@@ -368,7 +368,7 @@
 			var result = confirm(value + ' 처리 하시겠습니까?'); 
 			if(result) {
 				alert('완료되었습니다.');
-				location.href = "/projectDetailBd.do";
+				location.href = "/project/detail/bidding.do";
 			} 
 		}
 	</script>

@@ -228,18 +228,18 @@
 		});
 
 		function fn_addView(link){
-			if(link == "forecastList") {
+			/* if(link == "forecastList") {
 				location.href="<c:url value='/forecastList.do'/>";
-			} else {
-				var url = '/'+link+'.do';
+			} else { */
+				var url = '/mngProject/order/'+link+'.do';
 				var dialogId = 'program_layer';
 				var varParam = {
 		
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-			}
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+			/* } */
 		}
 
 	</script>
@@ -253,7 +253,7 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">발주 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">
 						<select>

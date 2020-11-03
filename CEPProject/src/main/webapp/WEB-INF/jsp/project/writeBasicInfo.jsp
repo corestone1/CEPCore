@@ -127,7 +127,7 @@
 	</style>
 	<script>
 		function fn_addBiddingView(){
-			var url = '/writeAmountInfo.do';
+			var url = '/project/writeAmountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

@@ -17,25 +17,6 @@
 			padding-left: 34px;
 			padding-top: 43px;
 		}
-		.popContainer .left {
-			width: 178px;
-			height: 388px;
-			position: absolute;
-			top: 107px;
-			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
-			background-color: #32bc94;
-			z-index: 4;
-		}
-		.popContainer .left ul li {
-			height: 47px;
-			padding-left: 28px;
-			line-height: 47px;
-		}
-		.popContainer .left ul li:hover,
-		.popContainer .left ul li.on {
-			background-color: #fff;
-			color: #32bc94;
-		}
 		.popContainer .contents {
 			position: absolute;
 			width: 100%;

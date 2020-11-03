@@ -169,7 +169,7 @@
 		}
 		
 		function fn_addBiddingView(){
-			var url = '/writeBiddingInfo.do';
+			var url = '/project/writeBiddingInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -180,7 +180,7 @@
 		}
 		
 		function fn_preBaicView(){
-			var url = '/writeBasicInfo.do';
+			var url = '/project/writeBasicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	

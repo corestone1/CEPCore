@@ -16,7 +16,8 @@
 	<style>
 			header {
 				position: fixed;
-				width: 100%;
+				width: 1800px;
+				z-index: 1;
 			}
 			header > div {
 				height: 91px;
@@ -91,7 +92,7 @@
 			<ul class="ftw400 mgauto hgt100 colorWhite">
 				<li class="floatL textalignC cursorP"><a href="#">Dashboard</a></li>
 				<li class="floatL textalignC cursorP"><a href="/forecastList.do">Forecast</a></li>
-				<li class="floatL textalignC cursorP"><a href="/projectList.do">프로젝트</a></li>
+				<li class="floatL textalignC cursorP"><a href="/project/list.do">프로젝트</a></li>
 				<li class="floatL textalignC cursorP"><a href="#">유지보수</a></li>
 				<li class="floatL textalignC cursorP">
 					<a href="#">프로젝트관리</a>

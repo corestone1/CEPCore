@@ -178,6 +178,23 @@
 		}
 	</style>
 	<script>
+		$(document).ready(function() {
+			$('.middle table tbody tr td').attr('onclick',"fn_addView('mappingBill')");
+		});
+		function fn_addView(link){
+			/* if(link == "forecastList") {
+				location.href="<c:url value='/forecastList.do'/>";
+			} else { */
+				var url = '/mngProject/mapping/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+		
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+			/* } */
+		}
 	</script>
 </head>
 <body>
