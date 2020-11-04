@@ -131,7 +131,7 @@
 				<div class="floatL"><img class="cursorP"  src="<c:url value='/images/header_alarm.png'/>" /></div>
 				<div class="floatL"><img class="cursorP"  src="<c:url value='/images/header_setting.png'/>"/></div>
 				
-				<div class="floatL cursorP">
+				<div class="floatL cursorP" onclick="location.href='/logout.do'">
 					<img class="floatL" src="<c:url value='/images/header_profile.png'/>"/>
 					<span class="colorWhite floatL">박경구</span>
 					<span class="material-icons colorWhite">keyboard_arrow_down</span>

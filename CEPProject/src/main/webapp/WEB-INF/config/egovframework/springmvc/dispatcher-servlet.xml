@@ -106,4 +106,19 @@
 
     <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
     
+   <bean id="appProcessorInterceptor" class="com.cmm.interceptor.MeasuringInterceptor" />
+   
+    <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/" />
+			<mvc:exclude-mapping path="/login.do" />
+			<mvc:exclude-mapping path="/main.do" />
+			<mvc:exclude-mapping path="/css/**" />
+			<mvc:exclude-mapping path="/js/**" />
+			<mvc:exclude-mapping path="/images/**" />
+			<ref bean="appProcessorInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors> 
+
 </beans>

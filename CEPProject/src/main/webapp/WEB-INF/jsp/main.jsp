@@ -40,9 +40,12 @@
 	color: #959a9e;
 	font-size: 17px;
 }
+.loginWrap .loginTxt img {
+	margin-right: 20px;
+}
 .loginWrap input {
-	/* border-bottom: 1px solid #ececec; */
-	border-bottom: 1px solid red;
+	border-bottom: 1px solid #ececec !important; 
+	border: none;
 	width: 333px;
 	padding: 10px;
 }
@@ -58,6 +61,13 @@
 	margin-top: 32px;
 	margin-bottom: 30px;
 }
+.loginWrap .findPw {
+	margin-top: 15px;
+}
+.loginWrap .findPw a {
+	color: #959a9e;
+	font-size: 14px;
+}
 .error {
 	font-size : 14px; 
 	color : #f8ac19; 
@@ -65,70 +75,135 @@
 	width: 353px;
 	margin-bottom: 10px;
 }
-
+.wrap-loading{ 
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.2); /*not in ie */
+	filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000', endColorstr='#20000000');    /* ie */
+}
+.wrap-loading div { /*로딩 이미지*/
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -21px;
+	margin-top: -21px;
+}
+.wrap-loading div img {
+	width: 50px;
+}
 </style>
 <script language="JavaScript">
 	function loginCheck(){
-
-		var param = "key" + "=" + $("#key").val() + "&" +"pw" + "="+ $("#pw").val();
-		
-		$.ajax({
-			url : "/login.do",
-			type : "POST",
-			data : param,
-			cache : false,
-			async : false,
-			dataType : "text",
-
-			success : function(response) {								
-
-				if(response == 1){
-					alert("로그인 성공");
-					location.href="/forecastList.do";
+		var expText = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+		if(false == expText.test($('#key').val())){
+			alert("메일형식이 올바르지 않습니다.");
+			$('#key').focus();
+		} else {
+			var param = "key" + "=" + $("#key").val() + "&" +"pw" + "="+ $("#pw").val();
+			
+			$.ajax({
+				url : "/login.do",
+				type : "POST",
+				data : param,
+				cache : false,
+				async : false,
+				dataType : "text",
+	
+				success : function(response) {								
+	
+					if(response == 1){
+						alert("로그인 성공");
+						location.href="/forecastList.do";
+					}
+					else {
+						$('.error').css('display', 'block');
+						$('#key').focus();
+						console.log($("#key").val());
+						console.log($("#pw").val());
+						return false;
+					}	
+					alert(check);
+				},
+	
+				error : function(request, status, error) {
+					if (request.status != '0') {
+						alert("code : " + request.status + "\r\nmessage : "
+								+ request.reponseText + "\r\nerror : " + error);
+					}
 				}
-				else {
-					$('.error').css('display', 'block');
-					$('#key').focus();
-					console.log($("#key").val());
-					console.log($("#pw").val());
-					return false;
-				}	
-				alert(check);
-			},
-
-			error : function(request, status, error) {
-				if (request.status != '0') {
-					alert("code : " + request.status + "\r\nmessage : "
-							+ request.reponseText + "\r\nerror : " + error);
-				}
-			}
-		});	
+			});	
+		}
 	}
+	
+	function mailPw() {
+		if($("#key").val() == null || $("#key").val() == "" || $("#key").val().length == 0) {
+			alert('이메일 계정을 입력해주세요.');
+			$("#key").focus();
+		} else {
+			$.ajax({
+				url : "/resetPw.do",
+				type : "POST",
+				data : "email" + "=" + $("#key").val()+"&" +"pw" + "="+ $("#pw").val(),
+				dataType : "json",
+	
+				beforeSend:function(){
+			        $('.wrap-loading').removeClass('dpNone');
+			    }
+
+			    ,complete:function(){
+			        $('.wrap-loading').addClass('dpNone');
+			    }
+			    
+			    ,success : function(response) {								
+					if(response == 1){
+						alert("이메일로 임시 비밀번호가 발송되었습니다.");
+						history.back();
+					}
+					else {
+						return false;
+					}	
+				}
+				
+				,error : function(request, status, error) {
+					if (request.status != '0') {
+						alert("code : " + request.status + "\r\nmessage : "
+								+ request.reponseText + "\r\nerror : " + error);
+					}
+				}
+			});	
+		}
+	}
+	
 	$(document).ready(function() {
 		$('#key').focus();
 		
 		$("#key, #pw").keydown(function(event) {
 			if (event.which == 13) {
 				event.preventDefault();
-				$('#loginBotton').trigger('click');
+				$('#loginButton').trigger('click');
 			}
 		});
 		
-		 /* $("#key").keyup(function(){$(this).val($(this).val().replace(/[^a-z0-9]/gi,""));}); */
-	     $("#pw").keyup(function(){
-	    	 var expUrl = /[^a-z0-9!@#$%^*+=-]/gi;
-	    	 if(true == expUrl.test($(this).val())){
-	    		alert('허용되지않는 특수문자는 사용하실수 없습니다.');	 
-	    	 }
-	    	 
-	    	 $(this).val( $(this).val().replace(/[^a-z0-9!@#$%^*+=-]/gi,"") );} 
-	     );
-	     $("#key").bind("keyup", function() {
-	         $(this).val($(this).val().toLowerCase());
-	     });
-	     $("#pw").bind("keyup", function() {
-	         $(this).val($(this).val().toLowerCase());
-	     });
+		/* $("#key").keyup(function(){$(this).val($(this).val().replace(/[^a-z0-9]/gi,""));}); */
+		
+		$("#pw").keyup(function(){
+			var expText = /[^a-z0-9!@#$%^*+=-]/gi;
+			if(true == expText.test($(this).val())){
+				alert('허용되지않는 특수문자는 사용하실수 없습니다.');	 
+			}
+		 
+			$(this).val( $(this).val().replace(/[^a-z0-9!@#$%^*+=-]/gi,"") );
+		});
+		
+		$("#key").bind("keyup", function() {
+		    $(this).val($(this).val().toLowerCase());
+		});
+		$("#pw").bind("keyup", function() {
+		    $(this).val($(this).val().toLowerCase());
+		});
 	});
 </script>
 </head>
@@ -149,11 +224,15 @@
 	               	<div class = "error textalignC ftw300">
 						<label>입력한 아이디와 비밀번호가 일치하지 않습니다.</label>
 					</div>
-	               	<input type = "button" class = "loginbtn" value="Login" id = "loginBotton" onclick='loginCheck()'/>
+	               	<input type="button" class="loginbtn" value="Login" id="loginButton" onclick='loginCheck()'/>
+	               	<div class="textalignR findPw"><a class="cursorP ftw300" onclick='mailPw()'>비밀번호 찾기</a></div>
                	</div>
            	</div>
 		</div>
-		<div class="floatC" style="width: 0;"></div>
+		<div class="floatC" style="width: 0; height: 0;"></div>
 	</div>
+	<div class="wrap-loading dpNone">
+    	<div><img src="<c:url value='/images/ajax_loader.gif'/>" /></div>
+	</div> 
 </body>
 </html>

@@ -68,10 +68,17 @@ public class MainController {
 	
 	@RequestMapping(value="/logout.do")
 	public String logout(HttpSession session, HttpServletRequest request) {
-		String logoutUrl = "/login/loginpage";
+		String logoutUrl = "main";
 		session = request.getSession();
 		session.removeAttribute("admin");
 		return logoutUrl;
+	}
+	
+	@RequestMapping(value = "/resetPw.do")
+	public @ResponseBody int resetPw(HttpServletRequest request) throws Exception {
+		int result = service.resetPw(request);
+		
+		return result;
 	}
 	
 }

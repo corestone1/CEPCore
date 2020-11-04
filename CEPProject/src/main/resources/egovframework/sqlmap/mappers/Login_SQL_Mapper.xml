@@ -15,4 +15,12 @@
 		AND EMP_PW=#{empPw}
 
 	</select>
+	
+	<update id="updatePassword" parameterType="EmpVO">
+	
+		UPDATE SAMPLE
+		SET EMP_PW=#{empPw}
+		WHERE EMP_KEY=#{empKey}
+		
+	</update>
 </mapper>
