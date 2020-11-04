@@ -10,7 +10,7 @@
 	<select id="selectEmp" resultType="int">
 
 		SELECT COUNT(*)
-		FROM SAMPLE
+		FROM CMM_EMPLOYEE_TB
 		WHERE EMP_KEY=#{empKey}		
 		AND EMP_PW=#{empPw}
 
@@ -18,7 +18,7 @@
 	
 	<update id="updatePassword" parameterType="EmpVO">
 	
-		UPDATE SAMPLE
+		UPDATE CMM_EMPLOYEE_TB
 		SET EMP_PW=#{empPw}
 		WHERE EMP_KEY=#{empKey}
 		

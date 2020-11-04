@@ -115,14 +115,11 @@
 				success : function(response) {								
 	
 					if(response == 1){
-						alert("로그인 성공");
 						location.href="/forecastList.do";
 					}
 					else {
 						$('.error').css('display', 'block');
 						$('#key').focus();
-						console.log($("#key").val());
-						console.log($("#pw").val());
 						return false;
 					}	
 					alert(check);
