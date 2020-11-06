@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.project.service.impl.ProjectMapper">
+
+	<resultMap id="project" type="com.cep.project.vo.ProjectVO">
+		<result property="pjKey" column="PJ_KEY"/>
+		<result property="acKey" column="AC_KEY"/>
+		<result property="pjNm" column="PJ_NM"/>
+		<result property="pjStartDt" column="PJ_START_DT"/>
+		<result property="pjEndDt" column="PJ_END_DT"/>
+		<result property="pjStatusCd" column="PJ_STATUS_CD"/>
+		<result property="pjSaleEmpKey" column="PJ_SALE_EMP_KEY"/>
+	</resultMap>
+
+	<select id="selectProjectList" parameterType="projectVO" resultType="egovMap">
+
+			SELECT
+				PJ_KEY
+				, AC_KEY
+				, PJ_NM
+				, PJ_START_DT
+				, PJ_END_DT
+				, PJ_STATUS_CD
+				, PJ_SALE_EMP_KEY
+			FROM PJ_MAIN_TB
+			WHERE 1=1
+			<!-- <if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND	PJ_NM LIKE CONCAT('%' , #{pjNm}, '%')
+				 	</when>
+				</choose> 
+			</if> -->
+			ORDER BY PJ_KEY ASC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+
+	<select id="selectProjectListTotCnt" parameterType="searchVO" resultType="int">
+
+			SELECT COUNT(*)
+			FROM PJ_MAIN_TB
+			WHERE 1=1
+			<!-- <if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND	USERNAME LIKE CONCAT('%' , #{searchKeyword}, '%')
+					</when>
+		            <when test="searchCondition == 1">
+						AND	TITLE LIKE CONCAT('%' , #{searchKeyword}, '%')
+					</when>
+				</choose>
+			</if> -->
+	</select>
+
+</mapper>

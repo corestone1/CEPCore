@@ -114,3 +114,24 @@ function removeCommas(x) {
     if(!x || x.length == 0) return "";
     else return x.split(",").join("");
 }
+
+	
+$(function() {
+	$( "#fromDt" ).datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		numberOfMonths: 1,
+		onSelect: function( selectedDate ) {
+			$( "#toDt" ).datepicker( "option", "minDate", selectedDate );
+		}
+	});
+	
+	$( "#toDt" ).datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		numberOfMonths: 1,
+		onSelect: function( selectedDate ) {
+			$( "#fromDt" ).datepicker( "option", "maxDate", selectedDate );
+		}
+    });
+});

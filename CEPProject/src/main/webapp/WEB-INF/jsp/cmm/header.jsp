@@ -7,6 +7,7 @@
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/popup.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/datepicker.min.css'/>"/>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -85,6 +86,16 @@
 				background-color: #533db3
 			}
 	</style>
+	<script>
+		$(document).ready(function() {
+			$("#name").mouseover(function() {
+				$(this).html('Logout');
+			});
+			$("#name").mouseout(function() {
+				$(this).html($("#nameVal").val());
+			});
+		});
+	</script>
 </head>
 <body>
 	<header>
@@ -129,12 +140,10 @@
 			</ul>
 			<div>
 				<div class="floatL"><img class="cursorP"  src="<c:url value='/images/header_alarm.png'/>" /></div>
-				<div class="floatL"><img class="cursorP"  src="<c:url value='/images/header_setting.png'/>"/></div>
-				
-				<div class="floatL cursorP">
+				<div class="floatL cursorP" onclick="location.href='/logout.do'">
 					<img class="floatL" src="<c:url value='/images/header_profile.png'/>"/>
-					<span class="colorWhite floatL">박경구</span>
-					<span class="material-icons colorWhite">keyboard_arrow_down</span>
+					<span class="colorWhite floatL" id="name"><%= session.getAttribute("name") %></span>
+					<input id="nameVal" type="hidden" value=<%=session.getAttribute("name") %> />
 				</div>
 			</div>
 		</div>

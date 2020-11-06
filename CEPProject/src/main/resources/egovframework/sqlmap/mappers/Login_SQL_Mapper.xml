@@ -10,9 +10,26 @@
 	<select id="selectEmp" resultType="int">
 
 		SELECT COUNT(*)
-		FROM SAMPLE
+		FROM CMM_EMPLOYEE_TB
 		WHERE EMP_KEY=#{empKey}		
 		AND EMP_PW=#{empPw}
 
+	</select>
+	
+	<update id="updatePassword" parameterType="EmpVO">
+	
+		UPDATE CMM_EMPLOYEE_TB
+		SET EMP_PW=#{empPw}
+		WHERE EMP_KEY=#{empKey}
+		
+	</update>
+	
+	<select id="selectName" resultType="String">
+		
+		SELECT EMP_NM
+		FROM CMM_EMPLOYEE_TB
+		WHERE EMP_KEY=#{empKey}
+		AND EMP_PW=#{empPw}
+		
 	</select>
 </mapper>

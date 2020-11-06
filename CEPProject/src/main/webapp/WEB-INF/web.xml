@@ -58,6 +58,10 @@
 	<login-config>
 		<auth-method>BASIC</auth-method>
 	</login-config>
+	
+	<session-config>
+		<session-timeout>15</session-timeout>
+	</session-config>
     
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
