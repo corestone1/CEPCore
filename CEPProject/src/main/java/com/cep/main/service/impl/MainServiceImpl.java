@@ -104,4 +104,9 @@ public class MainServiceImpl implements MainService {
         return result;
 	}
 	
+	@Override
+	public String selectName(HashMap<String, String> map) throws Exception {
+		return mapper.selectName(map);
+	}
+	
 }

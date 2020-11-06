@@ -43,9 +43,6 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			background-image: url('./images/search_icon.png');
-			background-repeat: no-repeat;
-			background-position: 95% 50%;
 			font-size: 15px;
 			margin-bottom: 3px;
 		}
@@ -164,10 +161,17 @@
 		.bottom > div {
 			margin-top: 22px;
 		}
+		input[class^="calendar"] {
+			width: 150px;
+		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-repeat: no-repeat;
+		    background-position: 95% 50%;
+			cursor: pointer;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			
+		
 			$('#pl tr').each(function(index, item) {
 				if(index != 0) {
 					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
@@ -214,6 +218,7 @@
 				} */
 				
 			});
+			
 		});
 
 		/* function fn_addView(){
@@ -252,16 +257,19 @@
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">진행상태</option>
-						</select>
-						<select>
-							<option value="">구분</option>
-						</select>
-						<select>
-							<option value="">검색조건</option>
-						</select>
-						<input type="text" />
+						<%-- <form:select path="searchCondition" cssClass="use">
+        					<form:option value="" label="상태" />
+        					<form:option value="" label="입찰" />
+        					<form:option value="" label="계약" />
+        					<form:option value="" label="발주" />
+        					<form:option value="" label="수행" />
+        					<form:option value="" label="완료" />
+        				</form:select> --%>
+						<input type="text" class="calendar" placeholder="from" id="fromDt"/>
+						<label> ~ </label>
+						<input type="text" class="calendar" placeholder="to" id="toDt"/>
+						<input type="text" class="search" placeholder="프로젝트명" />
+						<span class="veralignT"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -282,7 +290,24 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
+							<c:forEach var="result" items="${resultList}" varStatus="status">
+		            			<tr>
+		            				<td onclick="event.cancelBubble = true;"></td>
+		            				<td align="center" class="listtd">
+		            					<%-- <c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/> --%>
+		            					<c:out value="${result.pjKey}"/>
+		            				</td>
+		            				<td align="center" class="listtd"><a href="javascript:fn_egov_select('<c:out value="${result.acKey}"/>')"><c:out value="${result.title}"/></a></td>
+		            				<td align="left" class="listtd"><c:out value="${result.pjNm}"/>&nbsp;</td>
+		            				<td align="left" class="listtd"><c:out value="${result.pjStartDt}"/>&nbsp;</td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/>&nbsp;</td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/>&nbsp;</td>
+		            			</tr>
+		        			</c:forEach>
+							<!-- <tr>
 								<td onclick="event.cancelBubble = true;"></td>
 								<td>002-2018-1220</td>
 								<td>미래에셋생명</td>
@@ -293,151 +318,7 @@
 								<td>71일</td>
 								<td><input type="hidden" value="PF" />수행</td>
 								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CT" />계약</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="BD" />입찰</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CP" />완료</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="OD" />발주</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="PF" />수행</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CT" />계약</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="BD" />입찰</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CP" />완료</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="OD" />발주</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CT" />계약</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="BD" />입찰</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="PF" />수행</td>
-								<td>홍길동차장</td>
-							</tr>
+							</tr> -->
 						</tbody>
 					</table>
 				</div>

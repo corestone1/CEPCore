@@ -29,6 +29,8 @@ public class MainController {
 	public int login(String key, String pw, HttpServletRequest request){
 		HttpSession session = request.getSession();
 		HashMap<String, String> map = new HashMap<String, String>();
+		String name = "";
+		
 		key = request.getParameter("key");
 		pw = request.getParameter("pw");
 		
@@ -39,12 +41,14 @@ public class MainController {
 		
 		try { 
 			loginIdentify = service.loginCheck(map);
+			name = service.selectName(map);
 		} catch(Exception e) { }
 		
 		if (loginIdentify == 1) {
 			log.info("로그인 성공");
 			//session.setAttribute("id", id);
 			//session.setAttribute("pw", pw);
+			session.setAttribute("name", name);
 			session.setAttribute("admin", map);
 
 		}
@@ -52,11 +56,7 @@ public class MainController {
 			log.info("로그인 실패");
 		}
 
-		System.out.println(loginIdentify);
-		/*System.out.println(key);
-		System.out.println(pw);*/
 		return loginIdentify;
-
 	}
 
 	

@@ -1,13 +1,20 @@
 package com.cep.project.web;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
+
+import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @Controller
 @RequestMapping("/project")
@@ -16,10 +23,30 @@ public class ProjectController {
 	@Resource(name="projectService")
 	private ProjectService service;
 	
+	@Resource(name="propertiesService")
+	protected EgovPropertyService propertiesService;
+	
 	@RequestMapping(value="/list.do")
-	public String selectProject(ProjectVO projectVO, ModelMap model) throws Exception {
+	public String selectProject(@ModelAttribute("searchVO") SampleDefaultVO searchVO, ModelMap model) throws Exception {
 		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+		
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		List<?> projectList = service.selectProjectList(searchVO);
+		model.addAttribute("resultList", projectList);
+		
+		int totCnt = service.selectProjectListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
 		
 		return "project/list";
 	}
