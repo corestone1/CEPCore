@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.maintenance.service.impl.MaintenanceMapper">
+<!--유지보수 관련 sql 관리하는 Mapper.xml  -->
+	<resultMap id="mtContractVO" type="com.cep.maintenance.vo.MtContractVO">
+		<result property="rowNum" column="ROW_NUM"/>
+		<result property="mtIntegrateKey" column="MT_INTEGRATE_KEY"/>
+		<result property="mtCtKey" column="MT_CT_KEY"/>
+		<result property="mtSeq" column="MT_SEQ"/>
+		<result property="mtAcKey" column="MT_AC_KEY"/>
+		<result property="mtAcNm" column="MT_AC_NM"/>
+		<result property="acDirectorKey" column="MT_AC_DIRECTOR_KEY"/>
+		<result property="mtNm" column="MT_NM"/>
+		<result property="ctDt" column="MT_CT_DT"/>
+		<result property="startDt" column="MT_START_DT"/>
+		<result property="endDt" column="MT_END_DT"/>
+		<result property="rgInspectCnt" column="MT_RG_INSPECT_CNT"/>
+		<result property="imCd" column="MT_IM_CD"/>
+		<result property="sbCtYn" column="MT_SB_CT_YN"/>
+		<result property="gbYn" column="GB_YN"/>
+		<result property="saleEmpKey" column="MT_SALE_EMP_KEY"/>
+		<result property="saleEmpNm" column="SALE_EMP_NM"/>
+		<result property="mngEmpKey" column="MT_MNG_EMP_KEY"/>
+		<result property="mngEmpNm" column="MNG_EMP_NM"/>
+		<result property="supportEmpKey" column="MT_SUPPORT_EMP_KEY"/>
+		<result property="supportEmpNm" column="SUPPORT_EMP_NM"/>
+		<result property="amount" column="MT_AMOUNT"/>
+		<result property="payTerms" column="MT_PAY_TERMS"/>
+		<result property="remark" column="REMARK"/>
+		<result property="deleteYn" column="DELETE_YN"/>
+		<result property="regDt" column="REG_DT"/>
+		<result property="regTm" column="REG_TM"/>
+		<result property="regEmpKey" column="REG_EMP_KEY"/>
+		<result property="modDt" column="MOD_DT"/>
+		<result property="modTm" column="MOD_TM"/>
+		<result property="modEmpKey" column="MOD_EMP_KEY"/>
+	</resultMap>
+	
+	<!-- 유지보수 기본정보 등록 -->
+	<insert id="insertMtContractBasic" parameterType="com.cep.maintenance.vo.MtContractVO">
+		INSERT INTO MT_CONTRACT_TB (
+			MT_INTEGRATE_KEY
+			, MT_CT_KEY
+			, MT_SEQ
+			, MT_AC_KEY
+			, MT_AC_DIRECTOR_KEY
+			, MT_NM
+			, MT_CT_DT
+			, MT_START_DT
+			, MT_END_DT
+			, MT_RG_INSPECT_CNT
+			, MT_IM_CD
+			, MT_SB_CT_YN
+			, GB_YN
+			, MT_SALE_EMP_KEY
+			, MT_MNG_EMP_KEY
+			, MT_SUPPORT_EMP_KEY
+			, MT_AMOUNT
+			, MT_PAY_TERMS
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+		) VALUES (
+			(SELECT IFNULL(MAX(MT_INTEGRATE_KEY) + 1, 1) FROM MT_CONTRACT_TB)
+		<if test="mtCtKey != null and mtCtKey != ''">
+		<!--
+			연장계약인 경우 MT_CT_KEY가 존재함.
+			MT_CT_KEY 키가 존재하는 경우    MT_SEQ+1을 해서 등록한다..
+		-->
+			, #{mtCtKey}
+			(SELECT MAX(MT_SEQ) + 1 FROM MT_CONTRACT_TB WHERE MT_CT_KEY=#{mtCtKey})
+		</if>
+		<if test="mtCtKey == null and mtCtKey == ''">
+		<!-- 신규 유지보수 정보를 등록하는 경우.-->
+			, make_key('MT')
+			, 1			
+		</if>
+			, #{mtCtKey}
+			, #{acDirectorKey}
+			, #{mtNm}
+			, #{ctDt}
+			, #{startDt}
+			, #{endDt}
+			, #{rgInspectCnt}
+			, #{imCd}
+			, #{sbCtYn}
+			, #{gbYn}
+			, #{saleEmpKey}
+			, #{mngEmpKey}
+			, #{supportEmpKey}
+			, #{amount}
+			, #{payTerms}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+		);	
+	</insert>
+	
+	<!--
+		유지보수 목록 조회 쿼리
+		날짜 조건이 없는 경우 (초기 검색) AND MT_CT_DT LIKE CONCAT(year(NOW()),'%') 검색하여 해당 년도를 검색한다.
+	  -->
+	<select id="selectMtContractList" parameterType="com.cep.maintenance.vo.MaintenanceDefaultVO" resultMap="mtContractVO">				
+		
+		SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
+		FROM (
+			SELECT MC.MT_CT_KEY
+				, MC.MT_INTEGRATE_KEY
+				, MC.MT_AC_KEY
+				, CA.AC_NM AS MT_AC_NM
+				, MC.MT_NM
+				, MC.MT_CT_DT
+				, MC.MT_START_DT
+				, MC.MT_END_DT
+				, MC.MT_RG_INSPECT_CNT
+				, MC.MT_IM_CD
+				, MC.MT_SB_CT_YN
+				, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SALE_EMP_KEY) AS SALE_EMP_NM
+				, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_MNG_EMP_KEY) AS MNG_EMP_NM
+				, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SUPPORT_EMP_KEY) AS SUPPORT_EMP_NM
+			FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, (SELECT @ROWNUM := 0) AS R
+			WHERE 1=1	
+				<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
+				AND MT_CT_DT LIKE CONCAT(year(NOW()),'%')
+					<!-- <if test="toDate == null or toDate == ''">
+						AND MT_CT_DT LIKE CONCAT(year(NOW()),'%')
+					</if> -->
+				</if>
+				<if test="fromDate != null and fromDate != ''">
+					AND MT_CT_DT >= #{fromDate}
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND MT_CT_DT <= #{toDate}
+					]]>
+				</if>
+				<if test="searchSaleEmpKey != null and searchSaleEmpKey != ''">
+					AND MT_SALE_EMP_KEY = #{searchSaleEmpKey}
+				</if>
+				<if test="searchMtName != null and searchMtName != ''">
+					AND MT_NM LIKE CONCAT(#{searchMtName}, '%')
+				</if>
+			  	AND MC.MT_AC_KEY = CA.AC_KEY
+			  	AND DELETE_YN='N'
+			  	ORDER BY MT_CT_DT DESC
+		) M			
+		
+	</select>
+	
+	<!-- 
+		유지보수 계약 삭제 ==> DELETE_YN값을 Y로 바꾼다.
+		1) 유지보수 목록에서 삭제
+	 -->
+	<update id="deleteMtContract">
+			UPDATE MT_CONTRACT_TB
+			SET DELETE_YN='Y'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
+	</update>
+	
+	
+	
+	<!-- ######################################################################  -->
+	<!-- 사원리스트회 -->
+	<select id="selectEmployeeList" resultType="egovMap">			
+			SELECT EMP_KEY
+				, EMP_NM
+			FROM CMM_EMPLOYEE_TB
+			ORDER BY EMP_NM		
+	</select>
+	
+	<!-- 거래처 담당자 리스트회 -->
+	<select id="selectAcDirectorList" parameterType="String" resultType="egovMap">			
+			SELECT AC_DIRECTOR_KEY
+				, AC_DIRECTOR_NM
+				, CONCAT(AC_DIRECTOR_POSITION_NM , ' / ' , AC_DIRECTOR_MB_NUM , ' / ' , AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
+			FROM CMM_ACCOUNT_DIRECTOR_TB
+			WHERE AC_KEY = #{acKey}
+			ORDER BY AC_DIRECTOR_NM		
+	</select>
+	
+	
+</mapper>

@@ -25,6 +25,8 @@ public class MaintenanceDefaultVO implements Serializable{
 	private String toDate; //to
 	private String searchSaleEmpKey; //영업담당자 키 
 	private String searchMtName;//검색 유지보수  프로젝트명
+	private String btnOption; //검색(search),수정(edit),삭제(delete),엑셀(excel)
+	private String selectKey; //선택한 항목의 key값
 	/**
 	 * @return the fromDate
 	 */
@@ -78,6 +80,30 @@ public class MaintenanceDefaultVO implements Serializable{
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	/**
+	 * @return the btnOption
+	 */
+	public String getBtnOption() {
+		return btnOption;
+	}
+	/**
+	 * @param btnOption the btnOption to set
+	 */
+	public void setBtnOption(String btnOption) {
+		this.btnOption = btnOption;
+	}
+	/**
+	 * @return the selectKey
+	 */
+	public String getSelectKey() {
+		return selectKey;
+	}
+	/**
+	 * @param selectKey the selectKey to set
+	 */
+	public void setSelectKey(String selectKey) {
+		this.selectKey = selectKey;
 	}
 	
 	
