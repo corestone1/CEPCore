@@ -208,7 +208,7 @@
 					}
 				}); */
 				/* location.href = "/mtDetail.do"; */
-				location.href = "#";
+				location.href = "/maintenance/detail/prodInfo.do";
 				/* if(event.target.nodeName=="TD"){
 					location.href = "/projectDetailBd.do";
 				} */ 

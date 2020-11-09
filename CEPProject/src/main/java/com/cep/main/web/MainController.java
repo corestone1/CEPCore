@@ -46,11 +46,8 @@ public class MainController {
 		
 		if (loginIdentify == 1) {
 			log.info("로그인 성공");
-			//session.setAttribute("id", id);
-			//session.setAttribute("pw", pw);
 			session.setAttribute("name", name);
 			session.setAttribute("admin", map);
-
 		}
 		else {
 			log.info("로그인 실패");
