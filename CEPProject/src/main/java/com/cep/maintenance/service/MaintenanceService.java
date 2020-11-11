@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cep.maintenance.vo.MaintenanceDefaultVO;
 import com.cep.maintenance.vo.MtContractVO;
+import com.cep.maintenance.vo.MtWorkVO;
 
 public interface MaintenanceService {
 	
@@ -43,6 +44,34 @@ public interface MaintenanceService {
 	  * @throws Exception
 	 */
 	void deleteMtContract(MtContractVO deleteVo) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectMtWorkList
+	  * @Cdate       : 2020. 11. 10.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수 작업목록 조회
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	 */
+	List<?> selectMtWorkList(MaintenanceDefaultVO searchVO) throws Exception;
+	
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtWork
+	  * @Cdate       : 2020. 11. 10.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수 작업목록을 삭제(update)한다.
+	  * @param MtWorkVO
+	  * @throws Exception
+	 */
+	void deleteMtWork(MtWorkVO deleteVo) throws Exception;
+	
+	
 	
 	/**
 	 * 

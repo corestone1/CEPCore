@@ -212,7 +212,7 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			showModalPop(dialogId, url, varParam, button, '유지보수 기본정보 등록', 'width:1144px;height:708px'); 
 		}
 		
 		function fn_searchList(){

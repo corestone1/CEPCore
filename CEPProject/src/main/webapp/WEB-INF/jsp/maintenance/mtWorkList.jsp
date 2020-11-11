@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 list)</title>
+	<title>유지보수 작업목록</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -26,6 +26,9 @@
 		form .title > label {
 			font-size: 26px;
 		}
+		.contentsWrap .contents .top div:nth-child(2) > * {
+			vertical-align: top;
+		}
 		.contentsWrap .contents .top select {
 			height: 40px;
 			width: 130px;
@@ -43,12 +46,18 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			background-image: url('./images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 			font-size: 15px;
 			margin-bottom: 3px;
 		}
+		.contentsWrap .contents .top input[class="calendar"] {
+			width: 177px;
+			height: 40px;
+			background-image: url('./images/calendar_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}		
 		.middle table {
 			width: 1662px;
 			font-size: 15px;
@@ -83,7 +92,7 @@
 			background-color: #ddf0ec
 		}
 		.middle table tbody tr td:nth-child(4),
-		.middle table tbody tr td:nth-child(9) {
+		.middle table tbody tr td:nth-child(6) {
 			font-weight: 400;
 		}
 		.middle table thead th, .middle table tbody tr td {
@@ -92,43 +101,44 @@
 		}
 		.middle table thead th:first-child,
 		.middle table tbody td:first-child {
-			width: 51px;
+			width: 50px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
-			width: 125px;
+			width: 48px;
+			max-width: 48px;
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
-			width: 178px;
+			width: 100px;
+			max-width: 100px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 413px;
+			width: 160px;
+			max-width: 160px;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
-			width: 102px;
+			width: 200px;
+			max-width: 200px;
 		}
 		.middle table thead th:nth-child(6),
+		.middle table tbody td:nth-child(6) {
+			width: 380px;
+			max-width: 380px;
+		}
 		.middle table thead th:nth-child(7),
 		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(6),
-		.middle table tbody td:nth-child(7),
-		.middle table tbody td:nth-child(8) {
-			width: 102px;
-		}
 		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9) {
-			width: 100px;
-		}
 		.middle table thead th:nth-child(10),
 		.middle table thead th:nth-child(11),
-		.middle table thead th:nth-child(12),
+		.middle table tbody td:nth-child(7),
+		.middle table tbody td:nth-child(8),
+		.middle table tbody td:nth-child(9),
 		.middle table tbody td:nth-child(10),
-		.middle table tbody td:nth-child(11),
-		.middle table tbody td:nth-child(12) {
-			width: 126px;
+		.middle table tbody td:nth-child(11) {
+			width: 100px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -166,53 +176,11 @@
 		}
 	</style>
 	<script>
-		$(document).ready(function() {
-			
-			$('#pl tr').each(function(index, item) {
-				if(index != 0) {
-					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
-				}
-				switch($(this).children().eq(8).children().eq(0).val()) {
-					case 'PF': $(this).children().eq(8).css('color','#32bc94');break;
-					case 'CT': $(this).children().eq(8).css('color','#4f4f4f');break;
-					case 'BD': $(this).children().eq(8).css('color','#915be2');break;
-					case 'CP': $(this).children().eq(8).css('color','#8093f2');break;
-					case 'OD': $(this).children().eq(8).css('color','#e1cb15');break;
-					default: $(this).children().eq(8).css('color','#000');break;
-				} 
-			});
-			
+		$(document).ready(function() {			
+
 			$('#pl tr').click(function() {
-				/* $.ajax({
-					url: '/example.projectDetail.do',
-					param: $('#listFrom').serialize(),
-					cache : false,
-					async : false,
-					dataType : "json",
-					
-					success: function(response) {
-						$('#listForm').submit();
-					},
-					
-					error: function(request, status, error) {
-						if(request.status != '0') {
-							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-						}
-					}
-				}); */
-				location.href = "/projectDetailBd.do";
-				/* if(event.target.nodeName=="TD"){
-					location.href = "/projectDetailBd.do";
-				} */ 
-				
-				
-				
-				/* if($(this).children().eq(0)){
-					alert("==>"+$(this).children().eq(0).children().eq(0).val()+"<==");
-				} else{
-					alert("bbbb");
-				} */
-				
+				/* location.href = "/mtDetail.do"; */
+				location.href = "#";
 			});
 		});
 
@@ -228,40 +196,7 @@
 		} */
 		
 		function fn_addView(){
-			var url = '/writeBasicInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
-
-		function fn_addView1(){
-			var url = '/writeLoseInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
-
-		function fn_addView2(){
-			var url = '/mappingBill.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
-
-		function fn_addView3(){
-			var url = '/addOrderInfo.do';
+			var url = '/maintenance/writeMtWorkInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 
@@ -271,31 +206,89 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
+		function fn_editBtn(){
+			var url = '/maintenance/editMtWorkInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
+		function fn_searchList(){
+			
+			document.listForm.action = "/maintenance/mtWorkList.do";
+           	document.listForm.submit(); 
+		}
+		
+		function fn_deleteBtn(){
+			if($('input[name="gubun"]').is(':checked')){
+				if(confirm("선택한 내용을 삭제하시겠습니까?")){
+					document.listForm.btnOption.value='delete';
+					document.listForm.selectKey.value=$('input[name="gubun"]:checked').val();
+
+					document.listForm.action = "/maintenance/deleteMtWork.do";
+		           	document.listForm.submit(); 
+				} else {
+					return false;
+				}
+				
+				
+			} else {
+				alert("삭제할 대상을 선택하세요 !!");
+				
+				return false;
+			}
+			
+			
+			/* document.listForm.action = "<c:url value='/mtContractList.do'/>";
+           	document.listForm.submit(); */ 
+		
+		}
+		
+
+        	
+		
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
+		<input type="hidden" name="btnOption" />
+		<input type="hidden" name="selectKey" />
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
-						<div class="title floatL"><label class="ftw500">프로젝트 list</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
-						<div class="addBtn floatL cursorP" onclick="fn_addView1();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
+						<div class="title floatL"><label class="ftw500">유지보수 작업목록</label></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">진행상태</option>
-						</select>
-						<select>
-							<option value="">구분</option>
-						</select>
-						<select>
-							<option value="">검색조건</option>
-						</select>
-						<input type="text" />
+						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
+						<form:input path="fromDate" type="text" placeholder="작업시작일자(from)" class="calendar" /> ~ <form:input path="toDate" type="text" placeholder="작업시작일자(to)" class="calendar" />
+						<!-- <select name="searchSaleEmpKey"> -->
+						<form:select path="searchWorkEmpKey">
+							<!-- <option value=""/>영업담당</option> -->
+							<form:option value="" label="지원담당" />
+							<c:forEach var="emp" items="${empList}" varStatus="status">
+								<%-- <option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option> --%>
+								<%-- <form:option value="<c:out value="${emp.empKey}"/>" label="<c:out value="${emp.empNm}"/>" /> --%>
+								<form:option value="${emp.empKey}" label="${emp.empNm}" />
+							</c:forEach>							
+						</form:select>
+						<form:select path="searchWorkResult">
+							<!-- <option value=""/>영업담당</option> -->
+							<form:option value="" label="조치결과" />
+							<form:option value="준비" label="준비" />	
+							<form:option value="진행중" label="진행중" />	
+							<form:option value="완료" label="완료" />					
+						</form:select>
+						<form:input path="searchMtName" type="text" placeholder="프로젝트 명"/>
+						<!-- <input type="text" name="searchMtName" placeholder="프로젝트 명"/> -->
+						<span><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -304,186 +297,49 @@
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>
-								<th scope="row">계약번호</th>
+								<th scope="row">No</th>
+								<th scope="row">작업번호</th>
 								<th scope="row">고객사</th>
+								<th scope="row">고객담당자</th>
 								<th scope="row">프로젝트명</th>
-								<th scope="row">시작일</th>
-								<th scope="row">종료일</th>
-								<th scope="row">프로젝트기간</th>
-								<th scope="row">남은기간</th>
-								<th scope="row">상태</th>
-								<th scope="row">영업담당자</th>
+								<th scope="row">작업시작일</th>
+								<th scope="row">작업종료일</th>
+								<th scope="row">작업유형</th>
+								<th scope="row">조치결과</th>
+								<th scope="row">지원담당자</th>
 							</tr>
 						</thead>
 						<tbody>
+						<c:forEach var="result" items="${resultList}" varStatus="status">						
 							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="PF" />수행</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CT" />계약</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="BD" />입찰</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CP" />완료</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="OD" />발주</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="PF" />수행</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CT" />계약</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="BD" />입찰</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CP" />완료</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="OD" />발주</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="CT" />계약</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="BD" />입찰</td>
-								<td>홍길동차장</td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="PF" />수행</td>
-								<td>홍길동차장</td>
-							</tr>
+								<td onclick="event.cancelBubble = true;">
+									<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${result.rowNum}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${result.rowNum}"/>" class="cursorP"/>
+								</td>
+								<td><c:out value="${status.count}"/></td>
+								<td><c:out value="${result.mtWorkKey}"/></td>
+								<td><c:out value="${result.acNm}"/></td>
+								<td><c:out value="${result.acDirectorNm}"/> / <c:out value="${result.acDirectorInfo}"/></td>
+								<td><c:out value="${result.mtNm}"/></td>
+								<td><c:out value="${result.mtWorkStartDt}"/></td>
+								<td><c:out value="${result.mtWorkEndDt}"/></td>
+								<td><c:out value="${result.mtWorkTypeCd}"/></td>
+								<td><c:out value="${result.mtWorkResultCd}"/></td>
+								<td><c:out value="${result.mtWorkEmpNm}"/></td>
+							</tr>						
+						</c:forEach>
+							
 						</tbody>
 					</table>
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-						<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button type="button" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" onclick="fn_editBtn();"/></button>
+						<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" onclick="fn_deleteBtn();"/></button>
+						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" onclick="fn_excelBtn();"/></button>
 					</div>
 				</div>
 			</div>
-		</div>
-	</form>
+		</div>	
+    </form:form>
 </body>
 </html>

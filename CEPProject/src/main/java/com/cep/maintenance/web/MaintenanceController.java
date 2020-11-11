@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cep.maintenance.service.MaintenanceService;
 import com.cep.maintenance.vo.MaintenanceDefaultVO;
 import com.cep.maintenance.vo.MtContractVO;
+import com.cep.maintenance.vo.MtWorkVO;
 import com.cep.project.vo.ProjectVO;
 
 @Controller
@@ -111,9 +112,59 @@ public class MaintenanceController {
 	}
 	
 	@RequestMapping(value="/mtWorkList.do")
-	public String selectMtWorkList(MtContractVO mtContractVO, ModelMap model) throws Exception {
+	public String selectMtWorkList(@ModelAttribute("searchVO") MaintenanceDefaultVO searchVO, ModelMap model) throws Exception {
 		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		List<?> mtList = null;
+		List<?> empList = null;
+		try {			
+			System.out.println("searchVO.getFromDate()===>"+searchVO.getFromDate());
+			System.out.println("searchVO.getToDate()===>"+searchVO.getToDate());
+			System.out.println("searchVO.getSearchWorkEmpKey()===>"+searchVO.getSearchWorkEmpKey());
+			System.out.println("searchVO.getSearchWorkResult()===>"+searchVO.getSearchWorkResult());
+			System.out.println("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
+			mtList = service.selectMtWorkList(searchVO);
+			System.out.println("mtList.size()=====>"+mtList.size());
+			/*for (int i = 0; i < mtList.size(); i++) {
+				MtWorkVO vo = (MtWorkVO)mtList.get(i);
+				System.out.println("vo.getMtNm()===>"+vo.getMtNm()+"/"+vo.getMtWorkCont());
+			}*/
+			empList = service.selectEmployeeList();
+			model.put("resultList", mtList);
+			model.put("empList", empList);
+			model.put("resultCode", "SUCC");
+		} catch (Exception e) {
+			model.put("resultCode", "FAIL");
+			logger.error("mtMainList error", e);
+		}
+		return "maintenance/mtWorkList";
+	}
+	
+	@RequestMapping(value="/deleteMtWork.do")
+	public String deleteMtWork(@ModelAttribute("searchVO") MaintenanceDefaultVO searchVO, ModelMap model) throws Exception {
+		
+		List<?> mtList = null;
+		List<?> empList = null;
+		MtWorkVO deleteVo = null;
+		try {			
+			
+			deleteVo = new MtWorkVO();
+			deleteVo.setModEmpKey("ycchoi@corestone.co.kr");
+			deleteVo.setMtWorkKey(Integer.parseInt(searchVO.getSelectKey()));
+			service.deleteMtWork(deleteVo);
+			/*System.out.println("mtList.size()=====>"+mtList.size());
+			for (int i = 0; i < mtList.size(); i++) {
+				MtContractVO vo = (MtContractVO)mtList.get(i);
+				System.out.println("vo.getMtAcNm()===>"+vo.getMtAcNm());
+			}*/
+			mtList = service.selectMtWorkList(searchVO);
+			empList = service.selectEmployeeList();
+			model.put("resultList", mtList);
+			model.put("empList", empList);
+			model.put("resultCode", "SUCC");
+		} catch (Exception e) {
+			model.put("resultCode", "FAIL");
+			logger.error("mtMainList error", e);
+		}
 		
 		return "maintenance/mtWorkList";
 	}
