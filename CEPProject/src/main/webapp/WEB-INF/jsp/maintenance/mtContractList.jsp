@@ -193,17 +193,6 @@
 			});
 		});
 
-		/* function fn_addView(){
-			var url = '/writeProject.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-		} */
-		
 		function fn_addView(){
 			var url = '/maintenance/writeMtBasicInfoView.do';
 			var dialogId = 'program_layer';

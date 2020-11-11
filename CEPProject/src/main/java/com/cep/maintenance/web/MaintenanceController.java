@@ -136,7 +136,8 @@ public class MaintenanceController {
 	
 	
 	@RequestMapping(value="/writeMtBasicInfo.do", method=RequestMethod.POST)
-	public void writeMtBasicInfo(@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
+	public void writeMtBasicInfo() {
+			/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
 		System.out.println("writeMtBasicInfo=====");
 //		System.out.println("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
 //		List<?> empList = null;

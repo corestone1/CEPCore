@@ -138,11 +138,37 @@
 	</style>
 	<script>
 		function fn_saveNext(){
-			document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
+		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
 			document.mtBasicForm.method="post";
 			alert(1111);
-           	document.mtBasicForm.submit(); 
+           	document.mtBasicForm.submit();  */
            	
+           	$.ajax({
+	        	url:"/maintenance/writeMtBasicInfo.do",
+	            /* dataType: 'json', */
+	            type:"post",  
+	            data: "",
+	     	   	contentType: "application/json; charset=UTF-8",
+	     	  	beforeSend: function(xhr) {
+	        		xhr.setRequestHeader("AJAX", true);
+	        		//xhr.setRequestHeader(header, token);
+	        	},
+	            success:function(data){		            	
+	            	var url = '/project/writeBasicInfo.do';
+	    			var dialogId = 'program_layer';
+	    			var varParam = {
+
+	    			}
+	    			var button = new Array;
+	    			button = [];
+	    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	        }); 
 		}
 		
 		$(function(){
@@ -204,7 +230,7 @@
 		        	} 
 		        });
 				
-			});
+			}); 
 			
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
 			$('#acDirectorKey').change(function(){
@@ -227,7 +253,7 @@
 	</script>
 </head>
 <body>
-	<form:form commandName="mtContractVO" id="mtBasicForm" name="mtBasicForm" method="post">		
+	<form:form commandName="mtContractVO" id="mtBasicForm" name="mtBasicForm" method="post">		 
 		<div class="popContainer">
 			<div class="top">
 				<div>
@@ -359,13 +385,12 @@
 						<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 					</div>
 					<div class="floatR" onclick="fn_saveNext();">
-						<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>
 		</div>	
-	</form:form>
-	
+	</form:form> 
 </body>
 </html>

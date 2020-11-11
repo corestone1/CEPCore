@@ -141,7 +141,7 @@
 		}
 		$(document).ready(function() {
 			
-			$("body").delegate("#fromDt", "focusin", function(){
+			/* $("body").delegate("#fromDt", "focusin", function(){
 				$(this).datepicker({
 					dateFormat: 'yy-mm-dd',
 					changeMonth: true,
@@ -160,7 +160,7 @@
 						$( "#fromDt" ).datepicker( "option", "maxDate", selectedDate );
 					}
 			    });
-			}); 
+			});  */
 		});
 	</script>
 </head>
@@ -220,8 +220,8 @@
 					<tr>
 						<td class="tdTitle">사업기간</td>
 						<td class="tdContents">
-							<input type="text" placeholder="from" class="calendar" id="fromDt"/> ~ 
-							<input type="text" placeholder="to" class="calendar" id="toDt"/>
+							<input type="text" placeholder="from" class="calendar fromDt" /> ~ 
+							<input type="text" placeholder="to" class="calendar toDt" />
 						</td>
 					</tr>
 					<tr>

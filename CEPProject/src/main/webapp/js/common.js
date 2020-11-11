@@ -115,42 +115,31 @@ function removeCommas(x) {
     else return x.split(",").join("");
 }
 
-	
+/* 추후 수정 필요
+ * from날짜 이전 날짜는 to날짜에서 선택 못하도록, to날짜 이후 날짜는 from 날짜에서 선택 못하도록
+ * */	
 $(window).load(function() {
-	$( "#fromDt" ).datepicker({
-		dateFormat: 'yy-mm-dd',
-		changeMonth: true,
-		numberOfMonths: 1,
-		onSelect: function( selectedDate ) {
-			$( "#toDt" ).datepicker( "option", "minDate", selectedDate );
-		}
+
+	$("body").delegate(".fromDt", "focusin", function(){
+		$(this).datepicker({
+			dateFormat: 'yy-mm-dd',
+			changeMonth: true,
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				$( ".toDt" ).datepicker( "option", "minDate", selectedDate );
+				/*$(this).datepicker();*/
+			}
+		});
 	});
-	
-	$( "#toDt" ).datepicker({
-		dateFormat: 'yy-mm-dd',
-		changeMonth: true,
-		numberOfMonths: 1,
-		onSelect: function( selectedDate ) {
-			$( "#fromDt" ).datepicker( "option", "maxDate", selectedDate );
-		}
-    });
+	$("body").delegate(".toDt", "focusin", function(){
+		$(this).datepicker({
+			dateFormat: 'yy-mm-dd',
+			changeMonth: true,
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
+				/*$(this).datepicker();*/
+			}
+	    });
+	}); 
 });
-function modalDate() {
-	$( "#fromDt" ).datepicker({
-		dateFormat: 'yy-mm-dd',
-		changeMonth: true,
-		numberOfMonths: 1,
-		onSelect: function( selectedDate ) {
-			$( "#toDt" ).datepicker( "option", "minDate", selectedDate );
-		}
-	});
-	
-	$( "#toDt" ).datepicker({
-		dateFormat: 'yy-mm-dd',
-		changeMonth: true,
-		numberOfMonths: 1,
-		onSelect: function( selectedDate ) {
-			$( "#fromDt" ).datepicker( "option", "maxDate", selectedDate );
-		}
-    });
-}
