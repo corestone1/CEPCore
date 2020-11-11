@@ -110,6 +110,28 @@ public class MaintenanceController {
 		return "maintenance/mtContractList";
 	}
 	
+	@RequestMapping(value="/writeMtWorkInfoView.do")
+	public String writeMtWorkInfoView(MtWorkVO mtContractVO,ModelMap model) throws Exception {
+
+		List<?> empList = null;
+		System.out.println("writeMtWorkInfoView=====");
+		try {
+			empList = service.selectEmployeeList();
+			model.put("empList", empList);
+		} catch (Exception e) {
+			model.put("resultCode", "FAIL");
+			logger.error("addBasicInfo error", e);
+		}
+		
+		return "maintenance/writeMtBasicInfo";
+	}
+	
+	
+	@RequestMapping(value="/writeMtWorkInfo.do", method=RequestMethod.POST)
+	public void writeMtWorkInfo(@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
+		System.out.println("writeMtWorkInfo=====");
+	}
+	
 	@RequestMapping(value="/mtWorkList.do")
 	public String selectMtWorkList(@ModelAttribute("searchVO") MaintenanceDefaultVO searchVO, ModelMap model) throws Exception {
 		

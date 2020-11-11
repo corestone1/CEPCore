@@ -35,7 +35,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -54,7 +54,7 @@
 		.contentsWrap .contents .top input[class="calendar"] {
 			width: 177px;
 			height: 40px;
-			background-image: url('./images/calendar_icon.png');
+			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}		
@@ -212,7 +212,7 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '유지보수 기본정보 등록', 'width:1144px;height:708px'); 
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
 		function fn_searchList(){
