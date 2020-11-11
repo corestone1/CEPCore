@@ -184,5 +184,11 @@ public class MaintenanceController {
      return modelAndView; 
 	}
 	
-	
+	@RequestMapping(value="/detail/prodInfo.do")
+	public String selectMtDetailProdInfo(MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/detail/prodInfo";
+	}
 }

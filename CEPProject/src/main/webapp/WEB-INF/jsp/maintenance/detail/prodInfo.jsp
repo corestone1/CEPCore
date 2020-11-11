@@ -14,9 +14,6 @@
 			position: absolute;
 			bottom: 31px;
 		}
-		.btnWrap.lt {
-			left: 127px;
-		}
 		.btnWrap.rt {
 			right: 127px;
 		}
@@ -27,7 +24,7 @@
 		form .contentsWrap {
 			background-color: #f6f7fc;
 			box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);
-			height: 830px;
+			height: 802px;
 		}
 		form .contentsWrap .contents {
 			padding: 38px 71px; 
@@ -54,6 +51,10 @@
 		form .contents .cg {
 			color: #24a37e;
 		}
+		form .contents .stitle img {
+			width: 27px;
+			margin-left: 10px;
+		}
 		form .contents > div > div > div > table {
 			border-collapse: collapse;
 			font-size: 15px;
@@ -74,6 +75,7 @@
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
 			border: 1px solid #bee2da;
+		    border-bottom: 2px solid #bfe3db;
 		}
 		form .contents .bsc tr td {
 			color: #0e8a67;
@@ -81,13 +83,16 @@
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
 		}
-		form .contents ul li {
+		form .contents .bsc tr td label.file {
+			text-decoration: underline;
+		}
+		form .contents .title ul li {
 			float: left;
 			text-align: center;
 			font-size: 17px;
 			cursor: pointer;
 		}
-		form .contents ul li:last-child {
+		form .contents .title ul li:last-child {
 			clear: both;
 			float: none;
 			width: 0 !important;
@@ -96,138 +101,171 @@
 			height: 46px;
 			width: 100%;
 			border-radius: 35px;
+			background-color: #d3d3d3;
 		}
 		form .contents > .fxd .title ul li {
-			width: 20%;
+			width: 25%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
+			border-radius: 35px;
 		}
 		form .contents > .fxd .title ul li > label {
 			display: inline-block;
     		width: 100%;
     		cursor: pointer;
 		}
-		form .contents > .fxd .title ul li:after {
-		    border-color: #d3d3d3 #d3d3d3 #d3d3d3 #d3d3d3;
-		    border-style: solid;
-		    border-width: 23px 14px;
-		    width: 0;
-		    height: 0;
-		    display: inline-block;
-		    content: "";
-		    position: absolute;
-		}
-		form .contents > .fxd .title ul li:nth-child(5):after,
-		form .contents > .fxd .title ul li:last-child:after {
-			display: none;
-		}
-		form .contents > .fxd .title ul li.on:after {
-			display: none;
-		}
-		form .contents > .fxd .title ul li:hover:after {
-			border-color: #d3d3d3 #d3d3d3 #d3d3d3 #b9b9b9;
-		}
-		.liAfter:after {
-			border-color: #b9b9b9 #b9b9b9 #b9b9b9 #b9b9b9 !important;
-		}
-		.liAfterNone:after {
-			display: none !important;
-		}
-		.liArrow {
-			background-image: url('http://172.10.122.10:8888/images/step_arrow.png');
-			background-repeat: no-repeat;
-		}
-		form .contents > .fxd .title ul li:first-child {
-			border-radius: 35px 0 0 35px;
-		}
-		form .contents > .fxd .title ul li:nth-last-child(2)  {
-			border-radius: 0 35px 35px 0;
-		}
-		form .contents > .fxd .title ul li.on  {
+		form .contents > .fxd .title ul li.on,
+		form .contents > .fxd .title ul li:hover  {
 			color: #fff  !important;
 			background-color: #4c3d92;
 		}
-		#detailForm .stitle ul {
-			width: 100%;
-		}
-		#detailForm .stitle ul li {
-			width: 33.3%;
-		}
-		#detailForm .stitle ul li a {
-			color: #a3a3a4;
-			padding-bottom: 11px;
-			display: block;
-    		border-bottom: 4px solid #c3c3c3;
-		}
-		#detailForm .stitle ul li a:hover {
-			color: #000;
-			border-bottom: 4px solid #6a5bae;
-		}
-		#detailForm .stitle ul li a.on {
-			color: #000;
-			border-bottom: 4px solid #6a5bae;
-		}
 		form .contents .dtl {
+			width: 997px;
+			font-size: 15px;
+			border-collapse: collapse;
+			font-weight: 300;
 			overflow: hidden;
+			border-top: 4px solid #6a5baf;
+		}
+		form .contents .dtl thead {
+			background-color: #e1dff5;
+			float: left;
+			width: 997px;
+		}
+		form .contents .dtl thead tr {
+			display: table;
+			width: 997px;
 		}
 		form .contents .dtl tbody {
+			width: 997px;
+			height: 532px;
 			overflow-y: auto;
 			overflow-x: hidden;
-			height: 547px;
 			float: left;
+			border-bottom: 2px solid #c4c4c4;
 		}
 		form .contents .dtl tbody tr {
-			border: 1px solid #ebe9ee;
+			display: table;
+			width: 997px;
+			cursor: pointer;
 		}
-		form .contents .dtl td {
-			color: #000;
+		form .contents .dtl tbody tr:hover {
+			background-color: #ddf0ec
 		}
-		form .contents .dtl tr td:first-child {
-			background-color: #e1dff5;
-			border-right: 1px solid #ebe9ee;
-			color: #535353;
+		form .contents .dtl tbody tr td:nth-child(3) {
+			font-weight: 400;
 		}
-		form .contents .dtl tr td:last-child {
-			width: 757px;
+		form .contents .dtl thead th, form .contents .dtl tbody tr td {
+			padding: 10px 7px;
+			border: 1px solid #edebef;
+			text-align: center;
+		}
+		form .contents .dtl tbody tr td {
+			font-weight: 200;
+		}
+		form .contents .dtl thead th:first-child,
+		form .contents .dtl tbody td:first-child {
+			width: 51px;
+			padding: 0;
+		}
+		form .contents .dtl thead th:nth-child(2),
+		form .contents .dtl tbody td:nth-child(2),
+		form .contents .dtl thead th:nth-child(6),
+		form .contents .dtl tbody td:nth-child(6) {
+			width: 51px;
+		}
+		form .contents .dtl thead th:nth-child(3),
+		form .contents .dtl tbody td:nth-child(3) {
+			width: 170px;
+		}
+		form .contents .dtl thead th:nth-child(4),
+		form .contents .dtl tbody td:nth-child(4) {
+			width: 216px;
+		}
+		form .contents .dtl thead th:nth-child(5),
+		form .contents .dtl tbody td:nth-child(5),
+		form .contents .dtl thead th:nth-child(7),
+		form .contents .dtl tbody td:nth-child(7) {
+			width: 109px;
+		}
+		form .contents .dtl thead th:nth-child(8),
+		form .contents .dtl tbody td:nth-child(8) {
+			width: 78px;
+		}
+		form .contents .dtl tbody tr td > span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 84%;
+			margin: 0 auto;
+		}
+		form .contents .dtl tbody tr td img {
+			width: 25px;
+			vertical-align: top;
+		}
+		.detailList li {
+			float: left;
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+		}
+		.detailList li:nth-child(2n-1) {
+			width: 82px;
+			font-weight: 400;
+			color: #158566;
+		}
+		.detailList li:nth-child(2n) {
+			width: 316px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: 200;
+			color: #21a17e;
+		}
+		.detailList li:last-child {
+			width: 734px;
+   			height: 56px;
+   			word-break: break-all;
+   			white-space: normal;
+   			overflow: auto;
+   			line-height: 1.5;
 		}
 	</style>
 	<script>
 		$(document).ready(function() {
 			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
 			var length = $('form .contents > .fxd .title ul li').length;
-			$('form .contents > .fxd .title ul li:nth-child(' + index + ')').toggleClass("liArrow");
-		
-			for(var i = 0; i < length; i++) {
-				if(i < index) {
-					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
-					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
-				}
-			}
 			
 			$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
 			
-			$('form .contents > .fxd .title ul li').mouseover(function(){ 
-				var index2 = $('form .contents > .fxd .title ul li').index(this);
-				for(var i = (index - 1); i <= index2; i++) {
-					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
-						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#b9b9b9');
-					} 
-					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
-						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').addClass('liAfter');
-					}
+			var html = '';
+			$('#detailForm table tbody tr').click(function() {
+				if($(this).attr('class') != "viewOpen") {
+					html = '<div style="width:997px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
+					       + '<div style="margin: 5px 71px;">'
+					       + '<ul class="detailList">'
+					       + '<li>제품상세</li>'
+					       + '<li title="제품상세 내용 표출 1P/8C, 32GB*2EA">제품상세 내용 표출 1P/8C, 32GB*2EA</li>'
+					       + '<li>계약기간</li>'
+					       + '<li title="2020.12.12~2021.12.12">2020.12.12~2021.12.12</li>'
+					       + '<li>비고</li>'
+					       + '<li title="비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출">비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출</li>'
+						   + '</ul>'
+					       + '</div>'
+					       + '</div>';
+					$(this).after(html);
+					$(this).attr('class', 'viewOpen');
+				} else {
+					$(this).removeClass('viewOpen');
+					$(this).next().remove();
 				}
 			});
 			
-			$('form .contents > .fxd .title ul li').mouseout(function(){ 
-				var index2 = $('form .contents > .fxd .title ul li').index(this);
-				for(var i = (index - 1); i <= index2; i++) {
-					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
-						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#d3d3d3');
-					}
-					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
-					 	$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').removeClass('liAfter'); 
-					}
+			$('#detailForm table tr').each(function(index, item) {
+				if(index != 0) {
+					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
 			});
 		});
@@ -255,7 +293,7 @@
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
-					<div class="title"><label class="ftw500">프로젝트 상세정보</label></div>
+					<div class="title"><label class="ftw500">유지보수 상세정보</label></div>
 					<div>
 						<div class="stitle cg">기본정보</div>
 						<div id="basicForm">
@@ -266,19 +304,43 @@
 								</tr>
 								<tr>
 									<td>고객사</td>
-									<td>미래에셋생명 / 담당자: 홍길동</td>
+									<td>미래에셋생명</td>
 								</tr>
 								<tr>
-									<td>영업담당자</td>
+									<td>고객사담당자</td>
+									<td>홍길동 / 차장 / 010-9999-8888 / asdfg@naver.com</td>
+								</tr>
+								<tr>
+									<td>관리담당자</td>
 									<td>홍길동</td>
 								</tr>
 								<tr>
 									<td>지원담당자</td>
-									<td>홍길동</td>
+									<td>김규민</td>
 								</tr>
 								<tr>
-									<td>사업기간</td>
-									<td>2019.12.12 ~ 2020.12.12</td>
+									<td>영업담당자</td>
+									<td>김규민</td>
+								</tr>
+								<tr>
+									<td>유지보수 금액</td>
+									<td>100,000,000</td>
+								</tr>
+								<tr>
+									<td>결제조건</td>
+									<td>당월 25일</td>
+								</tr>
+								<tr>
+									<td>유지보수 기간</td>
+									<td>2019-12-12 ~ 2020-12-12</td>
+								</tr>
+								<tr>
+									<td>계약일자</td>
+									<td>2020-12-02</td>
+								</tr>
+								<tr>
+									<td>보증증권 유무</td>
+									<td>Y <label class="file">보증증권.pdf</label></td>
 								</tr>
 								<tr>
 									<td>비고</td>
@@ -286,94 +348,172 @@
 								</tr>
 							</table>
 						</div>
-						<div class="btnWrap lt">
-							<div class="floatL">
-								<a title="계산서 발행 요청" href="/project/requestBill.do"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<a title="매입금 지급 요청" href="/project/requestPurchase.do"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a>
-								<a title="판매 품의서" href="/project/viewApproval.do"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_BD" title="/project/detail/bidding.do"><label>입찰</label></li>
-							<li id="LI_TOPBar_CT" title="/project/detail/contract.do"><label>계약</label></li>
-							<li id="LI_TOPBar_OD" class="on" title="/project/detail/order.do"><label>발주</label></li>
-							<li><label>수행</label></li>
-							<li><label>완료</label></li>
+							<li id="LI_TOPBar_PD" class="on" title="/maintenance/detail/prodInfo.do"><label>제품정보</label></li>
+							<li id="LI_TOPBar_SL" title="/project/detail/contract.do"><label>매출정보</label></li>
+							<li id="LI_TOPBar_BC" title="/project/detail/order.do"><label>백계약정보</label></li>
+							<li><label>매입정보</label></li>
 							<li></li>
 						</ul>
 					</div>
 					<div id="detailForm">
-						<div class="stitle mgb0">
-							<ul>
-								<li><a>사전작업/납품</a></li>
-								<li><a class="on">설치/구축</a></li>
-								<li><a>수행 일지</a></li>
-								<li></li>
-							</ul>
-						</div>
+						<div class="stitle cg colorBlack">제품정보<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" /></div>
 						<div class="floatC">
 							<table class="dtl">
-								<tr>
-									<td>설치장소</td>
-									<td>미래에셋 생명 데이터센터</td>
-								</tr>
-								<tr>
-									<td>구분</td>
-									<td>신규</td>
-								</tr>
-								<tr>
-									<td>모델명</td>
-									<td>VNX5400</td>
-								</tr>
-								<tr>
-									<td>시리얼번호</td>
-									<td>CKM00144500261</td>
-								</tr>
-								<tr>
-									<td>납품일</td>
-									<td>2019.12.12 ~ 2020.12.12</td>
-								</tr>
-								<tr>
-									<td>버전</td>
-									<td>05.33.006.5.102</td>
-								</tr>
-								<tr>
-									<td>주요스펙</td>
-									<td>Disk: 400GB Flash Drives x 25EA DA: max 40EA</td>
-								</tr>
-								<tr>
-									<td>캐쉬메모리</td>
-									<td>32GB</td>
-								</tr>
-								<tr>
-									<td>포트정보</td>
-									<td>FC Ports: 8Gbps FC x 4 Ports</td>
-								</tr>
-								<tr>
-									<td>관리아이피</td>
-									<td>192.168.1.162.50, 192.168.162.52, 192.168.162.53</td>
-								</tr>
-								<tr>
-									<td>장비유형</td>
-									<td>Block</td>
-								</tr>
-								<tr>
-									<td>기타</td>
-									<td>특이사항 없음</td>
-								</tr>
+								<thead class="ftw400">
+									<tr>
+										<th scope="row">선택</th>
+										<th scope="row">No</th>
+										<th scope="row">제품</th>
+										<th scope="row">시리얼번호</th>
+										<th scope="row">단가</th>
+										<th scope="row">수량</th>
+										<th scope="row">합계</th>
+										<th scope="row">부가세포함</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td></td>
+										<td>1</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>2</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>3</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>4</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>5</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>6</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>7</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>8</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>9</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>10</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>11</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>12</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>13</td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>5</td>
+										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
+										<td>Y</td>
+									</tr>
+								</tbody>
 							</table>
 						</div>
 						<div class="btnWrap rt">
 							<div class="floatR">
-								<button value="수행일지"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
-								<button value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
 								<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-								<button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button>
 								<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

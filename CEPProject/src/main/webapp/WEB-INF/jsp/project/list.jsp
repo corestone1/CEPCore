@@ -242,7 +242,7 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
-
+		
 	</script>
 </head>
 <body>
