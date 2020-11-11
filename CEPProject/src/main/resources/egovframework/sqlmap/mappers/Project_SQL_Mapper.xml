@@ -16,12 +16,12 @@
 
 			SELECT
 				PJ_KEY
-				, AC_KEY
+				, (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) AS acKey
 				, PJ_NM
 				, PJ_START_DT
 				, PJ_END_DT
 				, PJ_STATUS_CD
-				, PJ_SALE_EMP_KEY
+				, (SELECT e.EMP_NM FROM CMM_EMPLOYEE_TB e WHERE e.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) AS pjSaleEmpKey
 			FROM PJ_MAIN_TB
 			WHERE 1=1
 			<!-- <if test="searchKeyword != null and searchKeyword != ''">

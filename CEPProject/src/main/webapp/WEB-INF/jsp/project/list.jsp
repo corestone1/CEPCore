@@ -242,7 +242,7 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
-
+		
 	</script>
 </head>
 <body>
@@ -297,7 +297,7 @@
 		            					<%-- <c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/> --%>
 		            					<c:out value="${result.pjKey}"/>
 		            				</td>
-		            				<td align="center" class="listtd"><a href="javascript:fn_egov_select('<c:out value="${result.acKey}"/>')"><c:out value="${result.title}"/></a></td>
+		            				<td align="left" class="listtd"><c:out value="${result.acKey}"/>&nbsp;</td>
 		            				<td align="left" class="listtd"><c:out value="${result.pjNm}"/>&nbsp;</td>
 		            				<td align="left" class="listtd"><c:out value="${result.pjStartDt}"/>&nbsp;</td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>

@@ -189,7 +189,7 @@
 
 			$('#pl tr').click(function() {
 				/* location.href = "/mtDetail.do"; */
-				location.href = "#";
+				location.href = "/maintenance/detail/prodInfo.do";
 			});
 		});
 

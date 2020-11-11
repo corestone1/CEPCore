@@ -1,6 +1,5 @@
 package com.cep.maintenance.web;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,5 +234,11 @@ public class MaintenanceController {
      return modelAndView; 
 	}
 	
-	
+	@RequestMapping(value="/detail/prodInfo.do")
+	public String selectMtDetailProdInfo(MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/detail/prodInfo";
+	}
 }

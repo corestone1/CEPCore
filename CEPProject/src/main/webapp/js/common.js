@@ -116,7 +116,7 @@ function removeCommas(x) {
 }
 
 	
-$(function() {
+$(window).load(function() {
 	$( "#fromDt" ).datepicker({
 		dateFormat: 'yy-mm-dd',
 		changeMonth: true,
@@ -135,3 +135,22 @@ $(function() {
 		}
     });
 });
+function modalDate() {
+	$( "#fromDt" ).datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		numberOfMonths: 1,
+		onSelect: function( selectedDate ) {
+			$( "#toDt" ).datepicker( "option", "minDate", selectedDate );
+		}
+	});
+	
+	$( "#toDt" ).datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		numberOfMonths: 1,
+		onSelect: function( selectedDate ) {
+			$( "#fromDt" ).datepicker( "option", "maxDate", selectedDate );
+		}
+    });
+}

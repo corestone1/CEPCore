@@ -53,6 +53,9 @@ body * {
 .veralignT {
 	vertical-align: top;
 }
+.veralignM {
+	vertical-align: middle;
+}
 .mgauto {
 	margin: 0 auto;
 }
@@ -93,7 +96,7 @@ body * {
 	color: #fff;
 }
 .colorBlack {
-	color: #000;
+	color: #000 !important;
 }
 .positionFixed {
 	position: fixed;

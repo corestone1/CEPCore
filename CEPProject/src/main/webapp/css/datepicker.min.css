@@ -21,16 +21,16 @@
 	font-size: 100%;
 	list-style: none;
 }
-.ui-helper-clearfix:before,
-.ui-helper-clearfix:after {
+.ui-date-picker.ui-helper-clearfix:before,
+.ui-date-picker.ui-helper-clearfix:after {
 	content: "";
 	display: table;
 	border-collapse: collapse;
 }
-.ui-helper-clearfix:after {
+.ui-date-picker.ui-helper-clearfix:after {
 	clear: both;
 }
-.ui-helper-clearfix {
+.ui-date-picker.ui-helper-clearfix {
 	min-height: 0; /* support: IE7 */
 }
 .ui-helper-zfix {
@@ -71,13 +71,13 @@
 ----------------------------------*/
 
 /* Overlays */
-.ui-widget-overlay {
+/* .ui-widget-overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-}
+} */
 .ui-accordion .ui-accordion-header {
 	display: block;
 	cursor: pointer;
@@ -110,7 +110,7 @@
 	left: 0;
 	cursor: default;
 }
-.ui-button {
+/*.ui-button {
 	display: inline-block;
 	position: relative;
 	padding: 0;
@@ -120,7 +120,7 @@
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-}
+/*}
 .ui-button,
 .ui-button:link,
 .ui-button:visited,
@@ -129,10 +129,10 @@
 	text-decoration: none;
 }
 /* to make room for the icon, a width needs to be set here */
-.ui-button-icon-only {
+/* .ui-button-icon-only {
 	width: 2.2em;
 }
-/* button elements seem to need a little more width */
+button elements seem to need a little more width
 button.ui-button-icon-only {
 	width: 2.4em;
 }
@@ -143,7 +143,7 @@ button.ui-button-icons-only {
 	width: 3.7em;
 }
 
-/* button text element */
+button text element
 .ui-button .ui-button-text {
 	display: block;
 	line-height: normal;
@@ -168,12 +168,12 @@ button.ui-button-icons-only {
 	padding-left: 2.1em;
 	padding-right: 2.1em;
 }
-/* no icon support for input elements, provide padding by default */
+no icon support for input elements, provide padding by default
 input.ui-button {
 	padding: .4em 1em;
 }
 
-/* button icon element(s) */
+button icon element(s)
 .ui-button-icon-only .ui-icon,
 .ui-button-text-icon-primary .ui-icon,
 .ui-button-text-icon-secondary .ui-icon,
@@ -198,22 +198,22 @@ input.ui-button {
 	right: .5em;
 }
 
-/* button sets */
+button sets
 .ui-buttonset {
 	margin-right: 7px;
 }
 .ui-buttonset .ui-button {
 	margin-left: 0;
 	margin-right: -.3em;
-}
+} */
 
 /* workarounds */
 /* reset extra padding in Firefox, see h5bp.com/l */
-input.ui-button::-moz-focus-inner,
+/* input.ui-button::-moz-focus-inner,
 button.ui-button::-moz-focus-inner {
 	border: 0;
 	padding: 0;
-}
+} */
 .ui-datepicker {
 	width: 17em;
 	padding: .2em .2em 0;
@@ -419,14 +419,14 @@ a.ui-datepicker-prev.ui-corner-all::before{
 	border-right-width: 0;
 	border-left-width: 1px;
 }
-.ui-dialog {
+/* .ui-dialog {
 	overflow: hidden;
 	position: absolute;
 	top: 0;
 	left: 0;
 	padding: .2em;
 	outline: 0;
-}
+} 
 .ui-dialog .ui-dialog-titlebar {
 	padding: .4em 1em;
 	position: relative;
@@ -475,7 +475,7 @@ a.ui-datepicker-prev.ui-corner-all::before{
 	right: -5px;
 	bottom: -5px;
 	background-position: 16px 16px;
-}
+}*/
 .ui-draggable .ui-dialog-titlebar {
 	cursor: move;
 }
@@ -859,7 +859,7 @@ body .ui-tooltip {
 
 /* Component containers
 ----------------------------------*/
-.ui-widget {
+.ui-datepicker.ui-widget {
 	font-family: Verdana,Arial,sans-serif;
 	font-size: 1.1em;
 }
@@ -873,9 +873,9 @@ body .ui-tooltip {
 	font-family: Verdana,Arial,sans-serif;
 	font-size: 1em;
 }
-.ui-widget-content {
-  margin-top:4px;
-  font-size: 12px;
+.ui-datepicker.ui-widget-content {
+  	margin-top:4px;
+  	font-size: 12px;
     font-size: 0.75rem;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
@@ -1018,10 +1018,10 @@ body .ui-tooltip {
 ----------------------------------*/
 
 /* states and images */
-.ui-icon {
+/* .ui-icon {
 	width: 30px;
 	height: 30px;
-}
+} */
 
 /* positioning */
 .ui-icon-blank { background-position: 16px 16px; }
@@ -1234,10 +1234,10 @@ a.ui-corner-all{
   border-radius: 50%;
 }
 /* Overlays */
-.ui-widget-overlay {
+/* .ui-widget-overlay {
 	opacity: .3;
-	filter: Alpha(Opacity=30); /* support: IE8 */
-}
+	filter: Alpha(Opacity=30); support: IE8
+} */
 .ui-widget-shadow {
 	margin: -8px 0 0 -8px;
 	padding: 8px;

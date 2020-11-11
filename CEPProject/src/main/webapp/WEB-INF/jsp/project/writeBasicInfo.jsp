@@ -63,7 +63,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -93,10 +93,10 @@
 			outline: none;
 			background-color: #f6f7fc;
 		}
-		.popContainer .contents input[class="calendar"] {
+		.popContainer .contents input[class^="calendar"] {
 			width: 177px;
 			height: 40px;
-			background-image: url('./images/calendar_icon.png');
+			background-image: url('http://172.10.122.10:8888/images/icon_calendar.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
@@ -124,6 +124,9 @@
 			width: 100%;
 			font-size: 14px;
 		} 
+		.ui-datepicker.ui-widget-content {
+			z-index: 102 !important;
+		 }
 	</style>
 	<script>
 		function fn_addBiddingView(){
@@ -136,6 +139,29 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		$(document).ready(function() {
+			
+			$("body").delegate("#fromDt", "focusin", function(){
+				$(this).datepicker({
+					dateFormat: 'yy-mm-dd',
+					changeMonth: true,
+					numberOfMonths: 1,
+					onSelect: function( selectedDate ) {
+						$( "#toDt" ).datepicker( "option", "minDate", selectedDate );
+					}
+				});
+			});
+			$("body").delegate("#toDt", "focusin", function(){
+				$(this).datepicker({
+					dateFormat: 'yy-mm-dd',
+					changeMonth: true,
+					numberOfMonths: 1,
+					onSelect: function( selectedDate ) {
+						$( "#fromDt" ).datepicker( "option", "maxDate", selectedDate );
+					}
+			    });
+			}); 
+		});
 	</script>
 </head>
 <body>
@@ -194,8 +220,8 @@
 					<tr>
 						<td class="tdTitle">사업기간</td>
 						<td class="tdContents">
-							<input type="text" placeholder="from" class="calendar" /> ~ 
-							<input type="text" placeholder="to" class="calendar" />
+							<input type="text" placeholder="from" class="calendar" id="fromDt"/> ~ 
+							<input type="text" placeholder="to" class="calendar" id="toDt"/>
 						</td>
 					</tr>
 					<tr>

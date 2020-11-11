@@ -14,9 +14,9 @@
 	z-index: 1;
 }
 .ui-button {
-	font-size: 0px;
-	width: 21px;
-	height: 21px;
+	font-size: 0px !important;
+	width: 21px !important;
+	height: 21px !important;
 	background-image: url('/images/popup_close.png');
 	background-repeat: no-repeat;
 	background-position: 95% 50%;
