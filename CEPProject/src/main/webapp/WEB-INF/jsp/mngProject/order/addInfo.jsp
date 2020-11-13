@@ -114,12 +114,12 @@
 		.popContainer .contents2 > div:first-child {
 			margin: 0 54px 0 45px;
 		}
-		.popContainer .contents2 > div:first-child table:first-child {
+		.popContainer .contents2 .subject {
 			width: 811px;
 			background-color: #f6f7fc;
 			position: fixed;
 		}
-		.popContainer .contents2 > div:first-child table:nth-child(2) {
+		.popContainer .contents2 .prodTable > table {
 			padding-top: 64px;
 		}
 		.popContainer .contents2 > div.btnWrap {
@@ -188,6 +188,37 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		function fn_addInfoTable() {
+			var type = "prod";
+			var originLength = $('#'+type+'Length').val()*1;
+	    	$('#'+type+'Length').val($('#'+type+'Length').val()*1 + 1);
+	    	
+	    	var clones = $('.'+type+'Table').clone();
+	    	var clone = new jQuery.fn.init(clones[clones.length - 1]);
+			
+	    	var str = "";
+	    	var tdArr = new Array();
+	    	var tr = $('.'+type+'Table tr');
+	    	var td = tr.children();
+	    	
+	    	td.each(function(i) {
+	    		if(td.eq(i).children().attr('name') != null && td.eq(i).children().attr('name') != undefined && td.eq(i).children().attr('name') != "" && td.eq(i).children().attr('name').length != 0) {
+	    			tdArr.push(td.eq(i).children().attr('name'));
+	    		}
+	    	});
+
+	    	for(var i = 0; i < tdArr.length; i++) {
+	    		var splitName = tdArr[i].split('.')[1];
+				var name = type + 'List[' + ($('#'+type+'Length').val()*1) + '].';
+				console.log(name + splitName);
+				
+				clone.find('input[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
+				clone.find('textarea[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
+				clone.find('select[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
+	    	}
+	    	
+	    	$('#'+type+'Wrap').append(clone);
+		}
 	</script>
 </head>
 <body>
@@ -202,140 +233,104 @@
 				<li >발주 정보</li>
 			</ul>
 		</div>
-		<div class="contents">
-			<div>
-				<table>
-					<tr>
-						<td class="tdTitle">프로젝트명</td>
-						<td class="tdContents" colspan="3"><input type="text" class="search" style="width: 404px;"/></td>
-						<td class="tdTitle">고객사</td>
-						<td class="tdContents"><input type="text"  /></td>
-					</tr>
-					<tr>
-						<td class="tdTitle">발주일자</td>
-						<td class="tdContents">
-							<input type="text" value="2020-12-12" class="calendar" />	
-						</td>
-						<td class="tdTitle">입고일자</td>
-						<td class="tdContents">
-							<input type="text" value="2020-12-12" class="calendar" />	
-						</td>
-						<td class="tdTitle">담당자</td>
-						<td class="tdContents">
-							<input type="text" width="100px" />	
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		<div class="contents2">
-			<div>
-				<table>
-					<tr>		
-						<td class="subTitle" style="border-top: none;">
-							<label class="ftw400">제품정보</label>
-						</td>
-						<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" /></td>
-					</tr>
-				</table>
-				<table>
-					<tr>
-						<td class="tdTitle">제품</td>
-						<td class="tdContents">
-							<input type="text" class="search" />	
-						</td>
-						<td class="tdTitle">합계</td>
-						<td class="tdContents">
-							<input type="text" />	
-						</td>
-						<td class="tdTitle">수량</td>
-						<td class="tdContents">
-							<input type="text" style="width: 75px;"/>	
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">단가</td>
-						<td class="tdContents">
-							<input type="text" />
-						</td>	
-						<td class="tdTitle">부가세 포함</td>
-						<td class="tdContents">
-							<input type="radio" class="tCheck" name="hasVAT" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="hasVAT" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-						</td>	
-						<td class="tdTitle">계산서 발행 후</td>
-						<td class="tdContents">
-							<input type="text" style="width: 27px;"/>&nbsp;&nbsp;일 결제
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">매입처</td>
-						<td class="tdContents">
-							<input type="text" class="search" />	
-						</td>
-						<td class="tdTitle floatR">매입구분</td>
-						<td class="tdContents" colspan="3">
-							<input type="text"  value="H/S" readonly="readonly"/>	
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">제품상세</td>
-						<td class="tdContents" colspan="5"><textarea></textarea></td>
-					</tr>
-				</table>
-				<table>
-					<tr>
-						<td class="tdTitle">제품</td>
-						<td class="tdContents">
-							<input type="text" class="search" />	
-						</td>
-						<td class="tdTitle">합계</td>
-						<td class="tdContents">
-							<input type="text" />	
-						</td>
-						<td class="tdTitle">수량</td>
-						<td class="tdContents">
-							<input type="text" style="width: 75px;"/>	
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">단가</td>
-						<td class="tdContents">
-							<input type="text" />
-						</td>	
-						<td class="tdTitle">부가세 포함</td>
-						<td class="tdContents">
-							<input type="radio" class="tCheck" name="hasVAT" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="hasVAT" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-						</td>	
-						<td class="tdTitle">계산서 발행 후</td>
-						<td class="tdContents">
-							<input type="text" style="width: 27px;"/>&nbsp;&nbsp;일 결제
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">매입처</td>
-						<td class="tdContents">
-							<input type="text" class="search" />	
-						</td>
-						<td class="tdTitle floatR">매입구분</td>
-						<td class="tdContents" colspan="3">
-							<input type="text"  value="H/S" readonly="readonly"/>	
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">제품상세</td>
-						<td class="tdContents" colspan="5"><textarea></textarea></td>
-					</tr>
-				</table>
-			</div>
-			<div class="btnWrap floatR">
-				<div class="floatR" onclick="fn_preBiddingView();">
-					<button ><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+		<form action="/" id="uploadForm" method="post"> 
+			<input type="hidden" id="prodLength" name="prodLength" value="" />
+			<div class="contents">
+				<div>
+					<table>
+						<tr>
+							<td class="tdTitle">프로젝트명</td>
+							<td class="tdContents" colspan="3"><input type="text" class="search" style="width: 404px;"/></td>
+							<td class="tdTitle">고객사</td>
+							<td class="tdContents"><input type="text"  /></td>
+						</tr>
+						<tr>
+							<td class="tdTitle">발주일자</td>
+							<td class="tdContents">
+								<input type="text" value="2020-12-12" class="calendar" />	
+							</td>
+							<td class="tdTitle">입고일자</td>
+							<td class="tdContents">
+								<input type="text" value="2020-12-12" class="calendar" />	
+							</td>
+							<td class="tdTitle">담당자</td>
+							<td class="tdContents">
+								<input type="text" width="100px" />	
+							</td>
+						</tr>
+					</table>
 				</div>
-				<div class="floatN floatC"></div>
 			</div>
-		</div>	
+			<div class="contents2">
+				<div id="prodWrap">
+					<table class="subject">
+						<tr>		
+							<td class="subTitle" style="border-top: none;">
+								<label class="ftw400">제품정보</label>
+							</td>
+							<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+						</tr>
+					</table>
+					<div class="table ftw400 prodTable">
+						<table>
+							<tr>
+								<td class="tdTitle">제품</td>
+								<td class="tdContents">
+									<input type="text" class="search" name="prodList[0].orderPmFkKey" />	
+								</td>
+								<td class="tdTitle">합계</td>
+								<td class="tdContents">
+									<input type="text" name="prodList[0].orderSum"/>	
+								</td>
+								<td class="tdTitle">수량</td>
+								<td class="tdContents">
+									<input type="text" style="width: 75px;" name="prodList[0].orderQuantity" />	
+								</td>
+							</tr>
+							<tr>
+								<td class="tdTitle">단가</td>
+								<td class="tdContents">
+									<input type="text" name="prodList[0].orderUprice" />
+								</td>	
+								<td class="tdTitle">부가세 포함</td>
+								<td class="tdContents">
+									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								</td>	
+								<td class="tdTitle">계산서 발행 후</td>
+								<td class="tdContents">
+									<input type="text" style="width: 27px;" name="prodList[0].orderPayTerms" />&nbsp;&nbsp;일 결제
+								</td>
+							</tr>
+							<tr>
+								<td class="tdTitle">매입처</td>
+								<td class="tdContents">
+									<input type="text" class="search"  name="prodList[0].orderAcKey" />	
+								</td>
+								<td class="tdTitle floatR">매입구분</td>
+								<td class="tdContents" colspan="3">
+									<select id="orderCategory" name="prodList[0].orderCategory">
+										<option>매입구분</option>
+										<option value="HW">하드웨어</option>
+										<option value="SW">소프트웨어</option>
+									</select>	
+								</td>
+							</tr>
+							<tr>
+								<td class="tdTitle">제품상세</td>
+								<td class="tdContents" colspan="5"><textarea name="prodList[0].remark"></textarea></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="btnWrap floatR">
+					<div class="floatR" onclick="fn_preBiddingView();">
+						<button ><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+					</div>
+					<div class="floatN floatC"></div>
+				</div>
+			</div>	
+		</form>
 	</div>
 </body>
 </html>
