@@ -265,9 +265,9 @@
         					<form:option value="" label="수행" />
         					<form:option value="" label="완료" />
         				</form:select> --%>
-						<input type="text" class="calendar" placeholder="from" id="fromDt"/>
+						<input type="text" class="calendar fromDt" placeholder="from" id=""/>
 						<label> ~ </label>
-						<input type="text" class="calendar" placeholder="to" id="toDt"/>
+						<input type="text" class="calendar toDt" placeholder="to" id=""/>
 						<input type="text" class="search" placeholder="프로젝트명" />
 						<span class="veralignT"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>

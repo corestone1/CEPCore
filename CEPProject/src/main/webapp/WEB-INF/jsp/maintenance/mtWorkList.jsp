@@ -264,7 +264,7 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">유지보수 작업목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
+						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>		
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
@@ -313,7 +313,7 @@
 						<c:forEach var="result" items="${resultList}" varStatus="status">						
 							<tr>
 								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${result.rowNum}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${result.rowNum}"/>" class="cursorP"/>
+									<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 								</td>
 								<td><c:out value="${status.count}"/></td>
 								<td><c:out value="${result.mtWorkKey}"/></td>

@@ -51,7 +51,7 @@
 			font-size: 15px;
 			margin-bottom: 3px;
 		}
-		.contentsWrap .contents .top input[class="calendar"] {
+		.contentsWrap .contents .top input[class^="calendar"] {
 			width: 177px;
 			height: 40px;
 			background-image: url('/images/calendar_icon.png');
@@ -193,19 +193,19 @@
 			});
 		});
 
-		/* function fn_addView(){
-			var url = '/writeProject.do';
+		function fn_addView(){
+			var url = '/maintenance/writeMtBasicInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-		} */
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
 		
-		function fn_addView(){
-			var url = '/maintenance/writeMtBasicInfoView.do';
+		function fn_addView1(){
+			var url = '/maintenance/writeMtBackOrderInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 
@@ -259,11 +259,12 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">유지보수 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
+						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView1();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
-						<form:input path="fromDate" type="text" placeholder="계약일자(from)" class="calendar" /> ~ <form:input path="toDate" type="text" placeholder="계약일자(to)" class="calendar" />
+						<form:input path="fromDate" type="text" placeholder="계약일자(from)" class="calendar fromDt" /> ~ <form:input path="toDate" type="text" placeholder="계약일자(to)" class="calendar toDt" />
 						<!-- <select name="searchSaleEmpKey"> -->
 						<form:select path="searchSaleEmpKey">
 							<!-- <option value=""/>영업담당</option> -->
