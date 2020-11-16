@@ -4,11 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>백계약정보</title>
+	<title>유지보수 작업 발주추가</title>
 	<style>
 		.firstTd {			
 			border-top: 2px solid #e5e5e5;	
 			padding-top: 6px;
+		}
+		.lastTd {			
+			padding-bottom: 5px;
 		}
 		.popContainer .top {
 			width: 100%;
@@ -111,23 +114,12 @@
 		.popContainer td.tdContents {
 			width: 174px;
 			font-size: 14px;
-		} 				
-		
-				
+		} 							
 		.popContainer .contents tr:nth-child(1) td {
 			padding-top: 10px;
 			padding-bottom: 5px;
 			
 		} 
-		.popContainer .contents tr:nth-child(4) td {
-			
-			padding-bottom: 5px;
-			
-		} 
-		/* .popContainer .contents tr:nth-child(4) td {
-			padding-top: 20px;
-			padding-bottom: 5px;
-		}  */
 		.popContainer .contents td.subTitle {
 			font-size: 18px;
 			padding-right: 20px;
@@ -135,50 +127,6 @@
 			padding-top: 20px;
 			padding-bottom: 5px;
 		}	
-		/* 
-		.popContainer .contents2 > div:first-child {
-			margin: 0 54px 0 45px;
-		}
-		.popContainer .contents2 > div:first-child table:first-child {
-			width: 811px;
-			background-color: #f6f7fc;
-			position: fixed;
-		}
-		.popContainer .contents2 > div:first-child table:nth-child(2) {
-			padding-top: 64px;
-		}
-		.popContainer .contents2 > div.btnWrap {
-			margin: 0px 54px 15px 0px;
-		}
-		.popContainer .contents2 td.subTitle {
-			font-size: 18px;
-			padding-right: 20px;
-			width: 56px;
-			padding-top: 40px;
-		}					
-		.popContainer .contents2 td.subBtn {
-			padding-top: 40px;
-		}		
-		.popContainer .contents2 tr:nth-child(1) td {
-			border-top: 2px solid #e5e5e5;	
-			padding-top: 8px;
-		} 		
-		.popContainer .contents2 tr:nth-child(2) td {		
-			padding-top: 6px;
-		} 	
-		.popContainer .contents2 tr:last-child td{
-			padding-bottom: 10px;
-		}
-		.popContainer .contents2 {
-			position: absolute;
-			width: calc(100% - 201px);
-			height: 435px;
-			top: 238px;
-			left: 201px;			
-			z-index: 3;
-			background-color: #f6f7fc;
-			overflow-y: auto;
-		} */
 		.popContainer .contents textarea {
 			width: calc(100% - 22px);
 			height: 55px;
@@ -203,8 +151,8 @@
 		}	
 	</style>
 	<script>
-		function writeMtPurchaseAmount(){
-			var url = '/maintenance/writeMtPurchaseAmountView.do';
+		function fn_addBiddingView(){
+			var url = '/project/writeAmountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -213,7 +161,6 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
-		
 		function fn_addInfoTable() {
 			
 			var type = "prod";
@@ -244,13 +191,16 @@
 	    			forArr.push(td[i].getAttribute('for')); 	    			
 	    		}
 	    	}
+	    	console.log(nameArr);
 	    	
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		var splitName = nameArr[i].split('.')[1];
 				var name = type + 'List[' + ($('#'+type+'Length').val()*1) + '].';
 				clone.find('input[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
 				clone.find('textarea[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName); 
-				clone.find('input:radio[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', name + splitName);		
+				clone.find('select[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName); 
+				/* clone.find('input:radio[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', name + splitName); */	
+					
 	    	} 
 	    	
 	    	for(var i = 0; i < idArr.length; i++) {
@@ -274,20 +224,17 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">유지보수 등록</div>
+				<div class="floatL ftw500">유지보수 작업등록</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-					<li class="colorWhite cursorP">기본정보</li>
-					<li class="colorWhite cursorP">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>					
-					<li class="colorWhite cursorP on">발주정보</li>
-					<li class="colorWhite cursorP">매입정보</li>
+				<li class="colorWhite cursorP">기본정보</li>
+				<li class="colorWhite cursorP on">발주정보</li>
 			</ul>
 		</div>
-		<!-- <form action="/" id="uploadForm" method="post">  -->
-			<input type="hidden" id="prodLength" name="prodLength"  />
+		<form action="/" id="uploadForm" method="post"> 
+			<input type="hidden" id="prodLength" name="prodLength" value="" />
 			<div class="contents">
 				<div id="prodWrap">
 					<table>
@@ -298,25 +245,21 @@
 							<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" /></td>
 						</tr>
 						<tr>
-							<td class="tdTitle">발주일자</td>
-							<td class="tdContents">
-								<input type="text" value="2020-12-12" class="calendar fromDt" />	
+							<td class="tdTitle">프로젝트명</td>
+							<td class="tdContents" colspan="3">
+								<input type="text" class="search" style="width: 411px;"/>
+								<input type="hidden" name="orderCtFkKey"/>
+								<input type="hidden" name="orderCtClass" value="M">
 							</td>
-							<td class="tdTitle">합계</td>
-							<td class="tdContents">
-								<input type="text"  />	
-							</td>
-							<td class="tdTitle">결재조건</td>
-							<td class="tdContents">
-								<input type="text"  />	
-							</td>
+							<td class="tdTitle">고객사</td>
+							<td class="tdContents"><input type="text"  /></td>
 						</tr>
 						<tr>
-							<td class="tdTitle">거래처</td>
+							<td class="tdTitle">매입처</td>
 							<td class="tdContents">
 								<input type="text" class="search" />	
 							</td>
-							<td class="tdTitle">거래처담당자</td>
+							<td class="tdTitle">매입처담당자</td>
 							<td class="tdContents">
 								<select id="sbCtYn" name="sbCtYn">
 									<option value="홍길동">홍길동</option>
@@ -329,6 +272,20 @@
 									<option value="홍길동">홍길동</option>
 									<option value="홍길동1">홍길동1</option>
 								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">발주일자</td>
+							<td class="tdContents">
+								<input type="text" value="2020-12-12" class="calendar fromDt" />	
+							</td>
+							<td class="tdTitle">입고일자</td>
+							<td class="tdContents">
+								<input type="text" value="2020-12-12" class="calendar toDt" />
+							</td>
+							<td class="tdTitle">결재조건</td>
+							<td class="tdContents">
+								<input type="text"  />	
 							</td>
 						</tr>
 						<tr>		
@@ -365,21 +322,18 @@
 									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT1" /><label for="prodList[0].hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT2" /><label for="prodList[0].hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 								</td>	
-								<td class="tdTitle">시리얼번호</td>
+								<td class="tdTitle">매입구분</td>
 								<td class="tdContents">
-									<input type="text" name="prodList[0].mtPmSerialNum" readonly="readonly"/>	
+									<select name="prodList[0].orderCategory">
+										<option>매입구분</option>
+										<option value="HW">하드웨어</option>
+										<option value="SW">소프트웨어</option>
+									</select>		
 								</td>
 							</tr>
 							<tr>
-								<td class="tdTitle">계약기간</td>
-								<td class="tdContents" colspan="5">
-									<input type="text" name="prodList[0].mtStartDt" placeholder="from" class="calendar fromDt" /> ~ 
-									<input type="text" name="prodList[0].mtEndDt" placeholder="to" class="calendar toDt" />
-								</td>
-							</tr>
-							<tr>
-								<td class="tdTitle">제품상세</td>
-								<td class="tdContents" colspan="5"><textarea name="prodList[0].mtPmDetail" readonly="readonly"></textarea></td>
+								<td class="tdTitle lastTd">제품상세</td>
+								<td class="tdContents lastTd" colspan="5"><textarea name="prodList[0].mtPmDetail" readonly="readonly"></textarea></td>
 							</tr>
 							
 						</table>
@@ -387,13 +341,12 @@
 				</div>
 				<div class="btnWrap floatR">
 					<div class="floatR" onclick="writeMtPurchaseAmount();">
-						<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button ><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
-			</div>	
-		<!-- </form> -->
-		
+			</div>		
+		</form>
 	</div>
 </body>
 </html>

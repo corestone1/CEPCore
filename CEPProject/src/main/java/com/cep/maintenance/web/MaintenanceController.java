@@ -222,11 +222,11 @@ public class MaintenanceController {
 	}
 	
 	
-	@RequestMapping(value="/writeMtPurchageAmountView.do")
-	public String writeMtPurchageAmountView(MtContractVO mtContractVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/writeMtPurchaseAmountView.do")
+	public String writeMtPurchaseAmountView(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		System.out.println("writeMtBackOrderInfoView=====");
+		System.out.println("writeMtPurchaseAmountView=====");
 		try {
 			
 			
@@ -237,12 +237,12 @@ public class MaintenanceController {
 			logger.error("writeBackOrderInfoView error", e);
 		}
 		
-		return "maintenance/writeMtPurchageAmount";
+		return "maintenance/writeMtPurchaseAmount";
 	}
 	
 	
-	@RequestMapping(value="/writeMtPurchageAmount.do", method=RequestMethod.POST)
-	public void writeMtPurchageAmount(MtContractVO mtContractVO, HttpServletRequest request) {
+	@RequestMapping(value="/writeMtPurchaseAmount.do", method=RequestMethod.POST)
+	public void writeMtPurchaseAmount(MtContractVO mtContractVO, HttpServletRequest request) {
 
 		HashMap<String, String> sessionMap = null;
 		try {
@@ -253,7 +253,7 @@ public class MaintenanceController {
 			logger.error(null, e);
 		}
 			/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
-		System.out.println("writeMtBasicInfo=====");
+		System.out.println("writeMtPurchaseAmount=====");
 //		System.out.println("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
 //		List<?> empList = null;
 //		try {
@@ -369,7 +369,27 @@ public class MaintenanceController {
 		System.out.println("writeMtWorkInfo=====");
 	}
 
+	@RequestMapping(value="/writeMtWorkOrderInfoView.do")
+	public String writeMtWorkOrderInfoView(MtWorkVO mtWorkVO,ModelMap model) throws Exception {
+
+		List<?> empList = null;
+		System.out.println("writeMtWorkInfoView=====");
+		try {
+			empList = service.selectEmployeeList();
+			model.put("empList", empList);
+		} catch (Exception e) {
+			model.put("resultCode", "FAIL");
+			logger.error("addBasicInfo error", e);
+		}
+		
+		return "maintenance/writeMtWorkOrderInfo";
+	}
 	
+	
+	@RequestMapping(value="/writeMtWorkOrderInfo.do", method=RequestMethod.POST)
+	public void writeMtWorkOrderInfo(@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
+		System.out.println("writeMtWorkInfo=====");
+	}
 	
 	
 	//////////////////////////////////////////////////////

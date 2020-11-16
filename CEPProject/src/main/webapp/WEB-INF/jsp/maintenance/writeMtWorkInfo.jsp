@@ -137,10 +137,21 @@
 		} 
 	</style>
 	<script>
-		function fn_saveNext(){
+		function fn_saveBtn(){
 			document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
 			document.mtBasicForm.method="post";
            	document.mtBasicForm.submit(); 
+           	
+		}
+		function fn_saveNextBtn(){
+			var url = '/maintenance/writeMtWorkOrderInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
            	
 		}
 		
