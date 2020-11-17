@@ -161,10 +161,14 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		
+		
 		function fn_addInfoTable() {
 			
 			var type = "prod";
-			var originLength = $('#'+type+'Length').val()*1;
+			var originLength = $('#'+type+'Length').val()*1-1;
+			
+			var lastNum = $("input[name='lastNum']").get($("input[name='lastNum']").length-1).getAttribute('value')*1;
 			
 	    	$('#'+type+'Length').val($('#'+type+'Length').val()*1 + 1);
 	    	
@@ -191,32 +195,60 @@
 	    			forArr.push(td[i].getAttribute('for')); 	    			
 	    		}
 	    	}
-	    	console.log(nameArr);
+	    	
+	    	var name = type + 'List[' + (lastNum+1) + '].';
 	    	
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		var splitName = nameArr[i].split('.')[1];
-				var name = type + 'List[' + ($('#'+type+'Length').val()*1) + '].';
-				clone.find('input[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
-				clone.find('textarea[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName); 
-				clone.find('select[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName); 
+	    		clone.find('input[name="lastNum"]').val(lastNum+1);
+				clone.find('input[name="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('name', name + splitName).val("");
+				clone.find('textarea[name="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('name', name + splitName).val(""); 
+				clone.find('select[name="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('name', name + splitName); 
 				/* clone.find('input:radio[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', name + splitName); */	
 					
 	    	} 
 	    	
 	    	for(var i = 0; i < idArr.length; i++) {
 	    		var splitName = idArr[i].split('.')[1];
-				var id = type + 'List[' + ($('#'+type+'Length').val()*1) + '].';
-				clone.find('input[id="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', id + splitName);				
+				clone.find('input[id="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('id', name + splitName);				
 	    	} 
 	    	
 	    	for(var i = 0; i < forArr.length; i++) {
-	    		var splitName = forArr[i].split('.')[1];
-				var id = type + 'List[' + ($('#'+type+'Length').val()*1) + '].';				
-				
-				clone.find('label[for="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('for', id + splitName);				
+	    		var splitName = forArr[i].split('.')[1];				
+				clone.find('label[for="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('for', name + splitName);				
 	    	} 
 	    	
 	    	$('#'+type+'Wrap').append(clone);
+		}
+		
+		/* 제품정보 접기/펴기*/
+		function fn_viewSummary(obj) {
+	         var tbody = obj.parentNode.parentNode.parentNode;
+	         var jtbody = $(tbody);
+	         var className = obj.getAttribute('class');
+	         
+	         if(className === "down") {
+	            jtbody.find(".dpTbRow").attr('class','dpNone');
+	            obj.src = "<c:url value='/images/arrow_down.png'/>";
+	            obj.className = "up";
+	         } else {
+	            jtbody.find(".dpNone").attr('class','dpTbRow');
+	            obj.src = "<c:url value='/images/arrow_up.png'/>";
+	            obj.className = "down";
+	         }
+		}
+		/* 제품정보 삭제*/
+		function fn_delete(obj, type) {
+			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
+			var type = "prod";
+			var originLength = $('#'+type+'Length').val()*1;
+			if(originLength>1){
+				table.remove();
+				
+				$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+			} else {
+				alert("제품정보는 한개 이상 존재해야 합니다.");
+			}			
 		}
 	</script>
 </head>
@@ -234,7 +266,7 @@
 			</ul>
 		</div>
 		<form action="/" id="uploadForm" method="post"> 
-			<input type="hidden" id="prodLength" name="prodLength" value="" />
+			<input type="hidden" id="prodLength" name="prodLength" value="1" />
 			<div class="contents">
 				<div id="prodWrap">
 					<table>
@@ -297,6 +329,7 @@
 					</table>
 					<div class="prodTable">
 						<table>
+							<input type="hidden" name="lastNum" value="0" />
 							<tr>
 								<td class="tdTitle firstTd">제품</td>
 								<td class="tdContents firstTd">
@@ -309,10 +342,12 @@
 								</td>
 								<td class="tdTitle firstTd">수량</td>
 								<td class="tdContents firstTd">
-									<input type="text" name="prodList[0].mtOrderPmQuantity" style="width: 75px;"/>	
+									<input type="text" name="prodList[0].mtOrderPmQuantity" style="width: 75px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
 								</td>
 							</tr>
-							<tr>
+							<tr class="dpTbRow">
 								<td class="tdTitle">단가</td>
 								<td class="tdContents">
 									<input type="text" name="prodList[0].mtOrderPmUprice"/>
@@ -331,9 +366,9 @@
 									</select>		
 								</td>
 							</tr>
-							<tr>
+							<tr class="dpTbRow">
 								<td class="tdTitle lastTd">제품상세</td>
-								<td class="tdContents lastTd" colspan="5"><textarea name="prodList[0].mtPmDetail" readonly="readonly"></textarea></td>
+								<td class="tdContents lastTd" colspan="5"><textarea name="prodList[0].mtPmDetail"></textarea></td>
 							</tr>
 							
 						</table>

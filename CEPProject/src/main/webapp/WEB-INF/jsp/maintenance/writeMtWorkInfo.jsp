@@ -167,9 +167,9 @@
 				
 			});
 			
-			$('#sbCtYn').change(function(){
+			$('#mtWorkOrderYn').change(function(){
 				
-				if("Y" == $('#sbCtYn option:selected').val()){
+				if("Y" == $('#mtWorkOrderYn option:selected').val()){
 					$('#back_order').show();
 					$('#saveNextBtn').show();
 					$('#saveBtn').hide();
@@ -300,21 +300,23 @@
 						<tr>
 							<td class="tdTitle">작업유형</td>
 							<td class="tdContents">
-								<select name="imCd">
-									<option value="온라인">온라인</option>
-									<option value="오프라인">오프라인</option>
+								<select name="mtWorkTypeCd">
+									<option value="정기점검">정기점검</option>
+									<option value="장애처리">장애처리</option>
+									<option value="기술지원">기술지원</option>
 								</select>
 							</td>
 							<td class="tdSubTitle">조치결과</td>
 							<td class="tdContents">
-								<select name="imCd">
-									<option value="온라인">온라인</option>
-									<option value="오프라인">오프라인</option>
+								<select name="mtWorkResultCd">
+									<option value="준비">준비</option>
+									<option value="진행">진행</option>
+									<option value="완료">진행</option>
 								</select>
 							</td>
 							<td class="tdSubTitle">추가발주유무</td>
 							<td class="tdContents">
-								<select id="sbCtYn" name="sbCtYn">
+								<select id="mtWorkOrderYn" name="mtWorkOrderYn">
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select>
@@ -322,7 +324,7 @@
 						</tr>	
 						<tr>
 							<td class="tdTitle veralignT">지원내용</td>
-							<td class="tdContents" colspan="5"><textarea name="remark"></textarea></td>
+							<td class="tdContents" colspan="5"><textarea name="mtWorkCont"></textarea></td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>

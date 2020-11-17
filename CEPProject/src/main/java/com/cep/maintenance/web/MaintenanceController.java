@@ -47,7 +47,7 @@ public class MaintenanceController {
 //	public String selectMtContractList() throws Exception {
 //		
 //		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
-//		System.out.println("11111111111111");
+//		logger.debug("11111111111111");
 //		return "maintenance/mtContractList";
 //	}
 //	
@@ -66,16 +66,16 @@ public class MaintenanceController {
 				searchVO.setFromDate(searchVO.getToDate().replace("-", ""));
 			}
 			
-			System.out.println("searchVO.getFromDate()===>"+searchVO.getFromDate());
-			System.out.println("searchVO.getSearchSaleEmpKey()===>"+searchVO.getSearchSaleEmpKey());
-			System.out.println("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
-			System.out.println("searchVO.getBtnOption()===>"+searchVO.getBtnOption());
-			System.out.println("searchVO.getSelectKey()===>"+searchVO.getSelectKey());
+			logger.debug("searchVO.getFromDate()===>"+searchVO.getFromDate());
+			logger.debug("searchVO.getSearchSaleEmpKey()===>"+searchVO.getSearchSaleEmpKey());
+			logger.debug("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
+			logger.debug("searchVO.getBtnOption()===>"+searchVO.getBtnOption());
+			logger.debug("searchVO.getSelectKey()===>"+searchVO.getSelectKey());
 			mtList = service.selectMtContractList(searchVO);
-			/*System.out.println("mtList.size()=====>"+mtList.size());
+			/*logger.debug("mtList.size()=====>"+mtList.size());
 			for (int i = 0; i < mtList.size(); i++) {
 				MtContractVO vo = (MtContractVO)mtList.get(i);
-				System.out.println("vo.getMtAcNm()===>"+vo.getMtAcNm());
+				logger.debug("vo.getMtAcNm()===>"+vo.getMtAcNm());
 			}*/
 			empList = service.selectEmployeeList();
 			model.put("resultList", mtList);
@@ -111,10 +111,10 @@ public class MaintenanceController {
 			deleteVo.setModEmpKey(sessionMap.get("empKey"));
 			deleteVo.setMtIntegrateKey(Integer.parseInt(searchVO.getSelectKey()));
 			service.deleteMtContract(deleteVo);
-			/*System.out.println("mtList.size()=====>"+mtList.size());
+			/*logger.debug("mtList.size()=====>"+mtList.size());
 			for (int i = 0; i < mtList.size(); i++) {
 				MtContractVO vo = (MtContractVO)mtList.get(i);
-				System.out.println("vo.getMtAcNm()===>"+vo.getMtAcNm());
+				logger.debug("vo.getMtAcNm()===>"+vo.getMtAcNm());
 			}*/
 			mtList = service.selectMtContractList(searchVO);
 			empList = service.selectEmployeeList();
@@ -134,7 +134,7 @@ public class MaintenanceController {
 	public String writeMtBasicInfoView(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		System.out.println("writeMtBasicInfoView=====");
+		logger.debug("writeMtBasicInfoView=====");
 		try {
 			
 			
@@ -161,8 +161,8 @@ public class MaintenanceController {
 			logger.error(null, e);
 		}
 			/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
-		System.out.println("writeMtBasicInfo=====");
-//		System.out.println("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
+		logger.debug("writeMtBasicInfo=====");
+//		logger.debug("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
 //		List<?> empList = null;
 //		try {
 //			empList = service.selectEmployeeList();
@@ -180,7 +180,7 @@ public class MaintenanceController {
 	public String writeBackOrderInfoView(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		System.out.println("writeMtBackOrderInfoView=====");
+		logger.debug("writeMtBackOrderInfoView=====");
 		try {
 			
 			
@@ -207,8 +207,8 @@ public class MaintenanceController {
 			logger.error(null, e);
 		}
 			/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
-		System.out.println("writeMtBasicInfo=====");
-//		System.out.println("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
+		logger.debug("writeMtBasicInfo=====");
+//		logger.debug("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
 //		List<?> empList = null;
 //		try {
 //			empList = service.selectEmployeeList();
@@ -226,7 +226,7 @@ public class MaintenanceController {
 	public String writeMtPurchaseAmountView(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		System.out.println("writeMtPurchaseAmountView=====");
+		logger.debug("writeMtPurchaseAmountView=====");
 		try {
 			
 			
@@ -253,8 +253,8 @@ public class MaintenanceController {
 			logger.error(null, e);
 		}
 			/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
-		System.out.println("writeMtPurchaseAmount=====");
-//		System.out.println("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
+		logger.debug("writeMtPurchaseAmount=====");
+//		logger.debug("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
 //		List<?> empList = null;
 //		try {
 //			empList = service.selectEmployeeList();
@@ -282,18 +282,18 @@ public class MaintenanceController {
 				searchVO.setFromDate(searchVO.getToDate().replace("-", ""));
 			}
 			
-			System.out.println("searchVO.getFromDate()===>"+searchVO.getFromDate());
-			System.out.println("searchVO.getToDate()===>"+searchVO.getToDate());
-			System.out.println("searchVO.getSearchWorkEmpKey()===>"+searchVO.getSearchWorkEmpKey());
-			System.out.println("searchVO.getSearchWorkResult()===>"+searchVO.getSearchWorkResult());
-			System.out.println("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
+			logger.debug("searchVO.getFromDate()===>"+searchVO.getFromDate());
+			logger.debug("searchVO.getToDate()===>"+searchVO.getToDate());
+			logger.debug("searchVO.getSearchWorkEmpKey()===>"+searchVO.getSearchWorkEmpKey());
+			logger.debug("searchVO.getSearchWorkResult()===>"+searchVO.getSearchWorkResult());
+			logger.debug("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
 			
 			
 			mtList = service.selectMtWorkList(searchVO);
-			System.out.println("mtList.size()=====>"+mtList.size());
+			logger.debug("mtList.size()=====>"+mtList.size());
 			/*for (int i = 0; i < mtList.size(); i++) {
 				MtWorkVO vo = (MtWorkVO)mtList.get(i);
-				System.out.println("vo.getMtNm()===>"+vo.getMtNm()+"/"+vo.getMtWorkCont());
+				logger.debug("vo.getMtNm()===>"+vo.getMtNm()+"/"+vo.getMtWorkCont());
 			}*/
 			empList = service.selectEmployeeList();
 			model.put("resultList", mtList);
@@ -329,10 +329,10 @@ public class MaintenanceController {
 			deleteVo.setModEmpKey(sessionMap.get("empKey"));
 			deleteVo.setMtWorkKey(Integer.parseInt(searchVO.getSelectKey()));
 			service.deleteMtWork(deleteVo);
-			/*System.out.println("mtList.size()=====>"+mtList.size());
+			/*logger.debug("mtList.size()=====>"+mtList.size());
 			for (int i = 0; i < mtList.size(); i++) {
 				MtContractVO vo = (MtContractVO)mtList.get(i);
-				System.out.println("vo.getMtAcNm()===>"+vo.getMtAcNm());
+				logger.debug("vo.getMtAcNm()===>"+vo.getMtAcNm());
 			}*/
 			mtList = service.selectMtWorkList(searchVO);
 			empList = service.selectEmployeeList();
@@ -351,7 +351,7 @@ public class MaintenanceController {
 	public String writeMtWorkInfoView(MtWorkVO mtWorkVO,ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		System.out.println("writeMtWorkInfoView=====");
+		logger.debug("writeMtWorkInfoView=====");
 		try {
 			empList = service.selectEmployeeList();
 			model.put("empList", empList);
@@ -366,14 +366,14 @@ public class MaintenanceController {
 	
 	@RequestMapping(value="/writeMtWorkInfo.do", method=RequestMethod.POST)
 	public void writeMtWorkInfo(@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
-		System.out.println("writeMtWorkInfo=====");
+		logger.debug("writeMtWorkInfo=====");
 	}
 
 	@RequestMapping(value="/writeMtWorkOrderInfoView.do")
 	public String writeMtWorkOrderInfoView(MtWorkVO mtWorkVO,ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		System.out.println("writeMtWorkInfoView=====");
+		logger.debug("writeMtWorkInfoView=====");
 		try {
 			empList = service.selectEmployeeList();
 			model.put("empList", empList);
@@ -388,9 +388,17 @@ public class MaintenanceController {
 	
 	@RequestMapping(value="/writeMtWorkOrderInfo.do", method=RequestMethod.POST)
 	public void writeMtWorkOrderInfo(@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
-		System.out.println("writeMtWorkInfo=====");
+		logger.debug("writeMtWorkInfo=====");
 	}
 	
+	
+	@RequestMapping(value="/detail/mtWorkBasicInfo.do")
+	public String mtWorkBasicDetail(MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/detail/mtWorkBasicInfo";
+	}
 	
 	//////////////////////////////////////////////////////
 	@ResponseBody
@@ -403,8 +411,8 @@ public class MaintenanceController {
      try {
     	 
 //    	 acKey = request.getParameter("mtAcKey");
-//    	 System.out.println("acKey===>"+acKey);
-//    	 System.out.println("mtAcKey===>"+mtAcKey);
+//    	 logger.debug("acKey===>"+acKey);
+//    	 logger.debug("mtAcKey===>"+mtAcKey);
 //    	
 //    	 acKey="1098620738";
          /* Ajax List 리턴을 위해서는 ModelAndView 로 세팅해야함 */
@@ -412,7 +420,7 @@ public class MaintenanceController {
      
          acDirectorList =service.selectAcDirectorList(mtAcKey);
          
-         System.out.println("acDirectorList.size=====>"+acDirectorList.size());
+         logger.debug("acDirectorList.size=====>"+acDirectorList.size());
 //         modelAndView.setViewName("jsonView");
          modelAndView.put("result", acDirectorList);
 	} catch (Exception e) {
