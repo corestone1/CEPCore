@@ -148,6 +148,8 @@ $(window).load(function() {
 				$(this).datepicker();
 			}*/
 		});
+		$(this).attr('onkeyup','fn_date_format(event, this)');
+		$(this).attr('onkeypress','fn_date_format(event, this)');
 	});
 	$("body").delegate(".toDt", "focusin", function(){
 		$(this).datepicker({
@@ -161,6 +163,8 @@ $(window).load(function() {
 				$(this).datepicker();
 			}*/
 	    });
+		$(this).attr('onkeyup','fn_date_format(event, this)');
+		$(this).attr('onkeypress','fn_date_format(event, this)');
 	}); 
 	
 });

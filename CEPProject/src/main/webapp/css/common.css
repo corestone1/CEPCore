@@ -149,6 +149,12 @@ input[class="tCheck"]:checked+label:before {
 input[class="tCheck"] {
 	display: none;
 }
+input[class^="calendar"] {
+	cursor: pointer;
+    background-image: url(http://172.10.122.10:8888/images/icon_calendar.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
+}
 button {
 	border: none;
 	cursor: pointer;

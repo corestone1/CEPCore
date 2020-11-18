@@ -243,10 +243,6 @@
 		}
 		input[class^="calendar"] {
 			width: 120px;
-			cursor: pointer;
-		    background-image: url(http://172.10.122.10:8888/images/icon_calendar.png);
-		    background-repeat: no-repeat;
-		    background-position: 95% 50%;
 		}
 		select {
 			height: 37px;
@@ -502,14 +498,14 @@
 								<tr>
 									<td>유지보수 기간</td>
 									<td>
-										<input class="calendar fromDt" value="2019-12-12" type="text" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/>
+										<input class="calendar fromDt" value="2019-12-12" type="text"/>
 										&nbsp;&nbsp;~&nbsp;&nbsp;
-										<input class="calendar fromDt" value="2020-12-12" type="text" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/>
+										<input class="calendar fromDt" value="2020-12-12" type="text"/>
 									</td>
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><input class="calendar fromDt" value="2020-12-12" type="text" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/></td>
+									<td><input class="calendar fromDt" value="2020-12-12" type="text"/></td>
 								</tr>
 								<tr>
 									<td>보증증권 유무</td>
