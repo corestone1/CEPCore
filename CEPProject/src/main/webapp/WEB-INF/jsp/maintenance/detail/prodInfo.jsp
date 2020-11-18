@@ -331,18 +331,18 @@
 				}
 			});
 			
-			var modCh = 1;
 			$('#modInfo').click(function() {
 				if($('.detailList').length === 0) {
 					alert('수정할 정보를 선택해 주세요.');
 				} else if($('.detailList').length > 1) {
 					alert('최대로 수정할 수 있는 개수는 1개 입니다.');
-				} else if(modCh % 2 == 1) {
+				} else {
 					$("#selectTable").css('display','none');
 					$('#modTable').css('display','block');
 					$("#selectBasicTable").css('display','none');
 					$("#modBasicTable").css('display','block');
 					$("#modInfo img").attr('src',"http://172.10.122.10:8888/images/btn_save.png");
+					$("#modInfo").attr('id','saveInfo');
 					var carray = new Array();
 					var varray = new Array();
 					$('.detailList li label').each(function() {
@@ -354,11 +354,12 @@
 						$(this).attr('class',carray[index]);
 						$(this).attr('value',varray[index]);
 					});
-				} else {
-					alert('수정되었습니다.');
-					location.reload();
-				}
-				modCh++;
+					
+					$('#saveInfo').click(function() {
+						alert('수정되었습니다.');
+						location.reload();
+					});
+				} 
 			});
 		});
 		
@@ -376,6 +377,7 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
 			/* } */
 		}
+		
 	</script>
 </head>
 <body>
