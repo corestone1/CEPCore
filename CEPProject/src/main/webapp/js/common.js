@@ -115,31 +115,52 @@ function removeCommas(x) {
     else return x.split(",").join("");
 }
 
+//날짜 하이픈(-) 자동 추가
+function fn_date_format(e, oThis) {
+    var num_arr = [ 
+        97, 98, 99, 100, 101, 102, 103, 104, 105, 96,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57
+    ]
+    
+    var key_code = ( e.which ) ? e.which : e.keyCode;
+    if( num_arr.indexOf( Number( key_code ) ) != -1 ){
+    
+        var len = oThis.value.length;
+        if( len == 4 ) oThis.value += "-";
+        if( len == 7 ) oThis.value += "-";
+    }
+}
+
 /* 추후 수정 필요
  * from날짜 이전 날짜는 to날짜에서 선택 못하도록, to날짜 이후 날짜는 from 날짜에서 선택 못하도록
  * */	
 $(window).load(function() {
-
+	
 	$("body").delegate(".fromDt", "focusin", function(){
 		$(this).datepicker({
 			dateFormat: 'yy-mm-dd',
 			changeMonth: true,
+			changeYear: true,
+			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 			numberOfMonths: 1,
-			onSelect: function( selectedDate ) {
+			/*onSelect: function( selectedDate ) {
 				$( ".toDt" ).datepicker( "option", "minDate", selectedDate );
-				/*$(this).datepicker();*/
-			}
+				$(this).datepicker();
+			}*/
 		});
 	});
 	$("body").delegate(".toDt", "focusin", function(){
 		$(this).datepicker({
 			dateFormat: 'yy-mm-dd',
 			changeMonth: true,
+			changeYear: true,
+			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 			numberOfMonths: 1,
-			onSelect: function( selectedDate ) {
+			/*onSelect: function( selectedDate ) {
 				$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
-				/*$(this).datepicker();*/
-			}
+				$(this).datepicker();
+			}*/
 	    });
 	}); 
+	
 });

@@ -111,19 +111,28 @@
 			width: 166px;
 			font-size: 14px;
 		} 				
+		.popContainer .prodTable tr:first-child td:last-child {
+			position: absolute;
+		}
+		.popContainer .prodTable tr:first-child td:last-child img {
+			width: 11px;
+		} 
+		.popContainer .prodTable tr:first-child td:last-child img:last-child {
+			margin-left: 12px;
+		} 
 		.popContainer .contents2 > div:first-child {
 			margin: 0 54px 0 45px;
+		}
+		.popContainer .contents2 .subjectContainer {
+			height: 67px;
 		}
 		.popContainer .contents2 .subject {
 			width: 811px;
 			background-color: #f6f7fc;
 			position: fixed;
 		}
-		.popContainer .contents2 .prodTable > table {
-			padding-top: 64px;
-		}
 		.popContainer .contents2 > div.btnWrap {
-			margin: 0px 54px 15px 0px;
+			margin: 10px 54px 15px 0px;
 		}
 		.popContainer .contents2 td.subTitle {
 			font-size: 18px;
@@ -176,9 +185,23 @@
 			padding-top: 18px;
 			padding-right: 52px;
 		}	
+		select {
+		    height: 38px;
+		    width: 152px;
+		    border: 1px solid #e9e9e9;
+		    padding: 0 10px;
+		    -webkit-appearance: none;
+		    background: url(http://172.10.122.10:8888/images/arrow_down.png) no-repeat 91% 50%;
+		    background-color: #fff;
+		    color: #535353;
+		    font-size: 15px;
+		}
+		.dpTbRow {
+			display: table-row;
+		}
 	</style>
 	<script>
-		function fn_addBiddingView(){
+		function fn_addBiddingView() {
 			var url = '/project/writeAmountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -188,36 +211,128 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		
 		function fn_addInfoTable() {
 			var type = "prod";
-			var originLength = $('#'+type+'Length').val()*1;
-	    	$('#'+type+'Length').val($('#'+type+'Length').val()*1 + 1);
-	    	
-	    	var clones = $('.'+type+'Table').clone();
-	    	var clone = new jQuery.fn.init(clones[clones.length - 1]);
+			var originLength = $('#'+type+'Length').val()*1-1;
 			
-	    	var str = "";
-	    	var tdArr = new Array();
-	    	var tr = $('.'+type+'Table tr');
-	    	var td = tr.children();
-	    	
-	    	td.each(function(i) {
-	    		if(td.eq(i).children().attr('name') != null && td.eq(i).children().attr('name') != undefined && td.eq(i).children().attr('name') != "" && td.eq(i).children().attr('name').length != 0) {
-	    			tdArr.push(td.eq(i).children().attr('name'));
-	    		}
-	    	});
-
-	    	for(var i = 0; i < tdArr.length; i++) {
-	    		var splitName = tdArr[i].split('.')[1];
-				var name = type + 'List[' + ($('#'+type+'Length').val()*1) + '].';
-				console.log(name + splitName);
-				
+			$('#'+type+'Length').val($('#'+type+'Length').val()*1 + 1);
+			 
+			var clones = $('.'+type+'Table').clone();
+			var clone = new jQuery.fn.init(clones[clones.length - 1]);
+			
+			var str = "";
+			var nameArr = new Array();
+			var idArr = new Array();
+			var forArr = new Array();
+			 
+			var tr = $('.'+type+'Table tr');
+			var td = tr.children().children();
+ 
+			for(var i = 0; i < td.length; i++) {
+				if(td[i].getAttribute('name') != null && td[i].getAttribute('name') != undefined && td[i].getAttribute('name') != "" && td[i].getAttribute('name').length != 0) {
+					nameArr.push(td[i].getAttribute('name'));                 
+				}
+				if(td[i].getAttribute('id') != null && td[i].getAttribute('id') != undefined && td[i].getAttribute('id') != "" && td[i].getAttribute('id').length != 0) {
+					idArr.push(td[i].getAttribute('id'));                 
+				}
+				if(td[i].getAttribute('for') != null && td[i].getAttribute('for') != undefined && td[i].getAttribute('for') != "" && td[i].getAttribute('for').length != 0) {
+					forArr.push(td[i].getAttribute('for'));                 
+				}
+			}
+ 
+			for(var i = 0; i < nameArr.length; i++) {
+				var splitName = nameArr[i].split('.')[1];
+				var name = type + 'List[' + ($('#'+type+'Length').val()*1-1) + '].';
+				  
 				clone.find('input[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
-				clone.find('textarea[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
+				clone.find('textarea[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName); 
+				clone.find('input:radio[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', name + splitName);      
 				clone.find('select[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('name', name + splitName);
-	    	}
-	    	
-	    	$('#'+type+'Wrap').append(clone);
+			} 
+ 
+			for(var i = 0; i < idArr.length; i++) {
+				var splitName = idArr[i].split('.')[1];
+				var id = type + 'List[' + ($('#'+type+'Length').val()*1-1) + '].';
+				clone.find('input[id="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', id + splitName);            
+			} 
+ 
+			for(var i = 0; i < forArr.length; i++) {
+				var splitName = forArr[i].split('.')[1];
+				var id = type + 'List[' + ($('#'+type+'Length').val()*1-1) + '].';            
+				   
+				clone.find('label[for="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('for', id + splitName);            
+			} 
+ 
+			$('#'+type+'Wrap').append(clone);
+	    }		
+		
+		function fn_viewSummary(obj) {
+			var tbody = obj.parentNode.parentNode.parentNode;
+			var jtbody = $(tbody);
+			var className = obj.getAttribute('class');
+			
+			if(className === "down") {
+				jtbody.find(".dpTbRow").attr('class','dpNone');
+				obj.src = "<c:url value='/images/arrow_down.png'/>";
+				obj.className = "up";
+			} else {
+				jtbody.find(".dpNone").attr('class','dpTbRow');
+				obj.src = "<c:url value='/images/arrow_up.png'/>";
+				obj.className = "down";
+			}
+		}
+		
+		function fn_delete(obj, type) {
+			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
+			table.remove();
+			
+	    	console.log(type);
+	    	$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+		}
+		
+		function example() {
+			/* console.log($('#uploadForm').serialize()); */
+			/* var test = {
+				"list":[{"orderPmFkKey":"ssw"},{"orderPmFkKey":"ssw2"}]
+			};
+			document.uploadForm.action = "<c:url value='/mngProject/order/test.do'/>";
+			document.uploadForm.submit(); */
+			/* var formSerializeArray = $('#uploadForm').serializeArray();
+			var object = {};
+			for (var i = 0; i < formSerializeArray.length; i++){
+				console.log(formSerializeArray[i]['name']);
+				object[formSerializeArray[i]['name']] = formSerializeArray[i]['value'];
+			}
+		
+			var json = JSON.stringify(object);
+			alert(json); */
+			
+			/* var formSerializeArray = $('#uploadForm').serializeArray();
+			
+			var object = {};
+			for (var i = 0; i < formSerializeArray.length; i++) {
+				object[formSerializeArray[i]['name']] = formSerializeArray[i]['value'];
+			}
+			
+			console.log(JSON.stringify(formSerializeArray));
+			
+			var datajson = '{"list":[{"orderPmFkKey":"ssw"},{"orderPmFkKey":"ssw2"}]}';
+			$.ajax({
+				url:"/mngProject/order/test.do",
+				type:"post",
+				contentType:"application/json",
+				data:JSON.stringify({"list":[{"orderPmFkKey":"ssw"},{"orderPmFkKey":"ssw2"}]}),
+				
+				success: function(response) {
+					alert(response);
+				},
+				error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	}
+			}) */
 		}
 	</script>
 </head>
@@ -233,8 +348,8 @@
 				<li >발주 정보</li>
 			</ul>
 		</div>
-		<form action="/" id="uploadForm" method="post"> 
-			<input type="hidden" id="prodLength" name="prodLength" value="" />
+		<form name="uploadForm" id="uploadForm" method="post"> 
+			<input type="hidden" id="prodLength" name="prodLength" value="1" />
 			<div class="contents">
 				<div>
 					<table>
@@ -263,14 +378,16 @@
 			</div>
 			<div class="contents2">
 				<div id="prodWrap">
-					<table class="subject">
-						<tr>		
-							<td class="subTitle" style="border-top: none;">
-								<label class="ftw400">제품정보</label>
-							</td>
-							<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
-						</tr>
-					</table>
+					<div class="subjectContainer">
+						<table class="subject">
+							<tr>		
+								<td class="subTitle" style="border-top: none;">
+									<label class="ftw400">제품정보</label>
+								</td>
+								<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+							</tr>
+						</table>
+					</div>
 					<div class="table ftw400 prodTable">
 						<table>
 							<tr>
@@ -283,11 +400,15 @@
 									<input type="text" name="prodList[0].orderSum"/>	
 								</td>
 								<td class="tdTitle">수량</td>
-								<td class="tdContents">
+								<td class="tdContents" style="width: 115px;">
 									<input type="text" style="width: 75px;" name="prodList[0].orderQuantity" />	
 								</td>
+								<td>
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);"/>
+									<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" />
+								</td>
 							</tr>
-							<tr>
+							<tr class="dpTbRow">
 								<td class="tdTitle">단가</td>
 								<td class="tdContents">
 									<input type="text" name="prodList[0].orderUprice" />
@@ -298,11 +419,11 @@
 									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 								</td>	
 								<td class="tdTitle">계산서 발행 후</td>
-								<td class="tdContents">
+								<td class="tdContents" style="width: 115px;">
 									<input type="text" style="width: 27px;" name="prodList[0].orderPayTerms" />&nbsp;&nbsp;일 결제
 								</td>
 							</tr>
-							<tr>
+							<tr class="dpTbRow">
 								<td class="tdTitle">매입처</td>
 								<td class="tdContents">
 									<input type="text" class="search"  name="prodList[0].orderAcKey" />	
@@ -316,16 +437,71 @@
 									</select>	
 								</td>
 							</tr>
-							<tr>
+							<tr class="dpTbRow">
 								<td class="tdTitle">제품상세</td>
 								<td class="tdContents" colspan="5"><textarea name="prodList[0].remark"></textarea></td>
 							</tr>
 						</table>
-					</div>
+					</div> 
+					<%-- <div class="table ftw400 prodTable">
+						<table>
+							<tr>
+								<td class="tdTitle">제품</td>
+								<td class="tdContents">
+									<input type="text" class="search" name="orderPmFkKey" />	
+								</td>
+								<td class="tdTitle">합계</td>
+								<td class="tdContents">
+									<input type="text" name="orderSum"/>	
+								</td>
+								<td class="tdTitle">수량</td>
+								<td class="tdContents" style="width: 115px;">
+									<input type="text" style="width: 75px;" name="orderQuantity" />	
+								</td>
+								<td>
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);"/>
+									<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" />
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">단가</td>
+								<td class="tdContents">
+									<input type="text" name="orderUprice" />
+								</td>	
+								<td class="tdTitle">부가세 포함</td>
+								<td class="tdContents">
+									<input type="radio" class="tCheck" name="taxYn" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tCheck" name="taxYn" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								</td>	
+								<td class="tdTitle">계산서 발행 후</td>
+								<td class="tdContents" style="width: 115px;">
+									<input type="text" style="width: 27px;" name="orderPayTerms" />&nbsp;&nbsp;일 결제
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">매입처</td>
+								<td class="tdContents">
+									<input type="text" class="search"  name="orderAcKey" />	
+								</td>
+								<td class="tdTitle floatR">매입구분</td>
+								<td class="tdContents" colspan="3">
+									<select id="orderCategory" name="orderCategory">
+										<option>매입구분</option>
+										<option value="HW">하드웨어</option>
+										<option value="SW">소프트웨어</option>
+									</select>	
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">제품상세</td>
+								<td class="tdContents" colspan="5"><textarea name="remark"></textarea></td>
+							</tr>
+						</table>
+					</div> --%>
 				</div>
 				<div class="btnWrap floatR">
 					<div class="floatR" onclick="fn_preBiddingView();">
-						<button ><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+						<button type="button"><img src="<c:url value='/images/btn_bill_mapping.png'/>"/></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

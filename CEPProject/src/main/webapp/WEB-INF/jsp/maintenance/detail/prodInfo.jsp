@@ -232,6 +232,68 @@
    			overflow: auto;
    			line-height: 1.5;
 		}
+		input[type="text"] {
+		 	width: 177px;
+		    height: 34px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			background-color: #fff;
+			font-size: 14px;
+			margin-bottom: 4px;
+		}
+		input[class^="calendar"] {
+			width: 120px;
+			cursor: pointer;
+		    background-image: url(http://172.10.122.10:8888/images/icon_calendar.png);
+		    background-repeat: no-repeat;
+		    background-position: 95% 50%;
+		}
+		select {
+			height: 37px;
+		    width: 130px;
+		    border: 1px solid #e9e9e9;
+		    padding: 0 10px;
+		    -webkit-appearance: none;
+		    background: url(http://172.10.122.10:8888/images/arrow_down.png) no-repeat 91% 50%;
+		    background-color: #fff;
+		    color: #535353;
+		    font-size: 15px;
+		}
+		textarea {
+			border: 1px solid #e6e6e6;
+			padding: 0 10px;
+		}
+		select.nrslct {
+			width: 100px !important;
+		}
+		input[class="wdi"] {
+			width: 705.36px;
+		}
+		input[class="mdi"] {
+			width: 276px;
+		}
+		#modBasicTable tr td:last-child {
+			padding: 5px 20px;
+		}
+		#modBasicTable input[type="text"],
+		#modBasicTable textarea {
+			width: 380px; 
+		    color: #0e8a67;
+		}
+		#modBasicTable textarea {
+			color: #0e8a67;
+		}
+		#modBasicTable select {
+			font-size: 14px;
+			width: 187px;
+		   color: #0e8a67;
+		}
+		#modBasicTable input[class^="calendar"] {
+			width: 165px !important;
+		}
+		#modBasicTable label {
+			margin-left: 15px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -247,11 +309,11 @@
 					       + '<div style="margin: 5px 71px;">'
 					       + '<ul class="detailList">'
 					       + '<li>제품상세</li>'
-					       + '<li title="제품상세 내용 표출 1P/8C, 32GB*2EA">제품상세 내용 표출 1P/8C, 32GB*2EA</li>'
+					       + '<li title="제품상세 내용 표출 1P/8C, 32GB*2EA"><label class="mdi">제품상세 내용 표출 1P/8C, 32GB*2EA</label></li>'
 					       + '<li>계약기간</li>'
-					       + '<li title="2020.12.12~2021.12.12">2020.12.12~2021.12.12</li>'
+					       + '<li title="2020.12.12~2021.12.12"><label class="calendar fromDt">2020.12.12</label>&nbsp;&nbsp;~&nbsp;&nbsp;<label class="calendar toDt">2021.12.12</label></li>'
 					       + '<li>비고</li>'
-					       + '<li title="비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출">비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출</li>'
+					       + '<li title="비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출"><label class="wdi">비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출비고내용 표출</label></li>'
 						   + '</ul>'
 					       + '</div>'
 					       + '</div>';
@@ -267,6 +329,36 @@
 				if(index != 0) {
 					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
+			});
+			
+			var modCh = 1;
+			$('#modInfo').click(function() {
+				if($('.detailList').length === 0) {
+					alert('수정할 정보를 선택해 주세요.');
+				} else if($('.detailList').length > 1) {
+					alert('최대로 수정할 수 있는 개수는 1개 입니다.');
+				} else if(modCh % 2 == 1) {
+					$("#selectTable").css('display','none');
+					$('#modTable').css('display','block');
+					$("#selectBasicTable").css('display','none');
+					$("#modBasicTable").css('display','block');
+					$("#modInfo img").attr('src',"http://172.10.122.10:8888/images/btn_save.png");
+					var carray = new Array();
+					var varray = new Array();
+					$('.detailList li label').each(function() {
+						carray.push($(this).attr('class'));
+						varray.push($(this).text());
+					});
+					$( '.detailList li label' ).contents().unwrap().wrap( '<input type="text"></input>' );
+					$('.detailList li input').each(function(index) {
+						$(this).attr('class',carray[index]);
+						$(this).attr('value',varray[index]);
+					});
+				} else {
+					alert('수정되었습니다.');
+					location.reload();
+				}
+				modCh++;
 			});
 		});
 		
@@ -297,7 +389,7 @@
 					<div>
 						<div class="stitle cg">기본정보</div>
 						<div id="basicForm">
-							<table class="bsc">
+							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>프로젝트명</td>
 									<td>VDI중요단말 환경구축 및 노후장비 교체</td>
@@ -345,6 +437,95 @@
 								<tr>
 									<td>비고</td>
 									<td>비고 내용</td>
+								</tr>
+							</table>
+							<table class="bsc dpNone" id="modBasicTable">
+								<tr>
+									<td>프로젝트명</td>
+									<td><input type="text" value="VDI중요단말 환경구축 및 노후장비 교체" /></td>
+								</tr>
+								<tr>
+									<td>고객사</td>
+									<td>
+										<select>
+											<option>미래에셋생명</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>고객사담당자</td>
+									<td>
+										<select class="nrslct">
+											<option>홍길동</option>
+										</select>
+										<label>차장 / 010-9999-8888 / ersdf@naver.com</label>
+									</td>
+								</tr>
+								<tr>
+									<td>관리담당자</td>
+									<td>
+										<select class="nrslct">
+											<option>길동이</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>지원담당자</td>
+									<td>
+										<select class="nrslct">
+											<option>김규민</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>영업담당자</td>
+									<td>
+										<select class="nrslct">
+											<option>김규민</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>유지보수 금액</td>
+									<td><input type="text" value="100,000,000" /></td>
+								</tr>
+								<tr>
+									<td>결제조건</td>
+									<td>
+										<select>
+											<option>당월25일</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>유지보수 기간</td>
+									<td>
+										<input class="calendar fromDt" value="2019-12-12" type="text" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/>
+										&nbsp;&nbsp;~&nbsp;&nbsp;
+										<input class="calendar fromDt" value="2020-12-12" type="text" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/>
+									</td>
+								</tr>
+								<tr>
+									<td>계약일자</td>
+									<td><input class="calendar fromDt" value="2020-12-12" type="text" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/></td>
+								</tr>
+								<tr>
+									<td>보증증권 유무</td>
+									<td>
+										<select class="nrslct">
+											<option>Y</option>
+										</select>
+										<button type="button" class="veralignM"><img class="cursorP" src="<c:url value='/images/btn_file_upload.png'/>" /></button>
+										<label class="file">보증증권.pdf</label>
+									</td>
+								</tr>
+								<tr>
+									<td>비고</td>
+									<td>
+										<textarea rows="4" cols="45">
+											비고 내용
+										</textarea>
+									</td>
 								</tr>
 							</table>
 						</div>
@@ -512,7 +693,7 @@
 						</div>
 						<div class="btnWrap rt">
 							<div class="floatR">
-								<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>

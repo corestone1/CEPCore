@@ -373,6 +373,7 @@
 					$('#modTable').css('display','block');
 					$("#selectBasicTable").css('display','none');
 					$("#modBasicTable").css('display','block');
+					$("#modInfo img").attr('src',"http://172.10.122.10:8888/images/btn_save.png");
 				} else {
 					alert('수정되었습니다.');
 					location.reload();

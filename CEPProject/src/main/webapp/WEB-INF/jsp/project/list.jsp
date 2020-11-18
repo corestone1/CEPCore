@@ -242,7 +242,6 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
-		
 	</script>
 </head>
 <body>
@@ -265,9 +264,9 @@
         					<form:option value="" label="수행" />
         					<form:option value="" label="완료" />
         				</form:select> --%>
-						<input type="text" class="calendar fromDt" placeholder="from" id=""/>
+						<input type="text" class="calendar fromDt" placeholder="from" id="" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/>
 						<label> ~ </label>
-						<input type="text" class="calendar toDt" placeholder="to" id=""/>
+						<input type="text" class="calendar toDt" placeholder="to" id="" onkeyup="fn_date_format(event, this)" onkeypress="fn_date_format(event, this)"/>
 						<input type="text" class="search" placeholder="프로젝트명" />
 						<span class="veralignT"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>

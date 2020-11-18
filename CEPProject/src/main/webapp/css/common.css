@@ -107,6 +107,12 @@ body * {
 .dpBlock {
 	display: block;
 }
+.visibility {
+	visibility: visible;
+}
+.nvisibility {
+	visibility: hidden;
+}
 .addBtn {
 	width: 40px;
 	height: 40px;
