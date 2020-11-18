@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../../cmm/inc.jsp" %>
+<%@include file="../cmm/inc.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>발주추가</title>
+	<title>유지보수 작업 발주추가</title>
 	<style>
 		.firstTd {			
 			border-top: 2px solid #e5e5e5;	
@@ -27,7 +27,7 @@
 		}
 		.popContainer .left {
 			width: 201px;
-			height: 566px;
+			height: 601px;
 			position: absolute;
 			top: 107px;
 			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
@@ -39,17 +39,15 @@
 			padding-left: 28px;
 			line-height: 47px;
 		}
-		.popContainer .left ul li {
-			height: 47px;
-			padding-left: 28px;
-			line-height: 47px;
+		.popContainer .left ul li.on,
+		.popContainer .left ul li:hover {
 			background-color: #fff;
 			color: #32bc94;
 		}
 		.popContainer .contents {
 			position: absolute;
 			width: calc(100% - 201px);
-			height: 566px;
+			height: 601px;
 			top: 107px;
 			left: 201px;			
 			z-index: 3;
@@ -116,23 +114,12 @@
 		.popContainer td.tdContents {
 			width: 174px;
 			font-size: 14px;
-		} 				
-		
-				
+		} 							
 		.popContainer .contents tr:nth-child(1) td {
 			padding-top: 10px;
 			padding-bottom: 5px;
 			
 		} 
-		/* .popContainer .contents tr:nth-child(3) td {
-			
-			padding-bottom: 5px;
-			
-		}  */
-		/* .popContainer .contents tr:nth-child(4) td {
-			padding-top: 20px;
-			padding-bottom: 5px;
-		}  */
 		.popContainer .contents td.subTitle {
 			font-size: 18px;
 			padding-right: 20px;
@@ -140,50 +127,6 @@
 			padding-top: 20px;
 			padding-bottom: 5px;
 		}	
-		/* 
-		.popContainer .contents2 > div:first-child {
-			margin: 0 54px 0 45px;
-		}
-		.popContainer .contents2 > div:first-child table:first-child {
-			width: 811px;
-			background-color: #f6f7fc;
-			position: fixed;
-		}
-		.popContainer .contents2 > div:first-child table:nth-child(2) {
-			padding-top: 64px;
-		}
-		.popContainer .contents2 > div.btnWrap {
-			margin: 0px 54px 15px 0px;
-		}
-		.popContainer .contents2 td.subTitle {
-			font-size: 18px;
-			padding-right: 20px;
-			width: 56px;
-			padding-top: 40px;
-		}					
-		.popContainer .contents2 td.subBtn {
-			padding-top: 40px;
-		}		
-		.popContainer .contents2 tr:nth-child(1) td {
-			border-top: 2px solid #e5e5e5;	
-			padding-top: 8px;
-		} 		
-		.popContainer .contents2 tr:nth-child(2) td {		
-			padding-top: 6px;
-		} 	
-		.popContainer .contents2 tr:last-child td{
-			padding-bottom: 10px;
-		}
-		.popContainer .contents2 {
-			position: absolute;
-			width: calc(100% - 201px);
-			height: 435px;
-			top: 238px;
-			left: 201px;			
-			z-index: 3;
-			background-color: #f6f7fc;
-			overflow-y: auto;
-		} */
 		.popContainer .contents textarea {
 			width: calc(100% - 22px);
 			height: 55px;
@@ -218,6 +161,7 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		
 		
 		function fn_addInfoTable() {
 			
@@ -306,62 +250,19 @@
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			
 		}
-		
-		function example() {
-			/* console.log($('#uploadForm').serialize()); */
-			/* var test = {
-				"list":[{"orderPmFkKey":"ssw"},{"orderPmFkKey":"ssw2"}]
-			};
-			document.uploadForm.action = "<c:url value='/mngProject/order/test.do'/>";
-			document.uploadForm.submit(); */
-			/* var formSerializeArray = $('#uploadForm').serializeArray();
-			var object = {};
-			for (var i = 0; i < formSerializeArray.length; i++){
-				console.log(formSerializeArray[i]['name']);
-				object[formSerializeArray[i]['name']] = formSerializeArray[i]['value'];
-			}
-		
-			var json = JSON.stringify(object);
-			alert(json); */
-			
-			/* var formSerializeArray = $('#uploadForm').serializeArray();
-			
-			var object = {};
-			for (var i = 0; i < formSerializeArray.length; i++) {
-				object[formSerializeArray[i]['name']] = formSerializeArray[i]['value'];
-			}
-			
-			console.log(JSON.stringify(formSerializeArray));
-			
-			var datajson = '{"list":[{"orderPmFkKey":"ssw"},{"orderPmFkKey":"ssw2"}]}';
-			$.ajax({
-				url:"/mngProject/order/test.do",
-				type:"post",
-				contentType:"application/json",
-				data:JSON.stringify({"list":[{"orderPmFkKey":"ssw"},{"orderPmFkKey":"ssw2"}]}),
-				
-				success: function(response) {
-					alert(response);
-				},
-				error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	}
-			}) */
-		}
 	</script>
 </head>
 <body>
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">발주 추가</div>
+				<div class="floatL ftw500">유지보수 작업등록</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-				<li >발주 정보</li>
+				<li class="colorWhite cursorP">기본정보</li>
+				<li class="colorWhite cursorP on">발주정보</li>
 			</ul>
 		</div>
 		<form action="/" id="uploadForm" method="post"> 
@@ -378,12 +279,9 @@
 						<tr>
 							<td class="tdTitle">프로젝트명</td>
 							<td class="tdContents" colspan="3">
-								<select name="orderCtClass" style="width: 95px">
-									<option value="P">프로젝트</option>
-									<option value="M">유지보수</option>
-								</select>		
-								<input type="text" class="search" style="width: 315px;"/>
+								<input type="text" class="search" style="width: 411px;"/>
 								<input type="hidden" name="orderCtFkKey"/>
+								<input type="hidden" name="orderCtClass" value="M">
 							</td>
 							<td class="tdTitle">고객사</td>
 							<td class="tdContents"><input type="text"  /></td>
@@ -444,9 +342,9 @@
 								</td>
 								<td class="tdTitle firstTd">수량</td>
 								<td class="tdContents firstTd">
-									<input type="text" name="prodList[0].mtOrderPmQuantity" style="width: 75px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+									<input type="text" name="prodList[0].mtOrderPmQuantity" style="width: 75px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
 								</td>
 							</tr>
 							<tr class="dpTbRow">
@@ -470,7 +368,7 @@
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle lastTd">제품상세</td>
-								<td class="tdContents lastTd" colspan="5"><textarea name="prodList[0].mtPmDetail" readonly="readonly"></textarea></td>
+								<td class="tdContents lastTd" colspan="5"><textarea name="prodList[0].mtPmDetail"></textarea></td>
 							</tr>
 							
 						</table>

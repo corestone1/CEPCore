@@ -42,12 +42,19 @@ public class MainController {
 		try { 
 			loginIdentify = service.loginCheck(map);
 			name = service.selectName(map);
-		} catch(Exception e) { }
-		
+		} catch(Exception e) { 
+			log.error(null, e);
+		}
+		log.debug("key====>"+key);
+		log.debug("pw====>"+pw);
+		log.debug("loginIdentify====>"+loginIdentify);
 		if (loginIdentify == 1) {
 			log.info("로그인 성공");
+			//session.setAttribute("id", id);
+			//session.setAttribute("pw", pw);
 			session.setAttribute("name", name);
 			session.setAttribute("admin", map);
+
 		}
 		else {
 			log.info("로그인 실패");

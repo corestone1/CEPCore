@@ -61,7 +61,7 @@
 			margin-bottom: 100px;
 		} */
 		.popContainer .contents select {
-			width: 162px;
+			width: 178px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -84,7 +84,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
-			width: 140px;
+			width: calc(100% - 20px);
 			height: 38px;
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
@@ -97,7 +97,7 @@
 			background-color: #f6f7fc;
 		}
 		.popContainer .contents input[class^="calendar"] {
-			width: 140px;
+			width: 155px;
 			height: 38px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -105,7 +105,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 117px;
+			height: 109px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -137,38 +137,22 @@
 		} 
 	</style>
 	<script>
-		function fn_saveNext(){
-		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
+		function fn_saveBtn(){
+			document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
 			document.mtBasicForm.method="post";
-			alert(1111);
-           	document.mtBasicForm.submit();  */
+           	document.mtBasicForm.submit(); 
            	
-           	$.ajax({
-	        	url:"/maintenance/writeMtBasicInfo.do",
-	            /* dataType: 'json', */
-	            type:"post",  
-	            data: "",
-	     	   	contentType: "application/json; charset=UTF-8",
-	     	  	beforeSend: function(xhr) {
-	        		xhr.setRequestHeader("AJAX", true);
-	        		//xhr.setRequestHeader(header, token);
-	        	},
-	            success:function(data){		            	
-	            	var url = '/project/writeBasicInfo.do';
-	    			var dialogId = 'program_layer';
-	    			var varParam = {
+		}
+		function fn_saveNextBtn(){
+			var url = '/maintenance/writeMtWorkOrderInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
 
-	    			}
-	    			var button = new Array;
-	    			button = [];
-	    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	        }); 
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+           	
 		}
 		
 		$(function(){
@@ -183,14 +167,16 @@
 				
 			});
 			
-			$('#sbCtYn').change(function(){
+			$('#mtWorkOrderYn').change(function(){
 				
-				if("Y" == $('#sbCtYn option:selected').val()){
+				if("Y" == $('#mtWorkOrderYn option:selected').val()){
 					$('#back_order').show();
-					$('#back_buy').show();
+					$('#saveNextBtn').show();
+					$('#saveBtn').hide();
 				} else {
 					$('#back_order').hide();
-					$('#back_buy').hide();
+					$('#saveNextBtn').hide();
+					$('#saveBtn').show();
 				}
 				
 			});
@@ -230,7 +216,7 @@
 		        	} 
 		        });
 				
-			}); 
+			});
 			
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
 			$('#acDirectorKey').change(function(){
@@ -253,39 +239,33 @@
 	</script>
 </head>
 <body>
-	<form:form commandName="mtContractVO" id="mtBasicForm" name="mtBasicForm" method="post">		 
+	<form:form commandName="mtContractVO" id="mtBasicForm" name="mtBasicForm" method="post">		
 		<div class="popContainer">
 			<div class="top">
 				<div>
-					<div class="floatL ftw500">유지보수 등록</div>
+					<div class="floatL ftw500">유지보수 작업등록</div>
 				</div>
 			</div>
 			<div class="left">
 				<ul class="ftw400">
 					<li class="colorWhite cursorP on">기본정보</li>
-					<li class="colorWhite cursorP">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>
-					
 					<li id="back_order" class="colorWhite cursorP" style="display:none">발주정보</li>
-					<li id="back_buy" class="colorWhite cursorP" style="display:none">매입정보</li>
 				</ul>
 			</div>
 			<div class="contents">
 				<div>
 					<table>
 						<tr>
-							<td class="btnFc" colspan="6"><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
-						</tr>
-						<tr>
 							<td class="tdTitle">프로젝트명</td>
 							<td class="tdContents" colspan="5">
-								<input type="text" name="mtNm"/>
+								<input type="text" name="mtNm" class="search"/>
+								<input type="hidden" name="mtIntegrateKey" />
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle">고객사</td>
 							<td class="tdContents" colspan="5">
-								<input type="text" name="mtAcKey" id="mtAcKey" class="search" />	
+								<input type="text" id="mtAcNm" class="pname" value="미래에셋" readonly/>
 							</td>
 						</tr>
 						<tr>
@@ -301,25 +281,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">관리담당자</td>
-							<td class="tdContents">
-								<select name="mngEmpKey">
-									<c:forEach var="emp" items="${empList}" varStatus="status">										
-									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
-									</c:forEach>	
-								</select>
-							</td>
-							<td class="tdSubTitle">지원담당</td>
-							<td class="tdContents">
-								<select name="supportEmpKey">
-									<c:forEach var="emp" items="${empList}" varStatus="status">										
-									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
-									</c:forEach>	
-								</select>
-							</td>
-							<td class="tdSubTitle">영업담당</td>
-							<td class="tdContents">
-								<select name="saleEmpKey">
+							<td class="tdTitle">지원담당</td>
+							<td class="tdContents" colspan="5">
+								<select name="mtWorkEmpKey">
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
 									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
 									</c:forEach>	
@@ -327,52 +291,40 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">계약일자</td>
-							<td class="tdContents">
-								<input type="text" name="ctDt" class="calendar fromDt" />
-							</td>
-							<td class="tdSubTitle">유지보수기간</td>
-							<td class="tdContents" colspan="3">
-								<input type="text" name="startDt" placeholder="from" class="calendar fromDt" /> ~ 
-								<input type="text" name="endDt" placeholder="to" class="calendar toDt" />
+							<td class="tdTitle">작업기간</td>
+							<td class="tdContents" colspan="5">
+								<input type="text" name="mtWorkStartDt" placeholder="from" class="calendar fromDt" />&nbsp;<input type="text" name="mtWorkStartTm" style="width: 50px" />&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
+								<input type="text" name="mtWorkEndDt" placeholder="to" class="calendar toDt" />&nbsp;<input type="text" name="mtWorkEndTm" style="width: 50px" />
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">유지보수금액</td>
+							<td class="tdTitle">작업유형</td>
 							<td class="tdContents">
-								<input type="text"  name="amount" style="width: 140px"/>
-							</td>
-							<td class="tdSubTitle">검수방법</td>
-							<td class="tdContents">
-								<select name="imCd">
-									<option value="온라인">온라인</option>
-									<option value="오프라인">오프라인</option>
+								<select name="mtWorkTypeCd">
+									<option value="정기점검">정기점검</option>
+									<option value="장애처리">장애처리</option>
+									<option value="기술지원">기술지원</option>
 								</select>
 							</td>
-							<td class="tdSubTitle">백계약유무</td>
+							<td class="tdSubTitle">조치결과</td>
 							<td class="tdContents">
-								<select id="sbCtYn" name="sbCtYn">
+								<select name="mtWorkResultCd">
+									<option value="준비">준비</option>
+									<option value="진행">진행</option>
+									<option value="완료">진행</option>
+								</select>
+							</td>
+							<td class="tdSubTitle">추가발주유무</td>
+							<td class="tdContents">
+								<select id="mtWorkOrderYn" name="mtWorkOrderYn">
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select>
 							</td>
 						</tr>	
 						<tr>
-							<td class="tdTitle">결재조건</td>
-							<td class="tdContents">
-								<input type="text"  name="payTerms" style="width: 140px"/>
-							</td>
-							<td class="tdSubTitle">보증증권유무</td>
-							<td class="tdContents">
-								<select name="gbYn" id="gbYn">
-									<option value="N">N</option>
-									<option value="Y">Y</option>
-								</select>
-								
-							</td>
-							<td colspan="3">
-								<button type="button" id="file_upload" style="display:none"><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>
-							</td>
+							<td class="tdTitle veralignT">지원내용</td>
+							<td class="tdContents" colspan="5"><textarea name="mtWorkCont"></textarea></td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
@@ -381,16 +333,17 @@
 					</table>
 				</div>
 				<div class="btnWrap floatR">
-					<div class="floatL">
-						<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
+					<div id="saveBtn" class="floatR" onclick="fn_saveBtn();">
+						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
-					<div class="floatR" onclick="fn_saveNext();">
+					<div id="saveNextBtn" class="floatR" onclick="fn_saveNextBtn();" style="display:none">
 						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>
 		</div>	
-	</form:form> 
+	</form:form>
+	
 </body>
 </html>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cep.maintenance.service.MaintenanceService;
 import com.cep.maintenance.vo.MaintenanceDefaultVO;
 import com.cep.maintenance.vo.MtContractVO;
+import com.cep.maintenance.vo.MtWorkVO;
 
 
 @Service("maintenanceService")
@@ -55,6 +56,24 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 	public List<?> selectAcDirectorList(String acKey) throws Exception {
 		// TODO Auto-generated method stub
 		return mapper.selectAcDirectorList(acKey);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.service.MaintenanceService#selectMtWorkList(com.cep.maintenance.vo.MaintenanceDefaultVO)
+	 */
+	@Override
+	public List<?> selectMtWorkList(MaintenanceDefaultVO searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMtWorkList(searchVO);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.service.MaintenanceService#deleteMtWork(java.lang.String)
+	 */
+	@Override
+	public void deleteMtWork(MtWorkVO deleteVo) throws Exception {
+		mapper.deleteMtWork(deleteVo);
+		
 	}
 	
 }

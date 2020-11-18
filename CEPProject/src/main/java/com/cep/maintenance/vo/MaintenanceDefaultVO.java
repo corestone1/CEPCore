@@ -20,13 +20,15 @@ import java.io.Serializable;
  */
 public class MaintenanceDefaultVO implements Serializable{
 	private static final long serialVersionUID = -858838578081269359L;
-	
+	private int rowNum;
 	private String fromDate; // from
 	private String toDate; //to
 	private String searchSaleEmpKey; //영업담당자 키 
 	private String searchMtName;//검색 유지보수  프로젝트명
 	private String btnOption; //검색(search),수정(edit),삭제(delete),엑셀(excel)
 	private String selectKey; //선택한 항목의 key값
+	private String searchWorkEmpKey; //유지보수 작업(지원)담당자
+	private String searchWorkResult; // 작업결과(진행중/완료)
 	/**
 	 * @return the fromDate
 	 */
@@ -104,6 +106,42 @@ public class MaintenanceDefaultVO implements Serializable{
 	 */
 	public void setSelectKey(String selectKey) {
 		this.selectKey = selectKey;
+	}
+	/**
+	 * @return the searchWorkEmpKey
+	 */
+	public String getSearchWorkEmpKey() {
+		return searchWorkEmpKey;
+	}
+	/**
+	 * @param searchWorkEmpKey the searchWorkEmpKey to set
+	 */
+	public void setSearchWorkEmpKey(String searchWorkEmpKey) {
+		this.searchWorkEmpKey = searchWorkEmpKey;
+	}
+	/**
+	 * @return the searchWorkResult
+	 */
+	public String getSearchWorkResult() {
+		return searchWorkResult;
+	}
+	/**
+	 * @param searchWorkResult the searchWorkResult to set
+	 */
+	public void setSearchWorkResult(String searchWorkResult) {
+		this.searchWorkResult = searchWorkResult;
+	}
+	/**
+	 * @return the rowNum
+	 */
+	public int getRowNum() {
+		return rowNum;
+	}
+	/**
+	 * @param rowNum the rowNum to set
+	 */
+	public void setRowNum(int rowNum) {
+		this.rowNum = rowNum;
 	}
 	
 	

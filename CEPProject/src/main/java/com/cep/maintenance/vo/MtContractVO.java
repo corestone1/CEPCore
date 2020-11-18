@@ -24,7 +24,7 @@ import org.apache.ibatis.type.Alias;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 public class MtContractVO extends MaintenanceDefaultVO implements Serializable{
-	private int rowNum;
+	
 	private int mtIntegrateKey; //유지보수 계약 PK
 	private String mtCtKey; //유지보수 계약관리키
 	private int mtSeq; //유지보수 순번
@@ -390,18 +390,6 @@ public class MtContractVO extends MaintenanceDefaultVO implements Serializable{
 	 */
 	public void setModEmpKey(String modEmpKey) {
 		this.modEmpKey = modEmpKey;
-	}
-	/**
-	 * @return the rowNum
-	 */
-	public int getRowNum() {
-		return rowNum;
-	}
-	/**
-	 * @param rowNum the rowNum to set
-	 */
-	public void setRowNum(int rowNum) {
-		this.rowNum = rowNum;
 	}
 	/**
 	 * @return the mtAcNm

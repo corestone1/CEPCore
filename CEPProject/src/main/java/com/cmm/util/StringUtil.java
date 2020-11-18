@@ -1,5 +1,7 @@
 package com.cmm.util;
 
+import java.text.DecimalFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,5 +34,30 @@ public class StringUtil {
 		}
 		
 		return string;
+	}
+	
+	public static String getDefaultValue(String str, String defaultStr) {
+		String returnValue = null;
+		
+		if(null == str || str.length()==0 || str.equalsIgnoreCase("null")) {
+			returnValue = defaultStr;
+		}else {
+			returnValue = str;
+		}
+		return returnValue;
+	}
+	
+	public static String getCommaString(String str){
+		String pattern = "###,###,###,###,###";
+		DecimalFormat df = null;
+		String returnValue = null;
+		try{
+			df = new DecimalFormat (pattern);
+			double d = Double.parseDouble(str);
+			returnValue = df.format(d);
+		} catch (Exception e) {
+			returnValue = str;
+		}
+		return returnValue;
 	}
 }
