@@ -891,7 +891,7 @@ body .ui-tooltip {
     text-align: center;
     background-color: #fff;
     cursor: default;
-    z-index: 100;
+    z-index: 102 !important;
     width: 273px;
 }
 .ui-widget-content a {

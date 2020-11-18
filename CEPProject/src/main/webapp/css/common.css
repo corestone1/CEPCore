@@ -151,6 +151,7 @@ input[class="tCheck"] {
 }
 input[class^="calendar"] {
 	cursor: pointer;
+	height: 40px;
     background-image: url(http://172.10.122.10:8888/images/icon_calendar.png);
     background-repeat: no-repeat;
     background-position: 95% 50%;
