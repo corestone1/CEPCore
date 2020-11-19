@@ -137,12 +137,15 @@
 		} 
 	</style>
 	<script>
-		function fn_saveNext(){
+		/**
+		*  화면을 이동시킨다.
+		*  @param {string} varUrl 이동해야할 url
+		*/
+		function fn_addView(varUrl) {
 		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
 			document.mtBasicForm.method="post";
 			alert(1111);
            	document.mtBasicForm.submit();  */
-           	
            	$.ajax({
 	        	url:"/maintenance/writeMtBasicInfo.do",
 	            /* dataType: 'json', */
@@ -153,8 +156,8 @@
 	        		xhr.setRequestHeader("AJAX", true);
 	        		//xhr.setRequestHeader(header, token);
 	        	},
-	            success:function(data){		            	
-	            	var url = '/project/writeBasicInfo.do';
+	            success:function(data){		        
+	            	var url = '/maintenance/'+varUrl+'.do';
 	    			var dialogId = 'program_layer';
 	    			var varParam = {
 
@@ -245,8 +248,6 @@
 					}					
 				}				
 			});
-			
-			
 		});
 		
 		
@@ -263,9 +264,8 @@
 			<div class="left">
 				<ul class="ftw400">
 					<li class="colorWhite cursorP on">기본정보</li>
-					<li class="colorWhite cursorP">제품정보</li>
+					<li class="colorWhite cursorP" onclick="fn_addView('writeMtProductInfo');">제품정보</li>
 					<li class="colorWhite cursorP">매출정보</li>
-					
 					<li id="back_order" class="colorWhite cursorP" style="display:none">발주정보</li>
 					<li id="back_buy" class="colorWhite cursorP" style="display:none">매입정보</li>
 				</ul>
@@ -358,7 +358,7 @@
 							</td>
 						</tr>	
 						<tr>
-							<td class="tdTitle">결재조건</td>
+							<td class="tdTitle">결제조건</td>
 							<td class="tdContents">
 								<input type="text"  name="payTerms" style="width: 140px"/>
 							</td>
@@ -384,7 +384,7 @@
 					<div class="floatL">
 						<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 					</div>
-					<div class="floatR" onclick="fn_saveNext();">
+					<div class="floatR" onclick="fn_addView('writeMtProductInfo');">
 						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>

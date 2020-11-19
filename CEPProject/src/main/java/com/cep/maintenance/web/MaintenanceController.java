@@ -438,4 +438,12 @@ public class MaintenanceController {
 		
 		return "maintenance/detail/prodInfo";
 	}
+	
+	@RequestMapping(value="/writeMtProductInfo.do")
+	public String writeMtProductInfoView(MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/writeMtProductInfo";
+	}
 }

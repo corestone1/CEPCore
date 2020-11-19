@@ -193,8 +193,8 @@
 			});
 		});
 
-		function fn_addView(){
-			var url = '/maintenance/writeMtBasicInfoView.do';
+		function fn_addView(url){
+			var url = '/maintenance/'+url+'.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 
@@ -259,7 +259,7 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">유지보수 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView('writeMtBasicInfoView');"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView1();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
 					</div>
 					<div class="floatR">
