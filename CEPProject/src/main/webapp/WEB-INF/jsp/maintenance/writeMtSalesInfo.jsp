@@ -70,6 +70,7 @@
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
+			margin-bottom: 3px;
 		}
 		.popContainer .contents select.wdts {
 			width: 135px;
@@ -92,6 +93,11 @@
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
+		.popContainer .salesTable table {
+			border-bottom: 2px solid #e5e5e5;
+			padding-bottom: 13px;
+			margin-top: 5px;
+		}
 		.popContainer td.tdTitle {
 			margin-top: 11px;
 			font-size: 15px;
@@ -103,14 +109,20 @@
 		.popContainer td.tdContents {
 			width: 174px;
 			font-size: 14px;
-		} 				
+		} 	
+		.popContainer tr.sum td {
+			padding-top: 15px;
+		}		
+		.popContainer tr.sum td label {
+			color: #32bc94;
+		}		
 		.popContainer .contents tr:nth-child(1) td {
 			padding-top: 10px;
 		} 
 		.popContainer .contents td.subTitle {
 			font-size: 18px;
 			padding-right: 20px;
-			width: 56px;
+			width: 91px;
 			padding-top: 20px;
 			padding-bottom: 5px;
 		}	
@@ -138,9 +150,7 @@
 		}	
 	</style>
 	<script>
-		function fn_addInfoTable() {
-			
-			var type = "prod";
+		function fn_addInfoTable(type) {
 			var originLength = $('#'+type+'Length').val()*1-1;
 			
 			var lastNum = $("input[name='lastNum']").get($("input[name='lastNum']").length-1).getAttribute('value')*1;
@@ -261,82 +271,103 @@
 		<div class="left">
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_addView('writeMtBasicInfoView');">기본정보</li>
-					<li class="colorWhite cursorP on">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>					
+					<li class="colorWhite cursorP" onclick="fn_addView('writeMtProductInfo');">제품정보</li>
+					<li class="colorWhite cursorP on">매출정보</li>					
 					<li class="colorWhite cursorP">발주정보</li>
 					<li class="colorWhite cursorP">매입정보</li>
 			</ul>
 		</div>
 		<form action="/" id="uploadForm" method="post"> 
-			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			<input type="hidden" id="salesLength" name="salesLength" value="1" />
 			<input type="hidden" value='<c:out value="${resultList.id}"/>'>
 			<div class="contents">
-				<div id="prodWrap">
+				<div id="salesWrap">
 					<div class="subjectContainer">
 						<table class="subject">
 							<tr>		
 								<td class="subTitle" style="border-top: none;">
-									<label class="ftw400">제품정보</label>
+									<label class="ftw400">연도별 매출</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
-								<td class="subBtn" colspan="5"  style="border-top: none;"><img class="floatR" src="<c:url value='/images/icon_project.png'/>" onclick="fn_addInfoTable();"/></td>
+								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('sales');"/></td>
 							</tr>
 						</table>
 					</div>
-					<div class="prodTable">
+					<div class="salesTable">
 						<input type="hidden" name="lastNum" value="0" />
 						<table>
 							<tr>
-								<td class="tdTitle firstTd">제품</td>
-								<td class="tdContents firstTd">
-									<input type="text" name="prodList[0].mtOrderPmNm"class="search" />	
-									<input type="hidden" name="prodList[0].mtOrderPmKey"/>	
-								</td>
-								<td class="tdTitle firstTd">합계</td>
-								<td class="tdContents firstTd">
-									<input type="text" name="prodList[0].totalAmount" />	
-								</td>
-								<td class="tdTitle firstTd">수량</td>
-								<td class="tdContents firstTd">
-									<input type="text" name="prodList[0].mtOrderPmQuantity" style="width: 75px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+								<td class="tdTitle firstTd">연도</td>
+								<td class="tdContents firstTd" colspan="7">
+									<select>
+										<option></option>
+									</select>
 								</td>
 							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle">단가</td>
+							<tr>
+								<td class="tdTitle">1월</td>
 								<td class="tdContents">
-									<input type="text" name="prodList[0].mtOrderPmUprice"/>
+									<input type="text" name="salesList[0].Jan" />	
+								</td>
+								<td class="tdTitle">2월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Feb" />	
+								</td>
+								<td class="tdTitle">3월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Mar" />
 								</td>	
-								<td class="tdTitle">부가세 포함</td>
+								<td class="tdTitle">4월</td>
 								<td class="tdContents">
-									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT1" /><label for="prodList[0].hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT2" /><label for="prodList[0].hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+									<input type="text" name="salesList[0].Apr" />
 								</td>
-								<td class="tdTitle">시리얼번호</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">5월</td>
 								<td class="tdContents">
-									<input type="text" name="prodList[0].mtSerialNo" />	
+									<input type="text" name="salesList[0].May" />
+								</td>
+								<td class="tdTitle">6월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Jun" />
+								</td>
+								<td class="tdTitle">7월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Jul" />
+								</td>
+								<td class="tdTitle">8월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Aug" />
 								</td>
 							</tr>
 							<tr class="dpTbRow">
-								<td class="tdTitle">계약기간</td>
-								<td class="tdContents" colspan="3">
-									<input type="text" value="2020-12-12" class="calendar fromDt" />&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" value="2020-12-12" class="calendar toDt" />
+								<td class="tdTitle">9월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Sep" />
+								</td>
+								<td class="tdTitle">10월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Oct" />
+								</td>
+								<td class="tdTitle">11월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Nov" />
+								</td>
+								<td class="tdTitle">12월</td>
+								<td class="tdContents">
+									<input type="text" name="salesList[0].Dec" />
 								</td>
 							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle">지원내용</td>
-								<td class="tdContents" colspan="5"><textarea name="prodList[0].mtPmDetail" readonly="readonly"></textarea></td>
-							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle lastTd">비고</td>
-								<td class="tdContents lastTd" colspan="5"><textarea name="prodList[0].mtRemark" readonly="readonly"></textarea></td>
+							<tr class="dpTbRow sum">
+								<td class="tdTitle textalignR" colspan="7"><label>합계</label></td>
+								<td class="tdContents textalignR">
+									<label>123.456.789</label>
+								</td>
 							</tr>
 						</table>
 					</div>
 				</div>
 				<div class="btnWrap floatR">
-					<div class="floatR" onclick="fn_addView('writeMtSalesInfo');">
+					<div class="floatR" onclick="">
 						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>

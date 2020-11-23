@@ -10,8 +10,9 @@ function showModalPop(id, url, data, button, title, args) {
 	$.ajax ({
 		type: "GET",
 		url: url,
-		success: function(data) {
-			$('#'+id).html(data);
+		data: data,
+		success: function(response) {
+			$('#'+id).html(response);
 		}
 	});
 

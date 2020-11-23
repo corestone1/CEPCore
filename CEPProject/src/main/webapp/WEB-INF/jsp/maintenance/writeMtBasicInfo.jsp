@@ -146,11 +146,20 @@
 			document.mtBasicForm.method="post";
 			alert(1111);
            	document.mtBasicForm.submit();  */
+           	
+           	var object = {};
+            var fromData = $("#mtBasicForm").serializeArray();
+            for (var i = 0; fromData < fromData.length; i++){
+              
+              object[fromData[i]['name']] = fromData[i]['value'];
+           }
+            var sendData = JSON.stringify(object);
+            
            	$.ajax({
 	        	url:"/maintenance/writeMtBasicInfo.do",
 	            /* dataType: 'json', */
 	            type:"post",  
-	            data: "",
+	            data: sendData,
 	     	   	contentType: "application/json; charset=UTF-8",
 	     	  	beforeSend: function(xhr) {
 	        		xhr.setRequestHeader("AJAX", true);
@@ -164,7 +173,8 @@
 	    			}
 	    			var button = new Array;
 	    			button = [];
-	    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+	    			// /* showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
+	    			showModalPop(dialogId, url, data, button, '', 'width:1144px;height:708px');
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -265,7 +275,7 @@
 				<ul class="ftw400">
 					<li class="colorWhite cursorP on">기본정보</li>
 					<li class="colorWhite cursorP" onclick="fn_addView('writeMtProductInfo');">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>
+					<li class="colorWhite cursorP" onclick="fn_addView('writeMtSalesInfo');">매출정보</li>
 					<li id="back_order" class="colorWhite cursorP" style="display:none">발주정보</li>
 					<li id="back_buy" class="colorWhite cursorP" style="display:none">매입정보</li>
 				</ul>

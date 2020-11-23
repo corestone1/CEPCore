@@ -1,5 +1,6 @@
 package com.cep.maintenance.web;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,30 +151,38 @@ public class MaintenanceController {
 	
 	
 	@RequestMapping(value="/writeMtBasicInfo.do", method=RequestMethod.POST)
-	public void writeMtBasicInfo(MtContractVO mtContractVO, HttpServletRequest request) {
-
+	@ResponseBody 
+	public Map<String, Object> writeMtBasicInfo(HttpServletRequest request, @RequestBody MtContractVO mtContractVO, ModelMap model) {
 		HashMap<String, String> sessionMap = null;
 		try {
+			logger.info("writeMtBasicInfo=====");
+			/*logger.info("mtContractVO.getMtNm())=====>"+mtContractVO.getMtNm());*/
+			logger.info("mtContractVO.getMngEmpKey())=====>"+mtContractVO.getMngEmpKey());
 			sessionMap =(HashMap)request.getSession().getAttribute("admin");
-			
+ 
 			mtContractVO.setRegEmpKey(sessionMap.get("empKey"));
+     
 		} catch (Exception e) {
 			logger.error(null, e);
 		}
-			/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
-		logger.debug("writeMtBasicInfo=====");
-//		logger.debug("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
-//		List<?> empList = null;
-//		try {
-//			empList = service.selectEmployeeList();
-//			model.put("empList", empList);
-//		} catch (Exception e) {
-//			model.put("resultCode", "FAIL");
-//			logger.error("addBasicInfo error", e);
-//		}
-		
+		/*@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {*/
+		logger.info("writeMtBasicInfo=====");
+//	      logger.debug("mtContractVO.getMtNm()====="+mtContractVO.getMtNm());
+//	      List<?> empList = null;
+//	      try {
+//	         empList = service.selectEmployeeList();
+//	         model.put("empList", empList);
+//	      } catch (Exception e) {
+//	         model.put("resultCode", "FAIL");
+//	         logger.error("addBasicInfo error", e);
+//	      }
+  
 		/*return "maintenance/mtContractList";*/
-	}	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap.put("id", "aaaaa");
+		
+		return returnMap;
+	}   
 	
 	
 	@RequestMapping(value="/writeMtBackOrderInfoView.do")
@@ -440,10 +449,25 @@ public class MaintenanceController {
 	}
 	
 	@RequestMapping(value="/writeMtProductInfo.do")
-	public String writeMtProductInfoView(MtContractVO mtContractVO, ModelMap model) throws Exception {
+	public String writeMtProductInfo(HttpServletRequest request, MtContractVO mtContractVO, ModelMap model) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
+		Enumeration params = request.getParameterNames();
+		while (params.hasMoreElements()){
+		    String name = (String)params.nextElement();
+		    returnMap.put(name, request.getParameter(name));
+		}
+		model.addAttribute("resultList", returnMap);
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
 		return "maintenance/writeMtProductInfo";
+	}
+	
+	@RequestMapping(value="/writeMtSalesInfo.do")
+	public String writeMtSalesInfo(HttpServletRequest request, MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/writeMtSalesInfo";
 	}
 }
