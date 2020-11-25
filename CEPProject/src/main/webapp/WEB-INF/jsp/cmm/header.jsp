@@ -130,7 +130,7 @@
 					<div class="">
 						<ul>
 							<li><a href="/mngCommon/product/list.do">제품관리</a></li>
-							<li><a href="/mngProject/bill/list.do">계산서목록</a></li>
+							<li><a href="/mngCommon/employee/list.do">사용자관리</a></li>
 							<li><a href="/mngProject/mapping/list.do">발주·계산서 매핑</a></li>
 							<li><a href="/mngProject/billCalendar/list.do">계산서 일정</a></li>
 							<li><a href="/mngProject/fundSchedule/list.do">수금·지급 일정</a></li>
