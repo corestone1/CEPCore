@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmm.service.impl.MailMapper">
+
+	<resultMap id="mail" type="com.cmm.vo.MailVO">
+		<result property="fromEmail" column="ML_FROM_EMAIL"/>
+		<result property="subject" column="ML_SUBJECT"/>
+		<result property="content" column="ML_CONTENT"/>
+		<result property="toEmail" column="ML_TO_EMAIL"/>
+		<result property="successYn" column="SUCCESS_YN"/>
+	</resultMap>
+	
+	<insert id="insertMailInfo" parameterType="MailVO">
+		INSERT INTO CMM_MAIL_MNG_TB (
+			ML_FROM_EMAIL
+			, ML_SUBJECT
+			, ML_CONTENT
+			, ML_TO_EMAIL
+			, REG_DT
+			, REG_TM
+			, SUCCESS_YN		
+		) VALUES (
+			#{fromEmail}
+			, #{subject}
+			, #{content}
+			, #{toEmail}
+			, (SELECT DATE_FORMAT(now(), "%Y%m%d"))
+			, (SELECT DATE_FORMAT(now(), "%H%i%s"))
+			, #{successYn}
+		)
+	</insert>
+</mapper>
