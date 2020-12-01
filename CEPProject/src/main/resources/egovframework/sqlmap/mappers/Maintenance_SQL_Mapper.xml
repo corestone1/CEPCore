@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cep.maintenance.service.impl.MaintenanceMapper">
 <!--유지보수 관련 sql 관리하는 Mapper.xml  -->
-	<resultMap id="mtContractVO" type="com.cep.maintenance.vo.MtContractVO">
+	<resultMap id="mtContractVO" type="com.cep.maintenance.contract.vo.MtContractVO">
 		<result property="rowNum" column="ROW_NUM"/>
 		<result property="mtIntegrateKey" column="MT_INTEGRATE_KEY"/>
 		<result property="mtCtKey" column="MT_CT_KEY"/>
@@ -37,7 +37,7 @@
 	</resultMap>
 	
 	<!-- 유지보수 기본정보 등록 -->
-	<insert id="insertMtContractBasic" parameterType="com.cep.maintenance.vo.MtContractVO">
+	<insert id="insertMtContractBasic" parameterType="com.cep.maintenance.contract.vo.MtContractVO">
 		INSERT INTO MT_CONTRACT_TB (
 			MT_INTEGRATE_KEY
 			, MT_CT_KEY
@@ -105,7 +105,7 @@
 		유지보수 목록 조회 쿼리
 		날짜 조건이 없는 경우 (초기 검색) AND MT_CT_DT LIKE CONCAT(year(NOW()),'%') 검색하여 해당 년도를 검색한다.
 	  -->
-	<select id="selectMtContractList" parameterType="com.cep.maintenance.vo.MaintenanceDefaultVO" resultMap="mtContractVO">				
+	<select id="selectMtContractList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultMap="mtContractVO">				
 		
 		SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
 		FROM (
@@ -196,7 +196,7 @@
 		유지보수 작업 목록
 		리스트에서 모든 정보가 보여지기 때문에 모든정보를 불러온다.
 	  -->
-	<select id="selectMtWorkList" parameterType="com.cep.maintenance.vo.MaintenanceDefaultVO" resultType="egovMap">				
+	<select id="selectMtWorkList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">				
 		
 		SELECT
 		  	MW.MT_WORK_KEY

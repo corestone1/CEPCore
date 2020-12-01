@@ -51,6 +51,31 @@ public class ProjectController {
 		return "project/list";
 	}
 	
+	@RequestMapping(value="/popup/list.do")
+	public String selectPopupProject(@ModelAttribute("searchVO") SampleDefaultVO searchVO, ModelMap model) throws Exception {
+		
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+		
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		List<?> projectList = service.selectProjectList(searchVO);
+		model.addAttribute("resultList", projectList);
+		
+		int totCnt = service.selectProjectListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		
+		return "project/popup/samplePopup";
+	}
+	
 	@RequestMapping(value="/detail/bidding.do")
 	public String selectProjectDetailBd(ProjectVO projectVO, ModelMap model) throws Exception {
 		
@@ -75,72 +100,72 @@ public class ProjectController {
 		return "project/detail/order";
 	}
 	
-	@RequestMapping(value="/writeProject.do")
+	@RequestMapping(value="/write/project.do")
 	public String addProject(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeProject";
+		return "project/write/project";
 	}
 	
-	@RequestMapping(value="/writeBasicInfo.do")
+	@RequestMapping(value="/write/basicInfo.do")
 	public String addBasicInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeBasicInfo";
+		return "project/write/basicInfo";
 	}
 	
 	
-	@RequestMapping(value="/writeAmountInfo.do")
+	@RequestMapping(value="/write/amountInfo.do")
 	public String addAmountnfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeAmountInfo";
+		return "project/write/amountInfo";
 	}
 	
 	
-	@RequestMapping(value="/writeBiddingInfo.do")
+	@RequestMapping(value="/write/biddingInfo.do")
 	public String addBiddingInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeBiddingInfo";
+		return "project/write/biddingInfo";
 	}
 	
 	
-	@RequestMapping(value="/writeBuildInfo.do")
+	@RequestMapping(value="/write/buildInfo.do")
 	public String addBuildInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeBuildInfo";
+		return "project/write/buildInfo";
 	}
 	
 	
-	@RequestMapping(value="/writeWorkInfo.do")
+	@RequestMapping(value="/write/workInfo.do")
 	public String addWorkInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeWorkInfo";
+		return "project/write/workInfo";
 	}
 	
-	@RequestMapping(value="/writeFinishInfo.do")
+	@RequestMapping(value="/write/finishInfo.do")
 	public String addFinishInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeFinishInfo";
+		return "project/write/finishInfo";
 	}
 	
-	@RequestMapping(value="/writeLoseInfo.do")
+	@RequestMapping(value="/write/loseInfo.do")
 	public String addLoseInfo(ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
-		return "project/writeLoseInfo";
+		return "project/write/loseInfo";
 	}
 	
 	@RequestMapping(value="/requestBill.do")

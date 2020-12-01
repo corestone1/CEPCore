@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../../cmm/inc.jsp" %>
-<%@include file="../../cmm/header.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/inc.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/header.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -135,7 +135,7 @@
 			display: none !important;
 		}
 		.liArrow {
-			background-image: url('http://172.10.122.10:8888/images/step_arrow.png');
+			background-image: url('/images/step_arrow.png');
 			background-repeat: no-repeat;
 		}
 		form .contents > .fxd .title ul li:first-child {

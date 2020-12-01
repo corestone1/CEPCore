@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/inc.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -35,19 +35,20 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 100%;
+			width: calc(100% - 201px);
 			height: 601px;
 			top: 107px;
-			right: 0;
+			left: 201px;			
 			z-index: 3;
 			background-color: #f6f7fc;
+			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			margin: 9px 0 0 244px;
-			width: calc(100% - 244px);
+			width: calc(100% - 80px);
+			margin: 10px 40px 15px 40px;
 		}
 		.popContainer .contents > div:first-child {
-			min-height: 529px;
+			min-height: 519px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
@@ -62,7 +63,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -71,7 +72,7 @@
 			width: 135px;
 		}
 		.popContainer .contents input {
-			width: 691px;
+			width: calc(100% - 20px);
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -82,7 +83,7 @@
 		.popContainer .contents input[class="search"] {
 			width: 177px;
 			height: 38px;
-			background-image: url('./images/search_icon.png');
+			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
@@ -92,15 +93,15 @@
 			outline: none;
 			background-color: #f6f7fc;
 		}
-		.popContainer .contents input[class="calendar"] {
+		.popContainer .contents input[class^="calendar"] {
 			width: 177px;
 			height: 40px;
-			background-image: url('./images/calendar_icon.png');
+			background-image: url('/images/icon_calendar.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: 691px;
+			width: calc(100% - 20px);
 			height: 160px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -109,30 +110,27 @@
 			margin-bottom: 0px;
 			resize: none;
 		}
-		.popContainer .contents .btnWrap {
-			margin-top: 19px;
-			margin-bottom: 27px;
-		}		
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
-			width: 96px;
 			font-size: 14px;
-		    color: #525252;
+			color: #525252;
+			padding-right: 20px;
+			width: 99px;
 		}				
 		.popContainer .contents td.tdContents {
-			width: 691px;
+			width: 100%;
 			font-size: 14px;
 		} 
-		.popContainer .contents .btnDiv {
-	  		margin-right: 82px;
-		} 	
+		.ui-datepicker.ui-widget-content {
+			z-index: 102 !important;
+		 }
 	</style>
 	<script>
 		function fn_addBiddingView(){
-			var url = '/project/writeAmountInfo.do';
+			var url = '/project/write/amountInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -140,6 +138,10 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
+		function fn_SamplePopup(){
+		    window.open('/project/popup/list.do','','width=1000px,height=400,left=600');
 		}
 	</script>
 </head>
@@ -151,15 +153,18 @@
 			</div>
 		</div>
 		<div class="left">
-			<ul class="ftw500">
+			<ul class="ftw400">
 				<li >기본정보</li>
 			</ul>
 		</div>
 		<div class="contents">
+			<input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
+			<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/>
+			<input type="hidden" id="dialogId" />
 			<div>
 				<table>
 					<tr>
-						<td class="btnFc" colspan="2"><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+						<td class="btnFc" colspan="2"><button onclick="fn_SamplePopup();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
 					</tr>
 					<tr>
 						<td class="tdTitle">프로젝트명</td>
@@ -199,8 +204,8 @@
 					<tr>
 						<td class="tdTitle">사업기간</td>
 						<td class="tdContents">
-							<input type="text" placeholder="from" class="calendar" /> ~ 
-							<input type="text" placeholder="to" class="calendar" />
+							<input type="text" placeholder="from" class="calendar fromDt" /> ~ 
+							<input type="text" placeholder="to" class="calendar toDt" />
 						</td>
 					</tr>
 					<tr>
@@ -244,14 +249,14 @@
 					</tr>
 				</table> --%>	
 			</div>
-			<div class="btnWrap">
-				<div class="floatL btnDiv">
+			<div class="btnWrap floatR">
+				<div class="floatL">
 					<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 				</div>
-				<div class="floatR btnDiv" onclick="fn_addBiddingView();">
+				<div class="floatR" onclick="fn_addBiddingView();">
 					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
-				
+				<div class="floatN floatC"></div>
 			</div>
 <%-- 			<div class="btnWrap">
 				<table width="788px">

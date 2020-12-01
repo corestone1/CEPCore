@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
-<%@include file="../cmm/header.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/inc.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/header.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -163,7 +163,7 @@
 		}
 		input[class^="calendar"] {
 			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 			cursor: pointer;
@@ -220,20 +220,9 @@
 			});
 			
 		});
-
-		/* function fn_addView(){
-			var url = '/writeProject.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-		} */
 		
 		function fn_addView(){
-			var url = '/project/writeBasicInfo.do';
+			var url = '/project/write/basicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 
@@ -242,6 +231,7 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		
 	</script>
 </head>
 <body>
@@ -249,6 +239,10 @@
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
+			<!-- <input type="text" id="id" style="border: 1px solid #000;"/>
+			<input type="text" id="no" style="border: 1px solid #000;"/>
+			<input type="hidden" id="dialogId" />
+			<button type="button" onclick="fn_SamplePopup();">샘플팝업</button> -->
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">

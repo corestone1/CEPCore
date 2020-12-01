@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/inc.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -63,15 +63,29 @@
 			font-size: 14px;
 			margin-bottom: 3px;
 		}
+		.popContainer .contents input[class="timeInfo"] {
+			width: 30px;
+			height: 38px;
+		}
+		.popContainer .contents input[class="calendar"] {
+			width: 130px;
+			height: 40px;
+			background-image: url('./images/calendar_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 410px;
+			height: 277px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
 			resize: none;
+		}	
+		.popContainer .contents td.btnFc {			
+			padding-bottom: 12px;
 		}		
 		.popContainer .contents td.tdTitle {
 			margin-top: 11px;
@@ -84,8 +98,7 @@
 			width: 100%;
 			font-size: 14px;
 			font-weight: 200;
-		} 
-			 				
+		} 	 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
 			width: 124px;
@@ -109,21 +122,20 @@
 			background-color: #f6f7fc;
 			padding-left: 0px;
 		}
-		.popContainer .contents select {
-			width: 160px;
-			height: 40px;
-			border: 1px solid #e9e9e9;
-			padding: 0 10px;
-			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
-			background-color: #fff;
-			color: #535353;
-			font-size: 15px;
-		}
 	</style>
-	<script>		
+	<script>	
+		function fn_preBiddingView(){
+			var url = '/project/write/workInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+	
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}	
 		function fn_finish(){
-			var url = '/project/writeFinishInfo.do';
+			var url = '/project/write/finishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -138,41 +150,55 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">실주 등록</div>
+				<div class="floatL ftw500">프로젝트 등록</div>
+				<div class="subTitle">완료</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li>실주 정보</li>
+				<li >완료정보</li>
 			</ul>
 		</div>
 		<div class="contents">
 			<div>
 				<table>
 					<tr>
+						<td class="tdTitle">고객사</td>
+						<td class="tdContents" colspan="2">
+							<input type="text" class="pname"  value="KB손해보험" readonly/>
+						</td>
+					</tr>
+					<tr>
 						<td class="tdTitle">프로젝트명</td>
-						<td class="tdContents">
-							<input type="text" class="pname"  value="경신홀딩스 백업시스템 구축" readonly/>
+						<td class="tdContents" colspan="2">
+							<input type="text" class="pname"  value="EDMS이미지 암호화" readonly/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">작성자</td>
-						<td class="tdContents">
-							<select>
-								<option value="">홍길동</option>
-								<option value="">김철수</option>
-							</select>
+						<td class="tdTitle">검수일</td>
+						<td class="tdContents" colspan="2">
+							<input type="text" class="calendar" value="2020-12-25"/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle veralignT">사유분석</td>
-						<td class="tdContents"><textarea></textarea></td>
+						<td class="tdTitle">검수확인서</td>
+						<td >
+							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>							
+						</td>
+						<td>
+							<input type="text" class="pname" value="EDMS이미지 암호화 검수확인서.pdf" readonly>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle veralignT">비고</td>
+						<td class="tdContents"  colspan="2"><textarea></textarea></td>
 					</tr>
 				</table>
 			</div>
 			<div class="btnWrap">
 				<div class="floatR">
-					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_finish.png'/>" /></button>
 				</div>
 				
 			</div>

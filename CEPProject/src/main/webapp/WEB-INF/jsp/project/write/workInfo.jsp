@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../cmm/inc.jsp" %>
+<%@include file="/WEB-INF/jsp/cmm/inc.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -30,6 +30,9 @@
 			height: 47px;
 			padding-left: 28px;
 			line-height: 47px;
+		}
+		.popContainer .left ul li.on,
+		.popContainer .left ul li:hover {
 			background-color: #fff;
 			color: #32bc94;
 		}
@@ -55,7 +58,7 @@
 	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents input {
-			width: 700px;
+			width: calc(100% - 20px);
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -68,7 +71,7 @@
 			height: 38px;
 		}
 		.popContainer .contents input[class="calendar"] {
-			width: 130px;
+			width: 150px;
 			height: 40px;
 			background-image: url('./images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -76,7 +79,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 277px;
+			height: 100px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -93,12 +96,13 @@
 			color: #535353;
 			padding-right: 20px;
 			width: 99px;
+			
 		}				
 		.popContainer .contents td.tdContents {
 			width: 100%;
 			font-size: 14px;
 			font-weight: 200;
-		} 	 				
+		}	 				
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
 			width: 124px;
@@ -107,25 +111,15 @@
 			background-color: #9284d1;
 			margin-left: 150px;
 			text-align: center;
-			font-weight: 200;
-			
-		}  		
-		/* .popContainer .contents tr:first-child td { 
-			border-collapse: collapse;
-	  		border-spacing: 0 3px;	  			
-			padding-top: 20px;
-		} */
-		.popContainer .contents input[class="pname"] {
-			width: 400px;
-			border : none;
-			outline: none;
-			background-color: #f6f7fc;
-			padding-left: 0px;
-		}
+			font-weight: 200;			
+		}  	 		
+		.popContainer .contents tr:first-child td { 
+			padding-top: 8px;
+		}		
 	</style>
-	<script>	
-		function fn_preBiddingView(){
-			var url = '/project/writeWorkInfo.do';
+	<script>
+		function fn_addBuildView(){
+			var url = '/project/write/finishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -133,9 +127,10 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}	
-		function fn_finish(){
-			var url = '/project/writeFinishInfo.do';
+		}
+		
+		function fn_preBiddingView(){
+			var url = '/project/write/buildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 	
@@ -151,54 +146,67 @@
 		<div class="top">
 			<div>
 				<div class="floatL ftw500">프로젝트 등록</div>
-				<div class="subTitle">완료</div>
+				<div class="subTitle">수행</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li >완료정보</li>
+				<li class="colorWhite cursorP">설치 및 구축</li>
+				<li class="colorWhite cursorP on">수행일지</li>
 			</ul>
 		</div>
 		<div class="contents">
 			<div>
 				<table>
 					<tr>
-						<td class="tdTitle">고객사</td>
-						<td class="tdContents" colspan="2">
-							<input type="text" class="pname"  value="KB손해보험" readonly/>
+						<td class="tdTitle">구분</td>
+						<td class="tdContents">
+							<input type="radio" class="tCheck" name="gubun" id="gubun1" /><label for="gubun1" class="cursorP"></label>
+							&nbsp;&nbsp;작업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tCheck" name="gubun" id="gubun2" /><label for="gubun2" class="cursorP"></label> 
+							&nbsp;&nbsp;이슈&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tCheck" name="gubun" id="gubun3" /><label for="gubun3" class="cursorP"></label> 
+							&nbsp;&nbsp;장애&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tCheck" name="gubun" id="gubun4" /><label for="gubun4" class="cursorP"></label> 
+							&nbsp;&nbsp;기타
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">프로젝트명</td>
-						<td class="tdContents" colspan="2">
-							<input type="text" class="pname"  value="EDMS이미지 암호화" readonly/>
+						<td class="tdTitle">일시</td>
+						<td class="tdContents">
+							<input type="text" class="calendar" />&nbsp;&nbsp;
+							<input type="text" numberOnly class="timeInfo"/> :00&nbsp;&nbsp;&nbsp;
+							소요시간 <input type="text" numberOnly class="timeInfo"/> : <input type="text" placeholder="소요시간" numberOnly class="timeInfo" value="00"/>
 						</td>
 					</tr>
 					<tr>
-						<td class="tdTitle">검수일</td>
-						<td class="tdContents" colspan="2">
-							<input type="text" class="calendar" value="2020-12-25"/>
-						</td>
+						<td class="tdTitle">제목</td>
+						<td class="tdContents"><input type="text"/></td>
 					</tr>
 					<tr>
-						<td class="tdTitle">검수확인서</td>
-						<td >
-							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>							
-						</td>
-						<td>
-							<input type="text" class="pname" value="EDMS이미지 암호화 검수확인서.pdf" readonly>
-						</td>
+						<td class="tdTitle veralignT">내용</td>
+						<td class="tdContents"><textarea></textarea></td>
 					</tr>
 					<tr>
-						<td class="tdTitle veralignT">비고</td>
-						<td class="tdContents"  colspan="2"><textarea></textarea></td>
+						<td class="tdTitle veralignT">처리결과</td>
+						<td class="tdContents"><textarea></textarea></td>
 					</tr>
+					<tr>
+						<td class="tdTitle veralignT">기타</td>
+						<td class="tdContents"><textarea></textarea></td>
+					</tr>
+					<tr>
+						<td class="tdTitle">첨부파일</td>
+						<td class="tdContents">
+							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>
+						</td>
+					</tr>			
 				</table>
 			</div>
 			<div class="btnWrap">
 				<div class="floatR">
 					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_finish.png'/>" /></button>
+					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
 				
 			</div>
