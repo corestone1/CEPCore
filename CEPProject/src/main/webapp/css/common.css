@@ -102,7 +102,7 @@ body * {
 	position: fixed;
 }
 .dpNone {
-	display: none;
+	display: none !important;
 }
 .dpBlock {
 	display: block;
