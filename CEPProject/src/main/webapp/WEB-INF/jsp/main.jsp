@@ -151,16 +151,22 @@
 			        $('.wrap-loading').removeClass('dpNone');
 			    }
 
-			    ,complete:function(){
+			   ,complete:function(){
 			        $('.wrap-loading').addClass('dpNone');
-			    }
+			    } 
 			    
 			    ,success : function(response) {								
 					if(response == 1){
 						alert("이메일로 임시 비밀번호가 발송되었습니다.");
-						history.back();
+						location.reload();
 					}
 					else {
+						var result = confirm("이메일 발송이 실패했습니다. 재전송 하시겠습니까?");
+						if(result) {
+							mailPw();
+						} else {
+							location.reload();
+						}
 						return false;
 					}	
 				}
@@ -169,7 +175,7 @@
 					if (request.status != '0') {
 						alert("code : " + request.status + "\r\nmessage : "
 								+ request.reponseText + "\r\nerror : " + error);
-					}
+					}  
 				}
 			});	
 		}
