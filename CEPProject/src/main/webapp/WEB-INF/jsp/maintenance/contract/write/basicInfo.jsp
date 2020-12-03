@@ -48,7 +48,8 @@
 		}
 		.popContainer .contents > div {
 			width: calc(100% - 80px);
-			margin: 10px 40px 15px 40px;
+			/* margin: 10px 40px 15px 40px; */
+			margin: 10px 40px 15px 45px;
 		}
 		.popContainer .contents > div:first-child {
 			min-height: 519px;
@@ -75,7 +76,7 @@
 			width: 135px;
 		}
 		.popContainer .contents input {
-			width: calc(100% - 20px);
+			width: calc(100% - 37px);
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -104,7 +105,7 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: calc(100% - 20px);
+			width: calc(100% - 37px);
 			height: 117px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -134,9 +135,73 @@
 		.popContainer .contents td.tdContents {
 			width: 178px;
 			font-size: 14px;
+    color: #525252;
 		} 
+		.popContainer .contents .btnWrap {
+			margin : 10px 48px 15px 3px   
+		}
 	</style>
 	<script>
+		/**
+		*  화면을 이동시킨다.
+		*  @param {string} varUrl 이동해야할 url
+		*/
+		function fn_changeView(varUrl) {
+			var url = '/maintenance/contract/write/'+varUrl+'.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			// /* showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
+		function fn_addView111(varUrl) {
+		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
+			document.mtBasicForm.method="post";
+			alert(1111);
+	       	document.mtBasicForm.submit();  */
+	       	
+	       	var object = {};
+	        var fromData = $("#mtBasicForm").serializeArray();
+	        for (var i = 0; fromData < fromData.length; i++){
+	          
+	          object[fromData[i]['name']] = fromData[i]['value'];
+	       }
+	        var sendData = JSON.stringify(object);
+	        
+	       	$.ajax({
+	        	url:"/maintenance/writeMtBasicInfo.do",
+	            /* dataType: 'json', */
+	            type:"post",  
+	            data: sendData,
+	     	   	contentType: "application/json; charset=UTF-8",
+	     	  	beforeSend: function(xhr) {
+	        		xhr.setRequestHeader("AJAX", true);
+	        		//xhr.setRequestHeader(header, token);
+	        	},
+	            success:function(data){		        
+	            	var url = '/maintenance/'+varUrl+'.do';
+	    			var dialogId = 'program_layer';
+	    			var varParam = {
+	
+	    			}
+	    			var button = new Array;
+	    			button = [];
+	    			// /* showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
+	    			showModalPop(dialogId, url, data, button, '', 'width:1144px;height:708px');
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	        }); 
+		}
+		/*
+		*내용을 저장한다.
+		*/
 		function fn_saveNext(){
 		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
 			document.mtBasicForm.method="post";
@@ -180,6 +245,8 @@
 	        	} 
 	        });  
 		}
+		
+		
 		
 		$(function(){
 			$('#gbYn').change(function(){
@@ -245,7 +312,8 @@
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
 			$('#acDirectorKey').change(function(){
 				var checkVal = $('#acDirectorKey option:selected').val();
-				
+				console.log("checkVal===>"+acDirectorList.length);
+				console.log("acDirectorList===>"+acDirectorList);
 				if(acDirectorList.length>0){
 					for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {
 						if(checkVal == acDirectorList[idx].acDirectorKey ){
@@ -273,8 +341,8 @@
 			<div class="left">
 				<ul class="ftw400">
 					<li class="colorWhite cursorP on">기본정보</li>
-					<li class="colorWhite cursorP">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('productInfo');">제품정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfo');">매출정보</li>
 					
 					<li id="back_order" class="colorWhite cursorP" style="display:none">발주정보</li>
 					<li id="back_buy" class="colorWhite cursorP" style="display:none">매입정보</li>
@@ -352,7 +420,18 @@
 							<td class="tdContents">
 								<input type="text"  name="amount" style="width: 140px"/>
 							</td>
-							<td class="tdSubTitle">검수방법</td>
+							<td class="tdSubTitle">부가세 포함</td>
+							<td class="tdContents">
+								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" checked="checked"/><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+							</td>
+							<td class="tdSubTitle">결재조건</td>
+							<td class="tdContents">
+								<input type="text"  name="payTerms" style="width: 140px"/>
+							</td>
+						</tr>	
+						<tr>
+							<td class="tdTitle">검수방법</td>
 							<td class="tdContents">
 								<select name="imCd">
 									<option value="온라인">온라인</option>
@@ -360,29 +439,32 @@
 								</select>
 							</td>
 							<td class="tdSubTitle">정기점검횟수</td>
-							<td class="tdContents">
-								<input type="text"  name="rgInspectCnt" style="width: 80px"/> 회
+							<td class="tdContents" colspan="3">
+								<input type="text"  name="rgInspectCnt" style="width: 64px"/>&nbsp;회&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								백계약유무&nbsp;&nbsp;
+								<select id="sbCtYn" name="sbCtYn" style="width: 60px">
+									<option value="N">N</option>
+									<option value="Y">Y</option>
+								</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								보증증권유무&nbsp;&nbsp;
+								<select name="gbYn" id="gbYn" style="width: 60px">
+									<option value="N">N</option>
+									<option value="Y">Y</option>
+								</select>	
 							</td>
-						</tr>	
-						<tr>
-							<td class="tdTitle">결재조건</td>
+							<!-- <td class="tdSubTitle">백계약유무</td>
 							<td class="tdContents">
-								<input type="text"  name="payTerms" style="width: 140px"/>
-							</td>
-							<td class="tdSubTitle">백계약유무</td>
-							<td class="tdContents">
-								<select id="sbCtYn" name="sbCtYn">
+								<select id="sbCtYn" name="sbCtYn" style="width: 60px">
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select>
-							</td>
-							<td class="tdSubTitle">보증증권유무</td>
-							<td class="tdContents">
-								<select name="gbYn" id="gbYn">
+								보증증권유무
+								
+								<select name="gbYn" id="gbYn" style="width: 60px">
 									<option value="N">N</option>
 									<option value="Y">Y</option>
-								</select>								
-							</td>
+								</select>	
+							</td> -->
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>

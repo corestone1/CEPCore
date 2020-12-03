@@ -34,7 +34,7 @@ public interface MtContractMapper {
 	  * @return
 	  * @throws Exception
 	 */
-	public Map<Object, Object> selectMtBasicDetail(String mtIntegrateKey)  throws Exception;
+	public MtContractVO selectMtBasicDetail(String mtIntegrateKey)  throws Exception;
 	
 	/**
 	 * 

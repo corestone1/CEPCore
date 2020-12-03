@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
+    <Properties>
+        <Property name="logNm">d:/logs/$${date:yyyy}/$${date:MM}/cepErp</Property>
+        <Property name="layoutPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %l - %msg%n</Property>
+        <!-- <Property name="layoutPattern">%style{%d{yyyy/MM/dd HH:mm:ss,SSS}}{cyan} %highlight{[%-5p]}{FATAL=bg_red, ERROR=red,
+            INFO=green, DEBUG=blue}  [%C] %style{[%t]}{yellow}- %m%n -</Property> -->
+    </Properties>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %5p [%c] %m%n" />
+            <PatternLayout pattern="${layoutPattern}" />
         </Console>
         
-        <RollingFile name="file" fileName="d:/logs/cepDebug.log" filePattern="d:/logs/cepDebug.%i.%d{yyyyMMdd}.log">
-        	<PatternLayout pattern="%d %5p [%c] %m%n" />
-        	<Policies>
-        		<SizeBasedTriggeringPolicy size="100MB" />
-        	</Policies>
+        <RollingFile name="file" fileName="${logNm}.log" filePattern="${logNm}.%d{yyyyMMdd}_%i.log">
+           <PatternLayout pattern="${layoutPattern}" />
+           <Policies>
+              <SizeBasedTriggeringPolicy size="30MB" />
+           </Policies>
         </RollingFile>
     </Appenders>
     
@@ -18,7 +24,7 @@
             <AppenderRef ref="console" />
             <AppenderRef ref="file" />
         </Logger>
-        <Logger name="egovframework" level="DEBUG" additivity="false">
+        <Logger name="egovframework" level="INFO" additivity="false">
             <AppenderRef ref="console" />
             <AppenderRef ref="file" />
         </Logger>
@@ -27,36 +33,36 @@
             <AppenderRef ref="console" />
             <AppenderRef ref="file" />
         </Logger>
-        <Logger name="org.springframework" level="DEBUG" additivity="false">
+        <Logger name="org.springframework" level="INFO" additivity="false">
             <AppenderRef ref="console" />
             <AppenderRef ref="file" />
         </Logger>
         <!-- SQL Logger -->
-		<Logger name="jdbc.sqltiming" additivity="false">
-			<level value="DEBUG" />
-			<appender-ref ref="console"/>
-			<AppenderRef ref="file" /> 
-		</Logger>
-		<Logger name="jdbc.sqlonly" additivity="false"> 
-			<level value="DEBUG"/> 
-			<appender-ref ref="console"/>
-			<AppenderRef ref="file" /> 
-		</Logger>
-		<Logger name="jdbc.audit" additivity="false"> 
-			<level value="DEBUG"/>  
-			<appender-ref ref="console"/>
-			<AppenderRef ref="file" /> 
-		</Logger> 
-		<Logger name="jdbc.resultset" additivity="false">
-			<level value="DEBUG" />
-			<appender-ref ref="console"/>
-			<AppenderRef ref="file" /> 
-		</Logger>
-		<Logger name="jdbc.resultsettable" additivity="false"> 
-			<level value="DEBUG"/>  
-			<appender-ref ref="console"/>
-			<AppenderRef ref="file" /> 
-		</Logger> 
+      <Logger name="jdbc.sqltiming" additivity="false">
+         <level value="DEBUG" />
+         <appender-ref ref="console"/>
+         <AppenderRef ref="file" /> 
+      </Logger>
+      <Logger name="jdbc.sqlonly" additivity="false"> 
+         <level value="DEBUG"/> 
+         <appender-ref ref="console"/>
+         <AppenderRef ref="file" /> 
+      </Logger>
+      <Logger name="jdbc.audit" additivity="false"> 
+         <level value="DEBUG"/>  
+         <appender-ref ref="console"/>
+         <AppenderRef ref="file" /> 
+      </Logger> 
+      <Logger name="jdbc.resultset" additivity="false">
+         <level value="DEBUG" />
+         <appender-ref ref="console"/>
+         <AppenderRef ref="file" /> 
+      </Logger>
+      <Logger name="jdbc.resultsettable" additivity="false"> 
+         <level value="DEBUG"/>  
+         <appender-ref ref="console"/>
+         <AppenderRef ref="file" /> 
+      </Logger> 
         <Root level="DEBUG">
             <AppenderRef ref="console" />
             <AppenderRef ref="file" />

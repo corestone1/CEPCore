@@ -6,6 +6,9 @@ package com.cep.maintenance.contract.vo;
 import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
+
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.StringUtil;
 @SuppressWarnings("serial")
 @Alias("mtContractVO")
 /**
@@ -24,29 +27,31 @@ import org.apache.ibatis.type.Alias;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 public class MtContractVO extends MtDefaultVO implements Serializable{
-	
+//	private String mtOption; // 등록(w), 조회(r)
 	private String mtIntegrateKey; //유지보수 계약 PK
 	private String mtCtKey; //유지보수 계약관리키
 	private int mtSeq; //유지보수 순번
 	private String mtAcKey;//사업자 번호
 	private String mtAcNm;//거래처명
-	private String acDirectorKey;//유지보수 거래처 담당자 관리키
+	private String mtAcDirectorKey;//유지보수 거래처 담당자 관리키
+	private String acDirectorInfo;//유지보수 거래처 담당자 정보
 	private String mtNm;//유지보수 계약명
-	private String ctDt;//유지보수 계약일자
-	private String startDt;//유지보수 시작일자
-	private String endDt;//유지보수 종료일자
-	private String rgInspectCnt;//유지보수 정기 검수 횟수
-	private String imCd;//유지보수 검수방법
-	private String sbCtYn; //백계약 여부
+	private String mtCtDt;//유지보수 계약일자
+	private String mtStartDt;//유지보수 시작일자
+	private String mtEndDt;//유지보수 종료일자
+	private String mtRgInspectCnt;//유지보수 정기 검수 횟수
+	private String mtImCd;//유지보수 검수방법
+	private String mtSbCtYn; //백계약 여부
 	private String gbYn; // 보증증권 여부
-	private String saleEmpKey; //유지보수 영업 직원 관리키
+	private String mtSaleEmpKey; //유지보수 영업 직원 관리키
 	private String saleEmpNm; //유지보수 영업 직원 이름
-	private String mngEmpKey; //유지보수 관리 직원 관리키
+	private String mtMngEmpKey; //유지보수 관리 직원 관리키
 	private String mngEmpNm; //유지보수 관리 직원 이름
-	private String supportEmpKey; // 유지보수 지원 직원 관리키
+	private String mtSupportEmpKey; // 유지보수 지원 직원 관리키
 	private String supportEmpNm; // 유지보수 지원 직원 이름
-	private long amount; //유지보수 금액
-	private String payTerms; //유지보수 결재조건
+	private long mtAmount; //유지보수 금액
+	private String taxYn; //부가세포함여부
+	private String mtPayTerms; //유지보수 결재조건
 	private String remark; // 유지보수 비고
 	private String deleteYn;//유지보수 삭제여부
 	private String regDt; // 유지보수 등록일자
@@ -106,14 +111,14 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	/**
 	 * @return the acDirectorKey
 	 */
-	public String getAcDirectorKey() {
-		return acDirectorKey;
+	public String getMtAcDirectorKey() {
+		return mtAcDirectorKey;
 	}
 	/**
 	 * @param acDirectorKey the acDirectorKey to set
 	 */
-	public void setAcDirectorKey(String acDirectorKey) {
-		this.acDirectorKey = acDirectorKey;
+	public void setMtAcDirectorKey(String mtAcDirectorKey) {
+		this.mtAcDirectorKey = mtAcDirectorKey;
 	}
 	/**
 	 * @return the mtNm
@@ -127,89 +132,100 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	public void setMtNm(String mtNm) {
 		this.mtNm = mtNm;
 	}
+
+	
+
+
 	/**
-	 * @return the ctDt
+	 * @return the mtStartDt
 	 */
-	public String getCtDt() {
-		return ctDt;
+	public String getMtStartDt() {
+		return mtStartDt;
 	}
-	/**
-	 * @param ctDt the ctDt to set
-	 */
-	public void setCtDt(String ctDt) {
-		this.ctDt = ctDt;
+	
+	public String getDbStartDt() {
+		return CepDateUtil.convertDate(mtStartDt, null, null, "D");
 	}
-	/**
-	 * @return the startDt
-	 */
-	public String getStartDt() {
-		return startDt;
+	
+	public String getViewStartDt() {
+		return CepDateUtil.convertDate(mtStartDt, null, null, "V");
 	}
 	/**
 	 * @param startDt the startDt to set
 	 */
-	public void setStartDt(String startDt) {
-		this.startDt = startDt;
+	public void setMtStartDt(String mtStartDt) {
+		this.mtStartDt = mtStartDt;
 	}
 	/**
 	 * @return the endDt
 	 */
-	public String getEndDt() {
-		return endDt;
+	public String getMtEndDt() {
+		
+		return mtEndDt;
+	}
+	
+	public String getDbEndDt() {
+		
+		return CepDateUtil.convertDate(mtEndDt, null, null, "D");
+	}
+	
+	public String getViewEndDt() {
+		
+		return CepDateUtil.convertDate(mtEndDt, null, null, "V");
 	}
 	/**
 	 * @param endDt the endDt to set
 	 */
-	public void setEndDt(String endDt) {
-		this.endDt = endDt;
+	public void setMtEndDt(String mtEndDt) {
+		this.mtEndDt = mtEndDt;
 	}
 	/**
 	 * @return the rgInspectCnt
 	 */
-	public String getRgInspectCnt() {
-		return rgInspectCnt;
+	public String getMtRgInspectCnt() {
+		return mtRgInspectCnt;
 	}
 	/**
 	 * @param rgInspectCnt the rgInspectCnt to set
 	 */
-	public void setRgInspectCnt(String rgInspectCnt) {
-		this.rgInspectCnt = rgInspectCnt;
+	public void setMtRgInspectCnt(String mtRgInspectCnt) {
+		this.mtRgInspectCnt = mtRgInspectCnt;
 	}
 	/**
 	 * @return the imCd
 	 */
-	public String getImCd() {
-		return imCd;
+	public String getMtImCd() {
+		return mtImCd;
 	}
 	/**
 	 * @param imCd the imCd to set
 	 */
-	public void setImCd(String imCd) {
-		this.imCd = imCd;
+	public void setMtImCd(String mtImCd) {
+		this.mtImCd = mtImCd;
 	}
 	/**
 	 * @return the sbCtYn
 	 */
-	public String getSbCtYn() {
-		return sbCtYn;
+	public String getMtSbCtYn() {
+		return mtSbCtYn;
 	}
 	/**
 	 * @param sbCtYn the sbCtYn to set
 	 */
-	public void setSbCtYn(String sbCtYn) {
-		this.sbCtYn = sbCtYn;
+	public void setMtSbCtYn(String mtSbCtYn) {
+		this.mtSbCtYn = mtSbCtYn;
 	}
 	/**
 	 * @return the saleEmpKey
 	 */
-	public String getSaleEmpKey() {
-		return saleEmpKey;
+	public String getMtSaleEmpKey() {
+		return mtSaleEmpKey;
 	}
 	/**
 	 * @param saleEmpKey the saleEmpKey to set
 	 */
-	public void setSaleEmpKey(String saleEmpKey) {
-		this.saleEmpKey = saleEmpKey;
+	public void setMtSaleEmpKey(String mtSaleEmpKey) {
+		this.mtSaleEmpKey = mtSaleEmpKey;
 	}
 	/**
 	 * @return the saleEmpNm
@@ -226,14 +242,14 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	/**
 	 * @return the mngEmpKey
 	 */
-	public String getMngEmpKey() {
-		return mngEmpKey;
+	public String getMtMngEmpKey() {
+		return mtMngEmpKey;
 	}
 	/**
 	 * @param mngEmpKey the mngEmpKey to set
 	 */
-	public void setMngEmpKey(String mngEmpKey) {
-		this.mngEmpKey = mngEmpKey;
+	public void setMtMngEmpKey(String mtMngEmpKey) {
+		this.mtMngEmpKey = mtMngEmpKey;
 	}
 	/**
 	 * @return the mngEmpNm
@@ -250,14 +266,14 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	/**
 	 * @return the supportEmpKey
 	 */
-	public String getSupportEmpKey() {
-		return supportEmpKey;
+	public String getMtSupportEmpKey() {
+		return mtSupportEmpKey;
 	}
 	/**
 	 * @param supportEmpKey the supportEmpKey to set
 	 */
-	public void setSupportEmpKey(String supportEmpKey) {
-		this.supportEmpKey = supportEmpKey;
+	public void setSupportEmpKey(String mtSupportEmpKey) {
+		this.mtSupportEmpKey = mtSupportEmpKey;
 	}
 	/**
 	 * @return the supportEmpNm
@@ -274,26 +290,33 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	/**
 	 * @return the amount
 	 */
-	public long getAmount() {
-		return amount;
+	public long getMtAmount() {
+		return mtAmount;
+	}
+	
+	public String getDbAmount() {
+		return String.valueOf(mtAmount).replace(",", "");
+	}
+	public String getViewAmount() {
+		return StringUtil.getCommaString(String.valueOf(mtAmount));
 	}
 	/**
 	 * @param amount the amount to set
 	 */
-	public void setAmount(long amount) {
-		this.amount = amount;
+	public void setMtAmount(long mtAmount) {
+		this.mtAmount = mtAmount;
 	}
 	/**
 	 * @return the payTerms
 	 */
-	public String getPayTerms() {
-		return payTerms;
+	public String getMtPayTerms() {
+		return mtPayTerms;
 	}
 	/**
 	 * @param payTerms the payTerms to set
 	 */
-	public void setPayTerms(String payTerms) {
-		this.payTerms = payTerms;
+	public void setMtPayTerms(String mtPayTerms) {
+		this.mtPayTerms = mtPayTerms;
 	}
 	/**
 	 * @return the remark
@@ -415,4 +438,76 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	public void setGbYn(String gbYn) {
 		this.gbYn = gbYn;
 	}
+	/**
+	 * @return the taxYn
+	 */
+	public String getTaxYn() {
+		return taxYn;
+	}
+	/**
+	 * @param taxYn the taxYn to set
+	 */
+	public void setTaxYn(String taxYn) {
+		this.taxYn = taxYn;
+	}
+	/**
+	 * @return the mtOption
+	 */
+//	public String getMtOption() {
+//		return mtOption;
+//	}
+//	/**
+//	 * @param mtOption the mtOption to set
+//	 */
+//	public void setMtOption(String mtOption) {
+//		this.mtOption = mtOption;
+//	}
+	/**
+	 * @return the acDirectorInfo
+	 */
+	public String getAcDirectorInfo() {
+		return acDirectorInfo;
+	}
+	/**
+	 * @param acDirectorInfo the acDirectorInfo to set
+	 */
+	public void setAcDirectorInfo(String acDirectorInfo) {
+		this.acDirectorInfo = acDirectorInfo;
+	}
+	/**
+	 * @return the mtCtDt
+	 */
+	public String getMtCtDt() {
+		return mtCtDt;
+	}
+	public String getDbCtDt(){
+		return CepDateUtil.convertDate(mtCtDt, null, null, "D");
+	}
+	
+	public String getViewCtDt(){
+		return CepDateUtil.convertDate(mtCtDt, null, null, "V");
+	}
+	/**
+	 * @param mtCtDt the mtCtDt to set
+	 */
+	public void setMtCtDt(String mtCtDt) {
+		this.mtCtDt = mtCtDt;
+	}
+	
+//	private String convertDate(String date){
+//		String convertDate = null;
+//		if(!"".equals(StringUtil.getDefaultValue(date, ""))){
+//			if("w".equalsIgnoreCase(mtOption)){
+//				convertDate =  date.replace("-", "");
+//			}else{
+//				try {
+//					convertDate =  CepDateUtil.convertDisplayFormat(date, null, null);
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		return convertDate;
+//	}
 }

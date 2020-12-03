@@ -138,7 +138,7 @@
 		}
 		/* 작업정보 >발주정보 메뉴버튼 모양 및 크기   */
 		form .contents > .fxd .title ul li {
-			width: 50%;
+			width: 33.3%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -284,7 +284,12 @@
 			/* var index = $('form .contents > .fxd .title ul li.on').index() + 2;
 			var length = $('form .contents > .fxd .title ul li').length; */
 			
-			$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
+			//$('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();});
+			$('li[id^=LI_TOPBar]').click(function(event){ 
+				//location.href = this.title; event.preventDefault();
+				document.listForm.action = this.title;
+	           	document.listForm.submit();
+			});
 			
 			var html = '';
 			$('#detailForm .dtl2 tbody tr').click(function() {
@@ -338,6 +343,8 @@
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>		
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -404,6 +411,7 @@
 					<div class="title">
 						<ul>
 							<li id="LI_TOPBar_WB" title="/maintenance/work/detail/basicInfo.do"><label style="cursor: pointer;">작업정보</label></li>
+							<li id="LI_TOPBar_WB" title="/maintenance/work/detail/productInfo.do"><label style="cursor: pointer;">제품정보</label></li>
 							<li id="LI_TOPBar_WO" class="on" title="/maintenance/work/detail/orderInfo.do"><label id="orderLabel">발주정보</label></li>
 							<li></li>
 						</ul>

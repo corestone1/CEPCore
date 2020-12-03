@@ -210,7 +210,7 @@
 				$("input[name=selectKey]").val($('#check'+$(this).children().eq(1).text()).val());			
 				
 				/* location.href = "/maintenance/detail/prodInfo.do"; */
-				document.listForm.action = "/maintenance/contract/detail/prodInfo.do";
+				document.listForm.action = "/maintenance/contract/detail/productInfo.do";
 	           	document.listForm.submit(); 
 				
 			});
@@ -334,12 +334,12 @@
 								<td><c:out value="${result.mtCtKey}"/></td>
 								<td><c:out value="${result.mtAcNm}"/></td>
 								<td><c:out value="${result.mtNm}"/></td>
-								<td><c:out value="${result.ctDt}"/></td>
-								<td><c:out value="${result.startDt}"/></td>
-								<td><c:out value="${result.endDt}"/></td>
-								<td><c:out value="${result.rgInspectCnt}"/>회</td>
-								<td><c:out value="${result.imCd}"/></td>
-								<td><c:out value="${result.sbCtYn}"/></td>
+								<td><c:out value="${result.viewCtDt}"/></td>
+								<td><c:out value="${result.viewStartDt}"/></td>
+								<td><c:out value="${result.viewEndDt}"/></td>
+								<td><c:out value="${result.mtRgInspectCnt}"/>회</td>
+								<td><c:out value="${result.mtImCd}"/></td>
+								<td><c:out value="${result.mtSbCtYn}"/></td>
 								<td><c:out value="${result.saleEmpNm}"/></td>
 								<td><c:out value="${result.mngEmpNm}"/></td>
 								<td><c:out value="${result.supportEmpNm}"/></td>

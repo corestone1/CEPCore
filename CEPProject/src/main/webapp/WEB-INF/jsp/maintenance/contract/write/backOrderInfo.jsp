@@ -423,7 +423,7 @@
 				</div>
 				<div class="btnWrap floatR">
 					<div class="floatR" onclick="writeMtPurchaseAmount();">
-						<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

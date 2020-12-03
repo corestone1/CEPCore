@@ -179,8 +179,16 @@
 		$(document).ready(function() {			
 
 			$('#pl tr').click(function() {
-				/* location.href = "/mtDetail.do"; */
-				location.href = "/maintenance/work/detail/basicInfo.do";
+				 /*console.log("selectIntegrateKey====>"+$(this).children().eq(11).text().trim());
+				console.log("mtWorkKey====>"+$('#check'+$(this).children().eq(1).text()).val());*/
+				
+				$("input[name=selectIntegrateKey]").val($(this).children().eq(11).text().trim());
+				$("input[name=selectWorkKey]").val($('#check'+$(this).children().eq(1).text()).val());
+				
+
+				document.listForm.action = "/maintenance/work/detail/basicInfo.do";
+	           	document.listForm.submit(); 
+				/* location.href = "/maintenance/work/detail/basicInfo.do"; */
 			});
 		});
 
@@ -206,6 +214,16 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
+		function fn_addView2(){
+			var url = '/maintenance/work/write/productInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
 		
 		function fn_searchList(){
 			
@@ -243,7 +261,8 @@
 <body>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<input type="hidden" name="btnOption" />
-		<input type="hidden" name="selectKey" />
+		<input type="hidden" id="selectIntegrateKey" name="selectIntegrateKey"/>
+		<input type="hidden" id="selectWorkKey" name="selectWorkKey"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -251,7 +270,8 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">유지보수 작업목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>		
+						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
+						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>		
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
@@ -294,6 +314,7 @@
 								<th scope="row">작업유형</th>
 								<th scope="row">조치결과</th>
 								<th scope="row">지원담당자</th>
+								<th style="max-width: 0px; display: none;"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -304,14 +325,18 @@
 								</td>
 								<td><c:out value="${status.count}"/></td>
 								<td><c:out value="${result.mtWorkKey}"/></td>
-								<td><c:out value="${result.acNm}"/></td>
+								<td><c:out value="${result.mtAcNm}"/></td>
 								<td><c:out value="${result.acDirectorNm}"/> / <c:out value="${result.acDirectorInfo}"/></td>
 								<td><c:out value="${result.mtNm}"/></td>
-								<td><c:out value="${result.mtWorkStartDt}"/></td>
-								<td><c:out value="${result.mtWorkEndDt}"/></td>
+								<td><c:out value="${result.viewWorkStartDt}"/></td>
+								<td><c:out value="${result.viewWorkEndDt}"/></td>
 								<td><c:out value="${result.mtWorkTypeCd}"/></td>
 								<td><c:out value="${result.mtWorkResultCd}"/></td>
 								<td><c:out value="${result.mtWorkEmpNm}"/></td>
+								<td style="max-width: 0px; display: none;">
+									<c:out value="${result.mtIntegrateKey}"/>
+								</td>
+								
 							</tr>						
 						</c:forEach>
 							
