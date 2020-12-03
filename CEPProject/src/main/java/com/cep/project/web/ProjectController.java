@@ -1,13 +1,17 @@
 package com.cep.project.web;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
@@ -26,8 +30,17 @@ public class ProjectController {
 	@Resource(name="propertiesService")
 	protected EgovPropertyService propertiesService;
 	
+	@Value("#{comProps['maxFileCnt']}")
+	private String maxFileCnt;	// 허용 파일 개수
+	
+	@Value("#{comProps['maxFileSize']}")
+	private String maxFileSize;	// 허용 파일 사이즈
+	
+	@Value("#{comProps['fileExtn']}")
+	private String fileExtn;		// 허용 파일 확장자
+	
 	@RequestMapping(value="/list.do")
-	public String selectProject(@ModelAttribute("searchVO") SampleDefaultVO searchVO, ModelMap model) throws Exception {
+	public String selectProject(@ModelAttribute("searchVO") ProjectVO searchVO, ModelMap model) throws Exception {
 		
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
@@ -76,10 +89,19 @@ public class ProjectController {
 		return "project/popup/samplePopup";
 	}
 	
-	@RequestMapping(value="/detail/bidding.do")
-	public String selectProjectDetailBd(ProjectVO projectVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/detail/bidding.do", method={RequestMethod.GET, RequestMethod.POST})
+	public String selectProjectDetailBd(@ModelAttribute("projectVO") ProjectVO projectVO, ModelMap model) throws Exception {
+		Map<String, Object> result = null;
 		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		result = service.selectProjectDetail(projectVO);
+		if(result == null) {
+			result = new HashMap<String, Object>();
+			result.put("atchFileCnt", 0);
+		}
+		model.addAttribute("resultList", result);
+		model.addAttribute("maxFileCnt", maxFileCnt);
+		model.addAttribute("fileExtn", fileExtn);		
+		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		return "project/detail/bidding";
 	}

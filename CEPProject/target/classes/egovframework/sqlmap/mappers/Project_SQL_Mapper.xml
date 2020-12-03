@@ -10,6 +10,11 @@
 		<result property="pjEndDt" column="PJ_END_DT"/>
 		<result property="pjStatusCd" column="PJ_STATUS_CD"/>
 		<result property="pjSaleEmpKey" column="PJ_SALE_EMP_KEY"/>
+		<result property="bdLimitDt" column="BD_LIMIT_DT" />
+		<result property="bdProposalYn" column="BD_PROPOSAL_YN" />
+		<result property="bdProposalDueDt" column="BD_PROPOSAL_DUE_DT" />
+		<result property="bdProposalPresentYn" column="BD_PROPOSAL_PRESENT_YN" />
+		<result property="bdProposalPresentDt" column="BD_PROPOSAL_PRESENT_DT" />
 	</resultMap>
 
 	<select id="selectProjectList" parameterType="projectVO" resultType="egovMap">
@@ -52,4 +57,31 @@
 			</if> -->
 	</select>
 
+	<select id="selectProjectDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
+		SELECT 
+			PJ_NM
+			, M.AC_KEY
+			, M.PJ_SALE_EMP_KEY
+			, M.PJ_SUPPORT_EMP_KEY
+			, M.PJ_START_DT
+			, M.PJ_END_DT
+			, B.BD_LIMIT_DT
+			, B.BD_PROPOSAL_YN
+			, B.BD_PROPOSAL_DUE_DT
+			, B.BD_PROPOSAL_PRESENT_YN
+			, B.BD_PROPOSAL_PRESENT_DT
+		FROM PJ_MAIN_TB M
+		LEFT OUTER JOIN PJ_BIDDING_TB B
+		ON M.PJ_KEY = B.PJ_KEY
+		WHERE M.PJ_KEY = #{pjKey}
+		AND B.DELETE_YN = 'N'
+	</select>
+	
+	<select id="selectBiddingFile" parameterType="projectVO" resultType="egovMap">
+		SELECT
+			BD_FILE_DOC_NM
+		FROM PJ_BIDDING_FILE_INFO_TB bf
+		LEFT OUTER JOIN PJ_MAIN_TB m
+		WHERE bf.BD_KEY = m.PJ_KEY
+	</select>
 </mapper>

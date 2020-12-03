@@ -1,8 +1,10 @@
 package com.cep.project.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cep.project.vo.ProjectVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -29,12 +31,26 @@ public interface ProjectMapper {
 	 * @return 프로젝트 목록
 	 * @exception Exception
 	 */
-	List<?> selectProjectList(SampleDefaultVO searchVO) throws Exception;
+	public List<?> selectProjectList(SampleDefaultVO searchVO);
 	/**
 	 * 프로젝트 총 갯수를 조회한다.
 	 * @param searchVO - 조회할 정보가 담긴 VO
 	 * @return 프로젝트 총 갯수
 	 * @exception
 	 */
-	int selectProjectListTotCnt(SampleDefaultVO searchVO);
+	public int selectProjectListTotCnt(SampleDefaultVO searchVO);
+	/**
+	 * 프로젝트 상세정보를 조회한다.
+	 * @param projectVO - 조회할 정보가 담긴 VO
+	 * @return 프로젝트 상세 정보
+	 * @exception
+	 */
+	public Map<String, Object> selectProjectDetail(ProjectVO projectVO);
+	/**
+	 * 입찰 서류 정보를 조회한다.
+	 * @param projectVO - 조회할 정보가 담긴 VO
+	 * @return 입찰 서류 정보
+	 * @exception
+	 */
+	public List<?> selectBiddingFile(ProjectVO projectVO);
 }

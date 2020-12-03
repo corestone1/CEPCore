@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cep.example.vo.SampleDefaultVO;
+
 @SuppressWarnings("serial")
 @Alias("projectVO")
-public class ProjectVO implements Serializable {
+public class ProjectVO extends SampleDefaultVO implements Serializable {
 	
 	private String pjKey;
 	private String acKey;
@@ -15,6 +17,11 @@ public class ProjectVO implements Serializable {
 	private String pjEndDt;
 	private String pjStatusCd;
 	private String pjSaleEmpKey;
+	private String bdLimitDt;
+	private String bdProposalYn;
+	private String bdProposalDueDt;
+	private String bdProposalPresentYn;
+	private String bdProposalPresentDt;
 	
 	public String getPjKey() {
 		return pjKey;
@@ -57,6 +64,36 @@ public class ProjectVO implements Serializable {
 	}
 	public void setPjSaleEmpKey(String pjSaleEmpKey) {
 		this.pjSaleEmpKey = pjSaleEmpKey;
+	}
+	public String getBdLimitDt() {
+		return bdLimitDt;
+	}
+	public void setBdLimitDt(String bdLimitDt) {
+		this.bdLimitDt = bdLimitDt;
+	}
+	public String getBdProposalYn() {
+		return bdProposalYn;
+	}
+	public void setBdProposalYn(String bdProposalYn) {
+		this.bdProposalYn = bdProposalYn;
+	}
+	public String getBdProposalDueDt() {
+		return bdProposalDueDt;
+	}
+	public void setBdProposalDueDt(String bdProposalDueDt) {
+		this.bdProposalDueDt = bdProposalDueDt;
+	}
+	public String getBdProposalPresentYn() {
+		return bdProposalPresentYn;
+	}
+	public void setBdProposalPresentYn(String bdProposalPresentYn) {
+		this.bdProposalPresentYn = bdProposalPresentYn;
+	}
+	public String getBdProposalPresentDt() {
+		return bdProposalPresentDt;
+	}
+	public void setBdProposalPresentDt(String bdProposalPresentDt) {
+		this.bdProposalPresentDt = bdProposalPresentDt;
 	}
 	
 }
