@@ -174,32 +174,36 @@
 	        		xhr.setRequestHeader("AJAX", true);	        		
 	        	},
 	            success:function(data){	
-	            	console.log("data===>"+data);
+	            	var paramData = JSON.parse(data);
 	            	
-	            	alert("기본정보 등록을 성공하였습니다.")
-	            	if('sn'==param){
-	            		var url;
-	            		if("Y" == $('#mtWorkPmYn option:selected').val()){
-	            			//유지보수 작업 제품등록화면으로 이동
-	            			/* url = '/maintenance/writeMtWorkProductInfoView.do'; */
-	            			
-	            			url = '/maintenance/work/write/basicInfoView.do';
-	            		} else {
-	            			//유지보수 발주 등록화면으로 이동
-	            			url = '/maintenance/work/write/orderInfoView.do';
-	            		}
-	            		console.log("url===>"+url);
-	            		/* var url = '/maintenance/writeMtWorkOrderInfoView.do'; */
-		    			var dialogId = 'program_layer';
-		    			var varParam = data
-		    			var button = new Array;
-		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+	            	console.log("paramData===>"+paramData);
+	            	console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
+	            	if("Y" == paramData.successYN){
+	            		alert("유지보수기본정보 등록을 성공하였습니다.")
+		            	if('sn'==param){
+		            		var url;
+		            		if("Y" == $('#mtWorkPmYn option:selected').val()){
+		            			//유지보수작업 제품등록화면으로 이동
+		            			url = '/maintenance/work/write/productInfoView.do';
+		            		} else {
+		            			//유지보수작업 발주 등록화면으로 이동
+		            			url = '/maintenance/work/write/orderInfoView.do';
+		            		}
+		            		console.log("url===>"+url);
+			    			var dialogId = 'program_layer';
+			    			var varParam = paramData
+			    			var button = new Array;
+			    			button = [];
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		            	} else {
+		            		document.listForm.action = "/maintenance/work/workList.do";
+		        			document.listForm.method="get";
+		                   	document.listForm.submit(); 
+		            	}
 	            	} else {
-	            		document.mtBasicForm.action = "/maintenance/work/workList.do";
-	        			document.mtBasicForm.method="get";
-	                   	document.mtBasicForm.submit(); 
+	            		alert("유지보수기본정보 등록이 실패하였습니다.");
 	            	}
+	            	
 	            	
 	            },
 	        	error: function(request, status, error) {
@@ -245,7 +249,8 @@
 			});
 			
 			//제품등록유무에 의한 버튼 및 메뉴 display조정
-			$('#mtWorkPmYn').change(function(){				
+			$('#mtWorkPmYn').change(function(){			
+				console.log("mtIntegrateKey====>"+$('#mtWorkPmYn').val());
 				//왼쪽 발주 정보 보이고 안보이고
 				if("Y" == $('#mtWorkPmYn option:selected').val()){
 					$('#work_product').show();
@@ -266,8 +271,7 @@
 			var acDirectorList; // 고객 담당자 정보 리스트
 
 			/* 프로젝트 key를 이용하여  고객사명, 담당자 리스트 가져오기.. */
-			$('#mtIntegrateKey').change(function(){				
-				console.log("mtIntegrateKey====>"+$('#mtIntegrateKey').val());
+			$('#mtIntegrateKey').change(function(){	
 		        $.ajax({
 		        	url:"/maintenance/work/selectMtCustomerInfo.do",
 		            dataType: 'json',
@@ -279,20 +283,20 @@
 		        		//xhr.setRequestHeader(header, token);
 		        	},
 		            success:function(data){		            
-
-						$('#mtAcNm').val(data.basicContractInfo.mtNm);
+		            	acDirectorList = null;
+						$('#mtAcNm').val(data.basicContractInfo.mtAcNm);
 						if ( data.acDirectorList.length > 0 ) {
 							acDirectorList = data.acDirectorList;/* 값이 있는 경우  전역변수에 넣는다. */
 							
 							$('#acDirectorInfo').val(data.acDirectorList[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
-							$ ('#acDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+							$ ('#mtWorkAcDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
 							for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
-                        		$ ('#acDirectorKey' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorNm + '</option>' );
+                        		$ ('#mtWorkAcDirectorKey' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorNm + '</option>' );
                       		}
 		                }else{
 		                	acDirectorList = null;
-							$ ( '#acDirectorKey' ).find ( 'option' ).remove ();
-		                 	$ ( '#acDirectorKey' ).append ( "<option value=''>담당자</option>" );
+							$ ( '#mtWorkAcDirectorKey' ).find ( 'option' ).remove ();
+		                 	$ ( '#mtWorkAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
 		                }
 		            },
 		        	error: function(request, status, error) {
@@ -329,7 +333,7 @@
 		<div class="popContainer">
 			<div class="top">
 				<div>
-					<div class="floatL ftw500">유지보수 작업등록</div>
+					<div class="floatL ftw500">유지보수작업 등록</div>
 				</div>
 			</div>
 			<div class="left">
@@ -360,7 +364,7 @@
 						<tr>
 							<td class="tdTitle">고객사담당자</td>
 							<td class="tdContents" colspan="5">
-								<select id="acDirectorKey" name="acDirectorKey" >
+								<select id="mtWorkAcDirectorKey" name="mtWorkAcDirectorKey" >
 									<option value="">선택</option>
 									<%-- <c:forEach var="director" items="${acDirectorList}" varStatus="status">										
 									<option value="<c:out value="${director.directorKey}"/>"><c:out value="${director.directorNm}"/></option>
@@ -397,10 +401,10 @@
 						<tr>
 							<td class="tdTitle">조치결과</td>
 							<td class="tdContents">
-								<select name="mtWorkTypeCd">
+								<select name="mtWorkResultCd">
 									<option value="준비">준비</option>
 									<option value="진행">진행</option>
-									<option value="완료">진행</option>
+									<option value="완료">완료</option>
 								</select>
 							</td>
 							<td class="tdSubTitle">제품등록유무</td>

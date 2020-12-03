@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.maintenance.work.service.impl.MtWorkMapper">
+	<resultMap id="mtWorkVO" type="com.cep.maintenance.work.vo.MtWorkVO">
+		<result property="mtIntegrateKey" column="MT_INTEGRATE_KEY"/>
+		<result property="mtWorkKey" column="MT_WORK_KEY"/>
+		<result property="mtWorkEmpKey" column="MT_WORK_EMP_KEY"/>
+		<result property="mtWorkEmpNm" column="MT_WORK_EMP_NM"/>		
+		<result property="mtNm" column="MT_NM"/>
+		<result property="mtAcNm" column="MT_AC_NM"/>
+		<result property="mtWorkAcDirectorKey" column="MT_WORK_AC_DIRECTOR_KEY"/>
+		<result property="acDirectorNm" column="AC_DIRECTOR_NM"/>		
+		<result property="acDirectorInfo" column="AC_DIRECTOR_INFO"/>		
+		<result property="mtWorkStartDt" column="MT_WORK_START_DT"/>
+		<result property="mtWorkStartTm" column="MT_WORK_START_TM"/>
+		<result property="mtWorkEndDt" column="MT_WORK_END_DT"/>
+		<result property="mtWorkEndTm" column="MT_WORK_END_TM"/>
+		<result property="mtWorkTypeCd" column="MT_WORK_TYPE_CD"/>
+		<result property="mtWorkResultCd" column="MT_WORK_RESULT_CD"/>		
+		<result property="mtWorkPmYn" column="MT_WORK_PM_YN"/>
+		<result property="mtWorkOrderYn" column="MT_WORK_ORDER_YN"/>		
+		<result property="mtWorkCont" column="MT_WORK_CONT"/>
+		<result property="remark" column="REMARK"/>
+		<result property="deleteYn" column="DELETE_YN"/>
+		<result property="regDt" column="REG_DT"/>
+		<result property="regTm" column="REG_TM"/>
+		<result property="regEmpKey" column="REG_EMP_KEY"/>
+		<result property="modDt" column="MOD_DT"/>
+		<result property="modTm" column="MOD_TM"/>
+		<result property="modEmpKey" column="MOD_EMP_KEY"/>
+		<result property="modEmpKey" column="DELETE_YN"/>
+	</resultMap>
+	
+	<resultMap id="mtWorkProductVO" type="com.cep.maintenance.work.vo.MtWorkProductVO">
+		<result property="mtWorkKey" column="MT_WORK_KEY"/>
+		<result property="mtWorkSeq" column="MT_WORK_SEQ"/>
+		<result property="mtPmKey" column="MT_PM_KEY"/>
+		<result property="mtPmKeyNm" column="MT_PM_KEY_NM"/>
+		<result property="mtPmDetail" column="MT_PM_DETAIL"/>
+		<result property="mtPmSerialNum" column="MT_PM_SERIAL_NUM"/>
+		<result property="mtPmWorkCont" column="MT_PM_WORK_CONT"/>
+	</resultMap>
+	<!-- 유지보수작업 기본정보 등록 -->
+	<insert id="writeWorkBasic" parameterType="com.cep.maintenance.work.vo.MtWorkVO">
+		INSERT INTO MT_WORK_TB (
+		    MT_WORK_KEY
+		    , MT_INTEGRATE_KEY 
+		    , MT_WORK_EMP_KEY 
+		    , MT_WORK_AC_DIRECTOR_KEY 
+		    , MT_WORK_START_DT 
+		    , MT_WORK_START_TM 
+		    , MT_WORK_END_DT
+		    , MT_WORK_END_TM 
+		    , MT_WORK_TYPE_CD
+		    , MT_WORK_RESULT_CD
+		    , MT_WORK_CONT
+		    , MT_WORK_PM_YN
+		    , MT_WORK_ORDER_YN
+		    , REMARK
+		    , REG_DT
+		    , REG_TM
+		    , REG_EMP_KEY
+		    , DELETE_YN
+		) VALUES (
+		    #{mtWorkKey} 
+		    , #{mtIntegrateKey}
+		    , #{mtWorkEmpKey}
+		    , #{mtWorkAcDirectorKey}
+		    , #{dbWorkStartDt}
+		    , #{dbWorkStartTm}
+		    , #{dbWorkEndDt}
+		    , #{dbWorkEndTm}
+		    , #{mtWorkTypeCd}
+		    , #{mtWorkResultCd}
+		    , #{mtWorkCont}
+		    , #{mtWorkPmYn}
+		    , #{mtWorkOrderYn}
+		    , #{remark}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , #{regEmpKey} 
+		    , 'N'
+		);
+	</insert>
+	<!-- 유지보수 작업 기본정보 업데이트 -->
+	<update id="updateWorkBasic" parameterType="com.cep.maintenance.work.vo.MtWorkVO">
+		UPDATE MT_WORK_TB
+		SET
+			MT_WORK_EMP_KEY = #{mtWorkEmpKey}
+			, MT_WORK_AC_DIRECTOR_KEY = #{mtWorkAcDirectorKey}
+			, MT_WORK_START_DT = #{dbWorkStartDt}
+			, MT_WORK_START_TM = #{dbWorkStartTm} 
+			, MT_WORK_END_DT = #{dbWorkEndDt} 
+			, MT_WORK_END_TM = #{dbWorkEndTm} 
+			, MT_WORK_TYPE_CD = #{mtWorkTypeCd}
+			, MT_WORK_RESULT_CD = #{mtWorkResultCd} 
+			, MT_WORK_CONT = #{mtWorkCont} 
+			, MT_WORK_PM_YN = #{mtWorkPmYn} 
+			, MT_WORK_ORDER_YN = #{mtWorkOrderYn} 
+			, REMARK = #{remark}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_WORK_KEY = #{mtWorkKey};
+	</update>
+	<!--
+		유지보수 작업 목록
+		리스트에서 모든 정보가 보여지기 때문에 모든정보를 불러온다.
+	  -->
+	<select id="selectWorkList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO"  resultMap="mtWorkVO">				
+		
+		SELECT
+		  	MW.MT_WORK_KEY
+		  	, MW.MT_INTEGRATE_KEY
+		  	, CA.AC_NM AS MT_AC_NM
+		  	, MC.MT_NM
+		  	, MW.MT_WORK_EMP_KEY
+		  	, CE.EMP_NM AS MT_WORK_EMP_NM
+		  	, MW.MT_WORK_AC_DIRECTOR_KEY
+		    , AD.AC_DIRECTOR_NM 
+		    , CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM) AS AC_DIRECTOR_INFO
+		  	, MW.MT_WORK_START_DT
+		  	, MW.MT_WORK_END_DT
+		  	, MW.MT_WORK_TYPE_CD
+		  	, MW.MT_WORK_RESULT_CD
+		  FROM MT_WORK_TB MW
+		    , MT_CONTRACT_TB MC
+		    , CMM_ACCOUNT_TB CA
+		    , CMM_EMPLOYEE_TB CE
+		    , CMM_ACCOUNT_DIRECTOR_TB AD
+		  WHERE 1=1	
+		<if test="fromDate != null and fromDate != ''">
+			AND MW.MT_WORK_START_DT >= #{fromDate}
+		</if>
+		<if test="toDate != null and toDate != ''">
+			<![CDATA[
+			AND MW.MT_WORK_START_DT <= #{toDate}
+			]]>
+		</if>
+		<if test="searchWorkEmpKey != null and searchWorkEmpKey != ''">
+			AND MW.MT_WORK_EMP_KEY = #{searchWorkEmpKey}
+		</if>
+		<if test="searchWorkResult != null and searchWorkResult != ''">
+			AND MW.MT_WORK_RESULT_CD = #{searchWorkResult}
+		</if>
+		<if test="searchMtName != null and searchMtName != ''">
+			AND MC.MT_NM LIKE CONCAT(#{searchMtName}, '%')
+		</if>			
+			AND MW.DELETE_YN='N'
+		    AND MW.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
+		    AND MC.MT_AC_KEY = CA.AC_KEY
+		    AND MW.MT_WORK_EMP_KEY = CE.EMP_KEY
+		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
+	</select>
+		<!-- 
+		유지보수 작업 삭제 ==> DELETE_YN값을 Y로 바꾼다.
+		1) 유지보수 작업목록에서 삭제 기능
+	 -->
+	<update id="deleteMtWork" >
+			UPDATE MT_WORK_TB
+			SET DELETE_YN='Y'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_WORK_KEY=#{mtWorkKey}
+	</update>
+	
+	<!-- ===========================유지보수작업========================================= -->
+	<!--
+		유지보수 작업 상세보기
+	  -->
+	<select id="selectWorkDetail" parameterType="String" resultMap="mtWorkVO">				
+		
+		SELECT
+		  	MW.MT_WORK_KEY
+		  	, MW.MT_INTEGRATE_KEY
+		  	, CA.AC_NM
+		  	, MC.MT_NM
+		  	, MW.MT_WORK_EMP_KEY
+		  	, CE.EMP_NM AS MT_WORK_EMP_NM
+		  	, MW.MT_WORK_AC_DIRECTOR_KEY
+		    , AD.AC_DIRECTOR_NM 
+		    , CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM) AS AC_DIRECTOR_INFO
+		  	, MW.MT_WORK_START_DT
+		  	, MW.MT_WORK_START_TM
+		  	, MW.MT_WORK_END_DT
+		  	, MW.MT_WORK_END_TM
+		  	, MW.MT_WORK_TYPE_CD
+		  	, MW.MT_WORK_RESULT_CD
+        	, MW.MT_WORK_PM_YN
+        	, MW.MT_WORK_ORDER_YN
+		  	, MW.MT_WORK_CONT
+		  	, MW.REMARK
+		  FROM MT_WORK_TB MW
+		    , MT_CONTRACT_TB MC
+		    , CMM_ACCOUNT_TB CA
+		    , CMM_EMPLOYEE_TB CE
+		    , CMM_ACCOUNT_DIRECTOR_TB AD
+		  WHERE MW.MT_WORK_KEY=#{mtWorkKey}						
+			AND MW.DELETE_YN='N'
+		    AND MW.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
+		    AND MC.MT_AC_KEY = CA.AC_KEY
+		    AND MW.MT_WORK_EMP_KEY = CE.EMP_KEY
+		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
+	</select>
+	
+	<!-- 유지보수작업 제품정보 등록. -->
+	<insert id="writeWorkProductList" parameterType="java.util.HashMap">
+		
+			INSERT INTO MT_WORK_PRODUCT_TB (
+				MT_WORK_KEY 
+				, MT_WORK_SEQ
+			    , MT_PM_KEY 
+			    , MT_PM_WORK_CONT 
+			    , DELETE_YN 
+			    , REG_DT 
+			    , REG_TM 
+			    , REG_EMP_KEY
+			    )
+			VALUES
+			<foreach collection="mtWorkProductVoList" item="item" separator=",">
+			    (
+			     #{mtWorkKey}
+			    , (SELECT IFNULL(MAX(a.MT_WORK_SEQ) + 1, 1) FROM MT_WORK_PRODUCT_TB a WHERE a.MT_WORK_KEY=#{mtWorkKey})
+			    , #{item.mtPmKey} 
+			    , #{item.mtPmWorkCont}  
+			    , 'N' 
+			    , DATE_FORMAT(NOW(),'%Y%m%d')
+			    , DATE_FORMAT(NOW(),'%k%i%s')
+			    , #{regEmpKey} 
+			   )
+			</foreach>  		
+	</insert>
+	<!-- 유지보수작업 제품정보 목록조회 (추후 유지보수계약 제품목록과 MT_PM_KEY를 이용하여  제품시리얼번호를 가져와야함. 
+	         제품명(MT_PM_KEY_NM)은  PM_PRODUCT_MNG_TB.PM_KEY 와  MT_PRODUCT_TB.MT_PM_FK_KEY를 조인해서
+	     PM_PRODUCT_MNG_TB.PM_NM_CD를 사용하면 된다. -->
+	<select id="selectWorkProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO"  resultMap="mtWorkProductVO">	
+		SELECT
+		  WP.MT_WORK_KEY
+		  , WP.MT_WORK_SEQ
+		  , WP.MT_PM_KEY
+		  , CONCAT(WP.MT_PM_KEY , '제품') AS MT_PM_KEY_NM
+		  , 'TX112380SERAL' AS MT_PM_SERIAL_NUM
+		  , WP.MT_PM_WORK_CONT
+		  , '제품상세 제품상세 내용
+DB 손해보험 제품상세
+
+DB 손해보험 제품상세
+DB 손해보험 제품상세DB 손해보험 제품상세DB 손해보험 제품상세
+DB 손해보험 제품상세DB 손해보험 제품상세DB 손해보험 제품상세' AS MT_PM_DETAIL
+		FROM MT_WORK_PRODUCT_TB WP
+		WHERE WP.MT_WORK_KEY=#{mtWorkKey}
+		  AND WP.DELETE_YN='N'
+		ORDER BY WP.MT_WORK_SEQ	
+	</select>
+
+	
+</mapper>

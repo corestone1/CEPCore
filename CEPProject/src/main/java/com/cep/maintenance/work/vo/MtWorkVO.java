@@ -10,6 +10,8 @@ import java.io.Serializable;
 import org.apache.ibatis.type.Alias;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.StringUtil;
 @SuppressWarnings("serial")
 @Alias("mtWorkVO")
 
@@ -29,7 +31,7 @@ import com.cep.maintenance.contract.vo.MtDefaultVO;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 public class MtWorkVO extends MtDefaultVO implements Serializable{
-
+//	private String mtOption; // 등록(w), 조회(r)
 
 	private String mtAcNm;//거래처명
 	private String mtNm;//유지보수 계약명
@@ -40,8 +42,8 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
     // 유지보수 작업 관리키 업무(작업)
     private String mtWorkKey;
 
-    // 유지보수 통합 관리키 유지보수가 연장되면 해당 키는 같으며 순번이 증가
-    private int mtIntegrateKey;
+    // 유지보수 통합 관리키 
+    private String mtIntegrateKey;
 
     // 유지보수 작업 직원 관리키 
     private String mtWorkEmpKey;
@@ -66,6 +68,7 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 
     // 유지보수 작업 결과 코드 
     private String mtWorkResultCd;
+    
 
     // 유지보수 작업 내용 
     private String mtWorkCont;
@@ -117,14 +120,14 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	/**
 	 * @return the mtIntegrateKey
 	 */
-	public int getMtIntegrateKey() {
+	public String getMtIntegrateKey() {
 		return mtIntegrateKey;
 	}
 
 	/**
 	 * @param mtIntegrateKey the mtIntegrateKey to set
 	 */
-	public void setMtIntegrateKey(int mtIntegrateKey) {
+	public void setMtIntegrateKey(String mtIntegrateKey) {
 		this.mtIntegrateKey = mtIntegrateKey;
 	}
 
@@ -162,6 +165,14 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	public String getMtWorkStartDt() {
 		return mtWorkStartDt;
 	}
+	
+	public String getDbWorkStartDt(){
+		return CepDateUtil.convertDate(mtWorkStartDt, null, null,"D");
+	}
+	
+	public String getViewWorkStartDt(){
+		return CepDateUtil.convertDate(mtWorkStartDt, null, null, "V");
+	}
 
 	/**
 	 * @param mtWorkStartDt the mtWorkStartDt to set
@@ -175,6 +186,13 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	 */
 	public String getMtWorkStartTm() {
 		return mtWorkStartTm;
+	}
+	
+	public String getDbWorkStartTm() {
+		return CepDateUtil.convertTime(mtWorkStartTm, "D");
+	}
+	public String getViewWorkStartTm() {
+		return CepDateUtil.convertTime(mtWorkStartTm, "V");
 	}
 
 	/**
@@ -190,6 +208,13 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	public String getMtWorkEndDt() {
 		return mtWorkEndDt;
 	}
+	
+	public String getDbWorkEndDt() {
+		return CepDateUtil.convertDate(mtWorkEndDt, null, null, "D");
+	}
+	public String getViewWorkEndDt() {
+		return CepDateUtil.convertDate(mtWorkEndDt, null, null, "V");
+	}
 
 	/**
 	 * @param mtWorkEndDt the mtWorkEndDt to set
@@ -203,6 +228,13 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	 */
 	public String getMtWorkEndTm() {
 		return mtWorkEndTm;
+	}
+	public String getDbWorkEndTm() {
+		return CepDateUtil.convertTime(mtWorkEndTm, "D");
+	}
+	
+	public String getViewWorkEndTm() {
+		return CepDateUtil.convertTime(mtWorkEndTm, "V");
 	}
 
 	/**
@@ -463,4 +495,21 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	public void setMtWorkOrderYn(String mtWorkOrderYn) {
 		this.mtWorkOrderYn = mtWorkOrderYn;
 	}
+
+	/**
+	 * @return the mtOption
+	 */
+//	public String getMtOption() {
+//		return mtOption;
+//	}
+//
+//	/**
+//	 * @param mtOption the mtOption to set
+//	 */
+//	public void setMtOption(String mtOption) {
+//		this.mtOption = mtOption;
+//	}
+	
+
+	
 }

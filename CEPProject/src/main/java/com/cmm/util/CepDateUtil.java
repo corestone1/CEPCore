@@ -387,5 +387,75 @@ public class CepDateUtil {
 		}
 		return dateStr;
 	}
+	
+	
+	/**
+	 * 
+	  * @Method Name : convertDate
+	  * @Cdate       : 2020. 11. 30.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 날짜 타입을 변경하는 메서드
+	  * @param date
+	  * @param nowFormat
+	  * @param changeFormate
+	  * @param gubun : DB등록/수정(D), 화면 (V)
+	  * @return
+	 */
+	public static String convertDate(String date, String nowFormat, String changeFormate, String gubun){
+		String convertDate = null;
+		if(!"".equals(StringUtil.getDefaultValue(date, ""))){
+			if("D".equalsIgnoreCase(gubun)){
+				convertDate = date.replace("-", "");
+			} else {
+				if(date.length()==8){
+					try {
+						convertDate =  CepDateUtil.convertDisplayFormat(date, nowFormat, changeFormate);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					convertDate = date;
+				}
+			}
+			
+		}
+		return convertDate;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : convertTime
+	  * @Cdate       : 2020. 11. 30.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 4자리 시간을 형태를 변경하는 메서드 (1230 ==> 12:30)
+	  * @param time
+	  * @param gubun : DB등록/수정(D), 화면 (V)
+	  * @return
+	 */
+	public static String convertTime(String time, String gubun){
+		String convertTime = null;
+		StringBuffer sb = null;
+		if(!"".equals(StringUtil.getDefaultValue(time, ""))){
+			if("D".equalsIgnoreCase(gubun)){
+				convertTime = time.replace(":", "");
+			} else {
+				if(time.length()==4){
+					sb = new StringBuffer();
+					sb.append(time.substring(0, 2));
+					sb.append(":");
+					sb.append(time.substring(2, 4));
+					convertTime = sb.toString();
+				} else {
+					convertTime = time;
+				}
+			}
+			
+		}
+		
+		return convertTime;
+	}
 
 }

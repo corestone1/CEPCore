@@ -64,7 +64,7 @@ public class MtContractServiceImpl implements MtContractService {
 			writeVo.setMtIntegrateKey(mtIntegrateKey);
 			writeVo.setMtCtKey(mtCtKey);
 			
-			
+			logger.info("mtIntegrateKey===>"+mtIntegrateKey);
 			mtMapper.writeContractBasic(writeVo);
 			
 		} catch (Exception e) {
@@ -88,16 +88,16 @@ public class MtContractServiceImpl implements MtContractService {
 	 * @see com.cep.maintenance.service.MaintenanceService#selectMtContractBasicDetail(java.lang.String)
 	 */
 	@Override
-	public Map<Object, Object> selectContractBasicDetail(String mtIntegrateKey) throws Exception {
-		Map<Object, Object> contractMap = null;
+	public MtContractVO selectContractBasicDetail(String mtIntegrateKey) throws Exception {
+		MtContractVO contractBasicInfo = null;
 		
 		try {
-			contractMap = mtMapper.selectMtBasicDetail(mtIntegrateKey);
+			contractBasicInfo = mtMapper.selectMtBasicDetail(mtIntegrateKey);
 		} catch (Exception e) {
 
 			throw new Exception(e);
 		}
-		return contractMap;
+		return contractBasicInfo;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ public class MtContractServiceImpl implements MtContractService {
 	public String makePrimaryKey(PrimaryKeyType keyType) throws Exception {
 		String primaryKey = null;
 		try {
-			mtMapper.makePrimaryKey(keyType.getValue());
+			primaryKey = mtMapper.makePrimaryKey(keyType.getValue());
 		} catch (Exception e) {
 			throw new Exception(e);
 		}

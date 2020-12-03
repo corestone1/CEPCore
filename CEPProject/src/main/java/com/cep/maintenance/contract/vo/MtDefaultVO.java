@@ -29,6 +29,8 @@ public class MtDefaultVO implements Serializable{
 	private String selectKey; //선택한 항목의 key값
 	private String searchWorkEmpKey; //유지보수 작업(지원)담당자
 	private String searchWorkResult; // 작업결과(진행중/완료)
+	private String selectIntegrateKey;
+	private String selectWorkKey;
 	/**
 	 * @return the fromDate
 	 */
@@ -142,6 +144,30 @@ public class MtDefaultVO implements Serializable{
 	 */
 	public void setRowNum(int rowNum) {
 		this.rowNum = rowNum;
+	}
+	/**
+	 * @return the selectIntegrateKey
+	 */
+	public String getSelectIntegrateKey() {
+		return selectIntegrateKey;
+	}
+	/**
+	 * @param selectIntegrateKey the selectIntegrateKey to set
+	 */
+	public void setSelectIntegrateKey(String selectIntegrateKey) {
+		this.selectIntegrateKey = selectIntegrateKey;
+	}
+	/**
+	 * @return the selectWorkKey
+	 */
+	public String getSelectWorkKey() {
+		return selectWorkKey;
+	}
+	/**
+	 * @param selectWorkKey the selectWorkKey to set
+	 */
+	public void setSelectWorkKey(String selectWorkKey) {
+		this.selectWorkKey = selectWorkKey;
 	}
 	
 	

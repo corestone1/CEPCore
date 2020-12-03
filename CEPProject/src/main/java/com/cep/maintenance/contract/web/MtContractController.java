@@ -1,5 +1,6 @@
 package com.cep.maintenance.contract.web;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -75,10 +77,10 @@ public class MtContractController {
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
 			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
 			
-			logger.info("searchVO.getFromDate()===>"+searchVO.getFromDate());
-			logger.info("searchVO.getSearchSaleEmpKey()===>"+searchVO.getSearchSaleEmpKey());
-			logger.info("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
-			logger.info("searchVO.getBtnOption()===>"+searchVO.getBtnOption());
+			logger.debug("searchVO.getFromDate()===>"+searchVO.getFromDate());
+			logger.debug("searchVO.getSearchSaleEmpKey()===>"+searchVO.getSearchSaleEmpKey());
+			logger.debug("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
+			logger.debug("searchVO.getBtnOption()===>"+searchVO.getBtnOption());
 			logger.debug("searchVO.getSelectKey()===>"+searchVO.getSelectKey());
 			mtList = service.selectContractList(searchVO);
 			/*logger.debug("mtList.size()=====>"+mtList.size());
@@ -181,8 +183,7 @@ public class MtContractController {
 	public String writeBasicInfoView(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		try {
-			
+		try {			
 			
 			empList = service.selectEmployeeList();
 			model.put("empList", empList);
@@ -212,17 +213,20 @@ public class MtContractController {
 		HashMap<String, String> sessionMap = null;
 		String mtIntegrateKey = null;
 		try {
-//			logger.info("mtContractVO.getMtNm())=====>"+mtContractVO.getMtNm());
-//			logger.info("mtContractVO.mtAcKey())=====>"+mtContractVO.getMtAcKey());
+//			logger.debug("mtContractVO.mtAcKey())=====>"+mtContractVO.getMtAcKey());
 			sessionMap =(HashMap)request.getSession().getAttribute("admin");
+//			logger.debug("mtContractVO.getCtDt(1))=====>"+mtContractVO.getCtDt());
 			
+//			mtContractVO.setMtOption("w");//등록옵션 저장.
 			mtContractVO.setRegEmpKey(sessionMap.get("empKey"));
+
+//			logger.debug("mtContractVO.getCtDt(2))=====>"+mtContractVO.getCtDt());
 			
 			mtIntegrateKey = service.writeFirestContractBasic(mtContractVO);			
 			
 			
 			model.addAttribute("mtIntegrateKey", mtIntegrateKey);
-//			logger.info("mtIntegrateKey===>"+mtIntegrateKey);
+//			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
 		} catch (Exception e) {
 			logger.error(null, e);
 		}		
@@ -232,7 +236,7 @@ public class MtContractController {
 	public String backOrderDetail(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-		Map<Object, Object> basicContractInfo = null;
+		MtContractVO basicContractInfo = null;
 		List<?> backOrderList = null;
 		try {
 			//기본정보 조회
@@ -271,7 +275,7 @@ public class MtContractController {
 	public String writeBackOrderInfoView(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
 		List<?> empList = null;
-//		logger.info("writeMtBackOrderInfoView=====");
+//		logger.debug("writeMtBackOrderInfoView=====");
 		try {
 			
 			
@@ -389,7 +393,7 @@ public class MtContractController {
 		
 		List<?> purchaseAmountList = null;
 		List<?> empList = null;
-		Map<Object, Object> basicContractInfo = null;
+		MtContractVO basicContractInfo = null;
 		try {
 			
 			//기본정보 조회
@@ -406,7 +410,7 @@ public class MtContractController {
 						
 			model.put("empList", empList);
 		} catch (Exception e) {
-			logger.error("selectMtDetailProdInfo error", e);
+			logger.error("purchaseAmountInfo error", e);
 		}
 		
 		return "maintenance/contract/detail/purchaseAmountInfo";
@@ -414,7 +418,7 @@ public class MtContractController {
 	
 	/**
 	 * 
-	  * @Method Name : selectMtDetailProdInfo
+	  * @Method Name : selectMtDetailProductInfo
 	  * @Cdate       : 2020. 11. 24.
 	  * @Author      : aranghoo
 	  * @Modification: 
@@ -424,12 +428,12 @@ public class MtContractController {
 	  * @return
 	  * @throws Exception
 	 */
-	@RequestMapping(value="/detail/prodInfo.do")
-	public String selectMtDetailProdInfo(@ModelAttribute("searchVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/detail/productInfo.do")
+	public String selectMtDetailProductInfo(@ModelAttribute("searchVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
 		
 		List<?> prodList = null;
 		List<?> empList = null;
-		Map<Object, Object> basicContractInfo = null;
+		MtContractVO basicContractInfo = null;
 		try {
 			
 			//기본정보 조회
@@ -445,50 +449,63 @@ public class MtContractController {
 			model.put("prodList", prodList);			
 			model.put("empList", empList);
 		} catch (Exception e) {
-			logger.error("selectMtDetailProdInfo error", e);
+			logger.error("selectMtDetailProductInfo error", e);
 		}
-		logger.info("getSelectKey==>"+mtContractVO.getSelectKey());
+		logger.debug("getSelectKey==>"+mtContractVO.getSelectKey());
 		
-		return "maintenance/contract/detail/prodInfo";
+		return "maintenance/contract/detail/productInfo";
 	}
+	
+	/**
+	 * 
+	  * @Method Name : writeProductInfo
+	  * @Cdate       : 2020. 11. 25.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품정보를 등록하는 화면으로 이동
+	  * @param request
+	  * @param mtContractVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/write/productInfo.do")
+	public String writeProductInfo(HttpServletRequest request, MtContractVO mtContractVO, ModelMap model) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		Enumeration params = request.getParameterNames();
+		while (params.hasMoreElements()){
+		    String name = (String)params.nextElement();
+		    returnMap.put(name, request.getParameter(name));
+		}
+		model.addAttribute("resultList", returnMap);
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/contract/write/productInfo";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : writeMtSalesInfo
+	  * @Cdate       : 2020. 11. 25.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매출정보 입력하는 화면으로 이동.
+	  * @param request
+	  * @param mtContractVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/write/salesInfo.do")
+	public String writeMtSalesInfo(HttpServletRequest request, MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		
+		return "maintenance/contract/write/salesInfo";
+	}	
 	///////////////////////////////////////////////////////////////////////////////////
 	
-//	@ResponseBody
-//	@RequestMapping(value = "/selectMtCustomerInfo.do", method=RequestMethod.POST)
-//	public Map<String, Object>  selectMtCustomerInfo(HttpServletRequest request , HttpServletResponse response , @RequestBody String mtIntegrateKey) throws Exception {
-//      
-//		List < ? > acDirectorList = null;
-//		Map<String, Object> modelAndView = null;
-//		Map<Object, Object> basicContractInfo = null;
-//		try {
-//			 
-//		//    	 acKey = request.getParameter("mtAcKey");
-//		//    	 logger.debug("acKey===>"+acKey);
-//		//    	 logger.debug("mtAcKey===>"+mtAcKey);
-//		//    	
-//		//    	 acKey="1098620738";
-//		     /* Ajax List 리턴을 위해서는 ModelAndView 로 세팅해야함 */
-//			 
-//			 logger.info("mtIntegrateKey====>"+mtIntegrateKey);
-//		     modelAndView = new HashMap<String, Object>();
-//		 
-//		     basicContractInfo =service.selectContractBasicDetail(mtIntegrateKey);
-//		     
-//		     acDirectorList =service.selectAcDirectorList((String)basicContractInfo.get("mtAcKey"));
-//		     
-//		     logger.info("mtAcKey.size=====>"+(String)basicContractInfo.get("mtAcKey"));
-//		     logger.info("acDirectorList.size=====>"+acDirectorList.size());
-//		     
-//		//         modelAndView.setViewName("jsonView");
-//		     modelAndView.put("acDirectorList", acDirectorList);
-//		     modelAndView.put("basicContractInfo", basicContractInfo);
-//		} catch (Exception e) {
-//			logger.error("selectAcDirectorList error", e);
-//		}
-//
-//    
-//     return modelAndView; 
-//	}
 	
 	/**
 	 * 

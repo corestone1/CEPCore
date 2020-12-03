@@ -62,7 +62,7 @@ public interface MtContractService {
 	  * @return
 	  * @throws Exception
 	 */
-	Map<Object, Object> selectContractBasicDetail(String mtIntegrateKey)  throws Exception;
+	MtContractVO selectContractBasicDetail(String mtIntegrateKey)  throws Exception;
 	
 	
 	/**

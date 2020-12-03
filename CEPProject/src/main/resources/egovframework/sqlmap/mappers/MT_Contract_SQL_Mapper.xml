@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cep.maintenance.service.impl.MaintenanceMapper">
+<mapper namespace="com.cep.maintenance.contract.service.impl.MtContractMapper">
 <!--유지보수 관련 sql 관리하는 Mapper.xml  -->
 	<resultMap id="mtContractVO" type="com.cep.maintenance.contract.vo.MtContractVO">
 		<result property="rowNum" column="ROW_NUM"/>
@@ -9,23 +9,25 @@
 		<result property="mtSeq" column="MT_SEQ"/>
 		<result property="mtAcKey" column="MT_AC_KEY"/>
 		<result property="mtAcNm" column="MT_AC_NM"/>
-		<result property="acDirectorKey" column="MT_AC_DIRECTOR_KEY"/>
+		<result property="mtAcDirectorKey" column="MT_AC_DIRECTOR_KEY"/>
+		<result property="acDirectorInfo" column="AC_DIRECTOR_INFO"/>
 		<result property="mtNm" column="MT_NM"/>
-		<result property="ctDt" column="MT_CT_DT"/>
-		<result property="startDt" column="MT_START_DT"/>
-		<result property="endDt" column="MT_END_DT"/>
-		<result property="rgInspectCnt" column="MT_RG_INSPECT_CNT"/>
-		<result property="imCd" column="MT_IM_CD"/>
-		<result property="sbCtYn" column="MT_SB_CT_YN"/>
+		<result property="mtCtDt" column="MT_CT_DT"/>
+		<result property="mtStartDt" column="MT_START_DT"/>
+		<result property="mtEndDt" column="MT_END_DT"/>
+		<result property="mtRgInspectCnt" column="MT_RG_INSPECT_CNT"/>
+		<result property="mtImCd" column="MT_IM_CD"/>
+		<result property="mtSbCtYn" column="MT_SB_CT_YN"/>
 		<result property="gbYn" column="GB_YN"/>
-		<result property="saleEmpKey" column="MT_SALE_EMP_KEY"/>
+		<result property="mtSaleEmpKey" column="MT_SALE_EMP_KEY"/>
 		<result property="saleEmpNm" column="SALE_EMP_NM"/>
-		<result property="mngEmpKey" column="MT_MNG_EMP_KEY"/>
+		<result property="mtMngEmpKey" column="MT_MNG_EMP_KEY"/>
 		<result property="mngEmpNm" column="MNG_EMP_NM"/>
-		<result property="supportEmpKey" column="MT_SUPPORT_EMP_KEY"/>
+		<result property="mtSupportEmpKey" column="MT_SUPPORT_EMP_KEY"/>
 		<result property="supportEmpNm" column="SUPPORT_EMP_NM"/>
-		<result property="amount" column="MT_AMOUNT"/>
-		<result property="payTerms" column="MT_PAY_TERMS"/>
+		<result property="mtAmount" column="MT_AMOUNT"/>
+		<result property="taxYn" column="TAX_YN"/>		
+		<result property="mtPayTerms" column="MT_PAY_TERMS"/>
 		<result property="remark" column="REMARK"/>
 		<result property="deleteYn" column="DELETE_YN"/>
 		<result property="regDt" column="REG_DT"/>
@@ -37,7 +39,7 @@
 	</resultMap>
 	
 	<!-- 유지보수 기본정보 등록 -->
-	<insert id="insertMtContractBasic" parameterType="com.cep.maintenance.contract.vo.MtContractVO">
+	<insert id="writeContractBasic" parameterType="com.cep.maintenance.contract.vo.MtContractVO">
 		INSERT INTO MT_CONTRACT_TB (
 			MT_INTEGRATE_KEY
 			, MT_CT_KEY
@@ -56,44 +58,46 @@
 			, MT_MNG_EMP_KEY
 			, MT_SUPPORT_EMP_KEY
 			, MT_AMOUNT
+			, TAX_YN
 			, MT_PAY_TERMS
 			, REMARK
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
 		) VALUES (
-			(SELECT IFNULL(MAX(MT_INTEGRATE_KEY) + 1, 1) FROM MT_CONTRACT_TB)
+			#{mtIntegrateKey}
 		<choose>
-			<when test="mtCtKey != null and mtCtKey != ''">
+			<when test="mtSeq != null and mtSeq != ''">
 		<!--
 			연장계약인 경우 MT_CT_KEY가 존재함.
 			MT_CT_KEY 키가 존재하는 경우    MT_SEQ+1을 해서 등록한다..
 		-->
 			, #{mtCtKey}
-			(SELECT MAX(MT_SEQ) + 1 FROM MT_CONTRACT_TB WHERE MT_CT_KEY=#{mtCtKey})
+			, (SELECT MAX(MT_SEQ) + 1 FROM MT_CONTRACT_TB WHERE MT_CT_KEY=#{mtCtKey})
 			
 			</when>
 			<otherwise>
 		<!-- 신규 유지보수 정보를 등록하는 경우.-->
-			, make_key('MT')
+			, #{mtCtKey}
 			, 1						
 			</otherwise>
 		</choose>
-			, #{mtCtKey}
-			, #{acDirectorKey}
+			, #{mtAcKey}
+			, #{mtAcDirectorKey}
 			, #{mtNm}
-			, #{ctDt}
-			, #{startDt}
-			, #{endDt}
-			, #{rgInspectCnt}
-			, #{imCd}
-			, #{sbCtYn}
+			, #{dbCtDt}
+			, #{dbStartDt}
+			, #{dbEndDt}
+			, #{mtRgInspectCnt}
+			, #{mtImCd}
+			, #{mtSbCtYn}
 			, #{gbYn}
 			, #{saleEmpKey}
 			, #{mngEmpKey}
-			, #{supportEmpKey}
-			, #{amount}
-			, #{payTerms}
+			, #{mtSupportEmpKey}
+			, #{mtAmount}
+			, #{taxYn}
+			, #{mtPayTerms}
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%k%i%s')
@@ -153,11 +157,13 @@
 	</select>
 	
 	<!-- 기본정보 상세보기 -->
-	<select id="selectMtBasicDetail" parameterType="String" resultType="egovMap">		
+	<select id="selectMtBasicDetail" parameterType="String" resultMap="mtContractVO">		
 		SELECT MC.MT_CT_KEY
 			, MC.MT_INTEGRATE_KEY
 			, MC.MT_AC_KEY
 			, CA.AC_NM AS MT_AC_NM
+      		, MC.MT_AC_DIRECTOR_KEY
+			, CONCAT(AC_DIRECTOR_NM, ' / ' , AC_DIRECTOR_POSITION_NM , ' / ' , AC_DIRECTOR_MB_NUM , ' / ' , AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
 			, MC.MT_NM
 			, MC.MT_CT_DT
 			, MC.MT_START_DT
@@ -165,16 +171,23 @@
 			, MC.MT_RG_INSPECT_CNT
 			, MC.MT_IM_CD
 			, MC.MT_SB_CT_YN
+			, MC.GB_YN
+			, MC.MT_AMOUNT
+			, MC.TAX_YN
+			, MC.MT_PAY_TERMS
+			, MC.REMARK
 			, MC.MT_SALE_EMP_KEY
 			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SALE_EMP_KEY) AS SALE_EMP_NM
 			, MC.MT_MNG_EMP_KEY
 			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_MNG_EMP_KEY) AS MNG_EMP_NM
 			, MC.MT_SUPPORT_EMP_KEY
 			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SUPPORT_EMP_KEY) AS SUPPORT_EMP_NM
-		FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA
-		WHERE MC.MT_INTEGRATE_KEY=#{mtIntegrateKey}				
-		  	AND MC.MT_AC_KEY = CA.AC_KEY
-		  	AND DELETE_YN='N'
+		FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
+		WHERE MC.MT_INTEGRATE_KEY=#{mtIntegrateKey}			
+		  	AND MC.MT_AC_KEY = CA.AC_KEY		
+		  	AND MC.MT_AC_KEY = AD.AC_KEY			
+		  	AND MC.MT_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+		  	AND DELETE_YN='N';
 	</select>
 	
 	<!-- 
@@ -192,109 +205,8 @@
 	
 	
 	
-	<!--
-		유지보수 작업 목록
-		리스트에서 모든 정보가 보여지기 때문에 모든정보를 불러온다.
-	  -->
-	<select id="selectMtWorkList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">				
-		
-		SELECT
-		  	MW.MT_WORK_KEY
-		  	, MW.MT_INTEGRATE_KEY
-		  	, CA.AC_NM
-		  	, MC.MT_NM
-		  	, MW.MT_WORK_EMP_KEY
-		  	, CE.EMP_NM AS MT_WORK_EMP_NM
-		  	, MW.MT_WORK_AC_DIRECTOR_KEY
-		    , AD.AC_DIRECTOR_NM 
-		    , CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM) AS AC_DIRECTOR_INFO
-		  	, MW.MT_WORK_START_DT
-		  	, MW.MT_WORK_END_DT
-		  	, MW.MT_WORK_TYPE_CD
-		  	, MW.MT_WORK_RESULT_CD
-		  FROM MT_WORK_TB MW
-		    , MT_CONTRACT_TB MC
-		    , CMM_ACCOUNT_TB CA
-		    , CMM_EMPLOYEE_TB CE
-		    , CMM_ACCOUNT_DIRECTOR_TB AD
-		  WHERE 1=1	
-		<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
-			AND MW.MT_WORK_START_DT LIKE CONCAT(year(NOW()),'%')
-		</if>
-		<if test="fromDate != null and fromDate != ''">
-			AND MW.MT_WORK_START_DT >= #{fromDate}
-		</if>
-		<if test="toDate != null and toDate != ''">
-			<![CDATA[
-			AND MW.MT_WORK_START_DT <= #{toDate}
-			]]>
-		</if>
-		<if test="searchWorkEmpKey != null and searchWorkEmpKey != ''">
-			AND MW.MT_WORK_EMP_KEY = #{searchWorkEmpKey}
-		</if>
-		<if test="searchWorkResult != null and searchWorkResult != ''">
-			AND MW.MT_WORK_RESULT_CD = #{searchWorkResult}
-		</if>
-		<if test="searchMtName != null and searchMtName != ''">
-			AND MC.MT_NM LIKE CONCAT(#{searchMtName}, '%')
-		</if>			
-			AND MW.DELETE_YN='N'
-		    AND MW.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
-		    AND MC.MT_AC_KEY = CA.AC_KEY
-		    AND MW.MT_WORK_EMP_KEY = CE.EMP_KEY
-		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
-		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
-	</select>
+
 	
-	<!--
-		유지보수 작업 상세보기
-	  -->
-	<select id="selectMtWorkDetail" parameterType="String" resultType="egovMap">				
-		
-		SELECT
-		  	MW.MT_WORK_KEY
-		  	, MW.MT_INTEGRATE_KEY
-		  	, CA.AC_NM
-		  	, MC.MT_NM
-		  	, MW.MT_WORK_EMP_KEY
-		  	, CE.EMP_NM AS MT_WORK_EMP_NM
-		  	, MW.MT_WORK_AC_DIRECTOR_KEY
-		    , AD.AC_DIRECTOR_NM 
-		    , CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM) AS AC_DIRECTOR_INFO
-		  	, MW.MT_WORK_START_DT
-		  	, MW.MT_WORK_START_TM
-		  	, MW.MT_WORK_END_DT
-		  	, MW.MT_WORK_END_TM
-		  	, MW.MT_WORK_TYPE_CD
-		  	, MW.MT_WORK_RESULT_CD
-		  	, MW.MT_WORK_CONT
-		  	, MW.REMARK
-		  FROM MT_WORK_TB MW
-		    , MT_CONTRACT_TB MC
-		    , CMM_ACCOUNT_TB CA
-		    , CMM_EMPLOYEE_TB CE
-		    , CMM_ACCOUNT_DIRECTOR_TB AD
-		  WHERE MW.MT_WORK_KEY=#{mtWorkKey}						
-			AND MW.DELETE_YN='N'
-		    AND MW.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
-		    AND MC.MT_AC_KEY = CA.AC_KEY
-		    AND MW.MT_WORK_EMP_KEY = CE.EMP_KEY
-		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
-		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
-	</select>
-	
-		<!-- 
-		유지보수 작업 삭제 ==> DELETE_YN값을 Y로 바꾼다.
-		1) 유지보수 작업목록에서 삭제 기능
-	 -->
-	<update id="deleteMtWork" >
-			UPDATE MT_WORK_TB
-			SET DELETE_YN='Y'
-				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
-				, MOD_EMP_KEY = #{modEmpKey}
-			WHERE MT_WORK_KEY=#{mtWorkKey}
-	</update>
 	
 	<!-- ######################################################################  -->
 	<!-- 사원리스트회 -->
@@ -313,6 +225,10 @@
 			FROM CMM_ACCOUNT_DIRECTOR_TB
 			WHERE AC_KEY = #{acKey}
 			ORDER BY AC_DIRECTOR_NM		
+	</select>
+	
+	<select id="makePrimaryKey" parameterType="String" resultType="String">			
+			SELECT make_key(#{keyType});
 	</select>
 	
 	

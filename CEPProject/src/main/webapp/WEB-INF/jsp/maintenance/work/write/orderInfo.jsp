@@ -262,17 +262,22 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">유지보수 작업등록</div>
+				<div class="floatL ftw500">유지보수작업 등록</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw400">
 				<li class="colorWhite cursorP">기본정보</li>
+				<c:if test="${mtWorkPmYn eq 'Y' }">
+				<li class="colorWhite cursorP">제품정보</li>
+				</c:if>
 				<li class="colorWhite cursorP on">발주정보</li>
 			</ul>
 		</div>
 		<form action="/" id="uploadForm" method="post"> 
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>" />
+			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
 			<div class="contents">
 				<div id="prodWrap">
 					<table class="subject">
@@ -307,7 +312,7 @@
 							</td>
 							<td class="tdTitle">매입처담당자</td>
 							<td class="tdContents">
-								<select id="sbCtYn" name="sbCtYn">
+								<select id="sbCtYn1" name="sbCtYn1">
 									<option value="홍길동">홍길동</option>
 									<option value="홍길동1">홍길동1</option>
 								</select>
