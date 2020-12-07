@@ -7,6 +7,9 @@
 <head>
 	<title>CEP 샘플 화면(프로젝트 list)</title>
 	<style>
+		.middle tbody a {
+			color: #000;
+		}
 		.sfcnt {
 			height: 91px;
 		}
@@ -186,7 +189,7 @@
 				} 
 			});
 			
-			$('#pl tr').click(function() {
+			/* $('#pl tr').click(function(id) {
 				/* $.ajax({
 					url: '/example.projectDetail.do',
 					param: $('#listFrom').serialize(),
@@ -204,7 +207,7 @@
 						}
 					}
 				}); */
-				location.href = "/project/detail/bidding.do";
+				/* location.href = "/project/detail/bidding.do"; */
 				/* if(event.target.nodeName=="TD"){
 					location.href = "/project/detail/bidding.do";
 				} */ 
@@ -215,9 +218,9 @@
 					alert("==>"+$(this).children().eq(0).children().eq(0).val()+"<==");
 				} else{
 					alert("bbbb");
-				} */
+				} 
 				
-			});
+			}); */
 			
 		});
 		
@@ -232,10 +235,18 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
+		function fn_detail(pjKey) {
+			form = document.listForm;
+			form.pjKey.value = pjKey;
+			form.action = "<c:url value='/project/detail/bidding.do'/>";
+			form.submit(); 
+		}
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form id="listForm" name="listForm" method="post">
+		<input type="hidden" name="pjKey" value="<c:out value='${pjKey}'/>"/>
+		<input type="hidden" name="pjKey2" value="sss"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -291,7 +302,7 @@
 		            					<c:out value="${result.pjKey}"/>
 		            				</td>
 		            				<td align="left" class="listtd"><c:out value="${result.acKey}"/>&nbsp;</td>
-		            				<td align="left" class="listtd"><c:out value="${result.pjNm}"/>&nbsp;</td>
+		            				<td align="left" class="listtd"><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a>&nbsp;</td>
 		            				<td align="left" class="listtd"><c:out value="${result.pjStartDt}"/>&nbsp;</td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
@@ -324,6 +335,6 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

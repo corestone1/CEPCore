@@ -432,10 +432,25 @@
 			/* } */
 		}
 		
+		function fn_check_file(flag) {
+	       if (flag=="Y") {
+	           $('#file_upload_posbl').show();
+	           $('#file_upload_imposbl').hide();          
+	       } else {
+	           $('#file_upload_posbl').hide();
+	           $('#file_upload_imposbl').show();
+	       }
+	   }
+		
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form id="listForm" name="listForm" method="post">
+		<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="<c:out value=''/>" />
+		<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+		<input type="hidden" value="<c:out value='${resultList}'/>" />
+		<input type="hidden" value="<%=request.getParameter("pjKey") %>" />
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -448,7 +463,7 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>프로젝트명</td>
-									<td>VDI중요단말 환경구축 및 노후장비 교체</td>
+									<td><c:out value="${resultList.pjNm}"/></td>
 								</tr>
 								<tr>
 									<td>고객사</td>
@@ -772,11 +787,49 @@
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>
+						<div id="file_upload_posbl" style="display:none">    
+			                <input name="file_1" id="fileUploader" type="file" required />
+			                <div id="egovComFileList"></div>
+			          	</div>               
+		          		<div id="file_upload_imposbl" style="display:none"></div>
 					</div>
 				</div>
 				<div class="floatC"></div>
 			</div>
 		</div>	
-	</form>
+	</form:form>
+	<script type="text/javascript">
+		var existFileNum = $('#atchFileCnt').val();        
+		var maxFileNum = $('#maxFileCnt').val();
+		// 첨부한 파일 갯수
+		if (existFileNum ==null || existFileNum=="") {
+			existFileNum = 0;
+		}
+		// 최대 첨부가능 갯수
+		if(maxFileNum==null || maxFileNum==""){
+			maxFileNum = 3;
+		} 
+		// 남은 첨부가능 갯수
+		var uploadableFileNum = maxFileNum - existFileNum;
+		
+		if (uploadableFileNum<0) {
+			uploadableFileNum = 0;
+		}               
+	    
+	    if (uploadableFileNum != 0) {
+	        fn_check_file('Y');
+	        var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
+	        multi_selector.addElement(document.getElementById('fileUploader'));   
+	    } else{
+	    	fn_check_file('N');
+	    }
+	             
+	</script>
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
+		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
+		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
+		<input type="hidden" name="fileSeqno" value=""/>
+	</form:form>
 </body>
 </html>

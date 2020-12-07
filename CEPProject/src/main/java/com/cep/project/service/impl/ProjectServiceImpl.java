@@ -1,20 +1,18 @@
 package com.cep.project.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectVO;
 
 @Service("projectService")
 public class ProjectServiceImpl implements ProjectService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 	
 	@Resource(name="projectMapper")
 	private ProjectMapper mapper;
@@ -31,8 +29,13 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
-	public int selectProjectListTotCnt(SampleDefaultVO searchVO) {
+	public int selectProjectListTotCnt(SampleDefaultVO searchVO) throws Exception {
 		return mapper.selectProjectListTotCnt(searchVO);
+	}
+	
+	@Override
+	public Map<String, Object> selectProjectDetail(ProjectVO projectVO) throws Exception {
+		return mapper.selectProjectDetail(projectVO);
 	}
 	
 }
