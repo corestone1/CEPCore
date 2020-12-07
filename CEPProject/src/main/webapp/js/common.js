@@ -76,21 +76,23 @@ function modal_layer_add(div_id) {
 	}
 }
 */
-
+$(document).on("keyup", "input:text[numberOnly]",function() {
+	$(this).val($(this).val().replace(/[^0-9]/g,""));
+});
 /*
  * 숫자 필드 입력 function
- * 숫자만 입력 되도록 on("keyup", "input:text[numberOnly]
- * 해당 필드 클릭하면 숫자에서 컴마 제거 on("focus", "input:text[numberOnly]"
- * 해당 숫자에 3자리 마다 컴마 삽입 on("focusout", "input:text[numberOnly]"
+ * 숫자만 입력 되도록 on("keyup", "input:text[amountOnly]
+ * 해당 필드 클릭하면 숫자에서 컴마 제거 on("focus", "input:text[amountOnly]"
+ * 해당 숫자에 3자리 마다 컴마 삽입 on("focusout", "input:text[amountOnly]"
  * input에 numberOnly 를 입력하면 해당 내용 적용.
- * ex) <input type="text" numberOnly placeholder="계약금액"  class="amount" />
+ * ex) <input type="text" amountOnly placeholder="계약금액"  class="amount" />
  */
-$(document).on("focus", "input:text[numberOnly]", function() {
+$(document).on("focus", "input:text[amountOnly]", function() {
 	
     var x = $(this).val();
     x = removeCommas(x);
     $(this).val(x);
-}).on("focusout", "input:text[numberOnly]",function() {
+}).on("focusout", "input:text[amountOnly]",function() {
 	
     var x = $(this).val();
     if(x && x.length > 0) {
@@ -100,7 +102,7 @@ $(document).on("focus", "input:text[numberOnly]", function() {
         x = addCommas(x);
         $(this).val(x);
     }
-}).on("keyup", "input:text[numberOnly]",function() {
+}).on("keyup", "input:text[amountOnly]",function() {
 	
     $(this).val($(this).val().replace(/[^0-9]/g,""));
 });
@@ -113,6 +115,49 @@ function addCommas(x) {
 function removeCommas(x) {
     if(!x || x.length == 0) return "";
     else return x.split(",").join("");
+}
+/*
+ * 시간분표시하기
+ */
+$(document).on("focus", "input:text[timeOnly]", function() {
+	
+    var x = $(this).val();
+    x = removeColon(x);
+    $(this).val(x);
+}).on("focusout", "input:text[timeOnly]",function() {
+	
+    var x = $(this).val();
+    if(x && x.length > 0) {
+        if(!$.isNumeric(x)) {
+            x = x.replace(/[^0-9]/g,"");
+        }
+        x = addColon(x);
+        $(this).val(x);
+    }
+}).on("keyup", "input:text[timeOnly]",function() {
+	$(this).val($(this).val().replace(/[^0-9]/g,"").substring(0,4));
+});
+
+//시간콜론 추가.
+function addColon(x) {
+    //return x.toString().substring(0,2)+":"+x.toString().substring(3,4)
+	return x.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ":");
+}
+ 
+//모든 콜론 제거
+function removeColon(x) {
+    if(!x || x.length == 0) return "";
+    else return x.split(":").join("");
+}
+
+function addDateMinus(x) {
+	if(!x || x.length == 0) return "";
+	else x.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+}
+
+function removeData(x, y) {
+    if(!x || x.length == 0) return "";
+    else return x.split(y).join("");
 }
 
 //날짜 하이픈(-) 자동 추가

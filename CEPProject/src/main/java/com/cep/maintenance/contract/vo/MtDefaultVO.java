@@ -31,6 +31,8 @@ public class MtDefaultVO implements Serializable{
 	private String searchWorkResult; // 작업결과(진행중/완료)
 	private String selectIntegrateKey;
 	private String selectWorkKey;
+	private String parmMtSbCtYn; //백계약여부
+	private String updateYn; //업데이트 여부(Y:업데이트, N:등록)
 	/**
 	 * @return the fromDate
 	 */
@@ -168,6 +170,30 @@ public class MtDefaultVO implements Serializable{
 	 */
 	public void setSelectWorkKey(String selectWorkKey) {
 		this.selectWorkKey = selectWorkKey;
+	}
+	/**
+	 * @return the parmMtSbCtYn
+	 */
+	public String getParmMtSbCtYn() {
+		return parmMtSbCtYn;
+	}
+	/**
+	 * @param parmMtSbCtYn the parmMtSbCtYn to set
+	 */
+	public void setParmMtSbCtYn(String parmMtSbCtYn) {
+		this.parmMtSbCtYn = parmMtSbCtYn;
+	}
+	/**
+	 * @return the updateYn
+	 */
+	public String getUpdateYn() {
+		return updateYn;
+	}
+	/**
+	 * @param updateYn the updateYn to set
+	 */
+	public void setUpdateYn(String updateYn) {
+		this.updateYn = updateYn;
 	}
 	
 	

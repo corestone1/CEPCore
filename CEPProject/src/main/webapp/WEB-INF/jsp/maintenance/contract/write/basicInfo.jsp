@@ -157,56 +157,12 @@
 			// /* showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
-		function fn_addView111(varUrl) {
-		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
-			document.mtBasicForm.method="post";
-			alert(1111);
-	       	document.mtBasicForm.submit();  */
-	       	
-	       	var object = {};
-	        var fromData = $("#mtBasicForm").serializeArray();
-	        for (var i = 0; fromData < fromData.length; i++){
-	          
-	          object[fromData[i]['name']] = fromData[i]['value'];
-	       }
-	        var sendData = JSON.stringify(object);
-	        
-	       	$.ajax({
-	        	url:"/maintenance/writeMtBasicInfo.do",
-	            /* dataType: 'json', */
-	            type:"post",  
-	            data: sendData,
-	     	   	contentType: "application/json; charset=UTF-8",
-	     	  	beforeSend: function(xhr) {
-	        		xhr.setRequestHeader("AJAX", true);
-	        		//xhr.setRequestHeader(header, token);
-	        	},
-	            success:function(data){		        
-	            	var url = '/maintenance/'+varUrl+'.do';
-	    			var dialogId = 'program_layer';
-	    			var varParam = {
-	
-	    			}
-	    			var button = new Array;
-	    			button = [];
-	    			// /* showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
-	    			showModalPop(dialogId, url, data, button, '', 'width:1144px;height:708px');
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	        }); 
-		}
+		
 		/*
 		*내용을 저장한다.
 		*/
 		function fn_saveNext(){
-		/* 	document.mtBasicForm.action = "/maintenance/writeMtBasicInfo.do";
-			document.mtBasicForm.method="post";
-			alert(1111);
-           	document.mtBasicForm.submit();  */
+			$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
            	var formData = $("#mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
@@ -219,7 +175,6 @@
 	        	url:"/maintenance/contract/write/basicInfo.do",
 	            dataType: 'text', 
 	            type:"post",  
-	            /* data: $("#mtBasicForm").serialize(), */
 	            data: sendData,
 	            
 	     	   	contentType: "application/json; charset=UTF-8", 
@@ -230,13 +185,18 @@
 	        	},
 	            success:function(data){	
 	            	console.log("data===>"+data);
-	            	alert("기본정보 등록을 성공하였습니다.")
-	            	var url = '/maintenance/contract/write/basicInfoView.do';
-	    			var dialogId = 'program_layer';
-	    			var varParam = data
-	    			var button = new Array;
-	    			button = [];
-	    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+	            	if("Y" == paramData.successYN){
+	            		alert("유지보수계약 기본정보 등록을 성공하였습니다.")
+		            	var url = '/maintenance/contract/write/productInfoView.do';
+		    			var dialogId = 'program_layer';
+		    			var varParam = JSON.parse(data)
+		    			var button = new Array;
+		    			button = [];
+		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+	            	} else {
+	            		alert("유지보수계약 기본정보 등록이 실패하였습니다.");
+	            	}
+	            	 
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -290,14 +250,14 @@
 						if ( data.result.length > 0 ) {
 							acDirectorList = data.result;/* 값이 있는 경우  전역변수에 넣는다. */
 							$('#acDirectorInfo').val(data.result[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
-							$ ('#acDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+							$ ('#mtAcDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
 							for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
-                        		$ ('#acDirectorKey' ).append ( "<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>' );
+                        		$ ('#mtAcDirectorKey' ).append ( "<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>' );
                       		}
 		                }else{
 		                	acDirectorList = null;
-							$ ( '#acDirectorKey' ).find ( 'option' ).remove ();
-		                 	$ ( '#acDirectorKey' ).append ( "<option value=''>담당자</option>" );
+							$ ( '#mtAcDirectorKey' ).find ( 'option' ).remove ();
+		                 	$ ( '#mtAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
 		                }
 		            },
 		        	error: function(request, status, error) {
@@ -310,13 +270,13 @@
 			}); 
 			
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
-			$('#acDirectorKey').change(function(){
-				var checkVal = $('#acDirectorKey option:selected').val();
+			$('#mtAcDirectorKey').change(function(){
+				var checkVal = $('#mtAcDirectorKey option:selected').val();
 				console.log("checkVal===>"+acDirectorList.length);
 				console.log("acDirectorList===>"+acDirectorList);
 				if(acDirectorList.length>0){
 					for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {
-						if(checkVal == acDirectorList[idx].acDirectorKey ){
+						if(checkVal == acDirectorList[idx].mtAcDirectorKey ){
 							$('#acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
 							break;
 						}
@@ -332,6 +292,7 @@
 </head>
 <body>
 	<form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post">		 
+		<input type="hidden" id="updateYn" name="updateYn" value="N" />
 		<div class="popContainer">
 			<div class="top">
 				<div>
@@ -341,10 +302,10 @@
 			<div class="left">
 				<ul class="ftw400">
 					<li class="colorWhite cursorP on">기본정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('productInfo');">제품정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfo');">매출정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
 					
-					<li id="back_order" class="colorWhite cursorP" style="display:none">발주정보</li>
+					<li id="back_order" class="colorWhite cursorP" style="display:none">백계약정보</li>
 					<li id="back_buy" class="colorWhite cursorP" style="display:none">매입정보</li>
 				</ul>
 			</div>
@@ -369,7 +330,7 @@
 						<tr>
 							<td class="tdTitle">고객사담당자</td>
 							<td class="tdContents" colspan="5">
-								<select id="acDirectorKey" name="acDirectorKey" >
+								<select id="mtAcDirectorKey" name="mtAcDirectorKey" >
 									<option value="">선택</option>
 									<%-- <c:forEach var="director" items="${acDirectorList}" varStatus="status">										
 									<option value="<c:out value="${director.directorKey}"/>"><c:out value="${director.directorNm}"/></option>
@@ -381,7 +342,7 @@
 						<tr>
 							<td class="tdTitle">관리담당자</td>
 							<td class="tdContents">
-								<select name="mngEmpKey">
+								<select name="mtMngEmpKey">
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
 									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
 									</c:forEach>	
@@ -397,7 +358,7 @@
 							</td>
 							<td class="tdSubTitle">영업담당</td>
 							<td class="tdContents">
-								<select name="saleEmpKey">
+								<select name="mtSaleEmpKey">
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
 									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
 									</c:forEach>	
@@ -407,18 +368,18 @@
 						<tr>
 							<td class="tdTitle">계약일자</td>
 							<td class="tdContents">
-								<input type="text" name="ctDt" class="calendar fromDt" />
+								<input type="text" name="mtCtDt" class="calendar fromDt" />
 							</td>
 							<td class="tdSubTitle">유지보수기간</td>
 							<td class="tdContents" colspan="3">
-								<input type="text" name="startDt" placeholder="from" class="calendar fromDt" /> ~ 
-								<input type="text" name="endDt" placeholder="to" class="calendar toDt" />
+								<input type="text" name="mtStartDt" placeholder="from" class="calendar fromDt" /> ~ 
+								<input type="text" name="mtEndDt" placeholder="to" class="calendar toDt" />
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle">유지보수금액</td>
 							<td class="tdContents">
-								<input type="text"  name="amount" style="width: 140px"/>
+								<input type="text"  id="mtAmount" name="mtAmount" amountOnly style="width: 140px"/>
 							</td>
 							<td class="tdSubTitle">부가세 포함</td>
 							<td class="tdContents">
@@ -427,22 +388,22 @@
 							</td>
 							<td class="tdSubTitle">결재조건</td>
 							<td class="tdContents">
-								<input type="text"  name="payTerms" style="width: 140px"/>
+								<input type="text"  name="mtPayTerms" style="width: 140px"/>
 							</td>
 						</tr>	
 						<tr>
 							<td class="tdTitle">검수방법</td>
 							<td class="tdContents">
-								<select name="imCd">
+								<select name="mtImCd">
 									<option value="온라인">온라인</option>
 									<option value="오프라인">오프라인</option>
 								</select>
 							</td>
 							<td class="tdSubTitle">정기점검횟수</td>
 							<td class="tdContents" colspan="3">
-								<input type="text"  name="rgInspectCnt" style="width: 64px"/>&nbsp;회&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="text"  name="mtRgInspectCnt" numberOnly style="width: 64px"/>&nbsp;회&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								백계약유무&nbsp;&nbsp;
-								<select id="sbCtYn" name="sbCtYn" style="width: 60px">
+								<select id="sbCtYn" name="mtSbCtYn" style="width: 60px">
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

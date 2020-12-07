@@ -92,8 +92,8 @@
 			, #{mtImCd}
 			, #{mtSbCtYn}
 			, #{gbYn}
-			, #{saleEmpKey}
-			, #{mngEmpKey}
+			, #{mtSaleEmpKey}
+			, #{mtMngEmpKey}
 			, #{mtSupportEmpKey}
 			, #{mtAmount}
 			, #{taxYn}
@@ -204,7 +204,45 @@
 	</update>
 	
 	
+	<!-- ===========================유지보수 계약 제품========================================= -->
 	
+	<!-- 유지보수계약 제품정보 등록. -->
+	<insert id="writeMtContractProductList" parameterType="java.util.Map">
+		
+			INSERT INTO MT_PRODUCT_TB (
+				MT_INTEGRATE_KEY 
+				, MT_PM_FK_KEY
+			    , MT_PM_DETAIL 
+			    , MT_PM_SERIAL_NUM 
+			    , MT_PM_QUANTITY 
+			    , MT_PM_UPRICE 
+			    , MT_PM_START_DT 
+			    , MT_PM_END_DT 
+			    , REMARK 
+			    , DELETE_YN 
+			    , REG_DT 
+			    , REG_TM 
+			    , REG_EMP_KEY
+			    )
+			VALUES
+			<foreach collection="mtContractProductVoList" item="item" separator=",">
+			    (
+			     #{mtIntegrateKey}
+			    , #{item.mtPmFkKey}
+			    , #{item.mtPmDetail} 
+			    , #{item.mtPmSerialNum}
+			    , #{item.mtPmQuantity}
+			    , #{item.mtPmUprice}
+			    , #{item.mtPmStartDt}
+			    , #{item.mtPmEndDt} 
+			    , #{item.remark} 
+			    , 'N' 
+			    , DATE_FORMAT(NOW(),'%Y%m%d')
+			    , DATE_FORMAT(NOW(),'%k%i%s')
+			    , #{regEmpKey} 
+			   )
+			</foreach>  		
+	</insert>
 
 	
 	

@@ -269,25 +269,25 @@
 			if(originLength>1){
 				table.remove();
 				$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
-				
+				/*
 				nextTable.each(function() {
 					var num = $(this).find('input[name="lastNum"]').val()*1;
 					$(this).find('input[name="lastNum"]').val(num-1);
-					/* var newName = 'mtWorkProductVoListList[' + (num-1) + '].';
+					 var newName = 'mtWorkProductVoListList[' + (num-1) + '].';
 					
 					for(var i = 0; i < nameArr.length; i++) {
 			    		var splitName = nameArr[i].split('.')[1];
 			    		$(this).find('input[name="mtWorkProductVoList[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName);
 			    		$(this).find('textarea[name="mtWorkProductVoList[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName); 
 			    		$(this).find('select[name="mtWorkProductVoList[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName); 
-			    	}  */
-				});
+			    	}  
+				});*/
 			} else {
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			   
 		}
 		function fn_saveBtn(param){
-
+			//var saveUrl;
 			var object = {};
 			var listObject = new Array();
 			var obj = new Object();
@@ -378,6 +378,7 @@
 		</div>
 		<form:form commandName="mtWorkProductVO" id="mtBasicForm" name="mtBasicForm" method="post">
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			<input type="hidden" id="updateYn" name="updateYn" value="<c:out value="${updateYn}"/>" />
 			<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
 			<!-- <input type="hidden" id="mtWorkKey" name="mtWorkKey" value="MW200040" />

@@ -282,20 +282,11 @@
 					<li class="colorWhite cursorP">매입정보</li>
 			</ul>
 		</div>
-		<!-- <form action="/" id="uploadForm" method="post">  -->
+		<form action="/" id="uploadForm" method="post">
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
 			<div class="contents">
 				<div id="prodWrap">
-					<%-- <div class="subjectContainer">
-						<table class="subject">
-							<tr>      
-								<td class="subTitle" style="border-top: none;">
-									<label class="ftw400">제품정보</label>
-								</td>
-								<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable2();"/></td>
-							</tr>
-						</table>
-					</div> --%>
 					<table class="subject">
 						<tr>      
 							<td class="subTitle" style="border-top: none;">
@@ -305,12 +296,6 @@
 						</tr>
 					</table>					
 					<table>
-						<%-- <tr>		
-							<td class="subTitle" style="border-top: none;">
-								<label class="ftw500">발주등록</label>
-							</td>
-							<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" /></td>
-						</tr> --%>
 						<tr>
 							<td class="tdTitle">매입처</td>
 							<td class="tdContents">
@@ -327,14 +312,6 @@
 							<td class="tdContents">
 								<input type="text" value="2020-12-12" class="calendar fromDt" />	
 							</td>
-							
-							<!-- <td class="tdTitle">등록자</td>
-							<td class="tdContents">
-								<select id="sbCtYn" name="sbCtYn">
-									<option value="홍길동">홍길동</option>
-									<option value="홍길동1">홍길동1</option>
-								</select>
-							</td> -->
 						</tr>
 						<tr>
 							<td class="tdTitle">부가세 포함</td>
@@ -351,12 +328,6 @@
 								<input type="text" style="width: 154px" />	
 							</td>
 						</tr>
-						<%-- <tr>		
-							<td class="subTitle" style="border-top: none;">
-								<label class="ftw500">제품정보</label>
-							</td>
-							<td class="subTitle" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
-						</tr> --%>
 					</table>
 					<table class="subject">
 						<tr>      
@@ -385,21 +356,12 @@
 									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
 		                           <img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
 								</td>
-		                        <%-- <td>
-		                           <img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);"/>
-		                           <img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" />
-		                        </td> --%>
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle">단가</td>
 								<td class="tdContents">
 									<input type="text" name="prodList[0].mtOrderPmUprice"/>
-								</td>	
-								<!-- <td class="tdTitle">부가세 포함</td>
-								<td class="tdContents">
-									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT1" checked="checked"/><label for="prodList[0].hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT2" /><label for="prodList[0].hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-								</td> -->	
+								</td>
 								<td class="tdTitle">시리얼번호</td>
 								<td class="tdContents" colspan="3">
 									<input type="text" name="prodList[0].mtPmSerialNum" readonly="readonly"/>	
@@ -428,8 +390,7 @@
 					<div class="floatN floatC"></div>
 				</div>
 			</div>	
-		<!-- </form> -->
-		
+		</form>		
 	</div>
 </body>
 </html>

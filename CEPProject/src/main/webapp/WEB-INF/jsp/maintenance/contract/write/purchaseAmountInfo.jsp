@@ -178,11 +178,15 @@
 					<li class="colorWhite cursorP">제품정보</li>
 					<li class="colorWhite cursorP">매출정보</li>
 					
-					<li class="colorWhite cursorP">발주정보</li>
+					<li class="colorWhite cursorP">백계약정보</li>
 					<li class="colorWhite cursorP on">매입정보</li>
 			</ul>
 		</div>
 		<div class="contents">
+		<form action="/" id="uploadForm" method="post">
+			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
+			
 			<div>
 				<table>
 					<tr>		
@@ -287,6 +291,7 @@
 				</div>
 				<div class="floatN floatC"></div>
 			</div>
+		</form>	
 		</div>	
 	</div>
 </body>

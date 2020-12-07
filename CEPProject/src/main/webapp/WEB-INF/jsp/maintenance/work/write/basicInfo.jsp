@@ -394,8 +394,8 @@
 						<tr>
 							<td class="tdTitle">작업기간</td>
 							<td class="tdContents" colspan="5">
-								<input type="text" name="mtWorkStartDt" placeholder="from" class="calendar fromDt" />&nbsp;<input type="text" name="mtWorkStartTm" style="width: 50px" />&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
-								<input type="text" name="mtWorkEndDt" placeholder="to" class="calendar toDt" />&nbsp;<input type="text" name="mtWorkEndTm" style="width: 50px" />
+								<input type="text" name="mtWorkStartDt" placeholder="from" class="calendar fromDt" />&nbsp;<input type="text" name="mtWorkStartTm" timeOnly style="width: 50px" />&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
+								<input type="text" name="mtWorkEndDt" placeholder="to" class="calendar toDt" />&nbsp;<input type="text" name="mtWorkEndTm" timeOnly style="width: 50px" />
 							</td>
 						</tr>
 						<tr>

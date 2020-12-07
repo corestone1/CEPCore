@@ -1,5 +1,6 @@
 package com.cep.maintenance.work.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public class MtWorkServiceImpl implements MtWorkService {
 	public void writeWorkProductList(MtWorkProductVO mtWorkProductVO) throws Exception {
 		Map<String, Object> insertParam = null;
 		try {
-			insertParam = new HashedMap();
+			insertParam = new HashMap<>();
 			insertParam.put("mtWorkKey", mtWorkProductVO.getMtWorkKey());
 			insertParam.put("regEmpKey", mtWorkProductVO.getRegEmpKey());
 			insertParam.put("mtWorkProductVoList", mtWorkProductVO.getMtWorkProductVoList());
