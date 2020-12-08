@@ -451,6 +451,10 @@
 									<td><c:out value="${basicContractInfo.viewAmount}"/></td>
 								</tr>
 								<tr>
+									<td>부가세 포함여부</td>
+									<td><c:out value="${basicContractInfo.taxYn}"/></td>
+								</tr>
+								<tr>
 									<td>결제조건</td>
 									<td><c:out value="${basicContractInfo.mtPayTerms}"/></td>
 								</tr>

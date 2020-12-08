@@ -4,7 +4,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<%-- <script src="<c:url value='/js/jquery.serializeObject.js'/>"></script> --%>
 	<title>제품정보 등록</title>
 	<style>
 		.firstTd {			
@@ -76,19 +75,13 @@
 			width: 135px;
 		}
 		.popContainer input {
-			width: 180px;
+			width: 130px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 3px;
-		}
-		.popContainer input[class="search"] {
-			height: 38px;
-			background-image: url('/images/search_icon.png');
-			background-repeat: no-repeat;
-			background-position: 95% 50%;
 		}
 		.popContainer .contents2 input[class="numberTy"] {
 			width: 27px;
@@ -108,7 +101,7 @@
 			width: 96px;
 		}				
 		.popContainer td.tdContents {
-			/* width: 174px; */
+			width: 174px;
 			font-size: 14px;
 		} 				
 		.popContainer .contents tr:nth-child(1) td {
@@ -122,7 +115,7 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 20px);
+			width: calc(100% - 22px);
 			height: 55px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -154,13 +147,21 @@
 						if(arr){ 
 							obj = {};
 							objArry = new Array();
-							jQuery.each(arr, function() { 
-							obj[this.name] = this.value; 
+							jQuery.each(arr, function() {
+								
+							if(this.name=="mtPmQuantity" || this.name=="mtPmUprice" || this.name=="totalAmount"){
+								obj[this.name] = removeCommas(this.value); 
+							} else if(this.name=="mtPmStartDt" || this.name=="mtPmEndDt") {
+								obj[this.name] =  removeData(this.value,"-"); 
+							} else {
+								obj[this.name] = this.value; 
+							}
+							
 							/*
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('mtPmWorkCont' == this.name){
+							if('remark' == this.name){
 								objArry.push(obj);
 								obj = {};
 							}
@@ -172,9 +173,6 @@
 			}finally {} 
 			return objArry; 
 		}
-
-
-
 		function fn_addInfoTable() {
 			
 			var type = "prod";
@@ -206,28 +204,24 @@
 	    		if(td[i].getAttribute('for') != null && td[i].getAttribute('for') != undefined && td[i].getAttribute('for') != "" && td[i].getAttribute('for').length != 0) {
 	    			forArr.push(td[i].getAttribute('for')); 	    			
 	    		}
-	    	}
-	    	
-	    	//var name = 'mtWorkProductVoList[' + (lastNum+1) + '].';
-	    	
+	    	}	    	
+	    		    	
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		
 	    		clone.find('input[name="lastNum"]').val(lastNum+1);
 				clone.find('input[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");
 				clone.find('textarea[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
-				clone.find('select[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
-				/* clone.find('input:radio[name="'+ type + 'List[' + originLength + '].' + splitName+'"]').attr('id', name + splitName); */	
-					
+				clone.find('select[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 					
 	    	} 
-	    	
+	    	var name = type + 'List-' + (lastNum+1) + '-';
 	    	for(var i = 0; i < idArr.length; i++) {
-	    		var splitName = idArr[i].split('.')[1];
-				clone.find('input[id="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('id', name + splitName);				
+	    		var splitName = idArr[i].split('-')[2];
+				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);				
 	    	} 
 	    	
 	    	for(var i = 0; i < forArr.length; i++) {
-	    		var splitName = forArr[i].split('.')[1];				
-				clone.find('label[for="'+ type + 'List[' + lastNum + '].' + splitName+'"]').attr('for', name + splitName);				
+	    		var splitName = forArr[i].split('-')[2];				
+				clone.find('label[for="'+ type + 'List[' + lastNum + ']-' + splitName+'"]').attr('for', name + splitName);				
 	    	} 
 	    	
 	    	$('#'+type+'Wrap').append(clone);
@@ -252,7 +246,7 @@
 		
 		/* 제품정보 삭제*/
 		function fn_delete(obj, type) {
-			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
+/* 			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
 			var nextTable = $(obj.parentNode.parentNode.parentNode.parentNode.parentNode).nextAll();
 			var tr = nextTable.children().children().children();
 			var td = tr.children().children();
@@ -263,31 +257,54 @@
 	    		if(td[i].getAttribute('name') != null && td[i].getAttribute('name') != undefined && td[i].getAttribute('name') != "" && td[i].getAttribute('name').length != 0) {
 	    			nameArr.push(td[i].getAttribute('name')); 	   
 	    		}
-	    	}
-			
+	    	} */
+	    	var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
 			var originLength = $('#'+type+'Length').val()*1;
 			if(originLength>1){
 				table.remove();
 				$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
-				/*
-				nextTable.each(function() {
+				 
+				/* nextTable.each(function() {
 					var num = $(this).find('input[name="lastNum"]').val()*1;
 					$(this).find('input[name="lastNum"]').val(num-1);
-					 var newName = 'mtWorkProductVoListList[' + (num-1) + '].';
+					var newName = type + 'List[' + (num-1) + '].';
 					
 					for(var i = 0; i < nameArr.length; i++) {
 			    		var splitName = nameArr[i].split('.')[1];
-			    		$(this).find('input[name="mtWorkProductVoList[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName);
-			    		$(this).find('textarea[name="mtWorkProductVoList[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName); 
-			    		$(this).find('select[name="mtWorkProductVoList[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName); 
+			    		$(this).find('input[name="'+ type + 'List[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName);
+			    		$(this).find('textarea[name="'+ type + 'List[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName); 
+			    		$(this).find('select[name="'+ type + 'List[' + (num) + '].' + splitName+'"]').attr('name', newName + splitName); 
 			    	}  
-				});*/
+				}); */
 			} else {
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			   
 		}
-		function fn_saveBtn(param){
-			//var saveUrl;
+		
+		/* function fn_saveBtn(){
+
+			var object = {};
+			var listObject = new Array();
+			var obj = new Object();
+           	var formData = $("#mtBasicForm").serializeArray();
+           	var listData = $("#mtListForm").serializeObject();
+            
+           	for (var i = 0; i<formData.length; i++){
+                
+                object[formData[i]['name']] = formData[i]['value'];
+                            
+            }
+           console.log("formData===>"+formData);  
+           console.log("listData===>"+listData.length);  
+           console.log("listData===>"+JSON.stringify(listData));  
+           //console.log("listData2===>"+removeCommas(JSON.stringify(listData)));  
+           
+           for (var i = 0; i<listData.length; i++){
+        	   console.log("listData.mtPmUprice===>"+listData.mtPmUprice);  
+           }
+		} */
+		function fn_saveBtn(){
+
 			var object = {};
 			var listObject = new Array();
 			var obj = new Object();
@@ -300,17 +317,15 @@
                             
             }
            	//List를 담아준다.			
-            object["mtWorkProductVoList"]=listData;           	
+            object["mtContractProductVoList"]=listData;           	
 			
-			//object["mtWorkProductVoList" = listObject];
-           	var sendData = JSON.stringify(object);
-           	
-           	 $.ajax({
-	        	url:"/maintenance/work/write/productInfo.do",
+			var sendData = JSON.stringify(object);
+           	console.log("sendData==>"+sendData);
+           	$.ajax({
+	        	url:"/maintenance/contract/write/productInfo.do",
 	            dataType: 'text', 
 	            type:"post",  
-	            //data: JSON.stringify({"mtWorkKey":"111111111", "mtWorkProductVoList" :sendData}),
-				data: sendData,
+	            data: sendData,
 				
 	            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
 	            
@@ -321,29 +336,20 @@
 	        	},
 	            success:function(data){	
 	            	var paramData = JSON.parse(data);
-	            	//console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
+	            	console.log("data.mtIntegrateKey==>"+paramData.mtIntegrateKey);
 	            	
 	            	if("Y" == paramData.successYN){
-	            		alert("유지보수작업 제품등록을 성공하였습니다.");
-		            	if('sn'==param){
-		            		//유지보수작업 발주 등록화면으로 이동
-		            		var url='/maintenance/work/write/orderInfoView.do';
-		            		            			
-			    			var dialogId = 'program_layer';
-			    			var varParam = paramData
-			    			var button = new Array;
-			    			button = [];
-			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		            	} else {
-		            		/* document.mtBasicForm.action = "/maintenance/work/workList.do";
-		        			document.mtBasicForm.method="get";
-		                   	document.mtBasicForm.submit();  */
-		            		document.listForm.action = "/maintenance/work/workList.do";
-	        				document.listForm.method="get";
-	                   		document.listForm.submit(); 
-		            	}
+	            		alert("유지보수계약 제품등록을 성공하였습니다.");
+	            		//유지보수작업 발주 등록화면으로 이동
+	            		var url='/maintenance/contract/write/salesInfoView.do';
+	            		            			
+		    			var dialogId = 'program_layer';
+		    			var varParam = paramData
+		    			var button = new Array;
+		    			button = [];
+		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 	            	} else {
-	            		alert("유지보수작업 제품등록이 실패하였습니다.");
+	            		alert("유지보수계약 제품등록이 실패하였습니다.");
 	            	}
 	            	
 	            	
@@ -353,38 +359,44 @@
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        		}
 	        	} 
-	        }
-           	 
-           	);			           	
+	        });			           	
 		}
+		
+		//수량 X 단가 = 합계에 값 넣기
+		$(document).on("focusout", ".calculate", function() {
+			var num = $(this).attr('id').split('-')[1];
+			var quantity = removeCommas($("#prodList-"+num+"-mtPmQuantity").val());
+			var pmUprice = removeCommas($("#prodList-"+num+"-mtPmUprice").val());
+			$("#prodList-"+num+"-totalAmount").val(addCommas(quantity*pmUprice))
+		});
+
+		
 	</script>
 </head>
 <body>
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">유지보수작업 등록</div>
+				<div class="floatL ftw500">유지보수 등록</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-					<li class="colorWhite cursorP">기본정보</li>
-					<li id="work_product" class="colorWhite cursorP on">제품정보</li>
-					<c:if test="${mtWorkOrderYn eq 'Y' }">
-					<li id="work_order" class="colorWhite cursorP">발주정보</li>
+					<li class="colorWhite cursorP" onclick="fn_addView('writeMtBasicInfoView');">기본정보</li>
+					<li class="colorWhite cursorP on">제품정보</li>
+					<li class="colorWhite cursorP">매출정보</li>
+					<c:if test="${parmMtSbCtYn eq 'Y' }">		
+					<li class="colorWhite cursorP">백계약정보</li>
+					<li class="colorWhite cursorP">매입정보</li>
 					</c:if>
-					
 			</ul>
 		</div>
-		<form:form commandName="mtWorkProductVO" id="mtBasicForm" name="mtBasicForm" method="post">
+		<form action="/" id="mtBasicForm" name="mtBasicForm" method="post">
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
-			<input type="hidden" id="updateYn" name="updateYn" value="<c:out value="${updateYn}"/>" />
-			<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>" />
+			<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${parmMtSbCtYn}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
-			<!-- <input type="hidden" id="mtWorkKey" name="mtWorkKey" value="MW200040" />
-			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="MA200006" /> -->
-		</form:form>
-		<form:form commandName="mtListVO" id="mtListForm" name="mtBasicForm" method="post">
+		</form>
+		<form action="/" id="mtListForm" name="mtListForm" method="post">
 			<div class="contents">
 				<div id="prodWrap">
 					<div class="subjectContainer">
@@ -394,7 +406,7 @@
 									<label class="ftw400">제품정보</label>
 								</td>
 								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
-								
+								<td class="subBtn" colspan="5"  style="border-top: none;"><img class="floatR" src="<c:url value='/images/icon_project.png'/>" onclick="fn_addInfoTable();"/></td>
 							</tr>
 						</table>
 					</div>
@@ -404,41 +416,59 @@
 							<tr>
 								<td class="tdTitle firstTd">제품</td>
 								<td class="tdContents firstTd">
-									<input type="text" name="mtPmKey" class="search" />	
-									<!-- <input type="hidden" name="mtOrderPmKey"/> -->	
+									<input type="text" name="mtPmFkKey" class="search" />	
+									<!-- <input type="text" name="mtPmFkKeyNm"class="search" />	
+									<input type="hidden" name="mtPmFkKey"/>	 -->
 								</td>
-								<td class="tdTitle firstTd" style="padding-left:50px">시리얼번호</td>
+								<td class="tdTitle firstTd">합계</td>
 								<td class="tdContents firstTd">
-									<input type="text" name="mtPmSerialNum" value="TX112380SERAL" style="width: 252px" readonly="readonly"/>
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+									<input type="text" id="prodList-0-totalAmount" name="totalAmount" readonly="readonly"/>	
+								</td>
+								<td class="tdTitle firstTd">수량</td>
+								<td class="tdContents firstTd">
+									<input type="text" id="prodList-0-mtPmQuantity" name="mtPmQuantity" amountOnly style="width: 75px;" class="calculate"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
+		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
 								</td>
 							</tr>
 							<tr class="dpTbRow">
-								<td class="tdTitle">작업내용</td>
-								<td class="tdContents" colspan="3"><textarea name="mtPmWorkCont" ></textarea></td>
+								<td class="tdTitle">단가</td>
+								<td class="tdContents">
+									<input type="text" id="prodList-0-mtPmUprice" amountOnly name="mtPmUprice" class="calculate"/>
+								</td>	
+								<td class="tdTitle">시리얼번호</td>
+								<td class="tdContents" colspan="3">
+									<input type="text" name="mtPmSerialNum" />	
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">계약기간</td>
+								<td class="tdContents" colspan="3">
+									<input type="text" id="prodList-0-mtPmStartDt" name="mtPmStartDt" class="calendar fromDt" />&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-0-mtPmEndDt" name="mtPmEndDt" class="calendar toDt" />
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">상세정보</td>
+								<td class="tdContents" colspan="5"><textarea name="mtPmDetail"></textarea></td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle lastTd">비고</td>
+								<td class="tdContents lastTd" colspan="5"><textarea name="remark"></textarea></td>
 							</tr>
 						</table>
 					</div>
 				</div>
 				<div class="btnWrap floatR">
-				<c:choose>
-					<c:when test="${mtWorkOrderYn eq 'Y' }">
-						<div id="saveNextBtn" class="floatR" onclick="fn_saveBtn('sn');" >
-							<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</div>						
-					</c:when>
-					<c:otherwise>
-						<div class="floatR" onclick="fn_saveBtn('ss');">
-							<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-						</div>				
-					</c:otherwise>
-				</c:choose>						
+					<div class="floatR" onclick="fn_saveBtn();">
+						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					</div>
 					<div class="floatN floatC"></div>
 				</div>
-			</div>		
-		</form:form>
+			</div>
+		
+		</form>
+		<%-- <form:form commandName="mtListVO" id="mtListForm" name="mtBasicForm" method="post">		
+		</form:form --%>>
 	</div>
 </body>
 </html>

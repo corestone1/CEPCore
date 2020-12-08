@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>제품정보 등록</title>
+	<title>유지보수계약 매출정보 등록</title>
 	<style>
 		.firstTd {			
 			border-top: 2px solid #e5e5e5;	
@@ -272,14 +272,17 @@
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_addView('writeMtBasicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP" onclick="fn_addView('writeMtProductInfo');">제품정보</li>
-					<li class="colorWhite cursorP on">매출정보</li>					
-					<li class="colorWhite cursorP">발주정보</li>
+					<li class="colorWhite cursorP on">매출정보</li>	
+					<c:if test="${parmMtSbCtYn eq 'Y' }">		
+					<li class="colorWhite cursorP">백계약정보</li>
 					<li class="colorWhite cursorP">매입정보</li>
+					</c:if>
 			</ul>
 		</div>
 		<form action="/" id="uploadForm" method="post"> 
 			<input type="hidden" id="salesLength" name="salesLength" value="1" />
-			<input type="hidden" value='<c:out value="${resultList.id}"/>'>
+			<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${parmMtSbCtYn}"/>" />
+			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
 			<div class="contents">
 				<div id="salesWrap">
 					<div class="subjectContainer">
@@ -367,9 +370,21 @@
 					</div>
 				</div>
 				<div class="btnWrap floatR">
-					<div class="floatR" onclick="">
+				<c:choose>
+					<c:when test="${parmMtSbCtYn eq 'Y' }">
+						<div id="saveNextBtn" class="floatR" onclick="fn_saveBtn('sn');" >
+							<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						</div>						
+					</c:when>
+					<c:otherwise>
+						<div class="floatR" onclick="fn_saveBtn('ss');">
+							<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+						</div>				
+					</c:otherwise>
+				</c:choose>		
+					<%-- <div class="floatR" onclick="">
 						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					</div>
+					</div> --%>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>		

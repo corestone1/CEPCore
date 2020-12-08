@@ -100,9 +100,9 @@ public class MtWorkController {
 			model.put("resultList", mtList);
 			model.put("empList", empList);
 			model.put("searchParam", searchParam);
-			model.put("resultCode", "SUCC");
+			model.put("successYN", "Y");
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
+			model.put("successYN", "N");
 			logger.error("mtMainList error", e);
 		}
 		return "maintenance/work/workList";
@@ -199,8 +199,9 @@ public class MtWorkController {
 			model.put("empList", empList);
 			model.put("mtWorkKey", mtWorkVO.getMtWorkKey());
 			model.put("mtIntegrateKey", mtWorkVO.getMtIntegrateKey());
+			model.put("successYN", "Y");
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
+			model.put("successYN", "N");
 			logger.error("addBasicInfo error", e);
 		}
 		
@@ -292,8 +293,7 @@ public Map<String, String> writeProductInfo(HttpServletRequest request,  @Reques
 		Map<String, String> returnMap = new HashMap<>();
 		
 		try {
-
-			 System.out.println("jsonData==========>"+mtWorkProductVO);
+			 
 		     
 			sessionMap =(HashMap)request.getSession().getAttribute("admin");
 			mtWorkProductVO.setRegEmpKey(sessionMap.get("empKey"));
@@ -318,7 +318,6 @@ public Map<String, String> writeProductInfo(HttpServletRequest request,  @Reques
 //				logger.debug("mtListVO.getMtWorkProductVoList().size()==>"+mtWorkProductVO.getMtWorkProductVoList().size());
 //			}
 			mtwService.writeWorkProductList(mtWorkProductVO);
-			returnMap.put("successYN", "Y");
 			returnMap.put("mtWorkKey", mtWorkProductVO.getMtWorkKey());
 			returnMap.put("mtIntegrateKey", mtWorkProductVO.getMtIntegrateKey());
 //			returnMap.put("mtWorkPmYn", "Y");
@@ -527,6 +526,7 @@ public Map<String, String> writeProductInfo(HttpServletRequest request,  @Reques
 			model.put("basicContractInfo", basicContractInfo);
 			model.put("mtWorkProductList", mtWorkProductList);
 			model.put("mtWorkKey", mtWorkVO.getMtWorkKey());
+			model.put("successYN", "Y");
 		} catch (Exception e) {
 			model.put("successYN", "N");
 			logger.error("productDetailInfo error", e);

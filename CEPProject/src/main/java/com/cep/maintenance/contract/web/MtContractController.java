@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtSalesAmountVO;
+import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.StringUtil;
@@ -92,9 +94,9 @@ public class MtContractController {
 			model.put("resultList", mtList);
 			model.put("empList", empList);
 			model.put("searchParam", searchParam);
-			model.put("resultCode", "SUCC");
+			model.put("successYN", "Y");
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
+			model.put("successYN", "N");
 			logger.error("mtContractList error", e);
 		}
 		
@@ -158,9 +160,9 @@ public class MtContractController {
 			empList = service.selectEmployeeList();
 			model.put("resultList", mtList);
 			model.put("empList", empList);
-			model.put("resultCode", "SUCC");
+			model.put("successYN", "Y");
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
+			model.put("successYN", "N");
 			logger.error("mtMainList error", e);
 		}
 		
@@ -188,7 +190,7 @@ public class MtContractController {
 			empList = service.selectEmployeeList();
 			model.put("empList", empList);
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
+			
 			logger.error("addBasicInfo error", e);
 		}
 		
@@ -208,9 +210,10 @@ public class MtContractController {
 	 */
 	@RequestMapping(value="/write/basicInfo.do", method=RequestMethod.POST)
 	@ResponseBody 
-	public void writeBasicInfo(HttpServletRequest request, @RequestBody MtContractVO mtContractVO, ModelMap model) {
+	public Map<String, String> writeBasicInfo(HttpServletRequest request, @RequestBody MtContractVO mtContractVO) {
 
 		HashMap<String, String> sessionMap = null;
+		Map<String, String> returnMap = null;
 		String mtIntegrateKey = null;
 		try {
 //			logger.debug("mtContractVO.mtAcKey())=====>"+mtContractVO.getMtAcKey());
@@ -220,18 +223,194 @@ public class MtContractController {
 //			mtContractVO.setMtOption("w");//등록옵션 저장.
 			mtContractVO.setRegEmpKey(sessionMap.get("empKey"));
 
-//			logger.debug("mtContractVO.getCtDt(2))=====>"+mtContractVO.getCtDt());
+			logger.debug("mtContractVO.getDbAmount(2))=====>"+mtContractVO.getDbAmount());
 			
 			mtIntegrateKey = service.writeFirestContractBasic(mtContractVO);			
 			
-			
-			model.addAttribute("mtIntegrateKey", mtIntegrateKey);
+			returnMap = new HashMap<>();
+			returnMap.put("updateYn", "N");
+			returnMap.put("mtIntegrateKey", mtIntegrateKey);
+			returnMap.put("parmMtSbCtYn", mtContractVO.getMtSbCtYn()); //백계약여부.
 //			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
+
+			returnMap.put("successYN", "Y");
 		} catch (Exception e) {
+			returnMap.put("successYN", "N");
 			logger.error(null, e);
 		}		
+		return returnMap;
 	}	
 	
+	/**
+	 * 
+	  * @Method Name : writeProductInfo
+	  * @Cdate       : 2020. 11. 25.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품정보를 등록하는 화면으로 이동
+	  * @param request
+	  * @param mtContractVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/write/productInfoView.do")
+	public String writeProductInfoView(HttpServletRequest request, MtContractProductVO productVO, ModelMap model) throws Exception {
+				
+		try {
+						
+//			model.put("mtIntegrateKey", productVO.getMtIntegrateKey());		
+//			model.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+			model.put("updateYn", productVO.getUpdateYn());	
+			model.put("mtIntegrateKey", "MA200024");	
+			model.put("parmMtSbCtYn", "Y"); //백계약여부.
+			
+			model.put("successYN", "Y");
+		} catch (Exception e) {
+			model.put("successYN", "N");
+		}
+		
+		return "maintenance/contract/write/productInfo";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : writeProductInfo
+	  * @Cdate       : 2020. 12. 3.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 제품정보를 등록.
+	  * @param request
+	  * @param mtContractVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/write/productInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> writeProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		
+		try {			
+			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
+			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
+			
+			logger.debug("size=>"+productVO.getMtContractProductVoList().size());
+			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
+				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
+			}
+			sessionMap =(HashMap)request.getSession().getAttribute("admin");
+			
+			service.writeMtContractProductList(productVO.getMtIntegrateKey(), sessionMap.get("empKey"), productVO.getMtContractProductVoList());
+			
+			returnMap.put("mtIntegrateKey", productVO.getMtIntegrateKey());
+			returnMap.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+			returnMap.put("updateYn", "N");
+			returnMap.put("successYN", "Y");
+		} catch (Exception e) {
+			logger.error("",e);
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : updateProductInfo
+	  * @Cdate       : 2020. 12. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품을 업데이트한다.
+	  * @param request
+	  * @param productVO
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/write/updateProductInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {			
+			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
+			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
+			
+			logger.debug("size=>"+productVO.getMtContractProductVoList().size());
+			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
+				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
+			}
+			returnMap.put("mtIntegrateKey", productVO.getMtIntegrateKey());
+			returnMap.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+			returnMap.put("successYN", "Y");
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : writeMtSalesInfo
+	  * @Cdate       : 2020. 11. 25.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매출정보 입력하는 화면으로 이동.
+	  * @param request
+	  * @param mtContractVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/write/salesInfoView.do")
+	public String writeMtSalesInfoView(HttpServletRequest request, MtSalesAmountVO mtSalesAmountVO, ModelMap model) throws Exception {
+		
+		try {			
+			logger.debug("mtIntegrateKey===>"+mtSalesAmountVO.getMtIntegrateKey());
+			logger.debug("parmMtSbCtYn===>"+mtSalesAmountVO.getParmMtSbCtYn());
+			
+			model.put("updateYn", mtSalesAmountVO.getUpdateYn());	
+			model.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());			
+			model.put("parmMtSbCtYn", mtSalesAmountVO.getParmMtSbCtYn()); //백계약여부.
+			model.put("successYN", "Y");
+		} catch (Exception e) {
+			model.put("successYN", "N");
+		}
+		
+		return "maintenance/contract/write/salesInfo";
+	}	
+	
+	@RequestMapping(value="/write/salesInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> writeMtSalesInfo(HttpServletRequest request, @RequestBody MtSalesAmountVO mtSalesAmountVO, ModelMap model) throws Exception {
+		
+		HashMap<String, String> sessionMap = null;
+		Map<String, String> returnMap = null;
+		String mtIntegrateKey = null;
+		try {
+//			logger.debug("mtContractVO.mtAcKey())=====>"+mtContractVO.getMtAcKey());
+			sessionMap =(HashMap)request.getSession().getAttribute("admin");
+			
+			mtSalesAmountVO.setRegEmpKey(sessionMap.get("empKey"));
+
+//			logger.debug("mtContractVO.getCtDt(2))=====>"+mtContractVO.getCtDt());
+			
+//			mtIntegrateKey = service.writeFirestContractBasic(mtContractVO);			
+			
+			returnMap = new HashMap<>();
+			returnMap.put("parmMtSbCtYn", mtSalesAmountVO.getParmMtSbCtYn()); //백계약여부.
+			returnMap.put("mtIntegrateKey", mtIntegrateKey);
+//			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
+			returnMap.put("updateYn", "N");
+			returnMap.put("successYN", "Y");
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error(null, e);
+		}		
+		return returnMap;
+	}	
 	@RequestMapping(value="/detail/backOrderInfo.do")
 	public String backOrderDetail(MtContractVO mtContractVO, ModelMap model) throws Exception {
 
@@ -252,7 +431,7 @@ public class MtContractController {
 			model.put("backOrderList", backOrderList);			
 			model.put("empList", empList);
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
+			
 			logger.error("writeBackOrderInfoView error", e);
 		}
 		
@@ -282,7 +461,6 @@ public class MtContractController {
 			empList = service.selectEmployeeList();
 			model.put("empList", empList);
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
 			logger.error("writeBackOrderInfoView error", e);
 		}
 		
@@ -300,14 +478,17 @@ public class MtContractController {
 	  * @param request
 	 */
 	@RequestMapping(value="/write/backOrderInfo.do", method=RequestMethod.POST)
-	public void writeBackOrderInfo(MtContractVO mtContractVO, HttpServletRequest request) {
+	public void writeBackOrderInfo(MtContractVO mtContractVO, HttpServletRequest request, ModelMap model) {
 
 		HashMap<String, String> sessionMap = null;
 		try {
 			sessionMap =(HashMap)request.getSession().getAttribute("admin");
 			
 			mtContractVO.setRegEmpKey(sessionMap.get("empKey"));
+//			returnMap.put("updateYn", "N");
+			model.put("successYN", "Y");
 		} catch (Exception e) {
+			model.put("successYN", "N");
 			logger.error(null, e);
 		}
 //		logger.debug("writeMtBasicInfo=====");
@@ -343,9 +524,10 @@ public class MtContractController {
 		try {			
 			
 			empList = service.selectEmployeeList();
+			
+
 			model.put("empList", empList);
 		} catch (Exception e) {
-			model.put("resultCode", "FAIL");
 			logger.error("writePurchaseAmountView error", e);
 		}
 		
@@ -363,14 +545,17 @@ public class MtContractController {
 	  * @param request
 	 */
 	@RequestMapping(value="/write/purchaseAmount.do", method=RequestMethod.POST)
-	public void writePurchaseAmount(MtContractVO mtContractVO, HttpServletRequest request) {
+	public void writePurchaseAmount(MtContractVO mtContractVO, HttpServletRequest request, ModelMap model) {
 
 		HashMap<String, String> sessionMap = null;
 		try {
 			sessionMap =(HashMap)request.getSession().getAttribute("admin");
 			
 			mtContractVO.setRegEmpKey(sessionMap.get("empKey"));
+//			returnMap.put("updateYn", "N");
+			model.put("successYN", "Y");
 		} catch (Exception e) {
+			model.put("successYN", "N");
 			logger.error(null, e);
 		}
 		
@@ -455,55 +640,7 @@ public class MtContractController {
 		
 		return "maintenance/contract/detail/productInfo";
 	}
-	
-	/**
-	 * 
-	  * @Method Name : writeProductInfo
-	  * @Cdate       : 2020. 11. 25.
-	  * @Author      : aranghoo
-	  * @Modification: 
-	  * @Method Description : 유지보수계약 제품정보를 등록하는 화면으로 이동
-	  * @param request
-	  * @param mtContractVO
-	  * @param model
-	  * @return
-	  * @throws Exception
-	 */
-	@RequestMapping(value="/write/productInfo.do")
-	public String writeProductInfo(HttpServletRequest request, MtContractVO mtContractVO, ModelMap model) throws Exception {
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		
-		Enumeration params = request.getParameterNames();
-		while (params.hasMoreElements()){
-		    String name = (String)params.nextElement();
-		    returnMap.put(name, request.getParameter(name));
-		}
-		model.addAttribute("resultList", returnMap);
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
-		
-		return "maintenance/contract/write/productInfo";
-	}
-	
-	/**
-	 * 
-	  * @Method Name : writeMtSalesInfo
-	  * @Cdate       : 2020. 11. 25.
-	  * @Author      : aranghoo
-	  * @Modification: 
-	  * @Method Description : 유지보수계약 매출정보 입력하는 화면으로 이동.
-	  * @param request
-	  * @param mtContractVO
-	  * @param model
-	  * @return
-	  * @throws Exception
-	 */
-	@RequestMapping(value="/write/salesInfo.do")
-	public String writeMtSalesInfo(HttpServletRequest request, MtContractVO mtContractVO, ModelMap model) throws Exception {
-		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
-		
-		return "maintenance/contract/write/salesInfo";
-	}	
+
 	///////////////////////////////////////////////////////////////////////////////////
 	
 	

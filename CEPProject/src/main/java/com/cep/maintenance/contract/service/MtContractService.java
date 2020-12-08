@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cmm.config.PrimaryKeyType;
+import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
 
@@ -76,6 +77,57 @@ public interface MtContractService {
 	  * @throws Exception
 	 */
 	void deleteContract(MtContractVO deleteVo) throws Exception;	
+	
+	/* ============================== 유지보수계약 제품  ======================================*/
+	
+	/**
+	 * 
+	  * @Method Name : writeMtContractProductList
+	  * @Cdate       : 2020. 12. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :
+	  * @param insertParam
+	  * @throws Exception
+	 */
+	void writeMtContractProductList(String mtIntegrateKey, String regEmpKey, List<MtContractProductVO> mtContractProductVoList) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractProduct
+	  * @Cdate       : 2020. 12. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품 상제
+	  * @param mtPmKey
+	  * @throws Exception
+	 */
+	void deleteMtContractProduct(String mtPmKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractProductAll
+	  * @Cdate       : 2020. 12. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 해당 유지보수계약에 포함된 모든 제품을 삭제한다.
+	  * @param mtIntegrateKey
+	  * @throws Exception
+	 */
+	void deleteMtContractProductAll(String mtIntegrateKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectMtContractProductList
+	  * @Cdate       : 2020. 12. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품목록을 가져온다.
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	List<MtContractProductVO> selectMtContractProductList(String mtIntegrateKey)  throws Exception;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	
