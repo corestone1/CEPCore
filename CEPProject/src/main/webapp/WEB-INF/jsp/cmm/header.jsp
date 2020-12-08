@@ -15,6 +15,7 @@
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
 	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<script src="<c:url value='/js/string.js'/>"></script>
 	<style>
 			header {

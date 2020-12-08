@@ -59,6 +59,8 @@
 	
 	<util:properties id="comProps" location="classpath:/egovframework/message/message-common.properties"></util:properties>
 	
+	<bean id="fileDownloadView" class="com.cmm.web.FileDownloadView" />
+	
 	<bean id="antPathMater" class="org.springframework.util.AntPathMatcher" />
 	<bean id="defaultTraceHandler" class="egovframework.rte.fdl.cmmn.trace.handler.DefaultTraceHandler" />
 	 

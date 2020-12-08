@@ -57,7 +57,7 @@
 			</if> -->
 	</select>
 
-	<select id="selectProjectDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
+	<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT 
 			PJ_NM
 			, M.AC_KEY
@@ -77,11 +77,13 @@
 		AND B.DELETE_YN = 'N'
 	</select>
 	
-	<select id="selectBiddingFile" parameterType="projectVO" resultType="egovMap">
+	<select id="selectFileList" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT
-			BD_FILE_DOC_NM
-		FROM PJ_BIDDING_FILE_INFO_TB bf
-		LEFT OUTER JOIN PJ_MAIN_TB m
-		WHERE bf.BD_KEY = m.PJ_KEY
+			FF.FILE_KEY
+			, FF.FILE_ORG_NM
+		FROM FM_FILE_MNG_TB FF
+		JOIN FM_DOCTYPE_MNG_TB FD
+		ON FD.DOC_TYPE_KEY = FF.DOC_TYPE_KEY
+		WHERE FD.DOC_UP_TYPE_CD LIKE 'PJBD000%'
 	</select>
 </mapper>

@@ -28,3 +28,36 @@ function fileValidation(element){
 	
 	return true;
 }
+
+/**
+ * 파일 다운로드. jQuery File Download plugin
+ * @param url
+ * @param param
+ * @param succFnc
+ * @param failFnc
+ * @returns
+ */
+function fileDownload(url, param, succFnc, failFnc){
+	$.fileDownload(
+		url, 
+		{
+			httpMethod : "POST",
+			cookiePath : '',
+			data : param,
+			successCallback : function(responseHtml, url){
+				if(succFnc != null && "function" == typeof succFnc){
+					succFnc();
+				}else{
+					console.log("Downloading is completed!");
+				}
+			},
+			failCallback : function(responseHtml, url){
+				if(failFnc != null && "function" == typeof failFnc){
+					failFnc();
+				}else{
+					alert('에러가 발생했습니다.');
+				}
+			}
+		}
+	);
+}

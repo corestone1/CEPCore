@@ -10,6 +10,16 @@
 		.sfcnt {
 			height: 91px;
 		}
+		#fileUploader {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
 		.btnWrap {
 			position: absolute;
 			bottom: 31px;
@@ -301,8 +311,27 @@
 			margin-right: 7px;
 		}
 		form .contents .dtl#modTable .fileName {
-			display: table-cell;
+			display: inline-block;
+			background-image:url('/images/btn_file_upload.png');
+			background-repeat: no-repeat;
+			width: 130px;
+			height: 34px;
 			line-height: 32px;
+			vertical-align: middle;
+			cursor: pointer;
+		}
+		form .contents .dtl#modTable .upload-name { 
+			height: 29px;
+			vertical-align: top; 
+			border: none; 
+			font-size: 16px;
+			-webkit-appearance: none; 
+			-moz-appearance: none; 
+			appearance: none; 
+			cursor: pointer;
+		}
+		form .contents .dtl#modTable .upload-name:hover {
+			text-decoration: underline;
 		}
 		#modBasicTable tr td:last-child {
 			padding: 5px 20px;
@@ -369,13 +398,16 @@
 			var modCh = 1;
 			$('#modInfo').click(function() {
 				if(modCh % 2 == 1) {
-					$("#selectTable").css('display','none');
-					$('#modTable').css('display','block');
-					$("#selectBasicTable").css('display','none');
-					$("#modBasicTable").css('display','block');
+					$("#selectTable").css('display','none'); 
+					$("#modTable").removeClass('dpNone');
+					$("#selectBasicTable").css('display','none'); 
+					$("#modBasicTable").removeClass('dpNone');
 					$("#modInfo img").attr('src',"/images/btn_save.png");
 				} else {
-					alert('수정되었습니다.');
+					/* alert('수정되었습니다.'); */
+					$.ajax ({
+						url:""
+					})
 					location.reload();
 				}
 				modCh++;
@@ -415,6 +447,20 @@
 				}	 
 			}); */
 			
+			var fileTarget = $('#fileUploader'); 
+			
+			fileTarget.on('change', function() { 
+				if(window.FileReader){
+					var filename = $(this)[0].files[0].name; 
+				} else { 
+					var filename = $(this).val().split('/').pop().split('\\').pop(); 
+				} 
+				
+				$(this).siblings('.upload-name').val(filename); 
+				$(this).siblings('.upload-name').attr('onclick',''); 
+				$(this).siblings('.upload-name').css('cursor','default');
+				$(this).siblings('.upload-name').css('pointer-events','none');
+			});
 		});
 		
 		function fn_addView(link){
@@ -440,7 +486,16 @@
 	           $('#file_upload_posbl').hide();
 	           $('#file_upload_imposbl').show();
 	       }
-	   }
+		}
+		
+		function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm;
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data); 
+		}
+		
 		
 	</script>
 </head>
@@ -597,7 +652,9 @@
 								</tr>
 								<tr>
 									<td>첨부파일</td>
-									<td>첨부파일.txt</td>
+									<td>
+										<a style="color:#000;"><c:out value="${fileList.fileOrgNm}"/></a>
+									</td>
 								</tr>
 							</table>
 							<table class="dtl dpNone" id="modTable">
@@ -771,8 +828,9 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<button class="floatL"><img src="<c:url value='/images/btn_file_upload.png'/>"/></button>
-										<label class="fileName">기존첨부파일.txt</label>
+										<input type="file" class="floatL" id="fileUploader" />
+										<label for="fileUploader" class="fileName"></label>
+										<input class="upload-name" value="<c:out value="${fileList.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${fileList.fileKey}"/>, <c:out value="${fileList.fileOrgNm}"/>')" readonly/>
 									</td>
 								</tr>
 							</table>
@@ -787,11 +845,6 @@
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>
-						<div id="file_upload_posbl" style="display:none">    
-			                <input name="file_1" id="fileUploader" type="file" required />
-			                <div id="egovComFileList"></div>
-			          	</div>               
-		          		<div id="file_upload_imposbl" style="display:none"></div>
 					</div>
 				</div>
 				<div class="floatC"></div>
@@ -829,7 +882,8 @@
 		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
 		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
 		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
-		<input type="hidden" name="fileSeqno" value=""/>
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
 	</form:form>
 </body>
 </html>
