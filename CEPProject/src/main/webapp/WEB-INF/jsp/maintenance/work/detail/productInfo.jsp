@@ -338,15 +338,15 @@
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><c:out value="${basicContractInfo.viewCtDt}"/></td>
+									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-									<td><c:out value="${basicContractInfo.viewStartDt}"/> ~ <c:out value="${basicContractInfo.viewEndDt}"/></td>
+									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
-									<td><c:out value="${basicContractInfo.viewAmount}"/></td>
+									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<tr>
 									<td>부가세 포함여부</td>
@@ -422,7 +422,7 @@
 											<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtWorkSeq}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 										</td>
 										<td><c:out value="${status.count}"/></td>
-										<td class="textalignL"><c:out value="${list.mtPmKeyNm}"/></td>
+										<td class="textalignL"><c:out value="${list.makeTotalAmount2(list.mtWorkSeq,list.mtWorkSeq )}"/> :<c:out value="${list.mtPmKeyNm}"/></td>
 										<td class="textalignR"><c:out value="${list.mtPmSerialNum}"/></td>
 										<td class="textalignL">
 											<span><c:out value="${list.mtPmWorkCont}"/></span>																			

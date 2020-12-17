@@ -2,6 +2,9 @@ package com.cep.maintenance.contract.vo;
 
 import java.io.Serializable;
 
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.CepStringUtil;
+
 /**
  * 
  * @File Name : MaintenanceDefaultVO.java
@@ -25,7 +28,7 @@ public class MtDefaultVO implements Serializable{
 	private String toDate; //to
 	private String searchSaleEmpKey; //영업담당자 키 
 	private String searchMtName;//검색 유지보수  프로젝트명
-	private String btnOption; //검색(search),수정(edit),삭제(delete),엑셀(excel)
+	private String btnOption; //저장(ss), 저장하고 다음화면(sn)
 	private String selectKey; //선택한 항목의 key값
 	private String searchWorkEmpKey; //유지보수 작업(지원)담당자
 	private String searchWorkResult; // 작업결과(진행중/완료)
@@ -33,6 +36,9 @@ public class MtDefaultVO implements Serializable{
 	private String selectWorkKey;
 	private String parmMtSbCtYn; //백계약여부
 	private String updateYn; //업데이트 여부(Y:업데이트, N:등록)
+	private int mtSaveCnt; //여러개 저장하는 경우 저장되어있는 목록숫자.
+	
+	private String deleteListKeys; //리스트 항목에서 삭제를 선택한 목록의 관리키.
 	/**
 	 * @return the fromDate
 	 */
@@ -196,5 +202,45 @@ public class MtDefaultVO implements Serializable{
 		this.updateYn = updateYn;
 	}
 	
+	
+	///////////////////////////////////
+	
+	public String makeTotalAmount(String mtPmQuantity, String mtPmUprice){
+		String totalAmount = "0";
+		totalAmount = String.valueOf(Integer.parseInt(mtPmQuantity)*Integer.parseInt(mtPmUprice));
+		return totalAmount;
+	}
+	
+	public String makeDisplayDate(String date){
+		return CepDateUtil.convertDate(date, null, null, "V");
+	}
+	
+	public String makeDisplayAmount(String amount) {
+		return CepStringUtil.getCommaString(amount);
+	}
+	/**
+	 * @return the deleteListKeys
+	 */
+	public String getDeleteListKeys() {
+		return deleteListKeys;
+	}
+	/**
+	 * @param deleteListKeys the deleteListKeys to set
+	 */
+	public void setDeleteListKeys(String deleteListKeys) {
+		this.deleteListKeys = deleteListKeys;
+	}
+	/**
+	 * @return the mtSaveCnt
+	 */
+	public int getMtSaveCnt() {
+		return mtSaveCnt;
+	}
+	/**
+	 * @param mtSaveCnt the mtSaveCnt to set
+	 */
+	public void setMtSaveCnt(int mtSaveCnt) {
+		this.mtSaveCnt = mtSaveCnt;
+	}
 	
 }

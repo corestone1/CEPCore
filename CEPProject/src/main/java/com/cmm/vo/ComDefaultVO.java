@@ -18,6 +18,9 @@ import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.CepStringUtil;
+
 @Alias("comDefaultVO")
 public class ComDefaultVO implements Serializable {
 	private static final long serialVersionUID  = 1L;
@@ -50,5 +53,22 @@ public class ComDefaultVO implements Serializable {
 	}
 	public void setModTm(String modTm) {
 		this.modTm = modTm;
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	
+	public String makeTotalAmount(String mtPmQuantity, String mtPmUprice){
+		String totalAmount = "0";
+		totalAmount = String.valueOf(Integer.parseInt(mtPmQuantity)*Integer.parseInt(mtPmUprice));
+		return totalAmount;
+	}
+	
+	public String makeDisplayDate(String date){
+		return CepDateUtil.convertDate(date, null, null, "V");
+	}
+	
+	public String makeDisplayAmount(String amount) {
+		return CepStringUtil.getCommaString(amount);
 	}
 }

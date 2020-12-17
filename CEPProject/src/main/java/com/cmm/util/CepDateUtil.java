@@ -48,7 +48,7 @@ public class CepDateUtil {
 		String dateStr = null;
 		SimpleDateFormat dateFormatType = null;
 		try {
-			if("".equals(StringUtil.getDefaultValue(dateFormat, ""))) {
+			if("".equals(CepStringUtil.getDefaultValue(dateFormat, ""))) {
 				dateFormat = "yyyy-MM-dd HH:mm:ss";
 			}
 			dateFormatType = new SimpleDateFormat(dateFormat);
@@ -90,7 +90,7 @@ public class CepDateUtil {
 			checkVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
 			
 			calendar = Calendar.getInstance(tz);
-			if(!"".equals(StringUtil.getDefaultValue(nowFormat, ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(nowFormat, ""))){
 				baseDateFormat = new SimpleDateFormat(nowFormat);
 			} else {
 				baseDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -98,7 +98,7 @@ public class CepDateUtil {
 			
 			calendar.setTime(baseDateFormat.parse(strDate));
 			
-			if(!"".equals(StringUtil.getDefaultValue(changeFormate, ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(changeFormate, ""))){
 				changeDateFormat = new SimpleDateFormat(changeFormate);
 			} else {
 				changeDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -291,7 +291,7 @@ public class CepDateUtil {
 	public static String getToday(String dateFormat) throws Exception{
 		String toDay = null;
 		try {
-			if("".equals(StringUtil.getDefaultValue(dateFormat, ""))){
+			if("".equals(CepStringUtil.getDefaultValue(dateFormat, ""))){
 				dateFormat = "yyyyMMdd";
 			}
 			toDay =calculatorDateFromToDay(dateFormat, "D", 0);
@@ -326,14 +326,14 @@ public class CepDateUtil {
 		double checkVersion = 0;
 		try {
 			checkVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
-			if(!"".equals(StringUtil.getDefaultValue(dateFormat, ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(dateFormat, ""))){
 				sDateFormat = new SimpleDateFormat(dateFormat);
 			} else {
 				sDateFormat = new SimpleDateFormat("yyyyMMdd");
 			}
 			
 			//기준일자를 지정한다.
-			if("".equals(StringUtil.getDefaultValue(baseDate, "")) || baseDate.equalsIgnoreCase("TODAY")) {
+			if("".equals(CepStringUtil.getDefaultValue(baseDate, "")) || baseDate.equalsIgnoreCase("TODAY")) {
 				//오늘 날짜로 지정.
 				calendar = Calendar.getInstance(tz);
 			}else {
@@ -404,7 +404,7 @@ public class CepDateUtil {
 	 */
 	public static String convertDate(String date, String nowFormat, String changeFormate, String gubun){
 		String convertDate = null;
-		if(!"".equals(StringUtil.getDefaultValue(date, ""))){
+		if(!"".equals(CepStringUtil.getDefaultValue(date, ""))){
 			if("D".equalsIgnoreCase(gubun)){
 				convertDate = date.replace("-", "");
 			} else {
@@ -418,6 +418,24 @@ public class CepDateUtil {
 				} else {
 					convertDate = date;
 				}
+			}
+			
+		}
+		return convertDate;
+	}
+	
+	public static String displayDate(String date){
+		String convertDate = null;
+		if(!"".equals(CepStringUtil.getDefaultValue(date, ""))){
+			if(date.length()==8){
+				try {
+					convertDate =  CepDateUtil.convertDisplayFormat(date, "yyyyMMdd", "yyyy-MM-dd");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				convertDate = date;
 			}
 			
 		}
@@ -438,7 +456,7 @@ public class CepDateUtil {
 	public static String convertTime(String time, String gubun){
 		String convertTime = null;
 		StringBuffer sb = null;
-		if(!"".equals(StringUtil.getDefaultValue(time, ""))){
+		if(!"".equals(CepStringUtil.getDefaultValue(time, ""))){
 			if("D".equalsIgnoreCase(gubun)){
 				convertTime = time.replace(":", "");
 			} else {
@@ -456,6 +474,44 @@ public class CepDateUtil {
 		}
 		
 		return convertTime;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : makeYear
+	  * @Cdate       : 2020. 12. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 현재 년도를 기준으로 년도 리스트를 만든다. 
+	  * @param fromYear : 현재 년도 기준으로 시작년도(이전년도를 구하기 위해서는 -값을 넣어야함)
+	  * @param toYear : 현재년도를 기준으로 종료년도.
+	  * @return
+	  * @throws Exception
+	 */
+	public static List<String> makeYear(int fromYear, int toYear) throws Exception{
+		int nowYear = 0;
+		int startYear = 0;
+		int endYear = 0;
+		List<String> yearList = null;
+		try {
+			nowYear = Integer.parseInt(getToday("yyyy"));
+			
+			startYear = nowYear+fromYear;
+			endYear = nowYear+toYear;
+			
+			yearList = new ArrayList<>();
+			for (int i = startYear; i <= endYear; i++) {
+				yearList.add(String.valueOf(i));
+			}
+			
+			for (int i = 0; i < yearList.size(); i++) {
+				System.out.println(yearList.get(i));
+			}
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return yearList;
 	}
 
 }

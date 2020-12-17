@@ -150,8 +150,10 @@
 							jQuery.each(arr, function() {
 								
 							if(this.name=="mtPmQuantity" || this.name=="mtPmUprice" || this.name=="totalAmount"){
+								//숫자에서 컴마를 제거한다.
 								obj[this.name] = removeCommas(this.value); 
 							} else if(this.name=="mtPmStartDt" || this.name=="mtPmEndDt") {
+								//날짜에서 -를 제거한다.
 								obj[this.name] =  removeData(this.value,"-"); 
 							} else {
 								obj[this.name] = this.value; 
@@ -464,11 +466,10 @@
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
-			</div>
-		
+			</div>		
 		</form>
 		<%-- <form:form commandName="mtListVO" id="mtListForm" name="mtBasicForm" method="post">		
-		</form:form --%>>
+		</form:form >--%>
 	</div>
 </body>
 </html>

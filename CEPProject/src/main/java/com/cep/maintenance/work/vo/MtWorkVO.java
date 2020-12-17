@@ -11,7 +11,7 @@ import org.apache.ibatis.type.Alias;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cmm.util.CepDateUtil;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepStringUtil;
 @SuppressWarnings("serial")
 @Alias("mtWorkVO")
 

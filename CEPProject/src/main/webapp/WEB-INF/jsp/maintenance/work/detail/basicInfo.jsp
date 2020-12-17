@@ -440,15 +440,15 @@
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><c:out value="${basicContractInfo.viewCtDt}"/></td>
+									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-									<td><c:out value="${basicContractInfo.viewStartDt}"/> ~ <c:out value="${basicContractInfo.viewEndDt}"/></td>
+									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
-									<td><c:out value="${basicContractInfo.viewAmount}"/></td>
+									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<tr>
 									<td>부가세 포함여부</td>

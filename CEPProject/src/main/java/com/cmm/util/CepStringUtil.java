@@ -5,8 +5,8 @@ import java.text.DecimalFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StringUtil {
-	private static final Logger LOGGER = LoggerFactory.getLogger(StringUtil.class);
+public class CepStringUtil {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CepStringUtil.class);
 	
 	/**
      * 인자로 받은 String이 null일 경우 ""로 리턴

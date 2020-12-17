@@ -1,5 +1,6 @@
 package com.cep.maintenance.contract.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -7,14 +8,18 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
 import com.cmm.config.PrimaryKeyType;
+import com.cmm.util.CepStringUtil;
+import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
+import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
@@ -188,6 +193,225 @@ public class MtContractServiceImpl implements MtContractService {
 			throw new Exception(e);
 		}
 		return primaryKey;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectContractAmountInfo(java.lang.String)
+	 */
+	@Override
+	public Map<String, Object> selectContractAmountInfo(String mtIntegrateKey) throws Exception {
+		// TODO Auto-generated method stub
+		return mtMapper.selectContractAmountInfo(mtIntegrateKey);
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#writeMtContractSalesAmountList(java.lang.String, java.lang.String, java.util.List)
+	 */
+	@Override
+	public void writeMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountVO) throws Exception {
+		Map<String, Object> insertParam = null;
+		try {
+			insertParam = new Hashtable<>();
+
+			insertParam.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());
+			insertParam.put("regEmpKey", mtSalesAmountVO.getRegEmpKey());
+			insertParam.put("mtSalesAmountVOList", mtSalesAmountVO.getMtSalesAmountVOList());
+			mtMapper.writeMtContractSalesAmountList(insertParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#writeContractBackOrder(com.cep.maintenance.contract.vo.MtBackOrderVO)
+	 */
+	@Override
+//	@Transactional(propagation=Propagation.REQUIRED, rollbackFor={Exception.class})
+	@Transactional
+	public void writeContractBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception {
+		String mtOrderKey = null;
+		Map<String, Object> insertParam = null;
+		try {
+			//백계약 키를 생성한다.
+			mtOrderKey = makePrimaryKey(PrimaryKeyType.MAINTENACE_BACK_ORDER);
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtOrderKey, ""))){
+				mtBackOrderVO.setMtOrderKey(mtOrderKey);
+				
+				//백계약 메인을 등록한다.
+				mtMapper.writeContractBackOrder(mtBackOrderVO);
+				
+				insertParam = new HashMap<>();
+
+				insertParam.put("mtOrderKey", mtOrderKey);
+				insertParam.put("regEmpKey", mtBackOrderVO.getRegEmpKey());
+				insertParam.put("mtBackOrderProductVoList", mtBackOrderVO.getMtBackOrderProductVoList());
+				
+				//백계약 제품목록을 등록한다.
+				mtMapper.writeContractBackOrderProduct(insertParam);
+			} else {
+				throw new Exception("Can't make MT_BACK_ORDER_TB.MT_ORDER_KEY !!!! ..");
+			}
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectBackOrderSelectBoxList(java.lang.String)
+	 */
+	@Override
+	public List<?> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception {
+		return mtMapper.selectBackOrderSelectBoxList(mtIntegrateKey);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectBackOrderDetail(java.lang.String)
+	 */
+	@Override
+//	public Map<String, Object> selectBackOrderDetail(String mtOrderKey) throws Exception {
+//		Map<String, Object> backorderMap = null;
+//		try {
+//			backorderMap = mtMapper.selectBackOrderDetail(mtOrderKey);
+//			if(null != backorderMap) {
+//				backorderMap.put("mtBackOrderProductVoList", selectBackOrderProductList(mtOrderKey));
+//				
+//			}
+//		} catch (Exception e) {
+//			throw new Exception(e);
+//		}
+//		return backorderMap;
+//	}
+	public MtBackOrderVO selectBackOrderDetail(String mtOrderKey) throws Exception {
+		MtBackOrderVO vo = null;
+		try {
+			vo = mtMapper.selectBackOrderDetail(mtOrderKey);
+			if(null != vo) {
+				vo.setMtBackOrderProductVoList(selectBackOrderProductList(mtOrderKey));
+//				logger.debug("vo.getMtBackOrderProductVoList().size()===>"+vo.getMtBackOrderProductVoList().size());
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return vo;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectBackOrderList(java.lang.String)
+	 */
+	@Override
+	public List<MtBackOrderVO> selectBackOrderList(String mtIntegrateKey) throws Exception {
+		// TODO Auto-generated method stub
+		return mtMapper.selectBackOrderList(mtIntegrateKey);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectBackOrderProductList(java.lang.String)
+	 */
+	@Override
+	public List<MtBackOrderProductVO> selectBackOrderProductList(String mtOrderKey) throws Exception {
+		// TODO Auto-generated method stub
+		return mtMapper.selectBackOrderProductList(mtOrderKey);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#deleteBackOrder(java.lang.String, java.lang.String)
+	 */
+	@Override
+	@Transactional
+	public void deleteBackOrder(String modEmpKey, String mtOrderKey) throws Exception {
+		try {
+			//유지보수계약 백계약 제품목록 삭제
+			mtMapper.deleteBackOrderProductAll(modEmpKey, mtOrderKey);
+			
+			//유지보수계약 백계약 메인 삭제.
+			mtMapper.deleteBackOrder(modEmpKey, mtOrderKey);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#updateBackOrder(com.cep.maintenance.contract.vo.MtBackOrderVO)
+	 */
+	@Override
+	@Transactional
+	public void updateBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception {
+		String [] deleteKeyList = null;
+		List<MtBackOrderProductVO> updateProdctList = null;
+		List<MtBackOrderProductVO> insertProdctList = null;
+		Map<String, Object> updateParam = null;
+		Map<String, Object> insertParam = null;
+		
+		int productListSize = 0;
+		try {
+			//유지보수계약 백계약 삭제제품 대상 키 추출
+			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getDeleteListKeys(), ""))){
+				deleteKeyList = mtBackOrderVO.getDeleteListKeys().split(":");
+			}
+			
+			//유지보수계약 백계약 제품목록 업데이트, 신규등록 대상 추출
+			if(null !=mtBackOrderVO.getMtBackOrderProductVoList() && mtBackOrderVO.getMtBackOrderProductVoList().size()>0){
+				updateProdctList = new ArrayList<>();
+				insertProdctList = new ArrayList<>();
+				productListSize = mtBackOrderVO.getMtBackOrderProductVoList().size();
+				
+				for (int i = 0; i < productListSize; i++) {
+					if(!"".equals(CepStringUtil.getDefaultValue(
+							String.valueOf(mtBackOrderVO.getMtBackOrderProductVoList().get(i).getMtOrderPmKey()), ""))){
+						//MtOrderKey 값이 있는 경우 update대상
+						updateProdctList.add(mtBackOrderVO.getMtBackOrderProductVoList().get(i));
+					} else {
+						//MtOrderKey 값이 없는 경우 insert대상
+						insertProdctList.add(mtBackOrderVO.getMtBackOrderProductVoList().get(i));
+					}
+				}
+			}
+			
+			
+			//1. 유지보수계약 백계약 제품삭제
+			if(null !=deleteKeyList && deleteKeyList.length>0) {
+				mtMapper.deleteBackOrderProductList(mtBackOrderVO.getModEmpKey(), deleteKeyList);
+			}
+			
+			//2. 유지보수계약 백계약 제품 업데이트
+			if(null !=updateProdctList && updateProdctList.size()>0) {
+				updateParam = new HashMap<>();
+				updateParam.put("modEmpKey", mtBackOrderVO.getModEmpKey());
+				updateParam.put("mtBackOrderProductVoList", insertProdctList);
+				mtMapper.updateBackOrderProductList(updateParam);
+			}
+			
+			//3. 유지보수계약 백계약 신규제품 등록.
+			if(null !=insertProdctList && insertProdctList.size()>0) {
+				insertParam = new HashMap<>();
+				
+				insertParam.put("mtOrderKey", mtBackOrderVO.getMtOrderKey());
+				insertParam.put("regEmpKey", mtBackOrderVO.getRegEmpKey());
+				insertParam.put("mtBackOrderProductVoList", insertProdctList);
+				mtMapper.writeContractBackOrderProduct(insertParam);
+			}			
+			
+			//4. 유지보수계약 백계약 업데이트.
+			mtMapper.updateBackOrder(mtBackOrderVO);
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
 	}
 
 	

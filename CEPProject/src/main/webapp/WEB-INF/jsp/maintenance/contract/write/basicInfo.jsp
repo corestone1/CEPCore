@@ -135,10 +135,10 @@
 		.popContainer .contents td.tdContents {
 			width: 178px;
 			font-size: 14px;
-    color: #525252;
+    		color: #525252;
 		} 
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 15px 3px   
+			margin : 10px 48px 15px 3px;
 		}
 	</style>
 	<script>

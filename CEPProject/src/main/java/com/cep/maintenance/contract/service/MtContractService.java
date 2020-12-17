@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
+import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cmm.config.PrimaryKeyType;
+import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
+import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
@@ -128,6 +132,129 @@ public interface MtContractService {
 	  * @throws Exception
 	 */
 	List<MtContractProductVO> selectMtContractProductList(String mtIntegrateKey)  throws Exception;
+	
+	/* ============================== 유지보수계약 매출  ======================================*/
+	
+	/**
+	 * 
+	  * @Method Name : selectContractAmountInfo
+	  * @Cdate       : 2020. 12. 8.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :매출등록화며에서 보여줄 계약 금액정보를 조회한다.
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	 Map<String, Object> selectContractAmountInfo(String mtIntegrateKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : writeMtContractSalesAmountList
+	   * @Cdate       : 2020. 12. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약 매출정보 등록.
+	   * @param mtSalesAmountVO
+	   * @throws Exception
+	  */
+	 void writeMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountVO) throws Exception;
+	 
+	 
+		
+	/* ============================== 유지보수계약 백계약  ======================================*/
+		
+	/**
+	 * 
+	  * @Method Name : writeContractBackOrder
+	  * @Cdate       : 2020. 12. 14.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :백계약 내용을 등록한다.
+	  * @param mtBackOrderVO
+	  * @throws Exception
+	 */
+	 void writeContractBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectBackOrderSelectBoxList
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약별 백계약 등록 selectBox리스트회
+	   * @param mtIntegrateKey
+	   * @return
+	   * @throws Exception
+	  */
+	 List<?> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectBackOrderDetail
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약별 백계약 메인상세 
+	   * @param mtOrderKey
+	   * @return
+	   * @throws Exception
+	  */
+	 MtBackOrderVO selectBackOrderDetail(String mtOrderKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectBackOrderList
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description : 유지보수계약별 백계약 목록조회
+	   * @param mtIntegrateKey
+	   * @return
+	   * @throws Exception
+	  */
+	 List<MtBackOrderVO> selectBackOrderList(String mtIntegrateKey) throws Exception;
+	 
+	 
+	 /**
+	  * 
+	   * @Method Name : selectBackOrderProductList
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약별 백계약 제품목록 조회
+	   * @param mtOrderKey
+	   * @return
+	   * @throws Exception
+	  */
+	 List<MtBackOrderProductVO> selectBackOrderProductList(String mtOrderKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : deleteBackOrder
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description : 유지보수계약별 백계약 메인과 백계약 품목을 삭제한다.
+	   *                       deleteBackOrderProductAll, deleteBackOrder 수행
+	   * @param modEmpKey :수정자
+	   * @param mtOrderKey : 수정키
+	   * @throws Exception
+	  */
+	 void deleteBackOrder(String modEmpKey, String mtOrderKey)  throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : updateBackOrder
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약별 백계약 정보수정 
+	   *         deleteBackOrderProductList, updateBackOrderProductList, updateBackOrder 수행
+	   * @param mtBackOrderVO
+	   * @throws Exception
+	  */
+	 void updateBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	

@@ -25,7 +25,7 @@ import com.cep.maintenance.work.service.MtWorkService;
 import com.cep.maintenance.work.vo.MtWorkProductVO;
 import com.cep.maintenance.work.vo.MtWorkVO;
 import com.cmm.util.CepDateUtil;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepStringUtil;
 
 @Controller
 @RequestMapping("/maintenance/work")
@@ -61,15 +61,15 @@ public class MtWorkController {
 			
 			//날짜에서 -를 빼준다. 
 						
-			if(!"".equals(StringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
 				searchVO.setFromDate(searchVO.getFromDate().replace("-", ""));
 			}
 			
-			if(!"".equals(StringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
 			}
 			
-			if("".equals(StringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(StringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+			if("".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				toDay = CepDateUtil.getToday(null);
 				/*
 				 * 6개월 날짜 계산.
@@ -131,15 +131,15 @@ public class MtWorkController {
 		String toDay = null;		
 		String fromDate = null;
 		try {			
-			if(!"".equals(StringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
 				searchVO.setFromDate(searchVO.getFromDate().replace("-", ""));
 			}
 			
-			if(!"".equals(StringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
 			}
 			
-			if("".equals(StringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(StringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+			if("".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				toDay = CepDateUtil.getToday(null);
 				/*
 				 * 6개월 날짜 계산.
@@ -276,7 +276,7 @@ public class MtWorkController {
 	  * @Cdate       : 2020. 11. 24.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 유지보수 기본정보 등록
+	  * @Method Description : 유지보수작업 제품정보 등록
 	  * @param request
 	  * @param mtWorkVO
 	  * @param model
@@ -404,13 +404,13 @@ public Map<String, String> writeProductInfo(HttpServletRequest request,  @Reques
 		String mtIntegrateKey = null;
 		try {
 			
-			if(!"".equals(StringUtil.getDefaultValue(mtWorkVO.getMtIntegrateKey(), ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(mtWorkVO.getMtIntegrateKey(), ""))){
 				mtIntegrateKey = mtWorkVO.getMtIntegrateKey();
 			} else {
 				mtIntegrateKey = mtWorkVO.getSelectIntegrateKey();
 			}
 			
-			if(!"".equals(StringUtil.getDefaultValue(mtWorkVO.getMtWorkKey(), ""))){
+			if(!"".equals(CepStringUtil.getDefaultValue(mtWorkVO.getMtWorkKey(), ""))){
 				mtWorkKey = mtWorkVO.getMtWorkKey();
 			} else {
 				mtWorkKey = mtWorkVO.getSelectWorkKey();
