@@ -36,6 +36,19 @@ public class CepStringUtil {
 //		return string;
 //	}
 	
+	/**
+	 * 
+	  * @Method Name : getDefaultValue
+	  * @Cdate       : 2020. 12. 17.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : object가 null,"","null" 인경우  defaultStr을 return한다. 
+	  *                      ex) CepStringUtil.getDefaultValue(searchVO.amount(), "0");
+	  *                      ==> amount값이  null인경우 "0"을 리턴함.
+	  * @param object
+	  * @param defaultStr
+	  * @return
+	 */
 	public static String getDefaultValue(Object object, String defaultStr) {
 		String returnValue = null;
 		if(object != null) {
@@ -51,6 +64,17 @@ public class CepStringUtil {
 		return returnValue;
 	}
 	
+	/**
+	 * 
+	  * @Method Name : getCommaString
+	  * @Cdate       : 2020. 12. 17.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 해당 문자를 3자리 단위로 , 를 추가함.
+	  *                       ex) 123456789 ==> 123,456,789
+	  * @param str
+	  * @return
+	 */
 	public static String getCommaString(String str){
 		String pattern = "###,###,###,###,###";
 		DecimalFormat df = null;
