@@ -13,37 +13,41 @@ public class CepStringUtil {
      * @param String 값
      * @return String이 null 값일 경우 ""로 바꾼 String 값
      */
-	public static String nullConvert(String src) {
-		if(src == null || src.equals("null") || "".equals(src) || " ".equals(src)) {
-			return "";
-		} else {
-			return src.trim();
-		}
-	}
+//	public static String nullConvert(String src) {
+//		if(src == null || src.equals("null") || "".equals(src) || " ".equals(src)) {
+//			return "";
+//		} else {
+//			return src.trim();
+//		}
+//	}
+//	
+//	 /**
+//     * 객체가 null인 경우 "" 로 바꾸는 메서드
+//     * @param 원본 객체
+//     * @return result 문자열
+//     */
+//	public static String nullToString(Object object) {
+//		String string = "";
+//		
+//		if(object != null) {
+//			string = nullConvert(object.toString().trim());
+//		}
+//		
+//		return string;
+//	}
 	
-	 /**
-     * 객체가 null인 경우 "" 로 바꾸는 메서드
-     * @param 원본 객체
-     * @return result 문자열
-     */
-	public static String nullToString(Object object) {
-		String string = "";
-		
-		if(object != null) {
-			string = nullConvert(object.toString().trim());
-		}
-		
-		return string;
-	}
-	
-	public static String getDefaultValue(String str, String defaultStr) {
+	public static String getDefaultValue(Object object, String defaultStr) {
 		String returnValue = null;
-		
-		if(null == str || str.length()==0 || str.equalsIgnoreCase("null")) {
+		if(object != null) {
+			if(object.toString().length()==0 || object.toString().equalsIgnoreCase("null")) {
+				returnValue = defaultStr;
+			}else {
+				returnValue = object.toString();
+			}
+		} else {
 			returnValue = defaultStr;
-		}else {
-			returnValue = str;
 		}
+		
 		return returnValue;
 	}
 	

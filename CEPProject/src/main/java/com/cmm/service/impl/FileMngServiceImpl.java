@@ -34,7 +34,7 @@ public class FileMngServiceImpl implements FileMngService {
 		FileVO fileVO = null;
 		List<FileVO> fileList = null;
 		
-		String fileKey = CepStringUtil.nullToString(param.get("fileKey"));
+		String fileKey = CepStringUtil.getDefaultValue(param.get("fileKey"),"");
 		Map<String, MultipartFile> files = multiRequest.getFileMap();
 		
 		if(files.isEmpty()) {
