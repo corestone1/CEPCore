@@ -6,14 +6,20 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cep.maintenance.work.web.MtWorkController;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
 
@@ -23,6 +29,8 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 	
 	@Resource(name="projectService")
 	private ProjectService service;
@@ -92,16 +100,29 @@ public class ProjectController {
 	@RequestMapping(value="/detail/bidding.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String selectProjectDetailBd(@ModelAttribute("projectVO") ProjectVO projectVO, ModelMap model) throws Exception {
 		Map<String, Object> result = null;
+		Map<String, Object> fileResult = null;
 		
-		result = service.selectProjectDetail(projectVO);
-		if(result == null) {
-			result = new HashMap<String, Object>();
-			result.put("atchFileCnt", 0);
+		try {
+			result = service.selectBiddingDetail(projectVO);
+			
+			if(result != null) {
+				fileResult = service.selectFileList(projectVO);
+				if(fileResult == null) {
+					fileResult = new HashMap<String, Object>();
+					fileResult.put("atchFileCnt", 0);
+				}
+			} 
+			
+			model.addAttribute("resultList", result);
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
+			model.put("successYN", "Y");
+		} catch(Exception e) {
+			model.put("successYN", "N");
+			logger.error("project error", e);
 		}
-		model.addAttribute("resultList", result);
-		model.addAttribute("maxFileCnt", maxFileCnt);
-		model.addAttribute("fileExtn", fileExtn);		
-		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		return "project/detail/bidding";
 	}
@@ -154,6 +175,16 @@ public class ProjectController {
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
 		return "project/write/biddingInfo";
+	}
+	
+	
+	@RequestMapping(value = "/update/biddingInfo.do", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> updateDriverDetail(MultipartHttpServletRequest multiRequest, @RequestParam Map<String, Object> param) throws Exception {
+		Map<String, Object> returnMap = null;
+		
+		returnMap = service.updateBiddingInfo(multiRequest, param);
+		
+	   	return returnMap;
 	}
 	
 	

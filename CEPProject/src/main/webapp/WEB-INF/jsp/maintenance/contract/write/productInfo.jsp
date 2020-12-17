@@ -206,6 +206,13 @@
 	    		if(td[i].getAttribute('for') != null && td[i].getAttribute('for') != undefined && td[i].getAttribute('for') != "" && td[i].getAttribute('for').length != 0) {
 	    			forArr.push(td[i].getAttribute('for')); 	    			
 	    		}
+	    		if(td[i].getAttribute('for') != null && td[i].getAttribute('for') != undefined && td[i].getAttribute('for') != "" && td[i].getAttribute('for').length != 0 && td[i].getAttribute('class').includes('calendar')) {
+	    			$(this).attr('id','');
+	    		} 
+	    	}
+	    	
+	    	var name = type + 'List[' + (lastNum+1) + '].';
+	    	
 	    	}	    	
 	    		    	
 	    	for(var i = 0; i < nameArr.length; i++) {

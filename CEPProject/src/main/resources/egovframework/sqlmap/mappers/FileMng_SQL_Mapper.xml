@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmm.service.impl.FileMngMapper">
+	<select id="selectFile" resultType="fileVO">
+		SELECT
+			FILE_KEY AS fileKey
+			, FILE_ORG_NM AS fileOrgNm
+			, SERVER_FILE_PATH AS serverFilePath 
+			, SERVER_FILE_NM AS serverFileNm
+			, DOC_TYPE_KEY AS docTypeKey
+		FROM FM_FILE_MNG_TB
+		WHERE
+			FILE_KEY = #{fileKey}
+	</select>
+</mapper>

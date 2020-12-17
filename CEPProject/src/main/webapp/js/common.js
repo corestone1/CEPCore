@@ -213,17 +213,17 @@ function fn_date_format(e, oThis) {
  * */	
 $(window).load(function() {
 	
-	$("body").delegate(".fromDt", "focusin", function(){
+	/*$("body").delegate(".fromDt", "focusin", function(){
 		$(this).datepicker({
 			dateFormat: 'yy-mm-dd',
 			changeMonth: true,
 			changeYear: true,
 			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 			numberOfMonths: 1,
-			/*onSelect: function( selectedDate ) {
+			onSelect: function( selectedDate ) {
 				$( ".toDt" ).datepicker( "option", "minDate", selectedDate );
 				$(this).datepicker();
-			}*/
+			}
 		});
 		$(this).attr('onkeyup','fn_date_format(event, this)');
 		$(this).attr('onkeypress','fn_date_format(event, this)');
@@ -235,13 +235,30 @@ $(window).load(function() {
 			changeYear: true,
 			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 			numberOfMonths: 1,
-			/*onSelect: function( selectedDate ) {
+			onSelect: function( selectedDate ) {
 				$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
 				$(this).datepicker();
-			}*/
+			}
 	    });
 		$(this).attr('onkeyup','fn_date_format(event, this)');
 		$(this).attr('onkeypress','fn_date_format(event, this)');
-	}); 
+	}); */
+	
+	$("body").delegate(".calendar", "focusin", function(){
+		$(this).datepicker({
+			dateFormat: 'yy-mm-dd',
+			changeMonth: true,
+			changeYear: true,
+			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
+				$(this).datepicker();
+			}
+	    });
+		$(this).attr('onkeyup','fn_date_format(event, this)');
+		$(this).attr('onkeypress','fn_date_format(event, this)');
+		
+	});
 	
 });

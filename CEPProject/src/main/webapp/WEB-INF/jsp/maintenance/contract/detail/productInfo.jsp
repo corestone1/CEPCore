@@ -300,12 +300,6 @@
 				}
 			});
 			
-			$('#prodList table tr').each(function(index, item) {
-				if(index != 0) {
-					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
-				}
-			});
-			
 			$('#modInfo').click(function() {
 				if($('.detailList').length === 0) {
 					alert('수정할 정보를 선택해 주세요.');
@@ -381,15 +375,27 @@
 								</tr>
 								<tr>
 									<td>계약일자</td>
+<<<<<<< HEAD
 									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
+=======
+									<td><c:out value="${basicContractInfo.convertCtDt}"/></td>
+>>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
+<<<<<<< HEAD
 									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
+=======
+									<td><c:out value="${basicContractInfo.convertStartDt}"/> ~ <c:out value="${basicContractInfo.convertEndDt}"/></td>
+>>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
+<<<<<<< HEAD
 									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
+=======
+									<td><c:out value="${basicContractInfo.mtAmount}"/></td>
+>>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>부가세 포함여부</td>
@@ -527,8 +533,8 @@
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_PD" class="on" title="/maintenance/contract/detail/productInfo.do"><label>제품정보</label></li>
-							<li id="LI_TOPBar_SL" title="/maintenance/contract/detail/productInfo.do"><label>매출정보</label></li>
+							<li id="LI_TOPBar_PD" class="on" title="/maintenance/contract/detail/prodInfo.do"><label>제품정보</label></li>
+							<li id="LI_TOPBar_SL" title="/maintenance/contract/detail/prodInfo.do"><label>매출정보</label></li>
 							<li id="LI_TOPBar_BC" title="/maintenance/contract/detail/backOrderInfo.do"><label>백계약정보</label></li>
 							<li id="LI_TOPBar_PA" title="/maintenance/contract/detail/purchaseAmountInfo.do"><label>매입정보</label></li>
 							<li></li>
@@ -552,17 +558,21 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check1" /><label for="check1" class="cursorP"/>
+										</td>
 										<td>1</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
+										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R642</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+										<td><span title="2020010341000026zzz0h1sj">12341234</span></td>
 										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
 										<td>5</td>
 										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check2" /><label for="check2" class="cursorP"/>
+										</td>
 										<td>2</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -572,7 +582,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check3" /><label for="check3" class="cursorP"/>
+										</td>
 										<td>3</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -582,7 +594,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check4" /><label for="check4" class="cursorP"/>
+										</td>
 										<td>4</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -592,7 +606,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check5" /><label for="check5" class="cursorP"/>
+										</td>
 										<td>5</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -602,7 +618,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check6" /><label for="check6" class="cursorP"/>
+										</td>
 										<td>6</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -612,7 +630,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check7" /><label for="check7" class="cursorP"/>
+										</td>
 										<td>7</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -622,7 +642,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check8" /><label for="check8" class="cursorP"/>
+										</td>
 										<td>8</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -632,7 +654,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check9" /><label for="check9" class="cursorP"/>
+										</td>
 										<td>9</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -642,7 +666,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check10" /><label for="check10" class="cursorP"/>
+										</td>
 										<td>10</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -652,7 +678,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check11" /><label for="check11" class="cursorP"/>
+										</td>
 										<td>11</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -662,7 +690,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check12" /><label for="check12" class="cursorP"/>
+										</td>
 										<td>12</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
@@ -672,7 +702,9 @@
 										<td>Y</td>
 									</tr>
 									<tr>
-										<td></td>
+										<td onclick="event.cancelBubble = true;">
+											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check13" /><label for="check13" class="cursorP"/>
+										</td>
 										<td>13</td>
 										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>

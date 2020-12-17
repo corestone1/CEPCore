@@ -40,17 +40,20 @@ public interface ProjectMapper {
 	 */
 	public int selectProjectListTotCnt(SampleDefaultVO searchVO);
 	/**
-	 * 프로젝트 상세정보를 조회한다.
+	 * 프로젝트 입찰 상세정보를 조회한다.
 	 * @param projectVO - 조회할 정보가 담긴 VO
 	 * @return 프로젝트 상세 정보
 	 * @exception
 	 */
-	public Map<String, Object> selectProjectDetail(ProjectVO projectVO);
+	public Map<String, Object> selectBiddingDetail(ProjectVO projectVO);
 	/**
-	 * 입찰 서류 정보를 조회한다.
+	 * 입찰 첨부 파일을 조회한다.
 	 * @param projectVO - 조회할 정보가 담긴 VO
-	 * @return 입찰 서류 정보
+	 * @return 입찰 첨부 파일
 	 * @exception
 	 */
-	public List<?> selectBiddingFile(ProjectVO projectVO);
+	public Map<String, Object> selectFileList(ProjectVO projectVO);
+	
+	public Map<String, Object> updateBiddingInfo(ProjectVO projectVO);
+	
 }
