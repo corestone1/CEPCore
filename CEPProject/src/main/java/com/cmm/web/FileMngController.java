@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import com.cmm.service.FileMngService;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 
 import egovframework.rte.fdl.cmmn.exception.EgovBizException;
@@ -45,7 +45,7 @@ public class FileMngController {
 		File file = new File(fileVO.getServerFilePath() + File.separator + fileVO.getServerFileNm());
 		ModelAndView mav = new ModelAndView();
 		
-		String fileOrgNm = StringUtil.replace(fileVO.getFileOrgNm(), "&#39;", "'");
+		String fileOrgNm = CepStringUtil.replace(fileVO.getFileOrgNm(), "&#39;", "'");
 		
 		mav.setView(this.fileDownloadView);
 		mav.addObject("downloadFile", file);

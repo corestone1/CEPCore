@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cmm.service.FileMngService;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 
 @Service("fileMngService")
@@ -34,7 +34,7 @@ public class FileMngServiceImpl implements FileMngService {
 		FileVO fileVO = null;
 		List<FileVO> fileList = null;
 		
-		String fileKey = StringUtil.nullToString(param.get("fileKey"));
+		String fileKey = CepStringUtil.nullToString(param.get("fileKey"));
 		Map<String, MultipartFile> files = multiRequest.getFileMap();
 		
 		if(files.isEmpty()) {

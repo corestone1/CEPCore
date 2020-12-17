@@ -19,7 +19,6 @@ import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
 import com.cmm.service.FileMngService;
-import com.cmm.util.StringUtil;
 import com.cmm.vo.FileVO;
 
 @Service("projectService")
