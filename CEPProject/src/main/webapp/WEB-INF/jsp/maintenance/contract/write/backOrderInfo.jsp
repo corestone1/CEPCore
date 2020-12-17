@@ -261,7 +261,7 @@
 	    			idArr.push(td[i].getAttribute('id')); 	    			
 	    		}
 	    		if(td[i].getAttribute('for') != null && td[i].getAttribute('for') != undefined && td[i].getAttribute('for') != "" && td[i].getAttribute('for').length != 0) {
-	    			forArr.push(td[i].getAttribute('for')); 	    			
+	    			forArr.push(td[i].getAttribute('for'));
 	    		}
 	    	}
 	    	
