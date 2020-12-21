@@ -7,17 +7,17 @@ import org.apache.ibatis.type.Alias;
 @SuppressWarnings("serial")
 @Alias("fileVO")
 public class FileVO implements Serializable {
-	public int fileKey;
+	public String fileKey;
 	public String fileOrgNm;
 	public String serverFilePath;
 	public String serverFileNm;
 	public String docTypeKey;
 	public String regDt;
 	
-	public int getFileKey() {
+	public String getFileKey() {
 		return fileKey;
 	}
-	public void setFileKey(int fileKey) {
+	public void setFileKey(String fileKey) {
 		this.fileKey = fileKey;
 	}
 	public String getFileOrgNm() {

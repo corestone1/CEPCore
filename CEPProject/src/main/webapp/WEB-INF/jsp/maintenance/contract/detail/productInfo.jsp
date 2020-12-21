@@ -375,15 +375,27 @@
 								</tr>
 								<tr>
 									<td>계약일자</td>
+<<<<<<< HEAD
+									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
+=======
 									<td><c:out value="${basicContractInfo.convertCtDt}"/></td>
+>>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
+<<<<<<< HEAD
+									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
+=======
 									<td><c:out value="${basicContractInfo.convertStartDt}"/> ~ <c:out value="${basicContractInfo.convertEndDt}"/></td>
+>>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
+<<<<<<< HEAD
+									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
+=======
 									<td><c:out value="${basicContractInfo.mtAmount}"/></td>
+>>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>부가세 포함여부</td>

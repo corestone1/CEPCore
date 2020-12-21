@@ -82,7 +82,7 @@ public interface MtWorkMapper {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description : 유지보수작업 제품을 등록한다.
-	  * @param mtWorkProductVO
+	  * @param insertParam
 	  * @throws Exception
 	 */
 	public void writeWorkProductList(Map<String, Object> insertParam)throws Exception;

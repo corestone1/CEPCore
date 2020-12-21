@@ -6,9 +6,12 @@ package com.cep.maintenance.contract.vo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cmm.util.CepDateUtil;
-import com.cmm.util.StringUtil;
+import org.apache.ibatis.type.Alias;
 
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.CepStringUtil;
+@SuppressWarnings("serial")
+@Alias("mtContractProductVO")
 /**
  * @File Name : MtProductVO.java
  * @Project   : CEPProject
@@ -26,7 +29,7 @@ import com.cmm.util.StringUtil;
  */
 public class MtContractProductVO extends MtDefaultVO implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 
 	// 유지보수 제품 관리키 
     private int mtPmKey;
@@ -163,11 +166,11 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
 	
 	public int getDbPmQuantity() {
 		
-		return Integer.parseInt(StringUtil.getDefaultValue(mtPmQuantity, "0").replace(",", ""));
+		return Integer.parseInt(CepStringUtil.getDefaultValue(mtPmQuantity, "0").replace(",", ""));
 	}
 	
 	public String getViewPmQuantity() {
-		return StringUtil.getCommaString(String.valueOf(mtPmQuantity));
+		return CepStringUtil.getCommaString(String.valueOf(mtPmQuantity));
 	}
 
 	/**
@@ -184,10 +187,10 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
 		return mtPmUprice;
 	}
 	public int getDbPmUprice() {
-		return Integer.parseInt(StringUtil.getDefaultValue(mtPmUprice, "0").replace(",", ""));		
+		return Integer.parseInt(CepStringUtil.getDefaultValue(mtPmUprice, "0").replace(",", ""));		
 	}
 	public String getViewPmUprice() {
-		return StringUtil.getCommaString(String.valueOf(mtPmUprice));
+		return CepStringUtil.getCommaString(String.valueOf(mtPmUprice));
 	}
 
 	/**

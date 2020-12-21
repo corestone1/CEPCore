@@ -243,16 +243,280 @@
 			   )
 			</foreach>  		
 	</insert>
+	
+	
+	<!-- ===========================유지보수 계약 매출========================================= -->
 
+	<!-- 매출등록화면에서 보여주는 기본정보.  -->
+	<select id="selectContractAmountInfo" parameterType="String" resultType="egovMap">			
+		SELECT 
+		  MC.MT_START_DT
+		  , MC.MT_END_DT
+		  , MC.MT_AMOUNT
+		  , MIN(MP.MT_PM_START_DT) AS MT_PM_START_DT
+		  , MAX(MP.MT_PM_END_DT) AS MT_PM_END_DT
+		  , SUM(MP.MT_PM_QUANTITY * MP.MT_PM_UPRICE) AS MT_PM_TOTAL_AMOUNT
+		FROM MT_CONTRACT_TB MC, MT_PRODUCT_TB MP  
+		WHERE MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}	
+		  AND MC.MT_INTEGRATE_KEY = MP.MT_INTEGRATE_KEY;	
+	</select>	
+	
+	<!-- 유지보수계약 매출금액 등록 -->
+	<insert id="writeMtContractSalesAmountList" parameterType="java.util.Map">
+		INSERT INTO MT_SALES_AMOUNT_TB (
+		    MT_INTEGRATE_KEY 
+		    , MT_SALES_KEY 
+		    , MT_SALES_YEAR 
+		    , MT_SALES_JAN_AMOUNT 
+		    , MT_SALES_FEB_AMOUNT 
+		    , MT_SALES_MAR_AMOUNT 
+		    , MT_SALES_APR_AMOUNT 
+		    , MT_SALES_MAY_AMOUNT 
+		    , MT_SALES_JUN_AMOUNT 
+		    , MT_SALES_JUL_AMOUNT 
+		    , MT_SALES_AUG_AMOUNT 
+		    , MT_SALES_SEP_AMOUNT  
+		    , MT_SALES_OCT_AMOUNT  
+		    , MT_SALES_NOV_AMOUNT 
+		    , MT_SALES_DEC_AMOUNT 
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY)
+		VALUES
+		<foreach collection="mtSalesAmountVOList" item="item" separator=",">
+		    (
+		    #{mtIntegrateKey} 
+		    , (SELECT IFNULL(MAX(a.MT_SALES_KEY) + 1, 1) FROM MT_SALES_AMOUNT_TB a WHERE a.MT_INTEGRATE_KEY=#{mtIntegrateKey}) 
+		    , #{item.mtSalesYear}
+		    , #{item.mtSalesJanAmount}
+		    , #{item.mtSalesFebAmount}
+		    , #{item.mtSalesMarAmount}
+		    , #{item.mtSalesAprAmount}
+		    , #{item.mtSalesMayAmount}
+		    , #{item.mtSalesJunAmount}
+		    , #{item.mtSalesJulAmount}
+		    , #{item.mtSalesAugAmount}
+		    , #{item.mtSalesSepAmount}
+		    , #{item.mtSalesOctAmount}
+		    , #{item.mtSalesNovAmount}
+		    , #{item.mtSalesDecAmount}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , #{regEmpKey})
+		</foreach>    		
+	</insert>
+	
+	
+	<!-- ===========================유지보수 계약 백계약 ========================================= -->
+	
+	<!-- 유지보수계약 백계약 등록 -->
+	<insert id="writeContractBackOrder" parameterType="com.cep.maintenance.contract.vo.MtBackOrderVO">
+	
+		<!-- 유지보수계약 백계약 메인등록 -->
+		INSERT INTO MT_BACK_ORDER_TB (
+		    MT_ORDER_KEY 
+		    , MT_INTEGRATE_KEY 
+		    , MT_ORDER_AC_KEY 
+		    , MT_ORDER_AC_DIRECTOR_KEY 
+		    , MT_ORDER_PAY_TERMS 
+		    , MT_ORDER_AMOUNT 
+		    , TAX_YN 
+		    , MT_ORDER_DT 
+		    , REMARK 
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY
+		) VALUES (
+		    #{mtOrderKey} 
+		    , #{mtIntegrateKey} 
+		    , #{mtOrderAcKey}
+		    , #{mtOrderAcDirectorKey}
+		    , #{mtOrderPayTerms}
+		    , #{mtOrderAmount}
+		    , #{taxYn}
+		    , #{mtOrderDt}
+		    , #{remark}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , #{regEmpKey}
+		)				
+	</insert>
+	
+	<insert id="writeContractBackOrderProduct" parameterType="java.util.HashMap">
+				
+		<!-- 유지보수계약 백계약 제품등록 -->
+		INSERT INTO MT_BACK_ORDER_PRODUCT (
+		    MT_ORDER_KEY 
+		    , MT_PM_KEY 
+		    , MT_ORDER_PM_QUANTITY 
+		    , MT_ORDER_PM_UPRICE 
+		    , MT_START_DT 
+		    , MT_END_DT
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY)
+		VALUES
+		<foreach collection="mtBackOrderProductVoList" item="item" separator=",">
+		    (
+		    #{mtOrderKey} 
+		    , #{item.mtPmKey} 
+		    , #{item.mtOrderPmQuantity}
+		    , #{item.mtOrderPmUprice}
+		    , #{item.mtStartDt}
+		    , #{item.mtEndDt}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , #{regEmpKey})
+		</foreach>    	
+	</insert>
+	
+	<!-- 유지보수계약별 백계약 등록 리스트회 -->
+	<select id="selectBackOrderSelectBoxList" parameterType="String" resultType="egovMap">			
+			SELECT 
+			  MB.MT_ORDER_KEY
+			  , MB.MT_ORDER_AC_KEY
+			  , CA.AC_NM AS MT_AC_NM
+			FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
+			WHERE MB.MT_INTEGRATE_KEY=#{mtIntegrateKey}
+			  AND MB.MT_ORDER_AC_KEY = CA.AC_KEY	
+	</select>
+	
+	<!-- 유지보수계약별 백계약 메인상세 -->
+	<select id="selectBackOrderDetail" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtBackOrderVO">			
+	<!-- <select id="selectBackOrderDetail" parameterType="String" resultType="egovMap"> -->
+		SELECT 
+			MB.MT_ORDER_KEY AS mtOrderKey
+			, MB.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, MB.MT_ORDER_AC_KEY AS mtOrderAcKey
+		  	, CA.AC_NM AS mtOrderAcKeyNm
+			, MB.MT_ORDER_AC_DIRECTOR_KEY AS mtOrderAcDirectorKey
+			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
+			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
+			, MB.TAX_YN AS taxYn
+			, MB.MT_ORDER_DT AS mtOrderDt
+			, MB.REMARK AS remark
+		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
+		WHERE MT_ORDER_KEY = #{mtOrderKey} 
+			AND DELETE_YN='N'  
+		  AND MB.MT_ORDER_AC_KEY = CA.AC_KEY
+	</select>
+	
+	<!-- 유지보수계약별 백계약 목록조회 -->
+	<select id="selectBackOrderList" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtBackOrderVO">			
+	<!-- <select id="selectBackOrderList" parameterType="String" resultType="egovMap"> -->	
+		SELECT 
+			MB.MT_ORDER_KEY AS mtOrderKey
+			, MB.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, MB.MT_ORDER_AC_KEY AS mtOrderAcKey
+		  	, CA.AC_NM AS mtOrderAcKeyNm
+			, MB.MT_ORDER_AC_DIRECTOR_KEY AS mtOrderAcDirectorKey
+			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
+			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
+			, MB.TAX_YN AS taxYn
+			, MB.MT_ORDER_DT AS mtOrderDt
+			, MB.REMARK AS remark
+		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
+		WHERE MB.MT_INTEGRATE_KEY = #{mtIntegrateKey} 
+			AND MB.DELETE_YN='N'  
+		  AND MB.MT_ORDER_AC_KEY = CA.AC_KEY
+	</select>	
+	
+	
+	<!-- 유지보수계약별 백계약 제품목록 -->
+	<select id="selectBackOrderProductList" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtBackOrderProductVO">			
+	<!-- <select id="selectBackOrderProductList" parameterType="String" resultType="egovMap"> -->
+		SELECT
+			MB.MT_ORDER_PM_KEY AS mtOrderPmKey
+			, MB.MT_ORDER_KEY AS mtOrderKey
+			, MB.MT_PM_KEY AS mtPmKey
+			, MB.MT_ORDER_PM_QUANTITY AS mtOrderPmQuantity
+			, MB.MT_ORDER_PM_UPRICE AS mtOrderPmUprice
+			, MB.MT_START_DT AS mtStartDt
+			, MB.MT_END_DT AS mtEndDt
+		  , PM.PM_NM_CD AS mtPmKeyNm
+		  , MT.MT_PM_SERIAL_NUM AS mtPmSerialNum
+		  , MT.MT_PM_DETAIL AS mtPmDetail
+		FROM MT_BACK_ORDER_PRODUCT MB, MT_PRODUCT_TB MT, PM_PRODUCT_MNG_TB PM
+		WHERE MB.MT_ORDER_KEY = #{mtOrderKey}
+			AND MB.DELETE_YN='N'
+			AND MB.MT_PM_KEY = MT.MT_PM_KEY
+			AND MT.MT_PM_FK_KEY = PM.PM_KEY
+	</select>
+	
+	<!-- 유지보수계약별 백계약 삭제 -->
+	<update id="deleteBackOrder">
+		UPDATE MT_BACK_ORDER_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY=#{mtOrderKey}
+	</update>
+	
+	<!-- 유지보수계약별 백계약별 제품목록 전체삭제 -->
+	<update id="deleteBackOrderProductAll">
+		UPDATE MT_BACK_ORDER_PRODUCT
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY=#{mtOrderKey}
+	</update>
+	
+	<!-- 유지보수계약별 백계약별 제품목록 리스트삭제 -->
+	<update id="deleteBackOrderProductList">	
+		UPDATE MT_BACK_ORDER_PRODUCT
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_ORDER_PM_KEY IN
+			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
+				#{item}
+			</foreach>		
+	</update>
+	
+	<!-- 유지보수계약별 백계약 정보수정 -->
+	<update id="updateBackOrder" parameterType="com.cep.maintenance.contract.vo.MtBackOrderVO">	
+		UPDATE MT_BACK_ORDER_TB
+		SET MT_ORDER_AC_KEY = #{mtOrderAcKey}
+			, MT_ORDER_AC_DIRECTOR_KEY = #{mtOrderAcDirectorKey}
+			, MT_ORDER_PAY_TERMS = #{mtOrderPayTerms}
+			, MT_ORDER_AMOUNT = #{mtOrderAmount}
+			, TAX_YN = #{taxYn}
+			, MT_ORDER_DT = #{mtOrderDt}
+			, REMARK = #{remark}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY = #{mtOrderKey} 
+	</update>	
+	
+	
+	<!-- 유지보수계약 백계약 제품리스트 정보수정. -->
+	<update id="updateBackOrderProductList" parameterType="java.util.HashMap">
+		<foreach collection="mtBackOrderProductVoList" item="item" separator="," open="DECLARE BEGIN" close="; END;">
+			UPDATE MT_BACK_ORDER_PRODUCT
+			SET MT_PM_KEY=#{item.mtPmKey} 
+				, MT_ORDER_PM_QUANTITY = #{item.mtOrderPmQuantity}
+				, MT_ORDER_PM_UPRICE = #{item.mtOrderPmUprice}
+				, MT_START_DT = #{item.mtStartDt}
+				, MT_END_DT = #{item.mtEndDt}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_ORDER_PM_KEY = #{item.mtOrderPmKey}
+		</foreach>
+	</update>
 	
 	
 	<!-- ######################################################################  -->
 	<!-- 사원리스트회 -->
 	<select id="selectEmployeeList" resultType="egovMap">			
-			SELECT EMP_KEY
-				, EMP_NM
-			FROM CMM_EMPLOYEE_TB
-			ORDER BY EMP_NM		
+		SELECT EMP_KEY
+			, EMP_NM
+		FROM CMM_EMPLOYEE_TB
+		ORDER BY EMP_NM		
 	</select>
 	
 	<!-- 거래처 담당자 리스트회 -->

@@ -6,6 +6,14 @@ package com.cep.maintenance.work.vo;
 import java.io.Serializable;
 import java.util.List;
 
+
+import org.apache.ibatis.type.Alias;
+
+import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.CepStringUtil;
+@SuppressWarnings("serial")
+@Alias("mtWorkProductVO")
 /**
  * @File Name : MtWorkProductVO.java
  * @Project   : CEPProject
@@ -21,9 +29,9 @@ import java.util.List;
  *
  *  Copyright (C) by CORESTONE All right reserved.
  */
-public class MtWorkProductVO implements Serializable{
+public class MtWorkProductVO extends MtDefaultVO implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 
 	// 유지보수 통합 관리키 
     private String mtIntegrateKey;

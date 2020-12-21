@@ -8,7 +8,7 @@ import java.io.Serializable;
 import org.apache.ibatis.type.Alias;
 
 import com.cmm.util.CepDateUtil;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepStringUtil;
 @SuppressWarnings("serial")
 @Alias("mtContractVO")
 /**
@@ -298,7 +298,7 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 		return String.valueOf(mtAmount).replace(",", "");
 	}
 	public String getViewAmount() {
-		return StringUtil.getCommaString(String.valueOf(mtAmount));
+		return CepStringUtil.getCommaString(String.valueOf(mtAmount));
 	}
 	/**
 	 * @param amount the amount to set

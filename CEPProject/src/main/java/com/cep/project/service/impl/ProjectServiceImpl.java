@@ -15,7 +15,7 @@ import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
 import com.cmm.service.FileMngService;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 
 @Service("projectService")
@@ -49,12 +49,12 @@ public class ProjectServiceImpl implements ProjectService {
 		int result = 0;
 
 		projectVO.setPjKey("PJ200003");
-		projectVO.setAcKey(StringUtil.nullToString(param.get("acKey")));
-		projectVO.setPjSaleEmpKey(StringUtil.nullToString(param.get("pjSaleEmpKey")));
-		projectVO.setPjSupportEmpKey(StringUtil.nullToString(param.get("pjSupportEmpKey")));
-		projectVO.setAcDirectorKey(StringUtil.nullToString(param.get("acDirectorKey")));
-		projectVO.setPjStartDt(StringUtil.nullToString(param.get("pjStartDt")));
-		projectVO.setPjEndDt(StringUtil.nullToString(param.get("pjEndDt")));
+		projectVO.setAcKey(CepStringUtil.getDefaultValue(param.get("acKey"), ""));
+		projectVO.setPjSaleEmpKey(CepStringUtil.getDefaultValue(param.get("pjSaleEmpKey"), ""));
+		projectVO.setPjSupportEmpKey(CepStringUtil.getDefaultValue(param.get("pjSupportEmpKey"), ""));
+		projectVO.setAcDirectorKey(CepStringUtil.getDefaultValue(param.get("acDirectorKey"), ""));
+		projectVO.setPjStartDt(CepStringUtil.getDefaultValue(param.get("pjStartDt"), ""));
+		projectVO.setPjEndDt(CepStringUtil.getDefaultValue(param.get("pjEndDt"), ""));
 		
 		result = mapper.insertBasicInfo(projectVO);
 		

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
+import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
@@ -113,9 +115,178 @@ public interface MtContractMapper {
 	  * @throws Exception
 	 */
 	public List<MtContractProductVO> selectMtContractProductList(String mtIntegrateKey)  throws Exception;
-
 	
-	///////////////////////////////////////////////////////
+	/* ============================== 유지보수계약 매출  ======================================*/
+
+	/**
+	 * 
+	  * @Method Name : selectContractAmountInfo
+	  * @Cdate       : 2020. 12. 8.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 매출등록화며에서 보여줄 계약 금액정보를 조회한다.
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public Map<String, Object> selectContractAmountInfo(String mtIntegrateKey) throws Exception;
+	
+	
+	/**
+	 * 
+	  * @Method Name : writeMtContractSalesAmountList
+	  * @Cdate       : 2020. 12. 10.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매출정보 등록.
+	  * @param insertParam
+	  * @throws Exception
+	 */
+	public void writeMtContractSalesAmountList(Map<String, Object> insertParam) throws Exception;
+	
+	/* ============================== 유지보수계약 백계약  ======================================*/
+	
+	/**
+	 *
+	  * @Method Name : writeContractBackOrder
+	  * @Cdate       : 2020. 12. 14.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 백계약 내용을 등록한다.
+	  * @param mtBackOrderVO
+	  * @throws Exception
+	 */
+	public void writeContractBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : writeContractBackOrderProduct
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :백계약 품목 리스트를 등록한다.
+	  * @param insertParam
+	  * @throws Exception
+	 */
+	public void writeContractBackOrderProduct(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectBackOrderSelectBoxList
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별 백계약 거래처 selectBox목록 조회
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public List<?> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	
+	
+	/**
+	 * 
+	  * @Method Name : selectBackOrderDetail
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약별 백계약 메인 상세조회.
+	  * @param mtOrderKey
+	  * @return
+	  * @throws Exception
+	 */
+	public MtBackOrderVO selectBackOrderDetail(String mtOrderKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectBackOrderList
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별 백계약 메인 목록조회.
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public List<MtBackOrderVO> selectBackOrderList(String mtIntegrateKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectBackOrderProductList
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약별 백계약별 제품목록 조회. 
+	  * @param mtOrderKey
+	  * @return
+	  * @throws Exception
+	 */
+	public List<MtBackOrderProductVO> selectBackOrderProductList(String mtOrderKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteBackOrder
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약별 백계약 삭제
+	  * @param modEmpKey
+	  * @param mtOrderKey
+	  * @throws Exception
+	 */
+	public void deleteBackOrder(String modEmpKey, String mtOrderKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteBackOrderProductAll
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약별 백계약별 제품목록 전체삭제.
+	  * @param modEmpKey
+	  * @param mtOrderKey
+	  * @throws Exception
+	 */
+	public void deleteBackOrderProductAll(String modEmpKey, String mtOrderKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteBackOrderProductList
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약별 백계약별 제품목록 리스트 삭제.
+	  * @param modEmpKey
+	  * @param deleteKeyList
+	  * @throws Exception
+	 */
+	public void deleteBackOrderProductList(String modEmpKey, String[] deleteKeyList) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : updateBackOrder
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별 백계약 메인 정보수정
+	  * @param mtBackOrderVO
+	  * @throws Exception
+	 */
+	public void updateBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : updateBackOrderProductList
+	  * @Cdate       : 2020. 12. 16.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 백계약 제품리스트 정보수정
+	  * @param insertParam
+	  * @throws Exception
+	 */
+	public void updateBackOrderProductList(Map<String, Object> insertParam)throws Exception;
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * 

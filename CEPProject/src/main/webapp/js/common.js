@@ -108,13 +108,24 @@ $(document).on("focus", "input:text[amountOnly]", function() {
 });
 
 function addCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	var returnValue;
+	if(!x || x.length == 0) {
+		returnValue =  "";
+	} else {
+		returnValue = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+	return returnValue;
 }
  
 //모든 콤마 제거
 function removeCommas(x) {
-    if(!x || x.length == 0) return "";
-    else return x.split(",").join("");
+	var returnValue;
+    if(!x || x.length == 0) {
+    	returnValue= "";
+    } else {
+    	returnValue = x.split(",").join("");
+    }
+	return returnValue;
 }
 /*
  * 시간분표시하기
@@ -140,24 +151,45 @@ $(document).on("focus", "input:text[timeOnly]", function() {
 
 //시간콜론 추가.
 function addColon(x) {
-    //return x.toString().substring(0,2)+":"+x.toString().substring(3,4)
-	return x.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ":");
+	var returnValue;
+	if(!x || x.length == 0) {
+		returnValue =  "";
+	} else {
+		returnValue = x.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ":");
+	}
+	return returnValue;
 }
  
 //모든 콜론 제거
 function removeColon(x) {
-    if(!x || x.length == 0) return "";
-    else return x.split(":").join("");
+	var returnValue;
+    if(!x || x.length == 0) {
+    	returnValue= "";
+    } else {
+    	returnValue = x.split(":").join("");
+    }
+	return returnValue;
 }
 
-function addDateMinus(x) {
-	if(!x || x.length == 0) return "";
-	else x.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+function addDateMinus(x) {	
+	var returnValue;
+	if(!x || x.length == 0) {
+		returnValue =  "";
+	} else {
+		returnValue = x.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+	}
+	return returnValue;
 }
 
 function removeData(x, y) {
-    if(!x || x.length == 0) return "";
-    else return x.split(y).join("");
+	var returnValue;
+    if(!x || x.length == 0) {
+    	returnValue = "";
+    }
+    else {
+    	returnValue = x.split(y).join("");
+    }
+    return returnValue;
 }
 
 //날짜 하이픈(-) 자동 추가

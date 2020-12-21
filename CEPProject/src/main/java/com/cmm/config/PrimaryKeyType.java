@@ -23,11 +23,13 @@ public enum PrimaryKeyType {
 	 * PROJECT : 프로젝트 관리키 구분
 	 * MAINTENACE_CONTRACT_ALL : 유지보수 계약 통합키
 	 * MAINTENACE_CONTRACT : 유지보수 계약 관리키
+	 * MAINTENACE_BACK_ORDER : 유지보수 계약  백계약 관리키
 	 * MAINTENACE_WORK : 유지보수 작업 관리키.
 	 */
 	PROJECT("PJ")
 	, MAINTENACE_CONTRACT_ALL("MA")
 	, MAINTENACE_CONTRACT("MT") 
+	, MAINTENACE_BACK_ORDER("MB")
 	, MAINTENACE_WORK("MW");
 	
 	private String value;

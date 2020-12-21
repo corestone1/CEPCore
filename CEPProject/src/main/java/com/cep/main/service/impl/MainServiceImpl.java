@@ -30,8 +30,8 @@ import org.springframework.stereotype.Service;
 import com.cep.main.service.MainService;
 import com.cep.main.vo.EmpVO;
 import com.cmm.service.impl.MailMapper;
-import com.cmm.util.MailMngUtil;
-import com.cmm.util.StringUtil;
+import com.cmm.util.CepMailMngUtil;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.MailVO;
 
 @Service("mainService")
@@ -62,7 +62,7 @@ public class MainServiceImpl implements MainService {
 		
 		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
         
-		MailMngUtil mail = new MailMngUtil();
+		CepMailMngUtil mail = new CepMailMngUtil();
         // 메일 서버 설정
 		mail.setMailServer("smtp.gmail.com");
         // 메일 포트 설정
@@ -74,7 +74,7 @@ public class MainServiceImpl implements MainService {
         // 보내는 사람 메일 계정 비밀번호 설정
         mail.setSenderPassword("hihlljocnbncuicm");
         // 받는 사람 이메일 설정
-        mail.setToEmail(StringUtil.nullToString(request.getParameter("email")));
+        mail.setToEmail(CepStringUtil.getDefaultValue(request.getParameter("email"),""));
         // 메일 제목 설정
         mail.setSubject("비밀번호 안내");
         // 메일 내용 설정
@@ -82,7 +82,7 @@ public class MainServiceImpl implements MainService {
                 System.getProperty("line.separator"),
                 "<div style='width:720px; margin: 0 auto; border:1px solid #d8d8d8; padding: 50px; line-height: 1.5; font-family: sans-serif; font-size: 18px;'>",
                 "<div style='margin-bottom: 30px;'><img style='width: 180px;' src='"+"/corestone.co.kr/common/logo"+"'/></div>",
-                "<p><label>"+StringUtil.nullToString(request.getParameter("email"))+"</label>님, <br>회원님의 CEP 계정 비밀번호를 안내합니다.</p>",
+                "<p><label>"+CepStringUtil.getDefaultValue(request.getParameter("email"),"")+"</label>님, <br>회원님의 CEP 계정 비밀번호를 안내합니다.</p>",
                 "<p style='color:blue;'>"+newPw+"<label style='font-size:15px; color:#000;'> (변경 일자: "+format.format (System.currentTimeMillis())+")</label></p>",
                 "<p>비밀번호는 전체관리자에 의해 관리됩니다. 비밀번호 변경을 원할 시에는 관리자에게 문의하세요.</p>",
                 "</div>"));
