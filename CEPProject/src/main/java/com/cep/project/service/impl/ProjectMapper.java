@@ -31,7 +31,8 @@ public interface ProjectMapper {
 	 * @return 프로젝트 목록
 	 * @exception Exception
 	 */
-	public List<?> selectProjectList(SampleDefaultVO searchVO);
+	public List<?> selectProjectList(ProjectVO searchVO);
+	
 	/**
 	 * 프로젝트 총 갯수를 조회한다.
 	 * @param searchVO - 조회할 정보가 담긴 VO
@@ -39,6 +40,7 @@ public interface ProjectMapper {
 	 * @exception
 	 */
 	public int selectProjectListTotCnt(SampleDefaultVO searchVO);
+	
 	/**
 	 * 프로젝트 입찰 상세정보를 조회한다.
 	 * @param projectVO - 조회할 정보가 담긴 VO
@@ -46,6 +48,15 @@ public interface ProjectMapper {
 	 * @exception
 	 */
 	public Map<String, Object> selectBiddingDetail(ProjectVO projectVO);
+	
+	/**
+	 * 프로젝트 기본 정보를 등록한다.
+	 * @param projectVO - 등록할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int insertBasicInfo(ProjectVO projectVO);
+	
 	/**
 	 * 입찰 첨부 파일을 조회한다.
 	 * @param projectVO - 조회할 정보가 담긴 VO
@@ -55,5 +66,7 @@ public interface ProjectMapper {
 	public Map<String, Object> selectFileList(ProjectVO projectVO);
 	
 	public Map<String, Object> updateBiddingInfo(ProjectVO projectVO);
+	
+	public String makePrimaryKey(String keyType) throws Exception;
 	
 }

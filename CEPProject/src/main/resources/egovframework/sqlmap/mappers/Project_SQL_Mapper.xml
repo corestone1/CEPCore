@@ -5,11 +5,13 @@
 	<resultMap id="project" type="com.cep.project.vo.ProjectVO">
 		<result property="pjKey" column="PJ_KEY"/>
 		<result property="acKey" column="AC_KEY"/>
+		<result property="acDirectorKey" column="AC_DIRECTOR_KEY" />
 		<result property="pjNm" column="PJ_NM"/>
 		<result property="pjStartDt" column="PJ_START_DT"/>
 		<result property="pjEndDt" column="PJ_END_DT"/>
 		<result property="pjStatusCd" column="PJ_STATUS_CD"/>
 		<result property="pjSaleEmpKey" column="PJ_SALE_EMP_KEY"/>
+		<result property="pjSupportEmpKey" column="PJ_SUPPORT_EMP_KEY"/>
 		<result property="bdLimitDt" column="BD_LIMIT_DT" />
 		<result property="bdProposalYn" column="BD_PROPOSAL_YN" />
 		<result property="bdProposalDueDt" column="BD_PROPOSAL_DUE_DT" />
@@ -17,7 +19,7 @@
 		<result property="bdProposalPresentDt" column="BD_PROPOSAL_PRESENT_DT" />
 	</resultMap>
 
-	<select id="selectProjectList" parameterType="projectVO" resultType="egovMap">
+	<select id="selectProjectList" parameterType="projectVO" resultMap="project">
 
 			SELECT
 				PJ_KEY
@@ -29,15 +31,17 @@
 				, (SELECT e.EMP_NM FROM CMM_EMPLOYEE_TB e WHERE e.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) AS pjSaleEmpKey
 			FROM PJ_MAIN_TB
 			WHERE 1=1
-			<!-- <if test="searchKeyword != null and searchKeyword != ''">
-		        <choose>
-		            <when test="searchCondition == 0">
-						AND	PJ_NM LIKE CONCAT('%' , #{pjNm}, '%')
-				 	</when>
-				</choose> 
-			</if> -->
-			ORDER BY PJ_KEY ASC
-			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+			<if test="searchFromDt != null and searchFromDt != ''">
+					AND DATE_FORMAT(PJ_START_DT, '%Y-%m-%d') >= #{searchFromDt}
+			</if>
+			<if test="searchToDt != null and searchToDt != ''">
+				<![CDATA[
+					AND DATE_FORMAT(PJ_END_DT, '%Y-%m-%d') <= #{searchToDt}
+				]]>
+			</if> 
+			<if test="searchKeyword != null and searchKeyword != ''">
+					AND PJ_NM LIKE CONCAT('%' , #{searchKeyword}, '%')
+			</if> 
 	</select>
 
 	<select id="selectProjectListTotCnt" parameterType="searchVO" resultType="int">
@@ -57,6 +61,29 @@
 			</if> -->
 	</select>
 
+	<insert id="insertBasicInfo" parameterType="projectVO">
+		INSERT INTO PJ_MAIN_TB (
+			PJ_KEY
+			, AC_KEY
+			, AC_DIRECTOR_KEY
+			, PJ_NM
+			, PJ_START_DT
+			, PJ_END_DT
+			, PJ_SALE_EMP_KEY
+			, PJ_SUPPORT_EMP_KEY
+			, PJ_REMARK
+		) VALUES (
+			'PJ200003'
+			, '1'
+			, '1'
+			, '1'
+			, '1'
+			, '1'
+			, '1'
+			, '1'
+			, '1'
+		)
+	</insert>
 	<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT 
 			PJ_NM

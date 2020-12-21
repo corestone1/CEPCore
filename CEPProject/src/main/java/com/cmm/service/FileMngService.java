@@ -10,5 +10,5 @@ import com.cmm.vo.FileVO;
 public interface FileMngService {
 	List<FileVO> selectFileList(FileVO fileVO) throws Exception;
 	FileVO selectFile(FileVO fileVO) throws Exception;
-	String insertFile(MultipartHttpServletRequest multiRequest, Map<String, Object> param) throws Exception;
+	int insertFile(MultipartHttpServletRequest multiRequest, Map<String, Object> param) throws Exception;
 }

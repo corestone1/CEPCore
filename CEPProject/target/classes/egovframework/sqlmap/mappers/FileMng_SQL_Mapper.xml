@@ -12,4 +12,26 @@
 		WHERE
 			FILE_KEY = #{fileKey}
 	</select>
+	
+	<select id="getMaxFileKey" resultType="java.lang.Integer">
+		SELECT IFNULL(MAX(FILE_KEY), 0)+1 AS FILE_SEQNO
+				FROM FM_FILE_MNG_TB;
+	</select>
+	
+	<insert id="insertFile" parameterType="fileVO">
+		INSERT INTO FM_FILE_MNG_TB (
+			SERVER_FILE_PATH
+			, SERVER_FILE_NAME
+			, FILE_ORG_NM
+			<!-- , REG_DT
+			, REG_TM
+			, REG_EMP_KEY -->
+			, DOC_TYPE_KEY
+		) VALUES (
+			#{serverFilePath}
+			, #{serverFileNm}
+			, #{fileOrgNm}
+			, #{docTypeKey}
+		)
+	</insert>
 </mapper>

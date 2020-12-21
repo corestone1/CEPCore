@@ -3,16 +3,12 @@ package com.cep.project.service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
@@ -38,13 +34,35 @@ public class ProjectServiceImpl implements ProjectService {
 	 * @exception Exception
 	 */
 	@Override
-	public List<?> selectProjectList(SampleDefaultVO searchVO) throws Exception {
+	public List<?> selectProjectList(ProjectVO searchVO) throws Exception {
 		return mapper.selectProjectList(searchVO);
 	}
 	
 	@Override
 	public int selectProjectListTotCnt(SampleDefaultVO searchVO) throws Exception {
 		return mapper.selectProjectListTotCnt(searchVO);
+	}
+	
+	public Map<String, Object> insertBasicInfo(HttpServletRequest request, Map<String, Object> param) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		ProjectVO projectVO = new ProjectVO();
+		int result = 0;
+
+		projectVO.setPjKey("PJ200003");
+		projectVO.setAcKey(StringUtil.nullToString(param.get("acKey")));
+		projectVO.setPjSaleEmpKey(StringUtil.nullToString(param.get("pjSaleEmpKey")));
+		projectVO.setPjSupportEmpKey(StringUtil.nullToString(param.get("pjSupportEmpKey")));
+		projectVO.setAcDirectorKey(StringUtil.nullToString(param.get("acDirectorKey")));
+		projectVO.setPjStartDt(StringUtil.nullToString(param.get("pjStartDt")));
+		projectVO.setPjEndDt(StringUtil.nullToString(param.get("pjEndDt")));
+		
+		result = mapper.insertBasicInfo(projectVO);
+		
+		if(result > 0) {
+			returnMap.put("resultCode", "successYN");
+		}
+		
+		return returnMap;
 	}
 	
 	@Override

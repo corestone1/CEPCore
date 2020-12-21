@@ -36,7 +36,7 @@ public class FileMngController {
 	public ModelAndView download(@RequestParam Map<String, Object> param, HttpServletRequest request) throws Exception{
 		
 		FileVO vo = new FileVO();
-		vo.setFileKey((String)param.get("fileKey"));
+		vo.setFileKey(Integer.parseInt(StringUtil.nullToString(param.get("fileKey"))));
 		FileVO fileVO = service.selectFile(vo);
 		if(fileVO == null) {
 			throw new EgovBizException(messageSource.getMessage("FILENOTEXIST", null, null, new SessionLocaleResolver().resolveLocale(request)));

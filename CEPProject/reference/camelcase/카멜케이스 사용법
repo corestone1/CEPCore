@@ -1,0 +1,19 @@
+<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
+		SELECT 
+			PJ_NM
+			, M.AC_KEY
+			, M.PJ_SALE_EMP_KEY
+			, M.PJ_SUPPORT_EMP_KEY
+			, M.PJ_START_DT
+			, M.PJ_END_DT
+			, B.BD_LIMIT_DT
+			, B.BD_PROPOSAL_YN
+			, B.BD_PROPOSAL_DUE_DT
+			, B.BD_PROPOSAL_PRESENT_YN
+			, B.BD_PROPOSAL_PRESENT_DT
+		FROM PJ_MAIN_TB M
+		LEFT OUTER JOIN PJ_BIDDING_TB B
+		ON M.PJ_KEY = B.PJ_KEY
+		WHERE M.PJ_KEY = #{pjKey}
+		AND B.DELETE_YN = 'N'
+	</select>

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.apache.ibatis.type.Alias;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cmm.util.CepDateUtil;
 
 @SuppressWarnings("serial")
 @Alias("projectVO")
@@ -12,16 +13,19 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	
 	private String pjKey;
 	private String acKey;
+	private String acDirectorKey;
 	private String pjNm;
 	private String pjStartDt;
 	private String pjEndDt;
 	private String pjStatusCd;
 	private String pjSaleEmpKey;
+	private String pjSupportEmpKey;
 	private String bdLimitDt;
 	private String bdProposalYn;
 	private String bdProposalDueDt;
 	private String bdProposalPresentYn;
 	private String bdProposalPresentDt;
+	private String remark;
 	
 	public String getPjKey() {
 		return pjKey;
@@ -35,6 +39,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setAcKey(String acKey) {
 		this.acKey = acKey;
 	}
+	public String getAcDirectorKey() {
+		return acDirectorKey;
+	}
+	public void setAcDirectorKey(String acDirectorKey) {
+		this.acDirectorKey = acDirectorKey;
+	}
 	public String getPjNm() {
 		return pjNm;
 	}
@@ -42,7 +52,7 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 		this.pjNm = pjNm;
 	}
 	public String getPjStartDt() {
-		return pjStartDt;
+		return CepDateUtil.convertDate(pjStartDt, null, null, "V");
 	}
 	public void setPjStartDt(String pjStartDt) {
 		this.pjStartDt = pjStartDt;
@@ -64,6 +74,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setPjSaleEmpKey(String pjSaleEmpKey) {
 		this.pjSaleEmpKey = pjSaleEmpKey;
+	}
+	public String getPjSupportEmpKey() {
+		return pjSupportEmpKey;
+	}
+	public void setPjSupportEmpKey(String pjSupportEmpKey) {
+		this.pjSupportEmpKey = pjSupportEmpKey;
 	}
 	public String getBdLimitDt() {
 		return bdLimitDt;
@@ -95,5 +111,10 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setBdProposalPresentDt(String bdProposalPresentDt) {
 		this.bdProposalPresentDt = bdProposalPresentDt;
 	}
-	
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 }

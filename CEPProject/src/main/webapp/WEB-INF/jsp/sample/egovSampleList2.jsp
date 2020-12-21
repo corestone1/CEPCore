@@ -146,7 +146,7 @@
 	        				<th align="center">제목</th>
 	        				<th align="center">내용</th>
 	        				<th align="center">사용자이름</th>
-	        				<th align="center">사용자ID</th>
+	        				<th align="center">사용자IDdd</th>
 	        				<th align="center">작성일자</th>
 	        			</tr>
 	        		</thead>

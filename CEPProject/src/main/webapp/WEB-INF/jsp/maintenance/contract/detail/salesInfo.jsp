@@ -375,19 +375,15 @@
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><c:out value="${basicContractInfo.convertCtDt}"/></td>
+									<td></td>
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-									<td><c:out value="${basicContractInfo.convertStartDt}"/> ~ <c:out value="${basicContractInfo.convertEndDt}"/></td>
+									<td></td>
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
 									<td><c:out value="${basicContractInfo.mtAmount}"/></td>
-								</tr>
-								<tr>
-									<td>부가세 포함여부</td>
-									<td><c:out value="${basicContractInfo.taxYn}"/></td>
 								</tr>
 								<tr>
 									<td>결제조건</td>
@@ -521,8 +517,8 @@
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_PD" class="on" title="/maintenance/contract/detail/prodInfo.do"><label>제품정보</label></li>
-							<li id="LI_TOPBar_SL" title="/maintenance/contract/detail/salesInfo.do"><label>매출정보</label></li>
+							<li id="LI_TOPBar_PD" title="/maintenance/contract/detail/prodInfo.do"><label>제품정보</label></li>
+							<li id="LI_TOPBar_SL" class="on" title="/maintenance/contract/detail/salesInfo.do"><label>매출정보</label></li>
 							<li id="LI_TOPBar_BC" title="/maintenance/contract/detail/backOrderInfo.do"><label>백계약정보</label></li>
 							<li id="LI_TOPBar_PA" title="/maintenance/contract/detail/purchaseAmountInfo.do"><label>매입정보</label></li>
 							<li></li>
