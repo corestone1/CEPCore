@@ -41,7 +41,8 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
     private String mtPmFkKey;
     
     // 유지보수 제품명
-    private String mtPmFkKeyNm;
+//    private String mtPmFkKeyNm;
+    private String mtPmNmCd;
 
     // 유지보수 제품 상세 
     private String mtPmDetail;
@@ -358,19 +359,19 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
 		this.deleteYn = deleteYn;
 	}
 
-	/**
-	 * @return the mtPmFkKeyNm
-	 */
-	public String getMtPmFkKeyNm() {
-		return mtPmFkKeyNm;
-	}
-
-	/**
-	 * @param mtPmFkKeyNm the mtPmFkKeyNm to set
-	 */
-	public void setMtPmFkKeyNm(String mtPmFkKeyNm) {
-		this.mtPmFkKeyNm = mtPmFkKeyNm;
-	}
+//	/**
+//	 * @return the mtPmFkKeyNm
+//	 */
+//	public String getMtPmFkKeyNm() {
+//		return mtPmFkKeyNm;
+//	}
+//
+//	/**
+//	 * @param mtPmFkKeyNm the mtPmFkKeyNm to set
+//	 */
+//	public void setMtPmFkKeyNm(String mtPmFkKeyNm) {
+//		this.mtPmFkKeyNm = mtPmFkKeyNm;
+//	}
 
 	/**
 	 * @return the mtContractProductVoList
@@ -384,6 +385,20 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtContractProductVoList(List<MtContractProductVO> mtContractProductVoList) {
 		this.mtContractProductVoList = mtContractProductVoList;
+	}
+
+	/**
+	 * @return the mtPmNmCd
+	 */
+	public String getMtPmNmCd() {
+		return mtPmNmCd;
+	}
+
+	/**
+	 * @param mtPmNmCd the mtPmNmCd to set
+	 */
+	public void setMtPmNmCd(String mtPmNmCd) {
+		this.mtPmNmCd = mtPmNmCd;
 	}
 
 

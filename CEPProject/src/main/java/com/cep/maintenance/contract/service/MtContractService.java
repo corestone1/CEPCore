@@ -7,8 +7,12 @@ import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cmm.config.PrimaryKeyType;
+
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+
 import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
+import com.cep.maintenance.contract.vo.MtBuyAmountListVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
@@ -28,6 +32,18 @@ public interface MtContractService {
 	  * @throws Exception
 	 */
 	 String writeFirestContractBasic(MtContractVO writeVo) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : updateMtContractBasic
+	   * @Cdate       : 2020. 12. 30.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description : 유지보수계약 기본정보를 수정한다.
+	   * @param updateVo
+	   * @throws Exception
+	  */
+	 void updateMtContractBasic(MtContractVO updateVo) throws Exception;
 	 
 	 /**
 	  * 
@@ -82,43 +98,58 @@ public interface MtContractService {
 	 */
 	void deleteContract(MtContractVO deleteVo) throws Exception;	
 	
+	/**
+	 * 
+	  * @Method Name : selectMtContractCount
+	  * @Cdate       : 2021. 1. 5.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 단계별 등록 갯수 조회
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	 Map<String, Object> selectMtContractCount(String mtIntegrateKey)  throws Exception;
+	
 	/* ============================== 유지보수계약 제품  ======================================*/
 	
 	/**
 	 * 
 	  * @Method Name : writeMtContractProductList
-	  * @Cdate       : 2020. 12. 7.
+	  * @Cdate       : 2020. 12. 30.
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description :
-	  * @param insertParam
+	  * @param productVO
 	  * @throws Exception
 	 */
-	void writeMtContractProductList(String mtIntegrateKey, String regEmpKey, List<MtContractProductVO> mtContractProductVoList) throws Exception;
+	void writeMtContractProductList(MtContractProductVO productVO) throws Exception;
 	
 	/**
 	 * 
-	  * @Method Name : deleteMtContractProduct
-	  * @Cdate       : 2020. 12. 7.
+	  * @Method Name : deleteMtContractProductList
+	  * @Cdate       : 2020. 12. 31.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 유지보수계약 제품 상제
-	  * @param mtPmKey
+	  * @Method Description : 유지보수계약 제품목록 삭제
+	  * @param modEmpKey
+	  * @param deleteKeyList
 	  * @throws Exception
 	 */
-	void deleteMtContractProduct(String mtPmKey) throws Exception;
+	void deleteMtContractProductList(String modEmpKey, String[] deleteKeyList) throws Exception;
 	
 	/**
 	 * 
 	  * @Method Name : deleteMtContractProductAll
-	  * @Cdate       : 2020. 12. 7.
+	  * @Cdate       : 2020. 12. 31.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 해당 유지보수계약에 포함된 모든 제품을 삭제한다.
+	  * @Method Description :해당 유지보수계약에 포함된 모든 제품을 삭제한다.
+	  * @param modEmpKey
 	  * @param mtIntegrateKey
 	  * @throws Exception
 	 */
-	void deleteMtContractProductAll(String mtIntegrateKey) throws Exception;
+	void deleteMtContractProductAll(String modEmpKey, String mtIntegrateKey) throws Exception;
 	
 	/**
 	 * 
@@ -131,8 +162,20 @@ public interface MtContractService {
 	  * @return
 	  * @throws Exception
 	 */
-	List<MtContractProductVO> selectMtContractProductList(String mtIntegrateKey)  throws Exception;
+	List<?> selectMtContractProductList(MtDefaultVO searchVO)  throws Exception;
 	
+	/**
+	 * 
+	  * @Method Name : selectMtPmTotalAmount
+	  * @Cdate       : 2021. 1. 6.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품 총금액을 가져온다.
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	int selectMtPmTotalAmount(String mtIntegrateKey) throws Exception;
 	/* ============================== 유지보수계약 매출  ======================================*/
 	
 	/**
@@ -174,7 +217,7 @@ public interface MtContractService {
 	  * @param mtBackOrderVO
 	  * @throws Exception
 	 */
-	 void writeContractBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
+	 String writeContractBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
 	 
 	 /**
 	  * 
@@ -187,7 +230,7 @@ public interface MtContractService {
 	   * @return
 	   * @throws Exception
 	  */
-	 List<?> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	 List<EgovMap> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
 	 
 	 /**
 	  * 
@@ -255,6 +298,87 @@ public interface MtContractService {
 	   * @throws Exception
 	  */
 	 void updateBackOrder(MtBackOrderVO mtBackOrderVO) throws Exception;
+	 
+	 
+		
+	/* ============================== 유지보수계약 매입  ======================================*/
+	 /**
+	  * 
+	   * @Method Name : selectMtBuyAmountRefer
+	   * @Cdate       : 2020. 12. 23.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약 매입등록화면에서 상단에 보여지는 유지보수 금액정보 조회 with selectMtBuyTotalAmount
+	   * @param mtIntegrateKey
+	   * @return
+	   * @throws Exception
+	  */
+	 Map<String, Object> selectMtBuyAmountRefer(String mtIntegrateKey, String mtOrderKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectMtContractBuyAmountList
+	   * @Cdate       : 2020. 12. 23.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description : 유지보수계약 년도별 매입금액 목록 조회
+	   * @param mtOrderKey
+	   * @return
+	   * @throws Exception
+	  */
+	 List<?> selectMtContractBuyAmountList(String mtOrderKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectMtContractBuyAmountDetail
+	   * @Cdate       : 2020. 12. 23.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description : 유지보수계약 매입상세조회
+	   * @param mtOrderKey
+	   * @param mtBuyKey
+	   * @return
+	   * @throws Exception
+	  */
+	 Map<String, Object> selectMtContractBuyAmountDetail(String mtOrderKey, String mtBuyKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : writeMtContractBuyAmountList
+	   * @Cdate       : 2020. 12. 23.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약 매입금액 정보 등록.
+	   * @param mtBuyAmountListVO
+	   * @throws Exception
+	  */
+	 void writeMtContractBuyAmountList(MtBuyAmountListVO mtBuyAmountListVO) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : updateMtContractBuyAmountList
+	   * @Cdate       : 2020. 12. 23.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약 년도별 매입금액 목록 수정
+	   * 						deleteMtContractBuyAmountList, updateMtContractBuyAmountList 수행
+	   * @param mtBuyAmountListVO
+	   * @throws Exception
+	  */
+	 void updateMtContractBuyAmountList(MtBuyAmountListVO mtBuyAmountListVO)throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : deleteMtContractBuyAmountAll
+	   * @Cdate       : 2020. 12. 23.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약 거래처별 매입금액 전체삭제
+	   * @param modEmpKey
+	   * @param mtOrderKey
+	   * @throws Exception
+	  */
+	 void deleteMtContractBuyAmountAll(String modEmpKey, String mtOrderKey) throws Exception;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	

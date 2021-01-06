@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>제품정보 등록</title>
+	<title>유지보수 등록(제품정보)</title>
 	<style>
 		.firstTd {			
 			border-top: 2px solid #e5e5e5;	
@@ -60,6 +60,12 @@
 		.popContainer .contents .subject {
 			width: 844px;
 		}
+		.popContainer input[class="search"] {
+			height: 36px;
+			background-image: url('/images/search_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
 		.popContainer .contents select {
 			width: 153px;
 			height: 40px;
@@ -76,7 +82,8 @@
 		}
 		.popContainer input {
 			width: 130px;
-			height: 38px;
+			/* height: 38px; */
+			height: 35px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -116,7 +123,8 @@
 		}	
 		.popContainer .contents textarea {
 			width: calc(100% - 22px);
-			height: 55px;
+			/* height: 55px; */
+			height: 54px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -136,13 +144,32 @@
 			padding-top: 18px;
 			padding-right: 52px;
 		}	
+		.popContainer .contents .btnWrap {
+			margin : 10px 48px 15px 45px;
+		}
+		.popContainer .contents td.tdTitle label {
+			color: red;
+			vertical-align: middle;
+      	}
+		.calculate {
+			text-align: right !important;
+		}
 	</style>
 	<script>
+		$(document).ready(function() {
+			/*
+			처음 로딩시  저장된 리스트가 2개보다 많으면  모두 접는다.
+			2개까지는 스크롤바가 생성되지 않음.
+			*/
+			'<c:if test="${listCount > 2 }">'
+			fn_viewSummaryUpAll();
+			'</c:if>'
+		});
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
 			var objArry = null;
 				try { 
-					if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) { 
+					if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) {
 						var arr = this.serializeArray(); 
 						if(arr){ 
 							obj = {};
@@ -211,21 +238,23 @@
 	    		} 
 	    	}
 	    	
-	    	var name = type + 'List[' + (lastNum+1) + '].';
-	    	
-	    	}	    	
+	    	var name = type + 'List[' + (lastNum+1) + '].';	    	
+	    	   	
 	    		    	
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		
 	    		clone.find('input[name="lastNum"]').val(lastNum+1);
 				clone.find('input[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");
 				clone.find('textarea[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
-				clone.find('select[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 					
+				clone.find('select[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");		
+				clone.find('hidden[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
 	    	} 
 	    	var name = type + 'List-' + (lastNum+1) + '-';
 	    	for(var i = 0; i < idArr.length; i++) {
 	    		var splitName = idArr[i].split('-')[2];
-				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);				
+				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);	
+				clone.find('textarea[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);	
+				clone.find('img[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);	
 	    	} 
 	    	
 	    	for(var i = 0; i < forArr.length; i++) {
@@ -267,11 +296,37 @@
 	    			nameArr.push(td[i].getAttribute('name')); 	   
 	    		}
 	    	} */
+	    	var listNum;
+			var productName;
+			var serialNum;
+			var deleteKey;
 	    	var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
+			var selectNum = JSON.stringify($(obj.id).selector);
 			var originLength = $('#'+type+'Length').val()*1;
 			if(originLength>1){
-				table.remove();
-				$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+				/*
+				* 전체금액에서 삭제된 테이블 금액을 뺀다.
+				* 삭제테이블의 제품정보를 수집한다.
+				*/
+				listNum = selectNum.split('-')[1];
+				serialNum = $('#prodList-'+listNum+'-mtPmSerialNum').val();
+				if(serialNum == ''){
+					productName = $('#prodList-'+listNum+'-pmNmCd').val();
+				} else {
+					productName = $('#prodList-'+listNum+'-pmNmCd').val()+"("+serialNum+")";
+				}
+				//삭제 key
+				deleteKey =  $('#prodList-'+listNum+'-mtPmKey').val();
+				if(confirm(productName+" 제품정보를 삭제하시겠습니까?")) {
+					//삭제key list를 만든다.
+					if(deleteKey !=''){
+						$('#deleteListKeys').val($('#deleteListKeys').val()+deleteKey+":");
+					}
+					
+					table.remove();
+					$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+				}
+				
 				 
 				/* nextTable.each(function() {
 					var num = $(this).find('input[name="lastNum"]').val()*1;
@@ -289,30 +344,39 @@
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			   
 		}
-		
-		/* function fn_saveBtn(){
+		function fn_prevBtn(){
+			var url = '/maintenance/contract/write/basicInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtIntegrateKey":$('#mtIntegrateKey').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
 
-			var object = {};
-			var listObject = new Array();
-			var obj = new Object();
-           	var formData = $("#mtBasicForm").serializeArray();
-           	var listData = $("#mtListForm").serializeObject();
-            
-           	for (var i = 0; i<formData.length; i++){
-                
-                object[formData[i]['name']] = formData[i]['value'];
-                            
-            }
-           console.log("formData===>"+formData);  
-           console.log("listData===>"+listData.length);  
-           console.log("listData===>"+JSON.stringify(listData));  
-           //console.log("listData2===>"+removeCommas(JSON.stringify(listData)));  
-           
-           for (var i = 0; i<listData.length; i++){
-        	   console.log("listData.mtPmUprice===>"+listData.mtPmUprice);  
-           }
-		} */
 		function fn_saveBtn(){
+			//필수값 체크를 완료하면 저장 프로세스 시작.
+			var msg;
+			if ($("#mtListForm")[0].checkValidity()){
+				if($('#rowNum').val()*1 >0){
+					msg = "유지보수계약 제품정보를 수정하시겠습니까?"
+					
+				} else {
+					msg = "유지보수계약 제품정보를 저장하시겠습니까?"
+				}
+				
+				if(confirm(msg)) {
+					saveProductList();
+				}
+				
+			}  else {
+				 //Validate Form
+		        $("#mtListForm")[0].reportValidity();	
+			}
+		}
+	
+		function saveProductList(){
 
 			var object = {};
 			var listObject = new Array();
@@ -329,7 +393,7 @@
             object["mtContractProductVoList"]=listData;           	
 			
 			var sendData = JSON.stringify(object);
-           	console.log("sendData==>"+sendData);
+           	//console.log("sendData==>"+sendData);
            	$.ajax({
 	        	url:"/maintenance/contract/write/productInfo.do",
 	            dataType: 'text', 
@@ -345,7 +409,7 @@
 	        	},
 	            success:function(data){	
 	            	var paramData = JSON.parse(data);
-	            	console.log("data.mtIntegrateKey==>"+paramData.mtIntegrateKey);
+	            	//console.log("data.mtIntegrateKey==>"+paramData.mtIntegrateKey);
 	            	
 	            	if("Y" == paramData.successYN){
 	            		alert("유지보수계약 제품등록을 성공하였습니다.");
@@ -379,7 +443,12 @@
 			$("#prodList-"+num+"-totalAmount").val(addCommas(quantity*pmUprice))
 		});
 
-		
+		function fn_viewSummaryUpAll(){
+			$(".dpTbRow").attr('class','dpNone');
+			$(".down").attr('class','up');
+			$(".up").attr('src','<c:url value='/images/arrow_down.png'/>');
+			//$(".up").src = "<c:url value='/images/arrow_down.png'/>";
+		}
 	</script>
 </head>
 <body>
@@ -401,9 +470,20 @@
 			</ul>
 		</div>
 		<form action="/" id="mtBasicForm" name="mtBasicForm" method="post">
+		<c:choose>
+			<c:when test="${listCount > 0}">
+			<input type="hidden" id="prodLength" name="prodLength" value="<c:out value="${listCount}"/>" />
+			</c:when>
+			<c:otherwise> 
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			</c:otherwise>
+		</c:choose>
+			<%-- <input type="hidden" id="prodLength" name="prodLength" value="<c:out value="${listCount}"/>" />
+			<input type="hidden" id="prodLength" name="prodLength" value="1" /> --%>
 			<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${parmMtSbCtYn}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
+			<input type="hidden" id="rowNum" name="rowNum" value="<c:out value="${listCount}"/>" />
+			<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
 		</form>
 		<form action="/" id="mtListForm" name="mtListForm" method="post">
 			<div class="contents">
@@ -419,58 +499,123 @@
 							</tr>
 						</table>
 					</div>
-					<div class="prodTable">
-						<input type="hidden" name="lastNum" value="0" />
-						<table>
-							<tr>
-								<td class="tdTitle firstTd">제품</td>
-								<td class="tdContents firstTd">
-									<input type="text" name="mtPmFkKey" class="search" />	
-									<!-- <input type="text" name="mtPmFkKeyNm"class="search" />	
-									<input type="hidden" name="mtPmFkKey"/>	 -->
-								</td>
-								<td class="tdTitle firstTd">합계</td>
-								<td class="tdContents firstTd">
-									<input type="text" id="prodList-0-totalAmount" name="totalAmount" readonly="readonly"/>	
-								</td>
-								<td class="tdTitle firstTd">수량</td>
-								<td class="tdContents firstTd">
-									<input type="text" id="prodList-0-mtPmQuantity" name="mtPmQuantity" amountOnly style="width: 75px;" class="calculate"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
-								</td>
-							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle">단가</td>
-								<td class="tdContents">
-									<input type="text" id="prodList-0-mtPmUprice" amountOnly name="mtPmUprice" class="calculate"/>
-								</td>	
-								<td class="tdTitle">시리얼번호</td>
-								<td class="tdContents" colspan="3">
-									<input type="text" name="mtPmSerialNum" />	
-								</td>
-							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle">계약기간</td>
-								<td class="tdContents" colspan="3">
-									<input type="text" id="prodList-0-mtPmStartDt" name="mtPmStartDt" class="calendar fromDt" />&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-0-mtPmEndDt" name="mtPmEndDt" class="calendar toDt" />
-								</td>
-							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle">상세정보</td>
-								<td class="tdContents" colspan="5"><textarea name="mtPmDetail"></textarea></td>
-							</tr>
-							<tr class="dpTbRow">
-								<td class="tdTitle lastTd">비고</td>
-								<td class="tdContents lastTd" colspan="5"><textarea name="remark"></textarea></td>
-							</tr>
-						</table>
-					</div>
+					<c:choose>
+						<c:when test="${mtProductList == null ||  mtProductList.size() == 0}">
+						<div class="prodTable">
+							<input type="hidden" name="lastNum" value="0" />
+							<table>
+								<tr>
+									<td class="tdTitle firstTd"><label>*</label>제품</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-0-mtPmFkKey" name="mtPmFkKey" class="search" required/>	
+										<input type="hidden" id="prodList-0-pmNmCd" name="pmNmCd" />
+										<!-- <input type="text" id="prodList-0-pmNmCd" name="pmNmCd" class="search" required/>	
+										<input type="hidden" id="prodList-0-mtPmFkKey" name="mtPmFkKey"/>	 -->
+										<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />	
+									</td>
+									<td class="tdTitle firstTd">시리얼번호</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-0-mtPmSerialNum" name="mtPmSerialNum" required/>
+									</td>
+									<td class="tdTitle firstTd"><label>*</label>수량</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-0-mtPmQuantity" name="mtPmQuantity" amountOnly style="width: 75px;" class="calculate" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+			                        	<img id="prodList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label>단가</td>
+									<td class="tdContents">
+										<input type="text" id="prodList-0-mtPmUprice" name="mtPmUprice" class="calculate" amountOnly required/>
+									</td>	
+									<td class="tdTitle"><label>*</label>합계</td>
+									<td class="tdContents" colspan="3">
+										<input type="text" id="prodList-0-totalAmount" name="totalAmount" style="text-align: right;" readonly="readonly"/>	
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label>계약기간</td>
+									<td class="tdContents" colspan="3">
+										<input type="text" id="prodList-0-mtPmStartDt" name="mtPmStartDt" class="calendar fromDt" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-0-mtPmEndDt" name="mtPmEndDt" class="calendar toDt" required/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle">상세정보</td>
+									<td class="tdContents" colspan="5"><textarea id="prodList-0-mtPmDetail" name="mtPmDetail"></textarea></td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle lastTd">비고</td>
+									<td class="tdContents lastTd" colspan="5"><textarea id="prodList-0-remark" name="remark"></textarea></td>
+								</tr>
+							</table>
+						</div>
+						</c:when>
+						<c:otherwise>
+						<c:forEach var="list" items="${mtProductList}" varStatus="status">
+						<div class="prodTable">
+							<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>"/>
+							<table>
+								<tr>
+									<td class="tdTitle firstTd"><label>*</label>제품</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>" class="search" required/>	
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" />
+										<!-- <input type="text" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" class="search" required/>	
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>"/>	 -->
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
+									</td>
+									<td class="tdTitle firstTd">시리얼번호</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum" name="mtPmSerialNum" value="<c:out value="${list.mtPmSerialNum}"/>" required/>
+											
+									</td>
+									<td class="tdTitle firstTd"><label>*</label>수량</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmQuantity" name="mtPmQuantity" value="<c:out value="${displayUtil.commaStr(list.mtPmQuantity)}"/>" amountOnly style="width: 75px;" class="calculate" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+			                        	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label>단가</td>
+									<td class="tdContents">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmUprice" name="mtPmUprice" value="<c:out value="${displayUtil.commaStr(list.mtPmUprice)}"/>" class="calculate" amountOnly required/>
+									</td>	
+									<td class="tdTitle"><label>*</label>합계</td>
+									<td class="tdContents" colspan="3">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" style="text-align: right;" value="<c:out value="${displayUtil.makeMultiNumber(list.mtPmQuantity, list.mtPmUprice)}"/>" readonly="readonly"/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label>계약기간</td>
+									<td class="tdContents" colspan="3">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmStartDt" name="mtPmStartDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmEndDt" name="mtPmEndDt" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>" required/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle">상세정보</td>
+									<td class="tdContents" colspan="5"><textarea id="prodList-<c:out value="${status.index}"/>-mtPmDetail" name="mtPmDetail"><c:out value="${list.mtPmDetail}"/></textarea></td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle lastTd">비고</td>
+									<td class="tdContents lastTd" colspan="5"><textarea id="prodList-<c:out value="${status.index}"/>-remark" name="remark"><c:out value="${list.remark}"/></textarea></td>
+								</tr>
+							</table>
+						</div>
+						</c:forEach>
+						</c:otherwise>
+					</c:choose>					
+					
 				</div>
-				<div class="btnWrap floatR">
-					<div class="floatR" onclick="fn_saveBtn();">
-						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				<div class="btnWrap">
+					<div class="floatL">
+						<button type="button"><img src="<c:url value='/images/btn_prev_icon.png'/>" onclick="fn_prevBtn();"/></button>
 					</div>
+					<div class="floatR" >
+						<button type="button"><img src="<c:url value='/images/btn_next_icon.png'/>" onclick="fn_saveBtn();"/></button>
+					</div>
+					
 					<div class="floatN floatC"></div>
 				</div>
 			</div>		

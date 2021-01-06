@@ -105,6 +105,6 @@ public class CepDisplayUtil {
 		for (int i = 0; i < numbers.length; i++) {
 			multiVal += numbers[i];			
 		}
-		return (String.valueOf(multiVal));
+		return commaStr(String.valueOf(multiVal));
 	}
 }

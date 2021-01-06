@@ -25,6 +25,7 @@ import com.cep.maintenance.work.service.MtWorkService;
 import com.cep.maintenance.work.vo.MtWorkProductVO;
 import com.cep.maintenance.work.vo.MtWorkVO;
 import com.cmm.util.CepDateUtil;
+import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
 
 @Controller
@@ -525,7 +526,8 @@ public Map<String, String> writeProductInfo(HttpServletRequest request,  @Reques
 			
 			model.put("basicContractInfo", basicContractInfo);
 			model.put("mtWorkProductList", mtWorkProductList);
-			model.put("mtWorkKey", mtWorkVO.getMtWorkKey());
+			model.put("mtWorkKey", mtWorkVO.getMtWorkKey());		
+			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
 		} catch (Exception e) {
 			model.put("successYN", "N");
