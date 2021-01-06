@@ -48,6 +48,12 @@ public class SampleDefaultVO implements Serializable {
 
 	/** 검색Keyword */
 	private String searchKeyword = "";
+	
+	// 시작일
+    private String searchFromDt;
+    
+	// 종료일
+    private String searchToDt;
 
 	/** 검색사용여부 */
 	private String searchUseYn = "";
@@ -142,9 +148,25 @@ public class SampleDefaultVO implements Serializable {
 		this.pageSize = pageSize;
 	}
 
+	public String getSearchFromDt() {
+		return searchFromDt;
+	}
+
+	public void setSearchFromDt(String searchFromDt) {
+		this.searchFromDt = searchFromDt;
+	}
+
+	public String getSearchToDt() {
+		return searchToDt;
+	}
+
+	public void setSearchToDt(String searchToDt) {
+		this.searchToDt = searchToDt;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-
+	
 }

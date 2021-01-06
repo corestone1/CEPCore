@@ -10,4 +10,6 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 public interface FileMngMapper {
 	public List<FileVO> selectFileList(FileVO fileVO);
 	public FileVO selectFile(FileVO fileVO);
+	public int getMaxFileKey(FileVO vo);
+	public void insertFile(FileVO vo);
 }

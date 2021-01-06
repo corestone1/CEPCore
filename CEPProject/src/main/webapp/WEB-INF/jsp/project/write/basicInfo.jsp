@@ -129,6 +129,38 @@
 		 }
 	</style>
 	<script>
+		function fn_saveNext(){
+	       	var object = {};
+	       	var formData = $("#infoForm").serializeArray();
+	       	for (var i = 0; i<formData.length; i++){
+	            object[formData[i]['name']] = formData[i]['value'];
+	         }
+	       	var sendData = JSON.stringify(object);
+	       	
+	       	 $.ajax({
+	        	url:"/project/insert/basicInfo.do",
+	            dataType: 'json', 
+	            type:"POST",  
+	            data: sendData,
+	     	   	contentType: "application/json; charset=UTF-8", 
+	     	  	beforeSend: function(xhr) {
+	        		xhr.setRequestHeader("AJAX", true);
+	        		//xhr.setRequestHeader(header, token);
+	        		
+	        	},
+	            success:function(response){	
+	            	if(response!= null && response.successYN == 'Y') {
+	            		console.log(response.pjKey);
+	            	}
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	        });  
+		}
+	
 		function fn_addBiddingView(){
 			var url = '/project/write/amountInfo.do';
 			var dialogId = 'program_layer';
@@ -141,135 +173,91 @@
 		}
 		
 		function fn_SamplePopup(){
-		    window.open('/project/popup/list.do','','width=1000px,height=400,left=600');
+		    window.open('/project/popup/list.do','project_list','width=1000px,height=400,left=600');
 		}
 	</script>
 </head>
 <body>
-	<div class="popContainer">
-		<div class="top">
-			<div>
-				<div class="floatL ftw500">프로젝트 등록</div>
-			</div>
-		</div>
-		<div class="left">
-			<ul class="ftw400">
-				<li >기본정보</li>
-			</ul>
-		</div>
-		<div class="contents">
-			<input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
-			<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/>
-			<input type="hidden" id="dialogId" />
-			<div>
-				<table>
-					<tr>
-						<td class="btnFc" colspan="2"><button onclick="fn_SamplePopup();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
-					</tr>
-					<tr>
-						<td class="tdTitle">프로젝트명</td>
-						<td class="tdContents"><input type="text"/></td>
-					</tr>
-					<tr>
-						<td class="tdTitle">고객사</td>
-						<td class="tdContents">
-							<input type="text" class="search" />	
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">고객사담당자</td>
-						<td class="tdContents">
-							<select>
-								<option value="">홍길동</option>
-							</select>					
-							<input type="text" class="pname"  value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">영업담당자</td>
-						<td class="tdContents">
-							<select>
-								<option value="">최재용</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">지원담당자</td>
-						<td class="tdContents">
-							<select>
-								<option value="">김규민</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">사업기간</td>
-						<td class="tdContents">
-							<input type="text" placeholder="from" class="calendar fromDt" /> ~ 
-							<input type="text" placeholder="to" class="calendar toDt" />
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">비고</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<%-- <tr>
-						<td>							
-							<button><img src="<c:url value='/images/btn_file.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>							
-						</td>
-					</tr> --%>
-					<%-- <tr>
-						<td class="tdBtnWrap1"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td class="tdBtnWrap2">
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button><button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr> --%>
-					<%-- <tr>
-						<div class="btnWrap">
-							<table width="788px">
-								<tr width="788px">
-									<td width="30%" align="left" border="1px" border-color="#7ccbe8">
-										<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-									<td width="70%" align="right"border="1px" >
-										<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-									</td>
-								</tr>
-							</table>
-						</div>					
-					</tr> --%>					
-				</table>
-				<%-- <table>
-					<tr width="788px" class="btnWrap">
-						<td  width="200">
-							<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="610"align="right">
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table> --%>	
-			</div>
-			<div class="btnWrap floatR">
-				<div class="floatL">
-					<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
+	<form:form commandName="infoForm" id="infoForm" name="infoForm" method="post">
+		<div class="popContainer">
+			<div class="top">
+				<div>
+					<div class="floatL ftw500">프로젝트 등록</div>
 				</div>
-				<div class="floatR" onclick="fn_addBiddingView();">
-					<button ><img src="<c:url value='/images/btn_next.png'/>" /></button>
-				</div>
-				<div class="floatN floatC"></div>
 			</div>
-<%-- 			<div class="btnWrap">
-				<table width="788px">
-					<tr width="788px">
-						<td width="30%" align="left" border="1px" border-color="#7ccbe8"><button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="70%" align="right"border="1px" border-color="solid #dcdcdc">
-							<button><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table>
-			</div> --%>
+			<div class="left">
+				<ul class="ftw400">
+					<li >기본정보</li>
+				</ul>
+			</div>
+			<div class="contents">
+				<input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
+				<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/>
+				<input type="hidden" id="dialogId" />
+				<div>
+					<table>
+						<tr>
+							<td class="btnFc" colspan="2"><button onclick="fn_SamplePopup();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+						</tr>
+						<tr>
+							<td class="tdTitle">프로젝트명</td>
+							<td class="tdContents"><input type="text" name="pjNm"/></td>
+						</tr>
+						<tr>
+							<td class="tdTitle">고객사</td>
+							<td class="tdContents">
+								<input type="text" class="search" name="acKey"/>	
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">고객사담당자</td>
+							<td class="tdContents">
+								<select name="acDirectorKey">
+									<option value="">홍길동</option>
+								</select>					
+								<input type="text" class="pname"  value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">영업담당자</td>
+							<td class="tdContents">
+								<select name="pjSaleEmpKey">
+									<option value="">최재용</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">지원담당자</td>
+							<td class="tdContents">
+								<select name="pjSupportEmpKey">
+									<option value="">김규민</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">사업기간</td>
+							<td class="tdContents">
+								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt"/> ~ 
+								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" />
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT">비고</td>
+							<td class="tdContents"><textarea name="remark"></textarea></td>
+						</tr>
+					</table>
+				</div>
+				<div class="btnWrap floatR">
+					<div class="floatL">
+						<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
+					</div>
+					<div class="floatR">
+						<button type="button" onclick="fn_saveNext();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					</div>
+					<div class="floatN floatC"></div>
+				</div>
+			</div>
 		</div>
-	</div>
+	</form:form>
 </body>
 </html>

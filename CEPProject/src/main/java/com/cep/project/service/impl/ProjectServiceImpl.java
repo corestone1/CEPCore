@@ -3,22 +3,19 @@ package com.cep.project.service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
 import com.cmm.service.FileMngService;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 
 @Service("projectService")
@@ -37,13 +34,35 @@ public class ProjectServiceImpl implements ProjectService {
 	 * @exception Exception
 	 */
 	@Override
-	public List<?> selectProjectList(SampleDefaultVO searchVO) throws Exception {
+	public List<?> selectProjectList(ProjectVO searchVO) throws Exception {
 		return mapper.selectProjectList(searchVO);
 	}
 	
 	@Override
 	public int selectProjectListTotCnt(SampleDefaultVO searchVO) throws Exception {
 		return mapper.selectProjectListTotCnt(searchVO);
+	}
+	
+	public Map<String, Object> insertBasicInfo(HttpServletRequest request, Map<String, Object> param) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		ProjectVO projectVO = new ProjectVO();
+		int result = 0;
+
+		projectVO.setPjKey("PJ200003");
+		projectVO.setAcKey(CepStringUtil.getDefaultValue(param.get("acKey"), ""));
+		projectVO.setPjSaleEmpKey(CepStringUtil.getDefaultValue(param.get("pjSaleEmpKey"), ""));
+		projectVO.setPjSupportEmpKey(CepStringUtil.getDefaultValue(param.get("pjSupportEmpKey"), ""));
+		projectVO.setAcDirectorKey(CepStringUtil.getDefaultValue(param.get("acDirectorKey"), ""));
+		projectVO.setPjStartDt(CepStringUtil.getDefaultValue(param.get("pjStartDt"), ""));
+		projectVO.setPjEndDt(CepStringUtil.getDefaultValue(param.get("pjEndDt"), ""));
+		
+		result = mapper.insertBasicInfo(projectVO);
+		
+		if(result > 0) {
+			returnMap.put("resultCode", "successYN");
+		}
+		
+		return returnMap;
 	}
 	
 	@Override

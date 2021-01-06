@@ -405,10 +405,31 @@
 					$("#modInfo img").attr('src',"/images/btn_save.png");
 				} else {
 					/* alert('수정되었습니다.'); */
+					var object = {};
+		           	var formData = $("#viewForm").serializeArray();
+		           	for (var i = 0; i<formData.length; i++){
+		                
+		                object[formData[i]['name']] = formData[i]['value'];
+		             }
+		           	var data = JSON.stringify(object);
+		           
 					$.ajax ({
-						url:""
-					})
-					location.reload();
+						url:"/project/update/biddingInfo.do",
+						type:'post',
+						data: data,
+						dataType:'json',
+						contentType: "application/json; charset=UTF-8", 
+						success:function(data){	
+			            	alert('첨부파일 저장');
+			            	 
+			            },
+			        	error: function(request, status, error) {
+			        		if(request.status != '0') {
+			        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+			        		}
+			        	} 
+					});
+					/* location.reload(); */
 				}
 				modCh++;
 			});
@@ -882,8 +903,9 @@
 		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
 		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
 		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
-		<input type="hidden" name="fileKey" value=""/>
-		<input type="hidden" name="fileOrgNm" value=""/>
+		<input type="hidden" name="fileKey" value="${fileList.fileKey}"/>
+		<input type="hidden" name="fileOrgNm" value="${fileList.fileOrgNm}"/>
+		<input type="hidden" name="fileType" value="cdc"/>
 	</form:form>
 </body>
 </html>

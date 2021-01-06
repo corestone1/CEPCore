@@ -84,6 +84,13 @@
 		overflow-x: hidden;
 		float: left;
 	}
+	.popContainer .middle table tbody span {
+		display: inline-block;
+		overflow:hidden; 
+		text-overflow:ellipsis; 
+		white-space:nowrap;
+		vertical-align: middle;
+	}
 	.middle table tbody tr {
 		display: table;
 	}
@@ -153,8 +160,8 @@
 	            					<%-- <c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/> --%>
 	            					<c:out value="${result.pjKey}"/>
 	            				</td>
-	            				<td align="left" class="listtd"><span><c:out value="${result.acKey}"/></span>&nbsp;</td>
-	            				<td align="left" class="listtd"><span><c:out value="${result.pjNm}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd"><span><c:out value="${result.acKey}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd"><span><c:out value="${result.pjNm}"/></span>&nbsp;</td>
 	            				<td align="center" class="listtd"><c:out value="${result.pjStartDt}"/>&nbsp;</td>
 	            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
 	            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/>&nbsp;</td>

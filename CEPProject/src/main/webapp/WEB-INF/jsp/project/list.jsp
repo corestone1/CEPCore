@@ -79,6 +79,14 @@
 			width: 1662px;
 			cursor: pointer;
 		}
+		.middle table tbody tr td span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			margin-left: 15px;
+			vertical-align: middle;
+		}
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
 		}
@@ -188,40 +196,6 @@
 					default: $(this).children().eq(8).css('color','#000');break;
 				} 
 			});
-			
-			/* $('#pl tr').click(function(id) {
-				/* $.ajax({
-					url: '/example.projectDetail.do',
-					param: $('#listFrom').serialize(),
-					cache : false,
-					async : false,
-					dataType : "json",
-					
-					success: function(response) {
-						$('#listForm').submit();
-					},
-					
-					error: function(request, status, error) {
-						if(request.status != '0') {
-							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-						}
-					}
-				}); */
-				/* location.href = "/project/detail/bidding.do"; */
-				/* if(event.target.nodeName=="TD"){
-					location.href = "/project/detail/bidding.do";
-				} */ 
-				
-				
-				
-				/* if($(this).children().eq(0)){
-					alert("==>"+$(this).children().eq(0).children().eq(0).val()+"<==");
-				} else{
-					alert("bbbb");
-				} 
-				
-			}); */
-			
 		});
 		
 		function fn_addView(){
@@ -235,25 +209,63 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
+		function fn_search() {
+			var html = '';
+	        var page = '';
+	        $.ajax({
+	        	url: "/project/searchList.do",
+	        	type: "POST",
+	        	data: JSON.stringify({searchKeyword:$('#searchKeyword').val(), searchFromDt: $("#searchFromDt").val(), searchToDt: $("#searchToDt").val()}),
+	        	dataType: "json",
+	        	contentType: "application/json; charset=UTF-8",
+	        
+	        	beforeSend: function(xhr) {
+	        		xhr.setRequestHeader("AJAX", true);
+	        		//xhr.setRequestHeader(header, token);
+	        	},
+	        	success: function(response) {
+	        		if(response != null && response.successYN == 'Y') {
+	        			for(i = 0; i < response.resultList.length; i++) {
+							html += '<tr>'
+											+ '<td onclick="event.cancelBubble = true;"><input type="checkbox" class="tCheck" id="check' + (i+1) + '"/><label for="check' + (i+1) + '" class="cursorP"/></td>'
+					        				+ '<td align="center" class="listtd">'+ response.resultList[i].pjKey +'</td>'
+				        					+ '<td align="left" class="listtd"><span>'+ response.resultList[i].acKey +'</span></td>'
+				            				+ '<td align="left" class="listtd"><span><a href="javascript:fn_detail('+ response.resultList[i].pjKey + ')">'+ response.resultList[i].pjNm +'</a></span></td>'
+				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjStartDt +'</td>'
+				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjEndDt +'</td>'
+				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjEndDt +'</td>'
+				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjEndDt +'</td>'
+				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjStatusCd +'</td>'
+				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjSaleEmpKey +'</td>'
+			            				+ '</tr>'
+						}
+						$('.middle table tbody').html('');
+						$('.middle table tbody').append(html);
+	        		}	
+	        	},
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	}
+	        });
+		}
+		
 		function fn_detail(pjKey) {
 			form = document.listForm;
 			form.pjKey.value = pjKey;
 			form.action = "<c:url value='/project/detail/bidding.do'/>";
 			form.submit(); 
 		}
+		
 	</script>
 </head>
 <body>
-	<form:form id="listForm" name="listForm" method="post">
-		<input type="hidden" name="pjKey" value="<c:out value='${pjKey}'/>"/>
-		<input type="hidden" name="pjKey2" value="sss"/>
+	<form:form commandName="searchVO"  id="listForm" name="listForm" method="post" onsubmit="return false">
+		<input type="hidden" value="<c:out value="${resultCode}"/>"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
-			<!-- <input type="text" id="id" style="border: 1px solid #000;"/>
-			<input type="text" id="no" style="border: 1px solid #000;"/>
-			<input type="hidden" id="dialogId" />
-			<button type="button" onclick="fn_SamplePopup();">샘플팝업</button> -->
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
@@ -261,19 +273,12 @@
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
 					</div>
 					<div class="floatR">
-						<%-- <form:select path="searchCondition" cssClass="use">
-        					<form:option value="" label="상태" />
-        					<form:option value="" label="입찰" />
-        					<form:option value="" label="계약" />
-        					<form:option value="" label="발주" />
-        					<form:option value="" label="수행" />
-        					<form:option value="" label="완료" />
-        				</form:select> --%>
-						<input type="text" class="calendar fromDt" placeholder="from" id=""/>
+						<input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value=""/>
+						<%-- <c:out value="${searchVO.searchFromDt}"/> --%>
 						<label> ~ </label>
-						<input type="text" class="calendar toDt" placeholder="to" id=""/>
-						<input type="text" class="search" placeholder="프로젝트명" />
-						<span class="veralignT"><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<input type="text" class="calendar toDt" placeholder="to" id="searchToDt" name="searchToDt" value="<c:out value="${searchVO.searchToDt}"/>"/>
+						<input type="text" name="searchKeyword" id="searchKeyword" class="search" onKeyPress="if(event.keyCode==13){fn_search();}"placeholder="프로젝트명"  value="<c:out value="${searchVO.searchKeyword}"/>" />
+						<a href="javascript:fn_search();" class="veralignT"><img src="<c:url value='/images/icon_search.png'/> " /></a>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -298,31 +303,18 @@
 		            			<tr>
 		            				<td onclick="event.cancelBubble = true;"></td>
 		            				<td align="center" class="listtd">
-		            					<%-- <c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/> --%>
 		            					<c:out value="${result.pjKey}"/>
 		            				</td>
-		            				<td align="left" class="listtd"><c:out value="${result.acKey}"/>&nbsp;</td>
-		            				<td align="left" class="listtd"><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a>&nbsp;</td>
-		            				<td align="left" class="listtd"><c:out value="${result.pjStartDt}"/>&nbsp;</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/>&nbsp;</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/>&nbsp;</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/>&nbsp;</td>
+		            				<td align="left" class="listtd"><span><c:out value="${result.acKey}"/></span></td>
+		            				<td align="left" class="listtd"><span><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjStartDt}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/></td>
 		            			</tr>
 		        			</c:forEach>
-							<!-- <tr>
-								<td onclick="event.cancelBubble = true;"></td>
-								<td>002-2018-1220</td>
-								<td>미래에셋생명</td>
-								<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>71일</td>
-								<td>71일</td>
-								<td><input type="hidden" value="PF" />수행</td>
-								<td>홍길동차장</td>
-							</tr> -->
 						</tbody>
 					</table>
 				</div>
