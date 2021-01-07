@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmm.service.impl.ComMapper">
+
+	<!-- ######################################################################  -->
+	<!-- 거래처 리스트 조회 -->
+	<select id="selectAccountList" resultType="egovMap">
+		SELECT 
+			AC_KEY
+			, AC_BUSI_NUM
+			, AC_NM
+		FROM CMM_ACCOUNT_TB
+		ORDER BY AC_NM		
+	</select>
+	
+	<!-- 거래처 담당자 리스트 조회 -->
+	<select id="selectAcDirectorList" parameterType="String" resultType="egovMap">			
+		SELECT AC_DIRECTOR_KEY
+			, AC_DIRECTOR_NM
+			, CONCAT(AC_DIRECTOR_POSITION_NM , ' / ' , AC_DIRECTOR_MB_NUM , ' / ' , AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
+		FROM CMM_ACCOUNT_DIRECTOR_TB
+		WHERE AC_KEY = #{acKey}
+		ORDER BY AC_DIRECTOR_NM		
+	</select>
+	
+	<!-- 사원리스트 조회 -->
+	<select id="selectEmployeeList" resultType="egovMap">			
+		SELECT EMP_KEY
+			, EMP_NM
+		FROM CMM_EMPLOYEE_TB
+		ORDER BY EMP_NM		
+	</select>
+	
+	
+	<select id="makePrimaryKey" parameterType="String" resultType="String">			
+		SELECT make_key(#{keyType});
+	</select>
+	
+</mapper>

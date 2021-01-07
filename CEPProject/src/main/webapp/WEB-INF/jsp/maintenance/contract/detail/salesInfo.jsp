@@ -62,12 +62,12 @@
 		form .contents > div > div > div > table tr td {
 			padding: 13px 20px;
 		}
-		form .contents > div > div > div > table tr td:first-child {
+		form .contents .bsc tr td:first-child {
 			width: 124px;
 			font-weight: 400;
 			padding: 13px 20px 13px 45px;
 		} 
-		form .contents > div > div > div > table tr td:last-child {
+		form .contents .bsc tr td:last-child {
 			width: 400px;
 			font-weight: 200;
 		}
@@ -77,14 +77,12 @@
 			border: 1px solid #bee2da;
 		    border-bottom: 2px solid #bfe3db;
 		}
-		
 		form .contents .bsc tbody {			
 			height: 576px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
 		}
-		
 		form .contents .bsc tr td {
 			color: #0e8a67;
 		}
@@ -128,78 +126,53 @@
 			color: #fff  !important;
 			background-color: #4c3d92;
 		}
+		form .contents .dtlWrap {
+			height: 490px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			border-bottom: 2px solid #c4c4c4;
+		}
 		form .contents .dtl {
 			width: 997px;
 			font-size: 15px;
 			border-collapse: collapse;
 			font-weight: 300;
 			overflow: hidden;
-			border-top: 4px solid #6a5baf;
+		}
+		form .contents .dtl.body {
+			overflow-y: auto;
+			overflow-x: hidden;
+			float: left;
 		}
 		form .contents .dtl thead {
 			background-color: #e1dff5;
 			float: left;
 			width: 997px;
+			border-top: 4px solid #6a5baf;
 		}
 		form .contents .dtl thead tr {
-			display: table;
-			width: 997px;
-		}
-		form .contents .dtl tbody {
-			width: 997px;
-			height: 532px;
-			overflow-y: auto;
-			overflow-x: hidden;
-			float: left;
-			border-bottom: 2px solid #c4c4c4;
-		}
-		form .contents .dtl tbody tr {
-			display: table;
 			width: 997px;
 			cursor: pointer;
 		}
-		form .contents .dtl tbody tr:hover {
-			background-color: #ddf0ec
+		form .contents .dtl tbody {
+			float: left;
 		}
-		form .contents .dtl tbody tr td:nth-child(3) {
-			font-weight: 400;
+		form .contents .dtl tbody:hover {
+			background-color: #ddf0ec;
+		}
+		form .contents .dtl tbody tr {
+			width: 997px;
+			cursor: pointer;
 		}
 		form .contents .dtl thead th, form .contents .dtl tbody tr td {
 			padding: 10px 7px;
 			border: 1px solid #edebef;
 			text-align: center;
+			width: 122px;
+    		max-width: 122px;
 		}
 		form .contents .dtl tbody tr td {
 			font-weight: 200;
-		}
-		form .contents .dtl thead th:first-child,
-		form .contents .dtl tbody td:first-child {
-			width: 51px;
-			padding: 0;
-		}
-		form .contents .dtl thead th:nth-child(2),
-		form .contents .dtl tbody td:nth-child(2),
-		form .contents .dtl thead th:nth-child(6),
-		form .contents .dtl tbody td:nth-child(6) {
-			width: 51px;
-		}
-		form .contents .dtl thead th:nth-child(3),
-		form .contents .dtl tbody td:nth-child(3) {
-			width: 170px;
-		}
-		form .contents .dtl thead th:nth-child(4),
-		form .contents .dtl tbody td:nth-child(4) {
-			width: 216px;
-		}
-		form .contents .dtl thead th:nth-child(5),
-		form .contents .dtl tbody td:nth-child(5),
-		form .contents .dtl thead th:nth-child(7),
-		form .contents .dtl tbody td:nth-child(7) {
-			width: 109px;
-		}
-		form .contents .dtl thead th:nth-child(8),
-		form .contents .dtl tbody td:nth-child(8) {
-			width: 78px;
 		}
 		form .contents .dtl tbody tr td > span {
 			display: inline-block;
@@ -278,7 +251,7 @@
 			});
 			
 			var html = '';
-			$('#prodList table tbody tr').click(function() {
+			$('#prodList table tbody').click(function() {
 				if($(this).attr('class') != "viewOpen") {
 					html = '<div style="width:997px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 					       + '<div style="margin: 5px 71px;">'
@@ -517,7 +490,7 @@
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_PD" title="/maintenance/contract/detail/prodInfo.do"><label>제품정보</label></li>
+							<li id="LI_TOPBar_PD" title="/maintenance/contract/detail/productInfo.do"><label>제품정보</label></li>
 							<li id="LI_TOPBar_SL" class="on" title="/maintenance/contract/detail/salesInfo.do"><label>매출정보</label></li>
 							<li id="LI_TOPBar_BC" title="/maintenance/contract/detail/backOrderInfo.do"><label>백계약정보</label></li>
 							<li id="LI_TOPBar_PA" title="/maintenance/contract/detail/purchaseAmountInfo.do"><label>매입정보</label></li>
@@ -525,177 +498,95 @@
 						</ul>
 					</div>
 					<div id="prodList">
-						<div class="stitle cg colorBlack">제품정보<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="stitle cg colorBlack">매출정보<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" /></div>
 						<div class="floatC">
 							<table class="dtl">
 								<thead class="ftw400">
 									<tr>
-										<th scope="row">선택</th>
-										<th scope="row">No</th>
-										<th scope="row">제품</th>
-										<th scope="row">시리얼번호</th>
-										<th scope="row">단가</th>
-										<th scope="row">수량</th>
-										<th scope="row">합계</th>
-										<th scope="row">부가세포함</th>
+										<th rowspan="2" style="width: 10px">선택</th>
+										<th>연도</th>
+										<th>1월</th>
+										<th>2월</th>
+										<th>3월</th>
+										<th>4월</th>
+										<th>5월</th>
+										<th>6월</th>
+									</tr>
+									<tr>
+										<th>합계</th>
+										<th>7월</th>
+										<th>8월</th>
+										<th>9월</th>
+										<th>10월</th>
+										<th>11월</th>
+										<th>12월</th>
 									</tr>
 								</thead>
+							</table>
+						</div>
+						<div class="dtlWrap">
+							<table class="dtl body">
 								<tbody>
 									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check1" /><label for="check1" class="cursorP"/>
-										</td>
-										<td>1</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R642</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">12341234</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
+										<td rowspan="2" style="width: 10px" style="10px"><input type="checkbox" class="tCheck" id="check1"/><label for="check1" class="cursorP"></label></td>
+										<td>2019</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+		                           </tr>
+									<tr>
+										<td>123,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr>
+										<td rowspan="2" style="width: 10px" style="10px"><input type="checkbox" class="tCheck" id="check2"/><label for="check2" class="cursorP"></label></td>
+										<td>2020</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
 									</tr>
 									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check2" /><label for="check2" class="cursorP"/>
-										</td>
-										<td>2</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
+										<td>123,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr>
+										<td rowspan="2" style="width: 10px" style="10px"><input type="checkbox" class="tCheck" id="check3"/><label for="check3" class="cursorP"></label></td>
+										<td>2021</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
 									</tr>
 									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check3" /><label for="check3" class="cursorP"/>
-										</td>
-										<td>3</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check4" /><label for="check4" class="cursorP"/>
-										</td>
-										<td>4</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check5" /><label for="check5" class="cursorP"/>
-										</td>
-										<td>5</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check6" /><label for="check6" class="cursorP"/>
-										</td>
-										<td>6</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check7" /><label for="check7" class="cursorP"/>
-										</td>
-										<td>7</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check8" /><label for="check8" class="cursorP"/>
-										</td>
-										<td>8</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check9" /><label for="check9" class="cursorP"/>
-										</td>
-										<td>9</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check10" /><label for="check10" class="cursorP"/>
-										</td>
-										<td>10</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check11" /><label for="check11" class="cursorP"/>
-										</td>
-										<td>11</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check12" /><label for="check12" class="cursorP"/>
-										</td>
-										<td>12</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check13" /><label for="check13" class="cursorP"/>
-										</td>
-										<td>13</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
+										<td>123,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
+										<td>6,000,000</td>
 									</tr>
 								</tbody>
 							</table>

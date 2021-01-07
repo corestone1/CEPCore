@@ -8,15 +8,17 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectContractVO;
 import com.cep.project.vo.ProjectVO;
+import com.cmm.config.PrimaryKeyType;
+import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
-import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
+
 
 @Service("projectService")
 public class ProjectServiceImpl implements ProjectService {
@@ -26,6 +28,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Resource(name="fileMngService")
 	private FileMngService fileMngService;
+	
+	@Resource(name="comService")
+	private ComService comService;
 	
 	/**
 	 * 프로젝트 목록을 조회한다.
@@ -43,26 +48,57 @@ public class ProjectServiceImpl implements ProjectService {
 		return mapper.selectProjectListTotCnt(searchVO);
 	}
 	
-	public Map<String, Object> insertBasicInfo(HttpServletRequest request, Map<String, Object> param) throws Exception {
+	@Override
+	public List<?> selectProjectDetail(String pjKey) throws Exception {
+		return mapper.selectProjectDetail(pjKey);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> insertBasicInfo(HttpServletRequest request, ProjectVO projectVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		ProjectVO projectVO = new ProjectVO();
+		HashMap<String, String> session = null;
+		
 		int result = 0;
-
-		projectVO.setPjKey("PJ200003");
-		projectVO.setAcKey(CepStringUtil.getDefaultValue(param.get("acKey"), ""));
-		projectVO.setPjSaleEmpKey(CepStringUtil.getDefaultValue(param.get("pjSaleEmpKey"), ""));
-		projectVO.setPjSupportEmpKey(CepStringUtil.getDefaultValue(param.get("pjSupportEmpKey"), ""));
-		projectVO.setAcDirectorKey(CepStringUtil.getDefaultValue(param.get("acDirectorKey"), ""));
-		projectVO.setPjStartDt(CepStringUtil.getDefaultValue(param.get("pjStartDt"), ""));
-		projectVO.setPjEndDt(CepStringUtil.getDefaultValue(param.get("pjEndDt"), ""));
 		
-		result = mapper.insertBasicInfo(projectVO);
+		String pjKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT);
+		projectVO.setPjKey(pjKey);
 		
-		if(result > 0) {
-			returnMap.put("resultCode", "successYN");
+		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+		projectVO.setRegEmpKey(session.get("empKey"));
+		
+	    result = mapper.insertBasicInfo(projectVO);
+	    
+	    if(result > 0){
+        	returnMap.put("successYN", "Y");
+        	returnMap.put("pjKey", pjKey);
 		}
 		
-		return returnMap;
+		return returnMap;		
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> insertContractInfo(HttpServletRequest request, ProjectContractVO projectContractVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		
+		int result = 0;
+		
+		String ctKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_CONTRACT);
+		projectContractVO.setCtKey(ctKey);
+		
+		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+		projectContractVO.setRegEmpKey(session.get("empKey"));
+		
+	    result = mapper.insertContractInfo(projectContractVO);
+	    
+	    if(result > 0){
+        	returnMap.put("successYN", "Y");
+        	returnMap.put("pjKey", projectContractVO.getPjKey());
+		}
+		
+		return returnMap;		
 	}
 	
 	@Override

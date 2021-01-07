@@ -42,6 +42,14 @@ public interface ProjectMapper {
 	public int selectProjectListTotCnt(SampleDefaultVO searchVO);
 	
 	/**
+	 * 프로젝트 상세 정보를 조회한다..
+	 * @param pjKey - 조회할 정보의 key
+	 * @return 프로젝트 상세 정보
+	 * @exception
+	 */
+	public List<?> selectProjectDetail(String pjKey);
+	
+	/**
 	 * 프로젝트 입찰 상세정보를 조회한다.
 	 * @param projectVO - 조회할 정보가 담긴 VO
 	 * @return 프로젝트 상세 정보
@@ -56,6 +64,14 @@ public interface ProjectMapper {
 	 * @exception
 	 */
 	public int insertBasicInfo(ProjectVO projectVO);
+	
+	/**
+	 * 프로젝트 계약 정보를 등록한다.
+	 * @param projectVO - 등록할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int insertContractInfo(ProjectVO projectVO);
 	
 	/**
 	 * 입찰 첨부 파일을 조회한다.

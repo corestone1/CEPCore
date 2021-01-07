@@ -8,6 +8,7 @@
 		<typeAlias alias="sampleVO" type="com.cep.example.vo.SampleVO" />
 		<typeAlias alias="empVO" type="com.cep.main.vo.EmpVO" />
 		<typeAlias alias="projectVO" type="com.cep.project.vo.ProjectVO" />
+		<typeAlias alias="projectContractVO" type="com.cep.project.vo.ProjectContractVO" />
 		<typeAlias alias="mailVO" type="com.cmm.vo.MailVO" />
 		<typeAlias alias="fileVO" type="com.cmm.vo.FileVO" />
     </typeAliases>

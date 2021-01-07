@@ -8,15 +8,15 @@
 		<result property="acDirectorKey" column="AC_DIRECTOR_KEY" />
 		<result property="pjNm" column="PJ_NM"/>
 		<result property="pjStartDt" column="PJ_START_DT"/>
+		<result property="pjInspectDt" column="PJ_INSPECT_DT" />
 		<result property="pjEndDt" column="PJ_END_DT"/>
 		<result property="pjStatusCd" column="PJ_STATUS_CD"/>
 		<result property="pjSaleEmpKey" column="PJ_SALE_EMP_KEY"/>
 		<result property="pjSupportEmpKey" column="PJ_SUPPORT_EMP_KEY"/>
-		<result property="bdLimitDt" column="BD_LIMIT_DT" />
-		<result property="bdProposalYn" column="BD_PROPOSAL_YN" />
-		<result property="bdProposalDueDt" column="BD_PROPOSAL_DUE_DT" />
-		<result property="bdProposalPresentYn" column="BD_PROPOSAL_PRESENT_YN" />
-		<result property="bdProposalPresentDt" column="BD_PROPOSAL_PRESENT_DT" />
+		<result property="remark" column="REMARK" />
+		<result property="deleteYn" column="DELETE_YN" />
+		<result property="regEmpKey" column="REG_EMP_KEY" />
+		<result property="spKey" column="SP_KEY" />
 	</resultMap>
 
 	<select id="selectProjectList" parameterType="projectVO" resultMap="project">
@@ -61,6 +61,27 @@
 			</if> -->
 	</select>
 
+	<select id="selectProjectDetail" parameterType="String" resultType="egovMap">
+		
+		SELECT
+			AC_KEY
+			, AC_DIRECTOR_KEY
+			, PJ_NM
+			, PJ_START_DT
+			, PJ_END_DT
+			, PJ_SALE_EMP_KEY
+			, PJ_SUPPORT_EMP_KEY
+			, REMARK
+			, DELETE_YN
+			, REG_DT
+			, REG_EMP_KEY
+			, REG_TM
+			, SP_KEY
+		FROM PJ_MAIN_TB
+		WHERE PJ_KEY=#{pjKey}
+		
+	</select>
+	
 	<insert id="insertBasicInfo" parameterType="projectVO">
 		INSERT INTO PJ_MAIN_TB (
 			PJ_KEY
@@ -71,19 +92,56 @@
 			, PJ_END_DT
 			, PJ_SALE_EMP_KEY
 			, PJ_SUPPORT_EMP_KEY
-			, PJ_REMARK
+			, REMARK
+			, DELETE_YN
+			, REG_DT
+			, REG_EMP_KEY
+			, REG_TM
+			, SP_KEY
 		) VALUES (
-			'PJ200003'
-			, '1'
-			, '1'
-			, '1'
-			, '1'
-			, '1'
-			, '1'
-			, '1'
-			, '1'
+			#{pjKey}
+			, #{acKey}
+			, #{acDirectorKey}
+			, #{pjNm}
+			, #{pjStartDt}
+			, #{pjEndDt}
+			, #{pjSaleEmpKey}
+			, #{pjSupportEmpKey}
+			, #{remark}
+			, 'N'
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, #{regEmpKey}
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{spKey}
 		)
 	</insert>
+	
+	<insert id="insertContractInfo" parameterType="projectContractVO">
+		INSERT INTO PJ_CONTRACT_TB (
+			CT_KEY
+			, PJ_KEY
+			, CT_AMOUNT
+			, TAX_YN
+			, MT_CT_DT
+			, CT_TURN_NO
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{ctKey}
+			, #{pjKey}
+			, #{ctAmount}
+			, #{taxYn}
+			, #{mtCtDt}
+			, #{ctTurnNo}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
 	<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT 
 			PJ_NM

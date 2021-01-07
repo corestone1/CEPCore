@@ -27,6 +27,7 @@ public enum PrimaryKeyType {
 	 * MAINTENACE_WORK : 유지보수 작업 관리키.
 	 */
 	PROJECT("PJ")
+	, PROJECT_CONTRACT("CT")
 	, MAINTENACE_CONTRACT_ALL("MA")
 	, MAINTENACE_CONTRACT("MT") 
 	, MAINTENACE_BACK_ORDER("MB")

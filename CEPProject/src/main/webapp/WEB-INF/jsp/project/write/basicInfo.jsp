@@ -53,10 +53,8 @@
 		.popContainer .contents > div > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
+	  		width: 100%;
 		}
-		/* .popContainer .contents > div > table tr:first-child td {
-			margin-bottom: 100px;
-		} */
 		.popContainer .contents select {
 			width: 200px;
 			height: 40px;
@@ -118,10 +116,14 @@
 			font-size: 14px;
 			color: #525252;
 			padding-right: 20px;
-			width: 99px;
-		}				
+			width: 13%;
+		}
+		.popContainer .contents td.tdTitle label {
+			color: red;
+			vertical-align: middle;
+		}
 		.popContainer .contents td.tdContents {
-			width: 100%;
+			width: 87%;
 			font-size: 14px;
 		} 
 		.ui-datepicker.ui-widget-content {
@@ -129,51 +131,145 @@
 		 }
 	</style>
 	<script>
-		function fn_saveNext(){
-	       	var object = {};
-	       	var formData = $("#infoForm").serializeArray();
-	       	for (var i = 0; i<formData.length; i++){
-	            object[formData[i]['name']] = formData[i]['value'];
+		function fn_chkVali() {
+			if ($("#infoForm")[0].checkValidity()){
+	            if ($("#infoForm")[0].checkValidity()){
+	               //필수값 모두 통과하여 저장 프로세스 호출.
+	               fn_saveNext('contractInfo');
+	            } else {
+	                $("#infoForm")[0].reportValidity();   
+	            }            
+	            
+	         }  else {
+	             //Validate Form
+	              $("#infoForm")[0].reportValidity();   
 	         }
-	       	var sendData = JSON.stringify(object);
-	       	
-	       	 $.ajax({
-	        	url:"/project/insert/basicInfo.do",
-	            dataType: 'json', 
-	            type:"POST",  
-	            data: sendData,
-	     	   	contentType: "application/json; charset=UTF-8", 
+		}
+		
+		function fn_saveNext(link) {
+			var object = {};
+			var formData = $("#infoForm").serializeArray();
+			var form = document.infoForm;
+			
+			for (var i = 0; i<formData.length; i++){
+			    object[formData[i]['name']] = formData[i]['value'];
+			    if("pjStartDt" == formData[i]['name'] || "pjEndDt" == formData[i]['name']) {
+                	//날짜 - 제거
+                	object[formData[i]['name']] = removeData(formData[i]['value'],"-");
+                } else {
+                	object[formData[i]['name']] = formData[i]['value'];
+                }     
+			 }
+			
+			var sendData = JSON.stringify(object);
+			
+			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+				var url = '/project/write/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"pjKey" : $('#pjKey').val()
+				};
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+			} else {
+				$.ajax({
+					url:"/project/insert/basicInfo.do",
+				    dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		var url = '/project/write/'+link+'.do';
+							var dialogId = 'program_layer';
+							var varParam = JSON.parse(JSON.stringify(response));
+							var button = new Array;
+							button = [];
+							showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});  
+			}
+		}
+	
+		function fn_viewPopup(){
+			window.open('/project/popup/list.do','project_list','width=1000px,height=400,left=600'); 
+		}
+		
+		var acDirectorList;
+		
+		$(document).ready(function() {
+			
+			if(!($('#acKey').val() == "")) {
+				fn_selectAc();
+			}
+			
+			/* 고객사 선택하면 고객담당자 정보 가져오기. */
+			$('#acKey').change(function(){				
+				fn_selectAc();
+			}); 
+			
+			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
+			$('#acDirectorKey').change(function(){
+				var checkVal = $('#acDirectorKey option:selected').val();
+				
+				if(acDirectorList.length>0){
+					for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {
+						if(checkVal == acDirectorList[idx].acDirectorKey ){
+							$('#acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
+							break;
+						}
+					}					
+				}				
+			});
+		});
+		
+		function fn_selectAc() {
+			 $.ajax({
+	        	url:"/cmm/selectAcDirectorList.do",
+	            dataType: 'json',
+	            type:"post",  
+	            data: $('#acKey').val(),
+	     	   	contentType: "application/json; charset=UTF-8",
 	     	  	beforeSend: function(xhr) {
 	        		xhr.setRequestHeader("AJAX", true);
 	        		//xhr.setRequestHeader(header, token);
-	        		
 	        	},
-	            success:function(response){	
-	            	if(response!= null && response.successYN == 'Y') {
-	            		console.log(response.pjKey);
-	            	}
+	            success:function(data){		            	
+					if ( data.result.length > 0 ) {
+						acDirectorList = data.result;/* 값이 있는 경우  전역변수에 넣는다. */
+						$('#acDirectorInfo').val(data.result[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
+						$ ('#acDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+						for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
+							if(data.result[idx].acDirectorKey == "${resultList[0].acDirectorKey}") {
+								$('#acDirectorKey').append("<option value='"+data.result[idx].acDirectorKey+"' selected>" + data.result[idx].acDirectorNm + '</option>');
+							} else {
+								$('#acDirectorKey').append("<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>');
+							}
+						}
+	                } else{
+	                	acDirectorList = null;
+						$ ( '#acDirectorKey' ).find('option').remove();
+	                 	$ ( '#acDirectorKey' ).append ( "<option value=''>담당자</option>" );
+	                }
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        		}
 	        	} 
-	        });  
-		}
-	
-		function fn_addBiddingView(){
-			var url = '/project/write/amountInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
-		
-		function fn_SamplePopup(){
-		    window.open('/project/popup/list.do','project_list','width=1000px,height=400,left=600');
+	        });
 		}
 	</script>
 </head>
@@ -194,51 +290,59 @@
 				<input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
 				<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/>
 				<input type="hidden" id="dialogId" />
-				<div>
+				<input type="hidden" id="spKey" name="spKey" />
+				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
+				<div>  
 					<table>
 						<tr>
-							<td class="btnFc" colspan="2"><button onclick="fn_SamplePopup();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+							<td class="btnFc" colspan="2"><button type="button" onclick="fn_viewPopup();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
 						</tr>
 						<tr>
-							<td class="tdTitle">프로젝트명</td>
-							<td class="tdContents"><input type="text" name="pjNm"/></td>
+							<td class="tdTitle"><label>*</label>프로젝트명</td>
+							<td class="tdContents"><input type="text" name="pjNm" value="<c:out value="${resultList[0].pjNm}"/>" required/></td>
 						</tr>
 						<tr>
-							<td class="tdTitle">고객사</td>
+							<td class="tdTitle"><label>*</label>고객사</td>
 							<td class="tdContents">
-								<input type="text" class="search" name="acKey"/>	
+								<input type="text" class="search" name="acKey" id="acKey" value="<c:out value="${resultList[0].acKey}"/>" required/>	
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">고객사담당자</td>
+							<td class="tdTitle"><label>*</label>고객사담당자</td>
 							<td class="tdContents">
-								<select name="acDirectorKey">
-									<option value="">홍길동</option>
-								</select>					
-								<input type="text" class="pname"  value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
+								<select name="acDirectorKey" id="acDirectorKey">
+									<%-- <c:forEach var="emp" items="${empList}" varStatus="status">
+										<option <c:if test="${resultList[0].acDirectorKey == emp.empKey }">selected</c:if> value="${emp.empKey}">${emp.empNm}</option>
+									</c:forEach> --%>
+								</select>				
+								<input type="text" class="pname"  id="acDirectorInfo" value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">영업담당자</td>
+							<td class="tdTitle"><label>*</label>영업담당자</td>
 							<td class="tdContents">
 								<select name="pjSaleEmpKey">
-									<option value="">최재용</option>
+									<c:forEach var="emp" items="${empList}" varStatus="status">										
+										<option <c:if test="${resultList[0].pjSaleEmpKey == emp.empKey }">selected</c:if> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+									</c:forEach>	
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">지원담당자</td>
+							<td class="tdTitle"><label>*</label>지원담당자</td>
 							<td class="tdContents">
 								<select name="pjSupportEmpKey">
-									<option value="">김규민</option>
+									<c:forEach var="emp" items="${empList}" varStatus="status">										
+										<option <c:if test="${resultList[0].pjSupportEmpKey == emp.empKey }">selected</c:if> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+									</c:forEach>	
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">사업기간</td>
+							<td class="tdTitle"><label>*</label>사업기간</td>
 							<td class="tdContents">
-								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt"/> ~ 
-								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" />
+								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt" value="<c:out value="${resultList[0].pjStartDt}"/>" required /> ~ 
+								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" value="<c:out value="${resultList[0].pjEndDt}"/>" required/>
 							</td>
 						</tr>
 						<tr>
@@ -252,7 +356,7 @@
 						<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 					</div>
 					<div class="floatR">
-						<button type="button" onclick="fn_saveNext();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

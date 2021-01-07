@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cep.project.vo.ProjectContractVO;
 import com.cep.project.vo.ProjectVO;
 
 public interface ProjectService {
@@ -27,12 +28,28 @@ public interface ProjectService {
 	public int selectProjectListTotCnt(SampleDefaultVO searchVO) throws Exception;
 	
 	/**
+	 * 프로젝트 상세 정보를 조회한다.
+	 * @param pjKey - 조회할 정보의 key
+	 * @return 프로젝트 상세 정보
+	 * @exception
+	 */
+	public List<?> selectProjectDetail(String pjKey) throws Exception;
+	
+	/**
 	 * 프로젝트 기본 정보를 등록한다.
 	 * @param 
 	 * @return Map
 	 * @exception
 	 */
-	public Map<String, Object> insertBasicInfo(HttpServletRequest request, Map<String, Object> param) throws Exception;
+	public Map<String, Object> insertBasicInfo(HttpServletRequest request, ProjectVO projectVO) throws Exception;
+	
+	/**
+	 * 프로젝트 계약 정보를 등록한다.
+	 * @param 
+	 * @return Map
+	 * @exception
+	 */
+	public Map<String, Object> insertContractInfo(HttpServletRequest request, ProjectContractVO projectContractVO) throws Exception;
 	
 	/**
 	 * 프로젝트 입찰 상세 정보를 조회한다.

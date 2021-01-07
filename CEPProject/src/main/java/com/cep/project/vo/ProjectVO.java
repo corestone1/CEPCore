@@ -16,16 +16,15 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String acDirectorKey;
 	private String pjNm;
 	private String pjStartDt;
+	private String pjInspectDt;
 	private String pjEndDt;
 	private String pjStatusCd;
 	private String pjSaleEmpKey;
 	private String pjSupportEmpKey;
-	private String bdLimitDt;
-	private String bdProposalYn;
-	private String bdProposalDueDt;
-	private String bdProposalPresentYn;
-	private String bdProposalPresentDt;
 	private String remark;
+	private String deleteYn;
+	private String regEmpKey;
+	private String spKey;
 	
 	public String getPjKey() {
 		return pjKey;
@@ -52,13 +51,19 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 		this.pjNm = pjNm;
 	}
 	public String getPjStartDt() {
-		return CepDateUtil.convertDate(pjStartDt, null, null, "V");
+		return CepDateUtil.convertDate(pjStartDt, null, null, "D");
 	}
 	public void setPjStartDt(String pjStartDt) {
 		this.pjStartDt = pjStartDt;
 	}
+	public String getPjInspectDt() {
+		return pjInspectDt;
+	}
+	public void setPjInspectDt(String pjInspectDt) {
+		this.pjInspectDt = pjInspectDt;
+	}
 	public String getPjEndDt() {
-		return pjEndDt;
+		return CepDateUtil.convertDate(pjEndDt, null, null, "D");
 	}
 	public void setPjEndDt(String pjEndDt) {
 		this.pjEndDt = pjEndDt;
@@ -81,40 +86,29 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setPjSupportEmpKey(String pjSupportEmpKey) {
 		this.pjSupportEmpKey = pjSupportEmpKey;
 	}
-	public String getBdLimitDt() {
-		return bdLimitDt;
-	}
-	public void setBdLimitDt(String bdLimitDt) {
-		this.bdLimitDt = bdLimitDt;
-	}
-	public String getBdProposalYn() {
-		return bdProposalYn;
-	}
-	public void setBdProposalYn(String bdProposalYn) {
-		this.bdProposalYn = bdProposalYn;
-	}
-	public String getBdProposalDueDt() {
-		return bdProposalDueDt;
-	}
-	public void setBdProposalDueDt(String bdProposalDueDt) {
-		this.bdProposalDueDt = bdProposalDueDt;
-	}
-	public String getBdProposalPresentYn() {
-		return bdProposalPresentYn;
-	}
-	public void setBdProposalPresentYn(String bdProposalPresentYn) {
-		this.bdProposalPresentYn = bdProposalPresentYn;
-	}
-	public String getBdProposalPresentDt() {
-		return bdProposalPresentDt;
-	}
-	public void setBdProposalPresentDt(String bdProposalPresentDt) {
-		this.bdProposalPresentDt = bdProposalPresentDt;
-	}
 	public String getRemark() {
 		return remark;
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	public String getDeleteYn() {
+		return deleteYn;
+	}
+	public void setDeleteYn(String deleteYn) {
+		this.deleteYn = deleteYn;
+	}
+	public String getRegEmpKey() {
+		return regEmpKey;
+	}
+	public void setRegEmpKey(String regEmpKey) {
+		this.regEmpKey = regEmpKey;
+	}
+	public String getSpKey() {
+		return spKey;
+	}
+	public void setSpKey(String spKey) {
+		this.spKey = spKey;
+	}
+	
 }

@@ -132,7 +132,7 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">프로젝트 목록</div>
+				<div class="floatL ftw500">Forecast 목록</div>
 			</div>
 		</div>
 		<div class="contents">

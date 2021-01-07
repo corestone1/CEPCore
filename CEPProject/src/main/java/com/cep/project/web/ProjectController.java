@@ -21,10 +21,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectContractVO;
 import com.cep.project.vo.ProjectVO;
+import com.cmm.service.ComService;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+
 
 @Controller
 @RequestMapping("/project")
@@ -34,6 +37,9 @@ public class ProjectController {
 	
 	@Resource(name="projectService")
 	private ProjectService service;
+	
+	@Resource(name="comService")
+	private ComService comService;
 	
 	@Resource(name="propertiesService")
 	protected EgovPropertyService propertiesService;
@@ -126,7 +132,7 @@ public class ProjectController {
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		
-		return "project/popup/list";
+		return "project/popup/forecastList";
 	}
 	
 	@RequestMapping(value="/detail/bidding.do", method={RequestMethod.GET, RequestMethod.POST})
@@ -183,33 +189,45 @@ public class ProjectController {
 		return "project/write/project";
 	}
 	
-	@RequestMapping(value="/write/basicInfo.do", method=RequestMethod.GET)
-	public String viewAddBasicInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/write/basicInfo.do", method={RequestMethod.GET, RequestMethod.POST})
+	public String viewAddBasicInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
+		
+		String pjKey = request.getParameter("pjKey");
+		model.addAttribute("pjKey", pjKey);
+		
+		List<?> projectList = service.selectProjectDetail(pjKey);
+		model.addAttribute("resultList", projectList);
+		
+		List<?> empList = comService.selectEmployeeList();
+		model.addAttribute("empList", empList);
 		
 		return "project/write/basicInfo";
 	}
 	
 	@RequestMapping(value="/insert/basicInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addBasicInfo(HttpServletRequest request, @RequestParam Map<String, Object> param) throws Exception {
-		Map<String, Object> returnMap = null;
-		ProjectVO projectVO = new ProjectVO();
-		System.out.println(param);
-		returnMap = service.insertBasicInfo(request, param);
-		
-		/*returnMap.put("pjKey", projectVO.getPjKey());*/
-		
+	public Map<String, Object> addBasicInfo(HttpServletRequest request, @RequestBody ProjectVO projectVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap = service.insertBasicInfo(request, projectVO);
 		
 		return returnMap;
 	}
 	
+	@RequestMapping(value="/insert/contractInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addContractInfo(HttpServletRequest request, @RequestBody ProjectContractVO projectContractVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap = service.insertContractInfo(request, projectContractVO);
+		
+		return returnMap;
+	}
 	
-	@RequestMapping(value="/write/amountInfo.do")
-	public String addAmountnfo(ProjectVO projectVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/write/contractInfo.do")
+	public String viewAddContractInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		model.addAttribute("pjKey", request.getParameter("pjKey"));
 		
-		return "project/write/amountInfo";
+		return "project/write/contractInfo";
 	}
 	
 	

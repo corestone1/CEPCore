@@ -252,7 +252,6 @@ $(window).load(function() {
 			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 			numberOfMonths: 1,
 			onSelect: function( selectedDate ) {
-				$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
 				$(this).datepicker();
 			}
 	    });

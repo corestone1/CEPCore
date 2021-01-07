@@ -14,9 +14,9 @@ public class MeasuringInterceptor extends HandlerInterceptorAdapter{
 	    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 	        try {
 	        	System.out.println("SessionInterceptor : [init]");
-	        	System.out.println(request.getSession().getAttribute("admin"));
-	            //admin이라는 세션key를 가진 정보가 널일경우 로그인페이지로 이동
-	            if(request.getSession().getAttribute("admin") == null ){
+	        	System.out.println(request.getSession().getAttribute("userInfo"));
+	            //userInfo이라는 세션key를 가진 정보가 널일경우 로그인페이지로 이동
+	            if(request.getSession().getAttribute("userInfo") == null ){
 	                    response.sendRedirect("/");
 	                    System.out.println("로그인 정보가 없습니다.");
 	                    return false;
@@ -24,7 +24,7 @@ public class MeasuringInterceptor extends HandlerInterceptorAdapter{
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-	        //admin 세션key 존재시 main 페이지 이동
+	        //userInfo 세션key 존재시 main 페이지 이동
 	        return true;
 	    }
 	 

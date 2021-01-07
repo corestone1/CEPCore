@@ -53,7 +53,7 @@ public class MainController {
 			//session.setAttribute("id", id);
 			//session.setAttribute("pw", pw);
 			session.setAttribute("name", name);
-			session.setAttribute("admin", map);
+			session.setAttribute("userInfo", map);
 
 		}
 		else {
@@ -74,7 +74,7 @@ public class MainController {
 	public String logout(HttpSession session, HttpServletRequest request) {
 		String logoutUrl = "main";
 		session = request.getSession();
-		session.removeAttribute("admin");
+		session.removeAttribute("userInfo");
 		return logoutUrl;
 	}
 	
