@@ -5,268 +5,264 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-   <title>CEP 샘플 화면(프로젝트 상세보기)</title>
+   <title>유지보수계약 상세(매입정보)</title>
    <style>
-      .sfcnt {
-         height: 91px;
-      }
-      .btnWrap {
-         position: absolute;
-         bottom: 31px;
-      }
-      .btnWrap.rt {
-         right: 127px;
-      }
-      form .nav {
-         width: 100%;
-         height: 49px;
-      }
-      form .contentsWrap {
-         background-color: #f6f7fc;
-         box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);
-         height: 802px;
-      }
-      form .contentsWrap .contents {
-         padding: 38px 71px; 
-         width: 1662px;
-      }
-      form .title {
-         height: 50px;
-      }
-      form .title > label {
-         font-size: 26px;
-      }
-      form .contents > div:first-child {
-         width: 37%;
-      }
-      form .contents > .fxd {
-         width: 60%;
-      }
-      form .contents .stitle {
-         font-size: 18px;
-         font-weight: 500;
-         margin-bottom: 10px;
-         margin-top: 30px;
-      }
-      form .contents .cg {
-         color: #24a37e;
-      }
-      form .contents .stitle img {
-         width: 27px;
-         margin-left: 10px;
-      }
-      form .contents > div > div > div > table {
-         border-collapse: collapse;
-         font-size: 15px;
-      } 
-      form .contents > div > div > div > table tr td {
-         padding: 13px 20px;
-      }
-			
-		
+		.sfcnt {
+		   height: 91px;
+		}
+		.bottom > div {
+			margin-top: 22px;
+		}
+		form .nav {
+		   width: 100%;
+		   height: 49px;
+		}
+		form .mContentsWrap {
+		   background-color: #f6f7fc;
+		   box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);
+		   height: 802px;
+		}
+		form .mContentsWrap .mContents {
+		   padding: 38px 71px; 
+		   width: 1662px;
+		}
+		form .title {
+		   height: 50px;
+		}
+		form .title > label {
+		   font-size: 26px;
+		}
+		form .mContents > div:first-child {
+		   width: 37%;
+		}
+		form .mContents > .fxd {
+		   width: 60%;
+		}
+		form .mContents .stitle {
+		   font-size: 18px;
+		   font-weight: 500;
+		   margin-bottom: 10px;
+		   margin-top: 30px;
+		}
+		form .mContents .cg {
+		   color: #24a37e;
+		}
+		form .mContents .stitle img {
+		   width: 27px;
+		   margin-left: 10px;
+		}
+		form .mContents > div > div > div > table {
+		   border-collapse: collapse;
+		   font-size: 15px;
+		} 
+		form .mContents > div > div > div > table tr td {
+		   padding: 13px 20px;
+		}
+	
+
 		/* 기본정보 싸이즈 조정 */
-		form .contents .bsc tbody {			
+		form .mContents .bsc tbody {			
 			height: 576px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
 		}
-      form .contents .bsc tr td:first-child {
-         width: 124px;
-         font-weight: 400;
-         padding: 13px 20px 13px 45px;
-      } 
-      form .contents .bsc tr td:last-child {
-         width: 400px;
-         font-weight: 200;
-      }
-      form .contents .bsc {
-         border-top: 4px solid #32bc94 !important;
-         background-color: #ddf0ec;
-         border: 1px solid #bee2da;
-          border-bottom: 2px solid #bfe3db;
-      }
-      form .contents .bsc tr td {
-         color: #0e8a67;
-      }
-      form .contents .bsc tr td:first-child {
-         box-shadow: inset -7px 0 9px -4px #d0e2de;
-      }
-      form .contents .bsc tr td label.file {
-         text-decoration: underline;
-      }
-      form .contents .title ul li {
-         float: left;
-         text-align: center;
-         font-size: 17px;
-         cursor: pointer;
-      }
-      form .contents .title ul li:last-child {
-         clear: both;
-         float: none;
-         width: 0 !important;
-      }
-      form .contents > .fxd .title ul {
-         height: 46px;
-         width: 100%;
-         border-radius: 35px;
-         background-color: #d3d3d3;
-      }
-      form .contents > .fxd .title ul li {
-         width: 25%;
-         line-height: 46px;
-         color: #777777;
-         background-color: #d3d3d3;
-         border-radius: 35px;
-      }
-      form .contents > .fxd .title ul li > label {
-         display: inline-block;
-          width: 100%;
-          cursor: pointer;
-      }
-      form .contents > .fxd .title ul li.on,
-      form .contents > .fxd .title ul li:hover  {
-         color: #fff  !important;
-         background-color: #4c3d92;
-      }
-      form .contents .dtlWrap2 {
-         height: 490px;
-         overflow-y: auto;
-         overflow-x: hidden; 
-         border-bottom: 2px solid #c4c4c4;
-      }
-      form .contents .dtl, form .contents .dtl1 {
-         width: 997px;
-         font-size: 15px;
-         border-collapse: collapse;
-         font-weight: 300;
-         overflow: hidden;
-      }
-      form .contents .dtl1 thead {
-         background-color: #e1dff5;
-         float: left;
-         width: 995px;
-         border-top: 4px solid #6a5baf;
-      }
-      form .contents .dtl thead tr, form .contents .dtl1 thead tr {
-         /* display: table; */
-         width: 997px;
-      }
-      form .contents .dtl {
-     	 width: 997px;
-         height: 493px;
-         overflow-y: auto;
-         overflow-x: hidden;
-         float: left;
-      }
-      form .contents .dtl tbody {
-         /* width: 997px;
-         /*height: 532px;*/
-         /* overflow-y: auto;
-         overflow-x: hidden; */ 
-         float: left;
-         /*border-bottom: 2px solid #c4c4c4;*/
-      }
-      form .contents .dtl tbody tr {
-         /* display: table; */
-         width: 997px;
-         cursor: pointer;
-      }
-      form .contents .dtl tbody:hover {
-          background-color: #ddf0ec;
-      }
-      /* form .contents .dtl thead tr th:first-child, form .contents .dtl1 thead tr th:first-child {
-         width: 10px;
-      }
-      form .contents .dtl tbody tr:first-child td:first-child {
-         width: 10px;
-      } */
-      /* form .contents .dtl tbody tr td:nth-child(3) {
-         font-weight: 400;
-      } */
-      form .contents .dtl1 thead th, form .contents .dtl tbody tr td {
-         padding: 10px 7px;
-         border: 1px solid #edebef;
-         text-align: center;
-         width: 100px;
-         max-width: 100px
-      }
-      form .contents .dtl tbody tr td {
-         font-weight: 200;
-      }
-      /* form .contents .dtl thead th:first-child,
-      form .contents .dtl tbody td:first-child {
-         width: 51px;
-         padding: 0;
-      }
-      form .contents .dtl thead th:nth-child(2),
-      form .contents .dtl tbody td:nth-child(2),
-      form .contents .dtl thead th:nth-child(6),
-      form .contents .dtl tbody td:nth-child(6) {
-         width: 51px;
-      }
-      form .contents .dtl thead th:nth-child(3),
-      form .contents .dtl tbody td:nth-child(3) {
-         width: 170px;
-      }
-      form .contents .dtl thead th:nth-child(4),
-      form .contents .dtl tbody td:nth-child(4),
-      form .contents .dtl thead th:nth-child(5),
-      form .contents .dtl tbody td:nth-child(5),
-      form .contents .dtl thead th:nth-child(6),
-      form .contents .dtl tbody td:nth-child(6),
-      form .contents .dtl thead th:nth-child(7),
-      form .contents .dtl tbody td:nth-child(7),
-      form .contents .dtl thead th:nth-child(8),
-      form .contents .dtl tbody td:nth-child(8),
-      form .contents .dtl thead th:nth-child(9),
-      form .contents .dtl tbody td:nth-child(9), {
-         width: 90px;
-      } */
-      form .contents .dtl tbody tr td > span {
-         display: inline-block;
-         overflow:hidden; 
-         text-overflow:ellipsis; 
-         white-space:nowrap;
-         width: 84%;
-         margin: 0 auto;
-      }
-      form .contents .dtl tbody tr td img {
-         width: 25px;
-         vertical-align: top;
-      }
-      .detailList li {
-         float: left;
-         text-align: left;
-         margin-left: 10px;
-         line-height: 2.3;
-      }
-      .detailList li:nth-child(2n-1) {
-         width: 82px;
-         font-weight: 400;
-         color: #158566;
-      }
-      .detailList li:nth-child(2n) {
-         width: 316px;
-         overflow: hidden;
-         text-overflow: ellipsis;
-         white-space: nowrap;
-         font-weight: 200;
-         color: #21a17e;
-      }
-      .detailList li:last-child {
-         width: 734px;
-            height: 56px;
-            word-break: break-all;
-            white-space: normal;
-            overflow: auto;
-            line-height: 1.5;
-      }
+		form .mContents .bsc tr td:first-child {
+		   width: 124px;
+		   font-weight: 400;
+		   padding: 13px 20px 13px 45px;
+		} 
+		form .mContents .bsc tr td:last-child {
+		   width: 400px;
+		   font-weight: 200;
+		}
+		form .mContents .bsc {
+		   border-top: 4px solid #32bc94 !important;
+		   background-color: #ddf0ec;
+		   border: 1px solid #bee2da;
+		    border-bottom: 2px solid #bfe3db;
+		}
+		form .mContents .bsc tr td {
+		   color: #0e8a67;
+		}
+		form .mContents .bsc tr td:first-child {
+		   box-shadow: inset -7px 0 9px -4px #d0e2de;
+		}
+		form .mContents .bsc tr td label.file {
+		   text-decoration: underline;
+		}
+		form .mContents .title ul li {
+		   float: left;
+		   text-align: center;
+		   font-size: 17px;
+		   cursor: pointer;
+		}
+		form .mContents .title ul li:last-child {
+		   clear: both;
+		   float: none;
+		   width: 0 !important;
+		}
+		form .mContents > .fxd .title ul {
+		   height: 46px;
+		   width: 100%;
+		   border-radius: 35px;
+		   background-color: #d3d3d3;
+		}
+		form .mContents > .fxd .title ul li {
+		   width: 25%;
+		   line-height: 46px;
+		   color: #777777;
+		   background-color: #d3d3d3;
+		   border-radius: 35px;
+		}
+		form .mContents > .fxd .title ul li > label {
+		   display: inline-block;
+		    width: 100%;
+		    cursor: pointer;
+		}
+		form .mContents > .fxd .title ul li.on,
+		form .mContents > .fxd .title ul li:hover  {
+		   color: #fff  !important;
+		   background-color: #4c3d92;
+		}
+		form .mContents .dtlWrap2 {
+		   height: 490px;
+		   overflow-y: auto;
+		   overflow-x: hidden; 
+		   border-bottom: 2px solid #c4c4c4;
+		}
+		form .mContents .dtl, form .mContents .dtl1 {
+		   width: 997px;
+		   font-size: 15px;
+		   border-collapse: collapse;
+		   font-weight: 300;
+		   overflow: hidden;
+		}
+		form .mContents .dtl1 thead {
+		   background-color: #e1dff5;
+		   float: left;
+		   width: 995px;
+		   border-top: 4px solid #6a5baf;
+		}
+		form .mContents .dtl thead tr, form .mContents .dtl1 thead tr {
+		   /* display: table; */
+		   width: 997px;
+		}
+		form .mContents .dtl {
+		 width: 997px;
+		   height: 493px;
+		   overflow-y: auto;
+		   overflow-x: hidden;
+		   float: left;
+		}
+		form .mContents .dtl tbody {
+		   /* width: 997px;
+		   /*height: 532px;*/
+		   /* overflow-y: auto;
+		   overflow-x: hidden; */ 
+		   float: left;
+		   /*border-bottom: 2px solid #c4c4c4;*/
+		}
+		form .mContents .dtl tbody tr {
+		   /* display: table; */
+		   width: 997px;
+		   cursor: pointer;
+		}
+		form .mContents .dtl tbody:hover {
+		    background-color: #ddf0ec;
+		}
+		/* form .mContents .dtl thead tr th:first-child, form .mContents .dtl1 thead tr th:first-child {
+		   width: 10px;
+		}
+		form .mContents .dtl tbody tr:first-child td:first-child {
+		   width: 10px;
+		} */
+		/* form .mContents .dtl tbody tr td:nth-child(3) {
+		   font-weight: 400;
+		} */
+		form .mContents .dtl1 thead th, form .mContents .dtl tbody tr td {
+		   padding: 10px 7px;
+		   border: 1px solid #edebef;
+		   text-align: center;
+		   width: 100px;
+		   max-width: 100px
+		}
+		form .mContents .dtl tbody tr td {
+		   font-weight: 200;
+		}
+		/* form .mContents .dtl thead th:first-child,
+		form .mContents .dtl tbody td:first-child {
+		   width: 51px;
+		   padding: 0;
+		}
+		form .mContents .dtl thead th:nth-child(2),
+		form .mContents .dtl tbody td:nth-child(2),
+		form .mContents .dtl thead th:nth-child(6),
+		form .mContents .dtl tbody td:nth-child(6) {
+		   width: 51px;
+		}
+		form .mContents .dtl thead th:nth-child(3),
+		form .mContents .dtl tbody td:nth-child(3) {
+		   width: 170px;
+		}
+		form .mContents .dtl thead th:nth-child(4),
+		form .mContents .dtl tbody td:nth-child(4),
+		form .mContents .dtl thead th:nth-child(5),
+		form .mContents .dtl tbody td:nth-child(5),
+		form .mContents .dtl thead th:nth-child(6),
+		form .mContents .dtl tbody td:nth-child(6),
+		form .mContents .dtl thead th:nth-child(7),
+		form .mContents .dtl tbody td:nth-child(7),
+		form .mContents .dtl thead th:nth-child(8),
+		form .mContents .dtl tbody td:nth-child(8),
+		form .mContents .dtl thead th:nth-child(9),
+		form .mContents .dtl tbody td:nth-child(9), {
+		   width: 90px;
+		} */
+		form .mContents .dtl tbody tr td > span {
+		   display: inline-block;
+		   overflow:hidden; 
+		   text-overflow:ellipsis; 
+		   white-space:nowrap;
+		   width: 84%;
+		   margin: 0 auto;
+		}
+		form .mContents .dtl tbody tr td img {
+		   width: 25px;
+		   vertical-align: top;
+		}
+		.detailList li {
+		   float: left;
+		   text-align: left;
+		   margin-left: 10px;
+		   line-height: 2.3;
+		}
+		.detailList li:nth-child(2n-1) {
+		   width: 82px;
+		   font-weight: 400;
+		   color: #158566;
+		}
+		.detailList li:nth-child(2n) {
+		   width: 316px;
+		   overflow: hidden;
+		   text-overflow: ellipsis;
+		   white-space: nowrap;
+		   font-weight: 200;
+		   color: #21a17e;
+		}
+		.detailList li:last-child {
+		   width: 734px;
+		      height: 56px;
+		      word-break: break-all;
+		      white-space: normal;
+		      overflow: auto;
+		      line-height: 1.5;
+		}
    </style>
    <script>
       $(document).ready(function() {
-         var index = $('form .contents > .fxd .title ul li.on').index() + 2;
-         var length = $('form .contents > .fxd .title ul li').length;
+         var index = $('form .mContents > .fxd .title ul li.on').index() + 2;
+         var length = $('form .mContents > .fxd .title ul li').length;
          
          /* $('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();}); */
          $('li[id^=LI_TOPBar]').click(function(event){
@@ -330,8 +326,8 @@
    <input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
       <div class="sfcnt"></div>
       <div class="nav"></div>
-      <div class="contentsWrap">
-         <div class="contents mgauto">
+      <div class="mContentsWrap">
+         <div class="mContents mgauto">
             <div class="floatL">
                <div class="title"><label class="ftw500">유지보수 상세정보</label></div>
                <div>
@@ -348,19 +344,19 @@
 						</tr>
 						<tr>
 							<td>고객사담당자</td>
-							<td><c:out value="${basicContractInfo.acDirectorInfo}"/></td>
+							<td><c:out value="${basicContractInfo.mtAcDirectorNm}"/> / <c:out value="${basicContractInfo.acDirectorInfo}"/></td>
 						</tr>
 						<tr>
 							<td>계약일자</td>
-							<td><c:out value="${basicContractInfo.viewCtDt}"/></td>
+							<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/></td>
 						</tr>
 						<tr>
 							<td>유지보수 기간</td>
-							<td><c:out value="${basicContractInfo.viewStartDt}"/> ~ <c:out value="${basicContractInfo.viewEndDt}"/></td>
+							<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 						</tr>
 						<tr>
 							<td>유지보수 금액</td>
-							<td><c:out value="${basicContractInfo.viewAmount}"/></td>
+							<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 						</tr>
 						<tr>
 							<td>부가세 포함여부</td>
@@ -400,7 +396,7 @@
 						</tr>
 						<tr>
 							<td>비고</td>
-							<td><c:out value="${basicContractInfo.remark}"/></td>
+							<td ><pre><c:out value="${basicContractInfo.remark}"/></pre></td>
 						</tr>
                      </table>
                   </div>
@@ -751,7 +747,7 @@
                         </div>
                         
                   </div>
-                  <div class="btnWrap rt">
+                  <div class="bottom">
                      <div class="floatR">
                         <button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
                         <button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>

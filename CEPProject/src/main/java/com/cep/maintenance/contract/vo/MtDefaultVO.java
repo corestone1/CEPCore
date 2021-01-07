@@ -39,6 +39,11 @@ public class MtDefaultVO implements Serializable{
 	private int mtSaveCnt; //여러개 저장하는 경우 저장되어있는 목록숫자.
 	
 	private String deleteListKeys; //리스트 항목에서 삭제를 선택한 목록의 관리키.
+	
+	private String searchPmNmCd; //제품명
+	private String searchSerialNum; // 시리얼번호
+	private String whereNum; //리스트에서 선택한 row번호
+	
 	/**
 	 * @return the fromDate
 	 */
@@ -241,6 +246,42 @@ public class MtDefaultVO implements Serializable{
 	 */
 	public void setMtSaveCnt(int mtSaveCnt) {
 		this.mtSaveCnt = mtSaveCnt;
+	}
+	/**
+	 * @return the searchPmNmCd
+	 */
+	public String getSearchPmNmCd() {
+		return searchPmNmCd;
+	}
+	/**
+	 * @param searchPmNmCd the searchPmNmCd to set
+	 */
+	public void setSearchPmNmCd(String searchPmNmCd) {
+		this.searchPmNmCd = searchPmNmCd;
+	}
+	/**
+	 * @return the searchSerialNum
+	 */
+	public String getSearchSerialNum() {
+		return searchSerialNum;
+	}
+	/**
+	 * @param searchSerialNum the searchSerialNum to set
+	 */
+	public void setSearchSerialNum(String searchSerialNum) {
+		this.searchSerialNum = searchSerialNum;
+	}
+	/**
+	 * @return the whereNum
+	 */
+	public String getWhereNum() {
+		return whereNum;
+	}
+	/**
+	 * @param whereNum the whereNum to set
+	 */
+	public void setWhereNum(String whereNum) {
+		this.whereNum = whereNum;
 	}
 	
 }

@@ -10,6 +10,7 @@ import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 @Mapper("mtContractMapper")
 public interface MtContractMapper {
@@ -25,6 +26,19 @@ public interface MtContractMapper {
 	  * @throws Exception
 	 */
 	public void writeContractBasic(MtContractVO writeVo) throws Exception;
+	
+	
+	/**
+	 * 
+	  * @Method Name : updateMtContractBasic
+	  * @Cdate       : 2020. 12. 30.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 기본정보를 수정한다.
+	  * @param updateVo
+	  * @throws Exception
+	 */
+	public void updateMtContractBasic(MtContractVO updateVo) throws Exception;
 	
 	/**
 	 * 
@@ -65,6 +79,19 @@ public interface MtContractMapper {
 	 */
 	public void deleteMtContract(MtContractVO deleteVo) throws Exception;
 	
+	/**
+	 * 
+	  * @Method Name : selectMtContractCount
+	  * @Cdate       : 2021. 1. 5.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 단계별 등록 갯수 조회 
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public  Map<String, Object> selectMtContractCount(String mtIntegrateKey)  throws Exception;
+	
 	/* ============================== 유지보수계약 제품  ======================================*/
 	
 	/**
@@ -86,22 +113,34 @@ public interface MtContractMapper {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description : 유지보수계약 제품 상제
-	  * @param mtPmKey
+	  * @param deleteParam
 	  * @throws Exception
 	 */
-	public void deleteMtContractProduct(String mtPmKey) throws Exception;
+	public void deleteMtContractProductList(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
 	 * 
 	  * @Method Name : deleteMtContractProductAll
-	  * @Cdate       : 2020. 12. 7.
+	  * @Cdate       : 2020. 12. 31.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 해당 유지보수계약에 포함된 모든 제품을 삭제한다.
-	  * @param mtIntegrateKey
+	  * @Method Description :해당 유지보수계약에 포함된 모든 제품을 삭제한다.
+	  * @param deleteParam
 	  * @throws Exception
 	 */
-	public void deleteMtContractProductAll(String mtIntegrateKey) throws Exception;
+	public void deleteMtContractProductAll(Map<String, Object> deleteParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : updateMtContractProductList
+	  * @Cdate       : 2020. 12. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 해당 유지보수계약에 포함된  제품정보를 수정한다.
+	  * @param updateParam
+	  * @throws Exception
+	 */
+	public void updateMtContractProductList(Map<String, Object> updateParam)throws Exception;
 	
 	/**
 	 * 
@@ -114,8 +153,20 @@ public interface MtContractMapper {
 	  * @return
 	  * @throws Exception
 	 */
-	public List<MtContractProductVO> selectMtContractProductList(String mtIntegrateKey)  throws Exception;
+	public List<?> selectMtContractProductList(MtDefaultVO searchVO)  throws Exception;
 	
+	/**
+	 * 
+	  * @Method Name : selectMtContractProductList
+	  * @Cdate       : 2021. 1. 6.
+	  * @Author      : aranghoo
+	  * @Modification: 유지보수계약 제품 총금액을 가져온다.
+	  * @Method Description : 
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public int selectMtPmTotalAmount(String mtIntegrateKey) throws Exception;
 	/* ============================== 유지보수계약 매출  ======================================*/
 
 	/**
@@ -124,7 +175,7 @@ public interface MtContractMapper {
 	  * @Cdate       : 2020. 12. 8.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 매출등록화며에서 보여줄 계약 금액정보를 조회한다.
+	  * @Method Description : 매출등록화면에서 보여줄 계약 금액정보를 조회한다.
 	  * @param mtIntegrateKey
 	  * @return
 	  * @throws Exception
@@ -181,7 +232,7 @@ public interface MtContractMapper {
 	  * @return
 	  * @throws Exception
 	 */
-	public List<?> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	public List<EgovMap> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
 	
 	
 	/**
@@ -234,7 +285,8 @@ public interface MtContractMapper {
 	  * @param mtOrderKey
 	  * @throws Exception
 	 */
-	public void deleteBackOrder(String modEmpKey, String mtOrderKey) throws Exception;
+//	public void deleteBackOrder(String modEmpKey, String mtOrderKey) throws Exception;
+	public void deleteBackOrder(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
 	 * 
@@ -247,7 +299,8 @@ public interface MtContractMapper {
 	  * @param mtOrderKey
 	  * @throws Exception
 	 */
-	public void deleteBackOrderProductAll(String modEmpKey, String mtOrderKey) throws Exception;
+//	public void deleteBackOrderProductAll(String modEmpKey, String mtOrderKey) throws Exception;
+	public void deleteBackOrderProductAll(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
 	 * 
@@ -260,7 +313,8 @@ public interface MtContractMapper {
 	  * @param deleteKeyList
 	  * @throws Exception
 	 */
-	public void deleteBackOrderProductList(String modEmpKey, String[] deleteKeyList) throws Exception;
+//	public void deleteBackOrderProductList(String modEmpKey, String[] deleteKeyList) throws Exception;
+	public void deleteBackOrderProductList(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
 	 * 
@@ -284,7 +338,96 @@ public interface MtContractMapper {
 	  * @param insertParam
 	  * @throws Exception
 	 */
-	public void updateBackOrderProductList(Map<String, Object> insertParam)throws Exception;
+	public void updateBackOrderProductList(Map<String, Object> updateParam)throws Exception;
+	
+	/* ============================== 유지보수계약 매입  ======================================*/
+	
+	/**
+	 * 
+	  * @Method Name : selectMtBuyAmountRefer
+	  * @Cdate       : 2020. 12. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매입등록화면에서 상단에 보여지는 유지보수 금액정보
+	  * @param selectParam
+	  * @return
+	  * @throws Exception
+	 */
+	public Map<String, Object> selectMtBuyAmountRefer(Map<String, Object> selectParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectMtBuyTotalAmount
+	  * @Cdate       : 2020. 12. 23.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :mtOrderKey에 대한 매입전체 금액을 조회한
+	  * @param mtOrderKey
+	  * @return
+	  * @throws Exception
+	 */
+	public int selectMtBuyTotalAmount(String mtOrderKey) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : writeMtContractBuyAmountList
+	  * @Cdate       : 2020. 12. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매입금액 정보 등록.
+	  * @param insertParam
+	  * @throws Exception
+	 */
+	public void writeMtContractBuyAmountList(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : updateMtContractBuyAmountList
+	  * @Cdate       : 2020. 12. 23.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 년도별 매입금액 목록 수정
+	  * @param updateParam
+	  * @throws Exception
+	 */
+	public void updateMtContractBuyAmountList(Map<String, Object> updateParam)throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractBuyAmountList
+	  * @Cdate       : 2020. 12. 23.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 년도별 매입금액 목록 삭제
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteMtContractBuyAmountList(Map<String, Object> deleteParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractBuyAmountAll
+	  * @Cdate       : 2020. 12. 23.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 거래처별 매입금액 전체삭제.
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteMtContractBuyAmountAll(Map<String, Object> deleteParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectMtContractBuyAmountList
+	  * @Cdate       : 2020. 12. 23.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 년도별 매입금액 목록 조회.
+	  * @param selectParam
+	  * @return
+	  * @throws Exception
+	 */
+	public List<?> selectMtContractBuyAmountList(Map<String, Object> selectParam) throws Exception;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	

@@ -29,12 +29,12 @@
 		.popContainer .left {
 			width: 201px;
 			height: 601px;
-			position: absolute;
+			position: absolute; 
 			top: 107px;
 			box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.3);
 			background-color: #32bc94;
 			z-index: 4;
-		}
+		} 
 		.popContainer .left ul li {
 			height: 47px;
 			padding-left: 28px;
@@ -77,7 +77,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer input {
-			width: 130px;
+			width: 120px;
 			height: 30px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -94,7 +94,7 @@
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
-		.popContainer .salesTable table {
+		.popContainer .purchaseTable table {
 			border-bottom: 2px solid #e5e5e5;
 			padding-bottom: 5px;
 			margin-top: 5px;
@@ -103,16 +103,16 @@
 			margin-top: 11px;
 			font-size: 15px;
 			color: #525252;
-			padding-left: 5px;
-			padding-right: 5px;
-			max-width: 44px;
+			padding-left: 6px;
+			padding-right: 23px;
+			max-width: 55px;
 		}				
 		.popContainer td.tdContents {
-			max-width: 174px;
+			max-width: 150px;
 			font-size: 14px;
 		}							
 		.popContainer td.tdEtc {
-			width: 174px;
+			width: 141px;
 			font-size: 14px;
 		} 	
 		.popContainer tr td.sum {
@@ -253,8 +253,43 @@
 		.calculate {
 			text-align: right !important;
 		}
+		/* .popContainer .contents td.tdTitle label {
+			color: red;
+			vertical-align: middle;
+      	} */
 	</style>
 	<script>
+
+	
+		$(document).ready(function() {			
+			
+			$('#mtStartDt').val(addDateMinus("${buyAmountRefer.mtStartDt}"));
+			$('#mtEndDt').val(addDateMinus("${buyAmountRefer.mtEndDt}"));
+			$('#mtOrderStartDt').val(addDateMinus("${buyAmountRefer.mtOrderStartDt}"));
+			$('#mtOrderEndDt').val(addDateMinus("${buyAmountRefer.mtOrderEndDt}"));
+			$('#mtOrderPayTerms').val("${buyAmountRefer.mtOrderPayTerms}");
+			$('#mtOrderAmount').val(addCommas("${buyAmountRefer.mtOrderAmount}"));
+			//$('#mtBuyTotalAmount').val(addCommas("${buyAmountRefer.mtBuyTotalAmount}"));
+			
+			$('#mtSaveOrderAcKey').val("${mtOrderKey}").attr("selected", "true");
+			
+			fn_calculate();
+			
+			//합계 이벤트를 호출해줌.
+			$(".calculate").blur();
+			
+			/*
+				처음 로딩시  저장된 리스트가 2개보다 많으면  모두 접는다.
+				2개까지는 스크롤바가 생성되지 않음.
+			*/
+			'<c:if test="${purchaseInitCnt > 2 }">'
+			fn_viewSummaryUpAll();
+			//console.log("1111111====>"+"${purchaseInitCnt}");
+			'</c:if>'
+				
+			
+		});
+		
 		/* 리스트 데이타 만들기.*/
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
@@ -267,18 +302,17 @@
 							objArry = new Array();
 							jQuery.each(arr, function() { 
 							//숫자에서 컴마를 제거한다.
-							if('mtSalesYear' == this.name.split('-')[2]){
+							if('mtBuyYear' == this.name.split('-')[2]){
 								obj[this.name.split('-')[2]] = this.value;
 							}else{
 								obj[this.name] = removeCommas(this.value); 
-							}
-							
+							}							
 							
 							/*
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('mtSalesDecAmount' == this.name){
+							if('mtBuyDecAmount' == this.name){
 								objArry.push(obj);
 								obj = {};
 							}
@@ -304,7 +338,7 @@
 							jQuery.each(arr, function() {					
 								//console.log("this.name1========>"+this.name);
 								//console.log("this.name2========>"+this.name.split('-')[2]);
-								if('mtSalesYear' == this.name.split('-')[2]){		
+								if('mtBuyYear' == this.name.split('-')[2]){		
 									if(Object.keys(obj).includes(this.value)){
 										dupYear =  this.value+"년도 매출정보가 중복되었습니다. 확인 후 다시 등록하세요!!";
 										$( "#"+this.name ).focus();
@@ -331,26 +365,6 @@
 			}finally {} 
 			return dupYear; 
 		}
-		
-		$(document).ready(function() {
-			//지원담당자정보 셋팅
-			//$('#salesList-0-mtSalesYear').val("${nowYear}").attr("selected", "true");
-			//console.log("${nowYear}");
-
-			//$('#mtStartDt').val("${contractAmountInfo.mtStartDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			//$('#mtEndDt').val("${contractAmountInfo.mtEndDt}}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			//$('#mtPmStartDt').val("${contractAmountInfo.mtPmStartDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			//$('#mtPmEndDt').val("${contractAmountInfo.mtPmEndDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			$('#mtStartDt').val(addDateMinus("${contractAmountInfo.mtStartDt}"));
-			$('#mtEndDt').val(addDateMinus("${contractAmountInfo.mtEndDt}"));
-			$('#mtPmStartDt').val(addDateMinus("${contractAmountInfo.mtPmStartDt}"));
-			$('#mtPmEndDt').val(addDateMinus("${contractAmountInfo.mtPmEndDt}"));
-			$('#mtAmount').val(addCommas("${contractAmountInfo.mtAmount}"));
-			$('#mtPmTotalAmount').val(addCommas("${contractAmountInfo.mtPmTotalAmount}"));
-			
-		
-			fn_calculate();
-		});
 		
 
 		
@@ -398,7 +412,7 @@
 	    	//name 필드 값 변경
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		var splitName = nameArr[i].split('-')[2];
-	    		if('mtSalesYear' == splitName){
+	    		if('mtBuyYear' == splitName){
 	    			clone.find('input[name="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('name', name + splitName);	
 	    		}				
 	    	}
@@ -408,29 +422,17 @@
 				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
 				clone.find('select[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
 				clone.find('img[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
-				//console.log('select===>'+'select[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]');
-				
+				//console.log('select===>'+'select[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]');				
 	    	} 
-	    	
-	    	/* if(1== parseInt($('#salesLength').val())) {
-	    		lastYear = parseInt($('#nowYear').val());
-	    		
-	    	} else {
-	    		lastYear = parseInt($('#nowYear').val()) + parseInt($('#salesLength').val()-1);
-	    	} */	    	
+  	
 	    	
 	    	//for값 변경
 	    	for(var i = 0; i < forArr.length; i++) {
 	    		var splitName = forArr[i].split('-')[2];				
 				clone.find('label[for="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('for', name + splitName);				
 	    	} 
-	    	//console.log("name===>"+name+" / "+$('#nowYear').val());
 	    	
 	    	$('#'+type+'Wrap').append(clone);
-	    	//$('#'+name+'mtSalesYear').val($('#nowYear').val()).attr("selected", "true");
-	    	
-	    	//console.log("name===>"+name+" / "+lastYear);
-	    	//$('#'+name+'mtSalesYear').val(lastYear).attr("selected", "true");
 	    	//합계금액 0원 셋팅
 	    	$('#'+name+'yearTotalAmount').val(0);
 	    	fn_calculate();
@@ -453,57 +455,105 @@
 	         }
 		}
 		
+		function fn_viewSummaryUpAll(){
+			$(".dpTbRow").attr('class','dpNone');
+			$(".down").attr('class','up');
+			$(".up").attr('src','<c:url value='/images/arrow_down.png'/>');
+			//$(".up").src = "<c:url value='/images/arrow_down.png'/>";
+		}
+		
+		function fn_viewSummaryDownAll(){
+			$(".dpNone").attr('class','dpTbRow');
+			$(".up").attr('class','down');
+			$(".down").attr('src','<c:url value='/images/arrow_up.png'/>');
+		}
+		
 		/* 제품정보 삭제
 		* 업데이트 시 제품정보 제품정보 삭제 목록에 대해 수집한다.  
 		* deleteObj에 삭제 년도를 넣어준다.
 		*/
 		
 		function fn_delete(obj, type) {
-			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;			
-			var selectNum = JSON.stringify($(obj.id).selector);
+			var listNum;
+			var deleteYear;
+			var deleteKey;
 			
-			var originLength = $('#'+type+'Length').val()*1;
-			if(originLength>1){
+			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;			
+			var selectNum = JSON.stringify($(obj.id).selector);			
+			var originLength = $('#'+type+'Length').val()*1;			
+			
+			//한개이상 존재하는 경우 삭제
+			if(originLength>1){				
+				
 				/*
 				* 전체금액에서 삭제된 테이블 금액을 뺀다.
 				* 삭제테이블의 연도를 수집한다.
 				*/
-				deleteAmount(selectNum.split('-')[1]);
+				listNum = selectNum.split('-')[1];
+				// 삭제년도 수집.
+				deleteYear = $('#purchaseList-'+listNum+'-mtBuyYear').val();				
 				
-								
-				//선택한  테이블을 삭제한다.
-				table.remove();
-				$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+				//삭제 key
+				deleteKey =  $('#purchaseList-'+listNum+'-mtBuyKey').val();
+				console.log("deleteKey====>"+deleteKey);
+				//삭제확인
+				if(confirm(deleteYear+"년도 매입정보를 삭제하시겠습니까?")) {
+					//mtBuyKey값이 있는 경우 삭제key list를 만든다.
+					if(deleteKey !=''){
+						$('#deleteKeys').val($('#deleteKeys').val()+deleteKey+":");
+					}
+					//삭제된 금액을 뺀댜
+					deleteAmount(selectNum.split('-')[1]);					
+					//선택한  테이블을 삭제한다.
+					table.remove();
+					//테이블 개수에서 -1을 한다.
+					$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+				}
+				
+				
 				
 			} else {
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			   
 		}
 		
-		//var deleteObj = [];
 		function deleteAmount(num) {
 			var deleteYearAmount = 0;
-			var totalAmount = removeCommas($('#mtSaleTotalAmount').val())*1;
-			deleteYearAmount = removeCommas($('#salesList-'+num+'-yearTotalAmount').val())*1;
+			var totalAmount = removeCommas($('#mtBuyTotalAmount').val())*1;
+			deleteYearAmount = removeCommas($('#purchaseList-'+num+'-yearTotalAmount').val())*1;
 			//전체금액에서 삭제금액을 뺀다.
-			$('#mtSaleTotalAmount').val(addCommas(totalAmount-deleteYearAmount));
-			// 삭제한 년도를 수집한다.
-			if("" !=$('#salesList-'+num+'-mtSalesKey').val()){
-				$('#deleteKeys').val($('#deleteKeys').val()+":"+$('#salesList-'+num+'-mtSalesKey').val());
-			}
-			
-			
-			//deleteObj.push($('#salesList-'+num+'-mtSalesYear').val());
-			//console.log("delete year =======>"+$('#salesList-'+num+'-mtSalesYear').val());
-			//console.log("deleteObj1=============>"+deleteObj);
-			//console.log("deleteObj2=============>"+Array.from(new Set(deleteObj)));
+			$('#mtBuyTotalAmount').val(addCommas(totalAmount-deleteYearAmount));
 		}
 		
+		//등록된 거래처 정보를 선택하면 해당 등록 내역을 가져온다.
+		$('#mtSaveOrderAcKey').change(function(){
+			var url = '/maintenance/contract/write/purchaseAmountView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtIntegrateKey":$('#mtIntegrateKey').val(),
+					"mtOrderKey":$('#mtSaveOrderAcKey option:selected').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			
+		});
 		
-		function fn_saveBtn(param){
+		function fn_saveBtn(){
+			//필수값 체크를 완료하면 저장 프로세스 시작.
+			if ($("#mtListForm")[0].checkValidity()){
+				//필수값 모두 통과하여 저장 프로세스 호출.
+				savePurchageAmount();
+			} else {
+				 $("#mtListForm")[0].reportValidity();	
+			}	
+		}
+		
+		function savePurchageAmount(){
 			//년도 중복을 체크한다.
 			var checkYear = $("#mtListForm").checkDuplicate();
-			
+			//console.log("checkYear===>"+checkYear);
+
 			if('' != checkYear) {
 				alert(checkYear);
 				//$( "#salesList-0-mtSalesYear").focus();
@@ -521,67 +571,48 @@
 	                            
 	            }
 	           	//List를 담아준다.			
-	            object["mtSalesAmountVOList"]=listData;           	
+	            object["mtBuyAmountVOList"]=listData;           	
 				
 				//object["mtWorkProductVoList" = listObject];
-	           	var sendData = JSON.stringify(object);
-	           	var sendUrl;
-	           	if($('#updateYn').val()=='Y'){
-	           		//업데이트 수행 URL
-	           		sendUrl = "#";
-	           	} else {
-	           		//등록 수행 URL
-	           		sendUrl = "/maintenance/contract/write/purchaseAmount.do";
-	           	}
-	           	
+	           	var sendData = JSON.stringify(object);	           	
 	           	$.ajax({
-		        	url:sendUrl,
+		        	url:"/maintenance/contract/write/purchaseAmount.do",
 		            dataType: 'text', 
 		            type:"post",  
-		            //data: JSON.stringify({"mtWorkKey":"111111111", "mtWorkProductVoList" :sendData}),
-					data: sendData,
-					
-		            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
-		            
+					data: sendData,					
+		            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.		            
 		     	   	contentType: "application/json; charset=UTF-8", 
 		     	  	beforeSend: function(xhr) {
-		     	  		console.log("sendData11=====>"+sendData);
 		        		xhr.setRequestHeader("AJAX", true);	        		
 		        	},
 		            success:function(data){	
-		            	var paramData = JSON.parse(data);
-		            	//console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
+		            	var paramData = JSON.parse(data);	
 		            	
 		            	if("Y" == paramData.successYN){
-		            		if($('#updateYn').val()=='Y'){
-		            			alert("유지보수계약 매출정보 수정을 성공하였습니다.");
-								//유지보수계약 매출정보 상세화면으로 이동
-			            		document.listForm.action = "/maintenance/contract/workList.do";
-		        				document.listForm.method="get";
-		                   		document.listForm.submit(); 
+		            		if($('#purchaseInitCnt').val() !='0' && $('#purchaseInitCnt').val() !=''){
+		            			alert("유지보수계약 매입정보 수정을 성공하였습니다.");
 		            		} else {
-		            			alert("유지보수계약 매출정보  등록을 성공하였습니다.");
-		            			if('sn'==param){
-				            		//유지보수계약 백계약 등록화면으로 이동
-				            		var url='/maintenance/contract/write/backOrderInfoView.do';
-				            		            			
-					    			var dialogId = 'program_layer';
-					    			var varParam = paramData
-					    			var button = new Array;
-					    			button = [];
-					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-				            	} else {
-				            		/* document.mtBasicForm.action = "/maintenance/work/workList.do";
-				        			document.mtBasicForm.method="get";
-				                   	document.mtBasicForm.submit();  */
-				            		document.listForm.action = "/maintenance/contract/contractList.do";
-			        				document.listForm.method="get";
-			                   		document.listForm.submit(); 
-				            	}
+		            			alert("유지보수계약 매입정보  등록을 성공하였습니다.");
+		            			var varParam = {
+		            					"mtIntegrateKey":$('#mtIntegrateKey').val(),
+		            					"mtOrderKey":paramData.mtOrderKey
+		            			}
+		            			//유지보수계약 백계약 등록화면으로 이동
+			            		var url='/maintenance/contract/write/purchaseAmountView.do';
+			            		            			
+				    			var dialogId = 'program_layer';
+				    			//var varParam = paramData
+				    			var button = new Array;
+				    			button = [];
+				    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		            		}		            		
 			            	
 		            	} else {
-		            		alert("유지보수작업 제품등록이 실패하였습니다.");
+		            		if($('#purchaseInitCnt').val() !='0' && $('#purchaseInitCnt').val() !=''){
+		            			alert("유지보수작업 매입정보 수정이 실패하였습니다.");
+		            		} else {
+		            			alert("유지보수작업 매입정보 등록이 실패하였습니다.");
+		            		}		            		
 		            	}
 		            	
 		            	
@@ -605,14 +636,14 @@
 			$(".calculate").blur(function() {
 				var amount = removeCommas($(this).val())*1;
 				//전체금액 계산
-				var totalAmount = removeCommas($('#mtSaleTotalAmount').val())*1;
-				$('#mtSaleTotalAmount').val(addCommas((amount-beforeAmount)+totalAmount));
+				var totalAmount = removeCommas($('#mtBuyTotalAmount').val())*1;
+				$('#mtBuyTotalAmount').val(addCommas((amount-beforeAmount)+totalAmount));
 				
 				
 				//년도별 계산
 				var num = $(this).attr('id').split('-')[1];
-				var yearTotalAmount = removeCommas($("#salesList-"+num+"-yearTotalAmount").val())*1;
-				$("#salesList-"+num+"-yearTotalAmount").val(addCommas((amount-beforeAmount)+yearTotalAmount));
+				var yearTotalAmount = removeCommas($("#purchaseList-"+num+"-yearTotalAmount").val())*1;
+				$("#purchaseList-"+num+"-yearTotalAmount").val(addCommas((amount-beforeAmount)+yearTotalAmount));
 				//console.log("num=>"+num);
 				//console.log("amount11====>"+ amount+"/"+totalAmount+"/"+beforeAmount);			
 			});
@@ -636,19 +667,29 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-					<li class="colorWhite cursorP" onclick="fn_addView('writeMtBasicInfoView');">기본정보</li>
-					<li class="colorWhite cursorP" onclick="fn_addView('writeMtProductInfo');">제품정보</li>
+					<li class="colorWhite cursorP">기본정보</li>
+					<li class="colorWhite cursorP">제품정보</li>
 					<li class="colorWhite cursorP">매출정보</li>
 					<li class="colorWhite cursorP">백계약정보</li>
 					<li class="colorWhite cursorP on">매입정보</li>
 			</ul>
 		</div>
 		<form action="/" id="mtBasicForm" name="mtBasicForm" method="post"> 
-			<input type="hidden" id="salesLength" name="salesLength" value="1" />
-			<input type="hidden" id="updateYn" name="updateYn" value="<c:out value="${updateYn}"/>" />
-			<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${parmMtSbCtYn}"/>" />
+			<input type="hidden" id="purchaseLength" name="purchaseLength" value="<c:out value="${listCount}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
+			<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtOrderKey}"/>" />
+			<input type="hidden" id="purchaseInitCnt" name="purchaseInitCnt" value="<c:out value="${purchaseInitCnt}"/>" />
 			<input type="hidden" id="deleteKeys" name="deleteKeys"  />
+			<%-- 			
+			<input type="hidden" id="purchaseInitCnt2" name="purchaseInitCnt2" value="<c:out value="${purchaseAmountList.size()}"/>" />
+			<c:choose>
+				<c:when test="${null == purchaseAmountList.size()}">
+					<input type="hidden" id="purchaseInitCnt" name="purchaseInitCnt" value="0" />
+				</c:when>
+				<c:otherwise>
+					<input type="hidden" id="purchaseInitCnt" name="purchaseInitCnt" value="<c:out value="${purchaseAmountList.size()}"/>" />
+				</c:otherwise>
+			</c:choose> --%>			
 			<div class="contents1">
 				<div>
 					<!-- <div class="subTitle"><label class="ftw400">유지보수 계약정보</label></div> -->
@@ -656,8 +697,10 @@
 						<tr>		
 							<td class="subTitle" style="border-top: none;border: 0px;">
 								<label class="ftw400">매입거래처 </label>
-								<select id="mtOrderAcKey" name="mtOrderAcKey">																		
-									<option value="">거래처</option>									
+								<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey">																		
+									<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">
+											<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+									</c:forEach>									
 								</select>
 							</td>
 						</tr>
@@ -677,10 +720,10 @@
 						<tbody>
 							<tr>
 								<td><input type="text" id="mtStartDt" class="pname" readonly/> ~ <input type="text" id="mtEndDt" class="pname" readonly/></td>
-								<td><input type="text" id="mtPmStartDt" class="pname" readonly/> ~ <input type="text" id="mtPmEndDt" class="pname" readonly/></td>
-								<td ><input type="text" id="mtAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
-								<td ><input type="text" id="mtPmTotalAmount" style="width:120px;text-align: right" class="pname" readonly/></td>
-								<td ><input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right" class="pname" readonly/></td>
+								<td><input type="text" id="mtOrderStartDt" class="pname" readonly/> ~ <input type="text" id="mtOrderEndDt" class="pname" readonly/></td>
+								<td ><input type="text" id="mtOrderAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
+								<td ><input type="text" id="mtOrderPayTerms" style="width:120px;text-align: right" class="pname" readonly/></td>
+								<td ><input type="text" id="mtBuyTotalAmount" style="width:120px;text-align: right" class="pname" readonly/></td>
 							</tr>
 						</tbody>
 					</table>
@@ -690,112 +733,186 @@
 			<form action="/" id="mtListForm" name="mtListForm" method="post">
 			<div class="contents">
 
-				<div id="salesWrap">
+				<div id="purchaseWrap">
 					<div class="subjectContainer">
 						<table class="subject">
 							<tr>		
 								<td class="subTitle" style="border-top: none;">
 									<label class="ftw400">연도별 매입</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('sales');"/></td>
+								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('purchase');"/></td>
 							</tr>
 						</table>
 					</div>
-					<div class="salesTable">						
+					<c:choose>
+					<c:when test="${purchaseInitCnt eq 0 }">
+					<div class="purchaseTable">						
 						<table>
 							<tr>
-								<td class="tdTitle firstTd">연도</td>
+								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
-									<input type="text" id="salesList-0-mtSalesYear" name="salesList-0-mtSalesYear" style="text-align: center" numberOnly maxlength="4"/>
-									<%-- <select id="salesList-0-mtSalesYear" name="mtSalesYear">
-										<c:forEach var="year" items="${yearList}" varStatus="status">										
-										<option value="<c:out value="${year}"/>"><c:out value="${year}"/></option>
-										</c:forEach>	
-									</select> --%>
+									<input type="text" id="purchaseList-0-mtBuyYear" name="purchaseList-0-mtBuyYear" style="text-align: center" numberOnly required maxlength="4"/>
+
 									<input type="hidden" name="lastNum" value="0" />
-									<input type="hidden" id="salesList-0-mtSalesKey" name="mtSalesKey" value="10" />
+									<input type="hidden" id="purchaseList-0-mtBuyKey" name="mtBuyKey"/>
 								</td>
 								<td class="tdTitle sum"><label>합계</label></td>								
 								<td class="tdContents sum" >
-									<input type="text" id="salesList-0-yearTotalAmount" name="yearTotalAmount" style="width:150px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
+									<input type="text" id="purchaseList-0-yearTotalAmount" name="yearTotalAmount" style="width:150px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
 								</td>
-								<td class="tdEtc"></td><td class="tdEtc"></td>
-								<td class="tdEtc"></td>
-								<td class="tdEtc" style="text-align:right;">
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>
-		                        	<img id="salesList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'sales');" style="width: 11px"/>
+								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
+								<td class="tdContents"><input type="text" class="pname" style="width: 150px"></td>
+								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
+								<td class="tdEtc" style="text-align:right;padding-right: 10px">
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+		                        	<img id="purchaseList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/>
 								</td>
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle">1월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesJanAmount" name="mtSalesJanAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyJanAmount" name="mtBuyJanAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">2월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesFebAmount" name="mtSalesFebAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyFebAmount" name="mtBuyFebAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">3월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesMarAmount" name="mtSalesMarAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyMarAmount" name="mtBuyMarAmount" amountOnly class="calculate" />	
 								</td>	
 								<td class="tdTitle">4월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesAprAmount" name="mtSalesAprAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyAprAmount" name="mtBuyAprAmount" amountOnly class="calculate" />	
 								</td>
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle">5월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesMayAmount" name="mtSalesMayAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyMayAmount" name="mtBuyMayAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">6월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesJunAmount" name="mtSalesJunAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyJunAmount" name="mtBuyJunAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">7월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesJulAmount" name="mtSalesJulAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyJulAmount" name="mtBuyJulAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">8월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesAugAmount" name="mtSalesAugAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyAugAmount" name="mtBuyAugAmount" amountOnly class="calculate" />	
 								</td>
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle">9월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesSepAmount" name="mtSalesSepAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuySepAmount" name="mtBuySepAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">10월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesOctAmount" name="mtSalesOctAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyOctAmount" name="mtBuyOctAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">11월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesNovAmount" name="mtSalesNovAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyNovAmount" name="mtBuyNovAmount" amountOnly class="calculate" />	
 								</td>
 								<td class="tdTitle">12월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-0-mtSalesDecAmount" name="mtSalesDecAmount" amountOnly class="calculate" />	
+									<input type="text" id="purchaseList-0-mtBuyDecAmount" name="mtBuyDecAmount" amountOnly class="calculate" />	
 								</td>
 							</tr>
-<!-- 							<tr class="dpTbRow sum">
-								<td class="tdTitle textalignR" colspan="7"><label>합계</label></td>
-								
-								<td class="tdContents">
-									<input type="text" id="salesList-0-yearTotalAmount" name="yearTotalAmount" style="width:150px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
-								</td>
-								<td class="tdContents textalignR">
-									<label>123.456.789</label>
-								</td>
-							</tr> -->
 						</table>
 					</div>
+					</c:when>
+					<c:otherwise>
+					<c:forEach var="list" items="${purchaseAmountList}" varStatus="status">
+					<div class="purchaseTable">						
+						<table>
+							<tr>
+								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
+								<td class="tdContents firstTd">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" name="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" style="text-align: center" numberOnly required maxlength="4" value="<c:out value="${list.mtBuyYear}"/>"/>
+
+									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
+									<input type="hidden" id="purchaseList-<c:out value="${status.index}"/>-mtBuyKey" name="mtBuyKey" value="<c:out value="${list.mtBuyKey}"/>"/>
+								</td>
+								<td class="tdTitle sum"><label>합계</label></td>								
+								<td class="tdContents sum" >
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-yearTotalAmount" name="yearTotalAmount" style="width:150px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
+								</td>
+								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
+								<td class="tdContents"><input type="text" class="pname" style="width: 150px"></td>
+								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
+								<td class="tdEtc" style="text-align:right;padding-right: 10px">
+									<img id="upDown" src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+		                        	<img id="purchaseList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/>
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">1월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyJanAmount" name="mtBuyJanAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyJanAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">2월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyFebAmount" name="mtBuyFebAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyFebAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">3월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyMarAmount" name="mtBuyMarAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyMarAmount}"/>"/>	
+								</td>	
+								<td class="tdTitle">4월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyAprAmount" name="mtBuyAprAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyAprAmount}"/>"/>	
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">5월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyMayAmount" name="mtBuyMayAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyMayAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">6월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyJunAmount" name="mtBuyJunAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyJunAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">7월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyJulAmount" name="mtBuyJulAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyJulAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">8월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyAugAmount" name="mtBuyAugAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyAugAmount}"/>"/>	
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">9월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuySepAmount" name="mtBuySepAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuySepAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">10월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyOctAmount" name="mtBuyOctAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyOctAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">11월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyNovAmount" name="mtBuyNovAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyNovAmount}"/>"/>	
+								</td>
+								<td class="tdTitle">12월</td>
+								<td class="tdContents">
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyDecAmount" name="mtBuyDecAmount" amountOnly class="calculate" value="<c:out value="${list.mtBuyDecAmount}"/>"/>	
+								</td>
+							</tr>
+						</table>
+					</div>					
+					</c:forEach>
+					</c:otherwise>
+					</c:choose>
+					
 				</div>
 				<div class="btnWrap floatR">
 				
-					<div class="floatR" onclick="fn_saveBtn('ss');">
+					<div class="floatR" onclick="fn_saveBtn();">
 						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>		
 					<div class="floatN floatC"></div>

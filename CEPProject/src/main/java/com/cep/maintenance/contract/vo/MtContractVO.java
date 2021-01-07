@@ -34,6 +34,7 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	private String mtAcKey;//사업자 번호
 	private String mtAcNm;//거래처명
 	private String mtAcDirectorKey;//유지보수 거래처 담당자 관리키
+	private String mtAcDirectorNm;//유지보수 거래처 담당자 명
 	private String acDirectorInfo;//유지보수 거래처 담당자 정보
 	private String mtNm;//유지보수 계약명
 	private String mtCtDt;//유지보수 계약일자
@@ -492,6 +493,18 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtCtDt(String mtCtDt) {
 		this.mtCtDt = mtCtDt;
+	}
+	/**
+	 * @return the mtAcDirectorNm
+	 */
+	public String getMtAcDirectorNm() {
+		return mtAcDirectorNm;
+	}
+	/**
+	 * @param mtAcDirectorNm the mtAcDirectorNm to set
+	 */
+	public void setMtAcDirectorNm(String mtAcDirectorNm) {
+		this.mtAcDirectorNm = mtAcDirectorNm;
 	}
 	
 //	private String convertDate(String date){

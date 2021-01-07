@@ -422,7 +422,7 @@
 											<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtWorkSeq}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 										</td>
 										<td><c:out value="${status.count}"/></td>
-										<td class="textalignL"><c:out value="${list.makeTotalAmount2(list.mtWorkSeq,list.mtWorkSeq )}"/> :<c:out value="${list.mtPmKeyNm}"/></td>
+										<td class="textalignL"><c:out value="${list.mtPmKeyNm}"/></td>
 										<td class="textalignR"><c:out value="${list.mtPmSerialNum}"/></td>
 										<td class="textalignL">
 											<span><c:out value="${list.mtPmWorkCont}"/></span>																			

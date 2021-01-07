@@ -5,33 +5,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>유지보수작업 상세</title>
+	<title>유지보수계약 상세(백계약)</title>
 	
 	<style>
 		.sfcnt {
 			height: 91px;
 		}
-		.btnWrap {
-			position: absolute;
-			bottom: 31px;
-		}
-		.btnWrap.lt {
-			left: 127px;
-		}
-		.btnWrap.rt {
-			right: 127px;
+		.bottom > div {
+			margin-top: 22px;
 		}
 		form .nav {
 			width: 100%;
 			height: 49px;
 		}
 		/* 상세화면 전체크기 */
-		form .contentsWrap {
+		form .mContentsWrap {
 			background-color: #f6f7fc;
 			box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);
 			height: 802px;
 		}
-		form .contentsWrap .contents {
+		form .mContentsWrap .mContents {
 			padding: 38px 71px; 
 			width: 1662px;
 		}
@@ -43,35 +36,35 @@
 			font-size: 26px;
 		}
 		/* 왼쪽기본정보 싸이즈 */
-		form .contents > div:first-child {
+		form .mContents > div:first-child {
         	width: 37%;
       	}
 		/* 오른쪽 내용(상세정보) 싸이즈 */
-		form .contents > .fxd {
+		form .mContents > .fxd {
 			width: 60%;
 		}
 		/* 소타이틀(기본정보, 발주정보, 제품정보) 관련 css*/
-		form .contents .stitle {
+		form .mContents .stitle {
 			font-size: 18px;
 			font-weight: 500;
 			margin-bottom: 10px;
 			margin-top: 30px;
 		}
 		/* 기본정보 색상  */
-		form .contents .cg {
+		form .mContents .cg {
 			color: #24a37e;
 		}
 		/* 발주추카 이미지 크기 및 위치조정 */
-		form .contents .stitle img {
+		form .mContents .stitle img {
 			width: 27px;
 			margin-left: 10px;
 		}
-		form .contents > div > div > div > table {
+		form .mContents > div > div > div > table {
 			border-collapse: collapse;
 			font-size: 15px;
 		} 
 		/* 기본정보 테이블 padding */
-		form .contents > div > div > div > table tr td {
+		form .mContents > div > div > div > table tr td {
 			padding: 13px 20px;
 		}
 		/* 기본정보 타이틀 크기 및 글자크기 */
@@ -86,14 +79,14 @@
 			font-weight: 200;
 		}
 		/* 기본정보 틀 */
-		form .contents .bsc {
+		form .mContents .bsc {
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
 			border: 1px solid #bee2da;
           border-bottom: 2px solid #bfe3db;
 		}
 		
-		form .contents .dtl, form .contents .dtl2 {
+		form .mContents .dtl, form .mContents .dtl2 {
 		    width: 997px;
 		    font-size: 15px;
 		    border-collapse: collapse;
@@ -102,20 +95,20 @@
 		    border-top: 4px solid #6a5baf;
 		}
 
-		form .contents .dtl tbody, form .contents .dtl2 tbody {
+		form .mContents .dtl tbody, form .mContents .dtl2 tbody {
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
 			width: 997px;		
 		}
 		
-		form .contents .dtl thead, form .contents .dtl2 thead {
+		form .mContents .dtl thead, form .mContents .dtl2 thead {
 			background-color: #e1dff5;
 			float: left;
 			width: 997px;
 		}
 		/* 커서포인터 */
-		form .contents .dtl tbody tr, form .contents .dtl2 tbody tr {
+		form .mContents .dtl tbody tr, form .mContents .dtl2 tbody tr {
 		    display: table;
 		    width: 997px;
 		    cursor: pointer;
@@ -124,7 +117,7 @@
 		
 		
 		/* 발주정보 테이블 틀 나오게 하는 부분 */
-		form .contents .dtl thead th, form .contents .dtl tbody tr td ,form .contents .dtl2 thead th, form .contents .dtl2 tbody tr td {
+		form .mContents .dtl thead th, form .mContents .dtl tbody tr td ,form .mContents .dtl2 thead th, form .mContents .dtl2 tbody tr td {
 			padding: 10px 7px;
 			border: 1px solid #edebef;
 			text-align: center;
@@ -132,7 +125,7 @@
 			
 		
 		/* 기본정보 싸이즈 조정 */
-		form .contents .bsc tbody {			
+		form .mContents .bsc tbody {			
 			height: 576px;
 			overflow-y: auto;
 			overflow-x: hidden;
@@ -140,88 +133,88 @@
 		}
 		
 		/* 기본정보 글자색 */
-		form .contents .bsc tr td {
+		form .mContents .bsc tr td {
 			color: #0e8a67;
 		}
 		/* 기본정보 세로줄 나오는것 */
-		form .contents .bsc tr td:first-child {
+		form .mContents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
 		}
-		form .contents > .fxd .title ul {
+		form .mContents > .fxd .title ul {
 			height: 46px;
 			width: 100%;
 			border-radius: 35px;
 			background-color: #d3d3d3;
 		}
 		/* 제품정보>매출정보>백계약정보>매입정보 버튼 크기및 모양    */
-		form .contents > .fxd .title ul li {
+		form .mContents > .fxd .title ul li {
 			width: 25%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
 			border-radius: 35px;
 		}
-		form .contents .title ul li {
+		form .mContents .title ul li {
 			float: left;
 			text-align: center;
 			font-size: 17px;
 			cursor: pointer;
 		}
-		form .contents > .fxd .title ul li > label {
+		form .mContents > .fxd .title ul li > label {
 			display: inline-block;
     		width: 100%;
     		/* cursor: pointer; */
 		}
-		form .contents > .fxd .title ul li.on,
-		form .contents > .fxd .title ul li:hover  {
+		form .mContents > .fxd .title ul li.on,
+		form .mContents > .fxd .title ul li:hover  {
 			color: #fff  !important;
 			background-color: #4c3d92;
 		}		
 		
-		form .contents .dtl tbody tr:hover, form .contents .dtl2 tbody tr:hover {
+		form .mContents .dtl tbody tr:hover, form .mContents .dtl2 tbody tr:hover {
 			background-color: #ddf0ec
 		}
 		
 		/* 발주정보 세로싸이즈 */
-		form .contents .dtl tbody {
+		form .mContents .dtl tbody {
 			height: 176px;
 		}
 		
 		/* 백계약정보 테이블 크기조정 */
-		form .contents .dtl thead th:first-child,
-		form .contents .dtl tbody td:first-child {
+		form .mContents .dtl thead th:first-child,
+		form .mContents .dtl tbody td:first-child {
 			width: 51px;
 			padding: 0;
 		}
-		form .contents .dtl thead th:nth-child(2),
-		form .contents .dtl tbody td:nth-child(2) {
+		form .mContents .dtl thead th:nth-child(2),
+		form .mContents .dtl tbody td:nth-child(2) {
 			width: 51px;
 		}
-		form .contents .dtl thead th:nth-child(3),
-		form .contents .dtl tbody td:nth-child(3) {
+		form .mContents .dtl thead th:nth-child(3),
+		form .mContents .dtl tbody td:nth-child(3) {
 			width: 190px;
 		}
-		form .contents .dtl thead th:nth-child(4),
-		form .contents .dtl tbody td:nth-child(4) {
+		form .mContents .dtl thead th:nth-child(4),
+		form .mContents .dtl tbody td:nth-child(4) {
 			width: 100px;
 		}
-		form .contents .dtl thead th:nth-child(5) {
+		form .mContents .dtl thead th:nth-child(5) {
 			width: 100px;
 		}
-		form .contents .dtl tbody td:nth-child(5) {
+		form .mContents .dtl tbody td:nth-child(5) {
 			width: 100px;
 			text-align: right;
 		}
-		form .contents .dtl thead th:nth-child(6),
-		form .contents .dtl tbody td:nth-child(6) {
+		form .mContents .dtl thead th:nth-child(6),
+		form .mContents .dtl tbody td:nth-child(6) {
 			width: 80px;
 		}
-		form .contents .dtl thead th:nth-child(7),
-		form .contents .dtl tbody td:nth-child(7){
+		form .mContents .dtl thead th:nth-child(7),
+		form .mContents .dtl tbody td:nth-child(7){
 			width: 100px;
 		}
-		form .contents .dtl thead th:nth-child(8),
-		form .contents .dtl tbody td:nth-child(8) {
+		form .mContents .dtl thead th:nth-child(8),
+		form .mContents .dtl tbody td:nth-child(8) {
 			width: 220px;
 		}	
 		/* 발주정보, 제품정보 글짜크기 */
@@ -230,7 +223,7 @@
 		}
 		
 		/* 제품정보 세로싸이즈 */
-		form .contents .dtl2 tbody {
+		form .mContents .dtl2 tbody {
 			height: 247px;
 		}
 		/* 제품정보 테이블 크기조정 */
@@ -295,8 +288,8 @@
 	</style>
 	<script>
 		$(document).ready(function() {
-			/* var index = $('form .contents > .fxd .title ul li.on').index() + 2;
-			var length = $('form .contents > .fxd .title ul li').length; */
+			/* var index = $('form .mContents > .fxd .title ul li.on').index() + 2;
+			var length = $('form .mContents > .fxd .title ul li').length; */
 			
 			/* $('li[id^=LI_TOPBar]').click(function(event){ location.href = this.title; event.preventDefault();}); */
 			$('li[id^=LI_TOPBar]').click(function(event){
@@ -363,8 +356,8 @@
 	<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
-		<div class="contentsWrap">
-			<div class="contents mgauto">
+		<div class="mContentsWrap">
+			<div class="mContents mgauto">
 				<div class="floatL">
 					<div class="title"><label class="ftw500">유지보수 상세정보</label></div>
 					<div>
@@ -381,19 +374,19 @@
 								</tr>
 								<tr>
 									<td>고객사담당자</td>
-									<td><c:out value="${basicContractInfo.acDirectorInfo}"/></td>
+									<td><c:out value="${basicContractInfo.mtAcDirectorNm}"/> / <c:out value="${basicContractInfo.acDirectorInfo}"/></td>
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><c:out value="${basicContractInfo.viewCtDt}"/></td>
+									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-									<td><c:out value="${basicContractInfo.viewStartDt}"/> ~ <c:out value="${basicContractInfo.viewEndDt}"/></td>
+									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
-									<td><c:out value="${basicContractInfo.viewAmount}"/></td>
+									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<tr>
 									<td>부가세 포함여부</td>
@@ -433,7 +426,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td><c:out value="${basicContractInfo.remark}"/></td>
+									<td ><pre><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 						</div>
@@ -601,7 +594,7 @@
 								</tbody>
 							</table>
 						</div>
-						<div class="btnWrap rt">
+						<div class="bottom">
 							<div class="floatR">
 								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>

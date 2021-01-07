@@ -78,7 +78,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 545px;
+			height: 550px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -206,9 +206,8 @@
 			                
 			        console.log("배열에 담긴 값 : "+tdArr); */
 
-
-				$("input[name=selectKey]").val($('#check'+$(this).children().eq(1).text()).val());			
-				
+				//$("input[name=selectKey]").val($('#check'+$(this).children().eq(1).text()).val());			
+				document.listForm.selectKey.value=$('#check'+$(this).children().eq(1).text()).val();
 				/* location.href = "/maintenance/detail/prodInfo.do"; */
 				document.listForm.action = "/maintenance/contract/detail/productInfo.do";
 	           	document.listForm.submit(); 
@@ -229,6 +228,28 @@
 		
 		function fn_addView1(){
 			var url = '/maintenance/contract/write/backOrderInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
+		function fn_addView2(){
+			var url = '/maintenance/contract/write/purchaseAmountView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
+		function fn_addView3(){
+			var url = '/maintenance/contract/write/productInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 
@@ -274,6 +295,7 @@
 <body>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<input type="hidden" name="btnOption" />
+		<!-- <input type="hidden" id="selectKey" name="selectKey"/> -->
 		<input type="hidden" id="selectKey" name="selectKey"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
@@ -283,7 +305,9 @@
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">유지보수 목록</label></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="fn_addView3();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView1();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
+						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
@@ -328,15 +352,15 @@
 						<c:forEach var="result" items="${resultList}" varStatus="status">
 							<tr>
 								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tCheck" name="mtIntegrateKey" id="check<c:out value="${result.rowNum}"/>" value="<c:out value="${result.mtIntegrateKey}"/>" /><label for="check<c:out value="${result.rowNum}"/>" class="cursorP"/>
+									<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${result.rowNum}"/>" value="<c:out value="${result.mtIntegrateKey}"/>" /><label for="check<c:out value="${result.rowNum}"/>" class="cursorP"/>
 								</td>
 								<td><c:out value="${result.rowNum}"/></td>
 								<td><c:out value="${result.mtCtKey}"/></td>
 								<td><c:out value="${result.mtAcNm}"/></td>
 								<td><c:out value="${result.mtNm}"/></td>
-								<td><c:out value="${result.viewCtDt}"/></td>
-								<td><c:out value="${result.viewStartDt}"/></td>
-								<td><c:out value="${result.viewEndDt}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.mtStartDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.mtEndDt)}"/></td>
 								<td><c:out value="${result.mtRgInspectCnt}"/>회</td>
 								<td><c:out value="${result.mtImCd}"/></td>
 								<td><c:out value="${result.mtSbCtYn}"/></td>

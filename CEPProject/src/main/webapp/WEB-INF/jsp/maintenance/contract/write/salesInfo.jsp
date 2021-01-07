@@ -786,7 +786,7 @@
 								<td class="tdEtc"></td><td class="tdEtc"></td>
 								<td class="tdEtc"></td>
 								<td class="tdEtc" style="text-align:right;">
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
 		                        	<img id="salesList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'sales');" style="width: 11px"/>
 								</td>
 								<%-- <td class="floatR">

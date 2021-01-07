@@ -287,7 +287,7 @@
 					document.mtBasicForm.action = "/maintenance/work/detail/basicInfo.do";
 		           	document.mtBasicForm.submit();
 				} else if(this.title == "productInfo"){
-					console.log("productInfo===>${basicWorkInfo.mtWorkPmYn}")
+					//console.log("productInfo===>${basicWorkInfo.mtWorkPmYn}")
 					if("${basicWorkInfo.mtWorkPmYn}" == "Y"){
 						document.mtBasicForm.action = "/maintenance/work/detail/productInfo.do";
 			           	document.mtBasicForm.submit();
@@ -312,7 +312,7 @@
 				/* $("#LI_TOPBar_WO"). */
 				
 			}
-			
+			//수정버튼 클릭
 			$('#modInfo').click(function() {
 				console.log($('#editMode').val())
 				if($('#editMode').val()=="0"){
