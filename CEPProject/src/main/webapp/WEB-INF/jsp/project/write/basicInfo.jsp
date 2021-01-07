@@ -347,7 +347,7 @@
 										<option <c:if test="${resultList[0].acDirectorKey == emp.empKey }">selected</c:if> value="${emp.empKey}">${emp.empNm}</option>
 									</c:forEach> --%>
 								</select>				
-								<input type="text" class="pname"  id="acDirectorInfo" value="차장/ 010-1234-5678 / hong@naver.com" readonly/>
+								<input type="text" class="pname"  id="acDirectorInfo" readonly/>
 							</td>
 						</tr>
 						<tr>
