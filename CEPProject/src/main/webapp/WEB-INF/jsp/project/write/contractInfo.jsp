@@ -120,6 +120,15 @@
 		}
 	</style>
 	<script>
+		$(document).ready(function() {
+			 $('input:checkbox[name="taxYn"]').each(function() {
+			      if(this.checked) {
+			            $(this).val('Y');
+			      } else {
+			    	  $(this).val('N');
+			      }
+			 });	
+		});
 		
 		function fn_chkVali() {
 			if ($("#infoForm")[0].checkValidity()){
@@ -147,10 +156,10 @@
 			if(calcuTurn>0) {
 				for(i=0; i<calcuTurn; i++){
 					var rowItem = "<tr class='ftw200'>";
-					rowItem += "	<td>"+(beforeTurn+i+1)+ "회차 :&nbsp;";
+					rowItem += "<td>"+(beforeTurn+i+1)+ "회차 :&nbsp;";
 					rowItem += "<input type='text' name='ctTurnNo' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' numberOnly class='rateInfo'/>";
 					rowItem += "&nbsp;%&nbsp;&nbsp;&nbsp;";
-					rowItem += "<input type='text' name='ctAmount' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount' />&nbsp;원 </td>";
+					rowItem += "<input type='text' name='ctAmount' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount' />&nbsp;원</td>";
 					rowItem += "</tr>"
 					
 					$('#addRow').append(rowItem);
@@ -165,7 +174,13 @@
 			document.getElementById("beforeTurn").value= turnVal.value;
 			
 			$('input[id^=rate]').change(function(event) { 
-				$('#amount'+$(this).attr('id').substring(4)).val($('#sum').val() * $(this).val() / 100);
+				if($('#sum').val() == null || $('#sum').val() == "") {
+					alert('총 계약금액을 입력해주세요.');
+					$('#sum').focus();
+					$(this).val('');
+				} else {
+					$('#amount'+$(this).attr('id').substring(4)).val($('#sum').val() * $(this).val() / 100);	
+				}
 			});
 		}
 		
@@ -201,7 +216,7 @@
 						url:"/project/insert/contractInfo.do",
 					    dataType: 'json', 
 					    type:"POST",  
-					    data: {"pjKey":$('#pjKey').val(), "ctAmount":},
+					    data: {"pjKey":$('#pjKey').val(), "ctAmount":$('#amount'+(i+1)), "ctTurnNo":(i+1), "ctPayTerms":$('#ctPayTerms').val(), "taxYn":$('#taxYn').val()},
 					 	contentType: "application/json; charset=UTF-8", 
 						beforeSend: function(xhr) {
 							xhr.setRequestHeader("AJAX", true);
@@ -272,12 +287,15 @@
 					<table>
 						<tr class="ftw200">
 							<td class="firstRow">
-								<input type="text" id="sum" name="sum" placeholder="계약금액"  numberOnly class="amount"/> &nbsp;원
+								<input type="text" id="sum" name="sum" placeholder="총 계약금액"  numberOnly class="amount"/> &nbsp;원
+								<label>(부가세포함 </label>
+								<input type='checkbox' class='tCheck' id='taxYn' value='Y' name='taxYn'/><label for='pCheck' class='cursorP veralignM'></label>
+								<label>)</label>
 							</td>
 						</tr>
 						<tr class="ftw200">
 							<td>
-								<input type="text" name="ctPayTerms" placeholder="청구일로 부터" numberOnly /> &nbsp;이내
+								<input type="text" id="ctPayTerms" name="ctPayTerms" placeholder="청구일로 부터" numberOnly /> &nbsp;이내
 							</td>
 						</tr>
 						<tr class="ftw200">
@@ -307,9 +325,14 @@
 					</table>
 				</div>
 				<div class="btnWrap floatR">
-					<div class="floatR">
+					<div class="floatL btnPrev">
 						<button type="button" onclick="fn_preBaicView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					</div>
+					<div class="floatL btnSave">
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>
+					<div class="floatR">
+						<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

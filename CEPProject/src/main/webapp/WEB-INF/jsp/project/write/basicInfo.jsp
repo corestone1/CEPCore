@@ -135,7 +135,7 @@
 			if ($("#infoForm")[0].checkValidity()){
 	            if ($("#infoForm")[0].checkValidity()){
 	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_saveNext('contractInfo');
+	               fn_save();
 	            } else {
 	                $("#infoForm")[0].reportValidity();   
 	            }            
@@ -146,7 +146,9 @@
 	         }
 		}
 		
-		function fn_saveNext(link) {
+		var countSave = 0;
+		
+		function fn_save() {
 			var object = {};
 			var formData = $("#infoForm").serializeArray();
 			var form = document.infoForm;
@@ -186,12 +188,9 @@
 					},
 				    success:function(response){	
 				    	if(response!= null && response.successYN == 'Y') {
-				    		var url = '/project/write/'+link+'.do';
-							var dialogId = 'program_layer';
-							var varParam = JSON.parse(JSON.stringify(response));
-							var button = new Array;
-							button = [];
-							showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				    		alert('저장되었습니다.');
+				    		$('#newKey').val(response.pjKey);
+				    		countSave++;
 				    	}
 				    },
 					error: function(request, status, error) {
@@ -203,6 +202,33 @@
 			}
 		}
 	
+		function fn_next(link) {
+			if(countSave > 0) {
+				var url = '/project/write/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"pjKey": $("#newKey").val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+			}
+			else {
+				if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+					var url = '/project/write/'+link+'.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+							"pjKey": $("#pjKey").val()
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				} else {
+					alert('저장을 해주세요.');
+				}
+			}
+		}
+		
 		function fn_viewPopup(){
 			window.open('/project/popup/list.do','project_list','width=1000px,height=400,left=600'); 
 		}
@@ -233,6 +259,11 @@
 					}					
 				}				
 			});
+			
+			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_mod.png'/>" /></button>');
+			}
 		});
 		
 		function fn_selectAc() {
@@ -292,6 +323,7 @@
 				<input type="hidden" id="dialogId" />
 				<input type="hidden" id="spKey" name="spKey" />
 				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
+				<input type="hidden" id="newKey" name="newKey" value="<c:out value="${pjKey}"/>"/>
 				<div>  
 					<table>
 						<tr>
@@ -355,8 +387,11 @@
 					<div class="floatL">
 						<button ><img src="<c:url value='/images/btn_file.png'/>" /></button>
 					</div>
+					<div class="floatL btnSave">
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>
 					<div class="floatR">
-						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
