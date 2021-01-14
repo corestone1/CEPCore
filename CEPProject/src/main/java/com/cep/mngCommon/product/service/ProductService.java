@@ -39,4 +39,15 @@ public interface ProductService {
 	List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception;
 	
 	
+	
+	/**
+	  * @Method Name : insertProduct
+	  * @Cdate       : 2021. 1. 11.
+	  * @Author      : ynk
+	  * @Modification: 
+	  * @Method Description : 제품을 등록합니다.
+	  * @param productVO
+	  * @throws Exception
+	  */
+	void insertProduct(ProductVO productVO) throws Exception;
 }

@@ -26,6 +26,9 @@ public class ProductSearchVO implements Serializable {
 	private String productMake;     //제조사
 	private String productName;     //제품명
 	
+	private String pmKeyDomId; //Search Popup Return값을 넘기는 객체의 ID(제품키)
+	private String pmNmDomId;  //Search Popup Return값을 넘기는 객체의 ID(제품명)
+	
 	public String getProductDivision() {
 		return productDivision;
 	}
@@ -52,6 +55,30 @@ public class ProductSearchVO implements Serializable {
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	/**
+	 * @return the pmKeyDomId
+	 */
+	public String getPmKeyDomId() {
+		return pmKeyDomId;
+	}
+	/**
+	 * @param pmKeyDomId the pmKeyDomId to set
+	 */
+	public void setPmKeyDomId(String pmKeyDomId) {
+		this.pmKeyDomId = pmKeyDomId;
+	}
+	/**
+	 * @return the pmNmDomId
+	 */
+	public String getPmNmDomId() {
+		return pmNmDomId;
+	}
+	/**
+	 * @param pmNmDomId the pmNmDomId to set
+	 */
+	public void setPmNmDomId(String pmNmDomId) {
+		this.pmNmDomId = pmNmDomId;
 	}
 	
 	

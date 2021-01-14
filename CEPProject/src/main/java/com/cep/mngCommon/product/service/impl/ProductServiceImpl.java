@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,14 @@ public class ProductServiceImpl implements ProductService {
 	public List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception {
 		logger.debug("=======================");
 		return mapper.selectProductList(searchVO);
+	}
+	
+	@Override
+	public void insertProduct(ProductVO productVO) throws Exception {
+		//Product Key 생성
+		productVO.setPmKey("PM000002");
+		
+		mapper.insertProduct(productVO);
 	}
 
 }
