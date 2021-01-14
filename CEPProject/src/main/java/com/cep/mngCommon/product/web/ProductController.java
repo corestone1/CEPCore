@@ -51,8 +51,6 @@ public class ProductController {
 		
 		List<ProductVO> lltProduct = service.selectProductList(searchVO);
 		
-		logger.debug("--------------------");
-		
 		model.put("productList", lltProduct);
 		
 		return "mngCommon/product/list";

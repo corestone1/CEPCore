@@ -41,7 +41,6 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception {
-		logger.debug("=======================");
 		return mapper.selectProductList(searchVO);
 	}
 	
