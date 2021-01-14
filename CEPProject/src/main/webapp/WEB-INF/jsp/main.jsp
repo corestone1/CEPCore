@@ -116,7 +116,7 @@
 				success : function(response) {								
 	
 					if(response == 1){
-						location.href="/forecastList.do";
+						location.href="/forecast/list.do";
 					}
 					else {
 						$('.error').css('display', 'block');
