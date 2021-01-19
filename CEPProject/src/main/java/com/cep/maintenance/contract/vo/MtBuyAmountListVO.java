@@ -6,6 +6,10 @@ package com.cep.maintenance.contract.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.ibatis.type.Alias;
+
+@SuppressWarnings("serial")
+@Alias("mtSalesAmountVO")
 /**
  * @File Name : MtBuyAmountListVO.java
  * @Project   : CEPProject
@@ -21,15 +25,15 @@ import java.util.List;
  *
  *  Copyright (C) by CORESTONE All right reserved.
  */
-public class MtBuyAmountListVO implements Serializable {
+public class MtBuyAmountListVO extends MtDefaultVO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 	// 유지보수 통합 관리키 유지보수 계약 PK
 	private String mtIntegrateKey;
 	// 유지보수 발주 관리키
 	private String mtOrderKey;
 	// 유지보수계약 매입 삭제 관리키 
-	private String deleteKeys;
+//	private String deleteKeys;
 	// 등록자 관리키
 	private String regEmpKey;
 	// 수정자 관리키
@@ -71,16 +75,16 @@ public class MtBuyAmountListVO implements Serializable {
 	/**
 	 * @return the deleteKeys
 	 */
-	public String getDeleteKeys() {
-		return deleteKeys;
-	}
-
-	/**
-	 * @param deleteKeys the deleteKeys to set
-	 */
-	public void setDeleteKeys(String deleteKeys) {
-		this.deleteKeys = deleteKeys;
-	}
+//	public String getDeleteKeys() {
+//		return deleteKeys;
+//	}
+//
+//	/**
+//	 * @param deleteKeys the deleteKeys to set
+//	 */
+//	public void setDeleteKeys(String deleteKeys) {
+//		this.deleteKeys = deleteKeys;
+//	}
 
 	/**
 	 * @return the regEmpKey

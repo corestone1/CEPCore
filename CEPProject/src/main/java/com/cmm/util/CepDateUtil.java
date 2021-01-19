@@ -504,9 +504,9 @@ public class CepDateUtil {
 				yearList.add(String.valueOf(i));
 			}
 			
-			for (int i = 0; i < yearList.size(); i++) {
-				System.out.println(yearList.get(i));
-			}
+//			for (int i = 0; i < yearList.size(); i++) {
+//				System.out.println(yearList.get(i));
+//			}
 			
 		} catch (Exception e) {
 			throw new Exception(e);

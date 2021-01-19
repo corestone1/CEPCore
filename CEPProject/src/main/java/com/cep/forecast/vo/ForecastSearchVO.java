@@ -129,7 +129,6 @@ public class ForecastSearchVO implements Serializable {
 	public void setSpBusiNmDomId(String spBusiNmDomId) {
 		this.spBusiNmDomId = spBusiNmDomId;
 	}
-
-	
 	
 }
+

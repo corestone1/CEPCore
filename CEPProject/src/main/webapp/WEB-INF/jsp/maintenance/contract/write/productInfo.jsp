@@ -6,10 +6,10 @@
 <head>
 	<title>유지보수 등록(제품정보)</title>
 	<style>
-		.firstTd {			
+		/* .firstTd {			
 			border-top: 2px solid #e5e5e5;	
 			padding-top: 6px;
-		}
+		} */
 		.lastTd {			
 			padding-bottom: 5px;
 		}
@@ -46,7 +46,8 @@
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: calc(100% - 201px);
+			/* width: calc(100% - 201px); */
+			width : 943px;
 			height: 601px;
 			top: 107px;
 			left: 201px;			
@@ -56,9 +57,12 @@
 		}
 		.popContainer .contents > div {
 			margin: 10px 54px 0 45px;
+			width: 850px;
 		}
 		.popContainer .contents .subject {
 			width: 844px;
+			border-bottom: 2px solid #e5e5e5;
+			padding-bottom: 9px;
 		}
 		.popContainer input[class="search"] {
 			height: 36px;
@@ -122,8 +126,9 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 22px);
+			/* width: calc(100% - 22px); */
 			/* height: 55px; */
+			width : 717px;
 			height: 54px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -145,7 +150,7 @@
 			padding-right: 52px;
 		}	
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 15px 45px;
+			margin : 20px 0px 15px 45px;
 		}
 		.popContainer .contents td.tdTitle label {
 			color: red;
@@ -154,17 +159,114 @@
 		.calculate {
 			text-align: right !important;
 		}
+		.btnCenter {
+			width : calc(100% - 46px);
+			text-align: center;
+		}
+		.popContainer .prodTable table {
+			border-bottom : 2px solid #e5e5e5;
+			width : 844px;
+			table-layout: fixed;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
 			/*
 			처음 로딩시  저장된 리스트가 2개보다 많으면  모두 접는다.
-			2개까지는 스크롤바가 생성되지 않음.
+			1개까지는 스크롤바가 생성되지 않음.
 			*/
-			'<c:if test="${listCount > 2 }">'
+			'<c:if test="${listCount > 1 }">'
 			fn_viewSummaryUpAll();
 			'</c:if>'
 		});
+		/**
+		*  화면을 이동시킨다.
+		*  @param {string} varUrl 이동해야할 url
+		*/
+		function fn_changeView(varUrl) {
+			var url;
+			if($('#mtIntegrateKey').val() !="") {
+				if(varUrl == "basicInfoView"){
+					if(confirm("유지보수계약 기본정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}					
+				} else if(varUrl == "productInfoView"){
+					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+					
+				} else if(varUrl == "salesInfoView"){					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 매출정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
+				} else if(varUrl == "backOrderInfoView"){
+					if("${parmMtSbCtYn}" == "Y"){
+						
+						if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
+							if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 매출정보가 등록되지 않았습니다.\n 유지보수계약 매출정보를 먼저 등록하세요.");
+							return false;
+						}						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 등록하세요.");
+						return false;
+					}					
+					
+				} else if(varUrl == "purchaseAmountView"){					
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+							return false;
+						}						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+						return false;
+					}
+				}
+			} else {
+				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
+				return false;
+			}
+			
+			if(url != "") {
+				
+				var dialogId = 'program_layer';
+				var varParam = {
+					"mtIntegrateKey": $('#mtIntegrateKey').val(),
+					"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			} else {
+
+				return false;
+			}			
+		} //end fn_changeView()
+		
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
 			var objArry = null;
@@ -218,10 +320,18 @@
 	    	var nameArr = new Array();
 	    	var idArr = new Array();
 	    	var forArr = new Array();
+	    	var classArr = new Array(); // 접기펴기
 	    	
 	    	var tr = $('.'+type+'Table tr');
 	    	var td = tr.children().children();
 	    	
+	    	/* var cls = $('.'+type+'Table');
+	    	var clscs = cls.children();
+	    	console.log("clscs.length===>"+clscs.length);
+	    	
+	    	for(var i = 0; i < clscs.length; i++) {
+	    		console.log("clscs.[i]===>"+JSON.stringify(clscs[i]));
+	    	} */
 	    	
 	    	for(var i = 0; i < td.length; i++) {
 	    		if(td[i].getAttribute('name') != null && td[i].getAttribute('name') != undefined && td[i].getAttribute('name') != "" && td[i].getAttribute('name').length != 0) {
@@ -236,10 +346,17 @@
 	    		if(td[i].getAttribute('for') != null && td[i].getAttribute('for') != undefined && td[i].getAttribute('for') != "" && td[i].getAttribute('for').length != 0 && td[i].getAttribute('class').includes('calendar')) {
 	    			$(this).attr('id','');
 	    		} 
+
+	    		//if(td[i].getAttribute('class') != null && td[i].getAttribute('class') != undefined && td[i].getAttribute('class') != "" && td[i].getAttribute('class').length != 0) {
+	    		//	classArr.push(td[i].getAttribute('class')); 	    			
+	    		//}
 	    	}
 	    	
 	    	var name = type + 'List[' + (lastNum+1) + '].';	    	
 	    	   	
+	    	for(var i = 0; i < classArr.length; i++) {
+	    		clone.find('input[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");
+	    	}
 	    		    	
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		
@@ -258,9 +375,14 @@
 	    	} 
 	    	
 	    	for(var i = 0; i < forArr.length; i++) {
+	    		
 	    		var splitName = forArr[i].split('-')[2];				
 				clone.find('label[for="'+ type + 'List[' + lastNum + ']-' + splitName+'"]').attr('for', name + splitName);				
 	    	} 
+	    	
+	    	//펼쳐서 보여주기
+	    	clone.find('.dpNone').attr('class', 'dpTbRow');
+	    	clone.find('.up').attr('class', 'down').attr('src', '/images/arrow_up.png');
 	    	
 	    	$('#'+type+'Wrap').append(clone);
 		}
@@ -344,30 +466,62 @@
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			   
 		}
+		
+		//이전화면으로 이동
 		function fn_prevBtn(){
-			var url = '/maintenance/contract/write/basicInfoView.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-					"mtIntegrateKey":$('#mtIntegrateKey').val()
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 기본정보 등록화면으로 이동하시겠습니까?")) {
+				var url = '/maintenance/contract/write/basicInfoView.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"mtIntegrateKey":$('#mtIntegrateKey').val(),
+						"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			} else {
+				return false;
 			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			
+		}
+		//다음화면으로 이동
+		function fn_nextBtn(){
+			if("${mtContractCountInfo.mtProductCnt}" > 0){
+				if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출정보 등록화면으로 이동하시겠습니까?")) {
+					var url = '/maintenance/contract/write/salesInfoView.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+							"mtIntegrateKey":$('#mtIntegrateKey').val(),
+							"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+				} else {
+					return false;
+				}
+			} else {
+				alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+				return false;
+			}	
+			
 		}
 
 		function fn_saveBtn(){
 			//필수값 체크를 완료하면 저장 프로세스 시작.
-			var msg;
+			
+			var actionTitle;
 			if ($("#mtListForm")[0].checkValidity()){
-				if($('#rowNum').val()*1 >0){
-					msg = "유지보수계약 제품정보를 수정하시겠습니까?"
-					
+				if($('#rowNum').val()*1 >0){					
+					actionTitle = "수정";
 				} else {
-					msg = "유지보수계약 제품정보를 저장하시겠습니까?"
+					actionTitle = "저장";
 				}
 				
-				if(confirm(msg)) {
-					saveProductList();
+				if(confirm("유지보수계약 제품정보를 "+actionTitle+"하시겠습니까?")) {
+					saveProductList(actionTitle);
+				} else {
+					return false;
 				}
 				
 			}  else {
@@ -376,7 +530,7 @@
 			}
 		}
 	
-		function saveProductList(){
+		function saveProductList(actionTitle){
 
 			var object = {};
 			var listObject = new Array();
@@ -412,9 +566,9 @@
 	            	//console.log("data.mtIntegrateKey==>"+paramData.mtIntegrateKey);
 	            	
 	            	if("Y" == paramData.successYN){
-	            		alert("유지보수계약 제품등록을 성공하였습니다.");
+	            		alert("유지보수계약 제품"+actionTitle+"을 성공하였습니다.");
 	            		//유지보수작업 발주 등록화면으로 이동
-	            		var url='/maintenance/contract/write/salesInfoView.do';
+	            		var url='/maintenance/contract/write/productInfoView.do';
 	            		            			
 		    			var dialogId = 'program_layer';
 		    			var varParam = paramData
@@ -422,7 +576,7 @@
 		    			button = [];
 		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 	            	} else {
-	            		alert("유지보수계약 제품등록이 실패하였습니다.");
+	            		alert("유지보수계약 제품"+actionTitle+"을 실패하였습니다.");
 	            	}
 	            	
 	            	
@@ -443,12 +597,12 @@
 			$("#prodList-"+num+"-totalAmount").val(addCommas(quantity*pmUprice))
 		});
 
-		function fn_viewSummaryUpAll(){
+/* 		function fn_viewSummaryUpAll(){
 			$(".dpTbRow").attr('class','dpNone');
 			$(".down").attr('class','up');
 			$(".up").attr('src','<c:url value='/images/arrow_down.png'/>');
 			//$(".up").src = "<c:url value='/images/arrow_down.png'/>";
-		}
+		} */
 	</script>
 </head>
 <body>
@@ -460,12 +614,12 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-					<li class="colorWhite cursorP" onclick="fn_addView('writeMtBasicInfoView');">기본정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP on">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
 					<c:if test="${parmMtSbCtYn eq 'Y' }">		
-					<li class="colorWhite cursorP">백계약정보</li>
-					<li class="colorWhite cursorP">매입정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');">매입정보</li>
 					</c:if>
 			</ul>
 		</div>
@@ -608,13 +762,30 @@
 					</c:choose>					
 					
 				</div>
-				<div class="btnWrap">
+				<div class="btnWrap floatL">
 					<div class="floatL">
-						<button type="button"><img src="<c:url value='/images/btn_prev_icon.png'/>" onclick="fn_prevBtn();"/></button>
+						<button type="button"><img src="<c:url value='/images/btn_prev.png'/>" onclick="fn_prevBtn();"/></button>
 					</div>
+					<div class="floatL btnCenter">
+						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>
+					<c:choose>
+						<c:when test="${mtContractCountInfo.mtProductCnt>0}">
 					<div class="floatR" >
-						<button type="button"><img src="<c:url value='/images/btn_next_icon.png'/>" onclick="fn_saveBtn();"/></button>
+						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
 					</div>
+						</c:when>
+						<c:otherwise>
+					<div class="floatR" >
+						<img src="<c:url value='/images/btn_non_next.png'/>"/>
+					</div>						
+						</c:otherwise>
+					</c:choose>
+					<%-- <c:if test="${mtContractCountInfo.mtProductCnt>0}">
+					<div class="floatR" >
+						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" onclick="fn_nextBtn();"/></button>
+					</div>
+					</c:if> --%>
 					
 					<div class="floatN floatC"></div>
 				</div>

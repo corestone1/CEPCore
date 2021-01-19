@@ -110,7 +110,7 @@ $(document).on("focus", "input:text[amountOnly]", function() {
 function addCommas(x) {
 	var returnValue;
 	if(!x || x.length == 0) {
-		returnValue =  "";
+		returnValue =  x;
 	} else {
 		returnValue = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
@@ -191,6 +191,23 @@ function removeData(x, y) {
     }
     return returnValue;
 }
+
+//접기
+function fn_viewSummaryUpAll(){
+	$(".dpTbRow").attr('class','dpNone');
+	$(".down").attr('class','up');
+	//$(".up").attr('src','<c:url value="/images/arrow_down.png"/>');
+	$(".up").attr('src','/images/arrow_down.png');
+}
+
+// 펴기
+function fn_viewSummaryDownAll(){
+	$(".dpNone").attr('class','dpTbRow');
+	$(".up").attr('class','down');
+	//$(".down").attr('src','<c:url value="/images/arrow_up.png"/>');
+	$(".down").attr('src','/images/arrow_up.png');
+}
+
 
 //날짜 하이픈(-) 자동 추가
 function fn_date_format(e, oThis) {
