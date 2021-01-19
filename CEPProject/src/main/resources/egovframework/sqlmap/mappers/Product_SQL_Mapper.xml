@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngCommon.product.service.impl.ProductMapper">
+
+<!--제품 관련 sql 관리하는 Mapper.xml  -->
+
+	<resultMap id="productVO" type="com.cep.mngCommon.product.vo.ProductVO">
+		<result property="rowNum"          column="ROW_NUM"/>
+		<result property="pmKey"           column="PM_KEY"/>
+		<result property="pmClassCd"       column="PM_CLASS_CD"/>
+		<result property="pmDetailClassCd" column="PM_DETAIL_CLASS_CD"/>
+		<result property="pmLineCd"        column="PM_LINE_CD"/>
+		<result property="pmNmCd"          column="PM_NM_CD"/>
+		<result property="mfAcKey"         column="MF_AC_KEY"/>
+		<result property="pmReleaseDt"     column="PM_RELEASE_DT"/>
+		<result property="eolDt"           column="EOL_DT"/>
+		<result property="eossDt"          column="EOSS_DT"/>
+		<result property="pmRemark"        column="PM_REMARK"/>
+		<result property="regDt"           column="REG_DT"/>
+		<result property="regTm"           column="REG_TM"/>
+		<result property="regEmpKey"       column="REG_EMP_KEY"/>
+		<result property="modDt"           column="MOD_DT"/>
+		<result property="modTm"           column="MOD_TM"/>
+		<result property="modEmpKey"       column="MOD_EMP_KEY"/>
+		<result property="acNm"            column="AC_NM" />
+	</resultMap>
+	
+	
+	<!--
+		제품 목록 조회 쿼리
+	  -->
+	<select id="selectProductList" parameterType="com.cep.mngCommon.product.vo.ProductSearchVO" resultMap="productVO">				
+		
+		SELECT PM.PM_KEY
+		     , PM.PM_CLASS_CD
+		     , PM.PM_DETAIL_CLASS_CD
+		     , PM.PM_LINE_CD, PM_NM_CD
+		     , PM.MF_AC_KEY
+		     , PM.PM_RELEASE_DT
+		     , PM.EOL_DT
+		     , PM.EOSL_DT
+		     , PM.PM_REMARK
+		     , PM.REG_DT
+		     , PM.REG_TM
+		     , PM.REG_EMP_KEY
+		     , PM.MOD_DT
+		     , PM.MOD_TM
+		     , PM.MOD_EMP_KEY
+			 , AC.AC_NM
+		FROM PM_PRODUCT_MNG_TB PM
+			 JOIN CMM_ACCOUNT_TB AC 
+			 ON PM.MF_AC_KEY = AC.AC_KEY
+		WHERE 1=1	
+		<if test="productDivision != null and productDivision != ''">
+			AND PM.PM_CLASS_CD = #{productDivision}
+		</if>
+		
+		<if test="productFlag != null and productFlag != ''">
+			AND 1=1
+		</if>
+		
+		<if test="productMake != null and productMake != ''">
+			<![CDATA[
+				AND AC.AC_NM LIKE CONCAT('%', CONCAT(#{productMake}, '%'))
+			]]>
+		</if>
+		
+		<if test="productName != null and productName != ''">
+			<![CDATA[
+				AND PM.PM_NM_CD LIKE CONCAT('%', CONCAT(#{productName}, '%'))
+			]]>
+		</if>
+		ORDER BY PM.REG_DT, PM.MF_AC_KEY DESC		
+		
+	</select>
+	
+	
+	<insert id="insertProduct" parameterType="com.cep.mngCommon.product.vo.ProductVO">
+		INSERT INTO PM_PRODUCT_MNG_TB (
+			  PM_KEY
+			, PM_CLASS_CD
+			, PM_DETAIL_CLASS_CD
+			, PM_LINE_CD
+			, PM_NM_CD
+			, MF_AC_KEY
+			, PM_RELEASE_DT
+			, EOL_DT
+			, EOSL_DT
+			, PM_REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+		)
+		VALUES
+		(
+			  make_key('PM')
+			, #{pmClassCd}
+			, #{pmDetailClassCd}
+			, #{pmLineCd}
+			, #{pmNmCd}
+			, #{mfAcKey}
+			, #{pmReleaseDt}
+			, #{eolDt}
+			, #{eossDt}
+			, #{pmRemark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+		)
+		
+	</insert>
+	
+</mapper>

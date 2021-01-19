@@ -172,7 +172,7 @@
 						//document.listForm.btnOption.value='delete';
 						alert($('input[name="gubun"]:checked').val());
 						
-						var litIdx = parseInt($('input[name="gubun"]:checked').val()) - 1;
+						var litIdx = parseInt($('input[name="gubun"]:checked').val());
 						
 						alert($('input[name="pmKey"]').eq(litIdx).val());
 						
@@ -257,20 +257,24 @@
 			});
 		});
 
-		function fn_addView(link){
-			if(link == "forecastList") {
-				location.href="<c:url value='/forecastList.do'/>";
-			} else {
-				var url = '/'+link+'.do';
-				var dialogId = 'program_layer';
-				var varParam = {
-		
-				}
-				var button = new Array;
-				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
-			}
+		function fn_addView(){
+			var url = '/mngCommon/product/writePopup.do';
+			var dialogId = 'program_layer';
+			
+			var varParam = {};
+			
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:548px;height:615px'); 
 		}
+		
+		
+		//제품목록 조회 팝업용 임시 코드
+		function fn_searchList()
+		{                
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmKeyDomId=docIdPmkey&pmNmDomId=docIdPmNm','PRODUCT_LIST','width=1000px,height=713px,left=600');
+		}
+		
 
 	</script>
 </head>
@@ -283,7 +287,8 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">제품 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="/images/btn_add.png" /></div>
+						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView()"><img src="/images/btn_add.png" /></div>
+						<div class="addBtn floatL cursorP" onclick="javascript:fn_searchList()"><img src="/images/btn_add.png" /></div>
 					</div>
 					<div class="floatR">
 						<form:select path="productDivision">

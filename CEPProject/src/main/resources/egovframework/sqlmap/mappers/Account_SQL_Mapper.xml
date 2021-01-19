@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngCommon.account.service.impl.AccountMapper">
+
+	<resultMap id="accountVO" type="com.cep.mngCommon.account.vo.AccountVO">
+		<result property="rowNum"          column="ROW_NUM"/>
+		<result property="acKey"           column="AC_KEY"/>
+		<result property="acSalesYN"       column="AC_SALES_YN"/>
+		<result property="acBuyYN"         column="AC_BUY_TN"/>
+		<result property="acBusiNum"       column="AC_BUSI_NUM"/>
+		<result property="acNm"            column="AC_NM"/>
+		<result property="acAddr"          column="AC_ADDR"/>
+		<result property="acAddrDetail"    column="AC_ADDR_DETAIL"/>
+		<result property="acCeoNm"         column="AC_CEO_NM"/>
+		<result property="acRepTel"        column="AC_REP_TEL"/>
+		<result property="acRepFax"        column="AC_REP_FAX"/>
+		<result property="regDt"           column="REG_DT"/>
+		<result property="regTm"           column="REG_TM"/>
+		<result property="regEmpKey"       column="REG_EMP_KEY"/>
+		<result property="modDt"           column="MOD_DT"/>
+		<result property="modTm"           column="MOD_TM"/>
+		<result property="modEmpKey"       column="MOD_EMP_KEY"/>
+	</resultMap>
+	
+
+	<!--
+		코드 목록 조회 쿼리
+	  -->
+	<select id="selectAccountList" parameterType="com.cep.mngCommon.account.vo.AccountSearchVO" resultMap="accountVO">				
+		
+		SELECT AC_KEY
+		     , AC_SALES_YN
+		     , AC_BUY_YN
+		     , AC_BUSI_NUM
+		     , AC_NM
+		     , AC_ADDR
+		     , AC_ADDR_DETAIL
+		     , AC_CEO_NM
+		     , AC_REP_TEL
+		     , AC_REP_FAX
+		     , REG_DT
+		     , REG_TM
+		     , REG_EMP_KEY
+		     , MOD_DT
+		     , MOD_TM
+		     , MOD_EMP_KEY
+		FROM   CMM_ACCOUNT_TB
+		WHERE 1=1	
+		
+		<if test="acSalesYN != null and acSalesYN != ''">
+			AND AC_SALES_YN = #{acSalesYN}
+		</if>
+		
+		<if test="acBuyYN != null and acBuyYN != ''">
+			AND AC_BUY_YN = #{acBuyYN}
+		</if>
+		
+		<if test="acNm != null and acNm != ''">
+			<![CDATA[
+				AND AC_NM LIKE CONCAT('%', CONCAT(#{acNm}, '%'))
+			]]> 
+		</if>
+		
+		ORDER BY AC_NM ASC		
+		
+	</select>
+	
+</mapper>
