@@ -3,9 +3,11 @@
  */
 package com.cep.maintenance.contract.vo;
 
-import java.io.Serializable;
 import java.util.List;
+import org.apache.ibatis.type.Alias;
 
+@SuppressWarnings("serial")
+@Alias("mtSaleAmountListVO")
 /**
  * @File Name : MtSaleAmountListVO.java
  * @Project   : CEPProject
@@ -21,16 +23,16 @@ import java.util.List;
  *
  *  Copyright (C) by CORESTONE All right reserved.
  */
-public class MtSaleAmountListVO implements Serializable{
+public class MtSaleAmountListVO extends MtDefaultVO {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 	private List<MtSalesAmountVO> mtSalesAmountVOList;
 	private String mtIntegrateKey;
 	private String parmMtSbCtYn;
-	private String deleteKeys;
+//	private String deleteKeys;
 	private String regEmpKey;
 	private String modEmpKey;
 	/**
@@ -72,15 +74,15 @@ public class MtSaleAmountListVO implements Serializable{
 	/**
 	 * @return the deleteKeys
 	 */
-	public String getDeleteKeys() {
-		return deleteKeys;
-	}
-	/**
-	 * @param deleteKeys the deleteKeys to set
-	 */
-	public void setDeleteKeys(String deleteKeys) {
-		this.deleteKeys = deleteKeys;
-	}
+//	public String getDeleteKeys() {
+//		return deleteKeys;
+//	}
+//	/**
+//	 * @param deleteKeys the deleteKeys to set
+//	 */
+//	public void setDeleteKeys(String deleteKeys) {
+//		this.deleteKeys = deleteKeys;
+//	}
 	/**
 	 * @return the regEmpKey
 	 */

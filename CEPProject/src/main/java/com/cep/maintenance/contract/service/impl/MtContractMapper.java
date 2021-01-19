@@ -185,6 +185,20 @@ public interface MtContractMapper {
 	
 	/**
 	 * 
+	  * @Method Name : selectMtSalesTotalAmount
+	  * @Cdate       : 2021. 1. 8.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 매출총금액
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public int selectMtSalesTotalAmount(String mtIntegrateKey) throws Exception;
+	
+	
+	/**
+	 * 
 	  * @Method Name : writeMtContractSalesAmountList
 	  * @Cdate       : 2020. 12. 10.
 	  * @Author      : aranghoo
@@ -194,6 +208,56 @@ public interface MtContractMapper {
 	  * @throws Exception
 	 */
 	public void writeMtContractSalesAmountList(Map<String, Object> insertParam) throws Exception;
+	
+	
+	/**
+	 * 
+	  * @Method Name : selectMtContractSalesAmountList
+	  * @Cdate       : 2021. 1. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매출정보 목록조회
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public List<?> selectMtContractSalesAmountList(String mtIntegrateKey)  throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : updateMtContractSalesAmountList
+	  * @Cdate       : 2021. 1. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약별 매출목록 정보수정
+	  * @param updateParam
+	  * @throws Exception
+	 */
+	public void updateMtContractSalesAmountList(Map<String, Object> updateParam)throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractSalesAmountAll
+	  * @Cdate       : 2021. 1. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별 매출목록 전체삭제
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteMtContractSalesAmountAll(Map<String, Object> deleteParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractSalesAmountList
+	  * @Cdate       : 2021. 1. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별  매출목록 리스트삭제
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteMtContractSalesAmountList(Map<String, Object> deleteParam) throws Exception;
 	
 	/* ============================== 유지보수계약 백계약  ======================================*/
 	
@@ -366,7 +430,7 @@ public interface MtContractMapper {
 	  * @return
 	  * @throws Exception
 	 */
-	public int selectMtBuyTotalAmount(String mtOrderKey) throws Exception;
+	public int selectMtBuyTotalAmount(Map<String, Object> selectParam) throws Exception;
 	
 	/**
 	 * 

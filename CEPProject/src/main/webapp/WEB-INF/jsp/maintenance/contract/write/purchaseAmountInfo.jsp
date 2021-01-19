@@ -48,25 +48,29 @@
 		.popContainer .contents {
 			position: absolute;
 			width: calc(100% - 201px);
-			height: 456px;
-			top: 252px;
+			height: 447px;
+			top: 261px;
 			left: 201px;			
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			margin: 10px 54px 0 45px;
+			margin: 10px 47px 0 37px;
+			over-flow-y: auto;
+			width: 863px
 		}
 		.popContainer .contents .subject {
-			width: 844px;
+			width: 863px;
+			border-bottom: 2px solid #e5e5e5;
+			padding-bottom: 9px;
 		}
 		.popContainer .contents select.wdts {
 			width: 135px;
 		}
 		.popContainer .contents select,  .popContainer .contents1 select{
 			width: 153px;
-			height: 36px;
+			height: 30px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
@@ -95,20 +99,24 @@
 			padding-bottom: 12px;
 		}		
 		.popContainer .purchaseTable table {
+			box-sizing: border-box;
 			border-bottom: 2px solid #e5e5e5;
 			padding-bottom: 5px;
 			margin-top: 5px;
+			table-layout: fixed;
+			width: 100%;
 		}
 		.popContainer td.tdTitle {
 			margin-top: 11px;
 			font-size: 15px;
 			color: #525252;
-			padding-left: 6px;
-			padding-right: 23px;
-			max-width: 55px;
+			padding-left: 0px;
+			padding-right: 10px;
+			width: 40px;
+			text-align: right;
 		}				
 		.popContainer td.tdContents {
-			max-width: 150px;
+			max-width: 120px;
 			font-size: 14px;
 		}							
 		.popContainer td.tdEtc {
@@ -153,31 +161,7 @@
 			overflow-x: hidden;
 			padding-top: 18px;
 			padding-right: 52px;
-		}	
-		
-		
-		.popContainer .contents1 table thead {
-			background-color: #e1dff5;
-			float: left;
-			//width: calc(100% - 220px);
-			border-top: 3.5px solid #6a5bae;
-		}
-		.popContainer .contents1 table thead {
-			display: table-header-group;
-		}
-		.popContainer .contents1 table tbody {
-			width: calc(100% - 201px);
-			//height: 200px;
-			overflow-y: auto;
-			overflow-x: hidden;
-			float: left;
-		}
-		.popContainer .contents1 table tbody tr {
-			display: table;
-			width: calc(100% - 220px);
-			/* cursor: pointer; */
-		}
-		
+		}			
 		.popContainer .contents1 {
 			position: absolute;
 			width: calc(100% - 201px);
@@ -190,25 +174,38 @@
 			overflow-x: hidden;
 		}		
 		.popContainer .contents1 table {
-			width: calc(100% - 201px);
-			//font-size: 15px;
-			//margin-top: 9px;
+			box-sizing: border-box;
+			width: calc(100% - 72px);
+			font-size: 15px;
+			margin-top: 7px;
 			margin-left: 38px;
 			border-collapse: collapse;
 			overflow: hidden;
 		}
-		.popContainer .contents1 table thead{			
-			font-size: 14px;
+		.popContainer .contents1 table thead {
+			background-color: #e1dff5;
+			float: left;
+			width: calc(100% - 8px);
+			border-top: 3.5px solid #6a5bae;
 		}
-		.popContainer .contents1 table tbody{			
-			font-size: 14px;
+		.popContainer .contents1 table thead {
+			display: table-header-group;
 		}
 		.popContainer .contents1 table tbody {
-			width: 1067px;
-			//height: 200px;
+			width: calc(100% - 5px);
+			/* height: 200px; */
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
+			font-size: 14px;
+		}
+		.popContainer .contents1 table tbody tr {
+			display: table;
+			width: calc(100% - 5px);
+			/* cursor: pointer; */
+		}
+		.popContainer .contents1 table thead{			
+			font-size: 15px;
 		}
 		.popContainer .contents1 table thead th {
 			padding: 10px 0;
@@ -227,12 +224,12 @@
 		}	 */
 		.contents1 table thead th:first-child,
 		.contents1 table tbody td:first-child {
-			width: 202px;
+			width: 207px;
 			border: 1px solid #edebef;
 		}	
 		.contents1 table thead th:nth-child(2),
 		.contents1 table tbody td:nth-child(2) {
-			width: 202px;
+			width: 204px;
 		}
 		.contents1 table thead th:nth-child(3),
 		.contents1 table tbody td:nth-child(3),
@@ -240,7 +237,7 @@
 		.contents1 table tbody td:nth-child(4),
 		.contents1 table thead th:nth-child(5),
 		.contents1 table tbody td:nth-child(5) {
-			width: 146px;
+			width: 150px;
 		}
 		
 		.popContainer input[class="pname"] {
@@ -252,6 +249,13 @@
 		}
 		.calculate {
 			text-align: right !important;
+		}	
+		.popContainer .contents .btnWrap {
+			margin : 20px 36px 15px 38px;
+		}
+		.btnCenter {
+			width : calc(100% - 46px);
+			text-align: center;
 		}
 		/* .popContainer .contents td.tdTitle label {
 			color: red;
@@ -282,13 +286,74 @@
 				처음 로딩시  저장된 리스트가 2개보다 많으면  모두 접는다.
 				2개까지는 스크롤바가 생성되지 않음.
 			*/
-			'<c:if test="${purchaseInitCnt > 2 }">'
+			'<c:if test="${purchaseInitCnt > 1 }">'
 			fn_viewSummaryUpAll();
-			//console.log("1111111====>"+"${purchaseInitCnt}");
 			'</c:if>'
 				
-			
 		});
+		/**
+		*  화면을 이동시킨다.
+		*  @param {string} varUrl 이동해야할 url
+		*/
+		function fn_changeView(varUrl) {
+			var url;
+			if($('#mtIntegrateKey').val() !="") {
+				if(varUrl == "basicInfoView"){
+					if(confirm("유지보수계약 기본정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}					
+				} else if(varUrl == "productInfoView"){
+					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+					
+				} else if(varUrl == "salesInfoView"){					
+
+					if(confirm("유지보수계약 매출정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}				
+					
+				} else if(varUrl == "backOrderInfoView"){
+					if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}				
+					
+				} else if(varUrl == "purchaseAmountView"){					
+					if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+				}
+			} else {
+				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
+				return false;
+			}
+			
+			if(url != "") {
+				
+				var dialogId = 'program_layer';
+				var varParam = {
+					"mtIntegrateKey": $('#mtIntegrateKey').val(),
+					"parmMtSbCtYn":"Y"
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			} else {
+
+				return false;
+			}			
+		} //end fn_changeView()
+		
 		
 		/* 리스트 데이타 만들기.*/
 		jQuery.fn.serializeObject = function() { 
@@ -423,14 +488,17 @@
 				clone.find('select[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
 				clone.find('img[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
 				//console.log('select===>'+'select[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]');				
-	    	} 
-  	
+	    	}   	
 	    	
 	    	//for값 변경
 	    	for(var i = 0; i < forArr.length; i++) {
 	    		var splitName = forArr[i].split('-')[2];				
 				clone.find('label[for="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('for', name + splitName);				
 	    	} 
+	    	
+	    	//펼쳐서 보여주기
+	    	clone.find('.dpNone').attr('class', 'dpTbRow');
+	    	clone.find('.up').attr('class', 'down').attr('src', '/images/arrow_up.png');
 	    	
 	    	$('#'+type+'Wrap').append(clone);
 	    	//합계금액 0원 셋팅
@@ -455,7 +523,7 @@
 	         }
 		}
 		
-		function fn_viewSummaryUpAll(){
+/* 		function fn_viewSummaryUpAll(){
 			$(".dpTbRow").attr('class','dpNone');
 			$(".down").attr('class','up');
 			$(".up").attr('src','<c:url value='/images/arrow_down.png'/>');
@@ -466,7 +534,7 @@
 			$(".dpNone").attr('class','dpTbRow');
 			$(".up").attr('class','down');
 			$(".down").attr('src','<c:url value='/images/arrow_up.png'/>');
-		}
+		} */
 		
 		/* 제품정보 삭제
 		* 업데이트 시 제품정보 제품정보 삭제 목록에 대해 수집한다.  
@@ -495,12 +563,12 @@
 				
 				//삭제 key
 				deleteKey =  $('#purchaseList-'+listNum+'-mtBuyKey').val();
-				console.log("deleteKey====>"+deleteKey);
+				//console.log("deleteKey====>"+deleteKey);
 				//삭제확인
 				if(confirm(deleteYear+"년도 매입정보를 삭제하시겠습니까?")) {
 					//mtBuyKey값이 있는 경우 삭제key list를 만든다.
 					if(deleteKey !=''){
-						$('#deleteKeys').val($('#deleteKeys').val()+deleteKey+":");
+						$('#deleteListKeys').val($('#deleteListKeys').val()+deleteKey+":");
 					}
 					//삭제된 금액을 뺀댜
 					deleteAmount(selectNum.split('-')[1]);					
@@ -539,14 +607,37 @@
 			
 		});
 		
-		function fn_saveBtn(){
-			//필수값 체크를 완료하면 저장 프로세스 시작.
-			if ($("#mtListForm")[0].checkValidity()){
-				//필수값 모두 통과하여 저장 프로세스 호출.
-				savePurchageAmount();
+		//이전화면으로 이동
+		function fn_prevBtn(){
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출정보 등록화면으로 이동하시겠습니까?")) {
+				var url = '/maintenance/contract/write/backOrderInfoView.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"mtIntegrateKey":$('#mtIntegrateKey').val(),
+						"parmMtSbCtYn":"Y"
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			} else {
-				 $("#mtListForm")[0].reportValidity();	
-			}	
+				return false;
+			}
+			
+		}
+		
+		function fn_saveBtn(){
+			if(confirm("유지보수계약 매입정보를 저장하시겠습니까?")) {
+				//필수값 체크를 완료하면 저장 프로세스 시작.
+				if ($("#mtListForm")[0].checkValidity()){
+					//필수값 모두 통과하여 저장 프로세스 호출.
+					savePurchageAmount();
+				} else {
+					 $("#mtListForm")[0].reportValidity();	
+				}	
+			} else {
+				return false;
+			}
+			
 		}
 		
 		function savePurchageAmount(){
@@ -667,11 +758,11 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-					<li class="colorWhite cursorP">기본정보</li>
-					<li class="colorWhite cursorP">제품정보</li>
-					<li class="colorWhite cursorP">매출정보</li>
-					<li class="colorWhite cursorP">백계약정보</li>
-					<li class="colorWhite cursorP on">매입정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
+				<li class="colorWhite cursorP on">매입정보</li>
 			</ul>
 		</div>
 		<form action="/" id="mtBasicForm" name="mtBasicForm" method="post"> 
@@ -679,7 +770,7 @@
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
 			<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtOrderKey}"/>" />
 			<input type="hidden" id="purchaseInitCnt" name="purchaseInitCnt" value="<c:out value="${purchaseInitCnt}"/>" />
-			<input type="hidden" id="deleteKeys" name="deleteKeys"  />
+			<input type="hidden" id="deleteListKeys" name="deleteListKeys"  />
 			<%-- 			
 			<input type="hidden" id="purchaseInitCnt2" name="purchaseInitCnt2" value="<c:out value="${purchaseAmountList.size()}"/>" />
 			<c:choose>
@@ -752,18 +843,16 @@
 								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
 									<input type="text" id="purchaseList-0-mtBuyYear" name="purchaseList-0-mtBuyYear" style="text-align: center" numberOnly required maxlength="4"/>
-
 									<input type="hidden" name="lastNum" value="0" />
 									<input type="hidden" id="purchaseList-0-mtBuyKey" name="mtBuyKey"/>
 								</td>
 								<td class="tdTitle sum"><label>합계</label></td>								
 								<td class="tdContents sum" >
-									<input type="text" id="purchaseList-0-yearTotalAmount" name="yearTotalAmount" style="width:150px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
+									<input type="text" id="purchaseList-0-yearTotalAmount" name="yearTotalAmount" style="width:136px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
 								</td>
-								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
-								<td class="tdContents"><input type="text" class="pname" style="width: 150px"></td>
-								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
-								<td class="tdEtc" style="text-align:right;padding-right: 10px">
+								<td class="tdTitle"></td><td class="tdContents"></td>
+								<td class="tdTitle"></td>	
+								<td class="tdEtc" style="text-align:right;">
 									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
 		                        	<img id="purchaseList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/>
 								</td>
@@ -825,26 +914,24 @@
 						</table>
 					</div>
 					</c:when>
-					<c:otherwise>
-					<c:forEach var="list" items="${purchaseAmountList}" varStatus="status">
+						<c:otherwise>
+							<c:forEach var="list" items="${purchaseAmountList}" varStatus="status">
 					<div class="purchaseTable">						
 						<table>
 							<tr>
 								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
 									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" name="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" style="text-align: center" numberOnly required maxlength="4" value="<c:out value="${list.mtBuyYear}"/>"/>
-
 									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
 									<input type="hidden" id="purchaseList-<c:out value="${status.index}"/>-mtBuyKey" name="mtBuyKey" value="<c:out value="${list.mtBuyKey}"/>"/>
 								</td>
 								<td class="tdTitle sum"><label>합계</label></td>								
 								<td class="tdContents sum" >
-									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-yearTotalAmount" name="yearTotalAmount" style="width:150px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-yearTotalAmount" name="yearTotalAmount" style="width:136px; text-align:right; color: #32bc94; font-size: 15px" class="pname" value="0" readonly/>
 								</td>
-								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
-								<td class="tdContents"><input type="text" class="pname" style="width: 150px"></td>
-								<td class="tdTitle" style="width: 31px"><label style="color: #f6f7fc;">공백</label></td>
-								<td class="tdEtc" style="text-align:right;padding-right: 10px">
+								<td class="tdTitle"></td><td class="tdContents"></td>
+								<td class="tdTitle"></td>								
+								<td class="tdEtc" style="text-align:right;">
 									<img id="upDown" src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
 		                        	<img id="purchaseList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/>
 								</td>
@@ -905,16 +992,19 @@
 							</tr>
 						</table>
 					</div>					
-					</c:forEach>
-					</c:otherwise>
+							</c:forEach>
+						</c:otherwise>
 					</c:choose>
 					
 				</div>
-				<div class="btnWrap floatR">
-				
-					<div class="floatR" onclick="fn_saveBtn();">
-						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					</div>		
+				<div class="btnWrap floatL">
+					<div class="floatL">
+						<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					</div>
+					<div class="floatL btnCenter">
+						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>				
+							
 					<div class="floatN floatC"></div>
 				</div>
 			</div>		

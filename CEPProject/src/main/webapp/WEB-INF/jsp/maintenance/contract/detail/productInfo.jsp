@@ -60,6 +60,8 @@
 		.mContents  table {
 			border-collapse: collapse;
 			font-size: 15px;
+			width: 614px;
+			table-layout: fixed;
 		} 
 		.mContents table tr td {
 			padding: 13px 18px;
@@ -91,14 +93,13 @@
 			color: #0e8a67;
 		}
 		.mContents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			
-			width: 90px;
+			box-shadow: inset -7px 0 9px -4px #d0e2de;			
+			width: 153px;
 			font-weight: 400;
-			padding: 13px 20px 13px 20px;
+			padding: 13px 13px 13px 13px;
 		}
 		.mContents .bsc tr td:last-child {
-			width: 460px;
+			width: 470px;
 			font-weight: 200;
 		}
 		.mContents .bsc tr td label.file {
@@ -227,7 +228,8 @@
 		}
 		.mContents .dtl tbody tr td img {
 			width: 13px;
-			vertical-align: top;
+			vertical-align: middle;
+			margin-bottom: 5px;
 		}
 		/* .detailList li {
 			float: left;
@@ -242,6 +244,7 @@
 		}
 		.detailList li:nth-child(2n) {
 			width: 910px; 
+   			height: auto;
 			overflow: hidden;
 			/* text-overflow: ellipsis; */
 			white-space: nowrap;
@@ -250,7 +253,7 @@
 		}
 		.detailList li:last-child {
 			/* width: 734px; */
-   			height: 56px;
+   			height: auto;
    			word-break: break-all;
    			white-space: normal;
    			overflow: auto;
@@ -357,7 +360,7 @@
 				$('#m_gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
 			'</c:if>'
 			
-			$('li[id^=LI_TOPBar]').click(function(event){ 
+			$('li[id^=LI_TOPBar]').click(function(event){
 				//location.href = this.title; event.preventDefault();
 				/* var formData = $("#mtBasicForm").serializeArray();
 				alert(JSON.stringify(formData)); */
@@ -374,7 +377,7 @@
 					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
 						if(confirm("유지보수계약 매출정보 상세화면으로 이동하시겠습니까?")){
-							document.m_mtMoveForm.action = "/maintenance/contract/detail/productInfo.do";
+							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesInfo.do";
 				           	document.m_mtMoveForm.submit();
 						}
 					} else {
@@ -413,9 +416,7 @@
 						
 					} else {
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
-					}				
-					
-					
+					}
 				}
 			});
 
@@ -479,7 +480,7 @@
 			
 
 			/* 고객사 선택하면 고객담당자 정보 가져오기. */
-			$('#m_mtAcKey').change(function(){				
+			$('#m_mtAcKey').change(function(){	
 		        $.ajax({
 		        	url:"/maintenance/contract/selectAcDirectorList.do",
 		            dataType: 'json',
@@ -535,7 +536,7 @@
 				});
 			});
 			
-		});
+		});//end document.ready
 		
 
 		//기본정보 수정버튼 클릭
@@ -561,7 +562,7 @@
 
 		}); */
 		function modeBasicInfo(){
-			console.log('aaadbdfdf');
+			
 			if($('#m_editMode').val()=="0"){
 				$('#modBasicTable').show();
 				$('#selectBasicTable').hide();
@@ -642,7 +643,8 @@
 			var url = '/maintenance/contract/write/productInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>'
+					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'					
 			}
 			var button = new Array;
 			button = [];
@@ -711,10 +713,10 @@
 						<button type="button" value="수정" id="modBasicInfo" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 					</div> 
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
-						<input type="hidden" id="m_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 					</form>
 					<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
-						<input type="hidden" id="m_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+						<input type="hidden" id="m2_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
@@ -732,27 +734,15 @@
 								</tr>
 								<tr>
 									<td>계약일자</td>
-<<<<<<< HEAD
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/></td>
-=======
-									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-<<<<<<< HEAD
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
-=======
-									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
-<<<<<<< HEAD
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
-=======
-									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 								</tr>
 								<tr>
 									<td>부가세포함</td>
@@ -771,7 +761,7 @@
 									<td><c:out value="${basicContractInfo.mtRgInspectCnt}"/> 회</td>
 								</tr>
 								<tr>
-									<td>백계약유무</td>
+									<td>백계약 유무</td>
 									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
 								</tr>
 								<tr>
@@ -792,7 +782,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td ><pre><c:out value="${basicContractInfo.remark}"/></pre></td>
+									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
@@ -928,205 +918,6 @@
 						</div>
 					</form>
 				</div>
-<<<<<<< HEAD
-=======
-				<div class="floatR dpBlock fxd">
-					<div class="title">
-						<ul>
-							<li id="LI_TOPBar_PD" class="on" title="/maintenance/contract/detail/prodInfo.do"><label>제품정보</label></li>
-							<li id="LI_TOPBar_SL" title="/maintenance/contract/detail/salesInfo.do"><label>매출정보</label></li>
-							<li id="LI_TOPBar_BC" title="/maintenance/contract/detail/backOrderInfo.do"><label>백계약정보</label></li>
-							<li id="LI_TOPBar_PA" title="/maintenance/contract/detail/purchaseAmountInfo.do"><label>매입정보</label></li>
-							<li></li>
-						</ul>
-					</div>
-					<div id="prodList">
-						<div class="stitle cg colorBlack">제품정보<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="floatC">
-							<table class="dtl">
-								<thead class="ftw400">
-									<tr>
-										<th scope="row">선택</th>
-										<th scope="row">No</th>
-										<th scope="row">제품</th>
-										<th scope="row">시리얼번호</th>
-										<th scope="row">단가</th>
-										<th scope="row">수량</th>
-										<th scope="row">합계</th>
-										<th scope="row">부가세포함</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check1" /><label for="check1" class="cursorP"/>
-										</td>
-										<td>1</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R642</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">12341234</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check2" /><label for="check2" class="cursorP"/>
-										</td>
-										<td>2</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check3" /><label for="check3" class="cursorP"/>
-										</td>
-										<td>3</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check4" /><label for="check4" class="cursorP"/>
-										</td>
-										<td>4</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check5" /><label for="check5" class="cursorP"/>
-										</td>
-										<td>5</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check6" /><label for="check6" class="cursorP"/>
-										</td>
-										<td>6</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check7" /><label for="check7" class="cursorP"/>
-										</td>
-										<td>7</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check8" /><label for="check8" class="cursorP"/>
-										</td>
-										<td>8</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check9" /><label for="check9" class="cursorP"/>
-										</td>
-										<td>9</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check10" /><label for="check10" class="cursorP"/>
-										</td>
-										<td>10</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check11" /><label for="check11" class="cursorP"/>
-										</td>
-										<td>11</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check12" /><label for="check12" class="cursorP"/>
-										</td>
-										<td>12</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-									<tr>
-										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="mtIntegrateKey" id="check13" /><label for="check13" class="cursorP"/>
-										</td>
-										<td>13</td>
-										<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-										<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>5</td>
-										<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-										<td>Y</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="btnWrap rt">
-							<div class="floatR">
-								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="floatC"></div>
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
 			</div>
 			<div class="floatR dpBlock fxd">
 				<div class="title">
@@ -1149,7 +940,8 @@
 				</div>
 				<div id="prodList">
 					<div class="stitle cg colorBlack floatL">
-						제품정보<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/>
+						제품정보
+						<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/>
 					</div>
 					<div class="stitle2 floatR">
 						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>
