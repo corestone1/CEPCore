@@ -33,7 +33,45 @@
 	
 	
 	<select id="makePrimaryKey" parameterType="String" resultType="String">			
-		SELECT make_key(#{keyType});
+		SELECT make_key(#{keyType}); commit;
 	</select>
 	
+	<insert id="insertSalesInfo" parameterType="java.util.Map">
+		INSERT INTO CMM_SALES_DETAIL_TB (
+			SALES_CT_FK_KEY
+			, SALES_CT_CLASS
+			, SALES_TURN
+			, SALES_COLLECT_RATE
+			, SALES_TURN_AMOUNT
+			, SALES_CHARGE_DT
+			, SALES_BILL_FC_DT
+			, SALES_COLLECT_FC_DT
+			, SALES_COLLECT_FINISH_DT
+			, SALES_GB_YN
+			, SALES_STATUS_CD
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES 
+		<foreach collection="SalesVOList" item="item" separator=",">
+			(
+				#{salesCtFkKey}
+				, #{item.salesCtClass}
+				, #{item.salesTurn}
+				, #{item.salesCollectRate}
+				, #{item.salesTurnAmount}
+				, #{item.salesChargeDt}
+				, #{item.salesBillFcDt}
+				, #{item.salesCollectFcDt}
+				, #{item.salesCollectFinishDt}
+				, #{item.salesGbYn}
+				, #{item.salesStatusCd}
+				, DATE_FORMAT(NOW(),'%Y%m%d')
+				, DATE_FORMAT(NOW(),'%H%i%s')
+				, #{regEmpKey}
+				, 'N'
+			)
+		</foreach>
+	</insert>
 </mapper>

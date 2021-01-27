@@ -80,7 +80,7 @@
 		.popContainer .contents input[class="calendar"] {
 			width: 130px;
 			height: 40px;
-			background-image: url('./images/calendar_icon.png');
+			background-image: url('./images/icon_calendar.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
@@ -110,7 +110,7 @@
 		.popContainer .contents td:last-child  {
 			padding-right: 0px !important;
 		} 		
-		.popContainer .contents tr:first-child td { 
+		.popContainer .contents tr.first td { 
 			border-collapse: collapse;
 	  		border-spacing: 0 3px;	  		
 			border-bottom:2px solid #e5e5e5;				
@@ -132,8 +132,25 @@
 		} */
 	</style>
 	<script>
+		function Request() {
+			var requestParam = "";
+			this.getParameter = function(param) {
+				var url = document.forms.infoForm.getAttribute('action');
+				var paramArr = (url.substring(url.indexOf("?")+1, url.length)).split("&");
+
+				for(var i = 0; i < paramArr.length; i++) {
+					var temp = paramArr[i].split("=");
+					
+					if(temp[0].toUpperCase() == param.toUpperCase()) {
+						requestParam = paramArr[i].split("=")[1];
+						break;
+					}
+				}
+				return requestParam;
+			}
+		}
+	
 		function check_click(num1, num2) {
-			
 			var check1 = document.getElementById("check"+num1+"-"+num2).checked;			
 			
 			if(num2==1){
@@ -161,27 +178,181 @@
 			}			
 		}
 		
-		function fn_addBuildView(){
-			var url = '/project/write/buildInfo.do';
+		var countSave = 0;
+		
+		function fn_save() {
+			var request = new Request();
+			var turnNo = request.getParameter("turnNo");
+
+			for(var i = 0; i < turnNo; i++) {
+				var object = {};
+				var formData = $("#form"+i).serializeArray();
+				
+				for (var j = 0; j<formData.length; j++){
+					object[formData[j]['name']] = formData[j]['value'];
+				    if("salesChargeDt" == formData[j]['name']) {
+	                	//날짜 - 제거
+	                	object[formData[j]['name']] = removeData(formData[j]['value'],"-");
+	                } else {
+	                	object[formData[j]['name']] = formData[j]['value'];
+	                }     
+				 }
+				
+				var sendData = JSON.stringify(object);
+				
+				countSave++;
+				
+				/* $.ajax({
+					url: "/project/insert/biddingInfo.do",
+				    dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		alert("저장되었습니다.");
+				    		countSave++;
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				}); */
+			}
+		}
+		
+		function fn_next(link) {
+			if(countSave > 0) {
+				var url = '/project/write/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"pjKey": $("#newKey").val(),
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+			}
+			else {
+				if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+					var url = '/project/write/'+link+'.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+							"pjKey": $("#pjKey").val(),
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				} else {
+					alert('저장을 해주세요.');
+				}
+			}
+		}
+		
+		function fn_prevView(){
+			var url = '/project/write/contractInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-	
+				"pjKey" : $('#pjKey').val()
 			}
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
-		function fn_preBaicView(){
-			var url = '/project/write/amountInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
+		$(document).ready(function() {
+			var request = new Request();
+			var turnNo = request.getParameter("turnNo");
+			var temp = 0;
+			
+			for(var i = 0; i < turnNo; i++) {
+				var ctKeyList = new Array();
+				var salesKeyList = new Array();
+				
+				<c:forEach items="${ctKey}" var="item">
+					ctKeyList.push("${item}");
+				</c:forEach>
+				
+				<c:forEach items="${salesKey}" var="item">
+					salesKeyList.push("${item}");
+				</c:forEach>
+				
+				var html = "<form id='form"+i+"' name='form'><table><tr class='first'>";
+					html += "<input type='hidden' name='pjKey' value='"+$('#pjKey').val() +"' />";
+					html += "<td colspan='2' >"+(i+1)+"회차 일정</td>";
+					html += "<td>";
+					html += "<input type='text' placeholder='계산서 예정일정' class='calendar' name='salesBillFcDt' required/> &nbsp;";
+					html += "<input type='text' placeholder='수금 예상 일정' class='calendar' name='salesCollectFcDt' required/>";
+					html += "<input type='hidden' name='ctKey' value='"+ctKeyList[i]+"' />";
+					html += "<input type='hidden' name='salesKey' value='"+salesKeyList[i]+"' />";
+					html += "<input type='hidden' value='"+(i+1)+"' name='salesTurn' />"
+					html += "</td>";
+					html += "<td colspan='3'></td>";
+					html += "</tr>";
+					html += "<tr class='ftw200'>";
+					html += "<td>";
+					html += "<input type='checkbox' class='tCheck' id='check"+(temp+1)+"-"+1+"' onclick='check_click("+(temp+1)+","+1+")'/><label for='check"+(temp+1)+"-"+1+"' class='cursorP'></label>";
+					html += "</td>";						
+					html += "<td>계약 보증 증권 정보</td>";
+					html += "<td id='step"+(temp+1)+"-"+1+"' style='visibility:hidden'>";
+					html += "<input type='text' id='from"+(temp+1)+"' placeholder='from' class='calendar' /> ~ ";
+					html += "<input type='text' id='to"+(temp+1)+"' placeholder='to' class='calendar' />";
+					html += "</td>";
+					html += "<td id='step"+(temp+1)+"-"+2+"' style='visibility:hidden'>";
+					html += "<input type='checkbox' class='tCheck' id='check"+(temp+1)+"-"+2+"' onclick='check_click("+(temp+1)+","+2+")'/><label for='check"+(temp+1)+"-"+2+"' class='cursorP'></label>"; 
+					html += "</td>";
+					html += "<td id='step"+(temp+1)+"-"+3+"' style='visibility:hidden'>완료</td>";
+					html += "<td id='step"+(temp+1)+"-"+4+"' style='visibility:hidden'>";
+					html += "<input type='text' id='amount"+(temp+1)+"' placeholder='금액' numberOnly class='amount' width='177px'/>";
+					html += "</td>";
+					html += "</tr>";
+					html += "<tr class='ftw200'>";
+					html += "<td>";
+					html += "<input type='checkbox' class='tCheck' id='check"+(temp+2)+"-"+1+"' onclick='check_click("+(temp+2)+","+1+")'/><label for='check"+(temp+2)+"-"+1+"' class='cursorP'></label>";
+					html += "</td>";
+					html += "<td>하자 보증 증권 정보</td>";
+					html += "<td id='step"+(temp+2)+"-"+1+"' style='visibility:hidden'>";
+					html += "<input type='text' id='from"+(temp+2)+"' placeholder='from' class='calendar' /> ~"; 
+					html += "<input type='text' id='to"+(temp+2)+"' placeholder='to' class='calendar' />";
+					html += "</td>";
+					html += "<td id='step"+(temp+2)+"-"+2+"' style='visibility:hidden'>";
+					html += "<input type='checkbox' class='tCheck' id='check"+(temp+2)+"-"+2+"' onclick='check_click("+(temp+2)+","+2+")'/><label for='check"+(temp+2)+"-"+2+"' class='cursorP'></label>"; 
+					html += "</td>";
+					html += "<td id='step"+(temp+2)+"-"+3+"' style='visibility:hidden'>완료</td>";
+					html += "<td id='step"+(temp+2)+"-"+4+"' style='visibility:hidden'>";
+					html += "<input type='text' id='amount"+(temp+2)+"' placeholder='금액' numberOnly class='amount' width='177px'/>";
+					html += "</td>";
+					html += "</tr>";
+					html += "<tr class='ftw200'>";
+					html += "<td>";
+					html += "<input type='checkbox' class='tCheck' id='check"+(temp+3)+"-"+1+"' onclick='check_click("+(temp+3)+","+1+")'/><label for='check"+(temp+3)+"-"+1+"' class='cursorP'></label>";
+					html += "</td>";
+					html += "<td>선급금 보증 증권 정보</td>";
+					html += "<td id='step"+(temp+3)+"-"+1+"' style='visibility:hidden'>";
+					html += "<input type='text' id='from"+(temp+3)+"' placeholder='from' class='calendar' /> ~ ";
+					html += "<input type='text' id='to"+(temp+3)+"' placeholder='to' class='calendar' />";
+					html += "</td>";
+					html += "<td id='step"+(temp+3)+"-"+2+"' style='visibility:hidden'>";
+					html += "<input type='checkbox' class='tCheck' id='check"+(temp+3)+"-"+2+"' onclick='check_click("+(temp+3)+","+2+")'/><label for='check"+(temp+3)+"-"+2+"' class='cursorP'></label>";
+					html += "</td>";
+					html += "<td id='step"+(temp+3)+"-"+3+"' style='visibility:hidden'>완료</td>";
+					html += "<td id='step"+(temp+3)+"-"+4+"' style='visibility:hidden'>";
+					html += "<input type='text' id='amount"+(temp+3)+"' placeholder='금액' numberOnly class='amount' width='177px'/>";
+					html += "</td>";
+					html += "</tr></table></form>";
+				
+					$('#infoTable').append(html);
+					
+					temp = (temp+2) + 1;
 			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
+			
+		});
 	</script>
 </head>
 <body>
@@ -198,87 +369,86 @@
 				<li class="colorWhite cursorP on">예상일정</li>
 			</ul>
 		</div>
-		<div class="contents">
-			<div>
-				<table>
-					<tr>
-						<td colspan="2" >1회차 일정</td>
-						<td  >
-							<input type="text" placeholder="계산서 예정일정" class="calendar" /> &nbsp;
-							<input type="text" placeholder="수금 예상 일정" class="calendar" />
-						</td>
-						<td colspan="3"></td>
-					</tr>
-					<tr class="ftw200">
-						<td>
-							<input type="checkbox" class="tCheck" id="check1-1" onclick="check_click(1,1)"/><label for="check1-1" class="cursorP"></label>
-						</td>						
-						<td>계약 보증 증권 정보</td>
-						<td id="step1-1" style="visibility:hidden">
-							<input type="text" id="from1" placeholder="from" class="calendar" /> ~ 
-							<input type="text" id="to1" placeholder="to" class="calendar" />
-						</td>
-						<td id="step1-2" style="visibility:hidden">
-							<input type="checkbox" class="tCheck" id="check1-2" onclick="check_click(1,2)"/><label for="check1-2" class="cursorP"></label> 
-						</td>
-						<td id="step1-3" style="visibility:hidden">완료</td>
-						<td id="step1-4" style="visibility:hidden">
-							<input type="text" id="amount1" placeholder="금액" numberOnly class="amount" width="177px"/>
-						</td>
-					</tr>
-					<tr class="ftw200">
-						<td>
-							<input type="checkbox" class="tCheck" id="check2-1" onclick="check_click(2,1)"/><label for="check2-1" class="cursorP"></label>
-						</td>
-						<td>하자 보증 증권 정보</td>
-						<td id="step2-1" style="visibility:hidden">
-							<input type="text" id="from2" placeholder="from" class="calendar" /> ~ 
-							<input type="text" id="to2" placeholder="to" class="calendar" />
-						</td>
-						<td id="step2-2" style="visibility:hidden">
-							<input type="checkbox" class="tCheck" id="check2-2" onclick="check_click(2,2)"/><label for="check2-2" class="cursorP"></label> 
-						</td>
-						<td id="step2-3" style="visibility:hidden">완료</td>
-						<td id="step2-4" style="visibility:hidden">
-							<input type="text" id="amount2" placeholder="금액" numberOnly class="amount" width="177px"/>
-						</td>
-					</tr>
-					<tr class="ftw200">
-						<td>
-							<input type="checkbox" class="tCheck" id="check3-1" onclick="check_click(3,1)"/><label for="check3-1" class="cursorP"></label>
-						</td>
-						<td>선급금 보증 증권 정보</td>
-						<td id="step3-1" style="visibility:hidden">
-							<input type="text" id="from3" placeholder="from" class="calendar" /> ~ 
-							<input type="text" id="to3" placeholder="to" class="calendar" />
-						</td>
-						<td id="step3-2" style="visibility:hidden">
-							<input type="checkbox" class="tCheck" id="check3-2" onclick="check_click(3,2)"/><label for="check3-2" class="cursorP"></label>
-						</td>
-						<td id="step3-3" style="visibility:hidden">완료</td>
-						<td id="step3-4" style="visibility:hidden">
-							<input type="text" id="amount3" placeholder="금액" numberOnly class="amount" width="177px"/>
-						</td>
-					</tr>			
-				</table>
-				<%-- <table>
-					<tr width="788px" class="btnWrap">
-						<td  width="200">
-							<button><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						<td width="610"align="right">
-							<button><img src="<c:url value='/images/btn_next.png'/>" /></button>
-						</td>
-					</tr>
-				</table> --%>	
-			</div>
-			<div class="btnWrap floatR">
-				<div class="floatR">
-					<button onclick="fn_preBaicView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+		<form:form commandName="infoForm" id="infoForm" name="infoForm" method="post">
+			<input type="hidden" id="pjKey" value="<c:out value="${pjKey}"/>" />
+ 			<div class="contents">
+				<div>
+					<div id="infoTable">
+						<!-- <tr>
+							<td colspan="2" >1회차 일정</td>
+							<td>
+								<input type="text" placeholder="계산서 예정일정" class="calendar" /> &nbsp;
+								<input type="text" placeholder="수금 예상 일정" class="calendar" />
+							</td>
+							<td colspan="3"></td>
+						</tr>
+						<tr class="ftw200">
+							<td>
+								<input type="checkbox" class="tCheck" id="check1-1" onclick="check_click(1,1)"/><label for="check1-1" class="cursorP"></label>
+							</td>						
+							<td>계약 보증 증권 정보</td>
+							<td id="step1-1" style="visibility:hidden">
+								<input type="text" id="from1" placeholder="from" class="calendar" /> ~ 
+								<input type="text" id="to1" placeholder="to" class="calendar" />
+							</td>
+							<td id="step1-2" style="visibility:hidden">
+								<input type="checkbox" class="tCheck" id="check1-2" onclick="check_click(1,2)"/><label for="check1-2" class="cursorP"></label> 
+							</td>
+							<td id="step1-3" style="visibility:hidden">완료</td>
+							<td id="step1-4" style="visibility:hidden">
+								<input type="text" id="amount1" placeholder="금액" numberOnly class="amount" width="177px"/>
+							</td>
+						</tr>
+						<tr class="ftw200">
+							<td>
+								<input type="checkbox" class="tCheck" id="check2-1" onclick="check_click(2,1)"/><label for="check2-1" class="cursorP"></label>
+							</td>
+							<td>하자 보증 증권 정보</td>
+							<td id="step2-1" style="visibility:hidden">
+								<input type="text" id="from2" placeholder="from" class="calendar" /> ~ 
+								<input type="text" id="to2" placeholder="to" class="calendar" />
+							</td>
+							<td id="step2-2" style="visibility:hidden">
+								<input type="checkbox" class="tCheck" id="check2-2" onclick="check_click(2,2)"/><label for="check2-2" class="cursorP"></label> 
+							</td>
+							<td id="step2-3" style="visibility:hidden">완료</td>
+							<td id="step2-4" style="visibility:hidden">
+								<input type="text" id="amount2" placeholder="금액" numberOnly class="amount" width="177px"/>
+							</td>
+						</tr>
+						<tr class="ftw200">
+							<td>
+								<input type="checkbox" class="tCheck" id="check3-1" onclick="check_click(3,1)"/><label for="check3-1" class="cursorP"></label>
+							</td>
+							<td>선급금 보증 증권 정보</td>
+							<td id="step3-1" style="visibility:hidden">
+								<input type="text" id="from3" placeholder="from" class="calendar" /> ~ 
+								<input type="text" id="to3" placeholder="to" class="calendar" />
+							</td>
+							<td id="step3-2" style="visibility:hidden">
+								<input type="checkbox" class="tCheck" id="check3-2" onclick="check_click(3,2)"/><label for="check3-2" class="cursorP"></label>
+							</td>
+							<td id="step3-3" style="visibility:hidden">완료</td>
+							<td id="step3-4" style="visibility:hidden">
+								<input type="text" id="amount3" placeholder="금액" numberOnly class="amount" width="177px"/>
+							</td>
+						</tr> -->			
+					</div>
 				</div>
-				<div class="floatN floatC"></div>
+				<div class="btnWrap floatR">
+					<div class="floatL btnPrev">
+						<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					</div>
+					<div class="floatL btnSave">
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>
+					<div class="floatR">
+						<button type="button" onclick="javascript:fn_next('orderInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					</div>
+					<div class="floatN floatC"></div>
+				</div>
 			</div>
-		</div>
+		</form:form>
 	</div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.cmm.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -57,5 +58,18 @@ public interface ComMapper {
 	* @throws Exception
 	*/
 	public String makePrimaryKey(String keyType) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : insertSalesInfo
+	* @Cdate       : 2020. 01. 15.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매출 정보 등록
+	* @param salesVO 
+	* @return
+	* @throws Exception
+	*/
+	public int insertSalesInfo(Map<String, Object> insertParam) throws Exception;
 	
 }

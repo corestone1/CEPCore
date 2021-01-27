@@ -76,6 +76,16 @@ public class SampleDefaultVO implements Serializable {
 	/** recordCountPerPage */
 	private int recordCountPerPage = 10;
 
+	private String regEmpKey;
+	
+	private String modEmpKey;
+	
+	//여러개 저장하는 경우 저장되어있는 목록숫자.
+	private int saveCnt; 
+	
+	//선택한 항목의 key값
+	private String selectKey; 
+	
 	public int getFirstIndex() {
 		return firstIndex;
 	}
@@ -162,6 +172,38 @@ public class SampleDefaultVO implements Serializable {
 
 	public void setSearchToDt(String searchToDt) {
 		this.searchToDt = searchToDt;
+	}
+	
+	public String getRegEmpKey() {
+		return regEmpKey;
+	}
+
+	public void setRegEmpKey(String regEmpKey) {
+		this.regEmpKey = regEmpKey;
+	}
+	
+	public String getModEmpKey() {
+		return modEmpKey;
+	}
+
+	public void setModEmpKey(String modEmpKey) {
+		this.modEmpKey = modEmpKey;
+	}
+	
+	public int getSaveCnt() {
+		return saveCnt;
+	}
+
+	public void setSaveCnt(int saveCnt) {
+		this.saveCnt = saveCnt;
+	}
+	
+	public String getSelectKey() {
+		return selectKey;
+	}
+
+	public void setSelectKey(String selectKey) {
+		this.selectKey = selectKey;
 	}
 
 	@Override

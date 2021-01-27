@@ -28,10 +28,13 @@ public enum PrimaryKeyType {
 	 */
 	PROJECT("PJ")
 	, PROJECT_CONTRACT("CT")
+	, GUARANTY_BOND("GB")
 	, MAINTENACE_CONTRACT_ALL("MA")
 	, MAINTENACE_CONTRACT("MT") 
 	, MAINTENACE_BACK_ORDER("MB")
-	, MAINTENACE_WORK("MW");
+	, MAINTENACE_WORK("MW")
+	, SALES_DETAIL("SD")
+	, PROJECT_ORDER("PO");
 	
 	private String value;
 	

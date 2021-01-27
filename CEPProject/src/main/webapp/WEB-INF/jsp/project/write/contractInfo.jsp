@@ -95,7 +95,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 36px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;	
@@ -121,20 +121,59 @@
 	</style>
 	<script>
 		$(document).ready(function() {
-			 $('input:checkbox[name="taxYn"]').each(function() {
-			      if(this.checked) {
-			            $(this).val('Y');
-			      } else {
-			    	  $(this).val('N');
-			      }
-			 });	
+			$('#taxYn').on('click', function() {
+				 if($('input[name=taxYnCheck]').is(":checked") == true) {
+					 $('input[name=taxYn').val('Y');
+				 } else {
+					 $('input[name=taxYn').val('N');
+				 }
+			});
 		});
+		
+		jQuery.fn.serializeObject = function() { 
+			var obj = null; 
+			var objArry = null;
+				try { 
+					if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) {
+						var arr = this.serializeArray(); 
+						if(arr){ 
+							obj = {};
+							objArry = new Array();
+							jQuery.each(arr, function() {
+								
+							/* if(this.name=="mtPmQuantity" || this.name=="mtPmUprice" || this.name=="totalAmount"){
+								//숫자에서 컴마를 제거한다.
+								obj[this.name] = removeCommas(this.value); 
+							} else  */
+							if(this.name=="salesChargeDt") {
+								//날짜에서 -를 제거한다.
+								obj[this.name] =  removeData(this.value,"-"); 
+							} else {
+								obj[this.name] = this.value; 
+							}
+							
+							/*
+							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
+							* 반복되는 필드값에서 아래부분만 변경사항 있음.
+							*/
+							if('taxYn' == this.name){
+								objArry.push(obj);
+								obj = {};
+							}
+						}); 	              
+					} 
+				} 
+			} catch(e) { 
+				alert(e.message); 
+			} finally {} 
+			return objArry; 
+		}
 		
 		function fn_chkVali() {
 			if ($("#infoForm")[0].checkValidity()){
 	            if ($("#infoForm")[0].checkValidity()){
 	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_saveNext('biddingInfo');
+	               fn_save();
 	            } else {
 	                $("#infoForm")[0].reportValidity();   
 	            }            
@@ -146,26 +185,30 @@
 		}
 		
 		function fn_turnChange(){
-			
 			var turnVal = document.getElementById("turnInfo");
 			var beforeTurn = parseInt(document.getElementById("beforeTurn").value);
 			
 			var calcuTurn = turnVal.value - beforeTurn;
 			
-			//alert(calcuTurn);
 			if(calcuTurn>0) {
 				for(i=0; i<calcuTurn; i++){
 					var rowItem = "<tr class='ftw200'>";
-					rowItem += "<td>"+(beforeTurn+i+1)+ "회차 :&nbsp;";
-					rowItem += "<input type='text' name='ctTurnNo' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' numberOnly class='rateInfo'/>";
-					rowItem += "&nbsp;%&nbsp;&nbsp;&nbsp;";
-					rowItem += "<input type='text' name='ctAmount' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount' />&nbsp;원</td>";
-					rowItem += "</tr>"
+					rowItem += "<td><form id='form"+i+"' name='form' display: block !important'>"+(beforeTurn+i+1)+ "회차 :&nbsp;&nbsp;";
+					rowItem += "<input type='text' name='salesCollectRate' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' numberOnly class='rateInfo' required/>";
+					rowItem += "&nbsp;&nbsp;%&nbsp;&nbsp;&nbsp;&nbsp;";
+					rowItem += "<input type='text' name='ctAmount' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount' required />&nbsp;원";
+					rowItem += "<input type='hidden' name='pjKey' value='"+$('#pjKey').val() +"' />";
+					rowItem += "<input type='hidden' name='salesCtClass' value='P' />";
+					rowItem += "<input type='hidden' class='salesChargeDt' name='salesChargeDt' value='"+$('#salesChargeDt').val() +"' />";
+					rowItem += "<input type='hidden' name='ctTurnNo' value='"+(i+1)+"' />";
+					rowItem += "<input type='hidden' name='salesTurn' value='"+(i+1)+"' />";
+					rowItem += "<input type='hidden' name='salesTurnAmount' id='sAmount"+(beforeTurn+i+1)+"' value='' />";
+					rowItem += "<input type='hidden' name='taxYn' value='N' /></form></td>";
+					rowItem += "</tr>";
 					
 					$('#addRow').append(rowItem);
 				}
 			} else {
-				//alert("===>"+calcuTurn*-1)
 				var deleteRow = document.getElementById("addRow").rows.length -turnVal.value;
 				for(i=0; i<deleteRow; i++){
 					document.getElementById("addRow").deleteRow(document.getElementById("addRow").rows.length-1);
@@ -174,7 +217,7 @@
 			document.getElementById("beforeTurn").value= turnVal.value;
 			
 			$('input[id^=rate]').change(function(event) { 
-				if($('#sum').val() == null || $('#sum').val() == "") {
+				if($('#sum').val() == null || $('#sum').val() == "" || $('#sum').val() == 0) {
 					alert('총 계약금액을 입력해주세요.');
 					$('#sum').focus();
 					$(this).val('');
@@ -184,77 +227,117 @@
 			});
 		}
 		
-		function fn_saveNext(link) {
-			var object = {};
-			var formData = $("#infoForm").serializeArray();
-			var form = document.infoForm;
+		var countSave = 0;
+		var ctKeyList = [];
+		var salesKeyList = [];
+		var successYn = 'N';
+		
+		function fn_save() {
+			var sum = 0;
 			
-			for (var i = 0; i<formData.length; i++){
-			    object[formData[i]['name']] = formData[i]['value'];
-			    if("pjStartDt" == formData[i]['name'] || "pjEndDt" == formData[i]['name']) {
-                	//날짜 - 제거
-                	object[formData[i]['name']] = removeData(formData[i]['value'],"-");
-                } else {
-                	object[formData[i]['name']] = formData[i]['value'];
-                }     
-			 }
+			for(var i = 0; i < parseInt(document.getElementById("beforeTurn").value); i++) {
+				sum += parseInt($('#amount'+(i+1)).val());
+			}
 			
-			var sendData = JSON.stringify(object);
-			
-			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+			if(sum != $('#sum').val()) {
+				alert('회차별 금액 합계와 총 계약 금액이 일치하지 않습니다.');
+			} else {
+				var object = {};
+				
+				$('.salesChargeDt').each(function() {
+					$(this).val($('#salesChargeDt').val());	
+				});
+				
+				for(var i = 1; i <= $('#beforeTurn').val(); i++) {
+					$('#sAmount'+i).val($('#amount'+i).val());
+				}
+				
+				var formData = $("#basicForm").serializeArray();
+				var listData = $("form[name=form]").serializeObject();
+				
+			 	for (var i = 0; i<formData.length; i++){
+	                object[formData[i]['name']] = formData[i]['value'];
+	            }
+			 	
+				object["projectContractSalesVOList"]=listData;
+				
+				var sendData = JSON.stringify(object);
+				
+			 	$.ajax({
+					url:"/project/insert/contractInfo.do",
+					dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				    async:false, 
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		$('#newKey').val(response.pjKey);
+				    		countSave++; 
+				    		for(var i = 0; i < response.ctKey.length; i++) {
+				    			ctKeyList.push(response.ctKey[i]);
+				    		} 
+				    		salesKeyList.push(response.saleKey);
+				    		
+				    		alert('저장되었습니다.');
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});  
+			}
+		}
+		
+		function fn_next(link) {
+			if(countSave > 0) {
 				var url = '/project/write/'+link+'.do';
 				var dialogId = 'program_layer';
+
 				var varParam = {
-						"pjKey" : $('#pjKey').val()
-				};
+						"pjKey": $("#newKey").val(),
+						"turnNo": $("#beforeTurn").val(),
+						"ctKey": ctKeyList,
+						"salesKey": salesKeyList
+				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
-			} else {
-				for(var i = 0; i < parseInt(document.getElementById("beforeTurn").value); i++) {
-					$.ajax({
-						url:"/project/insert/contractInfo.do",
-					    dataType: 'json', 
-					    type:"POST",  
-					    data: {"pjKey":$('#pjKey').val(), "ctAmount":$('#amount'+(i+1)), "ctTurnNo":(i+1), "ctPayTerms":$('#ctPayTerms').val(), "taxYn":$('#taxYn').val()},
-					 	contentType: "application/json; charset=UTF-8", 
-						beforeSend: function(xhr) {
-							xhr.setRequestHeader("AJAX", true);
-							//xhr.setRequestHeader(header, token);
-							
-						},
-					    success:function(response){	
-					    	if(response!= null && response.successYN == 'Y') {
-					    		var url = '/project/write/'+link+'.do';
-								var dialogId = 'program_layer';
-								var varParam = JSON.parse(JSON.stringify(response));
-								var button = new Array;
-								button = [];
-								showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
-					    	}
-					    },
-						error: function(request, status, error) {
-							if(request.status != '0') {
-								alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-							}
-						} 
-					});  
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+			}
+			else {
+				if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+					var ctKey = [];
+					var salesKey = [];
+					for(var i = 1; i <= $('#beforeTurn').val(); i++) {
+						ctKey.push($('#ctKey'+i).val());
+						salesKey.push($('#salesKey'+i).val());
+					}
+
+					var url = '/project/write/'+link+'.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+							"pjKey": $("#pjKey").val(),
+							"turnNo": $("#beforeTurn").val(),
+							"ctKey":ctKey,
+							"salesKey":salesKey
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				} else {
+					alert('저장을 해주세요.');
 				}
 			}
 		}
 		
-		function fn_addBiddingView(){
-			var url = '/project/write/biddingInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
-		
-		function fn_preBaicView(){
+		function fn_prevView(){
 			var url = '/project/write/basicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -281,63 +364,90 @@
 			</ul>
 		</div>
 		<form:form commandName="infoForm" id="infoForm" name="infoForm" method="post">
-			<input type="hidden" id="pjKey" value="<c:out value="${pjKey}"/>" />
+			<input type="hidden" id="newKey" name="newKey" value="" />
+			<c:set var = "total" value = "0" />
+			<c:set var = "max" value = "0" />
+			<c:forEach var="result" items="${resultList}" varStatus="status">     
+				<c:set var= "total" value="${total + result.ctAmount}"/>
+				<c:if test="${max < result.ctTurnNo }">
+					<c:set var="max" value="${result.ctTurnNo }" />
+				</c:if>
+			</c:forEach>
 			<div class="contents">
 				<div>
 					<table>
 						<tr class="ftw200">
 							<td class="firstRow">
-								<input type="text" id="sum" name="sum" placeholder="총 계약금액"  numberOnly class="amount"/> &nbsp;원
+								<input type="text" id="sum" name="sum" placeholder="총 계약금액"  numberOnly class="amount" value="<c:out value="${total }"/> "/> &nbsp;원
 								<label>(부가세포함 </label>
-								<input type='checkbox' class='tCheck' id='taxYn' value='Y' name='taxYn'/><label for='pCheck' class='cursorP veralignM'></label>
+								<input type='checkbox' class='tCheck' id='taxYn' value='N' name='taxYnCheck' <c:if test="${resultList[0].taxYn eq 'Y'}">checked="checked"</c:if>/><label for='taxYn' class='cursorP veralignM'></label>
 								<label>)</label>
 							</td>
 						</tr>
 						<tr class="ftw200">
 							<td>
-								<input type="text" id="ctPayTerms" name="ctPayTerms" placeholder="청구일로 부터" numberOnly /> &nbsp;이내
+								<input type="text" id="salesChargeDt" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(resultList[0].salesChargeDt)}"/>" required/> 
 							</td>
 						</tr>
 						<tr class="ftw200">
 							<td>
-								<input type="hidden" id="beforeTurn" value="0">
+								<input type="hidden" id="beforeTurn" value="${max eq null ? 0 : max }">
 								<select id="turnInfo" onchange="fn_turnChange()" placeholder="계약금액">
 									<option value="0">지급회차</option>
-									<option value="1">1회차</option>
-									<option value="2">2회차</option>
-									<option value="3">3회차</option>
-									<option value="4">4회차</option>
-									<option value="5">5회차</option>
-									<option value="6">6회차</option>
-									<option value="7">7회차</option>
-									<option value="8">8회차</option>
-									<option value="9">9회차</option>
+									<option <c:if test="${!empty resultList && max == 1}">selected</c:if> value="1">1회차</option>
+									<option <c:if test="${!empty resultList && max == 2}">selected</c:if> value="2">2회차</option>
+									<option <c:if test="${!empty resultList && max == 3}">selected</c:if> value="3">3회차</option>
+									<option <c:if test="${!empty resultList && max == 4}">selected</c:if> value="4">4회차</option>
+									<option <c:if test="${!empty resultList && max == 5}">selected</c:if> value="5">5회차</option>
+									<option <c:if test="${!empty resultList && max == 6}">selected</c:if> value="6">6회차</option>
+									<option <c:if test="${!empty resultList && max == 7}">selected</c:if> value="7">7회차</option>
+									<option <c:if test="${!empty resultList && max == 8}">selected</c:if> value="8">8회차</option>
+									<option <c:if test="${!empty resultList && max == 9}">selected</c:if> value="9">9회차</option>
 								</select>
 							</td>
 						</tr>
-						<tr>						 
-							<table id="addRow">
-								<!-- <tr>
-									<td>1회차 <input type="text" id="rate0" placeholder="1회차 비율" class="rateInfo" />&nbsp;%&nbsp;&nbsp; <input type="text" id="amount0" placeholder="1회차 금액" />&nbsp;원</td>
-								</tr> -->
-							</table>
-						</tr>
+					</table>
+					<table id="addRow">
+						<c:choose>
+							<c:when test="${ !empty resultList }">
+								<c:forEach var="result" items="${resultList }" varStatus="status">
+									<tr class='ftw200'>
+										<td>
+											${result.ctTurnNo }회차 :&nbsp;
+											<fmt:formatNumber  var="rateValue" value="${result.ctAmount / total * 100 }" type="number" />
+											<input type='text' name='ctTurnNo' id='rate${result.ctTurnNo }' placeholder='${result.ctTurnNo }회차 비율' numberOnly class='rateInfo' value="${rateValue }"/>
+											&nbsp;%&nbsp;&nbsp;&nbsp;
+											<input type='text' name='ctAmount' id='amount${result.ctTurnNo }' placeholder='${result.ctTurnNo }회차 금액' numberOnly class='amount' value="${result.ctAmount }"/>&nbsp;원
+											<input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.ctTurnNo }'/>
+											<input type='hidden' name='salesKey' value="${result.salesKey }" id='salesKey${result.salesTurn }' />
+										</td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								
+							</c:otherwise>
+						</c:choose> 
 					</table>
 				</div>
 				<div class="btnWrap floatR">
 					<div class="floatL btnPrev">
-						<button type="button" onclick="fn_preBaicView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+						<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 					</div>
 					<div class="floatL btnSave">
 						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatR">
-						<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" onclick="javascript:fn_next('biddingInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>
 		</form:form>
+		<form id="basicForm">
+			<input type="hidden" name="pjKey" id="pjKey" value="<c:out value="${pjKey}"/>" />
+			<input type="hidden" name="statusCd" value="PJST2000" />
+		</form>
 	</div>
 </body>
 </html>

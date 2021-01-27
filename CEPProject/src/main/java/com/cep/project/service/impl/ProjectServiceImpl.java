@@ -1,23 +1,32 @@
 package com.cep.project.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
-import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectContractSalesVO;
+import com.cep.project.vo.ProjectOrderProductVO;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
+import com.cmm.vo.GuarantyBondVO;
+
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 
 @Service("projectService")
@@ -70,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
 	    result = mapper.insertBasicInfo(projectVO);
 	    
 	    if(result > 0){
-        	returnMap.put("successYN", "Y");
+	    	returnMap.put("successYN", "Y");
         	returnMap.put("pjKey", pjKey);
 		}
 		
@@ -79,26 +88,115 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> insertContractInfo(HttpServletRequest request, ProjectContractVO projectContractVO) throws Exception {
+	/*@Transactional*/
+	public Map<String, Object> insertContractInfo(HttpServletRequest request, ProjectContractSalesVO projectContractSalesVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		List<ProjectContractSalesVO> insertList = null;
+		int listCnt = 0;
+		ProjectContractSalesVO contractSalesVO = null;
+		List ctKeyList = new ArrayList<Object>();
+		List salesKeyList = new ArrayList<Object>();
+		
+		try {
+			
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			projectContractSalesVO.setRegEmpKey(session.get("empKey"));
+			
+			listCnt = projectContractSalesVO.getProjectContractSalesVOList().size();
+			insertList = new ArrayList<>();
+
+			for (int i = 0; i < listCnt; i++) {
+				contractSalesVO = projectContractSalesVO.getProjectContractSalesVOList().get(i);
+				/*if(!"0".equals(CepStringUtil.getDefaultValue(productVO.getMtPmKey(), "0"))){
+					// 업데이트 대상
+					updateList.add(mtProductVO);
+				} else {*/
+					// 신규등록대상
+				insertList.add(contractSalesVO);
+				/*}*/
+			}
+			
+			comService.insertSalesInfo(projectContractSalesVO.getPjKey(), projectContractSalesVO.getRegEmpKey(), insertList);
+
+			insertContractList(projectContractSalesVO.getPjKey(), projectContractSalesVO.getRegEmpKey(), insertList);
+			
+			mapper.updateStatusCd(projectContractSalesVO.getPjKey(), projectContractSalesVO.getStatusCd());
+        	returnMap.put("pjKey", projectContractSalesVO.getPjKey());
+        	
+        	for(int i = 0; i < listCnt; i++) {
+        		ctKeyList.add(projectContractSalesVO.getProjectContractSalesVOList().get(i).getCtKey());
+        	}
+        	
+        	returnMap.put("ctKey", ctKeyList);
+        	returnMap.put("salesKey", projectContractSalesVO.getSalesKey());
+        	returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;		
+	}
+	
+	/**
+	 * 
+	  * @Method Name : insertContractList
+	  * @Cdate       : 2021. 01. 21.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 프로젝트 계약 회차별 정보를 등록한다.
+	  * @param mtIntegrateKey
+	  * @param regEmpKey
+	  * @param mtContractProductVoList
+	  * @throws Exception
+	 */
+	private void insertContractList(String pjKey, String regEmpKey, List<?> projectContractSalesVOList) throws Exception {
+		Map<String, Object> insertParam = null;
+		try {
+			insertParam = new Hashtable<>();
+			insertParam.put("pjKey", pjKey);			
+			
+			insertParam.put("regEmpKey", regEmpKey);
+			insertParam.put("projectContractSalesVOList", projectContractSalesVOList);
+			
+			mapper.insertContractInfo(insertParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
+	@Override
+	public List<?> selectContractDetail(String pjKey) throws Exception {
+		return mapper.selectContractDetail(pjKey);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public Map<String, Object> insertBiddingInfo(HttpServletRequest request, GuarantyBondVO guarantyBondVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		
 		int result = 0;
 		
 		String ctKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_CONTRACT);
-		projectContractVO.setCtKey(ctKey);
+		guarantyBondVO.setCtKey(ctKey);
 		
 		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
-		projectContractVO.setRegEmpKey(session.get("empKey"));
+		guarantyBondVO.setRegEmpKey(session.get("empKey"));
 		
-	    result = mapper.insertContractInfo(projectContractVO);
+//		comService.insertSalesInfo(request, guarantyBondVO);
+		
+	    result = mapper.insertBiddingInfo(guarantyBondVO);
 	    
 	    if(result > 0){
         	returnMap.put("successYN", "Y");
-        	returnMap.put("pjKey", projectContractVO.getPjKey());
+        	returnMap.put("pjKey", request.getParameter("pjKey"));
+        	returnMap.put("ctKey", guarantyBondVO.getCtKey());
+        	returnMap.put("salesKey", guarantyBondVO.getSalesKey());
 		}
 		
-		return returnMap;		
+		return returnMap;	
 	}
 	
 	@Override
@@ -142,5 +240,122 @@ public class ProjectServiceImpl implements ProjectService {
 	    
 		
 		return returnMap;	
+	}
+	
+	@Override
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public String insertOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO) throws Exception {
+		
+		String[] deleteKeyList = null;
+		List<ProjectOrderProductVO> insertList = null;
+		List<ProjectOrderProductVO> updateList = null;
+		int listCnt = 0;
+		ProjectOrderProductVO productVO = null;
+		HashMap<String, String> session = null;
+		
+		String orderKey = null;
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			orderVO.setRegEmpKey(session.get("empKey"));
+			orderVO.setModEmpKey(session.get("empKey"));
+			
+			if("".equals(orderVO.getOrderKey())){
+				// 해당 내용 신규등록
+				orderKey = writeOrderInfo(orderVO);
+			} else {
+				listCnt = orderVO.getProjectOrderProductVOList().size();
+				insertList = new ArrayList<>();
+	
+				for (int i = 0; i < listCnt; i++) {
+					productVO = productVO.getProjectOrderProductVOList().get(i);
+					/*if(!"0".equals(CepStringUtil.getDefaultValue(productVO.getMtPmKey(), "0"))){
+						// 업데이트 대상
+						updateList.add(mtProductVO);
+					} else {*/
+						// 신규등록대상
+					insertList.add(productVO);
+					/*}*/
+				}
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return orderKey;
+		
+	}
+	
+	/**
+	 * 
+	  * @Method Name : writeOrderInfo
+	  * @Cdate       : 2021. 01. 23.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 발주정보를 등록한다.
+	  * @param ProjectOrderVO
+	  * @return
+	  * @throws Exception
+	 */
+	private String writeOrderInfo(ProjectOrderVO orderVO) throws Exception {
+		
+		String orderKey = null;
+		Map<String, Object> insertParam = null;
+		try {
+			
+			orderKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_ORDER);
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(orderKey, ""))){
+				orderVO.setOrderKey(orderKey);
+				// 발주 메인을 등록한다.
+				mapper.insertOrderInfo(orderVO);
+				
+				insertParam = new HashMap<>();
+
+				insertParam.put("orderKey", orderKey);
+				insertParam.put("regEmpKey", orderVO.getRegEmpKey());
+				insertParam.put("projectOrderProductVOList", orderVO.getProjectOrderProductVOList());
+				
+				// 제품목록을 등록한다.
+				mapper.insertOrderProductInfo(insertParam);
+				
+			} else {
+				throw new Exception("Can't make PJ_ORDER_TB.ORDER_KEY !!!! ..");
+			}
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return orderKey;
+	}
+	
+	@Override
+	public ProjectOrderVO selectOrderDetail(String orderKey) throws Exception {
+		ProjectOrderVO vo = null;
+		try {
+			vo = mapper.selectOrderDetail(orderKey);
+			if(vo != null) {
+				vo.setProjectOrderProductVOList(selectOrderProductList(orderKey));
+			}
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return vo;
+	}
+	
+	@Override
+	public List<ProjectOrderProductVO> selectOrderProductList(String orderKey) throws Exception {
+		return mapper.selectOrderProductList(orderKey);
+	}
+	
+	@Override
+	public List<EgovMap> selectOrderSelectBoxList(String key) throws Exception {
+		return mapper.selectOrderSelectBoxList(key);
+	}
+	
+	@Override
+	public List<?> selectAcDirectorList(String acKey) throws Exception {
+		return mapper.selectAcDirectorList(acKey);
 	}
 }

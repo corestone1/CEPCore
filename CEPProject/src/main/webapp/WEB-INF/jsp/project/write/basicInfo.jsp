@@ -165,41 +165,30 @@
 			
 			var sendData = JSON.stringify(object);
 			
-			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
-				var url = '/project/write/'+link+'.do';
-				var dialogId = 'program_layer';
-				var varParam = {
-						"pjKey" : $('#pjKey').val()
-				};
-				var button = new Array;
-				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
-			} else {
-				$.ajax({
-					url:"/project/insert/basicInfo.do",
-				    dataType: 'json', 
-				    type:"POST",  
-				    data: sendData,
-				 	contentType: "application/json; charset=UTF-8", 
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-						//xhr.setRequestHeader(header, token);
-						
-					},
-				    success:function(response){	
-				    	if(response!= null && response.successYN == 'Y') {
-				    		alert('저장되었습니다.');
-				    		$('#newKey').val(response.pjKey);
-				    		countSave++;
-				    	}
-				    },
-					error: function(request, status, error) {
-						if(request.status != '0') {
-							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-						}
-					} 
-				});  
-			}
+			$.ajax({
+				url:"/project/insert/basicInfo.do",
+			    dataType: 'json', 
+			    type:"POST",  
+			    data: sendData,
+			 	contentType: "application/json; charset=UTF-8", 
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("AJAX", true);
+					//xhr.setRequestHeader(header, token);
+					
+				},
+			    success:function(response){	
+			    	if(response!= null && response.successYN == 'Y') {
+			    		alert('저장되었습니다.');
+			    		$('#newKey').val(response.pjKey);
+			    		countSave++;
+			    	}
+			    },
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					}
+				} 
+			});  
 		}
 	
 		function fn_next(link) {
@@ -323,7 +312,7 @@
 				<input type="hidden" id="dialogId" />
 				<input type="hidden" id="spKey" name="spKey" />
 				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
-				<input type="hidden" id="newKey" name="newKey" value="<c:out value="${pjKey}"/>"/>
+				<input type="hidden" id="newKey" name="newKey" value="<c:out value=""/>"/>
 				<div>  
 					<table>
 						<tr>
@@ -373,13 +362,13 @@
 						<tr>
 							<td class="tdTitle"><label>*</label>사업기간</td>
 							<td class="tdContents">
-								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt" value="<c:out value="${resultList[0].pjStartDt}"/>" required /> ~ 
-								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" value="<c:out value="${resultList[0].pjEndDt}"/>" required/>
+								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjStartDt)}"/>" required/> ~
+								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjEndDt)}"/>" required/>
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
-							<td class="tdContents"><textarea name="remark"></textarea></td>
+							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}" /></textarea></td>
 						</tr>
 					</table>
 				</div>

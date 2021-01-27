@@ -231,13 +231,13 @@
 					        				+ '<td align="center" class="listtd">'+ response.resultList[i].pjKey +'</td>'
 				        					+ '<td align="left" class="listtd"><span>'+ response.resultList[i].acKey +'</span></td>'
 				            				+ '<td align="left" class="listtd"><span><a href="javascript:fn_detail('+ response.resultList[i].pjKey + ')">'+ response.resultList[i].pjNm +'</a></span></td>'
-				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjStartDt +'</td>'
-				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjEndDt +'</td>'
-				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjEndDt +'</td>'
-				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjEndDt +'</td>'
+				            				+ '<td align="center" class="listtd">'+ dateFormatter(response.resultList[i].pjStartDt) +'</td>'
+				            				+ '<td align="center" class="listtd">'+ dateFormatter(response.resultList[i].pjEndDt) +'</td>'
+				            				+ '<td align="center" class="listtd">'+ calDateRange(dateFormatter(response.resultList[i].pjStartDt),  dateFormatter(response.resultList[i].pjEndDt)) +'일</td>'
+				            				+ '<td align="center" class="listtd">'+ calDateRange(getToday(), dateFormatter(response.resultList[i].pjEndDt)) +'일</td>'
 				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjStatusCd +'</td>'
 				            				+ '<td align="center" class="listtd">'+ response.resultList[i].pjSaleEmpKey +'</td>'
-			            				+ '</tr>'
+			            				+ '</tr>';
 						}
 						$('.middle table tbody').html('');
 						$('.middle table tbody').append(html);
@@ -258,6 +258,68 @@
 			form.submit(); 
 		}
 		
+		function dateFormatter(num) {
+		     if(!num) return "";
+		     var formatNum = '';
+
+		     // 공백제거
+		     num=num.replace(/\s/gi, "");
+		     
+		     try{
+		          if(num.length == 8) {
+		               formatNum = num.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+		          }
+		     } catch(e) {
+		          formatNum = num;
+		     }
+		     
+		     return formatNum;
+		}
+		
+		function calDateRange(val1, val2) {
+		    var FORMAT = "-";
+		
+		    if (val1.length != 10 || val2.length != 10)
+		        return null;
+		
+		    if (val1.indexOf(FORMAT) < 0 || val2.indexOf(FORMAT) < 0)
+		        return null;
+		
+		    var start_dt = val1.split(FORMAT);
+		    var end_dt = val2.split(FORMAT);
+		
+		    start_dt[1] = (Number(start_dt[1]) - 1) + "";
+		    end_dt[1] = (Number(end_dt[1]) - 1) + "";
+		
+		    var from_dt = new Date(start_dt[0], start_dt[1], start_dt[2]);
+		    var to_dt = new Date(end_dt[0], end_dt[1], end_dt[2]);
+		
+		    if((to_dt.getTime() - from_dt.getTime()) / 1000 / 60 / 60 / 24 > 0) {
+		    	return (to_dt.getTime() - from_dt.getTime()) / 1000 / 60 / 60 / 24;
+		    } else {
+		    	return 0;
+		    }
+		}
+		
+		function getToday() {
+		    var date = new Date();
+		    var year = date.getFullYear();
+		    var month = ("0" + (1 + date.getMonth())).slice(-2);
+		    var day = ("0" + date.getDate()).slice(-2);
+
+		    return year + "-" + month + "-" + day;
+		}
+		
+		function tmp() {
+			var url = '/project/write/orderInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":"PJ210065"
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
 	</script>
 </head>
 <body>
@@ -270,7 +332,8 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">프로젝트 list</label></div>
-						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
+						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="tmp();"><img src="<c:url value='/images/btn_add.png'/>" /></div>						
 					</div>
 					<div class="floatR">
 						<input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value=""/>
@@ -307,10 +370,16 @@
 		            				</td>
 		            				<td align="left" class="listtd"><span><c:out value="${result.acKey}"/></span></td>
 		            				<td align="left" class="listtd"><span><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjStartDt}"/></td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/></td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/></td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjEndDt}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjStartDt)}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjEndDt)}"/></td>
+		            				<fmt:parseDate value="${displayUtil.displayDate(result.pjStartDt)}" var="startPlanDate" pattern="yyyy-MM-dd"/>
+									<fmt:parseNumber value="${startPlanDate.time / (1000*60*60*24)}" integerOnly="true" var="startDate"></fmt:parseNumber>
+									<fmt:parseDate value="${displayUtil.displayDate(result.pjEndDt)}" var="endPlanDate" pattern="yyyy-MM-dd"/>
+									<fmt:parseNumber value="${endPlanDate.time / (1000*60*60*24)}" integerOnly="true" var="endDate"></fmt:parseNumber>
+									<jsp:useBean id="now" class="java.util.Date" />
+									<fmt:parseNumber value="${now.time / (1000*60*60*24)}" integerOnly="true" var="nowDate"></fmt:parseNumber>
+									<td align="center" class="listtd"><c:out value="${endDate - startDate}"/>일</td>
+		            				<td align="center" class="listtd"><c:out value="${endDate - nowDate + 1 > 0? endDate - nowDate + 1 : 0}"/>일</td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/></td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/></td>
 		            			</tr>

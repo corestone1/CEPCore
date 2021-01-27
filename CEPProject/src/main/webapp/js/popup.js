@@ -55,9 +55,14 @@ function showModalPop(id, url, data, button, title, args) {
 		open: function() {
 			$('.ui-widget-overlay').addClass('custom-overlay');
 		},
-		close: function() {
-			$('.ui-widget-overlay').removeClass('custom-overlay');
-			$('#'+id).remove();
+		close: function(event) {
+			if(confirm('나가시겠습니까? 변경사항이 저장되지 않을 수 있습니다.')) {
+				$('.ui-widget-overlay').removeClass('custom-overlay');
+				$('#'+id).remove();
+				location.reload();
+			} else {
+				 $(this).dialog("open");
+			}
 		},
 		buttons: button
 	});

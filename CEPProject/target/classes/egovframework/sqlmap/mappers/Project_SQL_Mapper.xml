@@ -27,7 +27,7 @@
 				, PJ_NM
 				, PJ_START_DT
 				, PJ_END_DT
-				, PJ_STATUS_CD
+				, (SELECT c.CD_NM FROM CMM_CODE_MNG_TB c WHERE c.CD_KEY = PJ_MAIN_TB.PJ_STATUS_CD) AS pjStatusCd
 				, (SELECT e.EMP_NM FROM CMM_EMPLOYEE_TB e WHERE e.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) AS pjSaleEmpKey
 			FROM PJ_MAIN_TB
 			WHERE 1=1
@@ -62,7 +62,6 @@
 	</select>
 
 	<select id="selectProjectDetail" parameterType="String" resultType="egovMap">
-		
 		SELECT
 			AC_KEY
 			, AC_DIRECTOR_KEY
@@ -79,8 +78,13 @@
 			, SP_KEY
 		FROM PJ_MAIN_TB
 		WHERE PJ_KEY=#{pjKey}
-		
 	</select>
+	
+	<update id="updateStatusCd" parameterType="String">
+		UPDATE PJ_MAIN_TB
+		SET PJ_STATUS_CD = #{1}
+		WHERE PJ_KEY = #{0}
+	</update>
 	
 	<insert id="insertBasicInfo" parameterType="projectVO">
 		INSERT INTO PJ_MAIN_TB (
@@ -98,6 +102,7 @@
 			, REG_EMP_KEY
 			, REG_TM
 			, SP_KEY
+			, PJ_STATUS_CD
 		) VALUES (
 			#{pjKey}
 			, #{acKey}
@@ -111,12 +116,13 @@
 			, 'N'
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, #{regEmpKey}
-			, DATE_FORMAT(NOW(),'%k%i%s')
+			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{spKey}
+			, 'PJST1000'
 		)
 	</insert>
 	
-	<insert id="insertContractInfo" parameterType="projectContractVO">
+	<insert id="insertContractInfo" parameterType="projectContractSalesVO">
 		INSERT INTO PJ_CONTRACT_TB (
 			CT_KEY
 			, PJ_KEY
@@ -128,19 +134,31 @@
 			, REG_TM
 			, REG_EMP_KEY
 			, DELETE_YN
-		) VALUES (
-			#{ctKey}
-			, #{pjKey}
-			, #{ctAmount}
-			, #{taxYn}
-			, #{mtCtDt}
-			, #{ctTurnNo}
-			, DATE_FORMAT(NOW(),'%Y%m%d')
-			, DATE_FORMAT(NOW(),'%k%i%s')
-			, #{regEmpKey}
-			, 'N'
-		)
+		) VALUES 
+		<foreach collection="projectContractSalesVOList" item="item" separator=",">
+			(
+				#{item.ctKey}
+				, #{pjKey}
+				, #{item.ctAmount}
+				, #{item.taxYn}
+				, #{item.mtCtDt}
+				, #{item.ctTurnNo}
+				, DATE_FORMAT(NOW(),'%Y%m%d')
+				, DATE_FORMAT(NOW(),'%H%i%s')
+				, #{regEmpKey}
+				, 'N'
+			)
+		</foreach>
 	</insert>
+	
+	<select id="selectContractDetail" parameterType="String" resultType="egovMap">
+		SELECT *
+		FROM PJ_CONTRACT_TB 
+		JOIN CMM_SALES_DETAIL_TB 
+		ON PJ_CONTRACT_TB.PJ_KEY = CMM_SALES_DETAIL_TB.SALES_CT_FK_KEY 
+		AND PJ_CONTRACT_TB.CT_TURN_NO = CMM_SALES_DETAIL_TB.SALES_TURN
+		WHERE PJ_CONTRACT_TB.PJ_KEY=#{pjKey} ORDER BY CT_TURN_NO
+	</select>
 	
 	<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT 
@@ -160,6 +178,149 @@
 		ON M.PJ_KEY = B.PJ_KEY
 		WHERE M.PJ_KEY = #{pjKey}
 		AND B.DELETE_YN = 'N'
+	</select>
+	
+	<insert id="insertBiddingInfo" parameterType="guarantyBondVO">
+		INSERT INTO CMM_GUARANTY_TB (
+			GB_KEY
+			, CT_KEY
+			, SALES_KEY
+			, GB_CLASS
+			, GB_KIND_CD
+			, GB_START_DT
+			, GB_END_DT
+			, GB_ISSUE_YN
+			, GB_AMOUNT
+			, SALES_KEY
+		) VALUES (
+			#{gbKey}
+			, #{ctKey}
+			, #{salesKey}
+			, #{gbClass}
+			, #{gbKindCd}
+			, #{gbStartDt}
+			, #{gbEndDt}
+			, #{gbIssueYn}
+			, #{gbAmount}
+			, #{salesKey}
+		)
+	</insert>
+	
+	<insert id="insertOrderInfo" parameterType="projectOrderVO">
+		INSERT INTO PJ_ORDER_TB (
+			ORDER_KEY
+			, ORDER_CT_CLASS
+			, ORDER_CT_FK_KEY
+			, ORDER_DT
+			, ORDER_AC_KEY
+			, ORDER_AC_DIRECTOR_KEY
+			, ORDER_PAY_TERMS
+			, ORDER_RECRIPT_DT
+			, MT_ORDER_AMOUNT
+			, TAX_YN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{orderKey} 
+			, #{orderCtClass}
+			, #{orderCtFkKey}
+			, #{orderDt}
+			, #{orderAcKey}
+			, #{orderAcDirectorKey}
+			, #{orderPayTerms}
+			, #{orderRecriptDt}
+			, #{mtOrderAmount}
+			, #{taxYn}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<insert id="insertOrderProductInfo" parameterType="java.util.HashMap">
+		INSERT INTO PJ_ORDER_PRODUCT_TB (
+			ORDER_KEY
+			, ORDER_SEQ
+			, ORDER_PM_FK_KEY
+			, ORDER_QUANTITY
+			, ORDER_UPRICE
+			, MT_RATE
+			, FREE_MT_START_DT
+			, FREE_MT_END_DT
+			, DELETE_YN
+		) VALUES 
+		<foreach collection="projectOrderProductVOList" item="item" separator=",">
+		    (
+			#{orderKey}
+			, #{item.orderSeq} -- ORDER_SEQ - IN int(11)
+			, #{orderPmFkKey}
+			, #{item.orderQuantity}
+			, #{item.orderUprice}
+			, #{mtRate}
+			, #{freeMtStartDt}
+			, #{freeMtEndDt}
+			, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<select id="selectOrderSelectBoxList" parameterType="String" resultType="egovMap">
+		SELECT
+			PO.ORDER_KEY
+			, PO.ORDER_AC_KEY
+			, CA.AC_NM
+		FROM PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA
+		WHERE PO.ORDER_CT_FK_KEY=#{key}
+			AND PO.DELETE_YN='N'
+			AND PO.ORDER_AC_KEY = CA.AC_KEY
+	</select>
+	
+	<select id="selectOrderDetail" parameterType="String" resultType="projectOrderVO">
+		SELECT
+			PO.ORDER_KEY AS orderKey
+			, PO.ORDER_CT_CLASS AS orderCtClass
+			, PO.ORDER_CT_FK_KEY AS orderCtFkKey
+			, PO.ORDER_DT AS orderDt
+			, PO.ORDER_AC_KEY AS orderAcKey
+			, PO.ORDER_RECRIPT_DT AS orderRecriptDt
+			, CA.AC_NM AS orderAcNm 
+			, PO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
+			, PO.ORDER_PAY_TERMS AS orderPayTerms
+			, PO.MT_ORDER_AMOUNT AS mtOrderAmount
+			, PO.TAX_YN AS taxYn
+		FROM PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA
+		WHERE PO.ORDER_KEY = #{orderKey}
+			AND PO.DELETE_YN='N'
+			AND PO.ORDER_AC_KEY = CA.AC_KEY
+	</select>
+	
+	<select id="selectOrderProductList" parameterType="String" resultType="projectOrderProductVO">
+		SELECT
+			PP.ORDER_KEY AS orderKey
+			, PP.ORDER_SEQ AS orderSeq
+			, PP.ORDER_PM_FK_KEY AS orderPmFkKey
+			, PP.ORDER_QUANTITY AS orderQuantity
+			, PP.ORDER_UPRICE AS orderUprice
+			, PP.MT_RATE AS mtRate
+			, PP.FREE_MT_START_DT AS freeMtStartDt
+			, PP.FREE_MT_END_DT AS freeMtEndDt
+			, PM.PM_NM_CD AS pmNmCd
+		FROM PJ_ORDER_PRODUCT_TB PP, PM_PRODUCT_MNG_TB PM
+		WHERE PP.ORDER_KEY = #{orderKey}
+			AND PP.DELETE_YN='N'
+			AND PP.ORDER_PM_FK_KEY = PM.PM_KEY
+	</select>
+	
+	<select id="selectAcDirectorList" parameterType="String" resultType="egovMap">			
+			SELECT AC_DIRECTOR_KEY
+				, AC_DIRECTOR_NM
+				, CONCAT(AC_DIRECTOR_POSITION_NM , ' / ' , AC_DIRECTOR_MB_NUM , ' / ' , AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
+			FROM CMM_ACCOUNT_DIRECTOR_TB
+			WHERE AC_KEY = #{acKey}
+			ORDER BY AC_DIRECTOR_NM		
 	</select>
 	
 	<select id="selectFileList" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">

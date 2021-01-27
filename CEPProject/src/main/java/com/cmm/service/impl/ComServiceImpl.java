@@ -1,13 +1,18 @@
 package com.cmm.service.impl;
 
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
+import com.cmm.vo.SalesVO;
 
 @Service("comService")
 public class ComServiceImpl implements ComService {
@@ -39,5 +44,25 @@ public class ComServiceImpl implements ComService {
 			throw new Exception(e);
 		}
 		return primaryKey;
+	}
+	
+	@Override
+	public Map<String, Object> insertSalesInfo(String key, String regEmpKey, List<?> insertList) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> insertParam = null;
+		try {
+			insertParam = new Hashtable<>();
+			insertParam.put("salesCtFkKey", key);
+			insertParam.put("regEmpKey", regEmpKey);
+			insertParam.put("SalesVOList", insertList);
+			
+			comMapper.insertSalesInfo(insertParam);
+			returnMap.put("salesKey", key);
+		    
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;		
 	}
 }

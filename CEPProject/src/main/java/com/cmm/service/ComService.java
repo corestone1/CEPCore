@@ -1,8 +1,12 @@
 package com.cmm.service;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.cmm.config.PrimaryKeyType;
+import com.cmm.vo.SalesVO;
 
 public interface ComService {
 	
@@ -57,4 +61,16 @@ public interface ComService {
 	  * @throws Exception
 	 */
 	public String makePrimaryKey(PrimaryKeyType keyType) throws Exception;
+	
+	/**
+	 * 프로젝트 매출 정보를 등록한다.
+	 * @Cdate       : 2020. 01. 15.
+	 * @Author      : sylim
+	 * @Modification: 
+	 * @Method Description : 매출 정보 등록
+	 * @param salesVO
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> insertSalesInfo(String key, String regEmpKey, List<?> insertList) throws Exception;
 }

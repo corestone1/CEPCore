@@ -9,11 +9,11 @@ import org.apache.ibatis.type.Alias;
 public class ProjectContractVO extends ProjectVO implements Serializable {
 	
 	private String ctKey;
-	private String ctAmount;
+	private int ctAmount;
 	private String ctPayTerms;
 	private String taxYn;
 	private String mtCtDt;
-	private String ctTurnNo;
+	private int ctTurnNo;
 	private String regDt;
 	private String regTm;
 	private String regEmpKey;
@@ -28,10 +28,10 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	public void setCtKey(String ctKey) {
 		this.ctKey = ctKey;
 	}
-	public String getCtAmount() {
+	public int getCtAmount() {
 		return ctAmount;
 	}
-	public void setCtAmount(String ctAmount) {
+	public void setCtAmount(int ctAmount) {
 		this.ctAmount = ctAmount;
 	}
 	public String getCtPayTerms() {
@@ -52,10 +52,10 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	public void setMtCtDt(String mtCtDt) {
 		this.mtCtDt = mtCtDt;
 	}
-	public String getCtTurnNo() {
+	public int getCtTurnNo() {
 		return ctTurnNo;
 	}
-	public void setCtTurnNo(String ctTurnNo) {
+	public void setCtTurnNo(int ctTurnNo) {
 		this.ctTurnNo = ctTurnNo;
 	}
 	public String getRegDt() {

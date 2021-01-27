@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cmm.service.ComService;
+import com.cmm.vo.SalesVO;
 
 
 @Controller
@@ -62,5 +63,14 @@ public class ComController {
 
      return modelAndView; 
 	}
+	
+	/*@RequestMapping(value="/insert/salesInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addSalesInfo(HttpServletRequest request, @RequestBody SalesVO salesVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap = service.insertSalesInfo(request, salesVO);
+		
+		return returnMap;
+	}*/
 	
 }
