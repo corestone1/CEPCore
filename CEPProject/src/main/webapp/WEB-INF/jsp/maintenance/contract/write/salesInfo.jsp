@@ -48,8 +48,10 @@
 		.popContainer .contents {
 			position: absolute;
 			width: calc(100% - 201px);
-			height: 449px;
-			top: 259px;
+			/* height: 449px; */
+			/* top: 259px; */
+			height: 488px;
+			top: 220px;
 			left: 201px;			
 			z-index: 3;
 			background-color: #f6f7fc;
@@ -352,7 +354,7 @@
 		}
 		
 		$(document).ready(function() {
-			'<c:if test="${listCount > 1 }">'
+			'<c:if test="${listCount > 2 }">'
 			fn_viewSummaryUpAll();
 			'</c:if>'
 			//지원담당자정보 셋팅
@@ -873,24 +875,28 @@
 				</div>
 				<div>
 					<table class="textalignC ftw200" >
-						<thead class="ftw400">
+						<tr>
+							<td>유지보수기간 : <input type="text" id="mtStartDt" class="pname" readonly/> ~ <input type="text" id="mtEndDt" class="pname" readonly/></td>
+							<td>계약금액 : <input type="text" id="mtAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
+						</tr>
+						<%-- <thead class="ftw400">
 							<tr>
 								<th scope="row">계약 유지보수기간</th>
-								<th scope="row">제품 유지보수기간</th>
+								<!-- <th scope="row">제품 유지보수기간</th> -->
 								<th scope="row">계약 금액</th>
-								<th scope="row">제품 금액</th>
-								<th scope="row">매출 금액</th>
+								<!-- <th scope="row">제품 금액</th> -->
+								<!-- <th scope="row">매출 금액</th> -->
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td><input type="text" id="mtStartDt" class="pname" readonly/> ~ <input type="text" id="mtEndDt" class="pname" readonly/></td>
-								<td><input type="text" id="mtPmStartDt" class="pname" readonly/> ~ <input type="text" id="mtPmEndDt" class="pname" readonly/></td>
+								<!-- <td><input type="text" id="mtPmStartDt" class="pname" readonly/> ~ <input type="text" id="mtPmEndDt" class="pname" readonly/></td> -->
 								<td ><input type="text" id="mtAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
-								<td ><input type="text" id="mtPmTotalAmount" style="width:120px;text-align: right" class="pname" readonly/></td>
+								<!-- <td ><input type="text" id="mtPmTotalAmount" style="width:120px;text-align: right" class="pname" readonly/></td> -->
 								<td ><input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/></td>
 							</tr>
-						</tbody>
+						</tbody> --%>
 					</table>
 				</div>
 			</div>
@@ -904,7 +910,11 @@
 								<td class="subTitle" style="border-top: none;">
 									<label class="ftw400">연도별 매출</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('sales');"/></td>
+								<td style="width:136px; text-align:right; color: #32bc94; font-size: 15px">
+									매출 총금액 : 
+									<input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
+								</td>
+								<%-- <td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('sales');"/></td> --%>
 							</tr>
 						</table>
 					</div>
@@ -915,7 +925,7 @@
 							<tr>
 								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
-									<input type="text" id="salesList-0-mtSalesYear" name="salesList-0-mtSalesYear" style="text-align: center" numberOnly maxlength="4"/>
+									<input type="text" id="salesList-0-mtSalesYear" name="salesList-0-mtSalesYear" style="text-align: center" numberOnly maxlength="4" readonly="readonly"/>
 									<input type="hidden" name="lastNum" value="0" />
 									<input type="hidden" id="salesList-0-mtSalesKey" name="mtSalesKey"/>
 								</td>
@@ -926,8 +936,8 @@
 								<td class="tdTitle"></td><td class="tdContents"></td>
 								<td class="tdTitle"></td>	
 								<td class="tdEtc" style="text-align:right;">
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img id="salesList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'sales');" style="width: 11px"/>
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/><!-- &nbsp;&nbsp;&nbsp; -->
+		                        	<%-- <img id="salesList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'sales');" style="width: 11px"/> --%>
 								</td>
 							</tr>
 							<tr class="dpTbRow">
@@ -994,7 +1004,7 @@
 							<tr>
 								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesYear" name="salesList-<c:out value="${status.index}"/>-mtSalesYear" value="<c:out value="${list.mtSalesYear}"/>" style="text-align: center" numberOnly maxlength="4"/>
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesYear" name="salesList-<c:out value="${status.index}"/>-mtSalesYear" value="<c:out value="${list.mtSalesYear}"/>" style="text-align: center" numberOnly maxlength="4" readonly="readonly"/>
 									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
 									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesKey" name="mtSalesKey" value="<c:out value="${list.mtSalesKey}"/>" />
 								</td>
@@ -1007,8 +1017,8 @@
 								<td class="tdTitle"></td><td class="tdContents"></td>
 								<td class="tdTitle"></td>								
 								<td class="tdEtc" style="text-align:right;">
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img id="salesList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'sales');" style="width: 11px"/>
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/><!-- &nbsp;&nbsp;&nbsp; -->
+		                        	<%-- <img id="salesList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'sales');" style="width: 11px"/> --%>
 								</td>
 							</tr>
 							<tr class="dpTbRow">

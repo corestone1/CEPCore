@@ -5,394 +5,401 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>유지보수계약 상세(매입정보)</title>
-<style>
-.sfcnt {
-	height: 91px;
-}
-
-.bottom>div {
-	margin-top: 22px;
-}
-
-.nav {
-	width: 100%;
-	height: 49px;
-}
-
-.mContentsWrap {
-	background-color: #f6f7fc;
-	box-shadow: inset 0 7px 9px -3px rgba(0, 0, 0, 0.1);
-	height: 802px;
-}
-
-.mContentsWrap .mContents {
-	padding: 38px 71px;
-	width: 1662px;
-}
-
-.title {
-	height: 50px;
-}
-
-.title>label {
-	font-size: 26px;
-}
-
-.mContents>div:first-child {
-	width: 37%;
-}
-
-.mContents>.fxd {
-	width: 60%;
-}
-
-.mContents .stitle {
-	font-size: 18px;
-	font-weight: 500;
-	margin-bottom: 10px;
-	margin-top: 30px;
-}
-
-.mContents .stitle2 {
-	font-size: 17px;
-	font-weight: 400;
-	margin-bottom: 1px;
-	margin-top: 26px;
-}
-
-.mContents .cg {
-	color: #24a37e;
-}
-
-.mContents .stitle img {
-	width: 27px;
-	margin-left: 10px;
-}
-
-.mContents table {
-	border-collapse: collapse;
-	font-size: 15px;
-	table-layout: fixed;
-	width: 614px;
-}
-
-.mContents table tr td {
-	padding: 13px 20px;
-}
-
-/* 기본정보 싸이즈 조정 */
-.mContents .bsc {
-	border-top: 4px solid #32bc94 !important;
-	background-color: #ddf0ec;
-	border: 1px solid #bee2da;
-	border-bottom: 2px solid #bfe3db;
-}
-
-.mContents .bsc tbody {
-	height: 576px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	float: left;
-}
-
-.mContents .bsc tr td {
-	color: #0e8a67;
-}
-
-.mContents .bsc tr td:first-child {
-	box-shadow: inset -7px 0 9px -4px #d0e2de;
-	width: 153px;
-	font-weight: 400;
-	padding: 13px 13px 13px 13px;
-}
-
-.mContents .bsc tr td:last-child {
-	width: 470px;
-	font-weight: 200;
-}
-
-.mContents .bsc tr td label.file {
-	text-decoration: underline;
-}
-
-.mContents .title ul li {
-	float: left;
-	text-align: center;
-	font-size: 17px;
-	cursor: pointer;
-}
-
-.mContents .title ul li:last-child {
-	clear: both;
-	float: none;
-	width: 0 !important;
-}
-
-.mContents>.fxd .title ul {
-	height: 46px;
-	width: 100%;
-	border-radius: 35px;
-	background-color: #d3d3d3;
-}
-
-.mContents>.fxd .title ul li {
-	width: 25%;
-	line-height: 46px;
-	color: #777777;
-	background-color: #d3d3d3;
-	border-radius: 35px;
-}
-
-.mContents>.fxd .title ul li>label {
-	display: inline-block;
-	width: 100%;
-	/* cursor: pointer; */
-}
-
-.mContents>.fxd .title ul li.on, .mContents>.fxd .title ul li:hover {
-	color: #fff !important;
-	background-color: #4c3d92;
-}
-
-.mContents .dtlWrap2 {
-	height: 490px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	border-bottom: 2px solid #c4c4c4;
-}
-
-.mContents .dtl, .mContents .dtl1 {
-	width: 992px;
-	font-size: 15px;
-	border-collapse: collapse;
-	font-weight: 300;
-	overflow: hidden;
-}
-
-.mContents .dtl1 thead {
-	background-color: #e1dff5;
-	float: left;
-	width: 995px;
-	border-top: 4px solid #6a5baf;
-}
-
-.mContents .dtl thead tr, .mContents .dtl1 thead tr {
-	/* display: table; */
-	width: 997px;
-}
-
-.mContents .dtl {
-	width: 997px;
-	height: 490px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	float: left;
-}
-
-.mContents .dtl tbody {
-	/* width: 997px;
-		   /*height: 532px;*/
-	/* overflow-y: auto;
-		   overflow-x: hidden; */
-	float: left;
-	/*border-bottom: 2px solid #c4c4c4;*/
-}
-
-.mContents .dtl tbody tr {
-	/* display: table; */
-	width: 997px;
-	cursor: pointer;
-}
-
-.mContents .dtl tbody:hover {
-	background-color: #ddf0ec;
-}
-/* .mContents .dtl thead tr th:first-child, .mContents .dtl1 thead tr th:first-child {
-		   width: 10px;
+	<title>유지보수계약 상세(매입정보)</title>
+	<style>
+		.sfcnt {
+			height: 91px;
 		}
-		.mContents .dtl tbody tr:first-child td:first-child {
-		   width: 10px;
-		} */
-/* .mContents .dtl tbody tr td:nth-child(3) {
-		   font-weight: 400;
-		} */
-.mContents .dtl1 thead th, .mContents .dtl tbody tr td {
-	padding: 10px 7px;
-	border: 1px solid #edebef;
-	text-align: center;
-	width: 100px;
-	max-width: 100px
-}
-
-.mContents .dtl tbody tr td {
-	font-weight: 200;
-}
-/* .mContents .dtl thead th:first-child,
-		.mContents .dtl tbody td:first-child {
-		   width: 51px;
-		   padding: 0;
+		
+		.bottom>div {
+			margin-top: 22px;
 		}
-		.mContents .dtl thead th:nth-child(2),
-		.mContents .dtl tbody td:nth-child(2),
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6) {
-		   width: 51px;
+		
+		.nav {
+			width: 100%;
+			height: 49px;
 		}
-		.mContents .dtl thead th:nth-child(3),
-		.mContents .dtl tbody td:nth-child(3) {
-		   width: 170px;
+		
+		.mContentsWrap {
+			background-color: #f6f7fc;
+			box-shadow: inset 0 7px 9px -3px rgba(0, 0, 0, 0.1);
+			height: 802px;
 		}
-		.mContents .dtl thead th:nth-child(4),
-		.mContents .dtl tbody td:nth-child(4),
-		.mContents .dtl thead th:nth-child(5),
-		.mContents .dtl tbody td:nth-child(5),
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6),
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7),
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8),
-		.mContents .dtl thead th:nth-child(9),
-		.mContents .dtl tbody td:nth-child(9), {
-		   width: 90px;
-		} */
-.mContents .dtl tbody tr td>span {
-	display: inline-block;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 84%;
-	margin: 0 auto;
-}
-
-.mContents .dtl tbody tr td img {
-	width: 25px;
-	vertical-align: top;
-}
-
-.detailList li {
-	float: left;
-	text-align: left;
-	margin-left: 10px;
-	line-height: 2.3;
-}
-
-.detailList li:nth-child(2n-1) {
-	width: 82px;
-	font-weight: 400;
-	color: #158566;
-}
-
-.detailList li:nth-child(2n) {
-	width: 316px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-weight: 200;
-	color: #21a17e;
-}
-
-.detailList li:last-child {
-	width: 734px;
-	height: 56px;
-	word-break: break-all;
-	white-space: normal;
-	overflow: auto;
-	line-height: 1.5;
-}
-
-#modBasicTable tr td:first-child {
-	box-shadow: inset -7px 0 9px -4px #d0e2de;
-	width: 132px;
-	font-weight: 400;
-	padding: 11px 8px 11px 17px;
-}
-
-#modBasicTable tr td:last-child {
-	padding: 5px 20px;
-	width: 463px;
-}
-
-#modBasicTable input[type="text"], #modBasicTable textarea {
-	width: 401px;
-	color: #0e8a67;
-}
-
-#modBasicTable textarea {
-	color: #0e8a67;
-	height: 105px;
-	border: 1px solid #e6e6e6;
-	padding: 0 10px;
-	resize: none;
-}
-
-#modBasicTable select, #m_listForm select{
-	height: 34px;
-	font-size: 14px;
-	width: 97px;
-	border: 1px solid #e9e9e9;
-	padding: 0 10px;
-	-webkit-appearance: none;
-	background: url(/images/arrow_down.png) no-repeat 91% 50%;
-	background-color: #fff;
-	color: #0e8a67;
-}
-
-#modBasicTable input[class^="calendar"] {
-	width: 140px !important;
-}
-
-#modBasicTable input[class="search"] {
-	background-image: url('/images/search_icon.png');
-	background-repeat: no-repeat;
-	background-position: 95% 50%;
-}
-
-#modBasicTable input[class="pname"] {
-	width: 305px;
-	border: none;
-	outline: none;
-	background-color: #ddf0ec;
-}
-
-.stitle2 input[class="pname"] {
-	width: 130px;
-	border: none;
-	outline: none;
-	background-color: #f6f7fc;
-	text-align: right;
-	font-size: 17px;
-	font-weight: 400;
-}
-
-input[type="text"] {
-	width: 138px;
-	height: 34px;
-	border: 1px solid #e9e9e9;
-	padding: 0 10px;
-	background-color: #fff;
-	font-size: 14px;
-	margin-bottom: 4px;
-}
-
-input[class^="calendar"] {
-	background-image: url(/images/calendar_icon.png);
-	background-repeat: no-repeat;
-	background-position: 95% 50%;
-}
-
-#modBasicTable tr td:first-child label {
-	color: red;
-	vertical-align: middle;
-}
-
-input[class="tCheck"]+label {
-	width: 24px !important;
-	height: 24px !important;
-}
-</style>
-<script>
+		
+		.mContentsWrap .mContents {
+			padding: 38px 71px;
+			width: 1662px;
+		}
+		
+		.title {
+			height: 50px;
+		}
+		
+		.title>label {
+			font-size: 26px;
+		}
+		
+		.mContents>div:first-child {
+			width: 37%;
+		}
+		
+		.mContents>.fxd {
+			width: 60%;
+		}
+		
+		.mContents .stitle {
+			font-size: 18px;
+			font-weight: 500;
+			margin-bottom: 10px;
+			margin-top: 30px;
+		}
+		
+		.mContents .stitle2 {
+			font-size: 17px;
+			font-weight: 400;
+			margin-bottom: 1px;
+			margin-top: 26px;
+		}
+		
+		.mContents .cg {
+			color: #24a37e;
+		}
+		
+		.mContents .stitle img {
+			width: 27px;
+			margin-left: 10px;
+		}
+		
+		.mContents table {
+			border-collapse: collapse;
+			font-size: 15px;
+			table-layout: fixed;
+			width: 614px;
+		}
+		
+		.mContents table tr td {
+			padding: 13px 20px;
+		}
+		
+		/* 기본정보 싸이즈 조정 */
+		.mContents .bsc {
+			border-top: 4px solid #32bc94 !important;
+			background-color: #ddf0ec;
+			border: 1px solid #bee2da;
+			border-bottom: 2px solid #bfe3db;
+		}
+		
+		.mContents .bsc tbody {
+			height: 576px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			float: left;
+		}
+		
+		.mContents .bsc tr td {
+			color: #0e8a67;
+		}
+		
+		.mContents .bsc tr td:first-child {
+			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			width: 153px;
+			font-weight: 400;
+			padding: 13px 13px 13px 13px;
+		}
+		
+		.mContents .bsc tr td:last-child {
+			width: 470px;
+			font-weight: 200;
+		}
+		
+		.mContents .bsc tr td label.file {
+			text-decoration: underline;
+		}
+		
+		.mContents .title ul li {
+			float: left;
+			text-align: center;
+			font-size: 17px;
+			cursor: pointer;
+		}
+		
+		.mContents .title ul li:last-child {
+			clear: both;
+			float: none;
+			width: 0 !important;
+		}
+		
+		.mContents>.fxd .title ul {
+			height: 46px;
+			width: 100%;
+			border-radius: 35px;
+			background-color: #d3d3d3;
+		}
+		
+		.mContents>.fxd .title ul li {
+			width: 25%;
+			line-height: 46px;
+			color: #777777;
+			background-color: #d3d3d3;
+			border-radius: 35px;
+		}
+		
+		.mContents>.fxd .title ul li>label {
+			display: inline-block;
+			width: 100%;
+			/* cursor: pointer; */
+		}
+		
+		.mContents>.fxd .title ul li.on, .mContents>.fxd .title ul li:hover {
+			color: #fff !important;
+			background-color: #4c3d92;
+		}
+		
+		.mContents .dtlWrap2 {
+			height: 487px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			border-bottom: 2px solid #c4c4c4;
+		}
+		
+		.mContents .dtl, .mContents .dtl1 {
+			width: 992px;
+			font-size: 15px;
+			border-collapse: collapse;
+			font-weight: 300;
+			overflow: hidden;
+		}
+		
+		.mContents .dtl1 thead {
+			background-color: #e1dff5;
+			float: left;
+			width: 995px;
+			border-top: 4px solid #6a5baf;
+		}
+		
+		.mContents .dtl thead tr, .mContents .dtl1 thead tr {
+			/* display: table; */
+			width: 997px;
+		}
+		
+		.mContents .dtl {
+			width: 997px;
+			height: 487px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			float: left;
+		}
+		
+		.mContents .dtl tbody {
+			/* width: 997px;
+				   /*height: 532px;*/
+			/* overflow-y: auto;
+				   overflow-x: hidden; */
+			float: left;
+			/*border-bottom: 2px solid #c4c4c4;*/
+		}
+		
+		.mContents .dtl tbody tr {
+			/* display: table; */
+			width: 997px;
+			cursor: pointer;
+		}
+		
+		.mContents .dtl tbody:hover {
+			background-color: #ddf0ec;
+		}
+		/* .mContents .dtl thead tr th:first-child, .mContents .dtl1 thead tr th:first-child {
+				   width: 10px;
+				}
+				.mContents .dtl tbody tr:first-child td:first-child {
+				   width: 10px;
+				} */
+		/* .mContents .dtl tbody tr td:nth-child(3) {
+				   font-weight: 400;
+				} */
+		.mContents .dtl1 thead th, .mContents .dtl tbody tr td {
+			padding: 10px 7px;
+			border: 1px solid #edebef;
+			text-align: center;
+			width: 100px;
+			max-width: 100px
+		}
+		
+		.mContents .dtl tbody tr td {
+			font-weight: 200;
+		}
+		/* .mContents .dtl thead th:first-child,
+				.mContents .dtl tbody td:first-child {
+				   width: 51px;
+				   padding: 0;
+				}
+				.mContents .dtl thead th:nth-child(2),
+				.mContents .dtl tbody td:nth-child(2),
+				.mContents .dtl thead th:nth-child(6),
+				.mContents .dtl tbody td:nth-child(6) {
+				   width: 51px;
+				}
+				.mContents .dtl thead th:nth-child(3),
+				.mContents .dtl tbody td:nth-child(3) {
+				   width: 170px;
+				}
+				.mContents .dtl thead th:nth-child(4),
+				.mContents .dtl tbody td:nth-child(4),
+				.mContents .dtl thead th:nth-child(5),
+				.mContents .dtl tbody td:nth-child(5),
+				.mContents .dtl thead th:nth-child(6),
+				.mContents .dtl tbody td:nth-child(6),
+				.mContents .dtl thead th:nth-child(7),
+				.mContents .dtl tbody td:nth-child(7),
+				.mContents .dtl thead th:nth-child(8),
+				.mContents .dtl tbody td:nth-child(8),
+				.mContents .dtl thead th:nth-child(9),
+				.mContents .dtl tbody td:nth-child(9), {
+				   width: 90px;
+				} */
+		.mContents .dtl tbody tr td>span {
+			display: inline-block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 84%;
+			margin: 0 auto;
+		}
+		
+		.mContents .dtl tbody tr td img {
+			width: 25px;
+			vertical-align: top;
+		}
+		
+		.detailList li {
+			float: left;
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+		}
+		
+		.detailList li:nth-child(2n-1) {
+			width: 82px;
+			font-weight: 400;
+			color: #158566;
+		}
+		
+		.detailList li:nth-child(2n) {
+			width: 316px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: 200;
+			color: #21a17e;
+		}
+		
+		.detailList li:last-child {
+			width: 734px;
+			height: 56px;
+			word-break: break-all;
+			white-space: normal;
+			overflow: auto;
+			line-height: 1.5;
+		}
+		
+		#modBasicTable tr td:first-child {
+			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			width: 132px;
+			font-weight: 400;
+			padding: 11px 8px 11px 17px;
+		}
+		
+		#modBasicTable tr td:last-child {
+			padding: 5px 20px;
+			width: 463px;
+		}
+		
+		#modBasicTable input[type="text"], #modBasicTable textarea {
+			width: 401px;
+			color: #0e8a67;
+		}
+		
+		#modBasicTable textarea {
+			color: #0e8a67;
+			height: 105px;
+			border: 1px solid #e6e6e6;
+			padding: 0 10px;
+			resize: none;
+		}
+		
+		#modBasicTable select, #m_listForm select{
+			height: 34px;
+			font-size: 14px;
+			width: 97px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			-webkit-appearance: none;
+			background: url(/images/arrow_down.png) no-repeat 91% 50%;
+			background-color: #fff;
+			color: #0e8a67;
+		}
+		
+		#modBasicTable input[class^="calendar"] {
+			width: 140px !important;
+		}
+		
+		#modBasicTable input[class="search"] {
+			background-image: url('/images/search_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
+		
+		#modBasicTable input[class="pname"] {
+			width: 305px;
+			border: none;
+			outline: none;
+			background-color: #ddf0ec;
+		}
+		
+		.stitle2 input[class="pname"] {
+			width: 130px;
+			border: none;
+			outline: none;
+			background-color: #f6f7fc;
+			text-align: right;
+			font-size: 17px;
+			font-weight: 400;
+		}
+		
+		input[type="text"] {
+			width: 138px;
+			height: 34px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			background-color: #fff;
+			font-size: 14px;
+			margin-bottom: 4px;
+		}
+		
+		input[class^="calendar"] {
+			background-image: url(/images/calendar_icon.png);
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
+		
+		#modBasicTable tr td:first-child label {
+			color: red;
+			vertical-align: middle;
+		}
+		
+		input[class="tCheck"]+label {
+			width: 24px !important;
+			height: 24px !important;
+		}
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
+	</style>
+	<script>
       $(document).ready(function() {
 			'<c:if test="${basicContractInfo != null }">'
 			//고객사 담당자 셋팅
@@ -613,9 +620,71 @@ input[class="tCheck"]+label {
 		        }); 
 				
 			});		
+					
+			//거래처 검색
+			$("#m_mtAcNm").on("keydown", function(event){
+				
+				if(event.keyCode == 13) {						
+					fnSearchAccoutList(this, $(this).val());
+				}						
+			});		
          
       }); // end  $(document).ready()
 		
+		//거래처 검색
+		var fnSearchAccoutList = function(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		var fnViewAccountList = function(pObject, pjAccountList){
+			var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 138px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	        ;
+			    	}			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#m_tr_account').after(html);
+			
+			
+			$("[id^='m_li_account']").click(function(event) {
+				
+				$('#m_mtAcNm').val(this.innerText); 
+				$('#m_mtAcKey').val(this.title);
+				$('#m_mtAcKey').change();
+				$('#m_div_accountList').remove();
+			});
+		};
+		
+		
+		//기본정보 수정
 		function modeBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
@@ -798,10 +867,10 @@ input[class="tCheck"]+label {
 				<div>
 					<div class="stitle cg">
 						기본정보
-						<button type="button" value="수정" id="modBasicInfo"
+						<%-- <button type="button" value="수정" id="modBasicInfo"
 							onclick="modeBasicInfo()">
 							<img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" />
-						</button>
+						</button> --%>
 					</div>
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
 						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>" />
@@ -886,16 +955,16 @@ input[class="tCheck"]+label {
 							<table class="bsc" id="modBasicTable" style="display: none">
 								<tr>
 									<td><label>*</label>프로젝트명</td>
-									<td><input type="text" name="mtNm"
-										value="<c:out value="${basicContractInfo.mtNm}"/>" required /></td>
+									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required /></td>
 								</tr>
-								<tr>
+								<tr id="m_tr_account">
 									<td><label>*</label>고객사</td>
-									<td><input type="text" name="mtAcKey" id="m_mtAcKey"
-										class="search" style="width: 165px"
-										value="<c:out value="${basicContractInfo.mtAcKey}"/>" required />
-										<input type="hidden" name="mtAcNm" id="m_mtAcNm"
-										value="<c:out value="${basicContractInfo.mtAcNm}"/>" /></td>
+									<td>
+										<%-- <input type="text" name="mtAcKey" id="m_mtAcKey" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
+										<input type="hidden" name="mtAcNm" id="m_mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/> --%>
+										<input type="text" name="mtAcNm" id="m_mtAcNm" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcNm}"/>" autocomplete="off" required/>
+										<input type="hidden" name="mtAcKey" id="m_mtAcKey" value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
+									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>고객사담당자</td>
@@ -1003,6 +1072,9 @@ input[class="tCheck"]+label {
 								</tr>
 							</table>
 						</div>
+						<div class="floatL" style="margin-top: 22px">
+							<button type="button" value="수정" id="modBasicInfo" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+						</div>
 					</form>
 				</div>
 			</div>
@@ -1103,7 +1175,7 @@ input[class="tCheck"]+label {
 								</tbody>
 							</c:forEach>
 								
-								<tbody>
+								<!-- <tbody>
 									<tr>
 										<td rowspan="2" style="width: 10px" style="10px">
 											<input type="checkbox" class="tCheck" id="check2"><label for="check2" class="cursorP"></label>
@@ -1402,7 +1474,7 @@ input[class="tCheck"]+label {
 										<td>6,000,000</td>
 										<td>6,000,000</td>
 									</tr>
-								</tbody>
+								</tbody> -->
 
 							</table>
 

@@ -216,7 +216,18 @@ public interface MtContractService {
 	*/
 	void writeMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountVO) throws Exception;
 	
-	
+	/**
+	 * 
+	  * @Method Name : deleteNwriteMtContractSalesAmountList
+	  * @Cdate       : 2021. 1. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : mtSalesAmountListVO.getMtIntegrateKey()해당하는 매출정보를 모두 삭제하고 새로운 매출정보를 등록한다.
+	  *                       유지보수 제품정보 입력 후 자동생성하는 곳에서 사용함.
+	  * @param mtSalesAmountListVO
+	  * @throws Exception
+	 */
+	void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO) throws Exception;
 	/**
 	 * 
 	  * @Method Name : selectMtContractSalesAmountList
@@ -434,6 +445,19 @@ public interface MtContractService {
 	   * @throws Exception
 	  */
 	 void writeMtContractBuyAmountList(MtBuyAmountListVO mtBuyAmountListVO) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : deleteNwriteMtContractBuyAmountList
+	   * @Cdate       : 2021. 1. 25.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :mtOrderKey에 대당하는 매입금액정보를 모두 삭제하고 새로운 매입정보를 등록한다.
+	   *                      백계약 정보 입력후 자동생성하는 곳에서 사용함.
+	   * @param mtBuyAmountListVO
+	   * @throws Exception
+	  */
+	 void deleteNwriteMtContractBuyAmountList(MtBuyAmountListVO mtBuyAmountListVO) throws Exception;
 	 
 	 /**
 	  * 

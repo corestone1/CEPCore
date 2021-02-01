@@ -11,6 +11,9 @@
 		.sfcnt {
 			height: 91px;
 		}
+		.bottom > div {
+			margin-top: 22px;
+		}
 		.btnWrap {
 			position: absolute;
 			bottom: 31px;
@@ -82,6 +85,7 @@
 			background-color: #ddf0ec;
 			border: 1px solid #bee2da;
 		    border-bottom: 2px solid #bfe3db;
+		    width: 614px;
 		}
 		
 		form .contents .bsc tbody {			
@@ -96,6 +100,7 @@
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			padding: 13px;
 		}
 		form .contents > .fxd .title ul {
 			height: 46px;
@@ -169,6 +174,7 @@
 			overflow-x: hidden;
 			height: 577px;
 			float: left;
+			border-bottom: 2px solid #c4c4c4;
 		}
 		form .contents .dtl tbody tr, form .contents .dtl2 tbody tr {
 			border: 1px solid #ebe9ee;
@@ -279,26 +285,35 @@
 			//추가발주여부
 			$('#mtWorkOrderYn').val("${basicWorkInfo.mtWorkOrderYn}").attr("selected", "true");
 			
+			//제품정보 커서 생성
+			if("Y"=="${basicWorkInfo.mtWorkPmYn}"){
+				$("#productLabel").css('cursor','pointer');
+			}
+			//발주정보 커서 생성.
+			if("Y"=="${basicWorkInfo.mtWorkOrderYn}"){
+				$("#orderLabel").css('cursor','pointer');				
+			}
 			
 			
-			$('li[id^=LI_TOPBar]').click(function(event){ 
+			
+			$('li[id^=LI_TOPBar]').click(function(event){
 				//location.href = this.title; event.preventDefault();
 				if(this.title == "basicInfo"){
-					document.mtBasicForm.action = "/maintenance/work/detail/basicInfo.do";
-		           	document.mtBasicForm.submit();
+					document.m_mtBasicForm.action = "/maintenance/work/detail/basicInfo.do";
+		           	document.m_mtBasicForm.submit();
 				} else if(this.title == "productInfo"){
 					//console.log("productInfo===>${basicWorkInfo.mtWorkPmYn}")
 					if("${basicWorkInfo.mtWorkPmYn}" == "Y"){
-						document.mtBasicForm.action = "/maintenance/work/detail/productInfo.do";
-			           	document.mtBasicForm.submit();
+						document.m_mtBasicForm.action = "/maintenance/work/detail/productInfo.do";
+			           	document.m_mtBasicForm.submit();
 					} else {
 						alert("제품정보가 없습니다.\n 제품등록여부를 Y로 변경 후 제품정보를 등록하세요.")
 					}
 				} else if(this.title == "orderInfo"){
-					console.log("orderInfo===>${basicWorkInfo.mtWorkOrderYn}")
+					//console.log("orderInfo===>${basicWorkInfo.mtWorkOrderYn}")
 					if("${basicWorkInfo.mtWorkOrderYn}" == "Y"){
-						document.mtBasicForm.action = "/maintenance/work/detail/orderInfo.do";
-			           	document.mtBasicForm.submit();
+						document.m_mtBasicForm.action = "/maintenance/work/detail/orderInfo.do";
+			           	document.m_mtBasicForm.submit();
 					} else {
 						alert("발주정보가 없습니다.\n 추가발주유무를 Y로 변경 후 발주정보를 등록하세요.")
 					}
@@ -307,11 +322,8 @@
 			});
 			
 			
-			if("Y"==$('#mtWorkOrderYn').val()){
-				$("#orderLabel").css('cursor','pointer');
-				/* $("#LI_TOPBar_WO"). */
-				
-			}
+			
+			
 			//수정버튼 클릭
 			$('#modInfo').click(function() {
 				console.log($('#editMode').val())
@@ -323,7 +335,7 @@
 				} else {
 					// update 수행.
 					var object = {};
-		           	var formData = $("#mtBasicForm").serializeArray();
+		           	var formData = $("#m_mtBasicForm").serializeArray();
 		           	//console.log("formData===>"+formData);
 		           	for (var i = 0; i<formData.length; i++){
 		                
@@ -353,9 +365,9 @@
 						
 								$('#editMode').val(0);
 								
-				            	document.mtBasicForm.action = "/maintenance/work/detail/basicInfo.do";
-				        		//document.mtBasicForm.method="get";
-				                document.mtBasicForm.submit(); 
+				            	document.m_mtBasicForm.action = "/maintenance/work/detail/basicInfo.do";
+				        		//document.m_mtBasicForm.method="get";
+				                document.m_mtBasicForm.submit(); 
 			            	} else {
 			            		alert("기본정보 수정을 실패하였습니다.")
 			            	}
@@ -407,12 +419,60 @@
 			/* } */
 		}
 		
+		//유지보수 작업 삭제.
+		function fn_deleteBtn(){
+			if(confirm("유지보수작업 내용을 삭제하시겠습니까?")){
+				/* document.listForm.btnOption.value='delete';
+				document.listForm.selectWorkKey.value=$('input[name="gubun"]:checked').val();
+
+				document.listForm.action = "/maintenance/work/deleteWork.do";
+	           	document.listForm.submit();  */
+	           	var sendData = {
+	           			"selectWorkKey":$('#mtWorkKey').val()
+	           	}
+				$.ajax({
+	           		url: "/maintenance/work/deleteWork.do",
+	           		dataType: 'text', 
+	           		type:"post",  
+	           		//data: JSON.parse(sendData),
+	           		data: JSON.stringify(sendData),
+	           		//data: sendData,
+	           		contentType: "application/json; charset=UTF-8", 
+	           		beforeSend: function(xhr) {
+	           			xhr.setRequestHeader("AJAX", true);	        		
+	           		},
+	           		success:function(data){	
+	           			var paramData = JSON.parse(data);
+	           		
+	           			//console.log("paramData===>"+paramData);
+	           			//console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
+	           			if("Y" == paramData.successYN){
+	           				alert("유지보수작업 삭제를 성공하였습니다.");
+	           				
+	           				document.m_mtBasicForm.action = "/maintenance/work/workList.do";
+	        	           	document.m_mtBasicForm.submit();
+	           				
+	           			} else {
+	           				alert("유지보수작업 삭제를 실패하였습니다.");
+	           				
+	           			}
+	           		},
+	           		error: function(request, status, error) {
+	           			if(request.status != '0') {
+	           				alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	           			}
+	           		} 
+	           	});          
+			} else {
+				return false;
+			}
 		
+		}
 
 	</script>
 </head>
 <body>
-	<form id="mtBasicForm" name="mtBasicForm" method="post">
+	<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
 		<input type="hidden" id="editMode" name="editMode"  value="0"/>
@@ -436,22 +496,22 @@
 								</tr>
 								<tr>
 									<td>고객사담당자</td>
-									<td><c:out value="${basicContractInfo.acDirectorInfo}"/></td>
+									<td><c:out value="${basicContractInfo.mtAcDirectorNm}"/> / <c:out value="${basicContractInfo.acDirectorInfo}"/></td>
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
+									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
+									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
-									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
+									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<tr>
-									<td>부가세 포함여부</td>
+									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
 								</tr>
 								<tr>
@@ -467,7 +527,7 @@
 									<td><c:out value="${basicContractInfo.mtRgInspectCnt}"/> 회</td>
 								</tr>
 								<tr>
-									<td>백계약유무</td>
+									<td>백계약 유무</td>
 									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
 								</tr>
 								<tr>
@@ -488,7 +548,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td><c:out value="${basicContractInfo.remark}"/></td>
+									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 						</div>
@@ -498,7 +558,7 @@
 					<div class="title">
 						<ul>
 							<li id="LI_TOPBar_WB" class="on" title="basicInfo"><label style="cursor: pointer;">작업정보</label></li>
-							<li id="LI_TOPBar_WP" title="productInfo"><label id="orderLabel">제품정보</label></li>
+							<li id="LI_TOPBar_WP" title="productInfo"><label id="productLabel">제품정보</label></li>
 							<li id="LI_TOPBar_WO" title="orderInfo"><label id="orderLabel">발주정보</label></li>
 							<li></li>
 						</ul>
@@ -535,13 +595,13 @@
 									<td>추가발주유무</td>
 									<td><c:out value="${basicWorkInfo.mtWorkOrderYn}"/></td>
 								</tr>								
-								<tr style="height: 133px">
+								<tr style="height: 117px">
 									<td>지원내용</td>
 									<td>
 										<pre><c:out value="${basicWorkInfo.mtWorkCont}"/></pre>
 									</td>
 								</tr>
-								<tr style="height: 100px">
+								<tr style="height: 116px">
 									<td>비고</td>
 									<td><pre><c:out value="${basicWorkInfo.remark}"/></pre></td>
 								</tr>
@@ -629,10 +689,10 @@
 								</tr>
 							</table>
 						</div>
-						<div class="btnWrap rt">
+						<div class="bottom">
 							<div class="floatR">
 								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

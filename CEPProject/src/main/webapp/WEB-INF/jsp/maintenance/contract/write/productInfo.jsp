@@ -178,6 +178,8 @@
 			'<c:if test="${listCount > 1 }">'
 			fn_viewSummaryUpAll();
 			'</c:if>'
+			
+
 		});
 		/**
 		*  화면을 이동시킨다.
@@ -267,7 +269,7 @@
 			}			
 		} //end fn_changeView()
 		
-		jQuery.fn.serializeObject = function() { 
+		jQuery.fn.serializeObject = function() {
 			var obj = null; 
 			var objArry = null;
 				try { 
@@ -281,9 +283,9 @@
 							if(this.name=="mtPmQuantity" || this.name=="mtPmUprice" || this.name=="totalAmount"){
 								//숫자에서 컴마를 제거한다.
 								obj[this.name] = removeCommas(this.value); 
-							} else if(this.name=="mtPmStartDt" || this.name=="mtPmEndDt") {
-								//날짜에서 -를 제거한다.
-								obj[this.name] =  removeData(this.value,"-"); 
+							} else if(this.name.split('-')[2]=="mtPmStartDt" || this.name.split('-')[2]=="mtPmEndDt") {
+								//이름에서 prodList-0-를 제거하고 날짜값에서 -를 제거한다.
+								obj[this.name.split('-')[2]] =  removeData(this.value,"-"); 
 							} else {
 								obj[this.name] = this.value; 
 							}
@@ -304,6 +306,71 @@
 			}finally {} 
 			return objArry; 
 		}
+		/* 제품 유지보수 기간과 기본정보 유지보수 기간을 체크한다.*/
+		jQuery.fn.checkPmDate = function() {
+			var checkDate = '';
+			var contractDate =addDateMinus($('#mtContFromDate').val())+" ~ "+addDateMinus($('#mtContEndDate').val());
+			var startDate;
+			try {
+				//console.log("contractDate====>"+contractDate);
+				if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) { 
+					var arr = this.serializeArray(); 
+					if(arr){							
+						jQuery.each(arr, function() {
+							if(''==checkDate) {
+								//console.log("this.name====>"+this.name);
+								if('mtPmStartDt' == this.name.split('-')[2]){
+									//console.log("mtPmStartDt====>"+this.name);
+									//startDate = removeData(this.value,'-')*1;
+									startDate = this.value;
+									//console.log("mtPmStartDt00000====>"+$('#mtContFromDate').val()+" / "+removeData(this.value,'-')+" / "+this.value+" / "+$('#mtContEndDate').val()+"/"+($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1));
+									//console.log("====>"+(false || true) +"/"+(true || true)+"/"+(false || false)+"/"+(true || false))
+									if(($('#mtContFromDate').val()*1 > removeData(this.value,'-')*1) | ($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1)) {
+										checkDate = this.value+"일자는 계약기간 범위("+contractDate+")에 있지 않습니다. \n확인 후 다시 등록하세요!!";
+										//console.log("this.name1111======>"+this.name+" / "+this.value)
+										//접혀있으면 포커스 이동이 안되므로 모두 펼친다.
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										
+										return checkDate;
+										
+									} else {
+										//console.log("mtPmStartDt11====>"+$('#mtContFromDate').val()+" / "+removeData(this.value,'-')+" / "+this.value+" / "+$('#mtContEndDate').val()+"/"+($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1));
+									}
+								} else if('mtPmEndDt' == this.name.split('-')[2]) {
+
+									//console.log("mtPmEndDt====>"+this.name);
+									if($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1) {
+										checkDate = this.value+"일자는 계약기간 범위("+contractDate+")에 있지 않습니다. \n확인 후 다시 등록하세요!!";
+										//접혀있으면 포커스 이동이 안되므로 모두 펼친다.
+										fn_viewSummaryDownAll();
+										//console.log("this.name222======>"+this.name+" / "+this.value)
+										$( "#"+this.name ).focus();
+										return checkDate;
+									} else if(removeData(startDate,'-')*1 > removeData(this.value,'-')*1) {
+										checkDate = this.value+"일자는 시작일자("+startDate+")보다 이전날짜입니다.. \n확인 후 다시 등록하세요!!";
+										//접혀있으면 포커스 이동이 안되므로 모두 펼친다.
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										return checkDate;
+									} else {
+										//console.log("mtPmEndDt111====>"+$('#mtContEndDate').val()+" / "+removeData(this.value,'-')+" / "+this.value);
+									}
+								}
+							} else {
+								//break;
+							}
+
+						}); 	              
+					} 
+				} 
+			}catch(e) { 
+				alert(e.message); 
+			}finally {} 
+			return checkDate; 
+		}
+		
+		
 		function fn_addInfoTable() {
 			
 			var type = "prod";
@@ -352,21 +419,27 @@
 	    		//}
 	    	}
 	    	
-	    	var name = type + 'List[' + (lastNum+1) + '].';	    	
+	    	var name = type + 'List-' + (lastNum+1) + '-';    	
 	    	   	
 	    	for(var i = 0; i < classArr.length; i++) {
 	    		clone.find('input[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");
 	    	}
-	    		    	
+	    	
+	    	//name 필드 값 변경 및 값 초기화	    	
 	    	for(var i = 0; i < nameArr.length; i++) {
+	    		var splitName = nameArr[i].split('-')[2];   			
 	    		
+	    		//값 초기화
 	    		clone.find('input[name="lastNum"]').val(lastNum+1);
 				clone.find('input[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");
 				clone.find('textarea[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
 				clone.find('select[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");		
 				clone.find('hidden[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
+				
+				//날짜필드값 변경
+				clone.find('input[name="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('name', name + splitName).val("");
 	    	} 
-	    	var name = type + 'List-' + (lastNum+1) + '-';
+	    	
 	    	for(var i = 0; i < idArr.length; i++) {
 	    		var splitName = idArr[i].split('-')[2];
 				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);	
@@ -388,7 +461,7 @@
 		}
 		
 		/* 제품정보 접기/펴기*/
-		function fn_viewSummary(obj) {
+/* 		function fn_viewSummary(obj) {
 	         var tbody = obj.parentNode.parentNode.parentNode;
 	         var jtbody = $(tbody);
 	         var className = obj.getAttribute('class');
@@ -402,7 +475,7 @@
 	            obj.src = "<c:url value='/images/arrow_up.png'/>";
 	            obj.className = "down";
 	         }
-		}
+		} */
 		
 		/* 제품정보 삭제*/
 		function fn_delete(obj, type) {
@@ -511,18 +584,26 @@
 			//필수값 체크를 완료하면 저장 프로세스 시작.
 			
 			var actionTitle;
+			var checkDate;
 			if ($("#mtListForm")[0].checkValidity()){
-				if($('#rowNum').val()*1 >0){					
-					actionTitle = "수정";
+				checkDate = $("#mtListForm").checkPmDate();
+				
+				if('' != checkDate) {
+					alert(checkDate);
 				} else {
-					actionTitle = "저장";
+					if($('#rowNum').val()*1 >0){					
+						actionTitle = "수정";
+					} else {
+						actionTitle = "저장";
+					}
+					
+					if(confirm("유지보수계약 제품정보를 "+actionTitle+"하시겠습니까?")) {
+						saveProductList(actionTitle);
+					} else {
+						return false;
+					}
 				}
 				
-				if(confirm("유지보수계약 제품정보를 "+actionTitle+"하시겠습니까?")) {
-					saveProductList(actionTitle);
-				} else {
-					return false;
-				}
 				
 			}  else {
 				 //Validate Form
@@ -597,6 +678,21 @@
 			$("#prodList-"+num+"-totalAmount").val(addCommas(quantity*pmUprice))
 		});
 
+		function fnUpdateSaleAmount(param) {
+			//alert(param);
+			$('#updateYn').val(param);
+		}
+		
+		//유지보수계약 제품 찾기 클릭
+		function fn_findMtProduct(obj) {
+			var num = $(obj).attr('id').split('-')[1];
+			//console.log('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val());
+			
+			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
+					,'MT_PRODUCT_POPUP'
+					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmKeyDomId=prodList-'+num+'-mtPmFkKey&pmNmDomId=prodList-'+num+'-pmNmCd','PRODUCT_LIST','width=1000px,height=713px,left=600');					
+		}
 /* 		function fn_viewSummaryUpAll(){
 			$(".dpTbRow").attr('class','dpNone');
 			$(".down").attr('class','up');
@@ -637,10 +733,14 @@
 			<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${parmMtSbCtYn}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
 			<input type="hidden" id="rowNum" name="rowNum" value="<c:out value="${listCount}"/>" />
+			<input type="hidden" id="mtContFromDate" name="mtContFromDate" value="<c:out value="${mtContFromDate}"/>" />
+			<input type="hidden" id="mtContEndDate" name="mtContEndDate" value="<c:out value="${mtContEndDate}"/>" />
 			<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
+			<input type="hidden" id="updateYn" name="updateYn" value="N"/>
 		</form>
 		<form action="/" id="mtListForm" name="mtListForm" method="post">
 			<div class="contents">
+			
 				<div id="prodWrap">
 					<div class="subjectContainer">
 						<table class="subject">
@@ -649,7 +749,15 @@
 									<label class="ftw400">제품정보</label>
 								</td>
 								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
-								<td class="subBtn" colspan="5"  style="border-top: none;"><img class="floatR" src="<c:url value='/images/icon_project.png'/>" onclick="fn_addInfoTable();"/></td>
+								<td class="subBtn" colspan="5"  style="border-top: none;text-align: center;vertical-align: middle;">
+									<c:if test="${listCount>0}">
+									유지보수 매출금액 업데이트여부 :
+									<input type="radio" class="tCheck" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tCheck" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+									</c:if>
+									
+									<img class="floatR" src="<c:url value='/images/icon_project.png'/>" onclick="fn_addInfoTable();"/>
+								</td>
 							</tr>
 						</table>
 					</div>
@@ -661,10 +769,10 @@
 								<tr>
 									<td class="tdTitle firstTd"><label>*</label>제품</td>
 									<td class="tdContents firstTd">
-										<input type="text" id="prodList-0-mtPmFkKey" name="mtPmFkKey" class="search" required/>	
-										<input type="hidden" id="prodList-0-pmNmCd" name="pmNmCd" />
-										<!-- <input type="text" id="prodList-0-pmNmCd" name="pmNmCd" class="search" required/>	
-										<input type="hidden" id="prodList-0-mtPmFkKey" name="mtPmFkKey"/>	 -->
+										<!-- <input type="text" id="prodList-0-mtPmFkKey" name="mtPmFkKey" class="search" required/>	
+										<input type="hidden" id="prodList-0-pmNmCd" name="pmNmCd" /> -->
+										<input type="text" id="prodList-0-pmNmCd" name="pmNmCd" class="search" onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
+										<input type="hidden" id="prodList-0-mtPmFkKey" name="mtPmFkKey"/>	
 										<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />	
 									</td>
 									<td class="tdTitle firstTd">시리얼번호</td>
@@ -691,7 +799,7 @@
 								<tr class="dpTbRow">
 									<td class="tdTitle"><label>*</label>계약기간</td>
 									<td class="tdContents" colspan="3">
-										<input type="text" id="prodList-0-mtPmStartDt" name="mtPmStartDt" class="calendar fromDt" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-0-mtPmEndDt" name="mtPmEndDt" class="calendar toDt" required/>
+										<input type="text" id="prodList-0-mtPmStartDt" name="prodList-0-mtPmStartDt" class="calendar fromDt" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-0-mtPmEndDt" name="prodList-0-mtPmEndDt" class="calendar toDt" required/>
 									</td>
 								</tr>
 								<tr class="dpTbRow">
@@ -713,10 +821,10 @@
 								<tr>
 									<td class="tdTitle firstTd"><label>*</label>제품</td>
 									<td class="tdContents firstTd">
-										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>" class="search" required/>	
-										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" />
-										<!-- <input type="text" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" class="search" required/>	
-										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>"/>	 -->
+										<%-- <input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>" class="search" required/>	
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" /> --%>
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" class="search" onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>"/>	
 										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
 									</td>
 									<td class="tdTitle firstTd">시리얼번호</td>
@@ -744,7 +852,7 @@
 								<tr class="dpTbRow">
 									<td class="tdTitle"><label>*</label>계약기간</td>
 									<td class="tdContents" colspan="3">
-										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmStartDt" name="mtPmStartDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmEndDt" name="mtPmEndDt" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>" required/>
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmStartDt" name="prodList-<c:out value="${status.index}"/>-mtPmStartDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmEndDt" name="prodList-<c:out value="${status.index}"/>-mtPmEndDt" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>" required/>
 									</td>
 								</tr>
 								<tr class="dpTbRow">
@@ -759,7 +867,8 @@
 						</div>
 						</c:forEach>
 						</c:otherwise>
-					</c:choose>					
+					</c:choose>				
+						
 					
 				</div>
 				<div class="btnWrap floatL">

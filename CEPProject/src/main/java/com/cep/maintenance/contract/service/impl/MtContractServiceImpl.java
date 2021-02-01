@@ -18,6 +18,7 @@ import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cmm.config.PrimaryKeyType;
+import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -153,6 +154,7 @@ public class MtContractServiceImpl implements MtContractService {
 		List<MtContractProductVO> updateList = null;
 		int productListCnt = 0;
 		MtContractProductVO mtProductVO = null;
+		MtSaleAmountListVO mtSalesAmountListVO = null;
 		try {
 			if(productVO.getRowNum()>0){
 				// 수정
@@ -176,7 +178,10 @@ public class MtContractServiceImpl implements MtContractService {
 				}
 				
 				//1. 제품목록 삭제.
-				deleteKeyList = productVO.getDeleteListKeys().split(":");
+				if(!"".equals(CepStringUtil.getDefaultValue(productVO.getDeleteListKeys(), ""))) {
+					deleteKeyList = productVO.getDeleteListKeys().split(":");
+				}
+				
 //				logger.debug("deleteKeyList==================>"+String.valueOf(deleteKeyList.toString())+"/"+deleteKeyList.length);
 				if(null != deleteKeyList && deleteKeyList.length>0) {
 					deleteMtContractProductList(productVO.getModEmpKey(), deleteKeyList);
@@ -192,12 +197,36 @@ public class MtContractServiceImpl implements MtContractService {
 				if(null != updateList && updateList.size()>0) {
 					updateMtProductList(productVO.getModEmpKey(), updateList);
 				}
-			}else {
+				logger.debug("productVO.getUpdateYn()======>"+productVO.getUpdateYn());
+				
+				//매출정보 초기화 업데이트를 선택한 경우
+				if("Y".equalsIgnoreCase(CepStringUtil.getDefaultValue(productVO.getUpdateYn(), "N"))) {
+					//4. 제품 목록에 대한 매출금액 자동생성
+					//매출정보를 자동생성한다.
+					mtSalesAmountListVO = new MtSaleAmountListVO();
+					mtSalesAmountListVO.setMtIntegrateKey(productVO.getMtIntegrateKey());
+					mtSalesAmountListVO.setRegEmpKey(productVO.getRegEmpKey());
+					mtSalesAmountListVO.setModEmpKey(productVO.getRegEmpKey());
+//					makeSalesAmoutList(productVO.getMtContractProductVoList());
+					mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtContractProductVoList()));
+					deleteNwriteMtContractSalesAmountList(mtSalesAmountListVO);
+				}
+				
+			} else {
 				//등록
 				writeMtProductList(productVO.getMtIntegrateKey(), productVO.getRegEmpKey(), productVO.getMtContractProductVoList());
 				
+				//4. 제품 목록에 대한 매출금액 자동생성
+				//매출정보를 자동생성한다.
+				mtSalesAmountListVO = new MtSaleAmountListVO();
+				mtSalesAmountListVO.setMtIntegrateKey(productVO.getMtIntegrateKey());
+				mtSalesAmountListVO.setRegEmpKey(productVO.getRegEmpKey());
+				mtSalesAmountListVO.setModEmpKey(productVO.getRegEmpKey());
+//				makeSalesAmoutList(productVO.getMtContractProductVoList());
+				mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtContractProductVoList()));
+				deleteNwriteMtContractSalesAmountList(mtSalesAmountListVO);
+				
 			}
-			
 			
 		} catch (Exception e) {
 			throw new Exception(e);
@@ -399,7 +428,10 @@ public class MtContractServiceImpl implements MtContractService {
 			
 			//1. 유지보수계약 매출정보 삭제
 //			deleteKeyList = mtSalesAmountListVO.getDeleteKeys().split(":");
-			deleteKeyList = mtSalesAmountListVO.getDeleteListKeys().split(":");
+			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountListVO.getDeleteListKeys(), ""))) {
+				deleteKeyList = mtSalesAmountListVO.getDeleteListKeys().split(":");
+			}
+			
 			if(null != deleteKeyList && deleteKeyList.length>0) {
 				
 				deleteMtContractSalesAmountList(mtSalesAmountListVO.getModEmpKey(), mtSalesAmountListVO.getMtIntegrateKey(), deleteKeyList);				
@@ -443,6 +475,31 @@ public class MtContractServiceImpl implements MtContractService {
 			throw new Exception(e);
 		}
 		return list;
+	}
+	
+	@Override
+	@Transactional
+	public void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO) throws Exception {
+		Map<String, Object> insertParam = null;
+		Map<String, Object> deleteParam = null;
+		try {
+			logger.debug("deleteNwriteMtContractSalesAmountList==>"+mtSalesAmountListVO.getMtIntegrateKey());
+			//1. 기존 등록되어있는 매입금액을 모두 삭제한다.
+			deleteParam = new HashMap<>();
+			deleteParam.put("mtIntegrateKey", mtSalesAmountListVO.getMtIntegrateKey());
+			deleteParam.put("modEmpKey", mtSalesAmountListVO.getModEmpKey());
+			mtMapper.deleteMtContractSalesAmountAll(deleteParam);
+			
+			//2.새로운 매입금액정보를 등록한다.
+			insertParam = new Hashtable<>();
+			insertParam.put("mtIntegrateKey", mtSalesAmountListVO.getMtIntegrateKey());
+			insertParam.put("regEmpKey", mtSalesAmountListVO.getRegEmpKey());
+			insertParam.put("mtSalesAmountVOList", mtSalesAmountListVO.getMtSalesAmountVOList());
+			mtMapper.writeMtContractSalesAmountList(insertParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
 	}
 	
 	@Override
@@ -495,10 +552,22 @@ public class MtContractServiceImpl implements MtContractService {
 		MtBackOrderProductVO productVO = null;
 		
 		String mtOrderKey = null;
+		MtBuyAmountListVO mtBuyAmountListVO = null;
 		try {
 			if("".equals(mtBackOrderVO.getMtOrderKey())){
 				// 해당 내용 신규등록
 				mtOrderKey = writeMtBackOrder(mtBackOrderVO);
+				
+				//신규생성시에는 무조건 백계약 매입정보를 생성한다.
+				mtBuyAmountListVO = new MtBuyAmountListVO();
+				mtBuyAmountListVO.setMtIntegrateKey(mtBackOrderVO.getMtIntegrateKey());
+				mtBuyAmountListVO.setMtOrderKey(mtOrderKey);
+				mtBuyAmountListVO.setRegEmpKey(mtBackOrderVO.getRegEmpKey());
+				mtBuyAmountListVO.setModEmpKey(mtBackOrderVO.getModEmpKey());				
+				mtBuyAmountListVO.setMtBuyAmountVOList(makeBuyAmoutList(mtBackOrderVO.getMtBackOrderProductVoList()));
+								
+				deleteNwriteMtContractBuyAmountList(mtBuyAmountListVO);
+				
 			} else {
 				/*해당 내용 업데이트*/
 				
@@ -524,7 +593,11 @@ public class MtContractServiceImpl implements MtContractService {
 				}
 
 				//1. 백계약 제품목록 삭제.
-				deleteKeyList = mtBackOrderVO.getDeleteListKeys().split(":");
+				if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getDeleteListKeys(), ""))) {
+					deleteKeyList = mtBackOrderVO.getDeleteListKeys().split(":");
+				}
+				
+				//logger.debug("mtBackOrderVO.getDeleteListKeys()===>"+mtBackOrderVO.getDeleteListKeys()+"/"+deleteKeyList);
 				if(null != deleteKeyList && deleteKeyList.length>0) {
 					deleteBackOrderProductList(mtBackOrderVO.getModEmpKey(), deleteKeyList);
 				}
@@ -542,6 +615,19 @@ public class MtContractServiceImpl implements MtContractService {
 				}
 				//4. 백계약 메인정보 업데이트
 				updateContractBackOrder(mtBackOrderVO);
+				
+				//매입정보 초기화 업데이트를 선택한 경우
+				if("Y".equalsIgnoreCase(CepStringUtil.getDefaultValue(mtBackOrderVO.getUpdateYn(), "N"))) {
+					//5. 백계약 업체별 제품정보에 대해 매입금액 자동생성
+					mtBuyAmountListVO = new MtBuyAmountListVO();
+					mtBuyAmountListVO.setMtIntegrateKey(mtBackOrderVO.getMtIntegrateKey());
+					mtBuyAmountListVO.setMtOrderKey(mtOrderKey);
+					mtBuyAmountListVO.setRegEmpKey(mtBackOrderVO.getRegEmpKey());
+					mtBuyAmountListVO.setModEmpKey(mtBackOrderVO.getModEmpKey());				
+					mtBuyAmountListVO.setMtBuyAmountVOList(makeBuyAmoutList(mtBackOrderVO.getMtBackOrderProductVoList()));
+									
+					deleteNwriteMtContractBuyAmountList(mtBuyAmountListVO);
+				}
 			}
 			
 		} catch (Exception e) {
@@ -549,6 +635,9 @@ public class MtContractServiceImpl implements MtContractService {
 		}
 		return mtOrderKey;
 	}
+	
+	
+	
 	
 	/**
 	 * 
@@ -964,7 +1053,10 @@ public class MtContractServiceImpl implements MtContractService {
 			}
 			
 			//1. 유지보수계약 매입정보 삭제
-			deleteKeyList = mtBuyAmountListVO.getDeleteListKeys().split(":");
+			if(!"".equals(CepStringUtil.getDefaultValue(mtBuyAmountListVO.getDeleteListKeys(), ""))) {
+				deleteKeyList = mtBuyAmountListVO.getDeleteListKeys().split(":");
+			}
+			
 			if(null != deleteKeyList && deleteKeyList.length>0) {
 				deleteMtContractBuyAmountList(mtBuyAmountListVO.getModEmpKey(), mtBuyAmountListVO.getMtOrderKey(), deleteKeyList);
 			}
@@ -1052,6 +1144,295 @@ public class MtContractServiceImpl implements MtContractService {
 			throw new Exception(e);
 		}
 		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#deleteNwriteMtContractBuyAmountList(com.cep.maintenance.contract.vo.MtBuyAmountListVO)
+	 */
+	@Override
+	@Transactional
+	public void deleteNwriteMtContractBuyAmountList(MtBuyAmountListVO mtBuyAmountListVO) throws Exception {
+		Map<String, Object> insertParam = null;
+		Map<String, Object> deleteParam = null;
+		try {
+			logger.debug("mtBuyAmountListVO.getMtIntegrateKey()==>"+mtBuyAmountListVO.getMtIntegrateKey());
+			//1. 기존 등록되어있는 매입금액을 모두 삭제한다.
+			deleteParam = new HashMap<>();
+			deleteParam.put("mtIntegrateKey", mtBuyAmountListVO.getMtIntegrateKey());
+			deleteParam.put("mtOrderKey", mtBuyAmountListVO.getMtOrderKey());
+			deleteParam.put("modEmpKey", mtBuyAmountListVO.getModEmpKey());
+			mtMapper.deleteMtContractBuyAmountAll(deleteParam);
+			
+			//2.새로운 매입금액정보를 등록한다.
+			insertParam = new Hashtable<>();
+			insertParam.put("mtIntegrateKey", mtBuyAmountListVO.getMtIntegrateKey());
+			insertParam.put("mtOrderKey", mtBuyAmountListVO.getMtOrderKey());
+			insertParam.put("regEmpKey", mtBuyAmountListVO.getRegEmpKey());
+			insertParam.put("mtBuyAmountVOList", mtBuyAmountListVO.getMtBuyAmountVOList());
+			mtMapper.writeMtContractBuyAmountList(insertParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+	
+//	==========================================================================================================
+	/**
+	 * 
+	  * @Method Name : makeSalesAmoutList
+	  * @Cdate       : 2021. 1. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품정보를 이용하여 매출정보를 자동생성하는 메서드
+	  * @param voList
+	  * @return
+	 */
+	private List<MtSalesAmountVO> makeSalesAmoutList(List<MtContractProductVO> voList) {
+		Map<String, MtSalesAmountVO> yearMap = null;
+		List<MtSalesAmountVO> mtSalesAmountVOList = null;
+		int listCnt = 0;
+		MtContractProductVO vo = null;
+		int totalAmount = 0;
+		try {
+			if(null != voList && voList.size()>0) {
+				System.out.println(voList.size());
+				
+				listCnt = voList.size();
+				for (int i = 0; i < listCnt; i++) {
+					if(null == yearMap) {
+						yearMap = new HashMap<>();
+					}
+					vo = voList.get(i);
+					totalAmount = Integer.parseInt(vo.getMtPmQuantity())*Integer.parseInt(vo.getMtPmUprice());
+//					logger.debug("vo.getFromDate()====>"+vo.getFromDate());
+//					logger.debug("vo.getMtPmStartDt()====>"+vo.getMtPmStartDt());
+//					logger.debug("vo.getToDate()====>"+vo.getToDate());
+//					logger.debug("vo.getMtPmEndDt()====>"+vo.getMtPmEndDt());
+//					logger.debug("totalAmount====>"+totalAmount);
+//					logger.debug("yearMap====>"+yearMap);
+					yearMap = calcuSalesAmount(vo.getMtPmStartDt(), vo.getMtPmEndDt(), totalAmount, yearMap);
+				}
+				
+				if(null !=yearMap && yearMap.size()>0) {
+					mtSalesAmountVOList = new ArrayList<>(yearMap.values());
+				}
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mtSalesAmountVOList;
+	}
+	
+	
+	private Map<String, MtSalesAmountVO> calcuSalesAmount(String fromDate, String toDate, int totalAmount, Map<String, MtSalesAmountVO> yearMap) throws Exception {
+		List<String> monthList = null;
+		MtSalesAmountVO salesVo = null;
+		MtSalesAmountVO calcuSalesVo = null;
+		int monthCnt = 0;
+		int avrAmount = 0;
+		String targetYear = null;
+		String targetMonth = null;
+		String checkYear = null;
+		try {
+			monthList = CepDateUtil.makeMonthListFormToEndDate(fromDate, toDate);
+			
+			if(null != monthList && monthList.size()>0) {
+				//년도에 맞는 vo를 생성한다.
+				for (int i = Integer.parseInt(fromDate.substring(0, 4)); i <= Integer.parseInt(toDate.substring(0, 4)); i++) {
+//					System.out.println("=============>"+i);
+					if(!yearMap.containsKey(String.valueOf(i))) {
+						//해당 년도가 존재하지 않으면 해당 
+						salesVo = new MtSalesAmountVO();
+						salesVo.setMtSalesYear(String.valueOf(i));
+						yearMap.put(String.valueOf(i), salesVo);
+					}
+				}	
+				monthCnt = monthList.size(); // 개월수..
+				avrAmount = totalAmount/monthCnt; //월별 평균금액
+				//해당 월별로 금액배분.
+				for (int i = 0; i < monthCnt; i++) {
+					targetYear = monthList.get(i).substring(0, 4);
+					targetMonth = monthList.get(i).substring(4, 6);
+					if(null == checkYear) {
+						checkYear = targetYear;
+						calcuSalesVo = yearMap.get(targetYear);
+					}
+					
+					if(!checkYear.equals(targetYear)) {
+						//checkYear년도에 변경된 사항을 Map에 저장한다.
+						yearMap.put(checkYear, calcuSalesVo);
+						
+						//새로운 target년도를 꺼내서 저장할 수 있도록 한다.
+						calcuSalesVo = yearMap.get(targetYear);
+						checkYear = targetYear;
+					}
+					
+					//해당 월에 해당하는 값에 값을 더해준다.
+					if("01".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesJanAmount(calcuSalesVo.getMtSalesJanAmount()+avrAmount);
+					} else if("02".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesFebAmount(calcuSalesVo.getMtSalesFebAmount()+avrAmount);
+					} else if("03".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesMarAmount(calcuSalesVo.getMtSalesMarAmount()+avrAmount);
+					} else if("04".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesAprAmount(calcuSalesVo.getMtSalesAprAmount()+avrAmount);
+					} else if("05".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesMayAmount(calcuSalesVo.getMtSalesMayAmount()+avrAmount);
+					} else if("06".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesJunAmount(calcuSalesVo.getMtSalesJunAmount()+avrAmount);
+					} else if("07".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesJulAmount(calcuSalesVo.getMtSalesJulAmount()+avrAmount);
+					} else if("08".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesAugAmount(calcuSalesVo.getMtSalesAugAmount()+avrAmount);
+					} else if("09".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesSepAmount(calcuSalesVo.getMtSalesSepAmount()+avrAmount);
+					} else if("10".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesOctAmount(calcuSalesVo.getMtSalesOctAmount()+avrAmount);
+					} else if("11".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesNovAmount(calcuSalesVo.getMtSalesNovAmount()+avrAmount);
+					} else if("12".equals(targetMonth)) {
+						calcuSalesVo.setMtSalesDecAmount(calcuSalesVo.getMtSalesDecAmount()+avrAmount);
+					}
+				}
+				
+				//마지막으로 변경된 년도의 객체를 저장한다.
+				yearMap.put(checkYear, calcuSalesVo);
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return yearMap;
+	}
+	
+	
+	/**
+	 * 
+	  * @Method Name : makeBuyAmoutList
+	  * @Cdate       : 2021. 1. 25.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 백계약 거래처별 제품정보를 이용하여 거래처별 매입정보를 자동생성하는 메서드
+	  * @param voList
+	  * @return
+	 */
+	private List<MtBuyAmountVO> makeBuyAmoutList(List<MtBackOrderProductVO> voList) {
+		Map<String, MtBuyAmountVO> yearMap = null;
+		List<MtBuyAmountVO> mtBuyAmountVOList = null;
+		int listCnt = 0;
+		MtBackOrderProductVO vo = null;
+		int totalAmount = 0;
+		try {
+			if(null != voList && voList.size()>0) {
+				System.out.println(voList.size());
+				
+				listCnt = voList.size();
+				for (int i = 0; i < listCnt; i++) {
+					if(null == yearMap) {
+						yearMap = new HashMap<>();
+					}
+					vo = voList.get(i);
+					totalAmount = vo.getMtOrderPmQuantity()*vo.getMtOrderPmUprice();
+//					logger.debug("vo.getFromDate()====>"+vo.getFromDate());
+//					logger.debug("vo.getMtPmStartDt()====>"+vo.getMtPmStartDt());
+//					logger.debug("vo.getToDate()====>"+vo.getToDate());
+//					logger.debug("vo.getMtPmEndDt()====>"+vo.getMtPmEndDt());
+//					logger.debug("totalAmount====>"+totalAmount);
+//					logger.debug("yearMap====>"+yearMap);
+					yearMap = calcuBuyAmount(vo.getMtStartDt(), vo.getMtEndDt(), totalAmount, yearMap);
+				}
+				
+				if(null !=yearMap && yearMap.size()>0) {
+					mtBuyAmountVOList = new ArrayList<>(yearMap.values());
+				}
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mtBuyAmountVOList;
+	}
+	
+	
+	private Map<String, MtBuyAmountVO> calcuBuyAmount(String fromDate, String toDate, int totalAmount, Map<String, MtBuyAmountVO> yearMap) throws Exception {
+		List<String> monthList = null;
+		MtBuyAmountVO buyVo = null;
+		MtBuyAmountVO calcuBuyVo = null;
+		int monthCnt = 0;
+		int avrAmount = 0;
+		String targetYear = null;
+		String targetMonth = null;
+		String checkYear = null;
+		try {
+			monthList = CepDateUtil.makeMonthListFormToEndDate(fromDate, toDate);
+			
+			if(null != monthList && monthList.size()>0) {
+				//년도에 맞는 vo를 생성한다.
+				for (int i = Integer.parseInt(fromDate.substring(0, 4)); i <= Integer.parseInt(toDate.substring(0, 4)); i++) {
+//					System.out.println("=============>"+i);
+					if(!yearMap.containsKey(String.valueOf(i))) {
+						//해당 년도가 존재하지 않으면 해당 
+						buyVo = new MtBuyAmountVO();
+						buyVo.setMtBuyYear(String.valueOf(i));
+						yearMap.put(String.valueOf(i), buyVo);
+					}
+				}	
+				monthCnt = monthList.size(); // 개월수..
+				avrAmount = totalAmount/monthCnt; //월별 평균금액
+				//해당 월별로 금액배분.
+				for (int i = 0; i < monthCnt; i++) {
+					targetYear = monthList.get(i).substring(0, 4);
+					targetMonth = monthList.get(i).substring(4, 6);
+					if(null == checkYear) {
+						checkYear = targetYear;
+						calcuBuyVo = yearMap.get(targetYear);
+					}
+					
+					if(!checkYear.equals(targetYear)) {
+						//checkYear년도에 변경된 사항을 Map에 저장한다.
+						yearMap.put(checkYear, calcuBuyVo);
+						
+						//새로운 target년도를 꺼내서 저장할 수 있도록 한다.
+						calcuBuyVo = yearMap.get(targetYear);
+						checkYear = targetYear;
+					}
+					
+					//해당 월에 해당하는 값에 값을 더해준다.
+					if("01".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyJanAmount(calcuBuyVo.getMtBuyJanAmount()+avrAmount);
+					} else if("02".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyFebAmount(calcuBuyVo.getMtBuyFebAmount()+avrAmount);
+					} else if("03".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyMarAmount(calcuBuyVo.getMtBuyMarAmount()+avrAmount);
+					} else if("04".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyAprAmount(calcuBuyVo.getMtBuyAprAmount()+avrAmount);
+					} else if("05".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyMayAmount(calcuBuyVo.getMtBuyMayAmount()+avrAmount);
+					} else if("06".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyJunAmount(calcuBuyVo.getMtBuyJunAmount()+avrAmount);
+					} else if("07".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyJulAmount(calcuBuyVo.getMtBuyJulAmount()+avrAmount);
+					} else if("08".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyAugAmount(calcuBuyVo.getMtBuyAugAmount()+avrAmount);
+					} else if("09".equals(targetMonth)) {
+						calcuBuyVo.setMtBuySepAmount(calcuBuyVo.getMtBuySepAmount()+avrAmount);
+					} else if("10".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyOctAmount(calcuBuyVo.getMtBuyOctAmount()+avrAmount);
+					} else if("11".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyNovAmount(calcuBuyVo.getMtBuyNovAmount()+avrAmount);
+					} else if("12".equals(targetMonth)) {
+						calcuBuyVo.setMtBuyDecAmount(calcuBuyVo.getMtBuyDecAmount()+avrAmount);
+					}
+				}
+				
+				//마지막으로 변경된 년도의 객체를 저장한다.
+				yearMap.put(checkYear, calcuBuyVo);
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return yearMap;
 	}
 
 	

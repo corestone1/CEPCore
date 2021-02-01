@@ -34,6 +34,16 @@
         <property name="url" value="jdbc:mariadb://172.10.103.10:3306/CEP_DB?allowMultiQueries=true"/>
         <property name="username" value="user"/>
         <property name="password" value="password"/>
+        <property name="initialSize" value="10"/> <!-- Default : 0, 최초로 커넥션을 맺을 때 Connection Pool에 생성되는 커넥션 개수  -->
+        <property name="maxActive" value="30"/><!-- Default : 8, maxIdle과 대부분 일치시킨다. 동시에 사용할 수 있는 최대 커넥션 -->
+        <property name="maxIdle" value="30"/><!-- Default : 8, 사용한 커넥션을 풀에 반납 시  최대로 유지할 개수 -->
+        
+        <!-- 특정 시간마다 validationQuery를 실행 셋팅 시작 -->
+       <property name="validationQuery" value="SELECT 1"/> <!-- DB 조회용으로 가장 간단한 쿼리를 설정 -->
+        <property name="testWhileIdle" value="true"/><!-- default : false 오랫동안 대기 상태인 커넥션이 끊어지는 것을 방지하기 위해 true로 설정하도록 권장 -->
+        <property name="timeBetweenEvictionRunsMillis" value="7200000"/> <!-- 스레드 동작 간격. 기본적으로 비활성화 되어 있다. 2시간마다 실행 -->
+
+        <!-- 특정 시간마다 validationQuery를 실행 셋팅 끝 -->
     </bean>
 <!--     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.mariadb.jdbc.Driver"/>

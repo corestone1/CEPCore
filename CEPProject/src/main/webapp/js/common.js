@@ -153,7 +153,7 @@ $(document).on("focus", "input:text[timeOnly]", function() {
 function addColon(x) {
 	var returnValue;
 	if(!x || x.length == 0) {
-		returnValue =  "";
+		returnValue =  x;
 	} else {
 		returnValue = x.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ":");
 	}
@@ -164,7 +164,7 @@ function addColon(x) {
 function removeColon(x) {
 	var returnValue;
     if(!x || x.length == 0) {
-    	returnValue= "";
+    	returnValue= x;
     } else {
     	returnValue = x.split(":").join("");
     }
@@ -174,7 +174,7 @@ function removeColon(x) {
 function addDateMinus(x) {	
 	var returnValue;
 	if(!x || x.length == 0) {
-		returnValue =  "";
+		returnValue =  x;
 	} else {
 		returnValue = x.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
 	}
@@ -184,7 +184,7 @@ function addDateMinus(x) {
 function removeData(x, y) {
 	var returnValue;
     if(!x || x.length == 0) {
-    	returnValue = "";
+    	returnValue = x;
     }
     else {
     	returnValue = x.split(y).join("");

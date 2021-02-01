@@ -151,32 +151,33 @@
 				, MC.MT_RG_INSPECT_CNT
 				, MC.MT_IM_CD
 				, MC.MT_SB_CT_YN
-				, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SALE_EMP_KEY) AS SALE_EMP_NM
+				, CE.EMP_NM AS SALE_EMP_NM
 				, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_MNG_EMP_KEY) AS MNG_EMP_NM
 				, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SUPPORT_EMP_KEY) AS SUPPORT_EMP_NM
-			FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, (SELECT @ROWNUM := 0) AS R
+			FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, (SELECT @ROWNUM := 0) AS R
 			WHERE 1=1	
 				<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
-				AND MT_CT_DT LIKE CONCAT(year(NOW()),'%')
-					<!-- <if test="toDate == null or toDate == ''">
-						AND MT_CT_DT LIKE CONCAT(year(NOW()),'%')
-					</if> -->
+					AND MC.MT_CT_DT LIKE CONCAT(year(NOW()),'%')
 				</if>
 				<if test="fromDate != null and fromDate != ''">
-					AND MT_CT_DT >= #{fromDate}
+					AND MC.MT_CT_DT >= #{fromDate}
 				</if>
 				<if test="toDate != null and toDate != ''">
 				<![CDATA[
-					AND MT_CT_DT <= #{toDate}
-					]]>
+					AND MC.MT_CT_DT <= #{toDate}
+				]]>
 				</if>
-				<if test="searchSaleEmpKey != null and searchSaleEmpKey != ''">
-					AND MT_SALE_EMP_KEY = #{searchSaleEmpKey}
+				<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+					AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
 				</if>
-				<if test="searchMtName != null and searchMtName != ''">
-					AND MT_NM LIKE CONCAT(#{searchMtName}, '%')
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%')
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%')
 				</if>
 			  	AND MC.MT_AC_KEY = CA.AC_KEY
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
 			  	AND DELETE_YN='N'
 			  	ORDER BY MT_CT_DT DESC
 		) M			
@@ -279,7 +280,7 @@
 		</foreach>  		
 	</insert>
 	
-		<!-- 유지보수계약별  제품목록 트회 -->
+	<!-- 유지보수계약별  제품목록 조회 -->
 	<select id="selectMtContractProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
 		SELECT
 		  	MP.MT_PM_KEY
@@ -693,9 +694,11 @@
 			, MB.MT_ORDER_PM_UPRICE AS mtOrderPmUprice
 			, MB.MT_START_DT AS mtStartDt
 			, MB.MT_END_DT AS mtEndDt
-		  	, PM.PM_NM_CD AS mtPmKeyNm
-		  	, MT.MT_PM_SERIAL_NUM AS mtPmSerialNum
-		  	, MT.MT_PM_DETAIL AS mtPmDetail
+			, PM.PM_NM_CD AS mtPmKeyNm
+			, MT.MT_PM_SERIAL_NUM AS mtPmSerialNum
+			, MT.MT_PM_DETAIL AS mtPmDetail
+			, MT.MT_PM_START_DT as mtPmStartDt
+			, MT.MT_PM_END_DT as mtPmEndDt
 		FROM MT_BACK_ORDER_PRODUCT MB, MT_PRODUCT_TB MT, PM_PRODUCT_MNG_TB PM
 		WHERE MB.MT_ORDER_KEY = #{mtOrderKey}
 			AND MB.DELETE_YN='N'

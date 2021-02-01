@@ -158,7 +158,7 @@
 		}
 		.mContents .dtl tbody {
 			width: 997px;
-			height: 532px;
+			height: 534px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -336,7 +336,13 @@
 			color: red;
 			vertical-align: middle;
       	}
-		/* #modBasicTable label { */
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
 			
 	</style>
 	<script>
@@ -535,8 +541,68 @@
 					}
 				});
 			});
+					
+			//거래처 검색
+			$("#m_mtAcNm").on("keydown", function(event){
+				
+				if(event.keyCode == 13) {						
+					fnSearchAccoutList(this, $(this).val());
+				}						
+			});		
 			
 		});//end document.ready
+		
+		//거래처 검색
+		var fnSearchAccoutList = function(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		var fnViewAccountList = function(pObject, pjAccountList){
+			var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 138px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	        ;
+			    	}			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#m_tr_account').after(html);
+			
+			
+			$("[id^='m_li_account']").click(function(event) {
+				
+				$('#m_mtAcNm').val(this.innerText); 
+				$('#m_mtAcKey').val(this.title);
+				$('#m_mtAcKey').change();
+				$('#m_div_accountList').remove();
+			});
+		};
 		
 
 		//기본정보 수정버튼 클릭
@@ -561,6 +627,8 @@
 			}
 
 		}); */
+		
+		//기본정보 수정
 		function modeBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
@@ -710,7 +778,7 @@
 				<div class="title"><label class="ftw500">유지보수 상세정보</label></div>
 				<div>
 					<div class="stitle cg">기본정보  
-						<button type="button" value="수정" id="modBasicInfo" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						
 					</div> 
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
 						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
@@ -790,11 +858,13 @@
 									<td><label>*</label>프로젝트명</td>
 									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/></td>
 								</tr>
-								<tr>
+								<tr id="m_tr_account">
 									<td><label>*</label>고객사</td>
 									<td>
-										<input type="text" name="mtAcKey" id="m_mtAcKey" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
-										<input type="hidden" name="mtAcNm" id="m_mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/>
+										<%-- <input type="text" name="mtAcKey" id="m_mtAcKey" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
+										<input type="hidden" name="mtAcNm" id="m_mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/> --%>
+										<input type="text" name="mtAcNm" id="m_mtAcNm" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcNm}"/>" autocomplete="off" required/>
+										<input type="hidden" name="mtAcKey" id="m_mtAcKey" value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
 									</td>
 								</tr>
 								<tr>
@@ -916,6 +986,9 @@
 								</tr>
 							</table>
 						</div>
+						<div class="floatL" style="margin-top: 22px">
+							<button type="button" value="수정" id="modBasicInfo" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+						</div>
 					</form>
 				</div>
 			</div>
@@ -983,7 +1056,7 @@
 									</td>
 								</tr>
 							</c:forEach>
-								<tr>
+								<%-- <tr>
 									<td onclick="event.cancelBubble = true;">
 										<input type="radio" class="tCheck" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
 									</td>
@@ -1126,11 +1199,12 @@
 									<td style="max-width: 0px; display: none;">
 										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
 									</td>
-								</tr> 
+								</tr>  --%>
 							</tbody>
 						</table>
 					</div>
 					<div class="bottom">
+						
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>

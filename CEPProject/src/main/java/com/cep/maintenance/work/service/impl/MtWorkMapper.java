@@ -100,4 +100,41 @@ public interface MtWorkMapper {
 	 */
 	public List<MtWorkProductVO> selectWorkProductList(String mtWorkKey) throws Exception;
 	
+	/**
+	 * 
+	  * @Method Name : updateWorkProductList
+	  * @Cdate       : 2021. 1. 28.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수작업 제품목록를 수정한다.
+	  * @param updateParam
+	  * @throws Exception
+	 */
+	public void updateWorkProductList(Map<String, Object> updateParam)throws Exception;
+	
+	
+	/**
+	 * 
+	  * @Method Name : deleteWorkProductList
+	  * @Cdate       : 2021. 1. 28.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수작업 제품목록을 삭제한다.
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteWorkProductList(Map<String, Object> deleteParam)throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteWorkProductAll
+	  * @Cdate       : 2021. 1. 28.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수 작업별 제품정보 전체삭제
+	  * @param deleteVo
+	  * @throws Exception
+	 */
+	public void deleteWorkProductAll(MtWorkVO deleteVo)throws Exception;
+	
 }

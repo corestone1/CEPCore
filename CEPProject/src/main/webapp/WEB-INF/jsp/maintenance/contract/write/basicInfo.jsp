@@ -106,7 +106,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 37px);
-			height: 117px;
+			height: 114px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -148,6 +148,13 @@
 			color: red;
 			vertical-align: middle;
       	}
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -177,7 +184,69 @@
 				$('#gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
 			'</c:if>'
 			
-		});
+				//거래처 검색
+				$("#mtAcNm").on("keydown", function(event){
+					
+					if(event.keyCode == 13) {		
+						
+						fnSearchAccoutList(this, $(this).val());
+					}						
+				});
+			
+		});//end $(document).ready()
+		
+		//거래처 검색
+		function fnSearchAccoutList(pObject, pstAccountNm) {
+			$('#div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		/* var fnViewAccountList = function(pObject, pjAccountList){ */
+			function fnViewAccountList(pObject, pjAccountList){
+			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {			    	  
+			    	   //console.log("=====>"+pjAccountList[i].acKey+" / "+pjAccountList[i].acNm)
+			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>';
+			    	}
+			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#td_account').after(html);
+			$('#tr_account').after(html);
+			
+			
+			$("[id^='li_account']").click(function(event) {
+				
+				$('#mtAcNm').val(this.innerText); 
+				$('#mtAcKey').val(this.title);
+				$('#mtAcKey').change();
+				$('#div_accountList').remove();
+			});
+		};
 		/**
 		*  화면을 이동시킨다.
 		*  @param {string} varUrl 이동해야할 url
@@ -411,7 +480,8 @@
 			//var acDirectorList; // 고객 담당자 정보 리스트
 
 			/* 고객사 선택하면 고객담당자 정보 가져오기. */
-			$('#mtAcKey').change(function(){				
+			$('#mtAcKey').change(function(){
+				
 		        $.ajax({
 		        	url:"/maintenance/contract/selectAcDirectorList.do",
 		            dataType: 'json',
@@ -443,7 +513,7 @@
 		                 	//acDirectorInfo 값 지움
 		                 	$('#acDirectorInfo').val('');
 		                 	
-		                 	$ ( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
+		                 	$( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
 		                }
 		            },
 		        	error: function(request, status, error) {
@@ -484,7 +554,8 @@
 	</script>
 </head>
 <body>
-	<form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post">		 
+	<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">
+	<%-- <form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post"> --%>		 
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
 		<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
 						
@@ -508,7 +579,7 @@
 				<div>
 					<table>
 						<tr>
-							<td class="btnFc" colspan="6"><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+							<td class="btnFc" colspan="6"><button type="button"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>프로젝트명</td>
@@ -516,11 +587,11 @@
 								<input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
 							</td>
 						</tr>
-						<tr>
+						<tr id="tr_account">
 							<td class="tdTitle"><label>*</label>고객사</td>
 							<td class="tdContents" colspan="5">
-								<input type="text" name="mtAcKey" id="mtAcKey" class="search" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
-								<input type="hidden" name="mtAcNm" id="mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/>	
+								<input type="text" name="mtAcNm" id="mtAcNm" class="search" value="<c:out value="${basicContractInfo.mtAcNm}" />" autocomplete="off"  required/>	
+								<input type="hidden" name="mtAcKey" id="mtAcKey"  value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
 							</td>
 						</tr>
 						<tr>
@@ -659,6 +730,7 @@
 				</div>
 			</div>
 		</div>	
-	</form:form> 
+	</form>
+	<%-- </form:form> --%> 
 </body>
 </html>

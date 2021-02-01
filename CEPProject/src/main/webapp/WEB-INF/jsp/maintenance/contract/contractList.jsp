@@ -52,8 +52,8 @@
 			margin-bottom: 3px;
 		}
 		.contentsWrap .contents .top input[class^="calendar"] {
-			width: 177px;
-			height: 40px;
+			width: 120px;
+			height: 38px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
@@ -313,18 +313,20 @@
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
 						<form:input path="fromDate" type="text" placeholder="계약일자(from)" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" placeholder="계약일자(to)" class="calendar toDt" value="${searchParam.toDate}"/>
 						<!-- <select name="searchSaleEmpKey"> -->
-						<form:select path="searchSaleEmpKey">
-							<!-- <option value=""/>영업담당</option> -->
+						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 100px"/>
+						<form:select path="searchGubun">
+							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="CU" label="고객사" />
+						</form:select>
+						<%-- <form:select path="searchSaleEmpKey">
 							<form:option value="" label="영업담당" />
 							<c:forEach var="emp" items="${empList}" varStatus="status">
-								<%-- <option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option> --%>
-								<%-- <form:option value="<c:out value="${emp.empKey}"/>" label="<c:out value="${emp.empNm}"/>" /> --%>
 								<form:option value="${emp.empKey}" label="${emp.empNm}" />
 							</c:forEach>							
-						</form:select>
-						<form:input path="searchMtName" type="text" placeholder="프로젝트 명"/>
+						</form:select> --%>
+						<form:input path="searchWord" type="text" placeholder="검색어"/>
 						<!-- <input type="text" name="searchMtName" placeholder="프로젝트 명"/> -->
-						<span><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></span>
+						<span><button><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></button></span>
 					</div>
 					<div class="floatC"></div>
 				</div>

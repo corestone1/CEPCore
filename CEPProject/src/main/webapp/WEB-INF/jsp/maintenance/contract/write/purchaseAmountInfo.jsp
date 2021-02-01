@@ -831,7 +831,7 @@
 								<td class="subTitle" style="border-top: none;">
 									<label class="ftw400">연도별 매입</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('purchase');"/></td>
+								<%-- <td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('purchase');"/></td> --%>
 							</tr>
 						</table>
 					</div>
@@ -842,7 +842,7 @@
 							<tr>
 								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
-									<input type="text" id="purchaseList-0-mtBuyYear" name="purchaseList-0-mtBuyYear" style="text-align: center" numberOnly required maxlength="4"/>
+									<input type="text" id="purchaseList-0-mtBuyYear" name="purchaseList-0-mtBuyYear" style="text-align: center" numberOnly required readonly="readonly" maxlength="4"/>
 									<input type="hidden" name="lastNum" value="0" />
 									<input type="hidden" id="purchaseList-0-mtBuyKey" name="mtBuyKey"/>
 								</td>
@@ -853,8 +853,8 @@
 								<td class="tdTitle"></td><td class="tdContents"></td>
 								<td class="tdTitle"></td>	
 								<td class="tdEtc" style="text-align:right;">
-									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img id="purchaseList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/>
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/><!-- &nbsp;&nbsp;&nbsp; -->
+		                        	<%-- <img id="purchaseList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/> --%>
 								</td>
 							</tr>
 							<tr class="dpTbRow">
@@ -921,7 +921,7 @@
 							<tr>
 								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
 								<td class="tdContents firstTd">
-									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" name="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" style="text-align: center" numberOnly required maxlength="4" value="<c:out value="${list.mtBuyYear}"/>"/>
+									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" name="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" style="text-align: center" numberOnly required readonly="readonly" maxlength="4" value="<c:out value="${list.mtBuyYear}"/>"/>
 									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
 									<input type="hidden" id="purchaseList-<c:out value="${status.index}"/>-mtBuyKey" name="mtBuyKey" value="<c:out value="${list.mtBuyKey}"/>"/>
 								</td>
@@ -932,8 +932,8 @@
 								<td class="tdTitle"></td><td class="tdContents"></td>
 								<td class="tdTitle"></td>								
 								<td class="tdEtc" style="text-align:right;">
-									<img id="upDown" src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-		                        	<img id="purchaseList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/>
+									<img id="upDown" src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/><!-- &nbsp;&nbsp;&nbsp; -->
+		                        	<%-- <img id="purchaseList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'purchase');" style="width: 11px"/> --%>
 								</td>
 							</tr>
 							<tr class="dpTbRow">

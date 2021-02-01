@@ -27,7 +27,9 @@ public class MtDefaultVO implements Serializable{
 	private String fromDate; // from
 	private String toDate; //to
 	private String searchSaleEmpKey; //영업담당자 키 
-	private String searchMtName;//검색 유지보수  프로젝트명
+	private String searchSaleEmpNm; //영업담당자 명
+	private String searchMtName;//조회 검색어 유지보수  프로젝트명
+	private String searchWord;//조회 검색어 (유지보수  프로젝트명/고객사명)
 	private String btnOption; //저장(ss), 저장하고 다음화면(sn)
 	private String selectKey; //선택한 항목의 key값
 	private String searchWorkEmpKey; //유지보수 작업(지원)담당자
@@ -43,6 +45,9 @@ public class MtDefaultVO implements Serializable{
 	private String searchPmNmCd; //제품명
 	private String searchSerialNum; // 시리얼번호
 	private String whereNum; //리스트에서 선택한 row번호
+	private String codeId;//팝업에서 사용할 code필드 id
+	private String nameId;//팝업에서 사용할 name 필드 id
+	private String searchGubun;//검색어 구분(고객사(CU) or 프로젝트명(PJ)) 
 	
 	/**
 	 * @return the fromDate
@@ -282,6 +287,66 @@ public class MtDefaultVO implements Serializable{
 	 */
 	public void setWhereNum(String whereNum) {
 		this.whereNum = whereNum;
+	}
+	/**
+	 * @return the codeId
+	 */
+	public String getCodeId() {
+		return codeId;
+	}
+	/**
+	 * @param codeId the codeId to set
+	 */
+	public void setCodeId(String codeId) {
+		this.codeId = codeId;
+	}
+	/**
+	 * @return the nameId
+	 */
+	public String getNameId() {
+		return nameId;
+	}
+	/**
+	 * @param nameId the nameId to set
+	 */
+	public void setNameId(String nameId) {
+		this.nameId = nameId;
+	}
+	/**
+	 * @return the searchGubun
+	 */
+	public String getSearchGubun() {
+		return searchGubun;
+	}
+	/**
+	 * @param searchGubun the searchGubun to set
+	 */
+	public void setSearchGubun(String searchGubun) {
+		this.searchGubun = searchGubun;
+	}
+	/**
+	 * @return the searchSaleEmpNm
+	 */
+	public String getSearchSaleEmpNm() {
+		return searchSaleEmpNm;
+	}
+	/**
+	 * @param searchSaleEmpNm the searchSaleEmpNm to set
+	 */
+	public void setSearchSaleEmpNm(String searchSaleEmpNm) {
+		this.searchSaleEmpNm = searchSaleEmpNm;
+	}
+	/**
+	 * @return the searchWord
+	 */
+	public String getSearchWord() {
+		return searchWord;
+	}
+	/**
+	 * @param searchWord the searchWord to set
+	 */
+	public void setSearchWord(String searchWord) {
+		this.searchWord = searchWord;
 	}
 	
 }

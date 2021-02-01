@@ -232,13 +232,51 @@
 		}
 		
 		function fn_deleteBtn(){
+			
 			if($('input[name="gubun"]').is(':checked')){
-				if(confirm("선택한 내용을 삭제하시겠습니까?")){
-					document.listForm.btnOption.value='delete';
-					document.listForm.selectKey.value=$('input[name="gubun"]:checked').val();
+				if(confirm("선택한 유지보수작업 내용을 삭제하시겠습니까?")){
+					var sendData = {
+		           			"selectWorkKey":$('input[name="gubun"]:checked').val()
+		           	}
+					$.ajax({
+		           		url: "/maintenance/work/deleteWork.do",
+		           		dataType: 'text', 
+		           		type:"post",  
+		           		//data: JSON.parse(sendData),
+		           		data: JSON.stringify(sendData),
+		           		//data: sendData,
+		           		contentType: "application/json; charset=UTF-8", 
+		           		beforeSend: function(xhr) {
+		           			xhr.setRequestHeader("AJAX", true);	        		
+		           		},
+		           		success:function(data){	
+		           			var paramData = JSON.parse(data);
+		           		
+		           			//console.log("paramData===>"+paramData);
+		           			//console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
+		           			if("Y" == paramData.successYN){
+		           				alert("유지보수작업 삭제를 성공하였습니다.");
+		           				
+		           				document.listForm.action = "/maintenance/work/workList.do";
+		        	           	document.listForm.submit();
+		           				
+		           			} else {
+		           				alert("유지보수작업 삭제를 실패하였습니다.");
+		           				
+		           			}
+		           		},
+		           		error: function(request, status, error) {
+		           			if(request.status != '0') {
+		           				alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		           			}
+		           		} 
+		           	});    
+					
+					/* document.listForm.btnOption.value='delete';
+					document.listForm.selectWorkKey.value=$('input[name="gubun"]:checked').val();
 
 					document.listForm.action = "/maintenance/work/deleteWork.do";
-		           	document.listForm.submit(); 
+		           	document.listForm.submit();  */
 				} else {
 					return false;
 				}
@@ -345,7 +383,7 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" onclick="fn_deleteBtn();"/></button>
+						<button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" onclick="fn_excelBtn();"/></button>
 					</div>
 				</div>
