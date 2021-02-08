@@ -41,6 +41,15 @@ public class CepDisplayUtil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			else if(date.length()==6)
+			{
+				try {
+					convertDate =  CepDateUtil.convertDisplayFormat(date, "yyyyMM", "yyyy-MM");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				convertDate = date;
 			}
