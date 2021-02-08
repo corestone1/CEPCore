@@ -147,7 +147,6 @@
 	{
 		var pmKeyDomId = '${pmKeyDomId}';
 		var pmNmDomId  = '${pmNmDomId}';
-<<<<<<< HEAD
 		
 		var parentId = getParameter("parentNm");
 		
@@ -163,25 +162,8 @@
 		{
 			alert(e);
 		}
-	
 		
-		close();
-	   /*  var dialogLayer = $('#dialogId').val();
-	    $("#" +dialogLayer).dialog('close'); */
-	}
-	
-	function fn_searchList()
-	{
-		document.productForm.action = "/mngCommon/product/popup/searchListPopup.do";
-       	document.productForm.submit(); 
-	}
-	
-=======
-	
-		alert(pmKeyDomId + ' : ID : ' + id + '\n' 
-			+ pmNmDomId  + ' : NM : ' + nm);
-		
-		try
+		/* try
 		{
 			opener.document.getElementById(pmKeyDomId).value = id;
 			opener.document.getElementById(pmNmDomId).value  = nm;
@@ -189,9 +171,8 @@
 		catch(e)
 		{
 			alert(e);
-		}
+		} */
 	
-		
 		close();
 	   /*  var dialogLayer = $('#dialogId').val();
 	    $("#" +dialogLayer).dialog('close'); */
@@ -202,7 +183,7 @@
 		document.productForm.action = "/mngCommon/product/popup/searchListPopup.do";
        	document.productForm.submit(); 
 	}
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
+
 	
 </script>	
 <form:form id="productForm" name="productForm" modelAttribute="searchVO" method="post" onsubmit="return false" >
