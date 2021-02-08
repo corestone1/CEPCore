@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
+import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.util.CepStringUtil;
 
@@ -162,10 +163,12 @@ public class MtContractServiceImpl implements MtContractService {
 					updateList = new ArrayList<>();
 					for (int i = 0; i < productListCnt; i++) {
 						mtProductVO = productVO.getMtContractProductVoList().get(i);
-						if(!"0".equals(CepStringUtil.getDefaultValue(productVO.getMtPmKey(), "0"))){
+						if(!"0".equals(CepStringUtil.getDefaultValue(mtProductVO.getMtPmKey(), "0"))){
+//							logger.debug("updateVo==================>"+mtProductVO.getMtPmKey());
 							// 업데이트 대상
 							updateList.add(mtProductVO);
 						} else {
+//							logger.debug("insertVo==================>"+mtProductVO.getMtPmKey()+"/"+CepStringUtil.getDefaultValue(productVO.getMtPmKey(), "0"));
 							// 신규등록대상
 							insertList.add(mtProductVO);
 						}
@@ -174,6 +177,7 @@ public class MtContractServiceImpl implements MtContractService {
 				
 				//1. 제품목록 삭제.
 				deleteKeyList = productVO.getDeleteListKeys().split(":");
+//				logger.debug("deleteKeyList==================>"+String.valueOf(deleteKeyList.toString())+"/"+deleteKeyList.length);
 				if(null != deleteKeyList && deleteKeyList.length>0) {
 					deleteMtContractProductList(productVO.getModEmpKey(), deleteKeyList);
 				}
@@ -350,27 +354,130 @@ public class MtContractServiceImpl implements MtContractService {
 		return mtMapper.selectContractAmountInfo(mtIntegrateKey);
 	}
 
-
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectMtSalesTotalAmount(java.lang.String)
+	 */
+	@Override
+	public int selectMtSalesTotalAmount(String mtIntegrateKey) throws Exception {
+		return mtMapper.selectMtSalesTotalAmount(mtIntegrateKey);
+	}
 	/* 
 	 * (non-Javadoc)
 	 * @see com.cep.maintenance.contract.service.MtContractService#writeMtContractSalesAmountList(java.lang.String, java.lang.String, java.util.List)
 	 */
 	@Override
-	public void writeMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountVO) throws Exception {
+	@Transactional
+	public void writeMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO) throws Exception {
 		Map<String, Object> insertParam = null;
+		Map<String, Object> updateParam = null;
+		
+		String[] deleteKeyList = null; //삭제대상 매출정보 목록
+		List<MtSalesAmountVO> insertList = null; //신규등록 대상 매출정보 목록
+		List<MtSalesAmountVO> updateList = null; //수정 대상 매출정보 목록
+		MtSalesAmountVO salesAmountVO = null;
+		int salesAmountCnt = 0;
 		try {
-			insertParam = new Hashtable<>();
+			
+			/*신규매출정보와 업데이트 매출정보를  분리한다.*/
+			if(null !=mtSalesAmountListVO.getMtSalesAmountVOList() && mtSalesAmountListVO.getMtSalesAmountVOList().size()>0) {
+				insertList = new ArrayList<>();
+				updateList = new ArrayList<>();
+				salesAmountCnt = mtSalesAmountListVO.getMtSalesAmountVOList().size();
+				
+				for (int i = 0; i < salesAmountCnt; i++) {
+					salesAmountVO = mtSalesAmountListVO.getMtSalesAmountVOList().get(i);
+					if(!"0".equals(CepStringUtil.getDefaultValue(salesAmountVO.getMtSalesKey(), "0"))){
+						// 업데이트 대상
+						updateList.add(salesAmountVO);
+					} else {
+						// 신규등록대상
+						insertList.add(salesAmountVO);
+					}
+				}
+			}
+			
+			//1. 유지보수계약 매출정보 삭제
+//			deleteKeyList = mtSalesAmountListVO.getDeleteKeys().split(":");
+			deleteKeyList = mtSalesAmountListVO.getDeleteListKeys().split(":");
+			if(null != deleteKeyList && deleteKeyList.length>0) {
+				
+				deleteMtContractSalesAmountList(mtSalesAmountListVO.getModEmpKey(), mtSalesAmountListVO.getMtIntegrateKey(), deleteKeyList);				
+			}
 
-			insertParam.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());
-			insertParam.put("regEmpKey", mtSalesAmountVO.getRegEmpKey());
-			insertParam.put("mtSalesAmountVOList", mtSalesAmountVO.getMtSalesAmountVOList());
-			mtMapper.writeMtContractSalesAmountList(insertParam);
+			//2. 유지보수계약 매출정보 업데이트
+			if(null != updateList && updateList.size()>0) {
+				
+				updateParam = new HashMap<>();
+				updateParam.put("mtIntegrateKey", mtSalesAmountListVO.getMtIntegrateKey());
+				updateParam.put("modEmpKey", mtSalesAmountListVO.getModEmpKey());
+				updateParam.put("mtSalesAmountVOList", updateList);
+				
+				updateMtContractSalesAmountList(updateParam);
+				//updateMtContractBuyAmountList(mtSalesAmountListVO.getModEmpKey(), mtSalesAmountListVO.getMtIntegrateKey(), updateList);
+			}
+			
+			//3. 유지보수계약 매출정보 신규등록
+			if(null != insertList && insertList.size()>0) {
+				insertParam = new Hashtable<>();
+
+				insertParam.put("mtIntegrateKey", mtSalesAmountListVO.getMtIntegrateKey());
+				insertParam.put("regEmpKey", mtSalesAmountListVO.getRegEmpKey());
+				insertParam.put("mtSalesAmountVOList", insertList);
+				mtMapper.writeMtContractSalesAmountList(insertParam);
+			}
+			
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
 		
 	}
 
+	@Override
+	public List<?> selectMtContractSalesAmountList(String mtIntegrateKey)  throws Exception {
+		
+		List<?> list = null;
+		try {
+			list = mtMapper.selectMtContractSalesAmountList(mtIntegrateKey);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return list;
+	}
+	
+	@Override
+	public void updateMtContractSalesAmountList(Map<String, Object> updateParam)throws Exception {
+		mtMapper.updateMtContractSalesAmountList(updateParam);
+	}
+	
+	@Override
+	public void deleteMtContractSalesAmountAll(String mtIntegrateKey, String modEmpKey) throws Exception {
+		Map<String, Object> deleteParam = null;
+		try {
+			deleteParam = new Hashtable<>();
+			deleteParam.put("mtIntegrateKey", mtIntegrateKey);
+			deleteParam.put("modEmpKey", modEmpKey);
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		mtMapper.deleteMtContractSalesAmountAll(deleteParam);
+	}
+	
+	@Override
+	public void deleteMtContractSalesAmountList(String modEmpKey, String mtIntegrateKey, String[] deleteKeyList) throws Exception {
+		Map<String, Object> deleteParam = null;
+		try {
+			deleteParam = new Hashtable<>();
+			deleteParam.put("modEmpKey", modEmpKey);
+			deleteParam.put("mtIntegrateKey", mtIntegrateKey);
+			deleteParam.put("deleteKeyList", deleteKeyList);
+			mtMapper.deleteMtContractSalesAmountList(deleteParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
 
 	/* ============================== 유지보수계약 백계약  ======================================*/
 	/* (non-Javadoc)
@@ -750,21 +857,41 @@ public class MtContractServiceImpl implements MtContractService {
 
 
 	/* (non-Javadoc)
-	 * @see com.cep.maintenance.contract.service.MtContractService#selectMtContractBuyAmountList(java.lang.String)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectMtContractBuyAmountList(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<?> selectMtContractBuyAmountList(String mtOrderKey) throws Exception {
+	public List<?> selectMtContractBuyAmountList(String mtIntegrateKey, String mtOrderKey) throws Exception {
 
 		Map<String, Object> selectParam = null;
 		List<?> list = null;
 		try {
 			selectParam = new HashMap<>();
+			selectParam.put("mtIntegrateKey", mtIntegrateKey);
 			selectParam.put("mtOrderKey", mtOrderKey);
 			list = mtMapper.selectMtContractBuyAmountList(selectParam);
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
 		return list;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectMtBuyTotalAmount(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public int selectMtBuyTotalAmount(String mtIntegrateKey, String mtOrderKey) throws Exception {
+		Map<String, Object> selectParam = null;
+		int buyTotalAmount = 0;
+		try {
+			selectParam = new HashMap<>();
+			selectParam.put("mtIntegrateKey", mtIntegrateKey);
+			selectParam.put("mtOrderKey", mtOrderKey);
+			buyTotalAmount = mtMapper.selectMtBuyTotalAmount(selectParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return buyTotalAmount;
 	}
 	
 	public Map<String, Object> selectMtContractBuyAmountDetail(String mtOrderKey, String mtBuyKey) throws Exception {
@@ -837,9 +964,9 @@ public class MtContractServiceImpl implements MtContractService {
 			}
 			
 			//1. 유지보수계약 매입정보 삭제
-			deleteKeyList = mtBuyAmountListVO.getDeleteKeys().split(":");
+			deleteKeyList = mtBuyAmountListVO.getDeleteListKeys().split(":");
 			if(null != deleteKeyList && deleteKeyList.length>0) {
-				deleteMtContractBuyAmountList(mtBuyAmountListVO.getModEmpKey(), deleteKeyList);
+				deleteMtContractBuyAmountList(mtBuyAmountListVO.getModEmpKey(), mtBuyAmountListVO.getMtOrderKey(), deleteKeyList);
 			}
 			
 			//2. 유지보수계약 매입정보 업데이트
@@ -858,11 +985,17 @@ public class MtContractServiceImpl implements MtContractService {
 		
 	}
 	
-	private void deleteMtContractBuyAmountList(String modEmpKey, String[] deleteKeyList) throws Exception{
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#deleteMtContractBuyAmountList(java.lang.String, java.lang.String, java.lang.String[])
+	 */
+	@Override
+	public void deleteMtContractBuyAmountList(String modEmpKey, String mtOrderKey, String[] deleteKeyList) throws Exception{
 		Map<String, Object> deleteParam = null;
 		try {
 			deleteParam = new HashMap<>();
 			deleteParam.put("modEmpKey", modEmpKey);
+			deleteParam.put("mtOrderKey", mtOrderKey);
 			deleteParam.put("deleteKeyList", deleteKeyList);
 			mtMapper.deleteMtContractBuyAmountList(deleteParam);
 		} catch (Exception e) {

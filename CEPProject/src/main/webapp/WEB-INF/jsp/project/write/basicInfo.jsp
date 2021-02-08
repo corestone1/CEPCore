@@ -334,7 +334,7 @@
 								<select name="acDirectorKey" id="acDirectorKey">
 									<%-- <c:forEach var="emp" items="${empList}" varStatus="status">
 										<option <c:if test="${resultList[0].acDirectorKey == emp.empKey }">selected</c:if> value="${emp.empKey}">${emp.empNm}</option>
-									</c:forEach> --%>
+									</c:forEach>  --%>
 								</select>				
 								<input type="text" class="pname"  id="acDirectorInfo" readonly/>
 							</td>

@@ -22,6 +22,7 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String pjSaleEmpKey;
 	private String pjSupportEmpKey;
 	private String remark;
+	private String finishRemark;
 	private String deleteYn;
 	private String regEmpKey;
 	private String spKey;
@@ -91,6 +92,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public String getFinishRemark() {
+		return finishRemark;
+	}
+	public void setFinishRemark(String finishRemark) {
+		this.finishRemark = finishRemark;
 	}
 	public String getDeleteYn() {
 		return deleteYn;

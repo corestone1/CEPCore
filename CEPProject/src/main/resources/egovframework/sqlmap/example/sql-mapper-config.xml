@@ -14,7 +14,11 @@
 		<typeAlias alias="guarantyBondVO" type="com.cmm.vo.GuarantyBondVO" />
 		<typeAlias alias="salesVO" type="com.cmm.vo.SalesVO" />
 		<typeAlias alias="projectContractSalesVO" type="com.cep.project.vo.ProjectContractSalesVO" />
-		<typeAlias alias="projectOrderVO" type="com.cep.project.vo.ProjectOrderVO" />
-		<typeAlias alias="projectOrderProductVO" type="com.cep.project.vo.ProjectOrderProductVO" />
+		<typeAlias alias="orderVO" type="com.cmm.vo.OrderVO" />
+		<typeAlias alias="orderProductVO" type="com.cmm.vo.OrderProductVO" />
+		<typeAlias alias="projectBuildVO" type="com.cep.project.vo.ProjectBuildVO" />
+		<typeAlias alias="projectWorkVO" type="com.cep.project.vo.ProjectWorkVO" />
+		<typeAlias alias="purchaseVO" type="com.cmm.vo.PurchaseVO" />
+		<typeAlias alias="paymentVO" type="com.cmm.vo.PaymentVO" />
     </typeAliases>
 </configuration>

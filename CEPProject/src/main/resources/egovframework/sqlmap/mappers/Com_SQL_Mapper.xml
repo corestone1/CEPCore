@@ -31,6 +31,19 @@
 		ORDER BY EMP_NM		
 	</select>
 	
+	<!-- 거래처 계좌 리스트 조회 -->
+	<select id="selectDepositList" resultType="egovMap">			
+		SELECT 
+			AC_KEY
+			, AC_AD_SEQ
+			, AC_BANK_NM
+			, AC_BKNO
+			, AC_ACHOLDER
+			, AC_REP_BKNO_YN
+		FROM CMM_ACCOUNT_DEPOSIT_TB
+		WHERE AC_KEY=#{acKey}
+			AND DELETE_YN='N'	
+	</select>
 	
 	<select id="makePrimaryKey" parameterType="String" resultType="String">			
 		SELECT make_key(#{keyType}); commit;
@@ -38,7 +51,8 @@
 	
 	<insert id="insertSalesInfo" parameterType="java.util.Map">
 		INSERT INTO CMM_SALES_DETAIL_TB (
-			SALES_CT_FK_KEY
+			SALES_KEY
+			, SALES_CT_FK_KEY
 			, SALES_CT_CLASS
 			, SALES_TURN
 			, SALES_COLLECT_RATE
@@ -56,7 +70,8 @@
 		) VALUES 
 		<foreach collection="SalesVOList" item="item" separator=",">
 			(
-				#{salesCtFkKey}
+				#{item.salesKey}
+				, #{salesCtFkKey}
 				, #{item.salesCtClass}
 				, #{item.salesTurn}
 				, #{item.salesCollectRate}
@@ -74,4 +89,164 @@
 			)
 		</foreach>
 	</insert>
+	
+	<select id="selectPurchaseDetail" parameterType="String" resultType="purchaseVO">
+		SELECT 
+			BUY_KEY AS buyKey
+			, BUY_ORDER_FK_KEY AS buyOrderFkKey
+			, BUY_CLASS AS buyClass
+			, BUY_AMOUNT AS buyAmount
+			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, BUY_TURN AS buyTurn
+		FROM CMM_PURCHASE_TB
+		WHERE BUY_ORDER_FK_KEY = #{orderKey}
+			AND DELETE_YN='N'
+	</select>
+	
+	<update id="updatePurchaseInfo" parameterType="purchaseVO">
+		UPDATE CMM_PURCHASE_TB 
+		SET
+			<if test="buyAmount != null and buyAmount != '' and buyAmount != 0"> 
+				BUY_AMOUNT = #{buyAmount},
+			</if>
+			<if test="donePaymentAmount != null and donePaymentAmount != '' and donePaymentAmount != 0">
+				DONE_PAYMENT_AMOUNT =#{donePaymentAmount},
+			</if>
+			<if test="yetPaymentAmount != null and yetPaymentAmount != '' and yetPaymentAmount != 0"> 
+				YET_PAYMENT_AMOUNT=#{yetPaymentAmount},
+			</if>
+			<if test="buyTurn != null and buyTurn != '' and buyTurn != 0">
+				BUY_TURN =#{buyTurn},
+			</if>
+			DELETE_YN='N'
+		WHERE BUY_KEY = #{buyKey}
+	</update>
+	
+	<select id="selectPaymentList" parameterType="String" resultType="egovMap">
+		SELECT 
+			PAYMENT_KEY 
+			, PAYMENT_BUY_FK_KEY 
+			, PAYMENT_STATUS_CD 
+			, PAYMENT_TURN 
+			, PAYMENT_CALL_DT 
+			, PAYMENT_DT 
+			, CALL_AMOUNT 
+			, CALL_AMOUNT_TAX_YN
+			, PAYMENT_AC_FK_KEY 
+			, PAYMENT_ACC_SEQ_FK_KEY 
+			, REMARK 
+		FROM CMM_PAYMENT_TB
+		WHERE PAYMENT_BUY_FK_KEY = #{buyKey}
+			AND DELETE_YN='N'
+			AND PAYMENT_STATUS_CD NOT IN('PYST3000','PYST4000')
+		ORDER BY PAYMENT_TURN
+	</select>
+	
+	<select id="selectPaymentDetail" parameterType="paymentVO" resultType="egovMap">
+		SELECT 
+			PAYMENT_KEY
+			, PAYMENT_BUY_FK_KEY 
+			, PAYMENT_STATUS_CD 
+			, PAYMENT_TURN 
+			, PAYMENT_CALL_DT 
+			, PAYMENT_DT 
+			, CALL_AMOUNT 
+			, CALL_AMOUNT_TAX_YN 
+			, PAYMENT_AC_FK_KEY 
+			, PAYMENT_ACC_SEQ_FK_KEY 
+			, REMARK 
+		FROM CMM_PAYMENT_TB
+		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
+			AND PAYMENT_TURN = #{paymentTurn}
+			AND DELETE_YN='N'
+	</select>
+	
+	<insert id="insertPaymentInfo" parameterType="paymentVO">
+		INSERT INTO CMM_PAYMENT_TB (
+			PAYMENT_KEY
+			, PAYMENT_BUY_FK_KEY
+			, PAYMENT_STATUS_CD
+			, PAYMENT_TURN
+			, PAYMENT_CALL_DT
+			, CALL_AMOUNT
+			, CALL_AMOUNT_TAX_YN
+			, PAYMENT_AC_FK_KEY
+			, PAYMENT_ACC_SEQ_FK_KEY
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{paymentKey}
+			, #{paymentBuyFkKey}
+			, #{paymentStatusCd}
+			, #{paymentTurn}
+			, #{paymentCallDt}
+			, #{callAmount}
+			, #{callAmountTaxYn}
+			, #{paymentAcFkKey}
+			, #{paymentAccSeqFkKey}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<update id="updatePaymentInfo" parameterType="paymentVO">
+		UPDATE CMM_PAYMENT_TB AS PM, CMM_PURCHASE_TB AS PC 
+		SET 
+			<if test="paymentStatusCd != null and paymentStatusCd != ''">
+				PM.PAYMENT_STATUS_CD = #{paymentStatusCd},
+			</if>
+			<if test="paymentCallDt != null and paymentCallDt != ''">
+				PM.PAYMENT_CALL_DT = #{paymentCallDt},
+			</if>
+			<if test="paymentStatusCd.equals('PYST4000') ">
+				PM.PAYMENT_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			</if>
+			<if test="callAmount != null and callAmount != ''">
+				PM.CALL_AMOUNT = #{callAmount},
+			</if>
+			<if test="callAmountTaxYn != null and callAmountTaxYn != ''">
+				PM.CALL_AMOUNT_TAX_YN = #{callAmountTaxYn},
+			</if>
+			<if test="paymentAccSeqFkKey != null and paymentAccSeqFkKey != ''">
+				PM.PAYMENT_ACC_SEQ_FK_KEY = #{paymentAccSeqFkKey},
+			</if>
+			<if test="remark != null and remark != ''">
+				PM.REMARK = #{remark},
+			</if>
+			PM.MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			PM.MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, PM.MOD_EMP_KEY = #{modEmpKey}
+		WHERE PM.PAYMENT_KEY = #{paymentKey}
+			AND PC.BUY_KEY = PM.PAYMENT_BUY_FK_KEY
+	</update>
+	
+	<select id="selectPrePaymentList" parameterType="String" resultType="egovMap">
+		SELECT 
+			BL.BILL_NO
+			, BL.BILL_ISSUE_DT 
+			, CONCAT((SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BL.BILL_AC_DIRECTOR_KEY ), ' / ' , (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BL.BILL_AC_DIRECTOR_KEY)) AS BILL_AC_DIRECTOR_KEY 
+			, BL.BILL_AMOUNT 
+			, BL.BILL_TURN_NO
+			, PM.CALL_AMOUNT 
+			, PM.PAYMENT_KEY
+			, PM.CALL_AMOUNT_TAX_YN
+			, PM.PAYMENT_STATUS_CD
+			, PM.PAYMENT_DT
+			, PM.PAYMENT_BUY_FK_KEY
+			, PM.CALL_AMOUNT_TAX_YN
+		FROM CMM_BILLING_TB BL, CMM_PAYMENT_TB PM
+		WHERE PM.PAYMENT_BUY_FK_KEY = #{buyKey}
+			AND PM.PAYMENT_BUY_FK_KEY = BL.BILL_CT_FK_KEY
+			AND PM.BILL_FK_KEY = BL.BILL_NO
+			AND PAYMENT_STATUS_CD IN('PYST3000', 'PYST4000')
+			AND BL.DELETE_YN='N'
+		ORDER BY PM.PAYMENT_TURN
+	</select>
 </mapper>

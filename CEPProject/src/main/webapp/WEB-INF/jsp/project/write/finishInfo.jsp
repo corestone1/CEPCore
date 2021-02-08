@@ -50,7 +50,7 @@
 		.popContainer .contents > div:first-child {
 			min-height: 529px;
 		}
-		.popContainer .contents > div > table {
+		.popContainer .contents > div > form > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
 		}
@@ -67,10 +67,10 @@
 			width: 30px;
 			height: 38px;
 		}
-		.popContainer .contents input[class="calendar"] {
+		.popContainer .contents input[class^="calendar"] {
 			width: 130px;
 			height: 40px;
-			background-image: url('./images/calendar_icon.png');
+			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
@@ -122,23 +122,77 @@
 			background-color: #f6f7fc;
 			padding-left: 0px;
 		}
+		.popContainer .contents td.tdTitle label {
+			color: red;
+			vertical-align: middle;
+      	}	
 	</style>
 	<script>	
-		function fn_preBiddingView(){
+		function fn_chkVali() {
+			if ($("#infoForm")[0].checkValidity()){
+	            if ($("#infoForm")[0].checkValidity()){
+	               //필수값 모두 통과하여 저장 프로세스 호출.
+	               fn_save();
+	            } else {
+	                $("#infoForm")[0].reportValidity();   
+	            }            
+	            
+	         }  else {
+	             //Validate Form
+	              $("#infoForm")[0].reportValidity();   
+	         }
+		}
+		
+		var countSave = 0;
+		
+		function fn_save() {
+			var object = {};
+			var formData = $("#infoForm").serializeArray();
+			var form = document.infoForm;
+			
+			for (var i = 0; i<formData.length; i++){
+			    object[formData[i]['name']] = formData[i]['value'];
+			    if("pjInspectDt" == formData[i]['name']) {
+                	//날짜 - 제거
+                	object[formData[i]['name']] = removeData(formData[i]['value'],"-");
+                } else {
+                	object[formData[i]['name']] = formData[i]['value'];
+                }     
+			 }
+			
+			var sendData = JSON.stringify(object);
+			console.log(sendData);
+			
+			$.ajax({
+				url:"/project/update/basicInfo.do",
+			    dataType: 'json', 
+			    type:"POST",  
+			    data: sendData,
+			 	contentType: "application/json; charset=UTF-8", 
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("AJAX", true);
+					//xhr.setRequestHeader(header, token);
+					
+				},
+			    success:function(response){	
+			    	if(response!= null && response.successYN == 'Y') {
+			    		alert('저장되었습니다.');
+			    		countSave++;
+			    	}
+			    },
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					}
+				} 
+			});   
+		}
+		
+		function fn_prevView(){
 			var url = '/project/write/workInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-	
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}	
-		function fn_finish(){
-			var url = '/project/write/finishInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
+				"pjKey" : $('#pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -161,46 +215,51 @@
 		</div>
 		<div class="contents">
 			<div>
-				<table>
-					<tr>
-						<td class="tdTitle">고객사</td>
-						<td class="tdContents" colspan="2">
-							<input type="text" class="pname"  value="KB손해보험" readonly/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">프로젝트명</td>
-						<td class="tdContents" colspan="2">
-							<input type="text" class="pname"  value="EDMS이미지 암호화" readonly/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">검수일</td>
-						<td class="tdContents" colspan="2">
-							<input type="text" class="calendar" value="2020-12-25"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">검수확인서</td>
-						<td >
-							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>							
-						</td>
-						<td>
-							<input type="text" class="pname" value="EDMS이미지 암호화 검수확인서.pdf" readonly>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">비고</td>
-						<td class="tdContents"  colspan="2"><textarea></textarea></td>
-					</tr>
-				</table>
+				<form id="infoForm" name="infoForm" method="post">
+					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }"/>
+					<table>
+						<tr>
+							<td class="tdTitle">고객사</td>
+							<td class="tdContents" colspan="2">
+								<input type="text" class="pname"  value="<c:out value="${resultList[0].acKey}"/>" readonly/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">프로젝트명</td>
+							<td class="tdContents" colspan="2">
+								<input type="text" class="pname"  value="<c:out value="${resultList[0].pjNm}"/>" readonly/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>검수일</td>
+							<td class="tdContents" colspan="2">
+								<input type="text" class="calendar" name="pjInspectDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjInspectDt)}"/>" required/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">검수확인서</td>
+							<td >
+								<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>							
+							</td>
+							<td>
+								<input type="text" class="pname" value="EDMS이미지 암호화 검수확인서.pdf" readonly>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT">비고</td>
+							<td class="tdContents"  colspan="2"><textarea name="finishRemark"><c:out value="${resultList[0].finishRemark}"/></textarea></td>
+						</tr>
+					</table>
+				</form>
 			</div>
-			<div class="btnWrap">
-				<div class="floatR">
-					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_finish.png'/>" /></button>
+			<div class="btnWrap floatR">
+				<div class="floatL btnPrev">
+					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 				</div>
-				
+				<div class="floatL btnSave">
+					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+				</div>
+				<div class="floatN floatC"></div>
 			</div>
 		</div>
 	</div>

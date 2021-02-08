@@ -12,8 +12,7 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	private int ctAmount;
 	private String ctPayTerms;
 	private String taxYn;
-	private String mtCtDt;
-	private int ctTurnNo;
+	private int collectTurn;
 	private String regDt;
 	private String regTm;
 	private String regEmpKey;
@@ -46,17 +45,11 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	public void setTaxYn(String taxYn) {
 		this.taxYn = taxYn;
 	}
-	public String getMtCtDt() {
-		return mtCtDt;
+	public int getCollectTurn() {
+		return collectTurn;
 	}
-	public void setMtCtDt(String mtCtDt) {
-		this.mtCtDt = mtCtDt;
-	}
-	public int getCtTurnNo() {
-		return ctTurnNo;
-	}
-	public void setCtTurnNo(int ctTurnNo) {
-		this.ctTurnNo = ctTurnNo;
+	public void setCollectTurn(int collectTurn) {
+		this.collectTurn = collectTurn;
 	}
 	public String getRegDt() {
 		return regDt;

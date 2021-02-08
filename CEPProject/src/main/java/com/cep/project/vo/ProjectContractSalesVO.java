@@ -16,8 +16,7 @@ public class ProjectContractSalesVO extends SalesVO implements Serializable {
 	private String pjKey;
 	private int ctAmount;
 	private String taxYn;
-	private String mtCtDt;
-	private int ctTurnNo;
+	private int collectTurn;
 	private String regEmpKey;
 	private String salesKey;
 	private String salesCtFkKey;
@@ -58,17 +57,11 @@ public class ProjectContractSalesVO extends SalesVO implements Serializable {
 	public void setTaxYn(String taxYn) {
 		this.taxYn = taxYn;
 	}
-	public String getMtCtDt() {
-		return mtCtDt;
+	public int getCollectTurn() {
+		return collectTurn;
 	}
-	public void setMtCtDt(String mtCtDt) {
-		this.mtCtDt = mtCtDt;
-	}
-	public int getCtTurnNo() {
-		return ctTurnNo;
-	}
-	public void setCtTurnNo(int ctTurnNo) {
-		this.ctTurnNo = ctTurnNo;
+	public void setCollectTurn(int collectTurn) {
+		this.collectTurn = collectTurn;
 	}
 	public String getRegEmpKey() {
 		return regEmpKey;

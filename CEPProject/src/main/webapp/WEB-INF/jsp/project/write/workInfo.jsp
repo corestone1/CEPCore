@@ -53,7 +53,7 @@
 		.popContainer .contents > div:first-child {
 			min-height: 529px;
 		}
-		.popContainer .contents > div > table {
+		.popContainer .contents > div > form > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
 		}
@@ -70,10 +70,10 @@
 			width: 30px;
 			height: 38px;
 		}
-		.popContainer .contents input[class="calendar"] {
+		.popContainer .contents input[class^="calendar"] {
 			width: 150px;
 			height: 40px;
-			background-image: url('./images/calendar_icon.png');
+			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
@@ -99,7 +99,7 @@
 			
 		}				
 		.popContainer .contents td.tdContents {
-			width: 100%;
+			width: 90%;
 			font-size: 14px;
 			font-weight: 200;
 		}	 				
@@ -116,24 +116,118 @@
 		.popContainer .contents tr:first-child td { 
 			padding-top: 8px;
 		}		
+		.popContainer .contents td.tdTitle label {
+			color: red;
+			vertical-align: middle;
+      	}	
 	</style>
 	<script>
-		function fn_addBuildView(){
-			var url = '/project/write/finishInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		$(document).ready(function() {
+			$("input:radio[name='pjWorkClassCd']:radio[value='${resultList[0].pjWorkClassCd}']").prop('checked', true);	
+		});
+		
+		function fn_chkVali() {
+			if ($("#infoForm")[0].checkValidity()){
+	            if ($("#infoForm")[0].checkValidity()){
+	               //필수값 모두 통과하여 저장 프로세스 호출.
+	               fn_save();
+	            } else {
+	                $("#infoForm")[0].reportValidity();   
+	            }            
+	            
+	         }  else {
+	             //Validate Form
+	              $("#infoForm")[0].reportValidity();   
+	         }
 		}
 		
-		function fn_preBiddingView(){
+		var countSave = 0;
+		
+		function fn_save() {
+			$("#pjWorkTakeTm").val($("#pjWorkTakeTm1").val() + $("#pjWorkTakeTm2").val());
+			$("#pjWorkTm").val($("#pjWorkTm1").val()+"00");
+			
+			if($("#pjWorkTakeTm").val() == null || !($("#pjWorkTakeTm").val().length > 0)) {
+				alert('소요시간을 입력해주세요.');
+				$(this).focus();
+			} else if($("#pjWorkTm").val() == null || !($("#pjWorkTm").val().length > 0)) {
+				alert('수행 시간을 입력해주세요.');
+				$(this).focus();
+			} else {
+				var object = {};
+				var formData = $("#infoForm").serializeArray();
+				var form = document.infoForm;
+				
+				for (var i = 0; i<formData.length; i++){
+				    object[formData[i]['name']] = formData[i]['value'];
+				    if("pjWorkDt" == formData[i]['name']) {
+	                	//날짜 - 제거
+	                	object[formData[i]['name']] = removeData(formData[i]['value'],"-");
+	                } else {
+	                	object[formData[i]['name']] = formData[i]['value'];
+	                }     
+				 }
+				
+				var sendData = JSON.stringify(object);
+				
+				$.ajax({
+					url:"/project/insert/workInfo.do",
+				    dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		alert('저장되었습니다.');
+				    		countSave++;
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});   
+			}
+		}
+	
+		function fn_next(link) {
+			if(countSave > 0) {
+				var url = '/project/write/'+link+'.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"pjKey": $("#pjKey").val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+			}
+			else {
+				if($('#resultList').val() != "" || $('#resultList').val().length != 0) {
+					var url = '/project/write/'+link+'.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+							"pjKey": $("#pjKey").val()
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				} else {
+					alert('저장을 해주세요.');
+				}
+			}
+		}
+		
+		function fn_prevView(){
 			var url = '/project/write/buildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-	
+				"pjKey" : $('#pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -145,70 +239,83 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">프로젝트 등록</div>
-				<div class="subTitle">수행</div>
+				<div class="floatL ftw500">수행일지 등록</div>
 			</div>
 		</div>
 		<div class="left">
 			<ul class="ftw300">
-				<li class="colorWhite cursorP">설치 및 구축</li>
 				<li class="colorWhite cursorP on">수행일지</li>
 			</ul>
 		</div>
 		<div class="contents">
 			<div>
-				<table>
-					<tr>
-						<td class="tdTitle">구분</td>
-						<td class="tdContents">
-							<input type="radio" class="tCheck" name="gubun" id="gubun1" /><label for="gubun1" class="cursorP"></label>
-							&nbsp;&nbsp;작업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="gubun" id="gubun2" /><label for="gubun2" class="cursorP"></label> 
-							&nbsp;&nbsp;이슈&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="gubun" id="gubun3" /><label for="gubun3" class="cursorP"></label> 
-							&nbsp;&nbsp;장애&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" class="tCheck" name="gubun" id="gubun4" /><label for="gubun4" class="cursorP"></label> 
-							&nbsp;&nbsp;기타
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">일시</td>
-						<td class="tdContents">
-							<input type="text" class="calendar" />&nbsp;&nbsp;
-							<input type="text" numberOnly class="timeInfo"/> :00&nbsp;&nbsp;&nbsp;
-							소요시간 <input type="text" numberOnly class="timeInfo"/> : <input type="text" placeholder="소요시간" numberOnly class="timeInfo" value="00"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">제목</td>
-						<td class="tdContents"><input type="text"/></td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">내용</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">처리결과</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">기타</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td class="tdTitle">첨부파일</td>
-						<td class="tdContents">
-							<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>
-						</td>
-					</tr>			
-				</table>
+				<form id="infoForm" name="infoForm" method="post">
+					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
+					<input type="hidden" id="resultList" value="<c:out value="${resultList}"/>" />
+					<input type="hidden" name="statusCd" value="PJST4000" />
+					<table>
+						<tr>
+							<td class="tdTitle">구분</td>
+							<td class="tdContents">
+								<input type="radio" class="tCheck" name="pjWorkClassCd" id="pjWorkClassCd1" checked="checked" value="작업"/><label for="pjWorkClassCd1" class="cursorP"></label>
+								&nbsp;&nbsp;작업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="pjWorkClassCd" id="pjWorkClassCd2" value="이슈"/><label for="pjWorkClassCd2" class="cursorP"></label> 
+								&nbsp;&nbsp;이슈&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="pjWorkClassCd" id="pjWorkClassCd3" value="장애"/><label for="pjWorkClassCd3" class="cursorP"></label> 
+								&nbsp;&nbsp;장애&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="pjWorkClassCd" id="pjWorkClassCd4" value="기타"/><label for="pjWorkClassCd4" class="cursorP"></label> 
+								&nbsp;&nbsp;기타
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>일시</td>
+							<td class="tdContents">
+								<input type="text" class="calendar" name="pjWorkDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjWorkDt)}"/>" required />&nbsp;&nbsp;
+								<c:set var="tm" value="${resultList[0].pjWorkTm}"/>
+								<input type="text" numberOnly class="timeInfo" id="pjWorkTm1" value="${fn:substring(tm,0,2) }"/> :00&nbsp;&nbsp;&nbsp;
+								<input type="hidden" name="pjWorkTm" id="pjWorkTm"/> 
+								<c:set var="takeTm" value="${resultList[0].pjWorkTakeTm}"/>
+								<c:set var="length" value="${fn:length(takeTm)}"/>
+								소요시간 <input type="text" numberOnly class="timeInfo" id="pjWorkTakeTm1" value="${fn:substring(tm,0,2) }"/> : <input type="text" numberOnly class="timeInfo" id="pjWorkTakeTm2" value="${fn:substring(tm,length-2,length) }">
+								<input type="hidden" name="pjWorkTakeTm" id="pjWorkTakeTm" /> 
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>제목</td>
+							<td class="tdContents"><input type="text" name="pjWorkNm" value="<c:out value="${resultList[0].pjWorkNm}"/>" required/></td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT"><label>*</label>내용</td>
+							<td class="tdContents"><textarea name="pjWorkCont" required><c:out value="${resultList[0].pjWorkCont}"/></textarea></td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT"><label>*</label>처리결과</td>
+							<td class="tdContents"><textarea name="pjWorkResult" required><c:out value="${resultList[0].pjWorkResult}"/></textarea></td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT">기타</td>
+							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}"/></textarea></td>
+						</tr>
+						<tr>
+							<td class="tdTitle">첨부파일</td>
+							<td class="tdContents">
+								<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>
+							</td>
+						</tr>			
+					</table>
+				</form>
 			</div>
-			<div class="btnWrap">
-				<div class="floatR">
-					<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					<button onclick="fn_addBuildView();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+			<div class="btnWrap floatR">
+				<div class="floatL btnPrev">
+					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 				</div>
-				
+				<div class="floatL btnSave">
+					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+				</div>
+				<div class="floatR">
+					<button type="button" onclick="javascript:fn_next('finishInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				</div>
+				<div class="floatN floatC"></div>
 			</div>
 		</div>
 	</div>

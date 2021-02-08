@@ -70,7 +70,7 @@
 		}
 		.popContainer .contents select {
 			width: 153px;
-			//height: 40px;
+			/* height: 40px; */
 			height: 35px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -105,7 +105,7 @@
 		}
 		.popContainer .contents input[class^="calendar"] {
 			width: 130px;
-			//height: 40px;
+			/* height: 40px; */
 			height: 33px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -425,17 +425,17 @@
 		        		xhr.setRequestHeader("AJAX", true);
 		        		//xhr.setRequestHeader(header, token);
 		        	},
-		            success:function(data){		            	
-						if ( data.result.length > 0 ) {						
-							$ ('#orderAcDirectorKey' ).find ( 'option' ).remove (); // select box 의 ID 기존의  option항목을 삭제 
-							for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
-	                    		$ ('#orderAcDirectorKey' ).append ( "<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>' );
+		            success:function(response){	
+		            	if (response.acDirectorList.length > 0) {						
+							$ ('#orderAcDirectorKey' ).find('option').remove (); // select box 의 ID 기존의  option항목을 삭제 
+							for ( var idx = 0 ; idx < response.acDirectorList.length ; idx++ ) {
+	                    		$ ('#orderAcDirectorKey' ).append ("<option value='"+response.acDirectorList[idx].acDirectorKey+"'>" + response.acDirectorList[idx].acDirectorNm + '</option>' );
 	                  		}
-		                }else{
+		                } else {
 		                	acDirectorList = null;
-							$ ( '#orderAcDirectorKey' ).find ( 'option' ).remove ();
-		                 	$ ( '#orderAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
-		                }
+							$ ('#orderAcDirectorKey').find ('option').remove ();
+		                 	$ ('#orderAcDirectorKey').append ("<option value=''>담당자</option>");
+		                } 
 		            },
 		        	error: function(request, status, error) {
 		        		if(request.status != '0') {
@@ -563,12 +563,14 @@
 		
 		//제품 찾기 클릭
 		function fn_findMtProduct(obj) {
-			var num = $(obj).attr('id').split('-')[1];
-			
+			/* var num = $(obj).attr('id').split('-')[1]; */
+			alert(obj);
 			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
-			window.open('/mngCommon/product/list.do','product_list','width=1000px,height=400,left=600');
+			/* window.open('/project/popup/productList.do','product_list','width=1000px,height=400,left=600'); */
+			
+			window.open('/mngCommon/product/popup/searchListPopup.do?parentNm='+obj+'','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
 		}
 		
 		
@@ -612,7 +614,7 @@
                 }           
             }
            	//백계약 제품List를 담아준다.			
-            object["projectOrderProductVOList"]=listData;
+            object["orderProductVOList"]=listData;
 			
 			//object["mtWorkProductVoList" = listObject];
            	var sendData = JSON.stringify(object);
@@ -793,7 +795,7 @@
                             
             }
            	//백계약 제품List를 담아준다.			
-            object["projectOrderProductVOList"]=listData;           	
+            object["orderProductVOList"]=listData;           	
 			
 			//object["mtWorkProductVoList" = listObject];
            	var sendData = JSON.stringify(object);
@@ -957,12 +959,12 @@
 						<tr>
 							<td class="tdTitle"><label>*</label>부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT1" value="Y" checked="checked"/><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT2" value="N" /><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 							</td>
 							<td class="tdTitle"><label>*</label>발주합계</td>
 							<td class="tdContents">
-								<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(orderVO.orderAmount)}"/>" style="text-align: right;"/>	
+								<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:choose><c:when test="${orderVO.orderAmount == 0 }"></c:when><c:otherwise>${displayUtil.commaStr(orderVO.orderAmount)}</c:otherwise></c:choose>" style="text-align: right;"/>	
 							</td>
 							<td class="tdTitle"><label>*</label>결제조건</td>
 							<td class="tdContents">
@@ -994,7 +996,7 @@
 									<tr>
 										<td class="tdTitle firstTd"><label>*</label>제품</td>
 										<td class="tdContents firstTd">
-											<input type="text" id="prodList-0-pmNmCd" name="pmNmCd" class="search"  onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
+											<input type="text" id="prodList-0-pmNmCd" name="pmNmCd" class="search"  onclick="fn_findMtProduct(this.id)" onkeypress="return false;" required/>	
 											<input type="hidden" id="prodList-0-orderPmFkKey" name="orderPmFkKey" />
 											<input type="hidden" id="prodList-0-orderSeq" name="orderSeq"/>	
 											<!-- <input type="text" id="prodList-0-orderPmFkKey" name="orderPmFkKey" class="search" />
@@ -1017,17 +1019,23 @@
 										<td class="tdContents">
 											<input type="text" id="prodList-0-orderUprice" name="orderUprice" amountOnly required class="calculate"/>
 										</td>
+										<td class="tdTitle"><label>*</label>입고일자</td>
+										<td class="tdContents">
+											<input type="text" id="prodList-0-orderReceiptDt" name="orderReceiptDt" class="calendar fromDt" required/>
+										</td>
+									</tr>
+									<tr>
 										<td class="tdTitle"><label>*</label>무상유지보수기간</td>
 										<td class="tdContents" colspan="5">
-											<input type="text" id="prodList-0-mtStartDt" name="mtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
-											<input type="text" id="prodList-0-mtEndDt" name="mtEndDt" placeholder="to" class="calendar toDt" required/>
-										</td>								
+											<input type="text" id="prodList-0-freeMtStartDt" name="reeMtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
+											<input type="text" id="prodList-0-freeMtEndDt" name="reeMtEndDt"" placeholder="to" class="calendar toDt" required/>
+										</td>		
 									</tr>
 								</table>
 							</div>
 							</c:when>
 							<c:otherwise>
-							<c:forEach var="list" items="${orderVO.projectOrderProductVOList}" varStatus="status">
+							<c:forEach var="list" items="${orderVO.orderProductVOList}" varStatus="status">
 							<div class="prodTable">
 								<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
 								<table>								
@@ -1054,6 +1062,17 @@
 										<td class="tdContents">
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-orderUprice" name="orderUprice" amountOnly required class="calculate" value="<c:out value="${displayUtil.commaStr(list.orderUprice)}"/>"/>
 										</td>
+										<td class="tdTitle"><label>*</label>입고일자</td>
+										<td class="tdContents">
+											<input type="text" id="prodList-0-orderReceiptDt" name="orderReceiptDt" class="calendar fromDt" value="<c:out value="${displayUtil.commaStr(list.orderReceiptDt)}"/>" required/>
+										</td>
+									</tr>
+									<tr>
+										<td class="tdTitle"><label>*</label>무상유지보수기간</td>
+										<td class="tdContents" colspan="5">
+											<input type="text" id="prodList-0-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" required/> ~ 
+											<input type="text" id="prodList-0-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.freeMtEndDt)}"/>" required/>
+										</td>		
 									</tr>
 								</table>
 							</div>

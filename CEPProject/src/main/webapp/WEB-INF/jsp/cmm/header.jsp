@@ -14,9 +14,6 @@
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
-	<script src="<c:url value='/js/file.js'/>"></script>
-	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
-	<script src="<c:url value='/js/string.js'/>"></script>
 	<style>
 			header {
 				position: fixed;
@@ -105,7 +102,7 @@
 		<div class="wdt100">
 			<ul class="ftw400 mgauto hgt100 colorWhite">
 				<li class="floatL textalignC cursorP"><a href="#">Dashboard</a></li>
-				<li class="floatL textalignC cursorP"><a href="/forecastList.do">Forecast</a></li>
+				<li class="floatL textalignC cursorP"><a href="/forecast/list.do">Forecast</a></li>
 				<li class="floatL textalignC cursorP"><a href="/project/list.do">프로젝트</a></li>
 				<li class="floatL textalignC cursorP">
 					<a href="/maintenance/contract/contractList.do">유지보수</a>

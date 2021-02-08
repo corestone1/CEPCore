@@ -39,6 +39,8 @@ public class MtBackOrderVO extends MtDefaultVO implements Serializable{
 
     // 유지보수 발주 거래처 담당자 관리키 
     private String mtOrderAcDirectorKey;
+    // 유지보수 발주거래처 담당자 명
+    private String mtOrderAcDirectorNm;
 
     // 유지보수 발주 결제 조건 당월 25일/매월25 /역발행 등
     private String mtOrderPayTerms;
@@ -328,5 +330,19 @@ public class MtBackOrderVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtOrderAcKeyNm(String mtOrderAcKeyNm) {
 		this.mtOrderAcKeyNm = mtOrderAcKeyNm;
+	}
+
+	/**
+	 * @return the mtOrderAcDirectorNm
+	 */
+	public String getMtOrderAcDirectorNm() {
+		return mtOrderAcDirectorNm;
+	}
+
+	/**
+	 * @param mtOrderAcDirectorNm the mtOrderAcDirectorNm to set
+	 */
+	public void setMtOrderAcDirectorNm(String mtOrderAcDirectorNm) {
+		this.mtOrderAcDirectorNm = mtOrderAcDirectorNm;
 	}
 }

@@ -141,11 +141,10 @@
 							objArry = new Array();
 							jQuery.each(arr, function() {
 								
-							/* if(this.name=="mtPmQuantity" || this.name=="mtPmUprice" || this.name=="totalAmount"){
+							if(this.name=="ctAmount" || this.name=="salesTurnAmount") {
 								//숫자에서 컴마를 제거한다.
 								obj[this.name] = removeCommas(this.value); 
-							} else  */
-							if(this.name=="salesChargeDt") {
+							} else if(this.name=="salesChargeDt") {
 								//날짜에서 -를 제거한다.
 								obj[this.name] =  removeData(this.value,"-"); 
 							} else {
@@ -196,11 +195,11 @@
 					rowItem += "<td><form id='form"+i+"' name='form' display: block !important'>"+(beforeTurn+i+1)+ "회차 :&nbsp;&nbsp;";
 					rowItem += "<input type='text' name='salesCollectRate' id='rate"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 비율' numberOnly class='rateInfo' required/>";
 					rowItem += "&nbsp;&nbsp;%&nbsp;&nbsp;&nbsp;&nbsp;";
-					rowItem += "<input type='text' name='ctAmount' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' numberOnly class='amount' required />&nbsp;원";
+					rowItem += "<input type='text' name='ctAmount' id='amount"+(beforeTurn+i+1)+"' placeholder='"+(beforeTurn+i+1)+"회차 금액' amountOnly class='amount' required />&nbsp;원";
 					rowItem += "<input type='hidden' name='pjKey' value='"+$('#pjKey').val() +"' />";
 					rowItem += "<input type='hidden' name='salesCtClass' value='P' />";
 					rowItem += "<input type='hidden' class='salesChargeDt' name='salesChargeDt' value='"+$('#salesChargeDt').val() +"' />";
-					rowItem += "<input type='hidden' name='ctTurnNo' value='"+(i+1)+"' />";
+					rowItem += "<input type='hidden' name='collectTurn' value='"+(i+1)+"' />";
 					rowItem += "<input type='hidden' name='salesTurn' value='"+(i+1)+"' />";
 					rowItem += "<input type='hidden' name='salesTurnAmount' id='sAmount"+(beforeTurn+i+1)+"' value='' />";
 					rowItem += "<input type='hidden' name='taxYn' value='N' /></form></td>";
@@ -222,7 +221,7 @@
 					$('#sum').focus();
 					$(this).val('');
 				} else {
-					$('#amount'+$(this).attr('id').substring(4)).val($('#sum').val() * $(this).val() / 100);	
+					$('#amount'+$(this).attr('id').substring(4)).val($('#sum').val().replace(/,/g, '') * $(this).val() / 100);	
 				}
 			});
 		}
@@ -236,12 +235,18 @@
 			var sum = 0;
 			
 			for(var i = 0; i < parseInt(document.getElementById("beforeTurn").value); i++) {
-				sum += parseInt($('#amount'+(i+1)).val());
+				sum += parseInt($('#amount'+(i+1)).val().replace(/,/g, ''));
 			}
 			
-			if(sum != $('#sum').val()) {
+			if(sum != $('#sum').val().replace(/,/g, '')) {
 				alert('회차별 금액 합계와 총 계약 금액이 일치하지 않습니다.');
 			} else {
+				if($('input[name=taxYnCheck]').is(":checked") == true) {
+					 $('input[name=taxYn').val('Y');
+				 } else {
+					 $('input[name=taxYn').val('N');
+				 }
+				
 				var object = {};
 				
 				$('.salesChargeDt').each(function() {
@@ -256,13 +261,13 @@
 				var listData = $("form[name=form]").serializeObject();
 				
 			 	for (var i = 0; i<formData.length; i++){
-	                object[formData[i]['name']] = formData[i]['value'];
+		 			object[formData[i]['name']] = formData[i]['value'];
 	            }
 			 	
 				object["projectContractSalesVOList"]=listData;
 				
 				var sendData = JSON.stringify(object);
-				
+				console.log(sendData);
 			 	$.ajax({
 					url:"/project/insert/contractInfo.do",
 					dataType: 'json', 
@@ -369,16 +374,17 @@
 			<c:set var = "max" value = "0" />
 			<c:forEach var="result" items="${resultList}" varStatus="status">     
 				<c:set var= "total" value="${total + result.ctAmount}"/>
-				<c:if test="${max < result.ctTurnNo }">
-					<c:set var="max" value="${result.ctTurnNo }" />
+				<c:if test="${max < result.collectTurn }">
+					<c:set var="max" value="${result.collectTurn }" />
 				</c:if>
 			</c:forEach>
+			<fmt:formatNumber value="${total }" pattern="#,###" var="totalAmount"/>
 			<div class="contents">
 				<div>
 					<table>
 						<tr class="ftw200">
 							<td class="firstRow">
-								<input type="text" id="sum" name="sum" placeholder="총 계약금액"  numberOnly class="amount" value="<c:out value="${total }"/> "/> &nbsp;원
+								<input type="text" id="sum" name="sum" placeholder="총 계약금액"  amountOnly class="amount" value="<c:out value="${total eq 0 ? null : totalAmount}"/>"/> &nbsp;원
 								<label>(부가세포함 </label>
 								<input type='checkbox' class='tCheck' id='taxYn' value='N' name='taxYnCheck' <c:if test="${resultList[0].taxYn eq 'Y'}">checked="checked"</c:if>/><label for='taxYn' class='cursorP veralignM'></label>
 								<label>)</label>
@@ -413,12 +419,12 @@
 								<c:forEach var="result" items="${resultList }" varStatus="status">
 									<tr class='ftw200'>
 										<td>
-											${result.ctTurnNo }회차 :&nbsp;
+											${result.collectTurn }회차 :&nbsp;
 											<fmt:formatNumber  var="rateValue" value="${result.ctAmount / total * 100 }" type="number" />
-											<input type='text' name='ctTurnNo' id='rate${result.ctTurnNo }' placeholder='${result.ctTurnNo }회차 비율' numberOnly class='rateInfo' value="${rateValue }"/>
+											<input type='text' name='collectTurn' id='rate${result.collectTurn }' placeholder='${result.collectTurn }회차 비율' numberOnly class='rateInfo' value="${rateValue }"/>
 											&nbsp;%&nbsp;&nbsp;&nbsp;
-											<input type='text' name='ctAmount' id='amount${result.ctTurnNo }' placeholder='${result.ctTurnNo }회차 금액' numberOnly class='amount' value="${result.ctAmount }"/>&nbsp;원
-											<input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.ctTurnNo }'/>
+											<input type='text' name='ctAmount' id='amount${result.collectTurn }' placeholder='${result.collectTurn }회차 금액' numberOnly class='amount' value="${displayUtil.commaStr(result.ctAmount) }"/>&nbsp;원
+											<input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.collectTurn }'/>
 											<input type='hidden' name='salesKey' value="${result.salesKey }" id='salesKey${result.salesTurn }' />
 										</td>
 									</tr>

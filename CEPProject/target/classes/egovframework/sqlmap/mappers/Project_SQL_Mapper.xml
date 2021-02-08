@@ -14,6 +14,7 @@
 		<result property="pjSaleEmpKey" column="PJ_SALE_EMP_KEY"/>
 		<result property="pjSupportEmpKey" column="PJ_SUPPORT_EMP_KEY"/>
 		<result property="remark" column="REMARK" />
+		<result property="finishRemark" column="FINISH_REMARK" />
 		<result property="deleteYn" column="DELETE_YN" />
 		<result property="regEmpKey" column="REG_EMP_KEY" />
 		<result property="spKey" column="SP_KEY" />
@@ -63,7 +64,8 @@
 
 	<select id="selectProjectDetail" parameterType="String" resultType="egovMap">
 		SELECT
-			AC_KEY
+			(SELECT CA.AC_NM FROM CMM_ACCOUNT_TB CA WHERE CA.AC_KEY = PJ_MAIN_TB.AC_KEY) AS AC_NM 
+			, AC_KEY
 			, AC_DIRECTOR_KEY
 			, PJ_NM
 			, PJ_START_DT
@@ -71,6 +73,8 @@
 			, PJ_SALE_EMP_KEY
 			, PJ_SUPPORT_EMP_KEY
 			, REMARK
+			, PJ_INSPECT_DT
+			, FINISH_REMARK
 			, DELETE_YN
 			, REG_DT
 			, REG_EMP_KEY
@@ -78,6 +82,7 @@
 			, SP_KEY
 		FROM PJ_MAIN_TB
 		WHERE PJ_KEY=#{pjKey}
+			AND DELETE_YN = 'N'
 	</select>
 	
 	<update id="updateStatusCd" parameterType="String">
@@ -122,14 +127,63 @@
 		)
 	</insert>
 	
+	<update id="updateBasicInfo" parameterType="projectVO">
+		UPDATE PJ_MAIN_TB 
+		SET	
+			<if test="acKey != null and acKey != ''">
+				AC_KEY = #{acKey},
+			</if>
+			<if test="acDirectorKey != null and acDirectorKey != ''">
+				AC_DIRECTOR_KEY = #{acDirectorKey},
+			</if>
+			<if test="pjNm != null and pjNm != ''">
+				PJ_NM = #{pjNm},
+			</if>
+			<if test="pjStartDt != null and pjStartDt != ''">
+				PJ_START_DT = #{pjStartDt},
+			</if>
+			<if test="pjEndDt != null and pjEndDt != ''">
+				PJ_END_DT = #{pjEndDt},
+			</if>
+			<if test="pjSaleEmpKey != null and pjSaleEmpKey != ''">
+				PJ_SALE_EMP_KEY = #{pjSaleEmpKey},
+			</if>
+			<if test="pjSupportEmpKey != null and pjSupportEmpKey != ''">
+				PJ_SUPPORT_EMP_KEY = #{pjSupportEmpKey},
+			</if>
+			<if test="remark != null and remark != ''">
+				REMARK = #{remark},
+			</if>
+			<if test="pjInspectDt != null and pjInspectDt != ''">
+				PJ_INSPECT_DT = #{pjInspectDt},
+			</if>
+			<if test="finishRemark != null and finishRemark != ''">
+				FINISH_REMARK = #{finishRemark},
+			</if>
+			<if test="spKey != null and spKey != ''">
+				SP_KEY = #{spKey},
+			</if>
+			<if test="pjInspectDt != null and pjInspectDt != ''">
+				PJ_STATUS_CD = "PJST5000",
+			</if>
+			MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PJ_KEY = #{pjKey}
+			AND DELETE_YN = 'N'
+	</update>
+	
+	<update id="deleteProject" parameterType="projectVO">
+		
+	</update>
+	
 	<insert id="insertContractInfo" parameterType="projectContractSalesVO">
 		INSERT INTO PJ_CONTRACT_TB (
 			CT_KEY
 			, PJ_KEY
 			, CT_AMOUNT
 			, TAX_YN
-			, MT_CT_DT
-			, CT_TURN_NO
+			, COLLECT_TURN
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -141,8 +195,7 @@
 				, #{pjKey}
 				, #{item.ctAmount}
 				, #{item.taxYn}
-				, #{item.mtCtDt}
-				, #{item.ctTurnNo}
+				, #{item.collectTurn}
 				, DATE_FORMAT(NOW(),'%Y%m%d')
 				, DATE_FORMAT(NOW(),'%H%i%s')
 				, #{regEmpKey}
@@ -156,8 +209,8 @@
 		FROM PJ_CONTRACT_TB 
 		JOIN CMM_SALES_DETAIL_TB 
 		ON PJ_CONTRACT_TB.PJ_KEY = CMM_SALES_DETAIL_TB.SALES_CT_FK_KEY 
-		AND PJ_CONTRACT_TB.CT_TURN_NO = CMM_SALES_DETAIL_TB.SALES_TURN
-		WHERE PJ_CONTRACT_TB.PJ_KEY=#{pjKey} ORDER BY CT_TURN_NO
+		AND PJ_CONTRACT_TB.COLLECT_TURN = CMM_SALES_DETAIL_TB.SALES_TURN
+		WHERE PJ_CONTRACT_TB.PJ_KEY=#{pjKey} ORDER BY COLLECT_TURN
 	</select>
 	
 	<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
@@ -206,8 +259,8 @@
 		)
 	</insert>
 	
-	<insert id="insertOrderInfo" parameterType="projectOrderVO">
-		INSERT INTO PJ_ORDER_TB (
+	<insert id="insertOrderInfo" parameterType="orderVO">
+		INSERT INTO CMM_ORDER_TB (
 			ORDER_KEY
 			, ORDER_CT_CLASS
 			, ORDER_CT_FK_KEY
@@ -215,8 +268,7 @@
 			, ORDER_AC_KEY
 			, ORDER_AC_DIRECTOR_KEY
 			, ORDER_PAY_TERMS
-			, ORDER_RECRIPT_DT
-			, MT_ORDER_AMOUNT
+			, ORDER_AMOUNT
 			, TAX_YN
 			, REG_DT
 			, REG_TM
@@ -230,8 +282,7 @@
 			, #{orderAcKey}
 			, #{orderAcDirectorKey}
 			, #{orderPayTerms}
-			, #{orderRecriptDt}
-			, #{mtOrderAmount}
+			, #{orderAmount}
 			, #{taxYn}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
@@ -241,24 +292,26 @@
 	</insert>
 	
 	<insert id="insertOrderProductInfo" parameterType="java.util.HashMap">
-		INSERT INTO PJ_ORDER_PRODUCT_TB (
+		INSERT INTO CMM_ORDER_PRODUCT_TB (
 			ORDER_KEY
 			, ORDER_SEQ
 			, ORDER_PM_FK_KEY
 			, ORDER_QUANTITY
 			, ORDER_UPRICE
+			, ORDER_RECEIPT_DT
 			, MT_RATE
 			, FREE_MT_START_DT
 			, FREE_MT_END_DT
 			, DELETE_YN
 		) VALUES 
-		<foreach collection="projectOrderProductVOList" item="item" separator=",">
+		<foreach collection="orderProductVOList" item="item" separator=",">
 		    (
 			#{orderKey}
-			, #{item.orderSeq} -- ORDER_SEQ - IN int(11)
+			, #{item.orderSeq} 
 			, #{orderPmFkKey}
 			, #{item.orderQuantity}
 			, #{item.orderUprice}
+			, #{item.orderReceiptDt}
 			, #{mtRate}
 			, #{freeMtStartDt}
 			, #{freeMtEndDt}
@@ -272,46 +325,55 @@
 			PO.ORDER_KEY
 			, PO.ORDER_AC_KEY
 			, CA.AC_NM
-		FROM PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA
+		FROM CMM_ORDER_TB PO, CMM_ACCOUNT_TB CA
 		WHERE PO.ORDER_CT_FK_KEY=#{key}
 			AND PO.DELETE_YN='N'
 			AND PO.ORDER_AC_KEY = CA.AC_KEY
 	</select>
 	
-	<select id="selectOrderDetail" parameterType="String" resultType="projectOrderVO">
+	<select id="selectOrderDetail" parameterType="String" resultType="orderVO">
 		SELECT
-			PO.ORDER_KEY AS orderKey
-			, PO.ORDER_CT_CLASS AS orderCtClass
-			, PO.ORDER_CT_FK_KEY AS orderCtFkKey
-			, PO.ORDER_DT AS orderDt
-			, PO.ORDER_AC_KEY AS orderAcKey
-			, PO.ORDER_RECRIPT_DT AS orderRecriptDt
-			, CA.AC_NM AS orderAcNm 
-			, PO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
-			, PO.ORDER_PAY_TERMS AS orderPayTerms
-			, PO.MT_ORDER_AMOUNT AS mtOrderAmount
-			, PO.TAX_YN AS taxYn
-		FROM PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA
-		WHERE PO.ORDER_KEY = #{orderKey}
-			AND PO.DELETE_YN='N'
-			AND PO.ORDER_AC_KEY = CA.AC_KEY
+			CO.ORDER_KEY AS orderKey
+			, CO.ORDER_CT_CLASS AS orderCtClass
+			, CO.ORDER_CT_FK_KEY AS orderCtFkKey
+			, CO.ORDER_DT AS orderDt
+			, CO.ORDER_AC_KEY AS orderAcKey
+			, (SELECT A.AC_NM FROM CMM_ACCOUNT_TB A WHERE A.AC_KEY = CO.ORDER_AC_KEY ) AS orderAcNm
+			, CO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
+			, (SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = CO.ORDER_AC_DIRECTOR_KEY ) AS orderAcDirectorNm
+			, (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = CO.ORDER_AC_DIRECTOR_KEY) AS orderAcDirectorMbNum
+			, CO.ORDER_PAY_TERMS AS orderPayTerms
+			, CO.ORDER_AMOUNT AS orderAmount
+			, CO.TAX_YN AS taxYn
+		FROM CMM_ORDER_TB CO, CMM_ACCOUNT_TB CA
+		WHERE CO.ORDER_KEY = #{orderKey}
+			AND CO.DELETE_YN='N'
+			AND CO.ORDER_AC_KEY = CA.AC_KEY
 	</select>
 	
-	<select id="selectOrderProductList" parameterType="String" resultType="projectOrderProductVO">
+	<select id="selectOrderProductList" parameterType="String" resultType="orderProductVO">
 		SELECT
-			PP.ORDER_KEY AS orderKey
-			, PP.ORDER_SEQ AS orderSeq
-			, PP.ORDER_PM_FK_KEY AS orderPmFkKey
-			, PP.ORDER_QUANTITY AS orderQuantity
-			, PP.ORDER_UPRICE AS orderUprice
-			, PP.MT_RATE AS mtRate
-			, PP.FREE_MT_START_DT AS freeMtStartDt
-			, PP.FREE_MT_END_DT AS freeMtEndDt
+			OP.ORDER_KEY AS orderKey
+			, OP.ORDER_SEQ AS orderSeq
+			, OP.ORDER_PM_FK_KEY AS orderPmFkKey
+			, OP.ORDER_QUANTITY AS orderQuantity
+			, OP.ORDER_UPRICE AS orderUprice
+			, OP.ORDER_RECEIPT_DT AS orderReceiptDt
+			, OP.MT_RATE AS mtRate
+			, OP.FREE_MT_START_DT AS freeMtStartDt
+			, OP.FREE_MT_END_DT AS freeMtEndDt
 			, PM.PM_NM_CD AS pmNmCd
-		FROM PJ_ORDER_PRODUCT_TB PP, PM_PRODUCT_MNG_TB PM
-		WHERE PP.ORDER_KEY = #{orderKey}
-			AND PP.DELETE_YN='N'
-			AND PP.ORDER_PM_FK_KEY = PM.PM_KEY
+		FROM CMM_ORDER_PRODUCT_TB OP, PM_PRODUCT_MNG_TB PM
+		WHERE OP.ORDER_KEY = #{orderKey}
+			AND OP.DELETE_YN='N'
+			AND OP.ORDER_PM_FK_KEY = PM.PM_KEY
+	</select>
+	
+	<select id="selectAcDirector" parameterType="Integer" resultType="egovMap">			
+			SELECT AC_DIRECTOR_KEY
+				, CONCAT(AC_DIRECTOR_NM, AC_DIRECTOR_POSITION_NM , ' / ' , AC_DIRECTOR_MB_NUM) AS AC_DIRECTOR_INFO
+			FROM CMM_ACCOUNT_DIRECTOR_TB
+			WHERE AC_DIRECTOR_KEY = #{acDirectorKey}
 	</select>
 	
 	<select id="selectAcDirectorList" parameterType="String" resultType="egovMap">			
@@ -331,5 +393,115 @@
 		JOIN FM_DOCTYPE_MNG_TB FD
 		ON FD.DOC_TYPE_KEY = FF.DOC_TYPE_KEY
 		WHERE FD.DOC_UP_TYPE_CD LIKE 'PJBD000%'
+	</select>
+	
+	<insert id="insertBuildInfo" parameterType="projectBuildVO">
+		INSERT INTO PJ_INSTALL_AND_BUILD_TB (
+			PJ_KEY
+			, INB_PLACE
+			, INB_CLASS
+			, INB_PM_KEY
+			, INB_PM_SERIAL_NO
+			, INB_DELIVERY_DT
+			, INB_PM_VER
+			, INB_SPEC_INFO
+			, INB_CACHE_MEM
+			, INB_PORT_INFO
+			, INB_MNG_IP
+			, INB_PM_TYPE
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{pjKey}
+			, #{inbPlace}
+			, #{inbClass}
+			, #{inbPmKey}
+			, #{inbPmSerialNo}
+			, #{inbDeliveryDt}
+			, #{inbPmVer}
+			, #{inbSpecInfo}
+			, #{inbCacheMem}
+			, #{inbPortInfo}
+			, #{inbMngIp}
+			, #{inbPmType}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<select id="selectBuildDetail" parameterType="String" resultType="egovMap">
+		SELECT
+			INB.PJ_KEY
+			, INB.INB_PLACE
+			, INB.INB_CLASS
+			, INB.INB_PM_KEY
+			, PM.PM_NM_CD AS inbPmNm
+			, INB.INB_PM_SERIAL_NO
+			, INB.INB_DELIVERY_DT
+			, INB.INB_PM_VER
+			, INB.INB_SPEC_INFO
+			, INB.INB_CACHE_MEM
+			, INB.INB_PORT_INFO
+			, INB.INB_MNG_IP
+			, INB.INB_PM_TYPE
+			, INB.REMARK
+		FROM PJ_INSTALL_AND_BUILD_TB INB, PM_PRODUCT_MNG_TB PM
+		WHERE PJ_KEY=#{pjKey}
+			AND INB.INB_PM_KEY = PM.PM_KEY
+			AND DELETE_YN = 'N'
+	</select>
+	
+	<insert id="insertWorkInfo" parameterType="projectWorkVO">
+		INSERT INTO PJ_WORK_TB (
+			PJ_KEY
+			, PJ_WORK_CLASS_CD
+			, PJ_WORK_DT
+			, PJ_WORK_TM
+			, PJ_WORK_TAKE_TM
+			, PJ_WORK_NM
+			, PJ_WORK_CONT
+			, PJ_WORK_RESULT
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{pjKey}
+			, #{pjWorkClassCd}
+			, #{pjWorkDt}
+			, #{pjWorkTm}
+			, #{pjWorkTakeTm}
+			, #{pjWorkNm}
+			, #{pjWorkCont}
+			, #{pjWorkResult}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<select id="selectWorkDetail" parameterType="String" resultType="egovMap">
+		SELECT
+			PJ_KEY
+			, PJ_WORK_CLASS_CD
+			, PJ_WORK_DT
+			, PJ_WORK_TM
+			, PJ_WORK_TAKE_TM
+			, PJ_WORK_NM
+			, PJ_WORK_CONT
+			, PJ_WORK_RESULT
+			, REMARK
+		FROM PJ_WORK_TB
+		WHERE PJ_KEY=#{pjKey}
+			AND DELETE_YN = 'N'
 	</select>
 </mapper>

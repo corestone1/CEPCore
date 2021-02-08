@@ -81,7 +81,7 @@
 		<div class="wdt100">
 			<ul class="ftw400 mgauto hgt100 colorWhite">
 				<li class="floatL textalignC cursorP"><a href="#" id="A_TOPMenu_DAS" title="/dashboard.do">Dashboard</a></li>
-				<li class="floatL textalignC cursorP"><a href="#" id="A_TOPMenu_FOR" title="/forecastList.do">Forecast</a></li>
+				<li class="floatL textalignC cursorP"><a href="#" id="A_TOPMenu_FOR" title="/forecast/list.do">Forecast</a></li>
 				<li class="floatL textalignC cursorP"><a href="#" id="A_TOPMenu_PRO" title="/project/list.do">프로젝트</a></li>
 				<li class="floatL textalignC cursorP"><a href="#" id="A_TOPMenu_MAI" title="/maintainList.do">유지보수</a></li>
 				<li class="floatL textalignC cursorP"><a href="#" id="A_TOPMenu_COM" title="/common.do">공통관리</a></li>			

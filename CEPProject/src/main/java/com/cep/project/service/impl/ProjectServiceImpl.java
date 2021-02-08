@@ -15,16 +15,18 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
-import com.cep.project.vo.ProjectOrderProductVO;
-import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
+import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
+import com.cmm.vo.OrderProductVO;
+import com.cmm.vo.OrderVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -84,6 +86,51 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 		return returnMap;		
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> updateBasicInfo(HttpServletRequest request, ProjectVO projectVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			projectVO.setModEmpKey(session.get("empKey"));
+			
+			mapper.updateBasicInfo(projectVO);
+		    
+	    	returnMap.put("successYN", "Y");
+			
+		} catch(Exception e) {
+			returnMap.put("successYN", "N");
+		}
+		return returnMap;		
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> deleteProject(HttpServletRequest request, ProjectVO projectVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		ProjectVO deleteVo = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			
+			deleteVo = new ProjectVO();
+			deleteVo.setModEmpKey(session.get("empKey"));
+			deleteVo.setPjKey(projectVO.getPjKey());
+			
+			mapper.deleteProject(deleteVo);
+		    
+	    	returnMap.put("successYN", "Y");
+			
+		} catch(Exception e) {
+			returnMap.put("successYN", "N");
+		}
+		return returnMap;	
+		
 	}
 	
 	@Override
@@ -205,8 +252,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
-	public Map<String, Object> selectFileList(ProjectVO projectVO) throws Exception {
-		return mapper.selectFileList(projectVO);
+	public Map<String, Object> selectFileList(FileVO fileVO) throws Exception {
+		return mapper.selectFileList(fileVO);
 	}
 	
 	@Override
@@ -245,13 +292,13 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	@Transactional
 	@SuppressWarnings("unchecked")
-	public String insertOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO) throws Exception {
+	public String insertOrderInfo(HttpServletRequest request, OrderVO orderVO) throws Exception {
 		
 		String[] deleteKeyList = null;
-		List<ProjectOrderProductVO> insertList = null;
-		List<ProjectOrderProductVO> updateList = null;
+		List<OrderProductVO> insertList = null;
+		List<OrderProductVO> updateList = null;
 		int listCnt = 0;
-		ProjectOrderProductVO productVO = null;
+		OrderProductVO productVO = null;
 		HashMap<String, String> session = null;
 		
 		String orderKey = null;
@@ -264,11 +311,11 @@ public class ProjectServiceImpl implements ProjectService {
 				// 해당 내용 신규등록
 				orderKey = writeOrderInfo(orderVO);
 			} else {
-				listCnt = orderVO.getProjectOrderProductVOList().size();
+				listCnt = orderVO.getOrderProductVOList().size();
 				insertList = new ArrayList<>();
 	
 				for (int i = 0; i < listCnt; i++) {
-					productVO = productVO.getProjectOrderProductVOList().get(i);
+					productVO = productVO.getOrderProductVOList().get(i);
 					/*if(!"0".equals(CepStringUtil.getDefaultValue(productVO.getMtPmKey(), "0"))){
 						// 업데이트 대상
 						updateList.add(mtProductVO);
@@ -293,17 +340,17 @@ public class ProjectServiceImpl implements ProjectService {
 	  * @Author      : sylim
 	  * @Modification: 
 	  * @Method Description : 발주정보를 등록한다.
-	  * @param ProjectOrderVO
+	  * @param OrderVO
 	  * @return
 	  * @throws Exception
 	 */
-	private String writeOrderInfo(ProjectOrderVO orderVO) throws Exception {
+	private String writeOrderInfo(OrderVO orderVO) throws Exception {
 		
 		String orderKey = null;
 		Map<String, Object> insertParam = null;
 		try {
 			
-			orderKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_ORDER);
+			orderKey = comService.makePrimaryKey(PrimaryKeyType.ORDER);
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(orderKey, ""))){
 				orderVO.setOrderKey(orderKey);
@@ -314,13 +361,13 @@ public class ProjectServiceImpl implements ProjectService {
 
 				insertParam.put("orderKey", orderKey);
 				insertParam.put("regEmpKey", orderVO.getRegEmpKey());
-				insertParam.put("projectOrderProductVOList", orderVO.getProjectOrderProductVOList());
+				insertParam.put("orderProductVOList", orderVO.getOrderProductVOList());
 				
 				// 제품목록을 등록한다.
 				mapper.insertOrderProductInfo(insertParam);
 				
 			} else {
-				throw new Exception("Can't make PJ_ORDER_TB.ORDER_KEY !!!! ..");
+				throw new Exception("Can't make CMM_ORDER_TB.ORDER_KEY !!!! ..");
 			}
 			
 		} catch (Exception e) {
@@ -330,12 +377,12 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
-	public ProjectOrderVO selectOrderDetail(String orderKey) throws Exception {
-		ProjectOrderVO vo = null;
+	public OrderVO selectOrderDetail(String orderKey) throws Exception {
+		OrderVO vo = null;
 		try {
 			vo = mapper.selectOrderDetail(orderKey);
 			if(vo != null) {
-				vo.setProjectOrderProductVOList(selectOrderProductList(orderKey));
+				vo.setOrderProductVOList(selectOrderProductList(orderKey));
 			}
 		} catch(Exception e) {
 			throw new Exception(e);
@@ -345,7 +392,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
-	public List<ProjectOrderProductVO> selectOrderProductList(String orderKey) throws Exception {
+	public List<OrderProductVO> selectOrderProductList(String orderKey) throws Exception {
 		return mapper.selectOrderProductList(orderKey);
 	}
 	
@@ -355,7 +402,66 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	public List<?> selectAcDirector(int acDirectorKey) throws Exception {
+		return mapper.selectAcDirector(acDirectorKey);
+	}
+	
+	@Override
 	public List<?> selectAcDirectorList(String acKey) throws Exception {
 		return mapper.selectAcDirectorList(acKey);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> insertBuildInfo(HttpServletRequest request, ProjectBuildVO buildVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			buildVO.setRegEmpKey(session.get("empKey"));
+			
+			mapper.insertBuildInfo(buildVO);
+			mapper.updateStatusCd(buildVO.getPjKey(), buildVO.getStatusCd());
+			
+	    	returnMap.put("successYN", "Y");
+	    	returnMap.put("pjKey", buildVO.getPjKey());
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;		
+	}
+	
+	@Override
+	public List<?> selectBuildDetail(String pjKey) throws Exception {
+		return mapper.selectBuildDetail(pjKey);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> insertWorkInfo(HttpServletRequest request, ProjectWorkVO workVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			workVO.setRegEmpKey(session.get("empKey"));
+			
+			mapper.insertWorkInfo(workVO);
+			mapper.updateStatusCd(workVO.getPjKey(), workVO.getStatusCd());
+			
+	    	returnMap.put("successYN", "Y");
+	    	returnMap.put("pjKey", workVO.getPjKey());
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;		
+	}
+	
+	@Override
+	public List<?> selectWorkDetail(String pjKey) throws Exception {
+		return mapper.selectWorkDetail(pjKey);
 	}
 }

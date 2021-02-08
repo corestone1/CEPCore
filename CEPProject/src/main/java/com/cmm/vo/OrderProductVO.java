@@ -1,4 +1,4 @@
-package com.cep.project.vo;
+package com.cmm.vo;
 
 import java.io.Serializable;
 
@@ -6,16 +6,18 @@ import org.apache.ibatis.type.Alias;
 
 
 @SuppressWarnings("serial")
-@Alias("projectOrderVO")
-public class ProjectOrderProductVO extends ProjectOrderVO implements Serializable {
+@Alias("orderProductVO")
+public class OrderProductVO extends OrderVO implements Serializable {
 	
 	private String orderKey;
 	private int orderSeq;
 	private String orderPmFkKey;
 	private int orderQuantity;
 	private int orderUprice;
+	private String orderReceiptDt;
 	private int mtRate;
-	private String freeMtMonth;
+	private String freeMtStartDt;
+	private String freeMtEndDt;
 	private String pmNmCd;
 	
 	public String getOrderKey() {
@@ -48,17 +50,29 @@ public class ProjectOrderProductVO extends ProjectOrderVO implements Serializabl
 	public void setOrderUprice(int orderUprice) {
 		this.orderUprice = orderUprice;
 	}
+	public String getOrderReceiptDt() {
+		return orderReceiptDt;
+	}
+	public void setOrderReceiptDt(String orderReceiptDt) {
+		this.orderReceiptDt = orderReceiptDt;
+	}
 	public int getMtRate() {
 		return mtRate;
 	}
 	public void setMtRate(int mtRate) {
 		this.mtRate = mtRate;
 	}
-	public String getFreeMtMonth() {
-		return freeMtMonth;
+	public String getFreeMtStartDt() {
+		return freeMtStartDt;
 	}
-	public void setFreeMtMonth(String freeMtMonth) {
-		this.freeMtMonth = freeMtMonth;
+	public void setFreeMtStartDt(String freeMtStartDt) {
+		this.freeMtStartDt = freeMtStartDt;
+	}
+	public String getFreeMtEndDt() {
+		return freeMtEndDt;
+	}
+	public void setFreeMtEndDt(String freeMtEndDt) {
+		this.freeMtEndDt = freeMtEndDt;
 	}
 	public String getPmNmCd() {
 		return pmNmCd;

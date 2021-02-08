@@ -91,19 +91,19 @@ public class ProductVO implements Serializable{
 		return pmReleaseDt;
 	}
 	public void setPmReleaseDt(String pmReleaseDt) {
-		this.pmReleaseDt = pmReleaseDt;
+		this.pmReleaseDt = pmReleaseDt.replaceAll("-", "");
 	}
 	public String getEolDt() {
 		return eolDt;
 	}
 	public void setEolDt(String eolDt) {
-		this.eolDt = eolDt;
+		this.eolDt = eolDt.replaceAll("-", "");
 	}
 	public String getEossDt() {
 		return eossDt;
 	}
 	public void setEossDt(String eossDt) {
-		this.eossDt = eossDt;
+		this.eossDt = eossDt.replaceAll("-", "");
 	}
 	public String getPmRemark() {
 		return pmRemark;

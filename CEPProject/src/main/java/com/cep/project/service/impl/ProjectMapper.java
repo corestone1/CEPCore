@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.example.vo.SampleDefaultVO;
-import com.cep.project.vo.ProjectOrderProductVO;
-import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectVO;
+import com.cep.project.vo.ProjectWorkVO;
+import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
+import com.cmm.vo.OrderProductVO;
+import com.cmm.vo.OrderVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -71,6 +74,22 @@ public interface ProjectMapper {
 	public int insertBasicInfo(ProjectVO projectVO);
 	
 	/**
+	 * 프로젝트 기본 정보를 수정한다.
+	 * @param projectVO - 등록할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int updateBasicInfo(ProjectVO projectVO);
+	
+	/**
+	 * 프로젝트 기본 정보를 삭제한다.
+	 * @param projectVO - 등록할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public Map<String, Object> deleteProject(ProjectVO projectVO);
+	
+	/**
 	 * 프로젝트 계약 정보를 등록한다.
 	 * @param projectVO - 등록할 정보가 담긴 VO
 	 * @return 
@@ -88,11 +107,11 @@ public interface ProjectMapper {
 	
 	/**
 	 * 프로젝트 발주 정보를 등록한다.
-	 * @param ProjectOrderVO - 등록할 정보가 담긴 VO
+	 * @param OrderVO - 등록할 정보가 담긴 VO
 	 * @return 
 	 * @exception
 	 */
-	public void insertOrderInfo(ProjectOrderVO orderVO);
+	public void insertOrderInfo(OrderVO orderVO);
 	
 	/**
 	 * 프로젝트 발주 품목 리스트를 등록한다.
@@ -120,11 +139,11 @@ public interface ProjectMapper {
 	
 	/**
 	 * 입찰 첨부 파일을 조회한다.
-	 * @param projectVO - 조회할 정보가 담긴 VO
+	 * @param fileVO - 조회할 정보가 담긴 VO
 	 * @return 입찰 첨부 파일
 	 * @exception
 	 */
-	public Map<String, Object> selectFileList(ProjectVO projectVO);
+	public Map<String, Object> selectFileList(FileVO fileVO);
 	
 	public Map<String, Object> updateBiddingInfo(ProjectVO projectVO);
 	
@@ -152,7 +171,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public ProjectOrderVO selectOrderDetail(String orderKey);
+	public OrderVO selectOrderDetail(String orderKey);
 	
 	/**
 	 * 프로젝트 계약별 발주 제품목록 상세조회
@@ -160,13 +179,41 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public List<ProjectOrderProductVO> selectOrderProductList(String orderKey);
+	public List<OrderProductVO> selectOrderProductList(String orderKey);
+	
+	public List<?> selectAcDirector(int acDirectorKey);
+	
+	public List<?> selectAcDirectorList(String acKey);
 	
 	/**
-	 * 프로젝트 계약별 발주 거래처 selectBox목록 조회
-	 * @param orderKey
+	 * 프로젝트 설치구축 정보를 등록한다.
+	 * @param buildVO - 등록할 정보가 담긴 VO
 	 * @return 
 	 * @exception
 	 */
-	public List<?> selectAcDirectorList(String acKey) throws Exception;
+	public int insertBuildInfo(ProjectBuildVO buildVO);
+	
+	/**
+	 * 프로젝트 설치 및 구축 상세 정보를 조회한다..
+	 * @param pjKey - 조회할 정보의 key
+	 * @return 프로젝트 설치 및 구축 상세 정보
+	 * @exception
+	 */
+	public List<?> selectBuildDetail(String pjKey);
+	
+	/**
+	 * 프로젝트 수행 정보를 등록한다.
+	 * @param workVO - 등록할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int insertWorkInfo(ProjectWorkVO workVO);
+	
+	/**
+	 * 프로젝트 수행 상세 정보를 조회한다..
+	 * @param pjKey - 조회할 정보의 key
+	 * @return 프로젝트 수행 상세 정보
+	 * @exception
+	 */
+	public List<?> selectWorkDetail(String pjKey);
 }

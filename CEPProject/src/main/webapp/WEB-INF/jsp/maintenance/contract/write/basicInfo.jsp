@@ -138,7 +138,11 @@
     		color: #525252;
 		} 
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 15px 3px;
+			margin : 10px 48px 15px 48px;
+		}
+		.btnCenter {
+			width : calc(100% - 210px);
+			text-align: center;
 		}
 		.popContainer .contents td label {
 			color: red;
@@ -148,7 +152,6 @@
 	<script>
 		$(document).ready(function() {
 			'<c:if test="${basicContractInfo != null }">'
-			console.log(111111111111111);
 				//고객사 담당자 셋팅
 				$('#mtAcDirectorKey').val("${basicContractInfo.mtAcDirectorKey}").attr("selected", "true");
 				//관리담당자 셋팅
@@ -180,16 +183,93 @@
 		*  @param {string} varUrl 이동해야할 url
 		*/
 		function fn_changeView(varUrl) {
-			var url = '/maintenance/contract/write/'+varUrl+'.do';
-			var dialogId = 'program_layer';
-			var varParam = {
+			var url;
+			if($('#mtIntegrateKey').val() !="") {
+				if(varUrl == "basicInfoView"){
+					if(confirm("유지보수계약 기본정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+					
+				} else if(varUrl == "productInfoView"){
+					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+					
+				} else if(varUrl == "salesInfoView"){
+					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 매출정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
+				} else if(varUrl == "backOrderInfoView"){
+					if("${basicContractInfo.mtSbCtYn}" == "Y"){
+						
+						if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
+							if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 매출정보가 등록되지 않았습니다.\n 유지보수계약 매출정보를 먼저 등록하세요.");
+							return false;
+						}
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 등록하세요.");
+						return false;
+					}					
+					
+				} else if(varUrl == "purchaseAmountView"){
+					
+					if("${basicContractInfo.mtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+							return false;
+						}
 
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+						return false;
+					}
+				}				
+			} else {
+				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
+				return false;
 			}
-			var button = new Array;
-			button = [];
-			// /* showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-		}
+			if(url != "") {
+				
+				var dialogId = 'program_layer';
+				var varParam = {
+					"mtIntegrateKey": $('#mtIntegrateKey').val(),
+					"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			} else {
+
+				return false;
+			}			
+		} //end fn_changeView()
 		
 		
 		function fn_saveBtn(){
@@ -255,7 +335,7 @@
 	            			//$('#mtIntegrateKey').val(paramData.mtIntegrateKey);
 	            		}
 	            		
-		            	var url = '/maintenance/contract/write/productInfoView.do';
+		            	var url = '/maintenance/contract/write/basicInfoView.do';
 		    			var dialogId = 'program_layer';
 		    			var varParam = JSON.parse(data)
 		    			var button = new Array;
@@ -282,11 +362,22 @@
 		
 		function fn_nextBtn(){
 			if($('#mtIntegrateKey').val() !=''){
-				if(confirm("유지보수계약 제품정보 등록화면으로 이동하시겠습니까?")) {
-					saveBasicInfo();
+				if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 제품정보 등록화면으로 이동하시겠습니까?")) {
+					//saveBasicInfo();
+					var url = '/maintenance/contract/write/productInfoView.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+							"mtIntegrateKey":$('#mtIntegrateKey').val(),
+							"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+				} else {
+					return false;
 				}
 			} else {
-				alert("제품정보를 입력하기 전 유지보수계약 기본정보를 들록하세요!!");
+				alert(" 유지보수계약 기본정보가 등록되지 않았습니다.\n 유지보수계약 기본정보를 먼저 등록하세요.");
 			}
 		}
 		
@@ -395,7 +486,7 @@
 <body>
 	<form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post">		 
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
-		<%-- <input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> --%>
+		<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
 						
 		<div class="popContainer">
 			<div class="top">
@@ -409,8 +500,8 @@
 					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
 					
-					<li id="back_order" class="colorWhite cursorP" style="display:none">백계약정보</li>
-					<li id="back_buy" class="colorWhite cursorP" style="display:none">매입정보</li>
+					<li id="back_order" class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');" style="display:none">백계약정보</li>
+					<li id="back_buy" class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');" style="display:none">매입정보</li>
 				</ul>
 			</div>
 			<div class="contents">
@@ -542,13 +633,28 @@
 						</tr>
 					</table>
 				</div>
-				<div class="btnWrap floatR">
+				<div class="btnWrap floatL">
 					<div class="floatL">
 						<button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button>
 					</div>
-					<div class="floatR" onclick="fn_saveBtn();">
-						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					<div class="floatL btnCenter">
+						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
+					<c:choose>
+						<c:when test="${basicContractInfo !=null}">
+					<div class="floatR"  style="margin-right: 22px;">
+						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
+					</div>
+						</c:when>
+						<c:otherwise>
+					<div class="floatR"  style="margin-right: 22px;">
+						<img src="<c:url value='/images/btn_non_next.png'/>"/>
+					</div>						
+						</c:otherwise>
+					</c:choose>
+					<%-- <div class="floatR" style="margin-right: 22px;">
+						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					</div> --%>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>

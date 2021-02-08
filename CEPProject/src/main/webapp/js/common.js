@@ -110,7 +110,7 @@ $(document).on("focus", "input:text[amountOnly]", function() {
 function addCommas(x) {
 	var returnValue;
 	if(!x || x.length == 0) {
-		returnValue =  "";
+		returnValue =  x;
 	} else {
 		returnValue = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
@@ -192,6 +192,23 @@ function removeData(x, y) {
     return returnValue;
 }
 
+//접기
+function fn_viewSummaryUpAll(){
+	$(".dpTbRow").attr('class','dpNone');
+	$(".down").attr('class','up');
+	//$(".up").attr('src','<c:url value="/images/arrow_down.png"/>');
+	$(".up").attr('src','/images/arrow_down.png');
+}
+
+// 펴기
+function fn_viewSummaryDownAll(){
+	$(".dpNone").attr('class','dpTbRow');
+	$(".up").attr('class','down');
+	//$(".down").attr('src','<c:url value="/images/arrow_up.png"/>');
+	$(".down").attr('src','/images/arrow_up.png');
+}
+
+
 //날짜 하이픈(-) 자동 추가
 function fn_date_format(e, oThis) {
     var num_arr = [ 
@@ -208,6 +225,21 @@ function fn_date_format(e, oThis) {
     }
 }
 
+// 자바 스크립트로 파라미터 받기
+function getParameter(name) {
+	var params = location.search.substr(location.search.indexOf("?") + 1);
+	var newVal = "";
+	
+	params = params.split("&");
+	for(var i = 0; i < params.length; i++) {
+		temp = params[i].split("=");
+		if([temp[0]] == name) { 
+			newVal = temp[1];
+		}
+	}
+	
+	return newVal;
+}
 /* 추후 수정 필요
  * from날짜 이전 날짜는 to날짜에서 선택 못하도록, to날짜 이후 날짜는 from 날짜에서 선택 못하도록
  * */	

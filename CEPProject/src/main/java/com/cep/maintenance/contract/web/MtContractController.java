@@ -25,6 +25,7 @@ import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountListVO;
+import com.cep.maintenance.contract.vo.MtBuyAmountVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cmm.util.CepDateUtil;
@@ -153,7 +154,7 @@ public class MtContractController {
 				searchVO.setToDate(toDay);				
 			}
 			
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			deleteVo = new MtContractVO();
 			deleteVo.setModEmpKey(sessionMap.get("empKey"));
@@ -194,11 +195,15 @@ public class MtContractController {
 		MtContractVO basicContractInfo = null; //유지보수 기본정보
 		List<?> empList = null; // 사용자 selectBox
 		List < ? > acDirectorList = null; // 고객사 담당자 리스트.
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		try {			
 			
 			logger.debug("mtContractVO.getMtIntegrateKey()====>"+mtContractVO.getMtIntegrateKey());
-			//테스트
-			mtContractVO.setMtIntegrateKey("MA200024");
+//			if("".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), ""))) {
+//				//테스트
+//				mtContractVO.setMtIntegrateKey("MA200024");
+//			}
+			
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), ""))){
 				//기본정보 조회
@@ -206,6 +211,8 @@ public class MtContractController {
 				
 				if(null !=basicContractInfo){
 					acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+					
+					mtContractCountInfo = service.selectMtContractCount(mtContractVO.getMtIntegrateKey());
 				}
 			}		
 			
@@ -215,6 +222,7 @@ public class MtContractController {
 			model.put("empList", empList);
 			model.put("basicContractInfo", basicContractInfo);
 			model.put("acDirectorList", acDirectorList);
+			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("displayUtil", new CepDisplayUtil());
 		} catch (Exception e) {
 			
@@ -245,7 +253,7 @@ public class MtContractController {
 		String mtIntegrateKey = null;
 		try {
 //			logger.debug("mtContractVO.mtAcKey())=====>"+mtContractVO.getMtAcKey());
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 //			logger.debug("mtContractVO.getCtDt(1))=====>"+mtContractVO.getCtDt());
 			
 //			mtContractVO.setMtOption("w");//등록옵션 저장.
@@ -282,6 +290,7 @@ public class MtContractController {
 		return returnMap;
 	}	
 	
+	//========================================== 유지보수계약 제품정보 ===============================================================
 	@RequestMapping(value="/popup/mtProductList.do")
 	public String selectPopupProject(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model) throws Exception {
 		
@@ -329,11 +338,17 @@ public class MtContractController {
 		List<?> mtProductList = null;		
 		MtDefaultVO searchVO = null;
 		int listCount = 0;
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		try {
 			//테스트
-			productVO.setMtIntegrateKey("MA200024");
-			productVO.setParmMtSbCtYn("Y");
-			
+//			productVO.setMtIntegrateKey("MA200024");
+//			productVO.setParmMtSbCtYn("Y");
+//			if("".equals(CepStringUtil.getDefaultValue(productVO.getMtIntegrateKey(), ""))) {
+//				//테스트
+//				productVO.setMtIntegrateKey("MA200024");
+//			}
+			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
+			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(productVO.getMtIntegrateKey(), ""))) {
 				searchVO = new MtDefaultVO();
@@ -342,12 +357,14 @@ public class MtContractController {
 				if(null != mtProductList && mtProductList.size()>0) {
 					listCount = mtProductList.size();
 				}
+				mtContractCountInfo = service.selectMtContractCount(productVO.getMtIntegrateKey());
 			}
 			
 			model.put("mtIntegrateKey", productVO.getMtIntegrateKey());		
 			model.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
 
 			model.put("mtProductList", mtProductList);
+			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("listCount", listCount);
 //			model.put("mtIntegrateKey", "MA200024");	
@@ -386,10 +403,11 @@ public class MtContractController {
 			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
 			
 			logger.debug("size=>"+productVO.getMtContractProductVoList().size());
+			logger.debug("rowNum=>"+productVO.getRowNum());
 			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
 				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
 			}
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			productVO.setRegEmpKey(sessionMap.get("empKey"));
 			productVO.setModEmpKey(sessionMap.get("empKey"));
@@ -421,12 +439,14 @@ public class MtContractController {
 	 */
 	@RequestMapping(value="/detail/productInfo.do")
 //	public String selectMtDetailProductInfo(@ModelAttribute("searchVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
-	public String selectMtDetailProductInfo(MtContractVO mtContractVO, ModelMap model) throws Exception {	
-		List<?> productList = null;
+	public String selectMtDetailProductInfo(MtContractVO mtContractVO, ModelMap model) throws Exception {
 		List<?> empList = null;
 		List <?> acDirectorList = null; // 고객사 담당자 리스트.
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		MtContractVO basicContractInfo = null;
+		
+		
+		List<?> productList = null;
 		MtDefaultVO searchVO = null;
 		int mtPmTotalAmount = 0;
 		try {
@@ -460,11 +480,14 @@ public class MtContractController {
 			model.put("basicContractInfo", basicContractInfo);
 			model.put("acDirectorList", acDirectorList);
 			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
-			model.put("productList", productList);
-			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("empList", empList);
-			model.put("displayUtil", new CepDisplayUtil());
+			
+			model.put("mtContractCountInfo", mtContractCountInfo);
+			model.put("productList", productList);
 			model.put("mtPmTotalAmount", mtPmTotalAmount);
+			
+			
+			model.put("displayUtil", new CepDisplayUtil());
 		} catch (Exception e) {
 			logger.error("selectMtDetailProductInfo error", e);
 		}
@@ -484,7 +507,7 @@ public class MtContractController {
 		String[] deleteKeyList = null;
 		try {
 //			logger.debug("mtContractVO.mtAcKey())=====>"+mtContractVO.getMtAcKey());
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 //			logger.debug("mtContractVO.getCtDt(1))=====>"+mtContractVO.getCtDt());
 			
 //			productVO.setModEmpKey(sessionMap.get("empKey"));
@@ -529,9 +552,10 @@ public class MtContractController {
 	 */
 	@RequestMapping(value="/write/updateProductInfo.do", method=RequestMethod.POST)
 	@ResponseBody
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> updateProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		
+		HashMap<String, String> sessionMap = null;
 		try {			
 			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
 			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
@@ -540,6 +564,10 @@ public class MtContractController {
 			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
 				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
 			}
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			productVO.setRegEmpKey(sessionMap.get("empKey"));
+			productVO.setModEmpKey(sessionMap.get("empKey"));
 			returnMap.put("mtIntegrateKey", productVO.getMtIntegrateKey());
 			returnMap.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
 			
@@ -551,26 +579,60 @@ public class MtContractController {
 		
 		return returnMap;
 	}
+	
+	//==========================================================  매출 =======================================================
+	
+	/**
+	 * 
+	  * @Method Name : salesInfoDetail
+	  * @Cdate       : 2021. 1. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매출정보 상세조회
+	  * @param mtSalesAmountVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
 	@RequestMapping(value="/detail/salesInfo.do")
 	public String salesInfoDetail(MtSalesAmountVO mtSalesAmountVO, ModelMap model) throws Exception {
 
-		List<?> empList = null;
 		MtContractVO basicContractInfo = null;
-		List<?> saleInfoList = null;
+		List<?> empList = null;
+		List<?> mtSalesAmountList = null;
+		List <?> acDirectorList = null; // 고객사 담당자 리스트.
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+		int mtSalesTotalAmount = 0;
 		try {
 			//기본정보 조회
 			basicContractInfo = service.selectContractBasicDetail(mtSalesAmountVO.getMtIntegrateKey());
+			if(null != basicContractInfo) {
+				// 조회
+				mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesAmountVO.getMtIntegrateKey());
+				//직원정보 조회
+				empList = service.selectEmployeeList();
+				// 거래처 직원정보 조회
+				acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+				
+				mtContractCountInfo = service.selectMtContractCount(mtSalesAmountVO.getMtIntegrateKey());
+				
+				//매출 총 금액
+				mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesAmountVO.getMtIntegrateKey());
+			}
 			
-			//백계약 품목 조회
-			saleInfoList = null;
-			
-			//직원정보 조회
-			empList = service.selectEmployeeList();
+
 			
 			model.put("basicContractInfo", basicContractInfo);
-			model.put("saleInfoList", saleInfoList);			
-			model.put("displayUtil", new CepDisplayUtil());
+			model.put("acDirectorList", acDirectorList);
+			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
+			model.put("mtContractCountInfo", mtContractCountInfo);	
 			model.put("empList", empList);
+			
+			model.put("mtSalesAmountList", mtSalesAmountList);		
+			model.put("mtSalesTotalAmount", mtSalesTotalAmount);	
+			
+			model.put("displayUtil", new CepDisplayUtil());
+			
 		} catch (Exception e) {
 			
 			logger.error("error", e);
@@ -578,6 +640,49 @@ public class MtContractController {
 		
 		return "maintenance/contract/detail/salesInfo";
 	}
+	
+	/**
+	 * 
+	  * @Method Name : deleteSalesAmountYear
+	  * @Cdate       : 2021. 1. 7.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 매출정보 상세조회에서 매출년도 삭제.
+	  * @param request
+	  * @param productVO
+	  * @return
+	 */
+	@RequestMapping(value="/detail/deleteSalesAmountYear.do", method=RequestMethod.POST)
+	@ResponseBody 
+	@SuppressWarnings("unchecked")
+	public Map<String, String> deleteSalesAmountYear(HttpServletRequest request, @RequestBody MtSalesAmountVO mtSalesAmountVO) {
+
+		HashMap<String, String> sessionMap = null;
+		Map<String, String> returnMap = new HashMap<>();
+		String[] deleteKeyList = null;
+		try {
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtSalesKey(), ""))) {
+				
+				deleteKeyList = new String[1];
+				deleteKeyList[0] = String.valueOf(mtSalesAmountVO.getMtSalesKey());
+				
+				service.deleteMtContractSalesAmountList(sessionMap.get("empKey"), mtSalesAmountVO.getMtIntegrateKey(), deleteKeyList);
+				
+				returnMap.put("successYN", "Y");
+			} else {
+				returnMap.put("successYN", "N");
+				
+			}			
+			
+			returnMap.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error(null, e);
+		}		
+		return returnMap;
+	}	
 	
 	/**
 	 * 
@@ -595,23 +700,52 @@ public class MtContractController {
 	@RequestMapping(value="/write/salesInfoView.do")
 	public String writeMtSalesInfoView(HttpServletRequest request, MtSalesAmountVO mtSalesAmountVO, ModelMap model) throws Exception {
 		 Map<String, Object> contractAmountInfo = null;
-		try {			
+		 List<?> mtSalesAmountList = null;
+		 int listCount = 0;
+		 int mtSalesTotalAmount = 0;
+		 Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+		 
+		try {		
+			
+//			if("".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), ""))){
+//				//테스트
+//				mtSalesAmountVO.setMtIntegrateKey("MA200024");
+//				mtSalesAmountVO.setParmMtSbCtYn("Y");
+//			}
+			
+			
 			logger.debug("mtIntegrateKey===>"+mtSalesAmountVO.getMtIntegrateKey());
 			logger.debug("parmMtSbCtYn===>"+mtSalesAmountVO.getParmMtSbCtYn());
 			
-			contractAmountInfo = service.selectContractAmountInfo("MA200024");
-			/*contractAmountInfo = service.selectContractAmountInfo(mtSalesAmountVO.getMtIntegrateKey());*/
+			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), ""))) {
+				contractAmountInfo = service.selectContractAmountInfo(mtSalesAmountVO.getMtIntegrateKey());
+				
+				mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesAmountVO.getMtIntegrateKey());
+				if(null !=mtSalesAmountList && mtSalesAmountList.size()>0) {
+					listCount = mtSalesAmountList.size();					
+					//매출 총 금액
+					mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesAmountVO.getMtIntegrateKey());
+				}
+				mtContractCountInfo = service.selectMtContractCount(mtSalesAmountVO.getMtIntegrateKey());
+			}
+						
+			
+//			model.put("updateYn", mtSalesAmountVO.getUpdateYn());	
+//			model.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());		
+//			model.put("yearList", CepDateUtil.makeYear(-5, 5));	
+//			model.put("nowYear", CepDateUtil.getToday("yyyy"));
+			model.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());	
+			model.put("parmMtSbCtYn", mtSalesAmountVO.getParmMtSbCtYn()); //백계약여부.
 			model.put("contractAmountInfo",contractAmountInfo);
-			model.put("updateYn", mtSalesAmountVO.getUpdateYn());	
-//			model.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());			
-//			model.put("parmMtSbCtYn", mtSalesAmountVO.getParmMtSbCtYn()); //백계약여부.
-			model.put("nowYear", CepDateUtil.getToday("yyyy"));
-			model.put("yearList", CepDateUtil.makeYear(-5, 5));
+			model.put("mtSalesAmountList",mtSalesAmountList);
+			model.put("mtContractCountInfo", mtContractCountInfo);
+			model.put("mtSalesTotalAmount",mtSalesTotalAmount);
+			
+			
+			model.put("displayUtil", new CepDisplayUtil());
+			model.put("listCount", listCount);
 			model.put("successYN", "Y");
 			
-
-			model.put("mtIntegrateKey", "MA200024");	
-			model.put("parmMtSbCtYn", "Y"); //백계약여부.
 		} catch (Exception e) {
 			logger.error("",e);
 			model.put("successYN", "N");
@@ -626,7 +760,7 @@ public class MtContractController {
 	  * @Cdate       : 2020. 12. 10.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 유지보수계약 매출정보 등록
+	  * @Method Description : 유지보수계약 매출정보 등록, 수정
 	  * @param request
 	  * @param deleteKeys
 	  * @param mtSalesAmountVO
@@ -643,17 +777,12 @@ public class MtContractController {
 		Map<String, String> returnMap = null;
 //		String mtIntegrateKey = null;
 		try {
-//			logger.debug("deleteKeys================>"+mtSalesAmountVO.getDeleteKeys());
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			logger.debug("deleteKeys================>"+mtSalesAmountVO.getDeleteListKeys());
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mtSalesAmountVO.setRegEmpKey(sessionMap.get("empKey"));
-//			logger.debug("deleteKeys==========>"+deleteKeys);
-			for (int i = 0; i < mtSalesAmountVO.getMtSalesAmountVOList().size(); i++) {
-				logger.debug("getMtSalesYear====>"+mtSalesAmountVO.getMtSalesAmountVOList().get(i).getMtSalesYear());
-				logger.debug("getMtIntegrateKey====>"+mtSalesAmountVO.getMtSalesAmountVOList().get(i).getMtIntegrateKey());
-				logger.debug("getMtSalesKey====>"+mtSalesAmountVO.getMtSalesAmountVOList().get(i).getMtSalesKey());
-				logger.debug("getMtSalesJanAmount====>"+mtSalesAmountVO.getMtSalesAmountVOList().get(i).getMtSalesJanAmount());
-			}
+			mtSalesAmountVO.setModEmpKey(sessionMap.get("empKey"));
+			
 			//매출정보를 등록한다.
 			service.writeMtContractSalesAmountList(mtSalesAmountVO);
 			
@@ -661,7 +790,7 @@ public class MtContractController {
 			returnMap.put("parmMtSbCtYn", mtSalesAmountVO.getParmMtSbCtYn()); //백계약여부.
 			returnMap.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());
 //			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
-			returnMap.put("updateYn", "N");
+//			returnMap.put("updateYn", "N");
 			returnMap.put("successYN", "Y");
 		} catch (Exception e) {
 			returnMap.put("successYN", "N");
@@ -669,32 +798,123 @@ public class MtContractController {
 		}		
 		return returnMap;
 	}	
+	
+	
+	//=============================================== 백계약 =============================================
+	/**
+	 * 
+	  * @Method Name : backOrderDetail
+	  * @Cdate       : 2021. 1. 8.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 백계약 상세조회
+	  *                       1. 유지보수계약 기본정보 조회
+	  *                       2. 백계약 거래처 목록 조회
+	  *                       3. 백계약 첫번째 거래처 첫번째 백계약 조회
+	  * @param mtBackOrderVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
 	@RequestMapping(value="/detail/backOrderInfo.do")
-	public String backOrderDetail(MtContractVO mtContractVO, ModelMap model) throws Exception {
-
+	public String backOrderDetail(MtBackOrderVO mtBackOrderVO, ModelMap model) throws Exception {
+		
+		//기본정보 관련 
+		List <?> acDirectorList = null; // 고객사 담당자 리스트.
 		List<?> empList = null;
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		MtContractVO basicContractInfo = null;
-		List<?> backOrderList = null;
+		
+		List<MtBackOrderVO> backOrderList = null;
+		List<MtBackOrderProductVO> backOrderProductList = null;		
+//		MtBackOrderVO vo = null;
 		try {
-			//기본정보 조회
-			basicContractInfo = service.selectContractBasicDetail(mtContractVO.getMtIntegrateKey());
 			
-			//백계약 품목 조회
-			backOrderList = null;
-			
-			//직원정보 조회
-			empList = service.selectEmployeeList();
+			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))) {
+				//기본정보 조회
+				basicContractInfo = service.selectContractBasicDetail(mtBackOrderVO.getMtIntegrateKey());
+				
+				if(null !=basicContractInfo) {
+					// 백계약 거래처 정보 조회
+					backOrderList = service.selectBackOrderList(mtBackOrderVO.getMtIntegrateKey());
+					
+					
+					if(null != backOrderList && backOrderList.size()>0) {
+						if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))) {
+							/*
+							 * 선택한 거래처의 백계약 품목 조회
+							 * getSelectKey : backorder key (mtOrderKey)
+							 */
+//							backOrderProductList = service.selectBackOrderProductList(mtBackOrderVO.getSelectKey());
+							//선택되지 않은경우 초기 상세화면을 콜한경우 첫번째값을 선택.
+							mtBackOrderVO.setSelectKey(backOrderList.get(0).getMtOrderKey());
+						}
+						/*
+						 * 선택한 거래처의 백계약 품목 조회
+						 * getSelectKey : backorder key (mtOrderKey)
+						 */
+						backOrderProductList = service.selectBackOrderProductList(mtBackOrderVO.getSelectKey());
+						
+					}
+					
+					
+					//직원정보 조회
+					empList = service.selectEmployeeList();
+					// 거래처 직원정보 조회
+					acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+					
+					mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
+					
+				}
+			}
 			
 			model.put("basicContractInfo", basicContractInfo);
-			model.put("backOrderList", backOrderList);			
-			model.put("displayUtil", new CepDisplayUtil());
+			model.put("acDirectorList", acDirectorList);
+			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
+			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("empList", empList);
+			
+			model.put("backOrderList", backOrderList);
+			model.put("selectKey", mtBackOrderVO.getSelectKey());			
+			model.put("backOrderProductList", backOrderProductList);			
+			model.put("displayUtil", new CepDisplayUtil());
+//			model.put("empList", empList);
 		} catch (Exception e) {
 			
-			logger.error("writeBackOrderInfoView error", e);
+			logger.error("backOrderDetail error", e);
 		}
 		
 		return "maintenance/contract/detail/backOrderInfo";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/detail/selectBackOrderProductList.do", method=RequestMethod.POST)
+	public Map<String, Object>  selectBackOrderProductList( @RequestBody String mtOrderKey) throws Exception {
+
+		List<MtBackOrderProductVO> backOrderProductList = null;	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+	     try {
+	    	 
+	    	 logger.debug("mtOrderKey=======>"+mtOrderKey);
+	    	 if(!"".equals(CepStringUtil.getDefaultValue(mtOrderKey, ""))) {
+	    		 returnMap = new HashMap<String, Object>();
+	    	     
+		         backOrderProductList = service.selectBackOrderProductList(mtOrderKey);
+		         
+		         logger.debug("productList.size=====>"+backOrderProductList.size());
+		//         modelAndView.setViewName("jsonView");
+		         returnMap.put("productList", backOrderProductList);
+		         returnMap.put("successYN", "Y");
+	    	 } else {
+	    		 returnMap.put("successYN", "N");
+	    	 }
+	    	
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("selectBackOrderProductList error", e);
+		}
+	    
+	     return returnMap; 
 	}
 	
 	/**
@@ -712,11 +932,13 @@ public class MtContractController {
 	@RequestMapping(value="/write/backOrderInfoView.do")
 	public String writeBackOrderInfoView(MtBackOrderVO mtBackOrderVO, ModelMap model) throws Exception {
 
-		List<?> backOrderSelectBox = null;
+		List<EgovMap> backOrderSelectBox = null;
+		EgovMap map = null;
 		MtBackOrderVO returnVo = null;
 		List < ? > acDirectorList = null;
 //		List < ? > backOrderBoxList = null;
 		int listCount = 1;
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		try {		
 			
 //			model.put("toDay", CepDateUtil.getToday("yyyy-MM-dd"));
@@ -724,40 +946,71 @@ public class MtContractController {
 			mtBackOrderVO.setMtOrderDt(CepDateUtil.getToday("yyyyMMdd"));
 			logger.debug("mtBackOrderVO.getMtIntegrateKey()===>"+mtBackOrderVO.getMtIntegrateKey());
 			logger.debug("mtBackOrderVO.getSelectKey()===>"+mtBackOrderVO.getSelectKey());
-			if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))){
-				mtBackOrderVO.setMtIntegrateKey("MA200024");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
-			}
-			if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
+//			if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))){
+//				mtBackOrderVO.setMtIntegrateKey("MA200024");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
+//			}
+//			if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
 //				mtBackOrderVO.setSelectKey("MB200002");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
-			}
-			mtBackOrderVO.setUpdateYn("N");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.			
+//			}
+//			mtBackOrderVO.setUpdateYn("N");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.			
 			
 			
-			
-			
+			mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
+			logger.debug("mtContractCountInfo.mtSalesAmountCnt==>"+mtContractCountInfo.get("mtSalesAmountCnt"));
 			//백계약 등록  거래처 목록을 가져온다.
 			backOrderSelectBox = service.selectBackOrderSelectBoxList(mtBackOrderVO.getMtIntegrateKey());			
-			if(null !=backOrderSelectBox){
-				mtBackOrderVO.setMtSaveCnt(backOrderSelectBox.size());//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
-			}
-			
-			//백계약 정보를 조회한다.
-			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
-				returnVo = service. selectBackOrderDetail(mtBackOrderVO.getSelectKey());
-				if(null != returnVo){
-					returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
-					returnVo.setSelectKey(mtBackOrderVO.getSelectKey());
-					returnVo.setMtSaveCnt(mtBackOrderVO.getMtSaveCnt());
-					if(null !=returnVo.getMtBackOrderProductVoList() && returnVo.getMtBackOrderProductVoList().size()>1){
-						listCount = returnVo.getMtBackOrderProductVoList().size();
+			if(null !=backOrderSelectBox && backOrderSelectBox.size()>0){
+				mtBackOrderVO.setMtSaveCnt(backOrderSelectBox.size());
+				if("newOrder".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getBtnOption(), ""))){
+					//신규저장
+					returnVo = mtBackOrderVO;
+				} else {
+					//백계약 정보를 조회한다.
+					if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
+						returnVo = service.selectBackOrderDetail(mtBackOrderVO.getSelectKey());
+						
+					} else {
+						map = backOrderSelectBox.get(0);
+						returnVo = service.selectBackOrderDetail((String)map.get("mtOrderKey"));
+						mtBackOrderVO.setSelectKey((String)map.get("mtOrderKey"));
 					}
-					acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
-					
-//					backOrderBoxList = service.selectBackOrderSelectBoxList(returnVo.getMtIntegrateKey());
+					if(null != returnVo){
+//						returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
+						returnVo.setSelectKey(mtBackOrderVO.getSelectKey());
+						returnVo.setMtSaveCnt(mtBackOrderVO.getMtSaveCnt());
+						if(null !=returnVo.getMtBackOrderProductVoList() && returnVo.getMtBackOrderProductVoList().size()>1){
+							listCount = returnVo.getMtBackOrderProductVoList().size();
+						}
+						acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
+						
+//						backOrderBoxList = service.selectBackOrderSelectBoxList(returnVo.getMtIntegrateKey());
+						
+					}
 				}
+//				mtBackOrderVO.setMtSaveCnt(backOrderSelectBox.size());//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
+				
 			} else {
 				returnVo = mtBackOrderVO;
 			}
+			
+			//백계약 정보를 조회한다.
+//			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
+//				returnVo = service. selectBackOrderDetail(mtBackOrderVO.getSelectKey());
+//				if(null != returnVo){
+//					returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
+//					returnVo.setSelectKey(mtBackOrderVO.getSelectKey());
+//					returnVo.setMtSaveCnt(mtBackOrderVO.getMtSaveCnt());
+//					if(null !=returnVo.getMtBackOrderProductVoList() && returnVo.getMtBackOrderProductVoList().size()>1){
+//						listCount = returnVo.getMtBackOrderProductVoList().size();
+//					}
+//					acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
+//					
+////					backOrderBoxList = service.selectBackOrderSelectBoxList(returnVo.getMtIntegrateKey());
+//					
+//				}
+//			} else {
+//				returnVo = mtBackOrderVO;
+//			}
 			
 			logger.debug("mtBackOrderVO.getMtOrderAcKeyNm()====>"+returnVo.getMtOrderAcKeyNm());
 //			logger.debug("backOrderSelectBox.size()====>"+backOrderSelectBox.size());
@@ -766,6 +1019,7 @@ public class MtContractController {
 			model.put("backOrderBoxList", backOrderSelectBox);
 			model.put("mtBackOrderVO", returnVo);
 			model.put("listCount", listCount);
+			model.put("mtContractCountInfo", mtContractCountInfo);
 			
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("acDirectorList", acDirectorList);
@@ -799,7 +1053,7 @@ public class MtContractController {
 		
 		String mtOrderKey = null;
 		try {
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mtBackOrderVO.setRegEmpKey(sessionMap.get("empKey"));
 			mtBackOrderVO.setModEmpKey(sessionMap.get("empKey"));
@@ -859,10 +1113,10 @@ public class MtContractController {
 	  * @return
 	  * @throws Exception
 	 */
-	@RequestMapping(value="/delete/backOrderAll.do", method=RequestMethod.POST)
+	@RequestMapping(value="/delete/backOrder.do", method=RequestMethod.POST)
 	@ResponseBody
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> deleteBackOrderAll(HttpServletRequest request, @RequestBody MtBackOrderVO mtBackOrderVO) throws Exception {
+	public Map<String, Object> deleteBackOrder(HttpServletRequest request, @RequestBody MtBackOrderVO mtBackOrderVO) throws Exception {
 
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> sessionMap = null;
@@ -873,7 +1127,7 @@ public class MtContractController {
 			mtBackOrderVO.setMtOrderDt(CepDateUtil.getToday("yyyyMMdd"));
 			logger.debug("mtBackOrderVO.getMtIntegrateKey()===>"+mtBackOrderVO.getMtIntegrateKey());
 			logger.debug("mtBackOrderVO.getSelectKey()===>"+mtBackOrderVO.getSelectKey());
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			service.deleteBackOrder(sessionMap.get("empKey"), mtBackOrderVO.getSelectKey());
 			
@@ -887,6 +1141,9 @@ public class MtContractController {
 		
 		return returnMap;
 	}
+	
+	
+	//============================================== 매입정보 ====================================================
 	
 	/**
 	 * 
@@ -909,11 +1166,12 @@ public class MtContractController {
 		String mtOrderKey = null;
 		int listCount = 1;
 		int purchaseAmountSize = 0;
+//		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		try {			
 			//테스트를 위해서.
-			if("".equals(CepStringUtil.getDefaultValue(mtBuyAmountListVO.getMtIntegrateKey(), ""))){
-				mtBuyAmountListVO.setMtIntegrateKey("MA200024");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
-			}
+//			if("".equals(CepStringUtil.getDefaultValue(mtBuyAmountListVO.getMtIntegrateKey(), ""))){
+//				mtBuyAmountListVO.setMtIntegrateKey("MA200024");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
+//			}
 			
 			///////////////////////////////////////////////////////////////////////////////////
 			
@@ -935,17 +1193,15 @@ public class MtContractController {
 				buyAmountRefer = service.selectMtBuyAmountRefer(mtBuyAmountListVO.getMtIntegrateKey(), mtOrderKey);
 				
 				//3. 첫번째 매입처의 년도별 매입정보 목록을 가져온다.
-				purchaseAmountList = service.selectMtContractBuyAmountList(mtOrderKey);
+				purchaseAmountList = service.selectMtContractBuyAmountList(mtBuyAmountListVO.getMtIntegrateKey(), mtOrderKey);
 								
 				if(null !=purchaseAmountList) {
 					purchaseAmountSize = purchaseAmountList.size();
 					if(purchaseAmountList.size()>1) {
 						listCount = purchaseAmountList.size();
 					}
-				}
-				
-				
-			}			
+				}				
+			}
 
 			model.put("backOrderSelectBox", backOrderSelectBox);
 			model.put("buyAmountRefer", buyAmountRefer);
@@ -980,7 +1236,7 @@ public class MtContractController {
 		HashMap<String, String> sessionMap = null;
 		Map<String, Object> returnMap = new HashMap<>();
 		try {
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("admin");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mtBuyAmountListVO.setRegEmpKey(sessionMap.get("empKey"));
 			mtBuyAmountListVO.setModEmpKey(sessionMap.get("empKey"));
@@ -1015,33 +1271,144 @@ public class MtContractController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/detail/purchaseAmountInfo.do")
-	public String mtPurchaseAmountDetail(MtContractVO mtContractVO, ModelMap model) throws Exception {
+	public String mtPurchaseAmountDetail(MtBuyAmountVO mtBuyAmountVO, ModelMap model) throws Exception {
 		
-		List<?> purchaseAmountList = null;
+		//기본정보 관련 
+		List <?> acDirectorList = null; // 고객사 담당자 리스트.
 		List<?> empList = null;
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		MtContractVO basicContractInfo = null;
+		
+		//매입정보
+		List<?> purchaseAmountList = null;
+		List<EgovMap> backOrderSelectBox = null;
+
+		EgovMap map = null;
+		String mtOrderKey = null;
+
+		int mtPurchaseTotalAmount = 0;
 		try {
-			
+			logger.debug("mtBuyAmountVO.getMtIntegrateKey()===>"+mtBuyAmountVO.getMtIntegrateKey());
 			//기본정보 조회
-			basicContractInfo = service.selectContractBasicDetail(mtContractVO.getMtIntegrateKey());
+			basicContractInfo = service.selectContractBasicDetail(mtBuyAmountVO.getMtIntegrateKey());
 			
-			//매입금액 리스트  조회
-			
-			
+			if(null !=basicContractInfo) {
+				backOrderSelectBox = service.selectBackOrderSelectBoxList(mtBuyAmountVO.getMtIntegrateKey());
+				if(null !=backOrderSelectBox && backOrderSelectBox.size()>0) {
+//					if(!"".equals(CepStringUtil.getDefaultValue(mtBuyAmountVO.getMtOrderKey(), ""))){
+//						mtOrderKey = mtBuyAmountVO.getMtOrderKey();
+//					} else {
+//						//매입정보 팝업을 처음 호출한 경우
+//						map =backOrderSelectBox.get(0);
+//						mtOrderKey = (String)map.get("mtOrderKey");
+//					}
+					//매입금액 리스트  조회
+					purchaseAmountList = service.selectMtContractBuyAmountList(mtBuyAmountVO.getMtIntegrateKey(), mtBuyAmountVO.getMtOrderKey());
+					
+					if(null != purchaseAmountList && purchaseAmountList.size()>0) {
+						//매입금액 총액 조회.
+						mtPurchaseTotalAmount = service.selectMtBuyTotalAmount(mtBuyAmountVO.getMtIntegrateKey(), mtBuyAmountVO.getMtOrderKey());
+					}
+				}				
+			}
 			
 			//직원정보 조회
 			empList = service.selectEmployeeList();
+			// 거래처 직원정보 조회
+			acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+			
+			mtContractCountInfo = service.selectMtContractCount(mtBuyAmountVO.getMtIntegrateKey());
 			
 			model.put("basicContractInfo", basicContractInfo);
-			model.put("displayUtil", new CepDisplayUtil());
-						
+			model.put("mtContractCountInfo", mtContractCountInfo);
+			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
+			model.put("acDirectorList", acDirectorList);
 			model.put("empList", empList);
+			model.put("displayUtil", new CepDisplayUtil());
+			
+
+			model.put("selectKey", mtBuyAmountVO.getSelectKey());//매입거래처 관리키
+			model.put("purchaseAmountList", purchaseAmountList);
+			model.put("backOrderSelectBox", backOrderSelectBox);
+			model.put("mtPurchaseTotalAmount", mtPurchaseTotalAmount);
+
 		} catch (Exception e) {
 			logger.error("purchaseAmountInfo error", e);
 		}
 		
 		return "maintenance/contract/detail/purchaseAmountInfo";
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/detail/selectPurchaseAmountListWithOderKey.do", method=RequestMethod.POST)
+	public Map<String, Object>  selectPurchaseAmountListWithOderKey( @RequestBody MtBuyAmountVO mtBuyAmountVO) throws Exception {
+
+		List<?> purchaseAmountList = null;
+		int mtPurchaseTotalAmount = 0;
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+	     try {
+	    	 logger.debug("mtOrderKey=======>"+mtBuyAmountVO.getMtIntegrateKey());
+	    	 logger.debug("mtOrderKey=======>"+mtBuyAmountVO.getMtOrderKey());
+	    	 if(!"".equals(CepStringUtil.getDefaultValue(mtBuyAmountVO.getMtIntegrateKey(), "")) ) {
+	    		 returnMap = new HashMap<String, Object>();
+	    	     
+	    		 purchaseAmountList = service.selectMtContractBuyAmountList(mtBuyAmountVO.getMtIntegrateKey(), mtBuyAmountVO.getMtOrderKey());
+	    		 if(null != purchaseAmountList && purchaseAmountList.size()>0) {
+					//매입금액 총액 조회.
+					mtPurchaseTotalAmount = service.selectMtBuyTotalAmount(mtBuyAmountVO.getMtIntegrateKey(), mtBuyAmountVO.getMtOrderKey());
+	    		 }
+		         
+		         logger.debug("purchaseAmountList.size=====>"+purchaseAmountList.size());
+		//         modelAndView.setViewName("jsonView");
+		         returnMap.put("purchaseAmountList", purchaseAmountList);
+		         returnMap.put("mtPurchaseTotalAmount", mtPurchaseTotalAmount);
+		         returnMap.put("successYN", "Y");
+	    	 } else {
+	    		 returnMap.put("successYN", "N");
+	    	 }
+	    	
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("selectPurchaseAmountListWithOderKey error", e);
+		}
+	    
+	     return returnMap; 
+	}
+	
+	@RequestMapping(value="/detail/deletePurchaseAmountYear.do", method=RequestMethod.POST)
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> deletePurchaseAmountYear(HttpServletRequest request, @RequestBody MtBuyAmountVO mtBuyAmountVO) throws Exception {
+
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		String[] deleteKeyList = new String[1];
+		try {		
+
+			logger.debug("mtBuyAmountVO.getMtIntegrateKey()===>"+mtBuyAmountVO.getMtIntegrateKey());
+			logger.debug("mtBuyAmountVO.getMtOrderKey()===>"+mtBuyAmountVO.getMtOrderKey());
+			logger.debug("mtBuyAmountVO.getDeleteListKeys()===>"+mtBuyAmountVO.getDeleteListKeys());
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			if(!"".equals(CepStringUtil.getDefaultValue(mtBuyAmountVO.getMtOrderKey(), ""))
+					&& !"".equals(CepStringUtil.getDefaultValue(mtBuyAmountVO.getDeleteListKeys(), ""))) {
+				deleteKeyList[0] = mtBuyAmountVO.getDeleteListKeys();
+				service.deleteMtContractBuyAmountList(sessionMap.get("empKey"),mtBuyAmountVO.getMtOrderKey()
+						, deleteKeyList);
+				
+//				returnMap.put("mtIntegrateKey", mtBuyAmountVO.getMtIntegrateKey());
+				returnMap.put("successYN", "Y");
+			} else {
+				returnMap.put("successYN", "N");
+			}
+			
+			
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("error", e);
+		}
+		
+		return returnMap;
+	}	
 	///////////////////////////////////////////////////////////////////////////////////
 	
 	

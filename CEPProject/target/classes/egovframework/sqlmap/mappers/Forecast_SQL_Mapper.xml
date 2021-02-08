@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.forecast.service.impl.ForecastMapper">
+
+<!--Forecast 관련 sql 관리하는 Mapper.xml  -->
+
+	<resultMap id="forecastVO" type="com.cep.forecast.vo.ForecastVO">
+		<result property="spKey"           column="SP_KEY"/>
+		<result property="acKey"           column="AC_KEY"/>
+		<result property="spBusiNm"        column="SP_BUSI_NM"/>
+		<result property="pmKey"           column="PM_KEY"/>
+		<result property="pmDetail"        column="PM_DETAIL"/>
+		<result property="fcSjConfQt"      column="FC_SJ_CONF_QT"/>
+		<result property="fcBuyAmount"     column="FC_SALES_AMOUNT"/>
+		<result property="fcSalesAmount"   column="FC_BUY_AMOUNT"/>
+		<result property="fcSalesProfit"   column="FC_SALES_PROFIT"/>
+		<result property="fcSalesDt"       column="FC_SALES_DT"/>
+		<result property="fcCollectDt"     column="FC_COLLECT_DT"/>
+		<result property="fcBuyPayDt"      column="FC_BUY_PAY_DT"/>
+		<result property="spState"         column="SP_STATE"/>
+		<result property="salesAcKey"      column="SALES_AC_KEY"/>
+		<result property="buyAcKey"        column="BUY_AC_KEY"/>
+		<result property="remark"          column="REMARK"/>
+		<result property="regDt"           column="REG_DT"/>
+		<result property="regTm"           column="REG_TM" />
+		<result property="regEmpKey"       column="REG_EMP_KEY" />
+		<result property="modDt"           column="MOD_DT"/>
+		<result property="modTm"           column="MOD_TM" />
+		<result property="modEmpKey"       column="MOD_EMP_KEY" />
+		
+		<result property="mfAcNm"          column="MF_AC_NM" />
+		<result property="pmDetailClassCd" column="PM_DETAIL_CLASS_CD" />
+		<result property="pmNm"            column="PM_NM" />
+		<result property="salesAcNm"       column="SALES_AC_NM" />
+		<result property="buyAcNm"         column="BUY_AC_NM" />
+	</resultMap>
+	
+	<!--
+		Forecast 목록 조회 쿼리
+	  -->
+	<select id="selectFocecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultMap="forecastVO">				
+		
+		SELECT SM.SP_KEY              AS SP_KEY
+		     , SM.AC_KEY              AS AC_KEY
+		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
+		     , SM.PM_KEY              AS PM_KEY
+		     , SM.PM_DETAIL           AS PM_DETAIL
+		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
+		     , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT
+		     , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT
+		     , SM.FC_SALES_PROFIT     AS FC_SALES_PROFIT
+		     , SM.FC_SALES_DT         AS FC_SALES_DT
+		     , SM.FC_COLLECT_DT       AS FC_COLLECT_DT
+		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT
+		     , SM.SP_STATE            AS SP_STATE
+		     , SM.SALES_AC_KEY        AS SALES_AC_KEY
+		     , SM.BUY_AC_KEY          AS BUY_AC_KEY
+		     , SM.REMARK              AS REMARK
+		     , SM.REG_TM              AS REG_TM
+		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
+		     , SM.MOD_DT              AS MOD_DT
+		     , SM.MOD_TM              AS MOD_TM
+		     , SM.MOD_EMP_KEY         AS MOD_EMP_KEY
+			  , AC.AC_NM              AS MF_AC_NM
+			  , PM.PM_NM_CD           AS PM_NM
+			  , PM.PM_DETAIL_CLASS_CD AS PM_DETAIL_CLASS_CD
+			  , SAC.AC_NM             AS SALES_AC_NM
+			  , BAC.AC_NM             AS BUY_AC_NM
+		FROM SP_MAIN_TB          SM
+			 JOIN CMM_ACCOUNT_TB AC 
+			 ON SM.AC_KEY = AC.AC_KEY
+			 JOIN PM_PRODUCT_MNG_TB PM
+			 ON SM.PM_KEY = PM.PM_KEY
+			 JOIN CMM_ACCOUNT_TB SAC
+			 ON SM.SALES_AC_KEY = SAC.AC_KEY
+			 JOIN CMM_ACCOUNT_TB BAC
+			 ON SM.BUY_AC_KEY = BAC.AC_KEY
+		WHERE 1=1	
+		ORDER BY SM.REG_DT DESC, SM.REG_TM DESC		
+		
+	</select>
+	
+	<select id="makeSpKey" resultType="String">
+		SELECT make_key('SP')
+	</select>
+	
+	<insert id="insertBasic" parameterType="com.cep.forecast.vo.ForecastVO">
+		INSERT INTO SP_MAIN_TB
+		(
+			  SP_KEY
+			, AC_KEY
+			, SALES_CT_CLASS
+			, SP_BUSI_NM
+			, PM_KEY
+			, PM_DETAIL
+			, FC_SJ_CONF_QT
+			, SP_STATE
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+		)
+		VALUES
+		(
+			  #{spKey}
+			, #{acKey}
+			, #{salesCtClass}
+			, #{spBusiNm}
+			, #{pmKey}
+			, #{pmDetail}
+			, #{fcSjConfQt}
+			, #{spState}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+		)
+
+	</insert>
+	
+	<select id="selectForecast" parameterType="com.cep.forecast.vo.ForecastVO" resultType="com.cep.forecast.vo.ForecastVO">				
+		
+		SELECT SM.SP_KEY              AS SP_KEY 
+		     , SM.AC_KEY              AS AC_KEY
+		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
+		     , SM.PM_KEY              AS PM_KEY
+		     , SM.PM_DETAIL           AS PM_DETAIL
+		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
+		     , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT
+		     , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT
+		     , SM.FC_SALES_PROFIT     AS FC_SALES_PROFIT
+		     , SM.FC_SALES_DT         AS FC_SALES_DT
+		     , SM.FC_COLLECT_DT       AS FC_COLLECT_DT
+		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT
+		     , SM.SP_STATE            AS SP_STATE
+		     , SM.SALES_AC_KEY        AS SALES_AC_KEY
+		     , SM.BUY_AC_KEY          AS BUY_AC_KEY
+		     , SM.REMARK              AS REMARK
+		     , SM.REG_TM              AS REG_TM
+		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
+		     , SM.MOD_DT              AS MOD_DT
+		     , SM.MOD_TM              AS MOD_TM
+		     , SM.MOD_EMP_KEY         AS MOD_EMP_KEY
+		     , AC.AC_NM               AS MF_AC_NM
+			  , (SELECT AC_NM FROM CMM_ACCOUNT_TB WHERE AC_KEY = SM.SALES_AC_KEY) AS SALES_AC_NM
+			  , (SELECT AC_NM FROM CMM_ACCOUNT_TB WHERE AC_KEY = SM.BUY_AC_KEY)   AS BUY_AC_NM
+		FROM SP_MAIN_TB          SM
+			 JOIN CMM_ACCOUNT_TB AC 
+			 ON SM.AC_KEY = AC.AC_KEY
+		WHERE SM.SP_KEY = #{spKey}
+		ORDER BY SM.REG_DT DESC, SM.REG_TM DESC		
+				
+		
+	</select>
+	
+</mapper>

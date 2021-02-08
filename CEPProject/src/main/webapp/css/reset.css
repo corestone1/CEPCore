@@ -7,4 +7,5 @@ input[type="text"], input[type="password"] { -webkit-appearance: none; border: n
 input[type="checkbox"] { -webkit-appearance: checkbox; }
 input[type="radio"] { border: none; }
 button, input[type="button"], input[type="submit"], input[type="reset"], input[type="file"] { -webkit-appearance: button; }
-table { border-spacing: 0; }
+table { border-spacing: 0; background: #fff; }
+iframe { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
