@@ -80,7 +80,7 @@
 		display: table;
 	}
 	.popContainer .middle table tbody {
-		height: 504px;
+		height: 218px;
 		overflow-y: auto;
 		overflow-x: hidden;
 		float: left;
@@ -147,16 +147,25 @@
 	function fn_productSelect(mtPmKey,pmNmCd,mtPmSerialNum,mtPmQuantity,mtPmUprice, totalAmount, mtPmStartDt, mtPmEndDt){
 		var num = $('#whereNum').val();
 		
-		opener.document.getElementById('prodList-'+num+'-mtPmKeyNm').value = pmNmCd;
-		opener.document.getElementById('prodList-'+num+'-mtPmKey').value = mtPmKey;
-		//opener.document.getElementById('prodList-'+num+'-totalAmount').value = totalAmount;
-		opener.document.getElementById('prodList-'+num+'-totalAmount').value = '';
-		opener.document.getElementById('prodList-'+num+'-mtOrderPmQuantity').value = mtPmQuantity;
-		//opener.document.getElementById('prodList-'+num+'-mtOrderPmUprice').value = mtPmUprice;
-		opener.document.getElementById('prodList-'+num+'-mtOrderPmUprice').value = '';
-		opener.document.getElementById('prodList-'+num+'-mtPmSerialNum').value = mtPmSerialNum;
-		opener.document.getElementById('prodList-'+num+'-mtStartDt').value = mtPmStartDt;
-		opener.document.getElementById('prodList-'+num+'-mtEndDt').value = mtPmEndDt;
+		if("backOrderPm" == $('#searchGubun').val() ) {
+			opener.document.getElementById('prodList-'+num+'-mtPmKeyNm').value = pmNmCd;
+			opener.document.getElementById('prodList-'+num+'-mtPmKey').value = mtPmKey;
+			//opener.document.getElementById('prodList-'+num+'-totalAmount').value = totalAmount;
+			opener.document.getElementById('prodList-'+num+'-totalAmount').value = '';
+			opener.document.getElementById('prodList-'+num+'-mtOrderPmQuantity').value = mtPmQuantity;
+			//opener.document.getElementById('prodList-'+num+'-mtOrderPmUprice').value = mtPmUprice;
+			opener.document.getElementById('prodList-'+num+'-mtOrderPmUprice').value = '';
+			opener.document.getElementById('prodList-'+num+'-mtPmSerialNum').value = mtPmSerialNum;
+			opener.document.getElementById('prodList-'+num+'-mtStartDt').value = mtPmStartDt;
+			opener.document.getElementById('prodList-'+num+'-mtEndDt').value = mtPmEndDt;
+			opener.document.getElementById('prodList-'+num+'-checkStartDt').value = mtPmStartDt;
+			opener.document.getElementById('prodList-'+num+'-checkEndDt').value = mtPmEndDt;
+		} else {
+			opener.document.getElementById('prodList-'+num+'-mtPmKeyNm').value = pmNmCd;
+			opener.document.getElementById('prodList-'+num+'-mtPmKey').value = mtPmKey;
+			opener.document.getElementById('prodList-'+num+'-mtPmSerialNum').value = mtPmSerialNum;
+		}
+		
 		close();
 	   /*  var dialogLayer = $('#dialogId').val();
 	    $("#" +dialogLayer).dialog('close'); */
@@ -169,14 +178,14 @@
 </script>	
 <form:form id="listForm" name="listForm" modelAttribute="searchVO" method="post" onsubmit="return false" >
 <input type="hidden" id="whereNum" name="whereNum" value="<c:out value="${whereNum}"/>" />
+<input type="hidden" id="searchGubun" name="searchGubun" value="<c:out value="${searchGubun}"/>" />
 <input type="hidden" id="selectIntegrateKey" name="selectIntegrateKey" value="<c:out value="${selectIntegrateKey}"/>" />
 <fieldset>
 	<div class="popContainer">
 		<div class="top">
 			<div>
 				<div class="floatL ftw500">유지보수 제품 목록</div>
-				<div class="floatR" style="margin-right: 40px;">
-				
+				<div class="floatR" style="margin-right: 40px;">				
 					<span><form:input path="searchPmNmCd" type="text" placeholder="제품명"/></span>					
 					<span><form:input path="searchSerialNum" type="text" placeholder="제품시리얼"/></span>
 					<span id="span_search" style="vertical-align:top;" >
@@ -231,18 +240,6 @@
 	            				<%-- <td align="center" class="listtd"><c:out value="${item.remark}"/>&nbsp;</td> --%>
 	            			</tr>
 	        			</c:forEach>
-						<!-- <tr>
-							<td onclick="event.cancelBubble = true;"></td>
-							<td>002-2018-1220</td>
-							<td>미래에셋생명</td>
-							<td>VDI 중요단말기 환경 구축 및 노후장비교체</td>
-							<td>2018-12-12</td>
-							<td>2018-12-12</td>
-							<td>71일</td>
-							<td>71일</td>
-							<td><input type="hidden" value="PF" />수행</td>
-							<td>홍길동차장</td>
-						</tr> -->
 					</tbody>
 				</table>
 			</div>

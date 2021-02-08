@@ -254,7 +254,8 @@
 		function fn_detail(pjKey) {
 			form = document.listForm;
 			form.pjKey.value = pjKey;
-			form.action = "<c:url value='/project/detail/bidding.do'/>";
+			//form.action = "/project/detail/bidding.do";
+			form.action = "/project/detail/main.do";
 			form.submit(); 
 		}
 		
@@ -263,6 +264,7 @@
 <body>
 	<form:form commandName="searchVO"  id="listForm" name="listForm" method="post" onsubmit="return false">
 		<input type="hidden" value="<c:out value="${resultCode}"/>"/>
+		<input type="hidden" name="pjKey" value="" />
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">

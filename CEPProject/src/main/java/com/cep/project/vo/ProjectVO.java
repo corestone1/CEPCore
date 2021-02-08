@@ -13,7 +13,7 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	
 	private String pjKey;
 	private String acKey;
-	private String acDirectorKey;
+	private int    acDirectorKey;
 	private String pjNm;
 	private String pjStartDt;
 	private String pjInspectDt;
@@ -38,10 +38,10 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setAcKey(String acKey) {
 		this.acKey = acKey;
 	}
-	public String getAcDirectorKey() {
+	public int getAcDirectorKey() {
 		return acDirectorKey;
 	}
-	public void setAcDirectorKey(String acDirectorKey) {
+	public void setAcDirectorKey(int acDirectorKey) {
 		this.acDirectorKey = acDirectorKey;
 	}
 	public String getPjNm() {
