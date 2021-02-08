@@ -5,394 +5,401 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>유지보수계약 상세(매입정보)</title>
-<style>
-.sfcnt {
-	height: 91px;
-}
-
-.bottom>div {
-	margin-top: 22px;
-}
-
-.nav {
-	width: 100%;
-	height: 49px;
-}
-
-.mContentsWrap {
-	background-color: #f6f7fc;
-	box-shadow: inset 0 7px 9px -3px rgba(0, 0, 0, 0.1);
-	height: 802px;
-}
-
-.mContentsWrap .mContents {
-	padding: 38px 71px;
-	width: 1662px;
-}
-
-.title {
-	height: 50px;
-}
-
-.title>label {
-	font-size: 26px;
-}
-
-.mContents>div:first-child {
-	width: 37%;
-}
-
-.mContents>.fxd {
-	width: 60%;
-}
-
-.mContents .stitle {
-	font-size: 18px;
-	font-weight: 500;
-	margin-bottom: 10px;
-	margin-top: 30px;
-}
-
-.mContents .stitle2 {
-	font-size: 17px;
-	font-weight: 400;
-	margin-bottom: 1px;
-	margin-top: 26px;
-}
-
-.mContents .cg {
-	color: #24a37e;
-}
-
-.mContents .stitle img {
-	width: 27px;
-	margin-left: 10px;
-}
-
-.mContents table {
-	border-collapse: collapse;
-	font-size: 15px;
-	table-layout: fixed;
-	width: 614px;
-}
-
-.mContents table tr td {
-	padding: 13px 20px;
-}
-
-/* 기본정보 싸이즈 조정 */
-.mContents .bsc {
-	border-top: 4px solid #32bc94 !important;
-	background-color: #ddf0ec;
-	border: 1px solid #bee2da;
-	border-bottom: 2px solid #bfe3db;
-}
-
-.mContents .bsc tbody {
-	height: 576px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	float: left;
-}
-
-.mContents .bsc tr td {
-	color: #0e8a67;
-}
-
-.mContents .bsc tr td:first-child {
-	box-shadow: inset -7px 0 9px -4px #d0e2de;
-	width: 153px;
-	font-weight: 400;
-	padding: 13px 13px 13px 13px;
-}
-
-.mContents .bsc tr td:last-child {
-	width: 470px;
-	font-weight: 200;
-}
-
-.mContents .bsc tr td label.file {
-	text-decoration: underline;
-}
-
-.mContents .title ul li {
-	float: left;
-	text-align: center;
-	font-size: 17px;
-	cursor: pointer;
-}
-
-.mContents .title ul li:last-child {
-	clear: both;
-	float: none;
-	width: 0 !important;
-}
-
-.mContents>.fxd .title ul {
-	height: 46px;
-	width: 100%;
-	border-radius: 35px;
-	background-color: #d3d3d3;
-}
-
-.mContents>.fxd .title ul li {
-	width: 25%;
-	line-height: 46px;
-	color: #777777;
-	background-color: #d3d3d3;
-	border-radius: 35px;
-}
-
-.mContents>.fxd .title ul li>label {
-	display: inline-block;
-	width: 100%;
-	/* cursor: pointer; */
-}
-
-.mContents>.fxd .title ul li.on, .mContents>.fxd .title ul li:hover {
-	color: #fff !important;
-	background-color: #4c3d92;
-}
-
-.mContents .dtlWrap2 {
-	height: 490px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	border-bottom: 2px solid #c4c4c4;
-}
-
-.mContents .dtl, .mContents .dtl1 {
-	width: 992px;
-	font-size: 15px;
-	border-collapse: collapse;
-	font-weight: 300;
-	overflow: hidden;
-}
-
-.mContents .dtl1 thead {
-	background-color: #e1dff5;
-	float: left;
-	width: 995px;
-	border-top: 4px solid #6a5baf;
-}
-
-.mContents .dtl thead tr, .mContents .dtl1 thead tr {
-	/* display: table; */
-	width: 997px;
-}
-
-.mContents .dtl {
-	width: 997px;
-	height: 490px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	float: left;
-}
-
-.mContents .dtl tbody {
-	/* width: 997px;
-		   /*height: 532px;*/
-	/* overflow-y: auto;
-		   overflow-x: hidden; */
-	float: left;
-	/*border-bottom: 2px solid #c4c4c4;*/
-}
-
-.mContents .dtl tbody tr {
-	/* display: table; */
-	width: 997px;
-	cursor: pointer;
-}
-
-.mContents .dtl tbody:hover {
-	background-color: #ddf0ec;
-}
-/* .mContents .dtl thead tr th:first-child, .mContents .dtl1 thead tr th:first-child {
-		   width: 10px;
+	<title>유지보수계약 상세(매입정보)</title>
+	<style>
+		.sfcnt {
+			height: 91px;
 		}
-		.mContents .dtl tbody tr:first-child td:first-child {
-		   width: 10px;
-		} */
-/* .mContents .dtl tbody tr td:nth-child(3) {
-		   font-weight: 400;
-		} */
-.mContents .dtl1 thead th, .mContents .dtl tbody tr td {
-	padding: 10px 7px;
-	border: 1px solid #edebef;
-	text-align: center;
-	width: 100px;
-	max-width: 100px
-}
-
-.mContents .dtl tbody tr td {
-	font-weight: 200;
-}
-/* .mContents .dtl thead th:first-child,
-		.mContents .dtl tbody td:first-child {
-		   width: 51px;
-		   padding: 0;
+		
+		.bottom>div {
+			margin-top: 22px;
 		}
-		.mContents .dtl thead th:nth-child(2),
-		.mContents .dtl tbody td:nth-child(2),
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6) {
-		   width: 51px;
+		
+		.nav {
+			width: 100%;
+			height: 49px;
 		}
-		.mContents .dtl thead th:nth-child(3),
-		.mContents .dtl tbody td:nth-child(3) {
-		   width: 170px;
+		
+		.mContentsWrap {
+			background-color: #f6f7fc;
+			box-shadow: inset 0 7px 9px -3px rgba(0, 0, 0, 0.1);
+			height: 802px;
 		}
-		.mContents .dtl thead th:nth-child(4),
-		.mContents .dtl tbody td:nth-child(4),
-		.mContents .dtl thead th:nth-child(5),
-		.mContents .dtl tbody td:nth-child(5),
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6),
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7),
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8),
-		.mContents .dtl thead th:nth-child(9),
-		.mContents .dtl tbody td:nth-child(9), {
-		   width: 90px;
-		} */
-.mContents .dtl tbody tr td>span {
-	display: inline-block;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 84%;
-	margin: 0 auto;
-}
-
-.mContents .dtl tbody tr td img {
-	width: 25px;
-	vertical-align: top;
-}
-
-.detailList li {
-	float: left;
-	text-align: left;
-	margin-left: 10px;
-	line-height: 2.3;
-}
-
-.detailList li:nth-child(2n-1) {
-	width: 82px;
-	font-weight: 400;
-	color: #158566;
-}
-
-.detailList li:nth-child(2n) {
-	width: 316px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-weight: 200;
-	color: #21a17e;
-}
-
-.detailList li:last-child {
-	width: 734px;
-	height: 56px;
-	word-break: break-all;
-	white-space: normal;
-	overflow: auto;
-	line-height: 1.5;
-}
-
-#modBasicTable tr td:first-child {
-	box-shadow: inset -7px 0 9px -4px #d0e2de;
-	width: 132px;
-	font-weight: 400;
-	padding: 11px 8px 11px 17px;
-}
-
-#modBasicTable tr td:last-child {
-	padding: 5px 20px;
-	width: 463px;
-}
-
-#modBasicTable input[type="text"], #modBasicTable textarea {
-	width: 401px;
-	color: #0e8a67;
-}
-
-#modBasicTable textarea {
-	color: #0e8a67;
-	height: 105px;
-	border: 1px solid #e6e6e6;
-	padding: 0 10px;
-	resize: none;
-}
-
-#modBasicTable select, #m_listForm select{
-	height: 34px;
-	font-size: 14px;
-	width: 97px;
-	border: 1px solid #e9e9e9;
-	padding: 0 10px;
-	-webkit-appearance: none;
-	background: url(/images/arrow_down.png) no-repeat 91% 50%;
-	background-color: #fff;
-	color: #0e8a67;
-}
-
-#modBasicTable input[class^="calendar"] {
-	width: 140px !important;
-}
-
-#modBasicTable input[class="search"] {
-	background-image: url('/images/search_icon.png');
-	background-repeat: no-repeat;
-	background-position: 95% 50%;
-}
-
-#modBasicTable input[class="pname"] {
-	width: 305px;
-	border: none;
-	outline: none;
-	background-color: #ddf0ec;
-}
-
-.stitle2 input[class="pname"] {
-	width: 130px;
-	border: none;
-	outline: none;
-	background-color: #f6f7fc;
-	text-align: right;
-	font-size: 17px;
-	font-weight: 400;
-}
-
-input[type="text"] {
-	width: 138px;
-	height: 34px;
-	border: 1px solid #e9e9e9;
-	padding: 0 10px;
-	background-color: #fff;
-	font-size: 14px;
-	margin-bottom: 4px;
-}
-
-input[class^="calendar"] {
-	background-image: url(/images/calendar_icon.png);
-	background-repeat: no-repeat;
-	background-position: 95% 50%;
-}
-
-#modBasicTable tr td:first-child label {
-	color: red;
-	vertical-align: middle;
-}
-
-input[class="tCheck"]+label {
-	width: 24px !important;
-	height: 24px !important;
-}
-</style>
-<script>
+		
+		.mContentsWrap .mContents {
+			padding: 38px 71px;
+			width: 1662px;
+		}
+		
+		.title {
+			height: 50px;
+		}
+		
+		.title>label {
+			font-size: 26px;
+		}
+		
+		.mContents>div:first-child {
+			width: 37%;
+		}
+		
+		.mContents>.fxd {
+			width: 60%;
+		}
+		
+		.mContents .stitle {
+			font-size: 18px;
+			font-weight: 500;
+			margin-bottom: 10px;
+			margin-top: 30px;
+		}
+		
+		.mContents .stitle2 {
+			font-size: 17px;
+			font-weight: 400;
+			margin-bottom: 1px;
+			margin-top: 26px;
+		}
+		
+		.mContents .cg {
+			color: #24a37e;
+		}
+		
+		.mContents .stitle img {
+			width: 27px;
+			margin-left: 10px;
+		}
+		
+		.mContents table {
+			border-collapse: collapse;
+			font-size: 15px;
+			table-layout: fixed;
+			width: 614px;
+		}
+		
+		.mContents table tr td {
+			padding: 13px 20px;
+		}
+		
+		/* 기본정보 싸이즈 조정 */
+		.mContents .bsc {
+			border-top: 4px solid #32bc94 !important;
+			background-color: #ddf0ec;
+			border: 1px solid #bee2da;
+			border-bottom: 2px solid #bfe3db;
+		}
+		
+		.mContents .bsc tbody {
+			height: 576px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			float: left;
+		}
+		
+		.mContents .bsc tr td {
+			color: #0e8a67;
+		}
+		
+		.mContents .bsc tr td:first-child {
+			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			width: 153px;
+			font-weight: 400;
+			padding: 13px 13px 13px 13px;
+		}
+		
+		.mContents .bsc tr td:last-child {
+			width: 470px;
+			font-weight: 200;
+		}
+		
+		.mContents .bsc tr td label.file {
+			text-decoration: underline;
+		}
+		
+		.mContents .title ul li {
+			float: left;
+			text-align: center;
+			font-size: 17px;
+			cursor: pointer;
+		}
+		
+		.mContents .title ul li:last-child {
+			clear: both;
+			float: none;
+			width: 0 !important;
+		}
+		
+		.mContents>.fxd .title ul {
+			height: 46px;
+			width: 100%;
+			border-radius: 35px;
+			background-color: #d3d3d3;
+		}
+		
+		.mContents>.fxd .title ul li {
+			width: 25%;
+			line-height: 46px;
+			color: #777777;
+			background-color: #d3d3d3;
+			border-radius: 35px;
+		}
+		
+		.mContents>.fxd .title ul li>label {
+			display: inline-block;
+			width: 100%;
+			/* cursor: pointer; */
+		}
+		
+		.mContents>.fxd .title ul li.on, .mContents>.fxd .title ul li:hover {
+			color: #fff !important;
+			background-color: #4c3d92;
+		}
+		
+		.mContents .dtlWrap2 {
+			height: 487px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			border-bottom: 2px solid #c4c4c4;
+		}
+		
+		.mContents .dtl, .mContents .dtl1 {
+			width: 992px;
+			font-size: 15px;
+			border-collapse: collapse;
+			font-weight: 300;
+			overflow: hidden;
+		}
+		
+		.mContents .dtl1 thead {
+			background-color: #e1dff5;
+			float: left;
+			width: 995px;
+			border-top: 4px solid #6a5baf;
+		}
+		
+		.mContents .dtl thead tr, .mContents .dtl1 thead tr {
+			/* display: table; */
+			width: 997px;
+		}
+		
+		.mContents .dtl {
+			width: 997px;
+			height: 487px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			float: left;
+		}
+		
+		.mContents .dtl tbody {
+			/* width: 997px;
+				   /*height: 532px;*/
+			/* overflow-y: auto;
+				   overflow-x: hidden; */
+			float: left;
+			/*border-bottom: 2px solid #c4c4c4;*/
+		}
+		
+		.mContents .dtl tbody tr {
+			/* display: table; */
+			width: 997px;
+			cursor: pointer;
+		}
+		
+		.mContents .dtl tbody:hover {
+			background-color: #ddf0ec;
+		}
+		/* .mContents .dtl thead tr th:first-child, .mContents .dtl1 thead tr th:first-child {
+				   width: 10px;
+				}
+				.mContents .dtl tbody tr:first-child td:first-child {
+				   width: 10px;
+				} */
+		/* .mContents .dtl tbody tr td:nth-child(3) {
+				   font-weight: 400;
+				} */
+		.mContents .dtl1 thead th, .mContents .dtl tbody tr td {
+			padding: 10px 7px;
+			border: 1px solid #edebef;
+			text-align: center;
+			width: 100px;
+			max-width: 100px
+		}
+		
+		.mContents .dtl tbody tr td {
+			font-weight: 200;
+		}
+		/* .mContents .dtl thead th:first-child,
+				.mContents .dtl tbody td:first-child {
+				   width: 51px;
+				   padding: 0;
+				}
+				.mContents .dtl thead th:nth-child(2),
+				.mContents .dtl tbody td:nth-child(2),
+				.mContents .dtl thead th:nth-child(6),
+				.mContents .dtl tbody td:nth-child(6) {
+				   width: 51px;
+				}
+				.mContents .dtl thead th:nth-child(3),
+				.mContents .dtl tbody td:nth-child(3) {
+				   width: 170px;
+				}
+				.mContents .dtl thead th:nth-child(4),
+				.mContents .dtl tbody td:nth-child(4),
+				.mContents .dtl thead th:nth-child(5),
+				.mContents .dtl tbody td:nth-child(5),
+				.mContents .dtl thead th:nth-child(6),
+				.mContents .dtl tbody td:nth-child(6),
+				.mContents .dtl thead th:nth-child(7),
+				.mContents .dtl tbody td:nth-child(7),
+				.mContents .dtl thead th:nth-child(8),
+				.mContents .dtl tbody td:nth-child(8),
+				.mContents .dtl thead th:nth-child(9),
+				.mContents .dtl tbody td:nth-child(9), {
+				   width: 90px;
+				} */
+		.mContents .dtl tbody tr td>span {
+			display: inline-block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 84%;
+			margin: 0 auto;
+		}
+		
+		.mContents .dtl tbody tr td img {
+			width: 25px;
+			vertical-align: top;
+		}
+		
+		.detailList li {
+			float: left;
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+		}
+		
+		.detailList li:nth-child(2n-1) {
+			width: 82px;
+			font-weight: 400;
+			color: #158566;
+		}
+		
+		.detailList li:nth-child(2n) {
+			width: 316px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: 200;
+			color: #21a17e;
+		}
+		
+		.detailList li:last-child {
+			width: 734px;
+			height: 56px;
+			word-break: break-all;
+			white-space: normal;
+			overflow: auto;
+			line-height: 1.5;
+		}
+		
+		#modBasicTable tr td:first-child {
+			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			width: 132px;
+			font-weight: 400;
+			padding: 11px 8px 11px 17px;
+		}
+		
+		#modBasicTable tr td:last-child {
+			padding: 5px 20px;
+			width: 463px;
+		}
+		
+		#modBasicTable input[type="text"], #modBasicTable textarea {
+			width: 401px;
+			color: #0e8a67;
+		}
+		
+		#modBasicTable textarea {
+			color: #0e8a67;
+			height: 105px;
+			border: 1px solid #e6e6e6;
+			padding: 0 10px;
+			resize: none;
+		}
+		
+		#modBasicTable select, #m_listForm select{
+			height: 34px;
+			font-size: 14px;
+			width: 97px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			-webkit-appearance: none;
+			background: url(/images/arrow_down.png) no-repeat 91% 50%;
+			background-color: #fff;
+			color: #0e8a67;
+		}
+		
+		#modBasicTable input[class^="calendar"] {
+			width: 140px !important;
+		}
+		
+		#modBasicTable input[class="search"] {
+			background-image: url('/images/search_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
+		
+		#modBasicTable input[class="pname"] {
+			width: 305px;
+			border: none;
+			outline: none;
+			background-color: #ddf0ec;
+		}
+		
+		.stitle2 input[class="pname"] {
+			width: 130px;
+			border: none;
+			outline: none;
+			background-color: #f6f7fc;
+			text-align: right;
+			font-size: 17px;
+			font-weight: 400;
+		}
+		
+		input[type="text"] {
+			width: 138px;
+			height: 34px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			background-color: #fff;
+			font-size: 14px;
+			margin-bottom: 4px;
+		}
+		
+		input[class^="calendar"] {
+			background-image: url(/images/calendar_icon.png);
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
+		
+		#modBasicTable tr td:first-child label {
+			color: red;
+			vertical-align: middle;
+		}
+		
+		input[class="tCheck"]+label {
+			width: 24px !important;
+			height: 24px !important;
+		}
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
+	</style>
+	<script>
       $(document).ready(function() {
 			'<c:if test="${basicContractInfo != null }">'
 			//고객사 담당자 셋팅
@@ -406,11 +413,14 @@ input[class="tCheck"]+label {
 			//부가세 포함 셋팅
 			$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 			//검수방법 셋팅
-			$('#m_mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
+			//$('#m_mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
+			$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
 			//백계약유무셋팅
-			$('#m_mtSbCtYn').val("${basicContractInfo.mtSbCtYn}").attr("selected", "true");
+			//$('#m_mtSbCtYn').val("${basicContractInfo.mtSbCtYn}").attr("selected", "true");
+			$("input:radio[name='mtSbCtYn']:radio[value='${basicContractInfo.mtSbCtYn}']").prop('checked', true);
 			//보증증권유무 셋팅
-			$('#m_gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
+			//$('#m_gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
+			$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
 		'</c:if>'
          
          
@@ -613,9 +623,71 @@ input[class="tCheck"]+label {
 		        }); 
 				
 			});		
+					
+			//거래처 검색
+			$("#m_mtAcNm").on("keydown", function(event){
+				
+				if(event.keyCode == 13) {						
+					fnSearchAccoutList(this, $(this).val());
+				}						
+			});		
          
       }); // end  $(document).ready()
 		
+		//거래처 검색
+		var fnSearchAccoutList = function(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		var fnViewAccountList = function(pObject, pjAccountList){
+			var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 138px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	        ;
+			    	}			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#m_tr_account').after(html);
+			
+			
+			$("[id^='m_li_account']").click(function(event) {
+				
+				$('#m_mtAcNm').val(this.innerText); 
+				$('#m_mtAcKey').val(this.title);
+				$('#m_mtAcKey').change();
+				$('#m_div_accountList').remove();
+			});
+		};
+		
+		
+		//기본정보 수정
 		function modeBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
@@ -729,7 +801,7 @@ input[class="tCheck"]+label {
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
 		}
 
-		function fn_deleteMtPurchaseBtn(){
+		/* function fn_deleteMtPurchaseBtn(){
 			var obj = null; 
 			var selectVal;
 			var paramOrderKey;
@@ -782,7 +854,48 @@ input[class="tCheck"]+label {
 			} else {
 				alert("삭제할 대상을 선택하세요 !!");
 			}
-		}
+		} */
+		//기본정보 삭제
+		function deleteBasicInfo(){			
+			if(confirm("유지보수계약 내용을 삭제하시겠습니까?")){
+				var sendData = {
+	           			"selectKey":$('#m1_mtIntegrateKey').val()
+	           	}
+				$.ajax({
+	           		url: "/maintenance/contract/deleteContract.do",
+	           		dataType: 'text', 
+	           		type:"post",  
+	           		//data: JSON.parse(sendData),
+	           		data: JSON.stringify(sendData),
+	           		//data: sendData,
+	           		contentType: "application/json; charset=UTF-8", 
+	           		beforeSend: function(xhr) {
+	           			xhr.setRequestHeader("AJAX", true);	        		
+	           		},
+	           		success:function(data){	
+	           			var paramData = JSON.parse(data);
+	           		
+	           			if("Y" == paramData.successYN){
+	           				alert("유지보수계약 삭제를 성공하였습니다.");
+	           				
+	           				document.m_mtMoveForm.action = "/maintenance/contract/contractList.do";
+	        	           	document.m_mtMoveForm.submit();
+	           				
+	           			} else {
+	           				alert("유지보수계약 삭제를 실패하였습니다.");
+	           				
+	           			}
+	           		},
+	           		error: function(request, status, error) {
+	           			if(request.status != '0') {
+	           				alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	           			}
+	           		} 
+	           	});    
+			} else {
+				return false;
+			}
+		} // end deleteBasicInfo()
    </script>
 </head>
 <body>
@@ -798,10 +911,10 @@ input[class="tCheck"]+label {
 				<div>
 					<div class="stitle cg">
 						기본정보
-						<button type="button" value="수정" id="modBasicInfo"
+						<%-- <button type="button" value="수정" id="modBasicInfo"
 							onclick="modeBasicInfo()">
 							<img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" />
-						</button>
+						</button> --%>
 					</div>
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
 						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>" />
@@ -886,16 +999,16 @@ input[class="tCheck"]+label {
 							<table class="bsc" id="modBasicTable" style="display: none">
 								<tr>
 									<td><label>*</label>프로젝트명</td>
-									<td><input type="text" name="mtNm"
-										value="<c:out value="${basicContractInfo.mtNm}"/>" required /></td>
+									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required /></td>
 								</tr>
-								<tr>
+								<tr id="m_tr_account">
 									<td><label>*</label>고객사</td>
-									<td><input type="text" name="mtAcKey" id="m_mtAcKey"
-										class="search" style="width: 165px"
-										value="<c:out value="${basicContractInfo.mtAcKey}"/>" required />
-										<input type="hidden" name="mtAcNm" id="m_mtAcNm"
-										value="<c:out value="${basicContractInfo.mtAcNm}"/>" /></td>
+									<td>
+										<%-- <input type="text" name="mtAcKey" id="m_mtAcKey" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
+										<input type="hidden" name="mtAcNm" id="m_mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/> --%>
+										<input type="text" name="mtAcNm" id="m_mtAcNm" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcNm}"/>" autocomplete="off" required/>
+										<input type="hidden" name="mtAcKey" id="m_mtAcKey" value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
+									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>고객사담당자</td>
@@ -935,7 +1048,9 @@ input[class="tCheck"]+label {
 								</tr>
 								<tr>
 									<td><label>*</label>부가세포함</td>
-									<td><input type="radio" class="tCheck" name="taxYn" value="Y" id="m_hasVAT1" checked="checked" /><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<td>
+										<input type="radio" class="tCheck" name="taxYn" value="Y" id="m_hasVAT1" checked="checked" /><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="radio" class="tCheck" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</td>
 								</tr>
@@ -945,32 +1060,48 @@ input[class="tCheck"]+label {
 								</tr>
 								<tr>
 									<td><label>*</label>검수방법</td>
-									<td><select id="m_mtImCd" name="mtImCd" style="width: 162px" required>
+									<td>										
+										<!-- <select id="m_mtImCd" name="mtImCd" style="width: 162px" required>
 											<option value="온라인">온라인</option>
 											<option value="오프라인">오프라인</option>
-									</select></td>
+										</select> -->
+										<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="m_hasImCd1" /><label for="m_hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+										&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="m_hasImCd2" checked="checked"/><label for="m_hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
+									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>정기점검횟수</td>
-									<td><input type="text" id="m_mtRgInspectCnt" name="mtRgInspectCnt" numberOnly style="width: 76px" value="<c:out value="${basicContractInfo.mtRgInspectCnt}"/>" required />회</td>
+									<td>
+										<input type="text"  id="m_mtRgInspectCnt" name="mtRgInspectCnt" numberOnly style="width: 76px" value="<c:out value="${basicContractInfo.mtRgInspectCnt}"/>" required/>회
+									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>백계약유무</td>
-									<td><select id="m_mtSbCtYn" name="mtSbCtYn" required>
+									<td>
+										<!-- <select id="m_mtSbCtYn" name="mtSbCtYn" required>
 											<option value="N">N</option>
 											<option value="Y">Y</option>
-									</select></td>
+										</select> -->
+										<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="m_hasSbCt1"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="m_hasSbCt2" checked="checked"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
+									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>보증증권 유무</td>
-									<td><select name="gbYn" id="m_gbYn" required>
+									<td>
+										<!-- <select name="gbYn" id="m_gbYn"  required>
 											<option value="N">N</option>
 											<option value="Y">Y</option>
-									</select>
-										<button type="button" class="veralignM">
-											<img class="cursorP"
-												src="<c:url value='/images/btn_file_upload.png'/>" />
-										</button> <label class="file">보증증권.pdf</label></td>
+										</select> -->
+										<input type="radio" class="tCheck" name="gbYn" value="Y" id="m_hasGbYn1" /><label for="m_hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="gbYn" value="N" id="m_hasGbYn2" checked="checked"/><label for="m_hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+										
+										<button type="button" class="veralignM"><img class="cursorP" src="<c:url value='/images/btn_file_upload.png'/>" /></button>
+										<label class="file">보증증권.pdf</label>
+									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>지원담당자</td>
@@ -1003,16 +1134,20 @@ input[class="tCheck"]+label {
 								</tr>
 							</table>
 						</div>
+						<div class="floatL" style="margin-top: 22px">
+							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>							
+							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+						</div>
 					</form>
 				</div>
 			</div>
 			<div class="floatR dpBlock fxd">
 				<div class="title">
 					<ul>
-						<li id="LI_TOPBar_PD" title="productInfo"><label>제품정보</label></li>
-						<li id="LI_TOPBar_SL" title="salesAmountInfo"><label>매출정보</label></li>
-						<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
-						<li id="LI_TOPBar_PA" class="on" title="purchaseAmountInfo"><label>매입정보</label></li>
+						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">제품정보</label></li>
+						<li id="LI_TOPBar_SL" title="salesAmountInfo"><label style="cursor: pointer;">매출정보</label></li>
+						<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
+						<li id="LI_TOPBar_PA" class="on" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
 						<li></li>
 					</ul>
 				</div>
@@ -1020,18 +1155,37 @@ input[class="tCheck"]+label {
 					<div class="stitle cg colorBlack floatL">
 						매입정보
 						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" /> --%>						
+						<%--<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:150px;height: 30px;">
+ 						<c:choose>
+						<c:when test="${null !=backOrderSelectBox && backOrderSelectBox.size()>1}">
+							<option value="">전체</option>														
+						<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">
+							<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+						</c:forEach>
+						</c:when>
+						<c:otherwise>
+						<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">
+							<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+						</c:forEach>
+						</c:otherwise>
+						</c:choose>															
+						</select> --%>
+						
+						<c:if test="${null !=backOrderSelectBox && backOrderSelectBox.size()>1}">
 						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:150px;height: 30px;">
 							<option value="">전체</option>														
 						<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">
 							<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
-						</c:forEach>									
+						</c:forEach>
 						</select>
+						</c:if>
+						
 					</div>
 					<div class="stitle2 floatR">
 						매입총 합계 : <input type="text" id="purchaseTotalAmount" class="pname"
 							value="<c:out value="${displayUtil.commaStr(mtPurchaseTotalAmount)}"/>" readonly />
 					</div>
-					<div class="floatC dtlWrap">
+					<div class="floatC dtlWrap middle2">
 						<table class="dtl1">
 							<thead class="ftw400">
 								<tr>
@@ -1103,7 +1257,7 @@ input[class="tCheck"]+label {
 								</tbody>
 							</c:forEach>
 								
-								<tbody>
+								<!-- <tbody>
 									<tr>
 										<td rowspan="2" style="width: 10px" style="10px">
 											<input type="checkbox" class="tCheck" id="check2"><label for="check2" class="cursorP"></label>
@@ -1402,7 +1556,7 @@ input[class="tCheck"]+label {
 										<td>6,000,000</td>
 										<td>6,000,000</td>
 									</tr>
-								</tbody>
+								</tbody> -->
 
 							</table>
 
@@ -1414,9 +1568,9 @@ input[class="tCheck"]+label {
 							<button value="수정" onclick="fn_editMtPurchaseBtn()">
 								<img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" />
 							</button>
-							<button value="삭제" onclick="fn_deleteMtPurchaseBtn()">
+							<%-- <button value="삭제" onclick="fn_deleteMtPurchaseBtn()">
 								<img class="cursorP" src="<c:url value='/images/btn_del.png'/>" />
-							</button>
+							</button> --%>
 							<button value="Excel">
 								<img class="cursorP"
 									src="<c:url value='/images/btn_excel.png'/>" />

@@ -25,3 +25,6 @@
 	top: 49px;
 	right: 60px;
 }
+.popContainer table {
+   background: transparent;
+}

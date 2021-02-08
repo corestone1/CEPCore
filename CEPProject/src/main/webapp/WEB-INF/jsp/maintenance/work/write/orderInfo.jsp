@@ -154,6 +154,14 @@
 			width: 811px;
 			background-color: #f6f7fc;
 			/* position: fixed; */
+		}	
+		.popContainer .contents .btnWrap {
+			margin : 20px 36px 15px 44px;
+			width : 836px;
+		}
+		.popContainer .contents .btnCenter {
+			width : calc(100% - 46px);
+			text-align: center;
 		}
 	</style>
 	<script>
@@ -256,6 +264,73 @@
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			
 		}
+		/**
+		*  화면을 이동시킨다.
+		*  @param {string} varUrl 이동해야할 url
+		*/
+		function fn_changeView(varUrl) {
+			var url;
+			if($('#mtWorkKey').val() !="") {
+				if(varUrl == "basicInfoView"){
+					if(confirm("유지보수작업 기본정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/work/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+				} else if(varUrl == "productInfoView"){
+					if(confirm("유지보수작업 제품정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/work/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+				}
+			} else {
+				alert("유지보수작업 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
+				return false;				
+			}
+			
+			if(url != "") {
+				
+				var dialogId = 'program_layer';
+				var varParam = {
+					"mtIntegrateKey": $('#mtIntegrateKey').val(),
+					"mtWorkKey":$('#mtWorkKey').val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			} else {
+
+				return false;
+			}	
+		}
+		
+		//이전화면으로 이동
+		function fn_prevBtn(){
+			var whereMsg;
+			var whereUrl;
+			if("Y" == $('#sv_mtWorkPmYn').val()){
+				whereMsg = "제품정보";
+				whereUrl = "/maintenance/work/write/productInfoView.do";
+			} else {
+				whereMsg = "기본정보";
+				whereUrl = "/maintenance/work/write/basicInfoView.do";
+			}
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수작업 "+whereMsg+" 등록화면으로 이동하시겠습니까?")) {
+				var url = whereUrl;
+				var dialogId = 'program_layer';
+				var varParam = {
+						"mtIntegrateKey":$('#mtIntegrateKey').val(),
+						"mtWorkKey":$('#mtWorkKey').val()
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			} else {
+				return false;
+			}
+			
+		}
 	</script>
 </head>
 <body>
@@ -267,9 +342,9 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-				<li class="colorWhite cursorP">기본정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 				<c:if test="${mtWorkPmYn eq 'Y' }">
-				<li class="colorWhite cursorP">제품정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 				</c:if>
 				<li class="colorWhite cursorP on">발주정보</li>
 			</ul>
@@ -278,6 +353,7 @@
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
 			<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
+			<input type="hidden" id="sv_mtWorkPmYn" name="sv_mtWorkPmYn" value="<c:out value="${mtWorkPmYn}"/>"/>
 			<div class="contents">
 				<div id="prodWrap">
 					<table class="subject">
@@ -410,9 +486,12 @@
 						</table>
 					</div>
 				</div>
-				<div class="btnWrap floatR">
-					<div class="floatR" onclick="writeMtPurchaseAmount();">
-						<button ><img src="<c:url value='/images/btn_save.png'/>" /></button>
+				<div class="btnWrap floatL">
+					<div class="floatL">
+						<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					</div>
+					<div class="floatL btnCenter">
+						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

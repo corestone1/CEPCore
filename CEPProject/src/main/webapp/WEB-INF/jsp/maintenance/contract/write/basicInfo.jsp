@@ -62,7 +62,7 @@
 			margin-bottom: 100px;
 		} */
 		.popContainer .contents select {
-			width: 162px;
+			width: 220px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -85,7 +85,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
-			width: 140px;
+			width: 200px;
 			height: 38px;
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
@@ -98,7 +98,7 @@
 			background-color: #f6f7fc;
 		}
 		.popContainer .contents input[class^="calendar"] {
-			width: 140px;
+			width: 198px;
 			height: 38px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -106,7 +106,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 37px);
-			height: 117px;
+			height: 114px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -133,7 +133,7 @@
 		    width: 87px;
 		}	
 		.popContainer .contents td.tdContents {
-			width: 178px;
+			width: 720px;
 			font-size: 14px;
     		color: #525252;
 		} 
@@ -141,13 +141,20 @@
 			margin : 10px 48px 15px 48px;
 		}
 		.btnCenter {
-			width : calc(100% - 210px);
+			width : calc(100% - 90px);
 			text-align: center;
 		}
 		.popContainer .contents td label {
 			color: red;
 			vertical-align: middle;
       	}
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -163,10 +170,13 @@
 				//부가세 포함 셋팅
 				$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 				//검수방법 셋팅
-				$('#mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
+				//$('#mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
+				$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
 				//백계약유무셋팅
-				$('#mtSbCtYn').val("${basicContractInfo.mtSbCtYn}").attr("selected", "true");
-				if("Y" == $('#mtSbCtYn option:selected').val()){
+				//$('#mtSbCtYn').val("${basicContractInfo.mtSbCtYn}").attr("selected", "true");
+				$("input:radio[name='mtSbCtYn']:radio[value='${basicContractInfo.mtSbCtYn}']").prop('checked', true);
+								
+				if("Y" == "${basicContractInfo.mtSbCtYn}"){
 					$('#back_order').show();
 					$('#back_buy').show();
 				} else {
@@ -174,10 +184,73 @@
 					$('#back_buy').hide();
 				}
 				//보증증권유무 셋팅
-				$('#gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
+				//$('#gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
+				$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
 			'</c:if>'
 			
-		});
+				//거래처 검색
+				$("#mtAcNm").on("keydown", function(event){
+					
+					if(event.keyCode == 13) {		
+						
+						fnSearchAccoutList(this, $(this).val());
+					}						
+				});
+			
+		});//end $(document).ready()
+		
+		//거래처 검색
+		function fnSearchAccoutList(pObject, pstAccountNm) {
+			$('#div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		/* var fnViewAccountList = function(pObject, pjAccountList){ */
+			function fnViewAccountList(pObject, pjAccountList){
+			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {			    	  
+			    	   //console.log("=====>"+pjAccountList[i].acKey+" / "+pjAccountList[i].acNm)
+			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>';
+			    	}
+			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#td_account').after(html);
+			$('#tr_account').after(html);
+			
+			
+			$("[id^='li_account']").click(function(event) {
+				
+				$('#mtAcNm').val(this.innerText); 
+				$('#mtAcKey').val(this.title);
+				$('#mtAcKey').change();
+				$('#div_accountList').remove();
+			});
+		};
 		/**
 		*  화면을 이동시킨다.
 		*  @param {string} varUrl 이동해야할 url
@@ -381,37 +454,34 @@
 			}
 		}
 		
+
 		
 		
+		function gbYnClick(param) {
+			if("Y" == param){
+				$('#file_upload').show();
+			} else {
+				$('#file_upload').hide();
+			}
+		}
+		
+		function mtSbCtYnClick(param) {
+			if("Y" == param){
+				$('#back_order').show();
+				$('#back_buy').show();
+			} else {
+				$('#back_order').hide();
+				$('#back_buy').hide();
+			}
+		}
 		
 		$(function(){
-			$('#gbYn').change(function(){
-				/* alert($('#gbYn option:selected').val()); */
-				
-				if("Y" == $('#gbYn option:selected').val()){
-					$('#file_upload').show();
-				} else {
-					$('#file_upload').hide();
-				}
-				
-			});
-			
-			$('#mtSbCtYn').change(function(){
-				
-				if("Y" == $('#mtSbCtYn option:selected').val()){
-					$('#back_order').show();
-					$('#back_buy').show();
-				} else {
-					$('#back_order').hide();
-					$('#back_buy').hide();
-				}
-				
-			});
 			
 			//var acDirectorList; // 고객 담당자 정보 리스트
 
 			/* 고객사 선택하면 고객담당자 정보 가져오기. */
-			$('#mtAcKey').change(function(){				
+			$('#mtAcKey').change(function(){
+				
 		        $.ajax({
 		        	url:"/maintenance/contract/selectAcDirectorList.do",
 		            dataType: 'json',
@@ -443,7 +513,7 @@
 		                 	//acDirectorInfo 값 지움
 		                 	$('#acDirectorInfo').val('');
 		                 	
-		                 	$ ( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
+		                 	$( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
 		                }
 		            },
 		        	error: function(request, status, error) {
@@ -484,7 +554,8 @@
 	</script>
 </head>
 <body>
-	<form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post">		 
+	<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">
+	<%-- <form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post"> --%>		 
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
 		<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
 						
@@ -508,24 +579,24 @@
 				<div>
 					<table>
 						<tr>
-							<td class="btnFc" colspan="6"><button><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+							<td class="btnFc" colspan="2"><button type="button"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>프로젝트명</td>
-							<td class="tdContents" colspan="5">
+							<td class="tdContents">
 								<input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
 							</td>
 						</tr>
-						<tr>
+						<tr id="tr_account">
 							<td class="tdTitle"><label>*</label>고객사</td>
-							<td class="tdContents" colspan="5">
-								<input type="text" name="mtAcKey" id="mtAcKey" class="search" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
-								<input type="hidden" name="mtAcNm" id="mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/>	
+							<td class="tdContents">
+								<input type="text" name="mtAcNm" id="mtAcNm" class="search" value="<c:out value="${basicContractInfo.mtAcNm}" />" autocomplete="off"  required/>	
+								<input type="hidden" name="mtAcKey" id="mtAcKey"  value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>고객사담당자</td>
-							<td class="tdContents" colspan="5">
+							<td class="tdContents">
 								<select id="mtAcDirectorKey" name="mtAcDirectorKey" required>									
 									<c:forEach var="item" items="${acDirectorList}" varStatus="status">										
 									<option value="<c:out value="${item.acDirectorKey}"/>"><c:out value="${item.acDirectorNm}"/></option>
@@ -538,7 +609,7 @@
 								</select>		
 								<input type="text" id="acDirectorInfo" class="pname" value="<c:out value="${basicContractInfo.acDirectorInfo}"/>" readonly/>
 							</td>
-						</tr>
+						</tr>						
 						<tr>
 							<td class="tdTitle"><label>*</label>관리담당자</td>
 							<td class="tdContents">
@@ -548,7 +619,10 @@
 									</c:forEach>	
 								</select>
 							</td>
-							<td class="tdSubTitle"><label>*</label>지원담당</td>
+						</tr>
+						
+						<tr>
+							<td class="tdTitle"><label>*</label>지원담당</td>
 							<td class="tdContents">
 								<select id="mtSupportEmpKey" name="mtSupportEmpKey" required>
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
@@ -556,7 +630,9 @@
 									</c:forEach>	
 								</select>
 							</td>
-							<td class="tdSubTitle"><label>*</label>영업담당</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>영업담당</td>
 							<td class="tdContents">
 								<select id="mtSaleEmpKey" name="mtSaleEmpKey" required>
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
@@ -570,8 +646,11 @@
 							<td class="tdContents">
 								<input type="text" name="mtCtDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/>" required/>
 							</td>
-							<td class="tdSubTitle"><label>*</label>유지보수기간</td>
-							<td class="tdContents" colspan="3">
+						</tr>
+						
+						<tr>
+							<td class="tdTitle"><label>*</label>유지보수기간</td>
+							<td class="tdContents">
 								<input type="text" name="mtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/>" required/> ~ 
 								<input type="text" name="mtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/>" required/>
 							</td>
@@ -579,64 +658,79 @@
 						<tr>
 							<td class="tdTitle"><label>*</label>유지보수금액</td>
 							<td class="tdContents">
-								<input type="text"  id="mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 140px; text-align: right;"/>
+								<input type="text"  id="mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 198px; text-align: right;"/>
 							</td>
-							<td class="tdSubTitle"><label>*</label>부가세 포함</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" checked="checked"/><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
-							<td class="tdSubTitle"><label>*</label>결재조건</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>결재조건</td>
 							<td class="tdContents">
-								<input type="text"  id="mtPayTerms" name="mtPayTerms" style="width: 140px" value="<c:out value="${basicContractInfo.mtPayTerms}"/>" required/>
+								<input type="text"  id="mtPayTerms" name="mtPayTerms" style="width: 198px" value="<c:out value="${basicContractInfo.mtPayTerms}"/>" required/>
 							</td>
-						</tr>	
+						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>검수방법</td>
 							<td class="tdContents">
-								<select id="mtImCd" name="mtImCd" required>
+								<!-- <select id="mtImCd" name="mtImCd" required>
 									<option value="온라인">온라인</option>
 									<option value="오프라인">오프라인</option>
-								</select>
+								</select> -->
+								<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="hasImCd1" /><label for="hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="hasImCd2" checked="checked"/><label for="hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
 							</td>
-							<td class="tdSubTitle"><label>*</label>정기점검횟수</td>
-							<td class="tdContents" colspan="3">
-								<input type="text"  name="mtRgInspectCnt" numberOnly style="width: 64px" value="<c:out value="${basicContractInfo.mtRgInspectCnt}"/>" required/>&nbsp;회&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<label>*</label>백계약유무&nbsp;&nbsp;
-								<select id="mtSbCtYn" name="mtSbCtYn" style="width: 56px" required>
-									<option value="N">N</option>
-									<option value="Y">Y</option>
-								</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<label>*</label>보증증권유무&nbsp;&nbsp;
-								<select name="gbYn" id="gbYn" style="width: 56px" required>
-									<option value="N">N</option>
-									<option value="Y">Y</option>
-								</select>	
-							</td>
-							<!-- <td class="tdSubTitle">백계약유무</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>정기점검횟수</td>
 							<td class="tdContents">
-								<select id="sbCtYn" name="sbCtYn" style="width: 60px">
+								<input type="text"  name="mtRgInspectCnt" numberOnly style="width: 198px" value="<c:out value="${basicContractInfo.mtRgInspectCnt}"/>" required/>&nbsp;회								
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>백계약유무</td>
+							<td class="tdContents">
+								<!-- <select id="mtSbCtYn" name="mtSbCtYn" style="width: 56px" required>
 									<option value="N">N</option>
 									<option value="Y">Y</option>
-								</select>
-								보증증권유무
-								
-								<select name="gbYn" id="gbYn" style="width: 60px">
+								</select> -->
+								<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="hasSbCt1" onclick="mtSbCtYnClick('Y');"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="hasSbCt2" checked="checked" onclick="mtSbCtYnClick('N');"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>보증증권유무</td>
+							<td class="tdContents">								
+								<!-- <select name="gbYn" id="gbYn" style="width: 56px" required>
 									<option value="N">N</option>
 									<option value="Y">Y</option>
-								</select>	
-							</td> -->
+								</select> -->	
+								<input type="radio" class="tCheck" name="gbYn" value="Y" id="hasGbYn1" /><label for="hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="gbYn" value="N" id="hasGbYn2" checked="checked"/><label for="hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
-							<td class="tdContents" colspan="5"><textarea name="remark"><c:out value="${basicContractInfo.remark}"/></textarea></td>
+							<td class="tdContents" ><textarea name="remark"><c:out value="${basicContractInfo.remark}"/></textarea></td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT">첨부파일</td>
+							<td class="tdContents"><button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
 						</tr>
 					</table>
 				</div>
 				<div class="btnWrap floatL">
-					<div class="floatL">
+					<%-- <div class="floatL">
 						<button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button>
-					</div>
+					</div> --%>
 					<div class="floatL btnCenter">
 						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
@@ -659,6 +753,7 @@
 				</div>
 			</div>
 		</div>	
-	</form:form> 
+	</form>
+	<%-- </form:form> --%> 
 </body>
 </html>

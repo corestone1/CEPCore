@@ -41,21 +41,35 @@ public class CepDisplayUtil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			else if(date.length()==6)
-			{
-				try {
-					convertDate =  CepDateUtil.convertDisplayFormat(date, "yyyyMM", "yyyy-MM");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			} else {
 				convertDate = date;
 			}
 			
 		}
 		return convertDate;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : displayTime
+	  * @Cdate       : 2021. 1. 27.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :시분을 시:분 형식으로 표시.
+	  * @param time
+	  * @return
+	 */
+	public static String displayTime(String time) {
+		StringBuffer sb = null;
+		if(!"".equals(CepStringUtil.getDefaultValue(time, "")) && time.length()>2) {
+			sb = new StringBuffer();
+			sb.append(time.substring(0, 2));
+			sb.append(":");
+			sb.append(time.substring(2, time.length()));
+			return sb.toString();
+		} else {
+			return time;
+		}
 	}
 	
 	/**

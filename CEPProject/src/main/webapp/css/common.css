@@ -191,3 +191,10 @@ pre { /* pre테크를 사용하는 경우 영역이 넘어가면 줄바꿈해줌
 	width: calc(100% - 211px);
     text-align: center;
 }
+.trcheckcolor {
+	background-color: #ddf0ec;
+}
+table {
+	background: #fff; 
+   	color : #535353;
+}

@@ -193,8 +193,90 @@ public class CepDateUtil {
 		return calendar;
 	}
 	
-	public static List makeDayListFormToEndDate(String startDay, String endDay) throws Exception{
-		List dayList = null;
+	/**
+	 * 
+	  * @Method Name : makeMonthListFormToEndDate
+	  * @Cdate       : 2021. 1. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :startDay부터 endDay까지 년월(yyyyMM) 리스트를 반환한다.
+	  * @param startDay
+	  * @param endDay
+	  * @return
+	  * @throws Exception
+	 */
+	public static List<String> makeMonthListFormToEndDate(String startDay, String endDay) throws Exception{
+		List<String> dayList = null;
+		int startYear = 0;
+		int startMonth = 0;
+		int startDate = 0;
+		Calendar calendar = null;
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+		try {
+			startDay = startDay.replaceAll("-", "").replaceAll("/", "");
+			endDay = endDay.replaceAll("-", "").replaceAll("/", "").substring(0, 6)+"01";
+			if(startDay.length() != 8) {
+				throw new Exception("must write start(from) date yyyyMMdd format !!!");
+			}
+			
+			if(endDay.length() != 8) {
+				throw new Exception("must write end(to) date yyyyMMdd format !!!");
+			}
+			
+			if(Integer.parseInt(startDay)>Integer.parseInt(endDay)) {
+				throw new Exception("The start date is in the future than the end date.");
+			}		
+			
+			//시작일에 대해 년/월/일을 구한다.
+			startYear = Integer.parseInt(startDay.substring(0, 4));
+			startMonth = Integer.parseInt(startDay.substring(4, 6));
+			startDate = Integer.parseInt("01");
+			
+			calendar = Calendar.getInstance();				
+			/*
+			 * 시작일 셋팅
+			 * Calendar의 Month는 0부터 시작하므로 -1 해준다.
+			 */
+			calendar.set(startYear, startMonth-1, startDate);
+			
+			dayList = new ArrayList<>();
+			while(true) {
+//				System.out.println("1====>"+simpleDateFormat.format(calendar.getTime()));
+				dayList.add(simpleDateFormat.format(calendar.getTime()).substring(0,6));
+				//1달씩 증가시킨다.
+				calendar.add(Calendar.MONTH, 1);
+				if(Integer.parseInt(simpleDateFormat.format(calendar.getTime())) == Integer.parseInt(endDay)) {
+//					System.out.println("2====>"+simpleDateFormat.format(calendar.getTime()));
+					dayList.add(simpleDateFormat.format(calendar.getTime()).substring(0,6));
+					break;
+				}else if (Integer.parseInt(simpleDateFormat.format(calendar.getTime())) > Integer.parseInt(endDay)) {
+//					System.out.println("3====>"+simpleDateFormat.format(calendar.getTime()));
+					break;
+				}
+			}
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return dayList;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : makeDayListFormToEndDate
+	  * @Cdate       : 2021. 1. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :startDay부터 endDay까지 날짜(yyyyMMdd) 리스트를 반환한다.
+	  * @param startDay
+	  * @param endDay
+	  * @return
+	  * @throws Exception
+	 */
+	public static List<String> makeDayListFormToEndDate(String startDay, String endDay) throws Exception{
+		List<String> dayList = null;
 		int startYear = 0;
 		int startMonth = 0;
 		int startDate = 0;
@@ -230,7 +312,7 @@ public class CepDateUtil {
 			 */
 			calendar.set(startYear, startMonth-1, startDate);
 			
-			dayList = new ArrayList();
+			dayList = new ArrayList<>();
 			while(true) {
 //				System.out.println("====>"+simpleDateFormat.format(calendar.getTime()));
 				dayList.add(simpleDateFormat.format(calendar.getTime()));

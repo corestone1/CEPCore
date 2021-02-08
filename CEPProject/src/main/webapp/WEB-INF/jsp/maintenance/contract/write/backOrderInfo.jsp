@@ -60,7 +60,7 @@
 		}
 		.popContainer .contents select {
 			width: 153px;
-			//height: 40px;
+			/* height: 40px; */
 			height: 35px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -75,7 +75,7 @@
 		}
 		.popContainer input {
 			width: 130px;
-			//height: 38px;
+			/* height: 38px; */
 			height: 30px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -84,7 +84,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer input[class="search"] {
-			//height: 38px;
+			/* height: 38px; */
 			height: 32px;
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
@@ -191,6 +191,13 @@
 			width : calc(100% - 46px);
 			text-align: center;
 		}
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -215,8 +222,71 @@
 			'<c:if test="${listCount > 1 }">'
 			fn_viewSummaryUpAll();
 			'</c:if>'
+			
+			//거래처 검색
+			$("#mtOrderAcKeyNm").on("keydown", function(event){
+				
+				if(event.keyCode == 13) {						
+					fnSearchAccoutList(this, $(this).val());
+				}
+					
+			});
 		
-		});
+		}); //end $(document).ready()
+		
+		//거래처 검색
+		var fnSearchAccoutList = function(pObject, pstAccountNm) {
+			$('#div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		var fnViewAccountList = function(pObject, pjAccountList){
+			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {
+			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	        ;
+			    	}
+			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#td_account').after(html);
+			$('#tr_account').after(html);
+			
+			
+			$("[id^='li_account']").click(function(event) {
+				
+				$('#mtOrderAcKeyNm').val(this.innerText); 
+				$('#mtOrderAcKey').val(this.title);
+				$('#mtOrderAcKey').change();
+				$('#div_accountList').remove();
+			});
+		};
+		
 		/**
 		*  화면을 이동시킨다.
 		*  @param {string} varUrl 이동해야할 url
@@ -252,7 +322,7 @@
 				} else if(varUrl == "backOrderInfoView"){
 					if("${parmMtSbCtYn}" == "Y"){
 						
-						if(${mtContractCountInfo.mtSalesAmountCnt} > 0){
+						if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
 							if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
 								url = '/maintenance/contract/write/'+varUrl+'.do';
 							} else {
@@ -300,7 +370,7 @@
 			}			
 		} //end fn_changeView()
 		
-		jQuery.fn.serializeObject = function() { 
+		jQuery.fn.serializeObject = function() {
 			var obj = null; 
 			var objArry = null;
 				try { 
@@ -314,9 +384,9 @@
 							if(this.name=="mtOrderPmQuantity" || this.name=="mtOrderPmUprice" || this.name=="totalAmount"){
 								//숫자에서 컴마를 제거한다.
 								obj[this.name] = removeCommas(this.value); 
-							} else if(this.name=="mtStartDt" || this.name=="mtEndDt") {
-								//날짜에서 -를 제거한다.
-								obj[this.name] =  removeData(this.value,"-"); 
+							} else if(this.name.split('-')[2]=="mtStartDt" || this.name.split('-')[2]=="mtEndDt") {
+								//이름에서 prodList-0-를 제거하고 날짜값에서 -를 제거한다.
+								obj[this.name.split('-')[2]] =  removeData(this.value,"-"); 
 							} else {
 								obj[this.name] = this.value; 
 							}
@@ -325,7 +395,7 @@
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('mtEndDt' == this.name){
+							if('mtEndDt' == this.name.split('-')[2]){
 								objArry.push(obj);
 								obj = {};
 							}
@@ -336,6 +406,93 @@
 				alert(e.message); 
 			}finally {} 
 			return objArry; 
+		}
+		
+		/* 백계약 제품 유지보수 기간과 기본정보 유지보수 기간을 체크한다.*/
+		jQuery.fn.checkPmDate = function() {
+			var checkDate = '';
+			//var contractDate =addDateMinus($('#mtContFromDate').val())+" ~ "+addDateMinus($('#mtContEndDate').val());
+			
+			var checkStartDate;
+			var checkEndDate;
+			var startDate;
+			try {
+				//console.log("contractDate====>"+contractDate);
+				if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) { 
+					var arr = this.serializeArray(); 
+					if(arr){							
+						jQuery.each(arr, function() {
+							if(''==checkDate) {
+								//console.log("this.name====>"+this.name);
+								if('mtStartDt' == this.name.split('-')[2]){
+									//console.log("mtPmStartDt====>"+this.name);
+									
+									checkStartDate = removeData($('#prodList-'+this.name.split('-')[1]+'-checkStartDt').val(),'-');
+									checkEndDate = removeData($('#prodList-'+this.name.split('-')[1]+'-checkEndDt').val(),'-');
+									//console.log("mtStartDt checkDate===>"+checkStartDate+" / "+checkEndDate+" / "+this.value);
+									//console.log("mtPmStartDt00000====>"+$('#mtContFromDate').val()+" / "+removeData(this.value,'-')+" / "+this.value+" / "+$('#mtContEndDate').val()+"/"+($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1));
+									//console.log("====>"+(false || true) +"/"+(true || true)+"/"+(false || false)+"/"+(true || false))
+									if(checkStartDate*1>removeData(this.value,'-')*1) {
+										//백계약 제품 시작일자가 유지보수 제품계약 시작일자보다 이전이면 경고
+										checkDate = this.value+"일자는 해당 유지보수 제품 계약시작일자("+addDateMinus(checkStartDate)+")보다 이전입니다.  \n확인 후 다시 등록하세요!!";
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										
+										return checkDate;
+									} else if(checkEndDate*1 < removeData(this.value,'-')*1) {
+										//백계약 제품 시작일자가 유지보수 제품계약 종료일자보다 이후이면 경고
+										checkDate = this.value+"일자는 해당 유지보수 제품 계약종료일자("+addDateMinus(checkEndDate)+")보다 이후입니다.  \n확인 후 다시 등록하세요!!";
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										
+										return checkDate;
+									} else {
+										//console.log("mtPmStartDt11====>"+$('#mtContFromDate').val()+" / "+removeData(this.value,'-')+" / "+this.value+" / "+$('#mtContEndDate').val()+"/"+($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1));
+									}
+								} else if('mtEndDt' == this.name.split('-')[2]) {
+
+									checkStartDate = removeData($('#prodList-'+this.name.split('-')[1]+'-checkStartDt').val(),'-');
+									checkEndDate = removeData($('#prodList-'+this.name.split('-')[1]+'-checkEndDt').val(),'-');
+									startDate = removeData($('#prodList-'+this.name.split('-')[1]+'-mtStartDt').val(),'-');
+									
+									//console.log("mtEndDt checkDate===>"+checkStartDate+" / "+checkEndDate+" / "+startDate+" / "+this.value);
+									if(checkStartDate*1>removeData(this.value,'-')*1) {
+										//백계약 제품 시작일자가 유지보수 제품계약 시작일자보다 이전이면 경고
+										checkDate = this.value+"일자는 해당 유지보수 제품 계약시작일자("+addDateMinus(checkStartDate)+")보다 이전입니다.  \n확인 후 다시 등록하세요!!";
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										
+										return checkDate;
+									} else if(checkEndDate*1 < removeData(this.value,'-')*1) {
+										//백계약 제품 시작일자가 유지보수 제품계약 종료일자보다 이후이면 경고
+										checkDate = this.value+"일자는 해당 유지보수 제품 계약종료일자("+addDateMinus(checkEndDate)+")보다 이후입니다.  \n확인 후 다시 등록하세요!!";
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										
+										return checkDate;
+									} else if(removeData(startDate,'-')*1 > removeData(this.value,'-')*1) {
+										//백계약 제품 시작일자가 유지보수 제품계약 종료일자보다 이후이면 경고
+										checkDate = this.value+"일자는 해당 유지보수 백계약 제품 계약시작일자("+addDateMinus(startDate)+")보다 이전입니다.  \n확인 후 다시 등록하세요!!";
+										fn_viewSummaryDownAll();
+										$( "#"+this.name ).focus();
+										
+										return checkDate;
+									} else {
+										//console.log("mtPmStartDt11====>"+$('#mtContFromDate').val()+" / "+removeData(this.value,'-')+" / "+this.value+" / "+$('#mtContEndDate').val()+"/"+($('#mtContEndDate').val()*1 < removeData(this.value,'-')*1));
+									}
+									
+								}
+							} else {
+								//break;
+							}
+
+						}); 	              
+					} 
+				} 
+			}catch(e) { 
+				alert(e.message); 
+			}finally {} 
+			return checkDate; 
 		}
 		
 		function fn_addInfoTable() {
@@ -375,17 +532,28 @@
 	    	
 	    	//복제하는 필드의 값제거.
 	    	for(var i = 0; i < nameArr.length; i++) {
+	    		var splitName = nameArr[i].split('-')[2];  
+	    		
 	    		clone.find('input[name="lastNum"]').val(lastNum+1);
 				clone.find('input[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val("");
 				clone.find('textarea[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 
 				clone.find('select[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 		
-				clone.find('hidden[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 					
+				clone.find('hidden[name="' + nameArr[i]+'"]').attr('name', nameArr[i]).val(""); 			
+				
+				//날짜필드값 변경
+				clone.find('input[name="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('name', name + splitName).val("");
+				
 	    	} 
+	    	clone.find('input[id="'+ type + 'List-' + lastNum + '-checkStartDt' +'"]').attr('id', name + 'checkStartDt').val("");
+			clone.find('input[id="'+ type + 'List-' + lastNum + '-checkEndDt' +'"]').attr('id', name + 'checkEndDt').val("");
+			
 	    	//id값 변경
 	    	for(var i = 0; i < idArr.length; i++) {
 	    		var splitName = idArr[i].split('-')[2];
 				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);		
 				clone.find('img[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
+				
+				
 	    	} 
 	    	//for값 변경
 	    	for(var i = 0; i < forArr.length; i++) {
@@ -540,34 +708,6 @@
 		        	} 
 		        });
 			}
-	       /*  $.ajax({
-	        	url:"/maintenance/contract/selectAcDirectorList.do",
-	            dataType: 'json',
-	            type:"post",  
-	            data: $('#mtOrderAcKey').val(),
-	     	   	contentType: "application/json; charset=UTF-8",
-	     	  	beforeSend: function(xhr) {
-	        		xhr.setRequestHeader("AJAX", true);
-	        		//xhr.setRequestHeader(header, token);
-	        	},
-	            success:function(data){		            	
-					if ( data.result.length > 0 ) {						
-						$ ('#mtOrderAcDirectorKey' ).find ( 'option' ).remove (); // select box 의 ID 기존의  option항목을 삭제 
-						for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
-                    		$ ('#mtOrderAcDirectorKey' ).append ( "<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>' );
-                  		}
-	                }else{
-	                	acDirectorList = null;
-						$ ( '#mtOrderAcDirectorKey' ).find ( 'option' ).remove ();
-	                 	$ ( '#mtOrderAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
-	                }
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	        }); */
 			
 		}); 
 		
@@ -658,12 +798,12 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
 		
-		//제품 찾기 클릭
+		//유지보수계약 제품 찾기 클릭
 		function fn_findMtProduct(obj) {
 			var num = $(obj).attr('id').split('-')[1];
 			//console.log('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val());
 			
-			window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
+			window.open('/maintenance/contract/popup/mtProductList.do?searchGubun=backOrderPm&whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no');
 			//window.open('/maintenance/contract/popup/mtProductList.do','','width=1000px,height=400,left=600');
@@ -714,23 +854,32 @@
 		
 		function fn_saveBtn(){
 			var actionTitle;
+			var checkDate;
 			//필수값 체크를 완료하면 저장 프로세스 시작.
 			if ($("#mtBasicForm")[0].checkValidity()){
 				
 				if ($("#mtListForm")[0].checkValidity()){
-					if($('#popSelectKey').val() !=''){
-						//수정
-						actionTitle = "수정";	
+					
+					checkDate = $("#mtListForm").checkPmDate();
+					
+					if('' != checkDate) {
+						alert(checkDate);
 					} else {
-						//등록
-						actionTitle = "저장";
+						if($('#popSelectKey').val() !=''){
+							//수정
+							actionTitle = "수정";	
+						} else {
+							//등록
+							actionTitle = "저장";
+						}
+						if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
+							//필수값 모두 통과하여 저장 프로세스 호출.
+							saveBackOrder();
+						} else {
+							return false;
+						}
 					}
-					if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
-						//필수값 모두 통과하여 저장 프로세스 호출.
-						saveBackOrder();
-					} else {
-						return false;
-					}
+					
 					
 				} else {
 					 $("#mtListForm")[0].reportValidity();	
@@ -766,7 +915,7 @@
             }
            	//백계약 제품List를 담아준다.			
             object["mtBackOrderProductVoList"]=listData;
-			
+			console.log("listData====>"+listData);
 			//object["mtWorkProductVoList" = listObject];
            	var sendData = JSON.stringify(object);
            
@@ -864,7 +1013,7 @@
 				
 				if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
 					$.ajax({
-			        	url:"/maintenance/contract/delete/backOrderAll.do",
+			        	url:"/maintenance/contract/delete/backOrder.do",
 			            dataType: 'text', 
 			            type:"post",  
 						data: JSON.stringify(sendData),
@@ -877,7 +1026,7 @@
 			        		xhr.setRequestHeader("AJAX", true);	        		
 			        	},
 			            success:function(data){	
-			            	console.log("data==>"+data);
+			            	//console.log("data==>"+data);
 			            	var paramData = JSON.parse(data);
 			            	
 			            	
@@ -915,9 +1064,15 @@
 			}
 			
 			
+		}	
+
+
+		function fnUpdateSaleAmount(param) {
+			//alert(param);
+			$('#updateYn').val(param);
 		}
 		
-		function fn_viewSummaryUpAll(){
+		/* function fn_viewSummaryUpAll(){
 			$(".dpTbRow").attr('class','dpNone');
 			$(".down").attr('class','up');
 			$(".up").attr('src','<c:url value='/images/arrow_down.png'/>');
@@ -928,7 +1083,7 @@
 			$(".dpNone").attr('class','dpTbRow');
 			$(".up").attr('class','down');
 			$(".down").attr('src','<c:url value='/images/arrow_up.png'/>');
-		}
+		} */
 		
 		//저장하고 다음으로 이동
 		/* function fn_saveNextBtn(){
@@ -1049,7 +1204,7 @@
 				<div>
 					<table class="subject1">						
 						<tr>      
-							<td class="subTitle" style="border-top: none;" colspan="6">
+							<td class="subTitle" style="border-top: none;" colspan="5">
 								<label class="ftw400">백계약등록</label>&nbsp;&nbsp;&nbsp;	
 								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewBackOrder();" style="vertical-align: middle"/>
 								
@@ -1065,6 +1220,13 @@
 										</c:forEach>							
 									</select>
 								</c:if>
+							</td>
+							<td style="width: 342px;">
+							<c:if test="${mtBackOrderVO.mtOrderKey !=null }">
+							유지보수 매입금액 업데이트여부 :
+									<input type="radio" class="tCheck" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tCheck" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+							</c:if>
 							</td>
 						</tr>
 					</table>
@@ -1083,17 +1245,19 @@
 						<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtBackOrderVO.mtIntegrateKey}"/>" />
 						<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
 						<input type="hidden" id="btnOption" name="btnOption" />
-						<input type="hidden" id="updateYn" name="updateYn" value="<c:out value="${mtBackOrderVO.updateYn}"/>"/>
+						<input type="hidden" id="updateYn" name="updateYn" value="N"/>
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${mtBackOrderVO.selectKey}"/>"/>
 						<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtBackOrderVO.mtOrderKey}"/>"/>
+						
 					<table>
-						<tr>
+						<tr id="tr_account">
 							<td class="tdTitle"><label>*</label>매입처</td>
 							<td class="tdContents">
 								<%-- <input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" />	
 								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey" value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/> --%>	
-								<input type="text" id="mtOrderAcKey" name="mtOrderAcKey" class="search" required value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/>
-								<input type="hidden" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" />
+								<input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" style="width: 152px" autocomplete="off" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" required/>
+								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey"  value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/>
+								
 							</td>
 							<td class="tdTitle"><label>*</label>매입처담당자</td>
 							<td class="tdContents">
@@ -1167,6 +1331,8 @@
 											<input type="text" id="prodList-0-mtPmKeyNm" name="mtPmKeyNm" class="search"  onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
 											<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />
 											<input type="hidden" id="prodList-0-mtOrderPmKey" name="mtOrderPmKey"/>	
+											<input type="hidden" id="prodList-0-checkStartDt" />
+											<input type="hidden" id="prodList-0-checkEndDt" />
 											<!-- <input type="text" id="prodList-0-mtPmKey" name="mtPmKey" class="search" />
 											<input type="hidden" id="prodList-0-mtPmKeyNm"  name="mtPmKeyNm"/> -->
 												
@@ -1195,8 +1361,8 @@
 									<tr class="dpTbRow">
 										<td class="tdTitle"><label>*</label>계약기간</td>
 										<td class="tdContents" colspan="5">
-											<input type="text" id="prodList-0-mtStartDt" name="mtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
-											<input type="text" id="prodList-0-mtEndDt" name="mtEndDt" placeholder="to" class="calendar toDt" required/>
+											<input type="text" id="prodList-0-mtStartDt" name="prodList-0-mtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
+											<input type="text" id="prodList-0-mtEndDt" name="prodList-0-mtEndDt" placeholder="to" class="calendar toDt" required/>
 										</td>
 									</tr>
 								</table>
@@ -1214,6 +1380,8 @@
 											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
 											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtOrderPmKey" name="mtOrderPmKey" value="<c:out value="${list.mtOrderPmKey}"/>"/>	
 								
+											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-checkStartDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>"  />
+											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-checkEndDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>"  />
 										</td>
 										<td class="tdTitle firstTd">시리얼번호</td>
 										<td class="tdContents firstTd">
@@ -1239,8 +1407,8 @@
 									<tr class="dpTbRow">
 										<td class="tdTitle"><label>*</label>계약기간</td>
 										<td class="tdContents" colspan="5">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtStartDt" name="mtStartDt" placeholder="from" class="calendar fromDt" required value="<c:out value="${displayUtil.displayDate(list.mtStartDt)}"/>" /> ~ 
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtEndDt" name="mtEndDt" placeholder="to" class="calendar toDt" required value="<c:out value="${displayUtil.displayDate(list.mtEndDt)}"/>" />
+											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtStartDt" name="prodList-<c:out value="${status.index}"/>-mtStartDt" placeholder="from" class="calendar fromDt" required value="<c:out value="${displayUtil.displayDate(list.mtStartDt)}"/>" /> ~ 
+											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtEndDt" name="prodList-<c:out value="${status.index}"/>-mtEndDt" placeholder="to" class="calendar toDt" required value="<c:out value="${displayUtil.displayDate(list.mtEndDt)}"/>" />
 										</td>
 									</tr>
 								</table>

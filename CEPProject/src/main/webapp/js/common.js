@@ -277,4 +277,37 @@ $(window).load(function() {
 		
 	});
 	
+	/* 리스트 클릭하면 색깔 칠하기.*/
+	$('.middle table tbody tr').children().click(function() {
+		//alert(111);
+		//해당 tbody의 tr의 class값 제거.
+		$(".middle table tbody tr").removeClass("trcheckcolor");
+		//$(".middle table tbody tr").parent().css("background", "red");
+		//$(this).css("background", "red");
+		//$(".middle table tbody").children().children().css("background", "red");
+		  //선택된 tr의 배경색을 변경
+		//$(".middle table tbody tr").addClass("truncheckcolor");
+		
+		$(this).parent().addClass("trcheckcolor");
+	});
+	
+	$('.submiddle table tbody tr').children().click(function() {
+		
+		//해당 tbody의 tr의 class값 제거.
+		$(".submiddle table tbody tr").removeClass("trcheckcolor");
+		
+		$(this).parent().addClass("trcheckcolor");
+	});
+	
+
+	/* 두줄 색칠하기 */
+	$('.middle2 table tbody tr').children().click(function() {
+		//해당 tbody의 tr의 class값 제거.
+		$(".middle2 table tbody tr").removeClass("trcheckcolor");
+		
+		$(this).parent().addClass("trcheckcolor");
+		$(this).parent().prev().addClass("trcheckcolor");
+		$(this).parent().next().addClass("trcheckcolor");
+	});
+	
 });
