@@ -97,14 +97,14 @@
 		}
 		
 		.mContents .bsc tr td {
-			color: #0e8a67;
+			color: #26a07d;
 		}
 		
 		.mContents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
 			width: 153px;
 			font-weight: 400;
-			padding: 13px 13px 13px 13px;
+			padding: 13px 13px 13px 20px;
 		}
 		
 		.mContents .bsc tr td:last-child {
@@ -990,7 +990,7 @@
 								<tr>
 									<td>비고</td>
 									<td>
-										<pre style="width: 435px">
+										<pre style="width: 390px">
 											<c:out value="${basicContractInfo.remark}" />
 										</pre>
 									</td>

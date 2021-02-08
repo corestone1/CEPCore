@@ -99,12 +99,12 @@
 		}
 		/* 기본정보 글자색 */
 		form .contents .bsc tr td {
-			color: #0e8a67;
+			color: #26a07d;
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			padding: 13px;
+			padding: 13px 13px 13px 20px;
 		}
 		
 		form .contents .dtl {
@@ -467,7 +467,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
+									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 						</div>

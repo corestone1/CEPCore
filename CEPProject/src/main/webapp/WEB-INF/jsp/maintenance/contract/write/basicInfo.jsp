@@ -582,20 +582,20 @@
 							<td class="btnFc" colspan="2"><button type="button"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>프로젝트명</td>
+							<td class="tdTitle"><label>*</label> 프로젝트명</td>
 							<td class="tdContents">
 								<input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
 							</td>
 						</tr>
 						<tr id="tr_account">
-							<td class="tdTitle"><label>*</label>고객사</td>
+							<td class="tdTitle"><label>*</label> 고객사</td>
 							<td class="tdContents">
 								<input type="text" name="mtAcNm" id="mtAcNm" class="search" value="<c:out value="${basicContractInfo.mtAcNm}" />" autocomplete="off"  required/>	
 								<input type="hidden" name="mtAcKey" id="mtAcKey"  value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>고객사담당자</td>
+							<td class="tdTitle"><label>*</label> 고객사담당자</td>
 							<td class="tdContents">
 								<select id="mtAcDirectorKey" name="mtAcDirectorKey" required>									
 									<c:forEach var="item" items="${acDirectorList}" varStatus="status">										
@@ -611,7 +611,7 @@
 							</td>
 						</tr>						
 						<tr>
-							<td class="tdTitle"><label>*</label>관리담당자</td>
+							<td class="tdTitle"><label>*</label> 관리담당자</td>
 							<td class="tdContents">
 								<select id="mtMngEmpKey" name="mtMngEmpKey" required>
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
@@ -622,7 +622,7 @@
 						</tr>
 						
 						<tr>
-							<td class="tdTitle"><label>*</label>지원담당</td>
+							<td class="tdTitle"><label>*</label> 지원담당</td>
 							<td class="tdContents">
 								<select id="mtSupportEmpKey" name="mtSupportEmpKey" required>
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
@@ -632,7 +632,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>영업담당</td>
+							<td class="tdTitle"><label>*</label> 영업담당</td>
 							<td class="tdContents">
 								<select id="mtSaleEmpKey" name="mtSaleEmpKey" required>
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
@@ -642,41 +642,41 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>계약일자</td>
+							<td class="tdTitle"><label>*</label> 계약일자</td>
 							<td class="tdContents">
 								<input type="text" name="mtCtDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/>" required/>
 							</td>
 						</tr>
 						
 						<tr>
-							<td class="tdTitle"><label>*</label>유지보수기간</td>
+							<td class="tdTitle"><label>*</label> 유지보수기간</td>
 							<td class="tdContents">
 								<input type="text" name="mtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/>" required/> ~ 
 								<input type="text" name="mtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/>" required/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>유지보수금액</td>
+							<td class="tdTitle"><label>*</label> 유지보수금액</td>
 							<td class="tdContents">
 								<input type="text"  id="mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 198px; text-align: right;"/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>부가세 포함</td>
+							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" checked="checked"/><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>결재조건</td>
+							<td class="tdTitle"><label>*</label> 결재조건</td>
 							<td class="tdContents">
 								<input type="text"  id="mtPayTerms" name="mtPayTerms" style="width: 198px" value="<c:out value="${basicContractInfo.mtPayTerms}"/>" required/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>검수방법</td>
+							<td class="tdTitle"><label>*</label> 검수방법</td>
 							<td class="tdContents">
 								<!-- <select id="mtImCd" name="mtImCd" required>
 									<option value="온라인">온라인</option>
@@ -688,13 +688,13 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>정기점검횟수</td>
+							<td class="tdTitle"><label>*</label> 정기점검횟수</td>
 							<td class="tdContents">
 								<input type="text"  name="mtRgInspectCnt" numberOnly style="width: 198px" value="<c:out value="${basicContractInfo.mtRgInspectCnt}"/>" required/>&nbsp;회								
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>백계약유무</td>
+							<td class="tdTitle"><label>*</label> 백계약유무</td>
 							<td class="tdContents">
 								<!-- <select id="mtSbCtYn" name="mtSbCtYn" style="width: 56px" required>
 									<option value="N">N</option>
@@ -706,7 +706,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>보증증권유무</td>
+							<td class="tdTitle"><label>*</label> 보증증권유무</td>
 							<td class="tdContents">								
 								<!-- <select name="gbYn" id="gbYn" style="width: 56px" required>
 									<option value="N">N</option>

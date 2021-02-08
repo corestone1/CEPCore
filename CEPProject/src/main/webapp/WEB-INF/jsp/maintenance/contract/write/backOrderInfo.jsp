@@ -1251,7 +1251,7 @@
 						
 					<table>
 						<tr id="tr_account">
-							<td class="tdTitle"><label>*</label>매입처</td>
+							<td class="tdTitle"><label>*</label> 매입처</td>
 							<td class="tdContents">
 								<%-- <input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" />	
 								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey" value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/> --%>	
@@ -1259,7 +1259,7 @@
 								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey"  value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/>
 								
 							</td>
-							<td class="tdTitle"><label>*</label>매입처담당자</td>
+							<td class="tdTitle"><label>*</label> 매입처담당자</td>
 							<td class="tdContents">
 							<c:choose>
 								<c:when test="${mtBackOrderVO.selectKey eq '' ||  mtBackOrderVO.selectKey eq 'null'||  mtBackOrderVO.selectKey eq null}">
@@ -1278,23 +1278,23 @@
 							</c:choose> 
 								
 							</td>
-							<td class="tdTitle"><label>*</label>발주일자</td>
+							<td class="tdTitle"><label>*</label> 발주일자</td>
 							<td class="tdContents">
 								<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
 								<input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" style="width: 153px" required/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>부가세 포함</td>
+							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT1" value="Y" checked="checked"/><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT2" value="N" /><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 							</td>
-							<td class="tdTitle"><label>*</label>발주합계</td>
+							<td class="tdTitle"><label>*</label> 발주합계</td>
 							<td class="tdContents">
 								<input type="text"  id="orderTotalAmount" name="mtOrderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="text-align: right;"/>	
 							</td>
-							<td class="tdTitle"><label>*</label>결제조건</td>
+							<td class="tdTitle"><label>*</label> 결제조건</td>
 							<td class="tdContents">
 								<input type="text" name="mtOrderPayTerms" style="width: 154px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
 							</td>
@@ -1326,7 +1326,7 @@
 								<input type="hidden" name="lastNum" value="0" />
 								<table>								
 									<tr>
-										<td class="tdTitle firstTd"><label>*</label>제품</td>
+										<td class="tdTitle firstTd"><label>*</label> 제품</td>
 										<td class="tdContents firstTd">
 											<input type="text" id="prodList-0-mtPmKeyNm" name="mtPmKeyNm" class="search"  onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
 											<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />
@@ -1341,7 +1341,7 @@
 										<td class="tdContents firstTd">
 											<input type="text" id="prodList-0-mtPmSerialNum" name="mtPmSerialNum" readonly="readonly"/>	
 										</td>
-										<td class="tdTitle firstTd"><label>*</label>수량</td>
+										<td class="tdTitle firstTd"><label>*</label> 수량</td>
 										<td class="tdContents firstTd">
 											<input type="text" id="prodList-0-mtOrderPmQuantity" name="mtOrderPmQuantity" amountOnly class="calculate" style="width: 75px;" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 											<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
@@ -1349,7 +1349,7 @@
 										</td>
 									</tr>
 									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label>단가</td>
+										<td class="tdTitle"><label>*</label> 단가</td>
 										<td class="tdContents">
 											<input type="text" id="prodList-0-mtOrderPmUprice" name="mtOrderPmUprice" amountOnly required class="calculate"/>
 										</td>
@@ -1359,7 +1359,7 @@
 										</td>									
 									</tr>
 									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label>계약기간</td>
+										<td class="tdTitle"><label>*</label> 계약기간</td>
 										<td class="tdContents" colspan="5">
 											<input type="text" id="prodList-0-mtStartDt" name="prodList-0-mtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
 											<input type="text" id="prodList-0-mtEndDt" name="prodList-0-mtEndDt" placeholder="to" class="calendar toDt" required/>
@@ -1374,7 +1374,7 @@
 								<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
 								<table>								
 									<tr>
-										<td class="tdTitle firstTd"><label>*</label>제품</td>
+										<td class="tdTitle firstTd"><label>*</label> 제품</td>
 										<td class="tdContents firstTd">
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmKeyNm" name="mtPmKeyNm" class="search" value="<c:out value="${list.mtPmKeyNm}"/>" required onclick="fn_findMtProduct(this)"/>	
 											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
@@ -1387,7 +1387,7 @@
 										<td class="tdContents firstTd">
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum" name="mtPmSerialNum" readonly="readonly" value="<c:out value="${list.mtPmSerialNum}"/>"/>
 										</td>
-										<td class="tdTitle firstTd"><label>*</label>수량</td>
+										<td class="tdTitle firstTd"><label>*</label> 수량</td>
 										<td class="tdContents firstTd">
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtOrderPmQuantity" name="mtOrderPmQuantity" amountOnly required class="calculate" style="width: 75px;" value="<c:out value="${displayUtil.commaStr(list.mtOrderPmQuantity)}"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 											<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
@@ -1395,7 +1395,7 @@
 										</td>
 									</tr>
 									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label>단가</td>
+										<td class="tdTitle"><label>*</label> 단가</td>
 										<td class="tdContents">
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtOrderPmUprice" name="mtOrderPmUprice" amountOnly required class="calculate" value="<c:out value="${displayUtil.commaStr(list.mtOrderPmUprice)}"/>"/>
 										</td>
@@ -1405,7 +1405,7 @@
 										</td>									
 									</tr>
 									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label>계약기간</td>
+										<td class="tdTitle"><label>*</label> 계약기간</td>
 										<td class="tdContents" colspan="5">
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtStartDt" name="prodList-<c:out value="${status.index}"/>-mtStartDt" placeholder="from" class="calendar fromDt" required value="<c:out value="${displayUtil.displayDate(list.mtStartDt)}"/>" /> ~ 
 											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtEndDt" name="prodList-<c:out value="${status.index}"/>-mtEndDt" placeholder="to" class="calendar toDt" required value="<c:out value="${displayUtil.displayDate(list.mtEndDt)}"/>" />

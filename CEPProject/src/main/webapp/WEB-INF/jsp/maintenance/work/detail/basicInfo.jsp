@@ -49,8 +49,8 @@
 		form .contents .stitle {
 			font-size: 18px;
 			font-weight: 500;
-			margin-bottom: 10px;
-			margin-top: 30px;
+			margin-bottom: 12px;
+			margin-top: 26px;
 		}
 		form .contents .cg {
 			color: #24a37e;
@@ -95,12 +95,14 @@
 			float: left;
 		}
 		form .contents .bsc tr td {
-			color: #0e8a67;
+			/* color: #0e8a67; */
+			color: #26a07d;
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			padding: 13px;
+			
+			padding: 13px 13px 13px 20px;
 		}
 		form .contents > .fxd .title ul {
 			height: 46px;
@@ -550,7 +552,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
+									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 						</div>

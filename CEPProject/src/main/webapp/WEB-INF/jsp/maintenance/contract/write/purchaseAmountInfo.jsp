@@ -840,7 +840,7 @@
 					<div class="purchaseTable">						
 						<table>
 							<tr>
-								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
+								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label> 연도</td>
 								<td class="tdContents firstTd">
 									<input type="text" id="purchaseList-0-mtBuyYear" name="purchaseList-0-mtBuyYear" style="text-align: center" numberOnly required readonly="readonly" maxlength="4"/>
 									<input type="hidden" name="lastNum" value="0" />
@@ -919,7 +919,7 @@
 					<div class="purchaseTable">						
 						<table>
 							<tr>
-								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
+								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label> 연도</td>
 								<td class="tdContents firstTd">
 									<input type="text" id="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" name="purchaseList-<c:out value="${status.index}"/>-mtBuyYear" style="text-align: center" numberOnly required readonly="readonly" maxlength="4" value="<c:out value="${list.mtBuyYear}"/>"/>
 									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />

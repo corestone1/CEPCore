@@ -98,13 +98,13 @@
 			float: left;
 		}
 		.mContents .bsc tr td {
-			color: #0e8a67;
+			color: #26a07d;
 		}
 		.mContents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;			
 			width: 153px;
 			font-weight: 400;
-			padding: 13px 13px 13px 13px;
+			padding: 13px 13px 13px 20px;
 		}
 		.mContents .bsc tr td:last-child {
 			width: 470px;
@@ -804,7 +804,7 @@
 									<td><c:out value="${basicContractInfo.mtRgInspectCnt}"/> 회</td>
 								</tr>
 								<tr>
-									<td>백계약유무</td>
+									<td>백계약 유무</td>
 									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
 								</tr>
 								<tr>
@@ -825,7 +825,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
+									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">

@@ -139,7 +139,7 @@
 		
 		/* 기본정보 글자색 */
 		.mContents .bsc tr td {
-			color: #0e8a67;
+			color: #26a07d;
 			padding : 13px 18px;
 		}
 		/* 기본정보 세로줄 나오는것 */
@@ -147,7 +147,7 @@
 			box-shadow: inset -7px 0 9px -4px #d0e2de;		
 			width: 153px;
 			font-weight: 400;
-			padding: 13px 13px 13px 13px;
+			padding: 13px 13px 13px 20px;
 		}
 		.mContents > .fxd .title ul {
 			height: 46px;
@@ -957,7 +957,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
+									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">

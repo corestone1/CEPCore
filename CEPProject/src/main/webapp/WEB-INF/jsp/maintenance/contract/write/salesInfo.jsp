@@ -1002,7 +1002,7 @@
 					<div class="salesTable">						
 						<table>
 							<tr>
-								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label>연도</td>
+								<td class="tdTitle firstTd"><label style="color: red;vertical-align: middle;">*</label> 연도</td>
 								<td class="tdContents firstTd">
 									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesYear" name="salesList-<c:out value="${status.index}"/>-mtSalesYear" value="<c:out value="${list.mtSalesYear}"/>" style="text-align: center" numberOnly maxlength="4" readonly="readonly"/>
 									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />

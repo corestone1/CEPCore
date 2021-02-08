@@ -767,7 +767,7 @@
 							<input type="hidden" name="lastNum" value="0" />
 							<table>
 								<tr>
-									<td class="tdTitle firstTd"><label>*</label>제품</td>
+									<td class="tdTitle firstTd"><label>*</label>&nbsp;제품</td>
 									<td class="tdContents firstTd">
 										<!-- <input type="text" id="prodList-0-mtPmFkKey" name="mtPmFkKey" class="search" required/>	
 										<input type="hidden" id="prodList-0-pmNmCd" name="pmNmCd" /> -->
@@ -775,11 +775,11 @@
 										<input type="hidden" id="prodList-0-mtPmFkKey" name="mtPmFkKey"/>	
 										<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />	
 									</td>
-									<td class="tdTitle firstTd">시리얼번호</td>
+									<td class="tdTitle firstTd">><label>*</label>&nbsp;시리얼번호</td>
 									<td class="tdContents firstTd">
 										<input type="text" id="prodList-0-mtPmSerialNum" name="mtPmSerialNum" required/>
 									</td>
-									<td class="tdTitle firstTd"><label>*</label>수량</td>
+									<td class="tdTitle firstTd"><label>*</label>&nbsp;수량</td>
 									<td class="tdContents firstTd">
 										<input type="text" id="prodList-0-mtPmQuantity" name="mtPmQuantity" amountOnly style="width: 75px;" class="calculate" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
@@ -787,17 +787,17 @@
 									</td>
 								</tr>
 								<tr class="dpTbRow">
-									<td class="tdTitle"><label>*</label>단가</td>
+									<td class="tdTitle"><label>*</label>&nbsp;단가</td>
 									<td class="tdContents">
 										<input type="text" id="prodList-0-mtPmUprice" name="mtPmUprice" class="calculate" amountOnly required/>
 									</td>	
-									<td class="tdTitle"><label>*</label>합계</td>
+									<td class="tdTitle"><label>*</label>&nbsp;합계</td>
 									<td class="tdContents" colspan="3">
 										<input type="text" id="prodList-0-totalAmount" name="totalAmount" style="text-align: right;" readonly="readonly"/>	
 									</td>
 								</tr>
 								<tr class="dpTbRow">
-									<td class="tdTitle"><label>*</label>계약기간</td>
+									<td class="tdTitle"><label>*</label>&nbsp;계약기간</td>
 									<td class="tdContents" colspan="3">
 										<input type="text" id="prodList-0-mtPmStartDt" name="prodList-0-mtPmStartDt" class="calendar fromDt" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-0-mtPmEndDt" name="prodList-0-mtPmEndDt" class="calendar toDt" required/>
 									</td>
@@ -819,7 +819,7 @@
 							<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>"/>
 							<table>
 								<tr>
-									<td class="tdTitle firstTd"><label>*</label>제품</td>
+									<td class="tdTitle firstTd"><label>*</label>&nbsp;제품</td>
 									<td class="tdContents firstTd">
 										<%-- <input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>" class="search" required/>	
 										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" value="<c:out value="${list.pmNmCd}"/>" /> --%>
@@ -827,12 +827,12 @@
 										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmFkKey" name="mtPmFkKey" value="<c:out value="${list.mtPmFkKey}"/>"/>	
 										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
 									</td>
-									<td class="tdTitle firstTd">시리얼번호</td>
+									<td class="tdTitle firstTd"><label>*</label>&nbsp;시리얼번호</td>
 									<td class="tdContents firstTd">
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum" name="mtPmSerialNum" value="<c:out value="${list.mtPmSerialNum}"/>" required/>
 											
 									</td>
-									<td class="tdTitle firstTd"><label>*</label>수량</td>
+									<td class="tdTitle firstTd"><label>*</label>&nbsp;수량</td>
 									<td class="tdContents firstTd">
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmQuantity" name="mtPmQuantity" value="<c:out value="${displayUtil.commaStr(list.mtPmQuantity)}"/>" amountOnly style="width: 75px;" class="calculate" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
@@ -840,17 +840,17 @@
 									</td>
 								</tr>
 								<tr class="dpTbRow">
-									<td class="tdTitle"><label>*</label>단가</td>
+									<td class="tdTitle"><label>*</label>&nbsp;단가</td>
 									<td class="tdContents">
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmUprice" name="mtPmUprice" value="<c:out value="${displayUtil.commaStr(list.mtPmUprice)}"/>" class="calculate" amountOnly required/>
 									</td>	
-									<td class="tdTitle"><label>*</label>합계</td>
+									<td class="tdTitle"><label>*</label>&nbsp;합계</td>
 									<td class="tdContents" colspan="3">
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" style="text-align: right;" value="<c:out value="${displayUtil.makeMultiNumber(list.mtPmQuantity, list.mtPmUprice)}"/>" readonly="readonly"/>
 									</td>
 								</tr>
 								<tr class="dpTbRow">
-									<td class="tdTitle"><label>*</label>계약기간</td>
+									<td class="tdTitle"><label>*</label>&nbsp;계약기간</td>
 									<td class="tdContents" colspan="3">
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmStartDt" name="prodList-<c:out value="${status.index}"/>-mtPmStartDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>" required/>&nbsp;&nbsp;~&nbsp;&nbsp;<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmEndDt" name="prodList-<c:out value="${status.index}"/>-mtPmEndDt" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>" required/>
 									</td>
