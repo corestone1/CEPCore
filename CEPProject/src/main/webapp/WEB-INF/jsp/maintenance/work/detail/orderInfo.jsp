@@ -347,7 +347,7 @@
 			
 			$('#detailForm .dtl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="radio" name="orderGubun" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" name="orderGubun" class="tRadio" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
 			});
 			

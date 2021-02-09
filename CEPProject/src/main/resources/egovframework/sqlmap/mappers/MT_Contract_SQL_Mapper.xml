@@ -138,7 +138,7 @@
 	  -->
 	<select id="selectMtContractList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultMap="mtContractVO">				
 		
-		SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
+		<!-- SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
 		FROM (
 			SELECT MC.MT_CT_KEY
 				, MC.MT_INTEGRATE_KEY
@@ -180,8 +180,52 @@
 				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
 			  	AND DELETE_YN='N'
 			  	ORDER BY MT_CT_DT DESC
+		) M			 -->
+		SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
+		FROM (
+			SELECT MC.MT_CT_KEY
+				, MC.MT_INTEGRATE_KEY
+				, MC.MT_AC_KEY
+				, CA.AC_NM AS MT_AC_NM
+				, MC.MT_NM
+				, MC.MT_CT_DT
+				, MC.MT_START_DT
+				, MC.MT_END_DT
+				, MC.MT_RG_INSPECT_CNT
+				, MC.MT_IM_CD
+				, MC.MT_SB_CT_YN
+				, CE.EMP_NM AS SALE_EMP_NM
+				, CE2.EMP_NM AS MNG_EMP_NM
+				, CE3.EMP_NM AS SUPPORT_EMP_NM
+			FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_EMPLOYEE_TB CE2, CMM_EMPLOYEE_TB CE3, (SELECT @ROWNUM := 0) AS R
+			WHERE 1=1	
+				<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
+					AND MC.MT_CT_DT LIKE CONCAT(year(NOW()),'%')
+				</if>
+				<if test="fromDate != null and fromDate != ''">
+					AND MC.MT_CT_DT >= #{fromDate}
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND MC.MT_CT_DT <= #{toDate}
+				]]>
+				</if>
+				<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+					AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%')
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%')
+				</if>
+			  	AND MC.MT_AC_KEY = CA.AC_KEY 
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+				AND MC.MT_MNG_EMP_KEY= CE2.EMP_KEY
+				AND MC.MT_SUPPORT_EMP_KEY = CE3.EMP_KEY 
+			  	AND DELETE_YN='N'
+			  	ORDER BY MT_CT_DT DESC 
 		) M			
-		
 	</select>
 	
 	<!-- 기본정보 상세보기 -->

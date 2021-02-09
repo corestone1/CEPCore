@@ -705,9 +705,9 @@
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select> -->
-								<input type="radio" class="tCheck" name="mtWorkPmYn" value="Y" id="workPmYn1" onclick="workPmYnClick('Y');"/><label for="workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="mtWorkPmYn" value="Y" id="workPmYn1" onclick="workPmYnClick('Y');"/><label for="workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="mtWorkPmYn" value="N" id="workPmYn2" checked="checked" onclick="workPmYnClick('N');"/><label for="workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="mtWorkPmYn" value="N" id="workPmYn2" checked="checked" onclick="workPmYnClick('N');"/><label for="workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 							<td class="tdSubTitle">추가발주유무</td>
 							<td class="tdContents">
@@ -715,9 +715,9 @@
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select> -->
-								<input type="radio" class="tCheck" name="mtWorkOrderYn" value="Y" id="workOrderYn1" onclick="workOrderYnClick('Y');"/><label for="workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="mtWorkOrderYn" value="Y" id="workOrderYn1" onclick="workOrderYnClick('Y');"/><label for="workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="mtWorkOrderYn" value="N" id="workOrderYn2" checked="checked" onclick="workOrderYnClick('N');"/><label for="workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N	
+								<input type="radio" class="tRadio" name="mtWorkOrderYn" value="N" id="workOrderYn2" checked="checked" onclick="workOrderYnClick('N');"/><label for="workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N	
 							</td>
 						</tr>	
 						<tr>

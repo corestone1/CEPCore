@@ -668,9 +668,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtWorkPmYn" value="Y" id="m_workPmYn1"/><label for="m_workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="mtWorkPmYn" value="Y" id="m_workPmYn1"/><label for="m_workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtWorkPmYn" value="N" id="m_workPmYn2" checked="checked"/><label for="m_workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N					
+										<input type="radio" class="tRadio" name="mtWorkPmYn" value="N" id="m_workPmYn2" checked="checked"/><label for="m_workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N					
 									</td>
 								</tr>	
 								<tr>
@@ -680,9 +680,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtWorkOrderYn" value="Y" id="m_workOrderYn1"/><label for="m_workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="mtWorkOrderYn" value="Y" id="m_workOrderYn1"/><label for="m_workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtWorkOrderYn" value="N" id="m_workOrderYn2" checked="checked"/><label for="m_workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N									
+										<input type="radio" class="tRadio" name="mtWorkOrderYn" value="N" id="m_workOrderYn2" checked="checked"/><label for="m_workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N									
 									</td>
 								</tr>	
 								<tr>

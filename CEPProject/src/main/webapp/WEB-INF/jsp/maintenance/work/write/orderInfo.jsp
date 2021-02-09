@@ -412,8 +412,8 @@
 							</td> -->
 							<td class="tdTitle">부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								<input type="radio" class="tRadio" name="taxYn" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+								<input type="radio" class="tRadio" name="taxYn" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 							</td>
 							<td class="tdTitle">결재조건</td>
 							<td class="tdContents">
@@ -466,8 +466,8 @@
 								</td>
 								<!-- <td class="tdTitle">부가세 포함</td>
 								<td class="tdContents">
-									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT1" /><label for="prodList[0].hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-									<input type="radio" class="tCheck" name="prodList[0].taxYn" id="prodList[0].hasVAT2" /><label for="prodList[0].hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="prodList[0].taxYn" id="prodList[0].hasVAT1" /><label for="prodList[0].hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="prodList[0].taxYn" id="prodList[0].hasVAT2" /><label for="prodList[0].hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 								</td> -->	
 								<td class="tdTitle">매입구분</td>
 								<td class="tdContents">

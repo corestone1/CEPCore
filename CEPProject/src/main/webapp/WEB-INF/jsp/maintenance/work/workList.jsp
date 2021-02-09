@@ -375,7 +375,7 @@
 						<c:forEach var="result" items="${resultList}" varStatus="status">						
 							<tr>
 								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tCheck" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+									<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 								</td>
 								<td><c:out value="${status.count}"/></td>
 								<td><c:out value="${result.mtWorkKey}"/></td>

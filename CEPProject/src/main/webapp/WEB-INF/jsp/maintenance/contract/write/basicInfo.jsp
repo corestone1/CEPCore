@@ -664,9 +664,9 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>
@@ -682,9 +682,9 @@
 									<option value="온라인">온라인</option>
 									<option value="오프라인">오프라인</option>
 								</select> -->
-								<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="hasImCd1" /><label for="hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+								<input type="radio" class="tRadio" name="mtImCd" value="온라인" id="hasImCd1" /><label for="hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
 								&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="hasImCd2" checked="checked"/><label for="hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
+								<input type="radio" class="tRadio" name="mtImCd" value="오프라인" id="hasImCd2" checked="checked"/><label for="hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
 							</td>
 						</tr>
 						<tr>
@@ -700,9 +700,9 @@
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select> -->
-								<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="hasSbCt1" onclick="mtSbCtYnClick('Y');"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="mtSbCtYn" value="Y" id="hasSbCt1" onclick="mtSbCtYnClick('Y');"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="hasSbCt2" checked="checked" onclick="mtSbCtYnClick('N');"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="mtSbCtYn" value="N" id="hasSbCt2" checked="checked" onclick="mtSbCtYnClick('N');"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>
@@ -712,9 +712,9 @@
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select> -->	
-								<input type="radio" class="tCheck" name="gbYn" value="Y" id="hasGbYn1" /><label for="hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="gbYn" value="Y" id="hasGbYn1" /><label for="hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="gbYn" value="N" id="hasGbYn2" checked="checked"/><label for="hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="gbYn" value="N" id="hasGbYn2" checked="checked"/><label for="hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>

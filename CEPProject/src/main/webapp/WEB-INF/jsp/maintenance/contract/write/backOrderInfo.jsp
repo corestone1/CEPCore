@@ -1224,8 +1224,8 @@
 							<td style="width: 342px;">
 							<c:if test="${mtBackOrderVO.mtOrderKey !=null }">
 							유지보수 매입금액 업데이트여부 :
-									<input type="radio" class="tCheck" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-									<input type="radio" class="tCheck" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 							</c:if>
 							</td>
 						</tr>
@@ -1287,8 +1287,8 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 							</td>
 							<td class="tdTitle"><label>*</label> 발주합계</td>
 							<td class="tdContents">

@@ -319,7 +319,7 @@
 			
 			/* $('#detailForm .dtl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="radio" name="orderGubun" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" name="orderGubun" class="tRadio" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
 			}); */
 			
@@ -500,7 +500,7 @@
 								<c:forEach var="list" items="${mtWorkProductList}" varStatus="status">
 									<tr>
 										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtWorkSeq}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+											<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtWorkSeq}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 										</td>
 										<td><c:out value="${status.count}"/></td>
 										<td class="textalignL"><span title="<c:out value="${list.mtPmKeyNm}"/>"><c:out value="${list.mtPmKeyNm}"/></span> <img class="down" src="<c:url value='/images/arrow_down.png'/>"/></td>
@@ -516,7 +516,7 @@
 								</c:forEach>
 									
 									<!-- <tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check21" value="MW90098" /><label for="check21" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check21" value="MW90098" /><label for="check21" class="cursorP"/></td>
 										<td>21</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -525,7 +525,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check22" value="MW90098" /><label for="check22" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="gubun" id="check22" value="MW90098" /><label for="check22" class="cursorP"/></td>
 										<td>22</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -534,7 +534,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check23" value="MW90098" /><label for="check23" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check23" value="MW90098" /><label for="check23" class="cursorP"/></td>
 										<td>23</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -543,7 +543,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check24" value="MW90098" /><label for="check24" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check24" value="MW90098" /><label for="check24" class="cursorP"/></td>
 										<td>24</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -552,7 +552,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check25" value="MW90098" /><label for="check25" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check25" value="MW90098" /><label for="check25" class="cursorP"/></td>
 										<td>25</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -561,7 +561,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check26" value="MW90098" /><label for="check26" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check26" value="MW90098" /><label for="check26" class="cursorP"/></td>
 										<td>26</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -570,7 +570,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check27" value="MW90098" /><label for="check27" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check27" value="MW90098" /><label for="check27" class="cursorP"/></td>
 										<td>27</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -579,7 +579,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check28" value="MW90098" /><label for="check28" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check28" value="MW90098" /><label for="check28" class="cursorP"/></td>
 										<td>28</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -588,7 +588,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check21" value="MW90098" /><label for="check29" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check21" value="MW90098" /><label for="check29" class="cursorP"/></td>
 										<td>29</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -597,7 +597,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="m_gubun" id="check30" value="MW90098" /><label for="check30" class="cursorP"/></td>
+										<td><input type="radio" class="tRadio" name="m_gubun" id="check30" value="MW90098" /><label for="check30" class="cursorP"/></td>
 										<td>30</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>

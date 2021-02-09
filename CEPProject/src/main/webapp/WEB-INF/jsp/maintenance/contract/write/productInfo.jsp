@@ -752,8 +752,8 @@
 								<td class="subBtn" colspan="5"  style="border-top: none;text-align: center;vertical-align: middle;">
 									<c:if test="${listCount>0}">
 									유지보수 매출금액 업데이트여부 :
-									<input type="radio" class="tCheck" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-									<input type="radio" class="tCheck" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</c:if>
 									
 									<img class="floatR" src="<c:url value='/images/icon_project.png'/>" onclick="fn_addInfoTable();"/>
@@ -775,7 +775,7 @@
 										<input type="hidden" id="prodList-0-mtPmFkKey" name="mtPmFkKey"/>	
 										<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />	
 									</td>
-									<td class="tdTitle firstTd">><label>*</label>&nbsp;시리얼번호</td>
+									<td class="tdTitle firstTd"><label>*</label>&nbsp;시리얼번호</td>
 									<td class="tdContents firstTd">
 										<input type="text" id="prodList-0-mtPmSerialNum" name="mtPmSerialNum" required/>
 									</td>

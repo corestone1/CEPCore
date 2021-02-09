@@ -158,7 +158,8 @@
 		}
 		.mContents .dtl tbody {
 			width: 997px;
-			height: 534px;
+			/* height: 534px; */
+			height: 486px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -948,9 +949,9 @@
 								<tr>
 									<td><label>*</label>부가세포함</td>
 									<td>
-										<input type="radio" class="tCheck" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+										<input type="radio" class="tRadio" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</td>
 								</tr>
 								<tr>
@@ -966,9 +967,9 @@
 											<option value="온라인">온라인</option>
 											<option value="오프라인">오프라인</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="m_hasImCd1" /><label for="m_hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+										<input type="radio" class="tRadio" name="mtImCd" value="온라인" id="m_hasImCd1" /><label for="m_hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
 										&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="m_hasImCd2" checked="checked"/><label for="m_hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
+										<input type="radio" class="tRadio" name="mtImCd" value="오프라인" id="m_hasImCd2" checked="checked"/><label for="m_hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
 									</td>
 								</tr>
 								<tr>
@@ -984,9 +985,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="m_hasSbCt1"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="mtSbCtYn" value="Y" id="m_hasSbCt1"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="m_hasSbCt2" checked="checked"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
+										<input type="radio" class="tRadio" name="mtSbCtYn" value="N" id="m_hasSbCt2" checked="checked"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
 									</td>
 								</tr>
 								<tr>
@@ -996,9 +997,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="gbYn" value="Y" id="m_hasGbYn1" /><label for="m_hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="gbYn" value="Y" id="m_hasGbYn1" /><label for="m_hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="gbYn" value="N" id="m_hasGbYn2" checked="checked"/><label for="m_hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+										<input type="radio" class="tRadio" name="gbYn" value="N" id="m_hasGbYn2" checked="checked"/><label for="m_hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
 										
 										<button type="button" class="veralignM"><img class="cursorP" src="<c:url value='/images/btn_file_upload.png'/>" /></button>
 										<label class="file">보증증권.pdf</label>
@@ -1073,9 +1074,9 @@
 						제품정보
 						<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/>
 					</div>
-					<div class="stitle2 floatR">
+					<%-- <div class="stitle2 floatR">
 						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>
-					</div>
+					</div> --%>
 					<div class="floatC middle">
 						<table class="dtl">
 							<thead class="ftw400">
@@ -1096,7 +1097,7 @@
 							<c:forEach var="list" items="${productList}" varStatus="status">
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtPmKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtPmKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 									</td>
 									<td><c:out value="${status.count}"/></td>
 									<td class="textalignL"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${list.pmNmCd}"/></span> <img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
@@ -1113,9 +1114,9 @@
 									</td>
 								</tr>
 							</c:forEach>
-								<%-- <tr>
+								 <%-- <tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
 									</td>
 									<td>11</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" class="down" /></td>
@@ -1133,7 +1134,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check8" /><label for="check8" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check8" /><label for="check8" class="cursorP"/>
 									</td>
 									<td>12</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1151,7 +1152,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check9" /><label for="check9" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check9" /><label for="check9" class="cursorP"/>
 									</td>
 									<td>13</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1169,7 +1170,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check10" /><label for="check10" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check10" /><label for="check10" class="cursorP"/>
 									</td>
 									<td>15</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1187,7 +1188,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check11" /><label for="check11" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check11" /><label for="check11" class="cursorP"/>
 									</td>
 									<td>16</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1205,7 +1206,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check12" /><label for="check12" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check12" /><label for="check12" class="cursorP"/>
 									</td>
 									<td>17</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1223,7 +1224,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check13" /><label for="check13" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check13" /><label for="check13" class="cursorP"/>
 									</td>
 									<td>18</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1241,7 +1242,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check15" /><label for="check15" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check15" /><label for="check15" class="cursorP"/>
 									</td>
 									<td>19</td>
 									<td class="textalignL"><span title="PowerEdge R640PowerEdge R640">PowerEdge R640PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1256,8 +1257,14 @@
 									<td style="max-width: 0px; display: none;">
 										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
 									</td>
-								</tr>  --%>
+								</tr> --%>
 							</tbody>
+						</table>
+						<table style="width: 997px">
+							<tr style="color: #26a07d;background-color: #ccf4d7;">
+								<td class="textalignR" style="width: 230px">제품합계</td>
+								<td style="width: 92px"><c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/></td>
+							</tr>
 						</table>
 					</div>
 					<div class="bottom">
@@ -1265,7 +1272,7 @@
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-							<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>
 					</div>
 				</div>
