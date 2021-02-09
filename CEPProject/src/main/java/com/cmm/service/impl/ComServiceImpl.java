@@ -75,6 +75,24 @@ public class ComServiceImpl implements ComService {
 	}
 	
 	@Override
+	public SalesVO selectSalesGuarantyDetail(String key) throws Exception {
+		return comMapper.selectSalesGuarantyDetail(key);	
+	}
+	
+	@Override
+	public Map<String, Object> updateSalesInfo(SalesVO salesVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try {
+			comMapper.updateSalesInfo(salesVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;		
+	}
+	
+	@Override
 	public PurchaseVO selectPurchaseDetail(String orderKey) throws Exception {
 		return comMapper.selectPurchaseDetail(orderKey);
 	}

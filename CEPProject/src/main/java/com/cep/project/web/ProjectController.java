@@ -1,5 +1,6 @@
 package com.cep.project.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +38,7 @@ import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.OrderVO;
+import com.cmm.vo.SalesVO;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -284,10 +287,24 @@ public class ProjectController {
 		String[] salesKey = request.getParameterValues("salesKey[]");
 		model.addAttribute("salesKey", salesKey);
 		
-		/*List<?> contractList = service.selectContractDetail(ctKey);
-		model.addAttribute("resultList", contractList);*/
 		
 		return "project/write/biddingInfo";
+	}
+	
+	@RequestMapping(value="/select/biddingInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public List<SalesVO> selectBiddingInfo(@RequestParam(value="salesKeyList[]") List<String> salesKeyList) throws Exception {
+		
+		List<SalesVO> salesList = new ArrayList<SalesVO>();
+		
+		for(String salesKey : salesKeyList) {
+			SalesVO salesVO = new SalesVO();
+			salesVO = comService.selectSalesGuarantyDetail(salesKey);
+			
+			salesList.add(salesVO);
+        }
+		
+		return salesList;
 	}
 	
 	

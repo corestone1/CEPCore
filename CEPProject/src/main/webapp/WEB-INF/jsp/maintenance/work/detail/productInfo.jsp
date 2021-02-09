@@ -11,7 +11,10 @@
 		.sfcnt {
 			height: 91px;
 		}
-		.btnWrap {
+		.bottom > div {
+			margin-top: 22px;
+		}
+		/* .btnWrap {
 			position: absolute;
 			bottom: 31px;
 		}
@@ -20,7 +23,7 @@
 		}
 		.btnWrap.rt {
 			right: 127px;
-		}
+		} */
 		form .nav {
 			width: 100%;
 			height: 49px;
@@ -83,8 +86,9 @@
 		form .contents .bsc {
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
-			border: 1px solid #bee2da;
+			/* border: 1px solid #bee2da; */
 		    border-bottom: 2px solid #bfe3db;
+		    width: 614px;
 		}
 		
 		form .contents .bsc tbody {			
@@ -95,11 +99,12 @@
 		}
 		/* 기본정보 글자색 */
 		form .contents .bsc tr td {
-			color: #0e8a67;
+			color: #26a07d;
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			padding: 13px 13px 13px 20px;
 		}
 		
 		form .contents .dtl {
@@ -122,6 +127,7 @@
 			overflow-x: hidden;
 			float: left;
 			width: 997px;		
+			border-bottom: 2px solid #c4c4c4;
 		}
 		/* 커서포인터 */
 		form .contents .dtl tbody tr {
@@ -181,7 +187,7 @@
 		
 		/* 제품정보 세로싸이즈 */
 		form .contents .dtl tbody {
-			height: 532px;
+			height: 534px;
 		}
 		/* 제품정보 테이블 크기조정 */
 		form .contents .dtl thead th:first-child,
@@ -217,13 +223,14 @@
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
-			width: 99%;
+			width: 90%;
 			margin: 0 auto;
 		}
 		/* 제품정보>제품에서 V 크기 및 위치  */
 		form .contents .dtl tbody tr td img {
-			width: 25px;
-			vertical-align: top;
+			width: 13px;
+			vertical-align: middle;
+			margin-bottom: 5px;
 		}
 		
 		/* 제품정보 클릭했을때 나타나는 내용에서 제목(제품상세) */
@@ -246,13 +253,39 @@
 		$(document).ready(function() {
 			
 			$('li[id^=LI_TOPBar]').click(function(event){ 
+
 				//location.href = this.title; event.preventDefault();
-				document.listForm.action = this.title;
-	           	document.listForm.submit();
+				if(this.title == "basicInfo"){
+					document.m_listForm.action = "/maintenance/work/detail/basicInfo.do";
+		           	document.m_listForm.submit();
+				} else if(this.title == "productInfo"){
+					//console.log("productInfo===>${basicWorkInfo.mtWorkPmYn}")
+					if("${basicWorkInfo.mtWorkPmYn}" == "Y"){
+						document.m_listForm.action = "/maintenance/work/detail/productInfo.do";
+			           	document.m_listForm.submit();
+					} else {
+						alert("제품정보가 없습니다.\n 제품등록여부를 Y로 변경 후 제품정보를 등록하세요.")
+					}
+				} else if(this.title == "orderInfo"){
+					//console.log("orderInfo===>${basicWorkInfo.mtWorkOrderYn}")
+					if("${basicWorkInfo.mtWorkOrderYn}" == "Y"){
+						document.m_listForm.action = "/maintenance/work/detail/orderInfo.do";
+			           	document.m_listForm.submit();
+					} else {
+						alert("발주정보가 없습니다.\n 추가발주유무를 Y로 변경 후 발주정보를 등록하세요.")
+					}
+				}
 			});
+			
+			
+			//발주정보 커서 생성.
+			if("Y"=="${basicWorkInfo.mtWorkOrderYn}"){
+				$("#orderLabel").css('cursor','pointer');				
+			}
+			
 			var html = '';
 			$('#detailForm .dtl tbody tr').click(function() {
-				if($(this).attr('class') != "viewOpen") {
+				if($(this).attr('class') != "viewOpen trcheckcolor") {
 					console.log($(this).children().eq(5).text());
 					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 					       + '<div style="margin: 5px 71px;">'
@@ -263,19 +296,26 @@
 					       + '</div>'
 					       + '</div>';
 					$(this).after(html);
-					$(this).attr('class', 'viewOpen');
+					$(this).attr('class', 'viewOpen trcheckcolor');
+					var className = $(this).children().children().eq(3).attr('class');
+					//console.log("className====>"+className);
+					if(className === "down") {
+						$(this).children().children().eq(3).attr('src','<c:url value='/images/arrow_up.png'/>');
+						$(this).children().children().eq(3).attr('class', "up");
+					} else {
+
+						$(this).children().children().eq(3).attr('src','<c:url value='/images/arrow_down.png'/>');
+						$(this).children().children().eq(3).attr('class', "down");
+					}
 				} else {
+					$(this).children().children().eq(3).attr('src','<c:url value='/images/arrow_down.png'/>');
+					$(this).children().children().eq(3).attr('class', "down");
 					$(this).removeClass('viewOpen');
 					$(this).next().remove();
 				}
 			});
 			
 			
-			if("Y"==$('#mtWorkOrderYn').val()){
-				$("#orderLabel").css('cursor','pointer');
-				/* $("#LI_TOPBar_WO"). */
-				
-			}
 			
 			/* $('#detailForm .dtl tr').each(function(index, item) {
 				if(index != 0) {
@@ -283,34 +323,75 @@
 				}
 			}); */
 			
-		});
+		}); // end $(document).ready()
 
 		
-		function fn_deleteBtn(){
-			if($('input[name="gubun"]').is(':checked')){
-				if(confirm("선택한 내용을 삭제하시겠습니까?")){
-					document.listForm.btnOption.value='delete';
-					document.listForm.selectKey.value=$('input[name="gubun"]:checked').val();
+				
+		function fn_addView(){
+			
+			var url = '/maintenance/work/write/productInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtWorkKey":'<c:out value="${mtWorkKey}"/>'				
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			
+		}
+		
+		function fn_deleteWorkPmBtn() {
+			var obj = null; 
+			if($('input[name="m_gubun"]').is(':checked')) {
+				//console.log("mtIntegrateKey.value===>"+document.m_mtMoveForm.mtIntegrateKey.value+"/"+$('input[name="m_gubun"]:checked').val());
+				if(confirm("선택한 제품을 삭제하시겠습니까?")){
+					obj = {};
+					obj["mtIntegrateKey"] = $('#mtIntegrateKey').val();
+					obj["mtWorkKey"] = $('#mtWorkKey').val();
+					obj["mtWorkSeq"] = $('input[name="m_gubun"]:checked').val();
+					$.ajax({
+			        	url:"/maintenance/work/detail/deleteWorkProduct.do",
+			            dataType: 'text', 
+			            type:"post",  
+			            data: JSON.stringify(obj),
+			            
+			     	   	contentType: "application/json; charset=UTF-8", 
+			     	  	beforeSend: function(xhr) {
+			        		xhr.setRequestHeader("AJAX", true);
+			        		
+			        	},
+			            success:function(data){	
 
-					document.listForm.action = "/maintenance/work/deleteProdect.do";
-		           	document.listForm.submit(); 
-				} else {
-					return false;
+			            	var paramData = JSON.parse(data);
+			            	
+			            	if("Y" == paramData.successYN){
+			            		alert("유지보수계약 제품정보 삭제를 성공하였습니다.");
+			            		
+			            		document.m_listForm.action = "/maintenance/work/detail/productInfo.do";
+			    	           	document.m_listForm.submit();
+			            	} else {
+			            		alert("유지보수계약 제품정보 삭제를 실패하였습니다.");
+			            		
+			            	}
+			            	 
+			            },
+			        	error: function(request, status, error) {
+			        		if(request.status != '0') {
+			        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+			        		}
+			        	} 
+			        });
 				}
-				
-				
 			} else {
 				alert("삭제할 대상을 선택하세요 !!");
-				
-				return false;
 			}
 			
-		
 		}
+		
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form id="m_listForm" name="m_listForm" method="post">
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>"/>		
 		<input type="hidden" id="mtWorkSeq" name="mtWorkSeq" />		
@@ -334,22 +415,22 @@
 								</tr>
 								<tr>
 									<td>고객사담당자</td>
-									<td><c:out value="${basicContractInfo.acDirectorInfo}"/></td>
+									<td><c:out value="${basicContractInfo.mtAcDirectorNm}"/> / <c:out value="${basicContractInfo.acDirectorInfo}"/></td>
 								</tr>
 								<tr>
 									<td>계약일자</td>
-									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtCtDt)}"/></td>
+									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtCtDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 기간</td>
-									<td><c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${basicContractInfo.makeDisplayDate(basicContractInfo.mtEndDt)}"/></td>
+									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수 금액</td>
-									<td><c:out value="${basicContractInfo.makeDisplayAmount(basicContractInfo.mtAmount)}"/></td>
+									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<tr>
-									<td>부가세 포함여부</td>
+									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
 								</tr>
 								<tr>
@@ -365,7 +446,7 @@
 									<td><c:out value="${basicContractInfo.mtRgInspectCnt}"/> 회</td>
 								</tr>
 								<tr>
-									<td>백계약유무</td>
+									<td>백계약 유무</td>
 									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
 								</tr>
 								<tr>
@@ -386,7 +467,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td><c:out value="${basicContractInfo.remark}"/></td>
+									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 						</div>
@@ -395,15 +476,15 @@
 				<div class="floatR dpBlock fxd">
 					<div class="title">
 						<ul>
-							<li id="LI_TOPBar_WB" title="/maintenance/work/detail/basicInfo.do"><label style="cursor: pointer;">작업정보</label></li>
-							<li id="LI_TOPBar_WB" class="on" title="/maintenance/work/detail/productInfo.do"><label style="cursor: pointer;">제품정보</label></li>
-							<li id="LI_TOPBar_WO" title="/maintenance/work/detail/orderInfo.do"><label id="orderLabel">발주정보</label></li>
+							<li id="LI_TOPBar_WB" title="basicInfo"><label style="cursor: pointer;">작업정보</label></li>
+							<li id="LI_TOPBar_WB" class="on"><label style="cursor: pointer;">제품정보</label></li>
+							<li id="LI_TOPBar_WO" title="orderInfo"><label id="orderLabel">발주정보</label></li>
 							<li></li>
 						</ul>
 					</div>
 					<div id="detailForm">
-						<div class="stitle cg colorBlack">제품정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="floatC">
+						<div class="stitle cg colorBlack">제품정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/></div>
+						<div class="floatC middle">
 							<table class="dtl">
 								<thead class="ftw400">
 									<tr>
@@ -419,13 +500,13 @@
 								<c:forEach var="list" items="${mtWorkProductList}" varStatus="status">
 									<tr>
 										<td onclick="event.cancelBubble = true;">
-											<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtWorkSeq}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+											<input type="radio" class="tCheck" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtWorkSeq}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 										</td>
 										<td><c:out value="${status.count}"/></td>
-										<td class="textalignL"><c:out value="${list.mtPmKeyNm}"/></td>
-										<td class="textalignR"><c:out value="${list.mtPmSerialNum}"/></td>
+										<td class="textalignL"><span title="<c:out value="${list.mtPmKeyNm}"/>"><c:out value="${list.mtPmKeyNm}"/></span> <img class="down" src="<c:url value='/images/arrow_down.png'/>"/></td>
+										<td class="textalignC"><c:out value="${list.mtPmSerialNum}"/></td>
 										<td class="textalignL">
-											<span><c:out value="${list.mtPmWorkCont}"/></span>																			
+											<span title="<c:out value="${list.mtPmWorkCont}"/>"><c:out value="${list.mtPmWorkCont}"/></span>																			
 										</td>
 										<td style="max-width: 0px; display: none;">
 											<c:out value="${list.mtPmDetail}"/>
@@ -434,8 +515,8 @@
 									</tr>
 								</c:forEach>
 									
-									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check21" value="MW90098" /><label for="check21" class="cursorP"/></td>
+									<!-- <tr>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check21" value="MW90098" /><label for="check21" class="cursorP"/></td>
 										<td>21</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -453,7 +534,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check23" value="MW90098" /><label for="check23" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check23" value="MW90098" /><label for="check23" class="cursorP"/></td>
 										<td>23</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -462,7 +543,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check24" value="MW90098" /><label for="check24" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check24" value="MW90098" /><label for="check24" class="cursorP"/></td>
 										<td>24</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -471,7 +552,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check25" value="MW90098" /><label for="check25" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check25" value="MW90098" /><label for="check25" class="cursorP"/></td>
 										<td>25</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -480,7 +561,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check26" value="MW90098" /><label for="check26" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check26" value="MW90098" /><label for="check26" class="cursorP"/></td>
 										<td>26</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -489,7 +570,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check27" value="MW90098" /><label for="check27" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check27" value="MW90098" /><label for="check27" class="cursorP"/></td>
 										<td>27</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -498,7 +579,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check28" value="MW90098" /><label for="check28" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check28" value="MW90098" /><label for="check28" class="cursorP"/></td>
 										<td>28</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -507,7 +588,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check21" value="MW90098" /><label for="check29" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check21" value="MW90098" /><label for="check29" class="cursorP"/></td>
 										<td>29</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
@@ -516,21 +597,21 @@
 										</td>
 									</tr>
 									<tr>
-										<td><input type="radio" class="tCheck" name="gubun" id="check30" value="MW90098" /><label for="check30" class="cursorP"/></td>
+										<td><input type="radio" class="tCheck" name="m_gubun" id="check30" value="MW90098" /><label for="check30" class="cursorP"/></td>
 										<td>30</td>
 										<td class="textalignL">PowerEdge R640</td>
 										<td class="textalignR">TX203-23AS-12-3033</td>
 										<td class="textalignL">
 											<span>작업내용작업내용작업내용작업내용작업내용작업내용작업내용작업내용</span>										
 										</td>
-									</tr>
+									</tr> -->
 								</tbody>
 							</table>
 						</div>
-						<div class="btnWrap rt">
+						<div class="bottom">
 							<div class="floatR">
-								<button type="button" value="수정" id="modInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<button type="button" value="수정" onclick="fn_addView();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+								<button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

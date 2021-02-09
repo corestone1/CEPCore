@@ -79,6 +79,12 @@ public class MtBackOrderProductVO implements Serializable {
 
     // 삭제 여부 초기값 (N)
     private String deleteYn;
+    
+    //해당 제품 유지보수계약 시작일자
+    private String mtPmStartDt;
+    
+    //해당 제품 유지보수계약 종료일자.
+    private String mtPmEndDt;
 
 	/**
 	 * @return the mtOrderPmKey
@@ -316,6 +322,34 @@ public class MtBackOrderProductVO implements Serializable {
 	 */
 	public void setMtPmDetail(String mtPmDetail) {
 		this.mtPmDetail = mtPmDetail;
+	}
+
+	/**
+	 * @return the mtPmStartDt
+	 */
+	public String getMtPmStartDt() {
+		return mtPmStartDt;
+	}
+
+	/**
+	 * @param mtPmStartDt the mtPmStartDt to set
+	 */
+	public void setMtPmStartDt(String mtPmStartDt) {
+		this.mtPmStartDt = mtPmStartDt;
+	}
+
+	/**
+	 * @return the mtPmEndDt
+	 */
+	public String getMtPmEndDt() {
+		return mtPmEndDt;
+	}
+
+	/**
+	 * @param mtPmEndDt the mtPmEndDt to set
+	 */
+	public void setMtPmEndDt(String mtPmEndDt) {
+		this.mtPmEndDt = mtPmEndDt;
 	}
 
 

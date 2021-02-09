@@ -234,28 +234,24 @@
 	</select>
 	
 	<insert id="insertBiddingInfo" parameterType="guarantyBondVO">
-		INSERT INTO CMM_GUARANTY_TB (
+		INSERT INTO CMM_GUARANTY_BOND_TB (
 			GB_KEY
 			, CT_KEY
 			, SALES_KEY
-			, GB_CLASS
 			, GB_KIND_CD
 			, GB_START_DT
 			, GB_END_DT
 			, GB_ISSUE_YN
 			, GB_AMOUNT
-			, SALES_KEY
 		) VALUES (
 			#{gbKey}
 			, #{ctKey}
 			, #{salesKey}
-			, #{gbClass}
-			, #{gbKindCd}
+			, #{gbKindCd} 
 			, #{gbStartDt}
 			, #{gbEndDt}
 			, #{gbIssueYn}
 			, #{gbAmount}
-			, #{salesKey}
 		)
 	</insert>
 	

@@ -1,6 +1,7 @@
 package com.cmm.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
@@ -23,6 +24,8 @@ public class SalesVO implements Serializable {
 	private String salesGbYn;
 	private String salesStatusCd;
 	private String regEmpKey;
+	private String modEmpKey;
+	private List<GuarantyBondVO> biddingList;
 	
 	public String getSalesKey() {
 		return salesKey;
@@ -101,6 +104,18 @@ public class SalesVO implements Serializable {
 	}
 	public void setRegEmpKey(String regEmpKey) {
 		this.regEmpKey = regEmpKey;
+	}
+	public String getModEmpKey() {
+		return modEmpKey;
+	}
+	public void setModEmpKey(String modEmpKey) {
+		this.modEmpKey = modEmpKey;
+	}
+	public List<GuarantyBondVO> getBiddingList() {
+		return biddingList;
+	}
+	public void setBiddingList(List<GuarantyBondVO> biddingList) {
+		this.biddingList = biddingList;
 	}
 	
 }

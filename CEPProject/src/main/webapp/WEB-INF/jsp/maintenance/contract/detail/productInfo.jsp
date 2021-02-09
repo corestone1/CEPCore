@@ -78,7 +78,7 @@
 		.mContents .bsc {
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
-			border: 1px solid #bee2da;
+			/* border: 1px solid #bee2da; */
 		    border-bottom: 2px solid #bfe3db;
 		}
 		
@@ -90,13 +90,13 @@
 		}
 		
 		.mContents .bsc tr td {
-			color: #0e8a67;
+			color: #26a07d;
 		}
 		.mContents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;			
 			width: 153px;
 			font-weight: 400;
-			padding: 13px 13px 13px 13px;
+			padding: 13px 13px 13px 20px;
 		}
 		.mContents .bsc tr td:last-child {
 			width: 470px;
@@ -158,7 +158,7 @@
 		}
 		.mContents .dtl tbody {
 			width: 997px;
-			height: 532px;
+			height: 534px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -336,7 +336,13 @@
 			color: red;
 			vertical-align: middle;
       	}
-		/* #modBasicTable label { */
+      	.accountList li {
+			text-align: left;
+			margin-left: 10px;
+			line-height: 2.3;
+			font-size: 14px;
+			color: #21a17e;
+		}
 			
 	</style>
 	<script>
@@ -353,11 +359,14 @@
 				//부가세 포함 셋팅
 				$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 				//검수방법 셋팅
-				$('#m_mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
+				//$('#m_mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
+				$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
 				//백계약유무셋팅
-				$('#m_mtSbCtYn').val("${basicContractInfo.mtSbCtYn}").attr("selected", "true");
+				//$('#m_mtSbCtYn').val("${basicContractInfo.mtSbCtYn}").attr("selected", "true");
+				$("input:radio[name='mtSbCtYn']:radio[value='${basicContractInfo.mtSbCtYn}']").prop('checked', true);
 				//보증증권유무 셋팅
-				$('#m_gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
+				//$('#m_gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
+				$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
 			'</c:if>'
 			
 			$('li[id^=LI_TOPBar]').click(function(event){
@@ -425,7 +434,8 @@
 			
 			var html = '';
 			$('#prodList table tbody tr').click(function() {
-				if($(this).attr('class') != "viewOpen") {
+				/* alert("=====>"+$(this).attr('class')); */
+				if($(this).attr('class') != "viewOpen trcheckcolor") {
 					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 					       + '<div style="margin: 5px 71px;">'
 					       + '<ul class="detailList">'
@@ -437,7 +447,7 @@
 					       + '</div>'
 					       + '</div>';
 					$(this).after(html);
-					$(this).attr('class', 'viewOpen');
+					$(this).attr('class', 'viewOpen trcheckcolor');
 					var className = $(this).children().children().eq(3).attr('class');
 					//console.log("className====>"+className);
 					if(className === "down") {
@@ -535,8 +545,68 @@
 					}
 				});
 			});
+					
+			//거래처 검색
+			$("#m_mtAcNm").on("keydown", function(event){
+				
+				if(event.keyCode == 13) {						
+					fnSearchAccoutList(this, $(this).val());
+				}						
+			});		
 			
 		});//end document.ready
+		
+		//거래처 검색
+		var fnSearchAccoutList = function(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		//거래처 검색
+		var fnViewAccountList = function(pObject, pjAccountList){
+			var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 138px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;//+ '<div style="margin: 5px;">';
+			       
+			       for(var i=0; i < pjAccountList.length; i++) {
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	        ;
+			    	}			       
+			       
+			    html +=  '</ul>'
+			          + '</div>'
+			         ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#m_tr_account').after(html);
+			
+			
+			$("[id^='m_li_account']").click(function(event) {
+				
+				$('#m_mtAcNm').val(this.innerText); 
+				$('#m_mtAcKey').val(this.title);
+				$('#m_mtAcKey').change();
+				$('#m_div_accountList').remove();
+			});
+		};
 		
 
 		//기본정보 수정버튼 클릭
@@ -561,6 +631,8 @@
 			}
 
 		}); */
+		
+		//기본정보 수정
 		function modeBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
@@ -697,6 +769,47 @@
 				alert("삭제할 대상을 선택하세요 !!");
 			}
 		}
+		//기본정보 삭제
+		function deleteBasicInfo(){			
+			if(confirm("유지보수계약 내용을 삭제하시겠습니까?")){
+				var sendData = {
+	           			"selectKey":$('#m1_mtIntegrateKey').val()
+	           	}
+				$.ajax({
+	           		url: "/maintenance/contract/deleteContract.do",
+	           		dataType: 'text', 
+	           		type:"post",  
+	           		//data: JSON.parse(sendData),
+	           		data: JSON.stringify(sendData),
+	           		//data: sendData,
+	           		contentType: "application/json; charset=UTF-8", 
+	           		beforeSend: function(xhr) {
+	           			xhr.setRequestHeader("AJAX", true);	        		
+	           		},
+	           		success:function(data){	
+	           			var paramData = JSON.parse(data);
+	           		
+	           			if("Y" == paramData.successYN){
+	           				alert("유지보수계약 삭제를 성공하였습니다.");
+	           				
+	           				document.m_mtMoveForm.action = "/maintenance/contract/contractList.do";
+	        	           	document.m_mtMoveForm.submit();
+	           				
+	           			} else {
+	           				alert("유지보수계약 삭제를 실패하였습니다.");
+	           				
+	           			}
+	           		},
+	           		error: function(request, status, error) {
+	           			if(request.status != '0') {
+	           				alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	           			}
+	           		} 
+	           	});    
+			} else {
+				return false;
+			}
+		} // end deleteBasicInfo()
 
 	</script>
 </head>
@@ -710,7 +823,7 @@
 				<div class="title"><label class="ftw500">유지보수 상세정보</label></div>
 				<div>
 					<div class="stitle cg">기본정보  
-						<button type="button" value="수정" id="modBasicInfo" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						
 					</div> 
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
 						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
@@ -782,7 +895,7 @@
 								</tr>
 								<tr>
 									<td>비고</td>
-									<td ><pre style="width: 435px"><c:out value="${basicContractInfo.remark}"/></pre></td>
+									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
@@ -790,11 +903,13 @@
 									<td><label>*</label>프로젝트명</td>
 									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/></td>
 								</tr>
-								<tr>
+								<tr id="m_tr_account">
 									<td><label>*</label>고객사</td>
 									<td>
-										<input type="text" name="mtAcKey" id="m_mtAcKey" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
-										<input type="hidden" name="mtAcNm" id="m_mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/>
+										<%-- <input type="text" name="mtAcKey" id="m_mtAcKey" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcKey}"/>" required/>	
+										<input type="hidden" name="mtAcNm" id="m_mtAcNm" value="<c:out value="${basicContractInfo.mtAcNm}"/>"/> --%>
+										<input type="text" name="mtAcNm" id="m_mtAcNm" class="search" style="width :165px" value="<c:out value="${basicContractInfo.mtAcNm}"/>" autocomplete="off" required/>
+										<input type="hidden" name="mtAcKey" id="m_mtAcKey" value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
 									</td>
 								</tr>
 								<tr>
@@ -833,7 +948,8 @@
 								<tr>
 									<td><label>*</label>부가세포함</td>
 									<td>
-										<input type="radio" class="tCheck" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="radio" class="tCheck" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</td>
 								</tr>
@@ -846,10 +962,13 @@
 								<tr>
 									<td><label>*</label>검수방법</td>
 									<td>										
-										<select id="m_mtImCd" name="mtImCd" style="width: 162px" required>
+										<!-- <select id="m_mtImCd" name="mtImCd" style="width: 162px" required>
 											<option value="온라인">온라인</option>
 											<option value="오프라인">오프라인</option>
-										</select>
+										</select> -->
+										<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="m_hasImCd1" /><label for="m_hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+										&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="m_hasImCd2" checked="checked"/><label for="m_hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
 									</td>
 								</tr>
 								<tr>
@@ -861,19 +980,26 @@
 								<tr>
 									<td><label>*</label>백계약유무</td>
 									<td>
-										<select id="m_mtSbCtYn" name="mtSbCtYn" required>
+										<!-- <select id="m_mtSbCtYn" name="mtSbCtYn" required>
 											<option value="N">N</option>
 											<option value="Y">Y</option>
-										</select>
+										</select> -->
+										<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="m_hasSbCt1"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="m_hasSbCt2" checked="checked"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
 									</td>
 								</tr>
 								<tr>
 									<td><label>*</label>보증증권 유무</td>
 									<td>
-										<select name="gbYn" id="m_gbYn"  required>
+										<!-- <select name="gbYn" id="m_gbYn"  required>
 											<option value="N">N</option>
 											<option value="Y">Y</option>
-										</select>
+										</select> -->
+										<input type="radio" class="tCheck" name="gbYn" value="Y" id="m_hasGbYn1" /><label for="m_hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" class="tCheck" name="gbYn" value="N" id="m_hasGbYn2" checked="checked"/><label for="m_hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+										
 										<button type="button" class="veralignM"><img class="cursorP" src="<c:url value='/images/btn_file_upload.png'/>" /></button>
 										<label class="file">보증증권.pdf</label>
 									</td>
@@ -916,6 +1042,10 @@
 								</tr>
 							</table>
 						</div>
+						<div class="floatL" style="margin-top: 22px">
+							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+						</div>
 					</form>
 				</div>
 			</div>
@@ -946,7 +1076,7 @@
 					<div class="stitle2 floatR">
 						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>
 					</div>
-					<div class="floatC">
+					<div class="floatC middle">
 						<table class="dtl">
 							<thead class="ftw400">
 								<tr>
@@ -983,7 +1113,7 @@
 									</td>
 								</tr>
 							</c:forEach>
-								<tr>
+								<%-- <tr>
 									<td onclick="event.cancelBubble = true;">
 										<input type="radio" class="tCheck" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
 									</td>
@@ -1126,11 +1256,12 @@
 									<td style="max-width: 0px; display: none;">
 										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
 									</td>
-								</tr> 
+								</tr>  --%>
 							</tbody>
 						</table>
 					</div>
 					<div class="bottom">
+						
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>

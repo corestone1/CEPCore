@@ -27,6 +27,7 @@ import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.OrderProductVO;
 import com.cmm.vo.OrderVO;
+import com.cmm.vo.SalesVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -224,25 +225,60 @@ public class ProjectServiceImpl implements ProjectService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		
-		int result = 0;
-		
-		String ctKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_CONTRACT);
-		guarantyBondVO.setCtKey(ctKey);
-		
-		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
-		guarantyBondVO.setRegEmpKey(session.get("empKey"));
-		
-//		comService.insertSalesInfo(request, guarantyBondVO);
-		
-	    result = mapper.insertBiddingInfo(guarantyBondVO);
-	    
-	    if(result > 0){
-        	returnMap.put("successYN", "Y");
-        	returnMap.put("pjKey", request.getParameter("pjKey"));
-        	returnMap.put("ctKey", guarantyBondVO.getCtKey());
-        	returnMap.put("salesKey", guarantyBondVO.getSalesKey());
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			guarantyBondVO.setModEmpKey(session.get("empKey"));
+			comService.updateSalesInfo(guarantyBondVO);
+				
+			for(int i = 0; i < guarantyBondVO.getBiddingList().size(); i++) {
+				guarantyBondVO.setCtKey(guarantyBondVO.getBiddingList().get(i).getCtKey());
+				guarantyBondVO.setSalesKey(guarantyBondVO.getBiddingList().get(i).getSalesKey());
+				
+				if(guarantyBondVO.getBiddingList().get(i).getCtGuarantyYN().equals("Y")) {
+					String gbKey = comService.makePrimaryKey(PrimaryKeyType.GUARANTY_BOND);
+
+					guarantyBondVO.setGbKey(gbKey);
+					guarantyBondVO.setGbKindCd("계약");
+					guarantyBondVO.setGbStartDt(guarantyBondVO.getBiddingList().get(i).getCtGuarantyStartDt());
+					guarantyBondVO.setGbEndDt(guarantyBondVO.getBiddingList().get(i).getCtGuarantyEndDt());
+					guarantyBondVO.setGbIssueYn(guarantyBondVO.getBiddingList().get(i).getCtGbIssueYn());
+					guarantyBondVO.setGbAmount(guarantyBondVO.getBiddingList().get(i).getCtGuarantyAmount());
+					
+					mapper.insertBiddingInfo(guarantyBondVO);
+				}
+				if(guarantyBondVO.getBiddingList().get(i).getDfGuarantyYN().equals("Y")) {
+					String gbKey = comService.makePrimaryKey(PrimaryKeyType.GUARANTY_BOND);
+
+					guarantyBondVO.setGbKey(gbKey);
+					guarantyBondVO.setGbKindCd("하자");
+					guarantyBondVO.setGbStartDt(guarantyBondVO.getBiddingList().get(i).getDfGuarantyStartDt());
+					guarantyBondVO.setGbEndDt(guarantyBondVO.getBiddingList().get(i).getDfGuarantyEndDt());
+					guarantyBondVO.setGbIssueYn(guarantyBondVO.getBiddingList().get(i).getDfGbIssueYn());
+					guarantyBondVO.setGbAmount(guarantyBondVO.getBiddingList().get(i).getDfGuarantyAmount());
+					
+					mapper.insertBiddingInfo(guarantyBondVO);
+				}
+				if(guarantyBondVO.getBiddingList().get(i).getPpGuarantyYN().equals("Y")) {
+					String gbKey = comService.makePrimaryKey(PrimaryKeyType.GUARANTY_BOND);
+					
+					guarantyBondVO.setGbKey(gbKey);
+					guarantyBondVO.setGbKindCd("선급금");
+					guarantyBondVO.setGbStartDt(guarantyBondVO.getBiddingList().get(i).getPpGuarantyStartDt());
+					guarantyBondVO.setGbEndDt(guarantyBondVO.getBiddingList().get(i).getPpGuarantyEndDt());
+					guarantyBondVO.setGbIssueYn(guarantyBondVO.getBiddingList().get(i).getPpGbIssueYn());
+					guarantyBondVO.setGbAmount(guarantyBondVO.getBiddingList().get(i).getPpGuarantyAmount());
+					
+					mapper.insertBiddingInfo(guarantyBondVO);
+				}
+				
+			}
+			
+	    	returnMap.put("successYN", "Y");
+	    	returnMap.put("pjKey", request.getParameter("pjKey"));
+		    	
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
-		
 		return returnMap;	
 	}
 	

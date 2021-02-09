@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
+import com.cmm.vo.SalesVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -77,7 +78,7 @@ public interface ComMapper {
 	/**
 	* 
 	* @Method Name : insertSalesInfo
-	* @Cdate       : 2020. 01. 15.
+	* @Cdate       : 2021. 01. 15.
 	* @Author      : sylim
 	* @Modification: 
 	* @Method Description : 매출 정보 등록
@@ -86,6 +87,33 @@ public interface ComMapper {
 	* @throws Exception
 	*/
 	public int insertSalesInfo(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : selectSalesDetail
+	* @Cdate       : 2021. 02. 06.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매출 정보 상세 조회
+	* @param salesKey 
+	* @return
+	* @throws Exception
+	*/
+	public SalesVO selectSalesGuarantyDetail(String key) throws Exception;
+	public SalesVO selectGuarantyDetail(String key) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : updateSalesInfo
+	* @Cdate       : 2021. 02. 06.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매출 정보 수정
+	* @param salesVO 
+	* @return
+	* @throws Exception
+	*/
+	public void updateSalesInfo(SalesVO salesVO) throws Exception;
 	
 	/**
 	* 
@@ -178,5 +206,7 @@ public interface ComMapper {
 	* @throws Exception
 	*/
 	public List<?> selectPrePaymentList(String buyKey) throws Exception;
+
+	
 	
 }

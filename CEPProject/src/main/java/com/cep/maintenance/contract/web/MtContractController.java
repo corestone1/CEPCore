@@ -59,6 +59,79 @@ public class MtContractController {
 	public String selectContractList(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model) throws Exception {
 		
 		List<?> mtList = null;
+//		List<?> empList = null;
+		String toDay = null;		
+//		String fromDate = null;
+		Map<String, String> searchParam = null;
+		try {			
+			toDay = CepDateUtil.getToday(null);		
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
+				searchVO.setFromDate(searchVO.getFromDate().replace("-", ""));
+			} else {
+				searchVO.setFromDate(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
+			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
+			} else {
+				searchVO.setToDate(toDay);
+			}
+			
+//			if("".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+//				toDay = CepDateUtil.getToday(null);
+//				/*
+//				 * 6개월 날짜 계산.
+//				 */
+//				fromDate = CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6);
+//				
+//				searchVO.setFromDate(fromDate);
+//				searchVO.setToDate(toDay);				
+//			}
+			searchParam = new HashMap<>();
+			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
+			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			
+			logger.debug("searchVO.getFromDate()===>"+searchVO.getFromDate());
+			logger.debug("searchVO.getSearchSaleEmpKey()===>"+searchVO.getSearchSaleEmpKey());
+			logger.debug("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
+			logger.debug("searchVO.getBtnOption()===>"+searchVO.getBtnOption());
+			logger.debug("searchVO.getSelectKey()===>"+searchVO.getSelectKey());
+			mtList = service.selectContractList(searchVO);
+			/*logger.debug("mtList.size()=====>"+mtList.size());
+			for (int i = 0; i < mtList.size(); i++) {
+				MtContractVO vo = (MtContractVO)mtList.get(i);
+				logger.debug("vo.getMtAcNm()===>"+vo.getMtAcNm());
+			}*/
+//			empList = service.selectEmployeeList();
+			model.put("resultList", mtList);
+//			model.put("empList", empList);
+			model.put("searchParam", searchParam);
+			model.put("displayUtil", new CepDisplayUtil());
+			model.put("successYN", "Y");
+		} catch (Exception e) {
+			model.put("successYN", "N");
+			logger.error("mtContractList error", e);
+		}
+		
+		return "maintenance/contract/contractList";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : selectPopupContractList
+	  * @Cdate       : 2021. 1. 20.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 목록 조회 팝업
+	  * @param searchVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/popup/contractList.do")
+	public String selectPopupContractList(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model) throws Exception {
+		
+		List<?> mtList = null;
 		List<?> empList = null;
 		String toDay = null;		
 		String fromDate = null;
@@ -82,15 +155,16 @@ public class MtContractController {
 				searchVO.setFromDate(fromDate);
 				searchVO.setToDate(toDay);				
 			}
+			logger.debug("searchGubun====>"+searchVO.getSearchGubun());
 			searchParam = new HashMap<>();
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
 			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			searchParam.put("codeId", searchVO.getCodeId()); //계약관리키가 입력될 필드명
+			searchParam.put("nameId", searchVO.getNameId()); //계약명이 입력될 필드명
+
 			
-			logger.debug("searchVO.getFromDate()===>"+searchVO.getFromDate());
-			logger.debug("searchVO.getSearchSaleEmpKey()===>"+searchVO.getSearchSaleEmpKey());
-			logger.debug("searchVO.getSearchMtName()===>"+searchVO.getSearchMtName());
-			logger.debug("searchVO.getBtnOption()===>"+searchVO.getBtnOption());
-			logger.debug("searchVO.getSelectKey()===>"+searchVO.getSelectKey());
+			
+			
 			mtList = service.selectContractList(searchVO);
 			/*logger.debug("mtList.size()=====>"+mtList.size());
 			for (int i = 0; i < mtList.size(); i++) {
@@ -105,10 +179,9 @@ public class MtContractController {
 			model.put("successYN", "Y");
 		} catch (Exception e) {
 			model.put("successYN", "N");
-			logger.error("mtContractList error", e);
+			logger.error("selectPopupContractList error", e);
 		}
-		
-		return "maintenance/contract/contractList";
+		return "maintenance/popup/mtContractListPopup";
 	}
 	
 	/**
@@ -124,58 +197,67 @@ public class MtContractController {
 	  * @return
 	  * @throws Exception
 	 */
-	@RequestMapping(value="/deleteContract.do")
+	@RequestMapping(value="/deleteContract.do", method=RequestMethod.POST)
+	@ResponseBody
 	@SuppressWarnings("unchecked")
-	public String deleteContract(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
+	public Map<String, String> deleteContract(@RequestBody MtDefaultVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
 		
-		List<?> mtList = null;
-		List<?> empList = null;
+//		List<?> mtList = null;
+//		List<?> empList = null;
+//		String toDay = null;		
+//		String fromDate = null;
+
 		MtContractVO deleteVo = null;
 		HashMap<String, String> sessionMap = null;
-		String toDay = null;		
-		String fromDate = null;
+		Map<String, String> returnMap = new HashMap<>();
 		try {			
-			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
-				searchVO.setFromDate(searchVO.getFromDate().replace("-", ""));
-			}
+//			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), ""))){
+//				searchVO.setFromDate(searchVO.getFromDate().replace("-", ""));
+//			}
+//			
+//			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+//				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
+//			}
+//			
+//			if("".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+//				toDay = CepDateUtil.getToday(null);
+//				/*
+//				 * 6개월 날짜 계산.
+//				 */
+//				fromDate = CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6);
+//				
+//				searchVO.setFromDate(fromDate);
+//				searchVO.setToDate(toDay);				
+//			}
+			logger.debug("searchVO.getSelectKey()========>"+searchVO.getSelectKey());
 			
-			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
-				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
-			}
-			
-			if("".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
-				toDay = CepDateUtil.getToday(null);
-				/*
-				 * 6개월 날짜 계산.
-				 */
-				fromDate = CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6);
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSelectKey(), ""))) {
+				sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 				
-				searchVO.setFromDate(fromDate);
-				searchVO.setToDate(toDay);				
+				deleteVo = new MtContractVO();
+				deleteVo.setModEmpKey(sessionMap.get("empKey"));
+				deleteVo.setMtIntegrateKey(searchVO.getSelectKey());
+				service.deleteContract(deleteVo);
+				returnMap.put("successYN", "Y");
+			} else {
+				returnMap.put("successYN", "N");
 			}
 			
-			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
-			
-			deleteVo = new MtContractVO();
-			deleteVo.setModEmpKey(sessionMap.get("empKey"));
-			deleteVo.setMtIntegrateKey(searchVO.getSelectKey());
-			service.deleteContract(deleteVo);
 			/*logger.debug("mtList.size()=====>"+mtList.size());
 			for (int i = 0; i < mtList.size(); i++) {
 				MtContractVO vo = (MtContractVO)mtList.get(i);
 				logger.debug("vo.getMtAcNm()===>"+vo.getMtAcNm());
 			}*/
-			mtList = service.selectContractList(searchVO);
-			empList = service.selectEmployeeList();
-			model.put("resultList", mtList);
-			model.put("empList", empList);
-			model.put("successYN", "Y");
+//			mtList = service.selectContractList(searchVO);
+//			empList = service.selectEmployeeList();
+//			model.put("resultList", mtList);
+//			model.put("empList", empList);
 		} catch (Exception e) {
-			model.put("successYN", "N");
-			logger.error("mtMainList error", e);
+			returnMap.put("successYN", "N");
+			logger.error("deleteContract error", e);
 		}
 		
-		return "maintenance/contract/contractList";
+		return returnMap;
 	}	
 	
 	/**
@@ -302,6 +384,7 @@ public class MtContractController {
 			logger.debug("searchVO.getWhereNum()=====>"+searchVO.getWhereNum());
 			logger.debug("searchVO.getSearchPmNmCd()=====>"+searchVO.getSearchPmNmCd());
 			logger.debug("searchVO.getSearchSerialNum()=====>"+searchVO.getSearchSerialNum());
+			logger.debug("searchVO.getSearchGubun()=====>"+searchVO.getSearchGubun());
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSelectIntegrateKey(), ""))) {
 //				mtProductList = service.selectMtContractProductList(searchVO.getSelectIntegrateKey());
@@ -309,14 +392,13 @@ public class MtContractController {
 			}
 			
 			model.put("mtProductList", mtProductList);
+			model.put("searchGubun", searchVO.getSearchGubun());
 			model.addAttribute("whereNum", searchVO.getWhereNum());
 			model.put("selectIntegrateKey", searchVO.getSelectIntegrateKey());
 			model.put("displayUtil", new CepDisplayUtil());
 		} catch (Exception e) {
 			logger.error(null, e);
-		}
-		
-		
+		}		
 		return "maintenance/popup/mtProductPopup";
 	}
 	
@@ -339,6 +421,7 @@ public class MtContractController {
 		MtDefaultVO searchVO = null;
 		int listCount = 0;
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+		MtContractVO basicContractInfo = null; //유지보수 기본정보
 		try {
 			//테스트
 //			productVO.setMtIntegrateKey("MA200024");
@@ -351,17 +434,27 @@ public class MtContractController {
 			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(productVO.getMtIntegrateKey(), ""))) {
-				searchVO = new MtDefaultVO();
-				searchVO.setSelectIntegrateKey(productVO.getMtIntegrateKey());
-				mtProductList = service.selectMtContractProductList(searchVO);
-				if(null != mtProductList && mtProductList.size()>0) {
-					listCount = mtProductList.size();
+				//기본정보 조회
+				basicContractInfo = service.selectContractBasicDetail(productVO.getMtIntegrateKey());
+				if(null != basicContractInfo) {
+					searchVO = new MtDefaultVO();
+					searchVO.setSelectIntegrateKey(productVO.getMtIntegrateKey());
+					//제품조회
+					mtProductList = service.selectMtContractProductList(searchVO);
+					if(null != mtProductList && mtProductList.size()>0) {
+						listCount = mtProductList.size();
+					}
+					mtContractCountInfo = service.selectMtContractCount(productVO.getMtIntegrateKey());
 				}
-				mtContractCountInfo = service.selectMtContractCount(productVO.getMtIntegrateKey());
+				
 			}
 			
 			model.put("mtIntegrateKey", productVO.getMtIntegrateKey());		
-			model.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+//			model.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+			
+			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
+			model.put("mtContFromDate", basicContractInfo.getMtStartDt()); //유지보수 계약 시작일자.
+			model.put("mtContEndDate", basicContractInfo.getMtEndDt()); //유지보수 계약 종료일자.
 
 			model.put("mtProductList", mtProductList);
 			model.put("mtContractCountInfo", mtContractCountInfo);
@@ -397,21 +490,30 @@ public class MtContractController {
 	public Map<String, Object> writeProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> sessionMap = null;
-		
+//		MtSaleAmountListVO mtSalesAmountListVO = null;
 		try {			
 			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
 			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
 			
 			logger.debug("size=>"+productVO.getMtContractProductVoList().size());
 			logger.debug("rowNum=>"+productVO.getRowNum());
-			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
-				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
-			}
+			logger.debug("getUpdateYn=>"+productVO.getUpdateYn());
+//			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
+//				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
+//			}
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			productVO.setRegEmpKey(sessionMap.get("empKey"));
 			productVO.setModEmpKey(sessionMap.get("empKey"));
 			service.writeMtContractProductList(productVO);
+			
+			
+//			//매출정보를 자동생성한다.
+//			mtSalesAmountListVO = new MtSaleAmountListVO();
+//			mtSalesAmountListVO.setMtIntegrateKey(productVO.getMtIntegrateKey());
+//			mtSalesAmountListVO.setRegEmpKey(sessionMap.get("empKey"));
+//			mtSalesAmountListVO.setModEmpKey(sessionMap.get("empKey"));
+			
 			
 			returnMap.put("mtIntegrateKey", productVO.getMtIntegrateKey());
 			returnMap.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
@@ -827,7 +929,9 @@ public class MtContractController {
 		
 		List<MtBackOrderVO> backOrderList = null;
 		List<MtBackOrderProductVO> backOrderProductList = null;		
-//		MtBackOrderVO vo = null;
+		String selectMtOrderAcKeyNm = null;
+		int backOrderListCnt = 0;
+		MtBackOrderVO vo = null;
 		try {
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))) {
@@ -840,6 +944,7 @@ public class MtContractController {
 					
 					
 					if(null != backOrderList && backOrderList.size()>0) {
+						backOrderListCnt = backOrderList.size();
 						if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))) {
 							/*
 							 * 선택한 거래처의 백계약 품목 조회
@@ -848,12 +953,20 @@ public class MtContractController {
 //							backOrderProductList = service.selectBackOrderProductList(mtBackOrderVO.getSelectKey());
 							//선택되지 않은경우 초기 상세화면을 콜한경우 첫번째값을 선택.
 							mtBackOrderVO.setSelectKey(backOrderList.get(0).getMtOrderKey());
+							selectMtOrderAcKeyNm = backOrderList.get(0).getMtOrderAcKeyNm();
 						}
 						/*
 						 * 선택한 거래처의 백계약 품목 조회
 						 * getSelectKey : backorder key (mtOrderKey)
 						 */
 						backOrderProductList = service.selectBackOrderProductList(mtBackOrderVO.getSelectKey());
+						
+//						for (int i = 0; i < backOrderListCnt; i++) {
+//							vo = backOrderList.get(i);
+//							if(mtBackOrderVO.getSelectKey()==vo.getMtOrderKey()){
+//								selectMtOrderAcKeyNm = vo.getMtOrderAcKeyNm();
+//							}
+//						}
 						
 					}
 					
@@ -874,6 +987,7 @@ public class MtContractController {
 			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("empList", empList);
 			
+			model.put("selectMtOrderAcKeyNm", selectMtOrderAcKeyNm);
 			model.put("backOrderList", backOrderList);
 			model.put("selectKey", mtBackOrderVO.getSelectKey());			
 			model.put("backOrderProductList", backOrderProductList);			
@@ -939,6 +1053,7 @@ public class MtContractController {
 //		List < ? > backOrderBoxList = null;
 		int listCount = 1;
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+//		MtContractVO basicContractInfo = null; //유지보수 기본정보
 		try {		
 			
 //			model.put("toDay", CepDateUtil.getToday("yyyy-MM-dd"));
@@ -954,9 +1069,71 @@ public class MtContractController {
 //			}
 //			mtBackOrderVO.setUpdateYn("N");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.			
 			
+			//기본정보 조회
+//			basicContractInfo = service.selectContractBasicDetail(mtBackOrderVO.getMtIntegrateKey());
+//			
+//			if(null != basicContractInfo) {
+//				mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
+////				logger.debug("mtContractCountInfo.mtSalesAmountCnt==>"+mtContractCountInfo.get("mtSalesAmountCnt"));
+//				//백계약 등록  거래처 목록을 가져온다.
+//				backOrderSelectBox = service.selectBackOrderSelectBoxList(mtBackOrderVO.getMtIntegrateKey());			
+//				if(null !=backOrderSelectBox && backOrderSelectBox.size()>0){
+//					mtBackOrderVO.setMtSaveCnt(backOrderSelectBox.size());
+//					if("newOrder".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getBtnOption(), ""))){
+//						//신규저장
+//						returnVo = mtBackOrderVO;
+//					} else {
+//						//백계약 정보를 조회한다.
+//						if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
+//							returnVo = service.selectBackOrderDetail(mtBackOrderVO.getSelectKey());
+//							
+//						} else {
+//							map = backOrderSelectBox.get(0);
+//							returnVo = service.selectBackOrderDetail((String)map.get("mtOrderKey"));
+//							mtBackOrderVO.setSelectKey((String)map.get("mtOrderKey"));
+//						}
+//						if(null != returnVo){
+////							returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
+//							returnVo.setSelectKey(mtBackOrderVO.getSelectKey());
+//							returnVo.setMtSaveCnt(mtBackOrderVO.getMtSaveCnt());
+//							if(null !=returnVo.getMtBackOrderProductVoList() && returnVo.getMtBackOrderProductVoList().size()>1){
+//								listCount = returnVo.getMtBackOrderProductVoList().size();
+//							}
+//							acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
+//							
+////							backOrderBoxList = service.selectBackOrderSelectBoxList(returnVo.getMtIntegrateKey());
+//							
+//						}
+//					}
+////					mtBackOrderVO.setMtSaveCnt(backOrderSelectBox.size());//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
+//					
+//				} else {
+//					returnVo = mtBackOrderVO;
+//				}
+//			}
+			
+			
+			//백계약 정보를 조회한다.
+//			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
+//				returnVo = service. selectBackOrderDetail(mtBackOrderVO.getSelectKey());
+//				if(null != returnVo){
+//					returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
+//					returnVo.setSelectKey(mtBackOrderVO.getSelectKey());
+//					returnVo.setMtSaveCnt(mtBackOrderVO.getMtSaveCnt());
+//					if(null !=returnVo.getMtBackOrderProductVoList() && returnVo.getMtBackOrderProductVoList().size()>1){
+//						listCount = returnVo.getMtBackOrderProductVoList().size();
+//					}
+//					acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
+//					
+////					backOrderBoxList = service.selectBackOrderSelectBoxList(returnVo.getMtIntegrateKey());
+//					
+//				}
+//			} else {
+//				returnVo = mtBackOrderVO;
+//			}
 			
 			mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
-			logger.debug("mtContractCountInfo.mtSalesAmountCnt==>"+mtContractCountInfo.get("mtSalesAmountCnt"));
+//			logger.debug("mtContractCountInfo.mtSalesAmountCnt==>"+mtContractCountInfo.get("mtSalesAmountCnt"));
 			//백계약 등록  거래처 목록을 가져온다.
 			backOrderSelectBox = service.selectBackOrderSelectBoxList(mtBackOrderVO.getMtIntegrateKey());			
 			if(null !=backOrderSelectBox && backOrderSelectBox.size()>0){
@@ -993,25 +1170,6 @@ public class MtContractController {
 				returnVo = mtBackOrderVO;
 			}
 			
-			//백계약 정보를 조회한다.
-//			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))){
-//				returnVo = service. selectBackOrderDetail(mtBackOrderVO.getSelectKey());
-//				if(null != returnVo){
-//					returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
-//					returnVo.setSelectKey(mtBackOrderVO.getSelectKey());
-//					returnVo.setMtSaveCnt(mtBackOrderVO.getMtSaveCnt());
-//					if(null !=returnVo.getMtBackOrderProductVoList() && returnVo.getMtBackOrderProductVoList().size()>1){
-//						listCount = returnVo.getMtBackOrderProductVoList().size();
-//					}
-//					acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
-//					
-////					backOrderBoxList = service.selectBackOrderSelectBoxList(returnVo.getMtIntegrateKey());
-//					
-//				}
-//			} else {
-//				returnVo = mtBackOrderVO;
-//			}
-			
 			logger.debug("mtBackOrderVO.getMtOrderAcKeyNm()====>"+returnVo.getMtOrderAcKeyNm());
 //			logger.debug("backOrderSelectBox.size()====>"+backOrderSelectBox.size());
 //			logger.debug("getMtBackOrderProductVoList.size()====>"+returnVo.getMtBackOrderProductVoList().size());
@@ -1020,6 +1178,9 @@ public class MtContractController {
 			model.put("mtBackOrderVO", returnVo);
 			model.put("listCount", listCount);
 			model.put("mtContractCountInfo", mtContractCountInfo);
+
+//			model.put("mtContFromDate", basicContractInfo.getMtStartDt()); //유지보수 계약 시작일자.
+//			model.put("mtContEndDate", basicContractInfo.getMtEndDt()); //유지보수 계약 종료일자.
 			
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("acDirectorList", acDirectorList);
@@ -1060,18 +1221,18 @@ public class MtContractController {
 			logger.debug("mtBackOrderVO.getMtIntegrateKey()=====>"+mtBackOrderVO.getMtIntegrateKey());
 			logger.debug("mtBackOrderVO.getMtBackOrderProductVoList().size()=====>"+mtBackOrderVO.getMtBackOrderProductVoList().size());
 			
-			if(null != mtBackOrderVO.getMtBackOrderProductVoList() && mtBackOrderVO.getMtBackOrderProductVoList().size()>0) {
-				logger.debug("=======================================================================================>");
-				for (int i = 0; i < mtBackOrderVO.getMtBackOrderProductVoList().size(); i++) {
-					checkVo = mtBackOrderVO.getMtBackOrderProductVoList().get(i);
-					logger.debug("checkVo.getMtPmKey()=====>"+checkVo.getMtPmKey());
-					logger.debug("checkVo.getMtOrderPmQuantity()=====>"+checkVo.getMtOrderPmQuantity());
-					logger.debug("checkVo.getMtOrderPmUprice()=====>"+checkVo.getMtOrderPmUprice());
-					logger.debug("checkVo.getMtStartDt()=====>"+checkVo.getMtStartDt());
-					logger.debug("checkVo.getMtEndDt()=====>"+checkVo.getMtEndDt());
-					logger.debug("=======================================================================================>");
-				}
-			}
+//			if(null != mtBackOrderVO.getMtBackOrderProductVoList() && mtBackOrderVO.getMtBackOrderProductVoList().size()>0) {
+//				logger.debug("=======================================================================================>");
+//				for (int i = 0; i < mtBackOrderVO.getMtBackOrderProductVoList().size(); i++) {
+//					checkVo = mtBackOrderVO.getMtBackOrderProductVoList().get(i);
+//					logger.debug("checkVo.getMtPmKey()=====>"+checkVo.getMtPmKey());
+//					logger.debug("checkVo.getMtOrderPmQuantity()=====>"+checkVo.getMtOrderPmQuantity());
+//					logger.debug("checkVo.getMtOrderPmUprice()=====>"+checkVo.getMtOrderPmUprice());
+//					logger.debug("checkVo.getMtStartDt()=====>"+checkVo.getMtStartDt());
+//					logger.debug("checkVo.getMtEndDt()=====>"+checkVo.getMtEndDt());
+//					logger.debug("=======================================================================================>");
+//				}
+//			}
 			
 			//update list 수집
 			
@@ -1129,7 +1290,7 @@ public class MtContractController {
 			logger.debug("mtBackOrderVO.getSelectKey()===>"+mtBackOrderVO.getSelectKey());
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
-			service.deleteBackOrder(sessionMap.get("empKey"), mtBackOrderVO.getSelectKey());
+			service.deleteBackOrder(sessionMap.get("empKey"), mtBackOrderVO.getSelectKey(), mtBackOrderVO.getMtIntegrateKey());
 			
 			returnMap.put("mtIntegrateKey", mtBackOrderVO.getMtIntegrateKey());
 			returnMap.put("successYN", "Y");
@@ -1384,7 +1545,7 @@ public class MtContractController {
 		HashMap<String, String> sessionMap = null;
 		String[] deleteKeyList = new String[1];
 		try {		
-
+			
 			logger.debug("mtBuyAmountVO.getMtIntegrateKey()===>"+mtBuyAmountVO.getMtIntegrateKey());
 			logger.debug("mtBuyAmountVO.getMtOrderKey()===>"+mtBuyAmountVO.getMtOrderKey());
 			logger.debug("mtBuyAmountVO.getDeleteListKeys()===>"+mtBuyAmountVO.getDeleteListKeys());

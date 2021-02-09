@@ -31,7 +31,7 @@
 		}
 		.contentsWrap .contents .top select {
 			height: 40px;
-			width: 130px;
+			width: 120px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
@@ -52,8 +52,8 @@
 			margin-bottom: 3px;
 		}
 		.contentsWrap .contents .top input[class^="calendar"] {
-			width: 177px;
-			height: 40px;
+			width: 120px;
+			height: 38px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
@@ -88,10 +88,19 @@
 			width: 1662px;
 			cursor: pointer;
 		}
+		.middle table tbody tr td span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			margin-left: 15px;
+			vertical-align: middle;
+		}
+		/* 리스트에 마우스 올려 놓았을 경우 해당 라인 색깔 변하게 하는것 */
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
 		}
-		.middle table tbody tr td:nth-child(4),
+		/* .middle table tbody tr td:nth-child(4), */
 		.middle table tbody tr td:nth-child(6) {
 			font-weight: 400;
 		}
@@ -231,30 +240,71 @@
            	document.listForm.submit(); 
 		}
 		
-		function fn_deleteBtn(){
-			if($('input[name="gubun"]').is(':checked')){
-				if(confirm("선택한 내용을 삭제하시겠습니까?")){
-					document.listForm.btnOption.value='delete';
-					document.listForm.selectKey.value=$('input[name="gubun"]:checked').val();
-
-					document.listForm.action = "/maintenance/work/deleteWork.do";
-		           	document.listForm.submit(); 
+		function fn_deleteBtn(){		
+			if($('input[name="m_gubun"]').is(':checked')){
+				if(confirm("선택한 유지보수작업 내용을 삭제하시겠습니까?")){
+					var sendData = {
+		           			"selectWorkKey":$('input[name="m_gubun"]:checked').val()
+		           	}
+					$.ajax({
+		           		url: "/maintenance/work/deleteWork.do",
+		           		dataType: 'text', 
+		           		type:"post",  
+		           		//data: JSON.parse(sendData),
+		           		data: JSON.stringify(sendData),
+		           		//data: sendData,
+		           		contentType: "application/json; charset=UTF-8", 
+		           		beforeSend: function(xhr) {
+		           			xhr.setRequestHeader("AJAX", true);	        		
+		           		},
+		           		success:function(data){	
+		           			var paramData = JSON.parse(data);
+		           		
+		           			//console.log("paramData===>"+paramData);
+		           			//console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
+		           			if("Y" == paramData.successYN){
+		           				alert("유지보수작업 삭제를 성공하였습니다.");
+		           				
+		           				document.listForm.action = "/maintenance/work/workList.do";
+		        	           	document.listForm.submit();
+		           				
+		           			} else {
+		           				alert("유지보수작업 삭제를 실패하였습니다.");
+		           				
+		           			}
+		           		},
+		           		error: function(request, status, error) {
+		           			if(request.status != '0') {
+		           				alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		           			}
+		           		} 
+		           	});    
 				} else {
 					return false;
-				}
-				
+				}				
 				
 			} else {
-				alert("삭제할 대상을 선택하세요 !!");
+				alert("삭제할 대상을 선택하세요 !!");				
+				return false;
+			}		
+		}// end fn_deleteBtn()
+		
+		function fn_modifyBtn() {
+			if($('input[name="m_gubun"]').is(':checked')){
+				var url = '/maintenance/work/write/basicInfoView.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"mtWorkKey":$('input[name="m_gubun"]:checked').val()					
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			} else {
+				alert("수정할 대상을 선택하세요 !!");
 				
 				return false;
-			}
-			
-			
-			/* document.listForm.action = "<c:url value='/mtContractList.do'/>";
-           	document.listForm.submit(); */ 
-		
-		}
+			}			
+		} // end fn_modifyBtn()
 		
 	</script>
 </head>
@@ -271,21 +321,21 @@
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">유지보수 작업목록</label></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>	
-						<div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div>		
+						<%-- <div class="addBtn floatL cursorP" onclick="fn_addView2();"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>		
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
 						<form:input path="fromDate" type="text" placeholder="작업시작일자(from)" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" placeholder="작업시작일자(to)" class="calendar toDt" value="${searchParam.toDate}"/>
 						<!-- <select name="searchSaleEmpKey"> -->
-						<form:select path="searchWorkEmpKey">
-							<!-- <option value=""/>영업담당</option> -->
+						<form:input path="searchWorkEmpNm" type="text" placeholder="지원담당" style="width: 100px"/>
+						<%-- <form:select path="searchWorkEmpKey">
 							<form:option value="" label="지원담당" />
 							<c:forEach var="emp" items="${empList}" varStatus="status">
-								<%-- <option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option> --%>
-								<%-- <form:option value="<c:out value="${emp.empKey}"/>" label="<c:out value="${emp.empNm}"/>" /> --%>
+								<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+								<form:option value="<c:out value="${emp.empKey}"/>" label="<c:out value="${emp.empNm}"/>" />
 								<form:option value="${emp.empKey}" label="${emp.empNm}" />
 							</c:forEach>							
-						</form:select>
+						</form:select> --%>
 						<form:select path="searchWorkResult">
 							<!-- <option value=""/>영업담당</option> -->
 							<form:option value="" label="조치결과" />
@@ -293,9 +343,13 @@
 							<form:option value="진행중" label="진행중" />	
 							<form:option value="완료" label="완료" />					
 						</form:select>
-						<form:input path="searchMtName" type="text" placeholder="프로젝트 명"/>
+						<form:select path="searchGubun">
+							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="CU" label="고객사" />
+						</form:select>
+						<form:input path="searchWord" type="text" placeholder="검색어"/>
 						<!-- <input type="text" name="searchMtName" placeholder="프로젝트 명"/> -->
-						<span><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></span>
+						<span><button><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></button></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -321,13 +375,13 @@
 						<c:forEach var="result" items="${resultList}" varStatus="status">						
 							<tr>
 								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tCheck" name="gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+									<input type="radio" class="tCheck" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${result.mtWorkKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 								</td>
 								<td><c:out value="${status.count}"/></td>
 								<td><c:out value="${result.mtWorkKey}"/></td>
-								<td><c:out value="${result.mtAcNm}"/></td>
-								<td><c:out value="${result.acDirectorNm}"/> / <c:out value="${result.acDirectorInfo}"/></td>
-								<td><c:out value="${result.mtNm}"/></td>
+								<td align="left"><span title="${result.mtAcNm}"><c:out value="${result.mtAcNm}"/></span></td>
+								<td align="left"><span title="${result.acDirectorInfo}"><c:out value="${result.acDirectorNm}"/> / <c:out value="${result.acDirectorInfo}"/></span></td>
+								<td align="left"><span title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
 								<td><c:out value="${result.viewWorkStartDt}"/></td>
 								<td><c:out value="${result.viewWorkEndDt}"/></td>
 								<td><c:out value="${result.mtWorkTypeCd}"/></td>
@@ -345,7 +399,8 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" onclick="fn_deleteBtn();"/></button>
+						<button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" onclick="fn_excelBtn();"/></button>
 					</div>
 				</div>

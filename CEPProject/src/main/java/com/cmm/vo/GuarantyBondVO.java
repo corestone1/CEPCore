@@ -1,10 +1,9 @@
 package com.cmm.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
-
-import com.cep.project.vo.ProjectContractVO;
 
 @SuppressWarnings("serial")
 @Alias("guarantyBondVO")
@@ -12,12 +11,27 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	
 	private String gbKey;
 	private String ctKey;
-	private String gbClass;
+	private String salesKey;
 	private String gbKindCd;
 	private String gbStartDt;
 	private String gbEndDt;
 	private String gbIssueYn;
 	private int gbAmount;
+	private String ctGuarantyYN;
+	private String dfGuarantyYN;
+	private String ppGuarantyYN;
+	private String ctGuarantyStartDt;
+	private String dfGuarantyStartDt;
+	private String ppGuarantyStartDt;
+	private String ctGuarantyEndDt;
+	private String dfGuarantyEndDt;
+	private String ppGuarantyEndDt;
+	private String ctGbIssueYn;
+	private String dfGbIssueYn;
+	private String ppGbIssueYn;
+	private int ctGuarantyAmount;
+	private int dfGuarantyAmount;
+	private int ppGuarantyAmount;
 	
 	public String getGbKey() {
 		return gbKey;
@@ -31,11 +45,11 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	public void setCtKey(String ctKey) {
 		this.ctKey = ctKey;
 	}
-	public String getGbClass() {
-		return gbClass;
+	public String getSalesKey() {
+		return salesKey;
 	}
-	public void setGbClass(String gbClass) {
-		this.gbClass = gbClass;
+	public void setSalesKey(String salesKey) {
+		this.salesKey = salesKey;
 	}
 	public String getGbKindCd() {
 		return gbKindCd;
@@ -67,4 +81,95 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	public void setGbAmount(int gbAmount) {
 		this.gbAmount = gbAmount;
 	}
+	public String getCtGuarantyYN() {
+		return ctGuarantyYN;
+	}
+	public void setCtGuarantyYN(String ctGuarantyYN) {
+		this.ctGuarantyYN = ctGuarantyYN;
+	}
+	public String getDfGuarantyYN() {
+		return dfGuarantyYN;
+	}
+	public void setDfGuarantyYN(String dfGuarantyYN) {
+		this.dfGuarantyYN = dfGuarantyYN;
+	}
+	public String getPpGuarantyYN() {
+		return ppGuarantyYN;
+	}
+	public void setPpGuarantyYN(String ppGuarantyYN) {
+		this.ppGuarantyYN = ppGuarantyYN;
+	}
+	public String getCtGuarantyStartDt() {
+		return ctGuarantyStartDt;
+	}
+	public void setCtGuarantyStartDt(String ctGuarantyStartDt) {
+		this.ctGuarantyStartDt = ctGuarantyStartDt;
+	}
+	public String getDfGuarantyStartDt() {
+		return dfGuarantyStartDt;
+	}
+	public void setDfGuarantyStartDt(String dfGuarantyStartDt) {
+		this.dfGuarantyStartDt = dfGuarantyStartDt;
+	}
+	public String getPpGuarantyStartDt() {
+		return ppGuarantyStartDt;
+	}
+	public void setPpGuarantyStartDt(String ppGuarantyStartDt) {
+		this.ppGuarantyStartDt = ppGuarantyStartDt;
+	}
+	public String getCtGuarantyEndDt() {
+		return ctGuarantyEndDt;
+	}
+	public void setCtGuarantyEndDt(String ctGuarantyEndDt) {
+		this.ctGuarantyEndDt = ctGuarantyEndDt;
+	}
+	public String getDfGuarantyEndDt() {
+		return dfGuarantyEndDt;
+	}
+	public void setDfGuarantyEndDt(String dfGuarantyEndDt) {
+		this.dfGuarantyEndDt = dfGuarantyEndDt;
+	}
+	public String getPpGuarantyEndDt() {
+		return ppGuarantyEndDt;
+	}
+	public void setPpGuarantyEndDt(String ppGuarantyEndDt) {
+		this.ppGuarantyEndDt = ppGuarantyEndDt;
+	}
+	public String getCtGbIssueYn() {
+		return ctGbIssueYn;
+	}
+	public void setCtGbIssueYn(String ctGbIssueYn) {
+		this.ctGbIssueYn = ctGbIssueYn;
+	}
+	public String getDfGbIssueYn() {
+		return dfGbIssueYn;
+	}
+	public void setDfGbIssueYn(String dfGbIssueYn) {
+		this.dfGbIssueYn = dfGbIssueYn;
+	}
+	public String getPpGbIssueYn() {
+		return ppGbIssueYn;
+	}
+	public void setPpGbIssueYn(String ppGbIssueYn) {
+		this.ppGbIssueYn = ppGbIssueYn;
+	}
+	public int getCtGuarantyAmount() {
+		return ctGuarantyAmount;
+	}
+	public void setCtGuarantyAmount(int ctGuarantyAmount) {
+		this.ctGuarantyAmount = ctGuarantyAmount;
+	}
+	public int getDfGuarantyAmount() {
+		return dfGuarantyAmount;
+	}
+	public void setDfGuarantyAmount(int dfGuarantyAmount) {
+		this.dfGuarantyAmount = dfGuarantyAmount;
+	}
+	public int getPpGuarantyAmount() {
+		return ppGuarantyAmount;
+	}
+	public void setPpGuarantyAmount(int ppGuarantyAmount) {
+		this.ppGuarantyAmount = ppGuarantyAmount;
+	}
+	
 }

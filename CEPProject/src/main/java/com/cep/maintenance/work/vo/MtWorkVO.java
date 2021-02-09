@@ -34,6 +34,7 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 //	private String mtOption; // 등록(w), 조회(r)
 
 	private String mtAcNm;//거래처명
+	private String mtAcKey;//거래처관리키
 	private String mtNm;//유지보수 계약명
 	private String mtWorkEmpNm; // 작업담당자명
 	private String acDirectorNm; //거래처담당자명
@@ -494,6 +495,20 @@ public class MtWorkVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtWorkOrderYn(String mtWorkOrderYn) {
 		this.mtWorkOrderYn = mtWorkOrderYn;
+	}
+
+	/**
+	 * @return the mtAcKey
+	 */
+	public String getMtAcKey() {
+		return mtAcKey;
+	}
+
+	/**
+	 * @param mtAcKey the mtAcKey to set
+	 */
+	public void setMtAcKey(String mtAcKey) {
+		this.mtAcKey = mtAcKey;
 	}
 
 	/**

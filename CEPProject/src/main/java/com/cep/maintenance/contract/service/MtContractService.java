@@ -93,6 +93,7 @@ public interface MtContractService {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description :유지보수 계약 삭제(update)
+	  *                      유지보수 계약 삭제시 제품정보, 매출정보, 백계약정보, 매입정보를 함께 삭제한다.
 	  * @param deleteVo
 	  * @throws Exception
 	 */
@@ -216,7 +217,18 @@ public interface MtContractService {
 	*/
 	void writeMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountVO) throws Exception;
 	
-	
+	/**
+	 * 
+	  * @Method Name : deleteNwriteMtContractSalesAmountList
+	  * @Cdate       : 2021. 1. 22.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : mtSalesAmountListVO.getMtIntegrateKey()해당하는 매출정보를 모두 삭제하고 새로운 매출정보를 등록한다.
+	  *                       유지보수 제품정보 입력 후 자동생성하는 곳에서 사용함.
+	  * @param mtSalesAmountListVO
+	  * @throws Exception
+	 */
+	void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO) throws Exception;
 	/**
 	 * 
 	  * @Method Name : selectMtContractSalesAmountList
@@ -344,13 +356,13 @@ public interface MtContractService {
 	   * @Cdate       : 2020. 12. 16.
 	   * @Author      : aranghoo
 	   * @Modification: 
-	   * @Method Description : 유지보수계약별 백계약 메인과 백계약 품목을 삭제한다.
-	   *                       deleteBackOrderProductAll, deleteBackOrder 수행
+	   * @Method Description : 유지보수계약별 거래처별 백계약 메인, 백계약 품목, 매입정보를 삭제한다.
+	   *                       deleteMtContractBuyAmountAll, deleteBackOrderProductAll, deleteBackOrder 수행
 	   * @param modEmpKey :수정자
 	   * @param mtOrderKey : 수정키
 	   * @throws Exception
 	  */
-	 void deleteBackOrder(String modEmpKey, String mtOrderKey)  throws Exception;
+	 void deleteBackOrder(String modEmpKey, String mtOrderKey, String mtIntegrateKey)  throws Exception;
 	 
 	 /**
 	  * 
@@ -437,6 +449,19 @@ public interface MtContractService {
 	 
 	 /**
 	  * 
+	   * @Method Name : deleteNwriteMtContractBuyAmountList
+	   * @Cdate       : 2021. 1. 25.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :mtOrderKey에 대당하는 매입금액정보를 모두 삭제하고 새로운 매입정보를 등록한다.
+	   *                      백계약 정보 입력후 자동생성하는 곳에서 사용함.
+	   * @param mtBuyAmountListVO
+	   * @throws Exception
+	  */
+	 void deleteNwriteMtContractBuyAmountList(MtBuyAmountListVO mtBuyAmountListVO) throws Exception;
+	 
+	 /**
+	  * 
 	   * @Method Name : updateMtContractBuyAmountList
 	   * @Cdate       : 2020. 12. 23.
 	   * @Author      : aranghoo
@@ -457,9 +482,10 @@ public interface MtContractService {
 	   * @Method Description :유지보수계약 거래처별 매입금액 전체삭제
 	   * @param modEmpKey
 	   * @param mtOrderKey
+	   * @param mtIntegrateKey
 	   * @throws Exception
 	  */
-	 void deleteMtContractBuyAmountAll(String modEmpKey, String mtOrderKey) throws Exception;
+	 void deleteMtContractBuyAmountAll(String modEmpKey, String mtOrderKey, String mtIntegrateKey) throws Exception;
 	 
 	 /**
 	  * 

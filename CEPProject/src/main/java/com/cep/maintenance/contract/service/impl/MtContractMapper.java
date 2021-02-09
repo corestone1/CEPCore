@@ -344,7 +344,7 @@ public interface MtContractMapper {
 	  * @Cdate       : 2020. 12. 16.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description : 유지보수계약별 백계약 삭제
+	  * @Method Description : 유지보수계약별 거래처별 백계약 삭제
 	  * @param modEmpKey
 	  * @param mtOrderKey
 	  * @throws Exception
@@ -352,6 +352,17 @@ public interface MtContractMapper {
 //	public void deleteBackOrder(String modEmpKey, String mtOrderKey) throws Exception;
 	public void deleteBackOrder(Map<String, Object> deleteParam) throws Exception;
 	
+	/**
+	 * 
+	  * @Method Name : deleteBackOrderAll
+	  * @Cdate       : 2021. 2. 3.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별 전체 백계약 삭제(유지보수계약 삭제시 호출)
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteBackOrderAll(Map<String, Object> deleteParam) throws Exception;
 	/**
 	 * 
 	  * @Method Name : deleteBackOrderProductAll
@@ -365,6 +376,18 @@ public interface MtContractMapper {
 	 */
 //	public void deleteBackOrderProductAll(String modEmpKey, String mtOrderKey) throws Exception;
 	public void deleteBackOrderProductAll(Map<String, Object> deleteParam) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteContractBackOrderProductAll
+	  * @Cdate       : 2021. 2. 3.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약에 대한 전체 백계약 제품목록 전체삭제(유지보수계약이 삭제되는 경우 호출됨)
+	  * @param deleteParam
+	  * @throws Exception
+	 */
+	public void deleteContractBackOrderProductAll(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
 	 * 

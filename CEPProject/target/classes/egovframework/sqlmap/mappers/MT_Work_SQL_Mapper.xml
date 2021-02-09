@@ -8,6 +8,7 @@
 		<result property="mtWorkEmpNm" column="MT_WORK_EMP_NM"/>		
 		<result property="mtNm" column="MT_NM"/>
 		<result property="mtAcNm" column="MT_AC_NM"/>
+		<result property="mtAcKey" column="MT_AC_KEY"/>
 		<result property="mtWorkAcDirectorKey" column="MT_WORK_AC_DIRECTOR_KEY"/>
 		<result property="acDirectorNm" column="AC_DIRECTOR_NM"/>		
 		<result property="acDirectorInfo" column="AC_DIRECTOR_INFO"/>		
@@ -137,36 +138,26 @@
 			AND MW.MT_WORK_START_DT <= #{toDate}
 			]]>
 		</if>
-		<if test="searchWorkEmpKey != null and searchWorkEmpKey != ''">
-			AND MW.MT_WORK_EMP_KEY = #{searchWorkEmpKey}
+		<if test="searchWorkEmpNm != null and searchWorkEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchWorkEmpNm}, '%')
 		</if>
 		<if test="searchWorkResult != null and searchWorkResult != ''">
 			AND MW.MT_WORK_RESULT_CD = #{searchWorkResult}
 		</if>
-		<if test="searchMtName != null and searchMtName != ''">
-			AND MC.MT_NM LIKE CONCAT(#{searchMtName}, '%')
-		</if>			
+		<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+			AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+			AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%')
+		</if>		
 			AND MW.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
 		    AND MW.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
 		    AND MC.MT_AC_KEY = CA.AC_KEY
 		    AND MW.MT_WORK_EMP_KEY = CE.EMP_KEY
 		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
-		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
+		  ORDER BY MT_WORK_START_DT DESC, AC_NM, MT_NM 
 	</select>
-		<!-- 
-		유지보수 작업 삭제 ==> DELETE_YN값을 Y로 바꾼다.
-		1) 유지보수 작업목록에서 삭제 기능
-	 -->
-	<update id="deleteMtWork" >
-			UPDATE MT_WORK_TB
-			SET DELETE_YN='Y'
-				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
-				, MOD_EMP_KEY = #{modEmpKey}
-			WHERE MT_WORK_KEY=#{mtWorkKey}
-	</update>
-	
-	<!-- ===========================유지보수작업========================================= -->
 	<!--
 		유지보수 작업 상세보기
 	  -->
@@ -175,13 +166,14 @@
 		SELECT
 		  	MW.MT_WORK_KEY
 		  	, MW.MT_INTEGRATE_KEY
-		  	, CA.AC_NM
+		  	, CA.AC_NM AS MT_AC_NM
+		  	, MC.MT_AC_KEY
 		  	, MC.MT_NM
 		  	, MW.MT_WORK_EMP_KEY
 		  	, CE.EMP_NM AS MT_WORK_EMP_NM
 		  	, MW.MT_WORK_AC_DIRECTOR_KEY
 		    , AD.AC_DIRECTOR_NM 
-		    , CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM) AS AC_DIRECTOR_INFO
+		    , CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM, ' / ' , AD.AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
 		  	, MW.MT_WORK_START_DT
 		  	, MW.MT_WORK_START_TM
 		  	, MW.MT_WORK_END_DT
@@ -205,6 +197,22 @@
 		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
 		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
 	</select>
+		
+		<!-- 
+		유지보수 작업 삭제 ==> DELETE_YN값을 Y로 바꾼다.
+		1) 유지보수 작업목록에서 삭제 기능
+	 -->
+	<update id="deleteMtWork" parameterType="com.cep.maintenance.work.vo.MtWorkVO">
+			UPDATE MT_WORK_TB
+			SET DELETE_YN='Y'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_WORK_KEY=#{mtWorkKey}
+	</update>
+	
+	<!-- ===========================유지보수작업 제품정보========================================= -->
+
 	
 	<!-- 유지보수작업 제품정보 등록. -->
 	<insert id="writeWorkProductList" parameterType="java.util.HashMap">
@@ -237,24 +245,59 @@
 	         제품명(MT_PM_KEY_NM)은  PM_PRODUCT_MNG_TB.PM_KEY 와  MT_PRODUCT_TB.MT_PM_FK_KEY를 조인해서
 	     PM_PRODUCT_MNG_TB.PM_NM_CD를 사용하면 된다. -->
 	<select id="selectWorkProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO"  resultMap="mtWorkProductVO">	
-		SELECT
-		  WP.MT_WORK_KEY
-		  , WP.MT_WORK_SEQ
-		  , WP.MT_PM_KEY
-		  , CONCAT(WP.MT_PM_KEY , '제품') AS MT_PM_KEY_NM
-		  , 'TX112380SERAL' AS MT_PM_SERIAL_NUM
-		  , WP.MT_PM_WORK_CONT
-		  , '제품상세 제품상세 내용
-DB 손해보험 제품상세
 
-DB 손해보험 제품상세
-DB 손해보험 제품상세DB 손해보험 제품상세DB 손해보험 제품상세
-DB 손해보험 제품상세DB 손해보험 제품상세DB 손해보험 제품상세' AS MT_PM_DETAIL
-		FROM MT_WORK_PRODUCT_TB WP
-		WHERE WP.MT_WORK_KEY=#{mtWorkKey}
-		  AND WP.DELETE_YN='N'
-		ORDER BY WP.MT_WORK_SEQ	
+		SELECT 
+			WP.MT_WORK_KEY AS MT_WORK_KEY
+			, WP.MT_WORK_SEQ AS MT_WORK_SEQ
+			, WP.MT_PM_KEY AS MT_PM_KEY
+			, WP.MT_PM_WORK_CONT AS MT_PM_WORK_CONT
+			, MT.MT_PM_SERIAL_NUM AS MT_PM_SERIAL_NUM
+			, PM.PM_NM_CD AS MT_PM_KEY_NM
+			, MT.MT_PM_DETAIL AS MT_PM_DETAIL
+		FROM MT_WORK_PRODUCT_TB WP, MT_PRODUCT_TB MT, PM_PRODUCT_MNG_TB PM
+		WHERE 1=1
+			AND WP.MT_WORK_KEY = #{mtWorkKey}
+			AND WP.MT_PM_KEY = MT.MT_PM_KEY
+			AND MT.MT_PM_FK_KEY = PM.PM_KEY
+			AND WP.DELETE_YN = 'N'
+			ORDER BY WP.MT_WORK_SEQ	
 	</select>
-
 	
+	<!--  유지보수작업 제품정보 수정-->
+	<update id="updateWorkProductList" parameterType="java.util.HashMap">
+		<foreach collection="mtWorkProductVoList" item="item" separator=";" close=";">
+			UPDATE MT_WORK_PRODUCT_TB
+			SET MT_PM_KEY = #{item.mtPmKey}
+				, MT_PM_WORK_CONT = #{item.mtPmWorkCont}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_WORK_KEY = #{mtWorkKey} 
+				AND MT_WORK_SEQ = #{item.mtWorkSeq} 
+		</foreach>
+	</update>
+
+	<!--  유지보수작업 제품정보 삭제-->
+	<update id="deleteWorkProductList" parameterType="java.util.HashMap">
+		UPDATE MT_WORK_PRODUCT_TB
+			SET DELETE_YN='Y'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_WORK_KEY = #{mtWorkKey} 
+				AND MT_WORK_SEQ IN   
+			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+	</update>
+	
+	<!-- 유지보수 작업별 제품정보 전체삭제  -->
+	<update id="deleteWorkProductAll" parameterType="com.cep.maintenance.work.vo.MtWorkVO">
+		UPDATE MT_WORK_PRODUCT_TB
+			SET DELETE_YN='Y'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_WORK_KEY = #{mtWorkKey} 
+	</update>
 </mapper>

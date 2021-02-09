@@ -153,7 +153,7 @@ $(document).on("focus", "input:text[timeOnly]", function() {
 function addColon(x) {
 	var returnValue;
 	if(!x || x.length == 0) {
-		returnValue =  "";
+		returnValue =  x;
 	} else {
 		returnValue = x.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ":");
 	}
@@ -164,7 +164,7 @@ function addColon(x) {
 function removeColon(x) {
 	var returnValue;
     if(!x || x.length == 0) {
-    	returnValue= "";
+    	returnValue= x;
     } else {
     	returnValue = x.split(":").join("");
     }
@@ -174,7 +174,7 @@ function removeColon(x) {
 function addDateMinus(x) {	
 	var returnValue;
 	if(!x || x.length == 0) {
-		returnValue =  "";
+		returnValue =  x;
 	} else {
 		returnValue = x.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
 	}
@@ -184,7 +184,7 @@ function addDateMinus(x) {
 function removeData(x, y) {
 	var returnValue;
     if(!x || x.length == 0) {
-    	returnValue = "";
+    	returnValue = x;
     }
     else {
     	returnValue = x.split(y).join("");
@@ -225,21 +225,6 @@ function fn_date_format(e, oThis) {
     }
 }
 
-// 자바 스크립트로 파라미터 받기
-function getParameter(name) {
-	var params = location.search.substr(location.search.indexOf("?") + 1);
-	var newVal = "";
-	
-	params = params.split("&");
-	for(var i = 0; i < params.length; i++) {
-		temp = params[i].split("=");
-		if([temp[0]] == name) { 
-			newVal = temp[1];
-		}
-	}
-	
-	return newVal;
-}
 /* 추후 수정 필요
  * from날짜 이전 날짜는 to날짜에서 선택 못하도록, to날짜 이후 날짜는 from 날짜에서 선택 못하도록
  * */	
@@ -290,6 +275,39 @@ $(window).load(function() {
 		$(this).attr('onkeyup','fn_date_format(event, this)');
 		$(this).attr('onkeypress','fn_date_format(event, this)');
 		
+	});
+	
+	/* 리스트 클릭하면 색깔 칠하기.*/
+	$('.middle table tbody tr').children().click(function() {
+		//alert(111);
+		//해당 tbody의 tr의 class값 제거.
+		$(".middle table tbody tr").removeClass("trcheckcolor");
+		//$(".middle table tbody tr").parent().css("background", "red");
+		//$(this).css("background", "red");
+		//$(".middle table tbody").children().children().css("background", "red");
+		  //선택된 tr의 배경색을 변경
+		//$(".middle table tbody tr").addClass("truncheckcolor");
+		
+		$(this).parent().addClass("trcheckcolor");
+	});
+	
+	$('.submiddle table tbody tr').children().click(function() {
+		
+		//해당 tbody의 tr의 class값 제거.
+		$(".submiddle table tbody tr").removeClass("trcheckcolor");
+		
+		$(this).parent().addClass("trcheckcolor");
+	});
+	
+
+	/* 두줄 색칠하기 */
+	$('.middle2 table tbody tr').children().click(function() {
+		//해당 tbody의 tr의 class값 제거.
+		$(".middle2 table tbody tr").removeClass("trcheckcolor");
+		
+		$(this).parent().addClass("trcheckcolor");
+		$(this).parent().prev().addClass("trcheckcolor");
+		$(this).parent().next().addClass("trcheckcolor");
 	});
 	
 });

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
+import com.cmm.vo.SalesVO;
 
 public interface ComService {
 	
@@ -77,8 +78,8 @@ public interface ComService {
 	public String makePrimaryKey(PrimaryKeyType keyType) throws Exception;
 	
 	/**
-	 * 프로젝트 매출 정보를 등록한다.
-	 * @Cdate       : 2020. 01. 15.
+	 * 매출 정보를 등록한다.
+	 * @Cdate       : 2021. 01. 15.
 	 * @Author      : sylim
 	 * @Modification: 
 	 * @Method Description : 매출 정보 등록
@@ -88,6 +89,29 @@ public interface ComService {
 	 */
 	public Map<String, Object> insertSalesInfo(String key, String regEmpKey, List<?> insertList) throws Exception;
 	
+	/**
+	 * 매출 정보를 조회한다.
+	 * @Cdate       : 2021. 02. 05.
+	 * @Author      : sylim
+	 * @Modification: 
+	 * @Method Description : 매출 정보 상세 조회
+	 * @param key: salesKey
+	 * @return
+	 * @throws Exception
+	 */
+	public SalesVO selectSalesGuarantyDetail(String key) throws Exception;
+	
+	/**
+	 * 매출 정보를 수정한다..
+	 * @Cdate       : 2021. 02. 05.
+	 * @Author      : sylim
+	 * @Modification: 
+	 * @Method Description : 매출 정보 수정
+	 * @param key: salesKey
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> updateSalesInfo(SalesVO salesVO) throws Exception;
 
 	/**
 	* 
@@ -165,6 +189,7 @@ public interface ComService {
 	* @return
 	* @throws Exception
 	*/
-	List<?> selectPrePaymentList(String buyKey) throws Exception;
+	public List<?> selectPrePaymentList(String buyKey) throws Exception;
+
 	
 }
