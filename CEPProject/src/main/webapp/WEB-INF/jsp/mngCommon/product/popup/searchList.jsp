@@ -148,22 +148,22 @@
 		var pmKeyDomId = '${pmKeyDomId}';
 		var pmNmDomId  = '${pmNmDomId}';
 		
-		var parentId = getParameter("parentNm");
+		//var parentId = getParameter("parentNm");
 		
 		alert(pmKeyDomId + ' : ID : ' + id + '\n' 
 			+ pmNmDomId  + ' : NM : ' + nm);
-		
+		/* 
 		try
 		{
-			/* opener.document.getElementById('pmKeyDomId').value = id; */
+		
 			opener.document.getElementById(""+parentId+"").value  = nm;
 		}
 		catch(e)
 		{
 			alert(e);
 		}
-		
-		/* try
+		 */
+		try
 		{
 			opener.document.getElementById(pmKeyDomId).value = id;
 			opener.document.getElementById(pmNmDomId).value  = nm;
@@ -171,7 +171,7 @@
 		catch(e)
 		{
 			alert(e);
-		} */
+		}
 	
 		close();
 	   /*  var dialogLayer = $('#dialogId').val();
