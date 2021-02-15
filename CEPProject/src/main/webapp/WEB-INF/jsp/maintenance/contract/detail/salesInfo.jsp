@@ -101,7 +101,7 @@
 			color: #26a07d;
 		}
 		.mContents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;			
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */			
 			width: 153px;
 			font-weight: 400;
 			padding: 13px 13px 13px 20px;
@@ -109,6 +109,7 @@
 		.mContents .bsc tr td:last-child {
 			width: 470px;
 			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		form .contents .bsc tr td label.file {
 			text-decoration: underline;
@@ -148,10 +149,10 @@
 			background-color: #4c3d92;
 		}
 		.mContents .dtlWrap {
-			height: 493px;
+			height: 448px;
 			overflow-y: auto;
 			overflow-x: hidden;
-			border-bottom: 2px solid #c4c4c4;
+			/* border-bottom: 2px solid #c4c4c4; */
 		}
 		.mContents .dtl {
 			width: 997px;
@@ -161,10 +162,11 @@
 			overflow: hidden;
 		}
 		.mContents .dtl.body {
-			height : 492px;
+			height : 448px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
+			border-bottom: 2px solid #c4c4c4;
 		}
 		.mContents .dtl thead {
 			background-color: #e1dff5;
@@ -335,6 +337,11 @@
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
+		}
+		.bottomtr {
+			color: #26a07d;
+    		background-color: #ccf4d7;
+    		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
 		}
 	</style>
 	<script>
@@ -1003,9 +1010,9 @@
 						매출정보
 						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/> --%>
 					</div>
-					<div class="stitle2 floatR">
+					<%-- <div class="stitle2 floatR">
 						매출총 합계 : <input type="text" id="salesTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
-					</div>
+					</div> --%>
 					<div class="floatC">
 						<table class="dtl">
 							<thead class="ftw400">
@@ -1158,124 +1165,15 @@
 									<td title="12월"><c:out value="${displayUtil.commaStr(list.mtSalesDecAmount)}"/></td>
 								</tr>
 							</tbody>
-						</c:forEach> --%>
-							<!-- <tbody>
-								<tr>
-									<td rowspan="2" style="width: 10px" style="10px">
-										<input type="radio" class="tRadio" name="m_gubun" id="check11"/><label for="check11" class="cursorP"></label>
-									</td>
-									<td>2019</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-								<tr>
-									<td>123,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-							</tbody>
-							<tbody>
-								<tr>
-									<td rowspan="2" style="width: 10px" style="10px">
-										<input type="radio" class="tRadio" name="m_gubun" id="check12"/><label for="check12" class="cursorP"></label>
-									</td>
-									<td>2020</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-								<tr>
-									<td>123,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-							</tbody>
-							<tbody>
-								<tr>
-									<td rowspan="2" style="width: 10px" style="10px">
-										<input type="radio" class="tRadio" name="m_gubun" id="check13"/><label for="check13" class="cursorP"></label>
-									</td>
-									<td>2021</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-								<tr>
-									<td>123,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-							</tbody>
-							<tbody>
-								<tr>
-									<td rowspan="2" style="width: 10px" style="10px">
-										<input type="radio" class="tRadio" name="m_gubun" id="check14"/><label for="check14" class="cursorP"></label>
-									</td>
-									<td>2021</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-								<tr>
-									<td>123,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-							</tbody> 
-							<tbody>
-								<tr>
-									<td rowspan="2" style="width: 10px" style="10px">
-										<input type="radio" class="tRadio" name="m_gubun" id="check15"/><label for="check15" class="cursorP"></label>
-									</td>
-									<td>2021</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-								<tr>
-									<td>123,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-									<td>6,000,000</td>
-								</tr>
-							</tbody> -->
-						</table>
+						</c:forEach>  --%>							
+						</table>						
 					</div>
+					<table style="width: 997px">
+							<tr class="bottomtr">
+								<td class="textalignR" style="width: 230px">매출합계</td>
+								<td style="width: 92px"><c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/></td>
+							</tr>
+						</table>
 					<div class="bottom">
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>

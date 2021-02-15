@@ -78,14 +78,14 @@
 		}
 		
 		.mContents table tr td {
-			padding: 13px 20px;
+			padding: 13px 18px;
 		}
 		
 		/* 기본정보 싸이즈 조정 */
 		.mContents .bsc {
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
-			border: 1px solid #bee2da;
+			/* border: 1px solid #bee2da; */
 			border-bottom: 2px solid #bfe3db;
 		}
 		
@@ -101,7 +101,7 @@
 		}
 		
 		.mContents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */
 			width: 153px;
 			font-weight: 400;
 			padding: 13px 13px 13px 20px;
@@ -110,6 +110,7 @@
 		.mContents .bsc tr td:last-child {
 			width: 470px;
 			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		
 		.mContents .bsc tr td label.file {
@@ -156,10 +157,10 @@
 		}
 		
 		.mContents .dtlWrap2 {
-			height: 487px;
+			height: 442px;
 			overflow-y: auto;
 			overflow-x: hidden;
-			border-bottom: 2px solid #c4c4c4;
+			/* border-bottom: 2px solid #c4c4c4; */
 		}
 		
 		/* .mContents .dtl, .mContents .dtl1 {
@@ -197,10 +198,11 @@
 			overflow: hidden;
 		}
 		.mContents .dtl.body {
-			height : 487px;
+			height : 442px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
+			border-bottom: 2px solid #c4c4c4;
 		}
 		
 		.mContents .dtl tbody {
@@ -316,7 +318,7 @@
 		}
 		
 		#modBasicTable tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */
 			width: 132px;
 			font-weight: 400;
 			padding: 11px 8px 11px 17px;
@@ -325,6 +327,7 @@
 		#modBasicTable tr td:last-child {
 			padding: 5px 20px;
 			width: 463px;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		
 		#modBasicTable input[type="text"], #modBasicTable textarea {
@@ -369,17 +372,22 @@
 			background-color: #ddf0ec;
 		}
 		
-		.stitle2 input[class="pname"] {
+		.bottomtr input[class="pname"] {
+			font-family: "Noto Sans KR", sans-serif !important;
 			width: 130px;
+			height: 18px;
 			border: none;
 			outline: none;
-			background-color: #f6f7fc;
-			text-align: right;
-			font-size: 17px;
+			background-color: #ccf4d7;
+			color: #26a07d;
+			text-align: left;
+			font-size: 15px;
 			font-weight: 400;
+			margin-bottom: 1px;
+			padding: 0px 0px;
 		}
 		
-		input[type="text"] {
+		.bsc input[type="text"] {
 			width: 138px;
 			height: 34px;
 			border: 1px solid #e9e9e9;
@@ -410,6 +418,11 @@
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
+		}
+		.bottomtr {
+			color: #26a07d;
+    		background-color: #ccf4d7;
+    		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
 		}
 	</style>
 	<script>
@@ -552,7 +565,7 @@
 			
 			
 			$('#m_mtSaveOrderAcKey').change(function(){
-				console.log("=========>"+$('#m1_mtIntegrateKey').val()+" / "+$('#m_mtSaveOrderAcKey option:selected').val()+"<=====");
+				//console.log("=========>"+$('#m1_mtIntegrateKey').val()+" / "+$('#m_mtSaveOrderAcKey option:selected').val()+"<=====");
 				//선택값을 저장한다.
 				 var varParam = {
 						"mtIntegrateKey": $('#m1_mtIntegrateKey').val(),
@@ -571,7 +584,7 @@
 		        		//xhr.setRequestHeader(header, token);
 		        	},
 		            success:function(data){
-		            	console.log("data.successYN===>"+data.successYN+" / "+data.purchaseAmountList.length);		            	
+		            	//console.log("data.successYN===>"+data.successYN+" / "+data.purchaseAmountList.length);		            	
 		            	if("Y" == data.successYN){
 		            		$('#purchaseTotalAmount').val(addCommas(data.mtPurchaseTotalAmount));
 		            		if ( data.purchaseAmountList.length > 0 ) {
@@ -1194,10 +1207,10 @@
 						</c:if>
 						
 					</div>
-					<div class="stitle2 floatR">
+					<%-- <div class="stitle2 floatR">
 						매입총 합계 : <input type="text" id="purchaseTotalAmount" class="pname"
 							value="<c:out value="${displayUtil.commaStr(mtPurchaseTotalAmount)}"/>" readonly />
-					</div>
+					</div> --%>
 					<div class="floatC dtlWrap middle2">
 						<table class="dtl1">
 							<thead class="ftw400">
@@ -1313,8 +1326,16 @@
 								</tbody>
 							</c:forEach> --%>
 							</table>
-
 						</div>
+						<table style="width: 997px">
+							<tr class="bottomtr">
+								<td class="textalignR" style="width: 230px">매입합계</td>
+								<td style="width: 92px;padding-top: 12px;">
+								<%-- <c:out value="${displayUtil.commaStr(mtPurchaseTotalAmount)}"/> --%>
+								<input type="text" id="purchaseTotalAmount" class="pname" value="<c:out value="${displayUtil.commaStr(mtPurchaseTotalAmount)}"/>" readonly />
+								</td>
+							</tr>
+						</table>
 
 					</div>
 					<div class="bottom">

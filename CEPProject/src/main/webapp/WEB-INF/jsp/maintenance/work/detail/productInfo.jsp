@@ -81,6 +81,7 @@
 		form .bsc tr td:last-child {
 			width: 400px;
 			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		/* 기본정보 틀 */
 		form .contents .bsc {
@@ -103,7 +104,7 @@
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */
 			padding: 13px 13px 13px 20px;
 		}
 		

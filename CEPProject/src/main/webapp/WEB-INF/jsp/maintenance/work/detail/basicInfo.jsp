@@ -74,6 +74,11 @@
 			width: 400px;
 			font-weight: 200;
 		}
+		form .contents .bsc tr td:last-child {
+			width: 400px;
+			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
+		}
 		/* 기본정보 내용 글자 굵기 */
 		form .bsc tr td:last-child {
 			width: 400px;
@@ -100,8 +105,7 @@
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */			
 			padding: 13px 13px 13px 20px;
 		}
 		form .contents > .fxd .title ul {

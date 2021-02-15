@@ -66,7 +66,7 @@
 		.mContents table tr td {
 			padding: 13px 18px;
 		}
-		.mContents > div > div > div > table tr td:first-child {
+		/* .mContents > div > div > div > table tr td:first-child {
 			width: 124px;
 			font-weight: 400;
 			padding: 13px 20px 13px 45px;
@@ -74,12 +74,22 @@
 		.mContents > div > div > div > table tr td:last-child {
 			width: 400px;
 			font-weight: 200;
-		}
+		} */
 		.mContents .bsc {
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
 			/* border: 1px solid #bee2da; */
 		    border-bottom: 2px solid #bfe3db;
+		}
+		.mContents .bsc tr td:first-child {
+			width: 124px;
+			font-weight: 400;
+			padding: 13px 20px 13px 45px;
+		} 
+		.mContents .bsc tr td:last-child {
+			width: 400px;
+			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		
 		.mContents .bsc tbody {			
@@ -93,7 +103,7 @@
 			color: #26a07d;
 		}
 		.mContents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;			
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */			
 			width: 153px;
 			font-weight: 400;
 			padding: 13px 13px 13px 20px;
@@ -159,7 +169,7 @@
 		.mContents .dtl tbody {
 			width: 997px;
 			/* height: 534px; */
-			height: 486px;
+			height: 487px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -343,6 +353,11 @@
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
+		}
+		.bottomtr {
+			color: #26a07d;
+    		background-color: #ccf4d7;
+    		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
 		}
 			
 	</style>
@@ -1261,7 +1276,7 @@
 							</tbody>
 						</table>
 						<table style="width: 997px">
-							<tr style="color: #26a07d;background-color: #ccf4d7;">
+							<tr class="bottomtr">
 								<td class="textalignR" style="width: 230px">제품합계</td>
 								<td style="width: 92px"><c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/></td>
 							</tr>

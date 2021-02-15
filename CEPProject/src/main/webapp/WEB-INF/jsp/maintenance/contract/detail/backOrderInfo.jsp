@@ -79,6 +79,7 @@
 		.mContents .bsc tr td:last-child {
 			width: 470px;
 			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		/* 기본정보 틀 */
 		.mContents .bsc {
@@ -144,7 +145,7 @@
 		}
 		/* 기본정보 세로줄 나오는것 */
 		.mContents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;		
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */		
 			width: 153px;
 			font-weight: 400;
 			padding: 13px 13px 13px 20px;
