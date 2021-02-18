@@ -26,6 +26,7 @@ import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountListVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountVO;
+import com.cep.maintenance.contract.vo.MtContractLinkVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cmm.util.CepDateUtil;
@@ -39,6 +40,8 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 @RequestMapping("/maintenance/contract")
 public class MtContractController {
 	private static final Logger logger = LoggerFactory.getLogger(MtContractController.class);
+
+	
 	@Resource(name="mtContractService")
 	private MtContractService service;
 	
@@ -295,6 +298,8 @@ public class MtContractController {
 					acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
 					
 					mtContractCountInfo = service.selectMtContractCount(mtContractVO.getMtIntegrateKey());
+					
+					
 				}
 			}		
 			
@@ -343,6 +348,12 @@ public class MtContractController {
 			mtContractVO.setModEmpKey(sessionMap.get("empKey"));
 			
 			logger.debug("mtContractVO.getMtIntegrateKey()=====>"+mtContractVO.getMtIntegrateKey());
+			
+			
+			logger.debug("mtContractVO.getMtForcastLinkVo().getMtLinkCtKey()=====>"+mtContractVO.getMtForcastLinkVo().getMtLinkCtKey());
+			logger.debug("mtContractVO.getMtForcastLinkVo().getMtLinkCtKeyNm()=====>"+mtContractVO.getMtForcastLinkVo().getMtLinkCtKeyNm());
+			logger.debug("mtContractVO.getMtForcastLinkVo().getMtLinkKey()=====>"+mtContractVO.getMtForcastLinkVo().getMtLinkKey());
+			logger.debug("mtContractVO.getMtForcastLinkVo().getLinkDeleteKey()=====>"+mtContractVO.getMtForcastLinkVo().getLinkDeleteKey());
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), ""))) {
 				// 유지보수계약 관리키가 존재하므로 수정

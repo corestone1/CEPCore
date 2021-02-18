@@ -1072,6 +1072,110 @@
 			ORDER BY MO.MT_ORDER_AC_KEY, MA.MT_BUY_YEAR
 	</select>
 	
+	<!-- ===========================유지보수 계약 링크(연계)========================================= -->
+	
+	<!-- 유지보수계약 연계정보 등록. -->
+	<insert id="writeMtContractLink" parameterType="com.cep.maintenance.contract.vo.MtContractLinkVO">		
+		INSERT INTO MT_CONTRACT_LINK_TB (
+			MT_INTEGRATE_KEY 
+			, MT_LINK_CT_CLASS_CD
+		    , MT_LINK_CT_KEY
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY		    
+		) VALUES (
+		    #{mtIntegrateKey}
+		    , #{mtLinkCtClassCd}
+		    , #{mtLinkCtKey}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , #{regEmpKey} 
+		); 		
+	</insert>
+	
+	<!-- 유지보수계약 연계정보 조회 -->
+	<select id="selectMtContractLinkList" parameterType="com.cep.maintenance.contract.vo.MtContractLinkVO" resultType="com.cep.maintenance.contract.vo.MtContractLinkVO">			
+		<choose>
+			<when test='mtLinkCtClassCd == null || mtLinkCtClassCd == ""'>
+			<!-- 유지보수계약 연계정보 모두를 검색하는 경우. -->
+				SELECT 
+					MC.MT_LINK_KEY AS mtLinkKey
+					, MC.MT_INTEGRATE_KEY AS mtIntegrateKey
+					, MC.MT_LINK_CT_CLASS_CD AS mtLinkCtClassCd
+					, MC.MT_LINK_CT_KEY AS mtLinkCtKey
+					, SM.SP_BUSI_NM AS mtLinkCtKeyNm
+				FROM MT_CONTRACT_LINK_TB MC, SP_MAIN_TB SM
+				WHERE MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+					AND MC.MT_LINK_CT_CLASS_CD = 'S'
+					AND MC.DELETE_YN = 'N'
+					AND MC.MT_LINK_CT_KEY = SM.SP_KEY	
+				UNION	
+				SELECT 
+					MC.MT_LINK_KEY AS mtLinkKey
+					, MC.MT_INTEGRATE_KEY AS mtIntegrateKey
+					, MC.MT_LINK_CT_CLASS_CD AS mtLinkCtClassCd
+					, MC.MT_LINK_CT_KEY AS mtLinkCtKey
+					, PM.PJ_NM AS mtLinkCtKeyNm
+				FROM MT_CONTRACT_LINK_TB MC, PJ_MAIN_TB PM
+				WHERE MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+					AND MC.MT_LINK_CT_CLASS_CD = 'P'
+					AND MC.DELETE_YN = 'N'
+					AND MC.MT_LINK_CT_KEY = PM.PJ_KEY
+			</when>
+			<otherwise>
+				<if test='mtLinkCtClassCd == "S"'>
+				<!-- 유지보수계약 FORECAST 연계정보 모두를 검색하는 경우. -->
+					SELECT 
+						MC.MT_LINK_KEY AS mtLinkKey
+						, MC.MT_INTEGRATE_KEY AS mtIntegrateKey
+						, MC.MT_LINK_CT_CLASS_CD AS mtLinkCtClassCd
+						, MC.MT_LINK_CT_KEY AS mtLinkCtKey
+						, SM.SP_BUSI_NM AS mtLinkCtKeyNm
+					FROM MT_CONTRACT_LINK_TB MC, SP_MAIN_TB SM
+					WHERE MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+						AND MC.MT_LINK_CT_CLASS_CD = 'S'
+						AND MC.DELETE_YN = 'N'
+						AND MC.MT_LINK_CT_KEY = SM.SP_KEY			
+				</if>
+				<if test='mtLinkCtClassCd == "P"'>
+				<!-- 유지보수계약 PROJECT 연계정보 모두를 검색하는 경우. -->
+					SELECT 
+						MC.MT_LINK_KEY AS mtLinkKey
+						, MC.MT_INTEGRATE_KEY AS mtIntegrateKey
+						, MC.MT_LINK_CT_CLASS_CD AS mtLinkCtClassCd
+						, MC.MT_LINK_CT_KEY AS mtLinkCtKey
+						, PM.PJ_NM AS mtLinkCtKeyNm
+					FROM MT_CONTRACT_LINK_TB MC, PJ_MAIN_TB PM
+					WHERE MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+						AND MC.MT_LINK_CT_CLASS_CD = 'P'
+						AND MC.DELETE_YN = 'N'
+						AND MC.MT_LINK_CT_KEY = PM.PJ_KEY		
+				</if>
+			</otherwise>
+		</choose>
+	</select>	
+	
+	<!--유지보수계약 연계정보 수정  -->
+	<update id="updateMtContractLink" parameterType="com.cep.maintenance.contract.vo.MtContractLinkVO">
+		UPDATE 	MT_CONTRACT_LINK_TB
+		SET MT_LINK_CT_KEY =  #{mtLinkCtKey}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_LINK_KEY = #{mtLinkKey}
+			AND MT_INTEGRATE_KEY = #{mtIntegrateKey}
+	</update>		
+	
+	<!--유지보수계약 연계정보 삭제  -->
+	<update id="deleteMtContractLink" parameterType="com.cep.maintenance.contract.vo.MtContractLinkVO">
+		UPDATE 	MT_CONTRACT_LINK_TB
+		SET DELETE_YN =  'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_LINK_KEY = #{linkDeleteKey}
+			AND MT_INTEGRATE_KEY = #{mtIntegrateKey}
+	</update>			
 	
 	<!-- ######################################################################  -->
 	<!-- 사원리스트회 -->

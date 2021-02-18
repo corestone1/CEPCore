@@ -599,6 +599,7 @@
 		function saveBasicInfo(){
 			//$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
+			var linkObject = {};
            	var formData = $("#m_mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
                 
@@ -612,6 +613,14 @@
                 	object[formData[i]['name']] = formData[i]['value'];
                 }      
              }
+           	
+           	if($('#m_mtLinkCtKey').val() !='' || $('#m_linkDeleteKey').val() !='') {
+           		linkObject['mtLinkKey'] = $('#m_mtLinkKey').val();
+           		linkObject['mtLinkCtKey'] = $('#m_mtLinkCtKey').val();
+           		linkObject['linkDeleteKey'] = $('#m_linkDeleteKey').val();
+           		
+           		object["mtForcastLinkVo"]=linkObject;     
+           	}
            	var sendData = JSON.stringify(object);
            	
            	 $.ajax({
@@ -750,6 +759,34 @@
 				return false;
 			}
 		} // end deleteBasicInfo()
+
+		function fn_mforecastPop() {
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=main_forecastCall&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function main_forecastCall(returnKey,returnNm) {
+			
+			$('#m_mtLinkCtKey').val(returnKey);
+			$('#m_mtLinkCtKeyNm').val(returnNm);
+			if($('#m_mtLinkCtKey').val() !='') {
+				$('#m_delete_forecast').show();
+			}
+		}
+		
+		function fn_mdeleteForecast() {
+			if(confirm("FORECAST 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#m_mtLinkKey').val() !='') {
+					$('#m_linkDeleteKey').val($('#m_mtLinkKey').val());
+					$('#m_mtLinkKey').val('');
+				}
+				$('#m_mtLinkCtKey').val('');
+				$('#m_mtLinkCtKeyNm').val('');
+				$('#m_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		}
 	</script>
 </head>
 <body>
@@ -771,6 +808,10 @@
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
+								<tr>
+									<td>FORECAST명</td>
+									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
 								<tr>
 									<td>프로젝트명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
@@ -837,6 +878,18 @@
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
+								<tr>
+									<td>FORECAST명</td>
+									<td>
+										<button type="button" onclick="javascript:fn_mforecastPop()" style="vertical-align: middle;">
+											<img src="<c:url value='/images/forecast_icon.png'/>" style="width: 180px"/>
+										</button>
+										<input type="text" name="mtLinkCtKeyNm" id="m_mtLinkCtKeyNm" class="pname"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" style="width: 215px" readonly="readonly"/>
+										<input type="hidden" name="mtLinkCtKey" id="m_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
+										<input type="hidden" name="mtLinkKey" id="m_mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
+										<img id="m_delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_mdeleteForecast();" style="width: 11px;display:none"/>
+									</td>
+								</tr>
 								<tr>
 									<td><label>*</label>프로젝트명</td>
 									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/></td>

@@ -25,6 +25,7 @@ public enum PrimaryKeyType {
 	 * MAINTENACE_CONTRACT : 유지보수 계약 관리키
 	 * MAINTENACE_BACK_ORDER : 유지보수 계약  백계약 관리키
 	 * MAINTENACE_WORK : 유지보수 작업 관리키.
+	 * FORECAST : FORECAST 관리키.
 	 */
 	PROJECT("PJ")
 	, PROJECT_CONTRACT("CT")
@@ -35,7 +36,8 @@ public enum PrimaryKeyType {
 	, MAINTENACE_WORK("MW")
 	, SALES_DETAIL("SD")
 	, ORDER("OD")
-	, PAYMENT("PY");
+	, PAYMENT("PY")
+	, FORECAST("SP");
 	
 	private String value;
 	

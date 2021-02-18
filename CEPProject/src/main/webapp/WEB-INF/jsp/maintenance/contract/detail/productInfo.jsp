@@ -385,6 +385,10 @@
 				$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
 			'</c:if>'
 			
+			'<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
+				$('#m_delete_forecast').show();
+			'</c:if>'
+			
 			$('li[id^=LI_TOPBar]').click(function(event){
 				//location.href = this.title; event.preventDefault();
 				/* var formData = $("#mtBasicForm").serializeArray();
@@ -449,7 +453,7 @@
 			
 			
 			var html = '';
-			$('#prodList table tbody tr').click(function() {
+			$('#prodList .dtl tbody tr').click(function() {
 				/* alert("=====>"+$(this).attr('class')); */
 				if($(this).attr('class') != "viewOpen trcheckcolor") {
 					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
@@ -675,6 +679,7 @@
 		function saveBasicInfo(){
 			//$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
+			var linkObject = {};
            	var formData = $("#m_mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
                 
@@ -688,6 +693,14 @@
                 	object[formData[i]['name']] = formData[i]['value'];
                 }      
              }
+           	
+           	if($('#m_mtLinkCtKey').val() !='' || $('#m_linkDeleteKey').val() !='') {
+           		linkObject['mtLinkKey'] = $('#m_mtLinkKey').val();
+           		linkObject['mtLinkCtKey'] = $('#m_mtLinkCtKey').val();
+           		linkObject['linkDeleteKey'] = $('#m_linkDeleteKey').val();
+           		
+           		object["mtForcastLinkVo"]=linkObject;     
+           	}
            	var sendData = JSON.stringify(object);
            	
            	 $.ajax({
@@ -826,7 +839,45 @@
 				return false;
 			}
 		} // end deleteBasicInfo()
+		
+	    /*
+	      hidden값 변경하면 이벤트 발생
+	    */
+/* 		survey('#m_mtLinkCtKey', function(){
+			//console.log('changed');
+			//mtLinkCtKey값이 존재하면 삭제 이미지 활성화 시킴.
+			if($('#m_mtLinkCtKey').val() !='') {
+				$('#m_delete_forecast').show();
+			}
+		}); */
 
+		function fn_mforecastPop() {
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=main_forecastCall&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function main_forecastCall(returnKey,returnNm) {
+			
+			$('#m_mtLinkCtKey').val(returnKey);
+			$('#m_mtLinkCtKeyNm').val(returnNm);
+			if($('#m_mtLinkCtKey').val() !='') {
+				$('#m_delete_forecast').show();
+			}
+		}
+		
+		function fn_mdeleteForecast() {
+			if(confirm("FORECAST 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#m_mtLinkKey').val() !='') {
+					$('#m_linkDeleteKey').val($('#m_mtLinkKey').val());
+					$('#m_mtLinkKey').val('');
+				}
+				$('#m_mtLinkCtKey').val('');
+				$('#m_mtLinkCtKeyNm').val('');
+				$('#m_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		}
 	</script>
 </head>
 <body>
@@ -847,8 +898,13 @@
 					<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
 						<input type="hidden" id="m2_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
+						<input type="hidden" id="m_linkDeleteKey" name="linkDeleteKey"/>
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
+								<tr>
+									<td>FORECAST명</td>
+									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
 								<tr>
 									<td>프로젝트명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
@@ -915,6 +971,18 @@
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
+								<tr>
+									<td>FORECAST명</td>
+									<td>
+										<button type="button" onclick="javascript:fn_mforecastPop()" style="vertical-align: middle;">
+											<img src="<c:url value='/images/forecast_icon.png'/>" style="width: 180px"/>
+										</button>
+										<input type="text" name="mtLinkCtKeyNm" id="m_mtLinkCtKeyNm" class="pname"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" style="width: 215px" readonly="readonly"/>
+										<input type="hidden" name="mtLinkCtKey" id="m_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
+										<input type="hidden" name="mtLinkKey" id="m_mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
+										<img id="m_delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_mdeleteForecast();" style="width: 11px;display:none"/>
+									</td>
+								</tr>
 								<tr>
 									<td><label>*</label>프로젝트명</td>
 									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/></td>

@@ -13,6 +13,7 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountListVO;
+import com.cep.maintenance.contract.vo.MtContractLinkVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
@@ -499,7 +500,61 @@ public interface MtContractService {
 	   * @param deleteKeyList
 	   * @throws Exception
 	  */
-	 void deleteMtContractBuyAmountList(String modEmpKey, String mtOrderKey, String[] deleteKeyList) throws Exception;
+	void deleteMtContractBuyAmountList(String modEmpKey, String mtOrderKey, String[] deleteKeyList) throws Exception;
+		
+	/* ============================== 유지보수계약 연계정보 관리  ======================================*/
+		
+	/**
+	 * 
+	  * @Method Name : writeMtContractLink
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 연계정보 등록
+	  * @param mtContractLinkVO
+	  * @throws Exception
+	 */
+	void writeMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectMtContractLinkList
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 연계정보 조회 
+	  *                      mtLinkCtClassCd 값이 P면 프로젝트 연계정보
+	  *                      mtLinkCtClassCd 값이 S면 forecast연계정보
+	  *                      mtLinkCtClassCd 없으면 프로젝트와 forecast연계정보 모두 조회
+	  * @param mtContractLinkVO
+	  * @return
+	  * @throws Exception
+	 */
+	List<MtContractLinkVO> selectMtContractLinkList(MtContractLinkVO mtContractLinkVO) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : updateMtContractLink
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약 연계정보 수정
+	  * @param mtContractLinkVO
+	  * @throws Exception
+	 */
+	void updateMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : deleteMtContractLink
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 연계정보 삭제
+	  * @param mtContractLinkVO
+	  * @throws Exception
+	 */
+	void deleteMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	

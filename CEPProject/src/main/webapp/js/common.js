@@ -225,6 +225,26 @@ function fn_date_format(e, oThis) {
     }
 }
 
+/*
+ * hidden값 또는 readonly필드에서 값이 변경하면 이벤트 발생 시키는 function
+ * ex) mtLinkCtKey필드의 값이 변경되면 아래 function호출됨.
+ * survey('#mtLinkCtKey', function(){
+ * 	console.log('changed');
+ *  이벤트 발생시 원하는 로직 구현
+ * });
+ */
+/*function survey(selector, callback) {
+	var input = $(selector);
+	var oldvalue = input.val();
+	setInterval(function(){
+		if (input.val()!=oldvalue){
+			console.log("00000000000000000======================");
+			oldvalue = input.val();
+			callback();
+		}
+		console.log("111111======================");
+	}, 400);
+}*/	
 /* 추후 수정 필요
  * from날짜 이전 날짜는 to날짜에서 선택 못하도록, to날짜 이후 날짜는 from 날짜에서 선택 못하도록
  * */	
@@ -310,4 +330,5 @@ $(window).load(function() {
 		$(this).parent().next().addClass("trcheckcolor");
 	});
 	
+
 });

@@ -27,6 +27,7 @@ import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountListVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountVO;
+import com.cep.maintenance.contract.vo.MtContractLinkVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 
@@ -130,6 +131,7 @@ public class MtContractServiceImpl implements MtContractService {
 	 * @see com.cep.maintenance.service.MaintenanceService#writeFirestContractBasic(com.cep.maintenance.vo.MtContractVO)
 	 */
 	@Override
+	@Transactional
 	public String writeFirestContractBasic(MtContractVO writeVo) throws Exception {
 		String mtIntegrateKey = null;
 		String mtCtKey = null;
@@ -143,6 +145,14 @@ public class MtContractServiceImpl implements MtContractService {
 //			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
 			mtMapper.writeContractBasic(writeVo);
 			
+			//유지보수계약 연계정보 등록
+			if(null != writeVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(writeVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+				writeVo.getMtForcastLinkVo().setMtIntegrateKey(mtIntegrateKey);
+				writeVo.getMtForcastLinkVo().setMtLinkCtClassCd("S"); //Forecast
+				writeVo.getMtForcastLinkVo().setRegEmpKey(writeVo.getRegEmpKey());
+				writeMtContractLink(writeVo.getMtForcastLinkVo());
+			}
+			
 		} catch (Exception e) {
 			mtIntegrateKey = null;
 			throw new Exception(e);
@@ -154,6 +164,7 @@ public class MtContractServiceImpl implements MtContractService {
 	 * @see com.cep.maintenance.service.MaintenanceService#writeContractBasic(com.cep.maintenance.vo.MtContractVO)
 	 */
 	@Override
+	@Transactional
 	public String writeContractBasic(MtContractVO writeVo) throws Exception {
 		String mtIntegrateKey = null;
 		try {
@@ -164,6 +175,14 @@ public class MtContractServiceImpl implements MtContractService {
 			
 //			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
 			mtMapper.writeContractBasic(writeVo);
+			
+			//유지보수계약 연계정보 등록
+			if(null != writeVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(writeVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+				writeVo.getMtForcastLinkVo().setMtIntegrateKey(mtIntegrateKey);
+				writeVo.getMtForcastLinkVo().setMtLinkCtClassCd("S"); //Forecast
+				writeVo.getMtForcastLinkVo().setRegEmpKey(writeVo.getRegEmpKey());
+				writeMtContractLink(writeVo.getMtForcastLinkVo());
+			}
 			
 		} catch (Exception e) {
 			mtIntegrateKey = null;
@@ -177,8 +196,40 @@ public class MtContractServiceImpl implements MtContractService {
 	 * @see com.cep.maintenance.contract.service.MtContractService#updateMtContractBasic(com.cep.maintenance.contract.vo.MtContractVO)
 	 */
 	@Override
+	@Transactional
 	public void updateMtContractBasic(MtContractVO updateVo) throws Exception {
-		mtMapper.updateMtContractBasic(updateVo);
+		try {
+			//1. 유지보수계약 기본정보 업데이트
+			mtMapper.updateMtContractBasic(updateVo);
+			
+			//2. 연계정보 삭제대상 삭제
+			if(null != updateVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getLinkDeleteKey(), ""))) {
+				
+				updateVo.getMtForcastLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());
+				updateVo.getMtForcastLinkVo().setModEmpKey(updateVo.getModEmpKey());
+				deleteMtContractLink(updateVo.getMtForcastLinkVo());				
+			}
+			
+			//3.유지보수계약 연계정보 등록
+			if(null != updateVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+				if("".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkKey(), ""))) {
+					//연계정보 관리키가 없으면 신규등록
+					updateVo.getMtForcastLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());
+					updateVo.getMtForcastLinkVo().setMtLinkCtClassCd("S"); //Forecast
+					updateVo.getMtForcastLinkVo().setRegEmpKey(updateVo.getRegEmpKey());
+					writeMtContractLink(updateVo.getMtForcastLinkVo());
+				} else {
+					//연계정보 관리키가 있으면 업데이트
+					updateVo.getMtForcastLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());
+					updateVo.getMtForcastLinkVo().setModEmpKey(updateVo.getModEmpKey());
+					updateMtContractLink(updateVo.getMtForcastLinkVo());
+				}				
+				
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
 	}
 	
 
@@ -186,11 +237,34 @@ public class MtContractServiceImpl implements MtContractService {
 	 * @see com.cep.maintenance.service.MaintenanceService#selectMtContractBasicDetail(java.lang.String)
 	 */
 	@Override
+//	public MtContractVO selectContractBasicDetail(String mtIntegrateKey, String mtLinkCtClassCd) throws Exception {
 	public MtContractVO selectContractBasicDetail(String mtIntegrateKey) throws Exception {
 		MtContractVO contractBasicInfo = null;
-		
+		List<MtContractLinkVO> contractLinkList = null;
+		MtContractLinkVO mtContractLinkVO = null;
+		int contractLinkCnt = 0;
 		try {
 			contractBasicInfo = mtMapper.selectMtBasicDetail(mtIntegrateKey);
+//			if(null !=contractBasicInfo 
+//					&& !MtContractLinkVO.NOT_SELECT_LINK_CT_TYPE.equalsIgnoreCase(CepStringUtil.getDefaultValue(mtLinkCtClassCd, "N"))) {
+			if(null !=contractBasicInfo) {
+				//연계정보를 조회한다.
+				mtContractLinkVO = new MtContractLinkVO();
+				mtContractLinkVO.setMtIntegrateKey(mtIntegrateKey);
+//				mtContractLinkVO.setMtLinkCtClassCd(mtLinkCtClassCd);
+				contractLinkList = selectMtContractLinkList(mtContractLinkVO);
+				if(null !=contractLinkList && contractLinkList.size()>0) {
+					contractLinkCnt = contractLinkList.size();
+					for (int i = 0; i < contractLinkCnt; i++) {
+						mtContractLinkVO = contractLinkList.get(i);
+						if("S".equalsIgnoreCase(mtContractLinkVO.getMtLinkCtClassCd())){
+							contractBasicInfo.setMtForcastLinkVo(mtContractLinkVO);
+						} else if("P".equalsIgnoreCase(mtContractLinkVO.getMtLinkCtClassCd())){
+							contractBasicInfo.setMtProjectLinkVo(mtContractLinkVO);
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 
 			throw new Exception(e);
@@ -1239,6 +1313,61 @@ public class MtContractServiceImpl implements MtContractService {
 		
 	}
 	
+	
+	/* ============================== 유지보수계약 연계정보 관리  ======================================*/
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#writeMtContractLink(com.cep.maintenance.contract.vo.MtContractLinkVO)
+	 */
+	public void writeMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception {
+		try {
+			mtMapper.writeMtContractLink(mtContractLinkVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectMtContractLinkList(com.cep.maintenance.contract.vo.MtContractLinkVO)
+	 */
+	public List<MtContractLinkVO> selectMtContractLinkList(MtContractLinkVO mtContractLinkVO) throws Exception {
+		List<MtContractLinkVO> contractLinkList = null;
+		try {
+			logger.debug("mtContractLinkVO.getMtLinkCtClassCd()======>"+mtContractLinkVO.getMtLinkCtClassCd());
+			contractLinkList = mtMapper.selectMtContractLinkList(mtContractLinkVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return contractLinkList;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#updateMtContractLink(com.cep.maintenance.contract.vo.MtContractLinkVO)
+	 */
+	public void updateMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception {
+		try {
+			mtMapper.updateMtContractLink(mtContractLinkVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#deleteMtContractLink(com.cep.maintenance.contract.vo.MtContractLinkVO)
+	 */
+	public void deleteMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception {
+		try {
+			mtMapper.deleteMtContractLink(mtContractLinkVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
 //	==========================================================================================================
 	/**
 	 * 

@@ -145,13 +145,21 @@
 	
 	function fn_ForecastSelect(id, nm)
 	{
+		//var returnKey = '${returnKey}';
+		//var returnNm = '${returnNm}';
 		try
 		{
-
-			alert('ID : ' + id + ', NM : ' + nm);
+			<c:if test="${returnType == 'O' }">
+			opener.document.getElementById('${returnKey}').value = id;
+			opener.document.getElementById('${returnNm}').value  = nm;
+			</c:if>
 			
-			opener.document.getElementById('pmKey').value = id;
-			opener.document.getElementById('pmNm').value  = nm;
+			<c:if test="${returnType == 'F' }">
+			opener.${returnFunctionNm}(id,nm);
+			</c:if>
+			//alert('ID : ' + id + ', NM : ' + nm);
+			
+			
 		}
 		catch(e)
 		{}
