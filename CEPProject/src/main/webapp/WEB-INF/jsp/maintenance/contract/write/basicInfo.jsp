@@ -194,7 +194,11 @@
 			'</c:if>'
 			
 			'<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
-				$('#delete_forecast').show();
+				$('#sp_delete_forecast').show();
+			'</c:if>'
+			
+			'<c:if test="${basicContractInfo.mtProjectLinkVo.mtLinkKey != null }">'
+				$('#pj_delete_forecast').show();
 			'</c:if>'
 			
 				//거래처 검색
@@ -451,7 +455,8 @@
 		function saveBasicInfo(){
 			$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
-			var linkObject = {};
+			var splinkObject = {};
+			var pjlinkObject = {};
            	var formData = $("#mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
                 
@@ -465,13 +470,29 @@
                 	object[formData[i]['name']] = formData[i]['value'];
                 }      
              }
-           	
-           	if($('#mtLinkCtKey').val() !='' || $('#linkDeleteKey').val() !='') {
-           		linkObject['mtLinkKey'] = $('#mtLinkKey').val();
-           		linkObject['mtLinkCtKey'] = $('#mtLinkCtKey').val();
-           		linkObject['linkDeleteKey'] = $('#linkDeleteKey').val();
+           	//Forecast 정보 등록
+           	if($('#sp_mtLinkCtKey').val() !='' || $('#sp_linkDeleteKey').val() !='') {
+           		splinkObject['mtLinkKey'] = $('#sp_mtLinkKey').val();
+           		splinkObject['mtLinkCtKey'] = $('#sp_mtLinkCtKey').val();
+           		splinkObject['linkDeleteKey'] = $('#sp_linkDeleteKey').val();
            		
-           		object["mtForcastLinkVo"]=linkObject;     
+           		object["mtForcastLinkVo"]=splinkObject;     
+           	}
+           	
+           	//project정보 등록
+           	/* if($('#pj_mtLinkCtKey').val() !='' || $('#pj_linkDeleteKey').val() !='') {
+           		pjlinkObject['mtLinkKey'] = $('#pj_mtLinkKey').val();
+           		pjlinkObject['mtLinkCtKey'] = $('#pj_mtLinkCtKey').val();
+           		pjlinkObject['linkDeleteKey'] = $('#pj_linkDeleteKey').val();
+           		
+           		object["mtProjectLinkVo"]=pjlinkObject;     
+           	} */
+           	if($('#id').val() !='' || $('#pj_linkDeleteKey').val() !='') {
+           		pjlinkObject['mtLinkKey'] = $('#pj_mtLinkKey').val();
+           		pjlinkObject['mtLinkCtKey'] = $('#id').val();
+           		pjlinkObject['linkDeleteKey'] = $('#pj_linkDeleteKey').val();
+           		
+           		object["mtProjectLinkVo"]=pjlinkObject;     
            	}
            	var sendData = JSON.stringify(object);
            	
@@ -567,37 +588,141 @@
 		}
 		
 		
-		
+		//Forecast연계
 		function fn_forecastPop() {
 			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
 			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
 		}
 		
 		function pop_forecastCall(returnKey,returnNm) {
-			
-			$('#mtLinkCtKey').val(returnKey);
-			$('#mtLinkCtKeyNm').val(returnNm);
-			if($('#mtLinkCtKey').val() !='') {
-				$('#delete_forecast').show();
+			if(returnKey !=$('#sp_mtLinkCtKey').val()){
+				//기존값이 다른경우 프로세스 진행
+		        $.ajax({
+		        	url:"/maintenance/contract/selectForecastMappingInfo.do",
+		            dataType: 'json',
+		            type:"post",  
+		            data: returnKey,
+		     	   	contentType: "application/json; charset=UTF-8",
+		     	  	beforeSend: function(xhr) {
+		        		xhr.setRequestHeader("AJAX", true);
+		        		//xhr.setRequestHeader(header, token);
+		        	},
+		            success:function(data){
+		            	
+		            	
+		            	if(''==$('#mtNm').val()){ 
+		            		//유지보수 명이 존재하지 않는 경우 해당 Forecast사업명을 넣어준다.
+		            		$('#mtNm').val(data.forecastVO.spBusiNm);
+		            	}
+		            	if($('#mtAcKey').val() !=data.forecastVO.acKey){ 
+		            		
+		            		$('#mtAcKey').val(data.forecastVO.acKey);
+		            		$('#mtAcNm').val(data.forecastVO.mfAcNm);
+		            		
+		            		if (data.acDirectorList.length > 0 ) {
+								//acDirectorList = data.acDirectorList;/* 값이 있는 경우  전역변수에 넣는다. */
+								//console.log("===============>"+data.acDirectorList[0].acDirectorInfo);
+								$('#acDirectorInfo').val(data.acDirectorList[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
+								$ ('#mtAcDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+								for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
+	                        		$ ('#mtAcDirectorKey' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorNm + '</option>' );
+	                      		}
+								
+								$ ('#mtAcDirectorCheck' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+								for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
+	                        		$ ('#mtAcDirectorCheck' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorInfo + '</option>' );
+	                      		}
+			                }else{
+			                	//acDirectorList = null;
+								$ ( '#mtAcDirectorKey' ).find ( 'option' ).remove ();
+			                 	$ ( '#mtAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
+			                 	//acDirectorInfo 값 지움
+			                 	$('#acDirectorInfo').val('');
+			                 	
+			                 	$( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
+			                }
+		            	}
+		            	
+		            	
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		        });				
+				
+				
+				$('#sp_mtLinkCtKey').val(returnKey);
+				$('#sp_mtLinkCtKeyNm').val(returnNm);
+				if($('#sp_mtLinkCtKey').val() !='') {
+					$('#sp_delete_forecast').show();
+				}
 			}
+			
 		}
 		
 		function fn_deleteForecast() {
 			if(confirm("FORECAST 연계정보를 삭제하시겠습니까?")) {
-				
-				if($('#mtLinkKey').val() !='') {
-					$('#linkDeleteKey').val($('#mtLinkKey').val());
-					$('#mtLinkKey').val('');
+				//console.log("sp_mtLinkKey==============>"+$('#sp_mtLinkKey').val());
+				if($('#sp_mtLinkKey').val() !='') {
+					$('#sp_linkDeleteKey').val($('#sp_mtLinkKey').val());
+					$('#sp_mtLinkKey').val('');
 				}
-				$('#mtLinkCtKey').val('');
-				$('#mtLinkCtKeyNm').val('');
-				$('#delete_forecast').hide();
+				//console.log("sp_linkDeleteKey==============>"+$('#sp_linkDeleteKey').val());
+				$('#sp_mtLinkCtKey').val('');
+				$('#sp_mtLinkCtKeyNm').val('');
+				$('#sp_delete_forecast').hide();
 			} else {
 				return false;
 			}
 			
 		}
+
 		
+		
+		//Project연계
+		function fn_projectPop() {
+			window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall','PROJECT_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function pop_projectCall(returnKey,returnNm) {
+			$('#pj_mtLinkCtKey').val(returnKey);
+			$('#pj_mtLinkCtKeyNm').val(returnNm);
+			if($('#pj_mtLinkCtKey').val() !='') {
+				$('#pj_delete_forecast').show();
+			}
+			
+		}
+		
+		/* function fn_deleteProject() {
+			if(confirm("PROJECT 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#pj_mtLinkKey').val() !='') {
+					$('#pj_linkDeleteKey').val($('#pj_mtLinkKey').val());
+					$('#pj_mtLinkKey').val('');
+				}
+				$('#pj_mtLinkCtKey').val('');
+				$('#pj_mtLinkCtKeyNm').val('');
+				$('#pj_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		} */
+		function fn_deleteProject() {
+			if(confirm("PROJECT 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#pj_mtLinkKey').val() !='') {
+					$('#pj_linkDeleteKey').val($('#pj_mtLinkKey').val());
+					$('#id').val('');
+				}
+				$('#id').val('');
+				$('#no').val('');
+				//$('#pj_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		}
 	    /*
 	      hidden값 변경하면 이벤트 발생
 	    */
@@ -616,7 +741,8 @@
 	<%-- <form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post"> --%>		 
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
 		<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
-		<input type="hidden" id="linkDeleteKey" name="linkDeleteKey"/>				
+		<input type="hidden" id="sp_linkDeleteKey" name="linkDeleteKey"/>	
+		<input type="hidden" id="pj_linkDeleteKey" name="linkDeleteKey"/>
 		<div class="popContainer">
 			<div class="top">
 				<div>
@@ -650,17 +776,31 @@
 								<button type="button" onclick="javascript:fn_forecastPop()" style="vertical-align: middle;">
 									<img src="<c:url value='/images/forecast_icon.png'/>" />
 								</button>
-								<input type="text" name="mtLinkCtKeyNm" id="mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>
+								<input type="text" name="mtLinkCtKeyNm" id="sp_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>
 								
-								<input type="hidden" name="mtLinkCtKey" id="mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
-								<input type="hidden" name="mtLinkKey" id="mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
-								<img id="delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteForecast();" style="width: 11px;display:none"/>
+								<input type="hidden" name="mtLinkCtKey" id="sp_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
+								<input type="hidden" name="mtLinkKey" id="sp_mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
+								<img id="sp_delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteForecast();" style="width: 11px;display:none"/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label> 프로젝트명</td>
+							<td class="tdTitle">PRJECT명</td>
 							<td class="tdContents">
-								<input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
+								<button type="button" onclick="javascript:fn_projectPop()" style="vertical-align: middle;">
+									<img src="<c:url value='/images/btn_project_connect.png'/>" />
+								</button>
+								<%-- <input type="text" id="pj_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
+								<input type="hidden" id="pj_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" /> --%>
+								<input type="text" id="no" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
+								<input type="hidden" id="id"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" />
+								<input type="hidden" id="pj_mtLinkKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkKey}"/>" />
+								<img id="pj_delete_project" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteProject();" style="width: 11px;"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label> 유지보수명</td>
+							<td class="tdContents">
+								<input type="text" id="mtNm" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
 							</td>
 						</tr>
 						<tr id="tr_account">

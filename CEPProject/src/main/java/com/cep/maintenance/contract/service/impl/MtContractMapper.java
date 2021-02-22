@@ -156,6 +156,20 @@ public interface MtContractMapper {
 	 */
 	public List<?> selectMtContractProductList(MtDefaultVO searchVO)  throws Exception;
 	
+	
+	/**
+	 * 
+	  * @Method Name : selectPjContractProductList
+	  * @Cdate       : 2021. 2. 19.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 프로젝트계약 제품목록을 가져온다.
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	 */
+	public List<?> selectPjContractProductList(MtDefaultVO searchVO)  throws Exception;
+	
 	/**
 	 * 
 	  * @Method Name : selectMtContractProductList

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cep.forecast.service.ForecastService;
+import com.cep.forecast.vo.ForecastVO;
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
@@ -45,6 +47,8 @@ public class MtContractController {
 	@Resource(name="mtContractService")
 	private MtContractService service;
 	
+	@Resource(name="forecastService")
+	private ForecastService forecastService;
 
 	/**
 	 * 
@@ -350,10 +354,7 @@ public class MtContractController {
 			logger.debug("mtContractVO.getMtIntegrateKey()=====>"+mtContractVO.getMtIntegrateKey());
 			
 			
-			logger.debug("mtContractVO.getMtForcastLinkVo().getMtLinkCtKey()=====>"+mtContractVO.getMtForcastLinkVo().getMtLinkCtKey());
-			logger.debug("mtContractVO.getMtForcastLinkVo().getMtLinkCtKeyNm()=====>"+mtContractVO.getMtForcastLinkVo().getMtLinkCtKeyNm());
-			logger.debug("mtContractVO.getMtForcastLinkVo().getMtLinkKey()=====>"+mtContractVO.getMtForcastLinkVo().getMtLinkKey());
-			logger.debug("mtContractVO.getMtForcastLinkVo().getLinkDeleteKey()=====>"+mtContractVO.getMtForcastLinkVo().getLinkDeleteKey());
+
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), ""))) {
 				// 유지보수계약 관리키가 존재하므로 수정
@@ -384,8 +385,21 @@ public class MtContractController {
 	}	
 	
 	//========================================== 유지보수계약 제품정보 ===============================================================
+	
+	/**
+	 * 
+	  * @Method Name : selectPopupMtProductList
+	  * @Cdate       : 2021. 2. 19.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수 작업등록에서 유지보수 제품목록 조회 팝업
+	  * @param searchVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
 	@RequestMapping(value="/popup/mtProductList.do")
-	public String selectPopupProject(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model) throws Exception {
+	public String selectPopupMtProductList(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model) throws Exception {
 		
 		
 		List<?> mtProductList = null;
@@ -413,6 +427,47 @@ public class MtContractController {
 		return "maintenance/popup/mtProductPopup";
 	}
 	
+	
+	/**
+	 * 
+	  * @Method Name : selectPopupPjProductList
+	  * @Cdate       : 2021. 2. 19.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수계약 제품등록에서 프로젝트 제품목록 팝업.
+	  * @param searchVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/popup/pjProductList.do")
+	public String selectPopupPjProductList(@ModelAttribute("searchVO") MtDefaultVO searchVO, ModelMap model) throws Exception {
+		
+		
+		List<?> mtProductList = null;
+		try {
+			
+			logger.debug("searchVO.getSelectIntegrateKey()===>"+searchVO.getSelectIntegrateKey());
+			logger.debug("searchVO.getWhereNum()=====>"+searchVO.getWhereNum());
+			logger.debug("searchVO.getSearchPmNmCd()=====>"+searchVO.getSearchPmNmCd());
+			logger.debug("searchVO.getSearchSerialNum()=====>"+searchVO.getSearchSerialNum());
+			logger.debug("searchVO.getSearchGubun()=====>"+searchVO.getSearchGubun());
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSelectIntegrateKey(), ""))) {
+//				mtProductList = service.selectMtContractProductList(searchVO.getSelectIntegrateKey());
+				mtProductList = service.selectPjContractProductList(searchVO);
+			}
+			
+			model.put("mtProductList", mtProductList);
+			model.put("searchGubun", searchVO.getSearchGubun());
+			model.addAttribute("whereNum", searchVO.getWhereNum());
+			model.put("selectIntegrateKey", searchVO.getSelectIntegrateKey());
+			model.put("displayUtil", new CepDisplayUtil());
+		} catch (Exception e) {
+			logger.error(null, e);
+		}		
+		return "maintenance/popup/pjProductPopup";
+	}
 	/**
 	 * 
 	  * @Method Name : writeProductInfo
@@ -466,7 +521,7 @@ public class MtContractController {
 			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
 			model.put("mtContFromDate", basicContractInfo.getMtStartDt()); //유지보수 계약 시작일자.
 			model.put("mtContEndDate", basicContractInfo.getMtEndDt()); //유지보수 계약 종료일자.
-
+			model.put("basicContractInfo", basicContractInfo); //유지보수 계약 종료일자.
 			model.put("mtProductList", mtProductList);
 			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("displayUtil", new CepDisplayUtil());
@@ -1603,7 +1658,7 @@ public class MtContractController {
       
 //     String acKey = null;
      List < ? > acDirectorList = null;
-     Map<String, Object> modelAndView = null;
+     Map<String, Object> modelAndView = new HashMap<String, Object>();
      try {
     	 
 //    	 acKey = request.getParameter("mtAcKey");
@@ -1612,15 +1667,75 @@ public class MtContractController {
 //    	
 //    	 acKey="1098620738";
          /* Ajax List 리턴을 위해서는 ModelAndView 로 세팅해야함 */
-         modelAndView = new HashMap<String, Object>();
      
          acDirectorList =service.selectAcDirectorList(mtAcKey);
          
          logger.debug("acDirectorList.size=====>"+acDirectorList.size());
 //         modelAndView.setViewName("jsonView");
          modelAndView.put("acDirectorList", acDirectorList);
+         modelAndView.put("successYN", "Y");
 	} catch (Exception e) {
+		modelAndView.put("successYN", "N");
 		logger.error("selectAcDirectorList error", e);
+	}
+
+    
+     return modelAndView; 
+	}
+	
+	
+	/**
+	 * 
+	  * @Method Name : selectForecastMappingInfo
+	  * @Cdate       : 2021. 2. 18.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : Forecast 거래처 및 해당 거래처 담당자 정보 조회(Selectbox용)
+	  * @param request
+	  * @param response
+	  * @param spKey(SP_MAIN_TB(ForecastTable key)
+	  * @return
+	  * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForecastMappingInfo.do", method=RequestMethod.POST)
+	public Map<String, Object>  selectForecastMappingInfo(HttpServletRequest request , HttpServletResponse response , @RequestBody String spKey) throws Exception {
+
+     List < ? > acDirectorList = null;
+     Map<String, Object> modelAndView = new HashMap<String, Object>();
+    
+     ForecastVO searchVO = null;
+     ForecastVO forecastVO = null;
+     try {
+
+    	 if(!"".equals(CepStringUtil.getDefaultValue(spKey, ""))) {
+    		 
+    		 searchVO = new ForecastVO();
+    		 searchVO.setSpKey(spKey);
+    		 forecastVO = forecastService.selectForecast(searchVO);
+    		 
+    		 if(null != forecastVO && !"".equals(CepStringUtil.getDefaultValue(forecastVO.getAcKey(), ""))) {
+    			 
+    			 modelAndView.put("forecastVO", forecastVO);
+    			 
+    			 acDirectorList =service.selectAcDirectorList(forecastVO.getAcKey());                 
+                 
+                 modelAndView.put("acDirectorList", acDirectorList);
+                 
+                 modelAndView.put("successYN", "Y");
+    		 } else {
+    			 modelAndView.put("successYN", "N");
+    			 logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에 "+spKey+" 관리키에 대한 거래처 정보가 존재하지 않습니다.");
+    		 }
+    		 
+    	 } else {
+    		 modelAndView.put("successYN", "N");
+    		 logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에  대한 관리키 parameter가 null입니다.");
+    	 }
+        
+	} catch (Exception e) {
+		modelAndView.put("successYN", "N");
+		logger.error("selectFocastMappingInfo :: {}", e);
 	}
 
     

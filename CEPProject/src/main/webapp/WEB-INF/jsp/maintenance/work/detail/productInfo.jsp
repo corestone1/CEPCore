@@ -287,7 +287,7 @@
 			var html = '';
 			$('#detailForm .dtl tbody tr').click(function() {
 				if($(this).attr('class') != "viewOpen trcheckcolor") {
-					console.log($(this).children().eq(5).text());
+					//console.log($(this).children().eq(5).text());
 					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 					       + '<div style="margin: 5px 71px;">'
 					       + '<ul class="detailList">'
@@ -411,7 +411,7 @@
 									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
 								</tr>
 								<tr>
-									<td>프로젝트명</td>
+									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
 								<tr>

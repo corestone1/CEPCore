@@ -1,10 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@include file="../../../cmm/inc.jsp" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>유지보수 등록(제품정보)</title>
+	<title>프로젝트 제품목록</title>
 	<style>
 		/* .firstTd {			
 			border-top: 2px solid #e5e5e5;	
@@ -169,6 +170,7 @@
 			table-layout: fixed;
 		}
 	</style>
+	
 	<script>
 		$(document).ready(function() {
 			/*
@@ -179,6 +181,10 @@
 			fn_viewSummaryUpAll();
 			'</c:if>'
 			
+
+			'<c:if test="${basicContractInfo.mtProjectLinkVo.mtLinkKey != null }">'
+				$('#pj_delete_forecast').show();
+			'</c:if>'
 
 		});
 		/**
@@ -699,6 +705,45 @@
 			$(".up").attr('src','<c:url value='/images/arrow_down.png'/>');
 			//$(".up").src = "<c:url value='/images/arrow_down.png'/>";
 		} */
+		//프로젝트 제품 찾기 클릭
+		function fn_addProjectProduct(mtLinkCtKey){
+			//var num = $(obj).attr('id').split('-')[1];
+			//console.log('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val());
+			var num = 1;
+			window.open('/maintenance/contract/popup/pjProductList.do?searchGubun=workPm&whereNum='+num+'&selectIntegrateKey='+mtLinkCtKey
+					,'PJ_PRODUCT_POPUP'
+					,'width=1000px,height=700,left=600,status=no,title=no,toolbar=no,menubar=no,location=no');
+			
+			
+		}
+		
+		function addProjectProduct(mtPmKey,pmNmCd,mtPmQuantity,enPmDetail) {
+
+			var checkNum;
+			var lastNum = $("input[name='lastNum']").get($("input[name='lastNum']").length-1).getAttribute('value')*1;
+			console.log("lastNum=======>"+lastNum);
+			
+			if($("#prodList-"+lastNum+"-mtPmFkKey").val()=='') {
+				
+				checkNum = lastNum;
+			} else {
+				fn_addInfoTable();
+				checkNum = lastNum+1;
+			}
+			
+			$("#prodList-"+checkNum+"-pmNmCd").val(pmNmCd);
+			$("#prodList-"+checkNum+"-mtPmFkKey").val(mtPmKey);
+			$("#prodList-"+checkNum+"-mtPmQuantity").val(mtPmQuantity);
+			if(enPmDetail.length >0) {
+				var parsedWordArray = CryptoJS.enc.Base64.parse(enPmDetail);
+				var mtPmDetail = parsedWordArray.toString(CryptoJS.enc.Utf8);
+			}
+			$("#prodList-"+checkNum+"-mtPmDetail").val(mtPmDetail);
+			/* prodList-3-pmNmCd
+			prodList-3-mtPmFkKey
+			prodList-3-mtPmQuantity
+			prodList-3-mtPmDetail */
+		}
 	</script>
 </head>
 <body>
@@ -748,15 +793,22 @@
 								<td class="subTitle" style="border-top: none;">
 									<label class="ftw400">제품정보</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="cursor: pointer;"/></td>
 								<td class="subBtn" colspan="5"  style="border-top: none;text-align: center;vertical-align: middle;">
 									<c:if test="${listCount>0}">
 									유지보수 매출금액 업데이트여부 :
 									<input type="radio" class="tRadio" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 									<input type="radio" class="tRadio" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</c:if>
+									<c:choose>
+										<c:when test="${basicContractInfo.mtProjectLinkVo == null ||  basicContractInfo.mtProjectLinkVo.mtLinkCtKey == null}">
+										<img id="project_product" class="floatR" src="<c:url value='/images/project_gray.png'/>"/>
+										</c:when>
+										<c:otherwise>
+										<img id="project_product" class="floatR" src="<c:url value='/images/btn_project_get.png'/>" onclick="fn_addProjectProduct('<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>');" style="cursor: pointer;"/>										
+										</c:otherwise>
+									</c:choose>
 									
-									<img class="floatR" src="<c:url value='/images/icon_project.png'/>" onclick="fn_addInfoTable();"/>
 								</td>
 							</tr>
 						</table>

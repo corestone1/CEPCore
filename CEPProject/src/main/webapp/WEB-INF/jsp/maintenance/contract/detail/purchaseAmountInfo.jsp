@@ -992,7 +992,7 @@
 									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
 								</tr>
 								<tr>
-									<td>프로젝트명</td>
+									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}" /></td>
 								</tr>
 								<tr>
@@ -1077,7 +1077,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label>*</label>프로젝트명</td>
+									<td><label>*</label>유지보수명</td>
 									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required /></td>
 								</tr>
 								<tr id="m_tr_account">

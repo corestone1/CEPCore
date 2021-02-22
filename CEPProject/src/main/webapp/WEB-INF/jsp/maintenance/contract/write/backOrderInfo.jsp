@@ -1206,7 +1206,7 @@
 						<tr>      
 							<td class="subTitle" style="border-top: none;" colspan="5">
 								<label class="ftw400">백계약등록</label>&nbsp;&nbsp;&nbsp;	
-								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewBackOrder();" style="vertical-align: middle"/>
+								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewBackOrder();" style="vertical-align: middle;cursor: pointer;"/>
 								
 								<c:if test="${backOrderBoxList.size() >0 }">
 									<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
@@ -1311,7 +1311,7 @@
 							<tr> 
 								<td class="subTitle" style="border-top: none;"  colspan="6">
 									<label class="ftw400">제품정보</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
+									<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle;cursor: pointer;"/>
 								</td>
 								<%-- <td colspan="5" class="floatL">
 									<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>

@@ -361,7 +361,7 @@
 							<td class="subTitle" style="border-top: none;">
 								<label class="ftw500">발주등록</label>
 							</td>
-							<td class="subTitle" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" /></td>
+							<td class="subTitle" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;"/></td>
 						</tr>
 					</table>	
 					<table>
@@ -432,7 +432,7 @@
 							<td class="subTitle" style="border-top: none;">
 								<label class="ftw500">제품정보</label>
 							</td>
-							<td class="subTitle" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+							<td class="subTitle" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="cursor: pointer;"/></td>
 						</tr>
 					</table>
 					<div class="prodTable">

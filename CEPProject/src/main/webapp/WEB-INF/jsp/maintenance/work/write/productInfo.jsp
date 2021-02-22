@@ -516,7 +516,7 @@
 			
 			window.open('/maintenance/contract/popup/mtProductList.do?searchGubun=workPm&whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
-					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no');
+					,'width=1000px,height=410,left=600,status=no,title=no,toolbar=no,menubar=no,location=no');
 			//window.open('/maintenance/contract/popup/mtProductList.do','','width=1000px,height=400,left=600');
 		}
 	</script>
@@ -563,7 +563,7 @@
 								<td class="subTitle" style="border-top: none;">
 									<label class="ftw400">제품정보</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+								<td class="subBtn" style="border-top: none;cursor: pointer;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
 								
 							</tr>
 						</table>

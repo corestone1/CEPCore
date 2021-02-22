@@ -187,7 +187,7 @@
 			<div class="floatR" style="padding-top: 40px;padding-left: 1px">
 				<form:input path="fromDate" type="text" placeholder="계약시작일자" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" placeholder="계약종료일자" class="calendar toDt" value="${searchParam.toDate}"/>
 				<form:select path="searchGubun">
-					<form:option value="PJ" label="프로젝트명" />
+					<form:option value="PJ" label="유지보수명" />
 					<form:option value="CU" label="고객사" />
 				</form:select>
 				<form:input path="searchWord" type="text" class="search" placeholder="검색어" />
@@ -202,7 +202,7 @@
 						<tr>
 							<th scope="row">선택</th>
 							<th scope="row">고객사</th>
-							<th scope="row">프로젝트명</th>
+							<th scope="row">유지보수명</th>
 							<th scope="row">계약일자</th>
 							<th scope="row">시작일</th>
 							<th scope="row">종료일</th>

@@ -499,7 +499,7 @@
 									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
 								</tr>
 								<tr>
-									<td>프로젝트명</td>
+									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
 								<tr>

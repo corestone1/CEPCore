@@ -168,6 +168,19 @@ public interface MtContractService {
 	
 	/**
 	 * 
+	  * @Method Name : selectPjContractProductList
+	  * @Cdate       : 2021. 2. 19.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 프로젝트 제품목록을 가져온다.
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	 */
+	List<?> selectPjContractProductList(MtDefaultVO searchVO)  throws Exception;
+	
+	/**
+	 * 
 	  * @Method Name : selectMtPmTotalAmount
 	  * @Cdate       : 2021. 1. 6.
 	  * @Author      : aranghoo
