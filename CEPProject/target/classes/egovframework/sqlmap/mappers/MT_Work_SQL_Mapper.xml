@@ -78,7 +78,7 @@
 		    , #{mtWorkOrderYn}
 		    , #{remark}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey} 
 		    , 'N'
 		);
@@ -100,7 +100,7 @@
 			, MT_WORK_ORDER_YN = #{mtWorkOrderYn} 
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_WORK_KEY = #{mtWorkKey};
 	</update>
@@ -206,7 +206,7 @@
 			UPDATE MT_WORK_TB
 			SET DELETE_YN='Y'
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_WORK_KEY=#{mtWorkKey}
 	</update>
@@ -236,7 +236,7 @@
 			    , #{item.mtPmWorkCont}  
 			    , 'N' 
 			    , DATE_FORMAT(NOW(),'%Y%m%d')
-			    , DATE_FORMAT(NOW(),'%k%i%s')
+			    , DATE_FORMAT(NOW(),'%H%i%s')
 			    , #{regEmpKey} 
 			   )
 			</foreach>  		
@@ -270,7 +270,7 @@
 			SET MT_PM_KEY = #{item.mtPmKey}
 				, MT_PM_WORK_CONT = #{item.mtPmWorkCont}
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_WORK_KEY = #{mtWorkKey} 
 				AND MT_WORK_SEQ = #{item.mtWorkSeq} 
@@ -282,7 +282,7 @@
 		UPDATE MT_WORK_PRODUCT_TB
 			SET DELETE_YN='Y'
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_WORK_KEY = #{mtWorkKey} 
 				AND MT_WORK_SEQ IN   
@@ -296,7 +296,7 @@
 		UPDATE MT_WORK_PRODUCT_TB
 			SET DELETE_YN='Y'
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_WORK_KEY = #{mtWorkKey} 
 	</update>

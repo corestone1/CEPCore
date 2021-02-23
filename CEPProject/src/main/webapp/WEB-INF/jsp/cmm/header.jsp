@@ -130,6 +130,7 @@
 					<a href="#">공통관리</a>
 					<div class="">
 						<ul>
+							<li><a href="/mngCommon/account/list.do">거래처관리</a></li>
 							<li><a href="/mngCommon/product/list.do">제품관리</a></li>
 							<li><a href="/mngCommon/employee/list.do">사용자관리</a></li>
 							<li><a href="/mngProject/mapping/list.do">발주·계산서 매핑</a></li>

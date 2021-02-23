@@ -101,7 +101,7 @@
 			, #{mtPayTerms}
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
-			, DATE_FORMAT(NOW(),'%k%i%s')
+			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{regEmpKey}
 		);	
 	</insert>
@@ -127,7 +127,7 @@
 			, MT_PAY_TERMS = #{mtPayTerms}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
 	</update>	
@@ -271,7 +271,7 @@
 			UPDATE MT_CONTRACT_TB
 			SET DELETE_YN='Y'
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
 	</update>
@@ -318,7 +318,7 @@
 		    , #{item.remark} 
 		    , 'N' 
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey} 
 		   )
 		</foreach>  		
@@ -383,7 +383,7 @@
 		UPDATE MT_PRODUCT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
 	</update>
@@ -393,7 +393,7 @@
 		UPDATE MT_PRODUCT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_PM_KEY IN
 			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
@@ -415,7 +415,7 @@
 				, MT_PM_END_DT = #{item.mtPmEndDt}
 				, REMARK = #{item.remark}
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_PM_KEY = #{item.mtPmKey} 
 		
@@ -501,7 +501,7 @@
 		    , #{item.mtSalesNovAmount}
 		    , #{item.mtSalesDecAmount}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey})
 		</foreach>    		
 	</insert>
@@ -596,7 +596,7 @@
 				, MT_SALES_DEC_CALL_YN = #{item.mtSalesDecCallYn}
 			</if>	
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_SALES_KEY = #{item.mtSalesKey}
 				AND MT_INTEGRATE_KEY =  #{mtIntegrateKey}					
@@ -608,7 +608,7 @@
 		UPDATE MT_SALES_AMOUNT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
 	</update>
@@ -618,7 +618,7 @@
 		UPDATE MT_SALES_AMOUNT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_INTEGRATE_KEY =  #{mtIntegrateKey}	
 				AND MT_SALES_KEY IN
@@ -657,7 +657,7 @@
 		    , #{mtOrderDt}
 		    , #{remark}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey}
 		)				
 	</insert>
@@ -685,7 +685,7 @@
 		    , #{item.mtStartDt}
 		    , #{item.mtEndDt}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey})
 		</foreach>    	
 	</insert>
@@ -774,7 +774,7 @@
 		UPDATE MT_BACK_ORDER_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_ORDER_KEY=#{mtOrderKey}
 	</update>
@@ -784,7 +784,7 @@
 		UPDATE MT_BACK_ORDER_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
 	</update>
@@ -794,7 +794,7 @@
 		UPDATE MT_BACK_ORDER_PRODUCT
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_ORDER_KEY=#{mtOrderKey}
 	</update>
@@ -807,7 +807,7 @@
 		SET BP.DELETE_YN='Y'
 			, BP.MOD_EMP_KEY = #{modEmpKey}
 			, BP.MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, BP.MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, BP.MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 		WHERE BO.MT_INTEGRATE_KEY=#{mtIntegrateKey}
 			AND BP.DELETE_YN='N'
 	</update>	
@@ -817,7 +817,7 @@
 		UPDATE MT_BACK_ORDER_PRODUCT
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_ORDER_PM_KEY IN
 			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
@@ -836,7 +836,7 @@
 			, MT_ORDER_DT = #{mtOrderDt}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_ORDER_KEY = #{mtOrderKey} 
 	</update>	
@@ -852,7 +852,7 @@
 				, MT_START_DT = #{item.mtStartDt}
 				, MT_END_DT = #{item.mtEndDt}
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_ORDER_PM_KEY = #{item.mtOrderPmKey}
 		</foreach>
@@ -947,7 +947,7 @@
 		    , #{item.mtBuyNovAmount}
 		    , #{item.mtBuyDecAmount}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey})
 		</foreach>    		
 	</insert>
@@ -1006,7 +1006,7 @@
 				, MT_BUY_DEC_CALL_YN = #{item.mtBuyDecCallYn}
 			</if>	
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_ORDER_KEY = #{mtOrderKey}
 				AND MT_BUY_KEY = #{item.mtBuyKey}
@@ -1019,7 +1019,7 @@
 		UPDATE MT_BUY_AMOUNT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_ORDER_KEY = #{mtOrderKey}
 				AND MT_BUY_KEY IN
@@ -1033,7 +1033,7 @@
 		UPDATE MT_BUY_AMOUNT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
 			WHERE 1=1				
 			<if test="mtOrderKey != null and mtOrderKey != ''">
@@ -1107,7 +1107,7 @@
 		    , #{mtLinkCtClassCd}
 		    , #{mtLinkCtKey}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
-		    , DATE_FORMAT(NOW(),'%k%i%s')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey} 
 		); 		
 	</insert>
@@ -1179,7 +1179,7 @@
 		UPDATE 	MT_CONTRACT_LINK_TB
 		SET MT_LINK_CT_KEY =  #{mtLinkCtKey}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_LINK_KEY = #{mtLinkKey}
 			AND MT_INTEGRATE_KEY = #{mtIntegrateKey}
@@ -1190,7 +1190,7 @@
 		UPDATE 	MT_CONTRACT_LINK_TB
 		SET DELETE_YN =  'Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE MT_LINK_KEY = #{linkDeleteKey}
 			AND MT_INTEGRATE_KEY = #{mtIntegrateKey}
