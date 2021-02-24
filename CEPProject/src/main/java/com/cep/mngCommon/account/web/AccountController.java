@@ -86,4 +86,16 @@ public class AccountController {
 		
 		return "mngCommon/account/write";
 	}
+	
+	@RequestMapping(value="/detail.do")
+	public String selectDetail(HttpServletRequest request, AccountSearchVO searchVO, ModelMap model) throws Exception {
+		
+		try {
+			
+		} catch (Exception e) {
+			logger.error("viewAddAccountInfo :: {}", e);
+		}
+		
+		return "mngCommon/account/detail";
+	}
 }

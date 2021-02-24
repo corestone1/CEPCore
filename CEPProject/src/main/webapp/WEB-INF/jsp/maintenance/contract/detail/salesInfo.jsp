@@ -251,7 +251,7 @@
 		}
 		
 		#modBasicTable tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */
 			
 			width: 132px;
 			font-weight: 400;

@@ -167,7 +167,12 @@
 	</style>
 	<script>
 		$(document).ready(function() {
-	
+			$('#fl tr').click(function() {
+				/* location.href = "/maintenance/detail/prodInfo.do"; */
+				document.listForm.action = "/mngCommon/account/detail.do";
+	           	document.listForm.submit(); 
+				
+			});
 			
 			$('#btn_delete').click(function() {
 				

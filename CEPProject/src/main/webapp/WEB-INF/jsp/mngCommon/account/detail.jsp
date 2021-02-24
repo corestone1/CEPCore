@@ -69,12 +69,6 @@
 		.mContents > div > div > div > table tr td {
 			padding: 13px 20px;
 		}
-		/* 기본정보 타이틀 크기 및 글자크기 */
-		.mContents .bsc tr td:first-child {
-			width: 153px;
-			font-weight: 400;
-         	padding: 13px;
-		} 
 		/* 기본정보 내용 글자 굵기 */
 		.mContents .bsc tr td:last-child {
 			width: 470px;
@@ -121,9 +115,8 @@
 		}		
 		
 		
-		
-		/* 발주정보 테이블 틀 나오게 하는 부분 */
-		.mContents .dtl thead th, .mContents .dtl tbody tr td ,.mContents .dtl2 thead th, .mContents .dtl2 tbody tr td {
+		.mContents .dtl thead th, .mContents .dtl tbody tr td 
+		,.mContents .dtl2 thead th, .mContents .dtl2 tbody tr td {
 			padding: 10px 7px;
 			border: 1px solid #edebef;
 			text-align: center;
@@ -132,7 +125,7 @@
 		
 		/* 기본정보 싸이즈 조정 */
 		.mContents .bsc tbody {			
-			height: 576px;
+			height: 385px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -144,9 +137,8 @@
 			padding : 13px 18px;
 		}
 		/* 기본정보 세로줄 나오는것 */
-		.mContents .bsc tr td:first-child {
-			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */		
-			width: 153px;
+		.mContents .bsc tr td:first-child {				
+			width: 107px;
 			font-weight: 400;
 			padding: 13px 13px 13px 20px;
 		}
@@ -156,116 +148,86 @@
 			border-radius: 35px;
 			background-color: #d3d3d3;
 		}
-		/* 제품정보>매출정보>백계약정보>매입정보 버튼 크기및 모양    */
-		.mContents > .fxd .title ul li {
-			width: 25%;
-			line-height: 46px;
-			color: #777777;
-			background-color: #d3d3d3;
-			border-radius: 35px;
-		}
-		.mContents .title ul li {
-			float: left;
-			text-align: center;
-			font-size: 17px;
-			cursor: pointer;
-		}
-		.mContents > .fxd .title ul li > label {
-			display: inline-block;
-    		width: 100%;
-    		/* cursor: pointer; */
-		}
-		.mContents > .fxd .title ul li.on,
-		.mContents > .fxd .title ul li:hover  {
-			color: #fff  !important;
-			background-color: #4c3d92;
-		}		
+
 		
 		.mContents .dtl tbody tr:hover, .mContents .dtl2 tbody tr:hover {
 			background-color: #ddf0ec
 		}
 		
-		/* 발주정보 세로싸이즈 */
+		/* 담당자정보 세로싸이즈 */
 		.mContents .dtl tbody {
-			height: 176px;
+			/* height: 176px; */
+			height: 220px;
 		}
 		
 		/* 백계약정보 테이블 크기조정 */
 		.mContents .dtl thead th:first-child,
 		.mContents .dtl tbody td:first-child {
-			width: 51px;
-			padding: 0;
+			width: 45px;
 		}
 		.mContents .dtl thead th:nth-child(2),
 		.mContents .dtl tbody td:nth-child(2) {
-			width: 51px;
+			width: 75px;
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 190px;
+			width: 94px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
-			width: 100px;
+			width: 76px;
 		}
-		.mContents .dtl thead th:nth-child(5) {
-			width: 100px;
-		}
+		.mContents .dtl thead th:nth-child(5),
 		.mContents .dtl tbody td:nth-child(5) {
-			width: 100px;
-			text-align: right;
+			width: 136px;
 		}
 		.mContents .dtl thead th:nth-child(6),
 		.mContents .dtl tbody td:nth-child(6) {
-			width: 80px;
+			width: 204px;
+		}
+		.mContents .dtl tbody td:nth-child(6) {
+			text-align: left;
 		}
 		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7){
-			width: 100px;
+		.mContents .dtl tbody td:nth-child(7) {
+			width: 260px;
+			max-width: 260px;
 		}
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8) {
-			width: 220px;
-		}	
-		/* 발주정보, 제품정보 글짜크기 */
+		.mContents .dtl tbody td:nth-child(7) {
+			text-align: left;
+		}
+		/* 담당자, 계좌정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
 			font-weight: 200;
 		}
 		
-		/* 제품정보 세로싸이즈 */
+		/*계좌정보 세로싸이즈 */
 		.mContents .dtl2 tbody {
-			height: 241px;
+			/* height: 241px; */
+			height: 197px;
 		}
-		/* 제품정보 테이블 크기조정 */
+		/* 계좌정보 테이블 크기조정 */
 		.dtl2 thead th:first-child,
 		.dtl2 tbody td:first-child {
 			width: 51px;
 		}
 		.dtl2 thead th:nth-child(2),
 		.dtl2 tbody td:nth-child(2) {
-			width: 200px;
+			width: 255px;
 		}
 		.dtl2 thead th:nth-child(3),
 		.dtl2 tbody td:nth-child(3) {
-			width: 60px;
+			width: 323px;
 		}
 		.dtl2 thead th:nth-child(4),
 		.dtl2 tbody td:nth-child(4) {
-			width: 100px;
+			width: 210px;
 		}
 		.dtl2 thead th:nth-child(5),
 		.dtl2 tbody td:nth-child(5) {
-			width: 110px;
-		}
-		.dtl2 thead th:nth-child(6),
-		.dtl2 tbody td:nth-child(6) {
-			width: 170px;
-		}
-		.dtl2 thead th:nth-child(7),
-		.dtl2 tbody td:nth-child(7) {
-			width: 200px;		
-		}
-		/* 백계약정보에서 제품과 제품상세  ... 으로 표시. */
+			width: 90px;
+		}	
+		/* 담당자 정보 비고부분 ... 으로 표시. */
 		
 		.mContents .dtl tbody tr td > span {
 			display: inline-block;
@@ -300,8 +262,6 @@
 		}
 		
 		#modBasicTable tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			
 			width: 132px;
 			font-weight: 400;
 			padding: 11px 8px 11px 17px;
@@ -312,7 +272,7 @@
 		}
 		#modBasicTable input[type="text"],
 		#modBasicTable textarea {
-			width: 401px; 
+			width: 230px; 
 		    color: #0e8a67;
 		}
 		#modBasicTable textarea {
@@ -325,7 +285,7 @@
 		#modBasicTable select {
 			height: 34px;
 			font-size: 14px;
-			width: 97px;
+			width: 72px;
 		    border: 1px solid #e9e9e9;
 		    padding: 0 10px;
 		    -webkit-appearance: none;
@@ -359,29 +319,20 @@
 		}
 		input[type="text"] {
 		 	width: 138px;
-		    height: 34px;
+		    height: 32px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 4px;
 		}
-		input[class^="calendar"] {
-		    background-image: url(/images/calendar_icon.png);
-		    background-repeat: no-repeat;
-		    background-position: 95% 50%;
-		}
 		#modBasicTable tr td:first-child label {
 			color: red;
 			vertical-align: middle;
       	}
-      	.accountList li {
-			text-align: left;
-			margin-left: 10px;
-			line-height: 2.3;
-			font-size: 14px;
-			color: #21a17e;
-		}
+      	#listForm {
+      		padding-top: 50px;
+      	}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -520,11 +471,11 @@
 									<td><label>*</label> 사업자번호</td>
 									<td>
 										<input type="text" id="acBusiNum" name="acBusiNum" required/>
-										<img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;"/>
+										<img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;padding-bottom: 5px;"/>
 									</td>
 								</tr>
 								<tr>
-									<td><label>*</label><label>*</label> 거래처명</td>
+									<td><label>*</label> 거래처명</td>
 									<td><input type="text" id="acNm" name="acNm" required/></td>
 								</tr>
 								<tr>
@@ -537,7 +488,7 @@
 									<td>&nbsp;&nbsp;거래처구분</td>
 									<td>
 										<input type="checkbox" class="tCheck" name="acSalesYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;매출거래처
-										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="checkbox" class="tCheck" name="acBuyYn" value="Y" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;매입거래처
 									</td>
 								</tr>
@@ -567,18 +518,18 @@
 								<tr>
 									<td><label>*</label> 주소</td>
 									<td>
-										<input type="text" id="acAddr" name="acAddr" style="width: 897px" required/>
+										<input type="text" id="acAddr" name="acAddr" style="width: 375px" required/>
 									</td>
 								</tr>
 								<tr>
 									<td></td>
 									<td>
-										<input type="text" id="acAddrDetail" name="acAddrDetail" style="width: 897px"/>
+										<input type="text" id="acAddrDetail" name="acAddrDetail" style="width: 375px"/>
 									</td>
 								</tr>
 							</table>
 						</div>
-						<div class="floatL" style="margin-top: 22px">
+						<div class="floatL" style="margin-top: 211px">
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
 						</div>
@@ -589,218 +540,119 @@
 				
 				<div id="listForm">
 					<div class="stitle cg colorBlack">
-						백계약정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView('newOrder')"/>
+						담당자정보
 					</div>
 					<div class="floatC middle" style="border-bottom: 2px solid #c4c4c4;">
 						<table class="dtl">
 							<thead class="ftw400">
 								<tr>
-									<th scope="row"><label>*</label> 이름</th>
+									<th scope="row">No</th>
+									<th scope="row">이름</th>
 									<th scope="row">부서</th>
 									<th scope="row">직급</th>
-									<th scope="row"><label>*</label> 연락처</th>
+									<th scope="row">연락처</th>
 									<th scope="row">이메일</th>
 									<th scope="row">비고</th>
 								</tr>
 							</thead>
 							<tbody>
-							<c:forEach var="list" items="${backOrderList}" varStatus="status">
-							<c:choose>
-								<c:when test="${status.count==1}">
-								<tr class="trcheckcolor">
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtOrderKey}"/>','${list.mtOrderAcKeyNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
-									</td>
-									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
-									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
-									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
-									<td><c:out value="${list.taxYn}"/></td>
-									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
-									<td><c:out value="${list.mtOrderPayTerms}"/></td>
-									<td style="max-width: 0px; display: none;">
-										<c:out value="${list.remark}"/>
-									</td>
-								</tr>
-								</c:when>
-								<c:otherwise>
 								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtOrderKey}"/>','${list.mtOrderAcKeyNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
-									</td>
-									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
-									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
-									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
-									<td><c:out value="${list.taxYn}"/></td>
-									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
-									<td><c:out value="${list.mtOrderPayTerms}"/></td>
-									<td style="max-width: 0px; display: none;">
-										<c:out value="${list.remark}"/>
-									</td>
-								</tr>
-								
-								</c:otherwise>
-							</c:choose>
-								<%-- <tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtOrderKey}"/>','${list.mtOrderAcKeyNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
-									</td>
-									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
-									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
-									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
-									<td><c:out value="${list.taxYn}"/></td>
-									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
-									<td><c:out value="${list.mtOrderPayTerms}"/></td>
-									<td style="max-width: 0px; display: none;">
-										<c:out value="${list.remark}"/>
-									</td>
-								</tr> --%>
-							</c:forEach>
-								<!-- <tr>
-									<td></td>
 									<td>1</td>
-									<td>대원CTS </td>
 									<td>홍길동</td>
-									<td>6,160,000</td>
-									<td>Y</td>
-									<td>2020-11-15</td>
-									<td>계산서 발행 후 90일</td>
+									<td>기술지원팀</td>
+									<td>차장</td>
+									<td>010-2568-5789</td>
+									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
+									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
 								</tr>
 								<tr>
-									<td></td>
 									<td>2</td>
-									<td>케이디아이에스</td>
-									<td>김길동</td>
-									<td>24,160,000</td>
-									<td>Y</td>
-									<td>2020-11-01</td>
-									<td>프로젝트 원청 수금 조건</td>
-								</tr>
-								<tr>
-									<td></td>
-									<td>3</td>
-									<td>대원CTS </td>
 									<td>홍길동</td>
-									<td>7,160,000</td>
-									<td>Y</td>
-									<td>2020-11-15</td>
-									<td>계산서 발행 후 30일</td>
+									<td>기술지원팀</td>
+									<td>차장</td>
+									<td>010-2568-5789</td>
+									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
+									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
 								</tr>
 								<tr>
-									<td></td>
+									<td>3</td>
+									<td>홍길동</td>
+									<td>기술지원팀</td>
+									<td>차장</td>
+									<td>010-2568-5789</td>
+									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
+									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
+								</tr>
+								<tr>
 									<td>4</td>
-									<td>케이디아이에스</td>
-									<td>김길동</td>
-									<td>24,160,000</td>
-									<td>N</td>
-									<td>2020-11-01</td>
-									<td>프로젝트 원청 수금 조건</td>
+									<td>홍길동</td>
+									<td>기술지원팀</td>
+									<td>차장</td>
+									<td>010-2568-5789</td>
+									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
+									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
 								</tr>
 								<tr>
-									<td></td>
 									<td>5</td>
-									<td>케이디아이에스</td>
-									<td>김길동</td>
-									<td>24,160,000</td>
-									<td>Y</td>
-									<td>2020-11-01</td> 
-									<td>계산서 발행 후 30일5</td>
-								</tr> -->
+									<td>홍길동</td>
+									<td>기술지원팀</td>
+									<td>차장</td>
+									<td>010-2568-5789</td>
+									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
+									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
 					
-					<div class="stitle cg colorBlack">제품정보</div>
+					<div class="stitle cg colorBlack">계좌정보</div>
 					<div class="floatC" style="border-bottom: 2px solid #c4c4c4;">
 						<table class="dtl2">
 							<thead class="ftw400">
 								<tr>
 									<th scope="row">No</th>
-									<th scope="row">제품</th>
-									<th scope="row">수량</th>
-									<th scope="row">단가</th>
-									<th scope="row">합계</th>
-									<th scope="row">시리얼번호</th>
-									<th scope="row">계약기간</th>
+									<th scope="row">은행명</th>
+									<th scope="row">계좌번호</th>
+									<th scope="row">예금주</th>
+									<th scope="row">주거래계좌</th>
 								</tr>
 							</thead>
-							<tbody>
-							<c:forEach var="list" items="${backOrderProductList}" varStatus="status">		
-								<tr>							
-									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span title="<c:out value="${list.mtPmKeyNm}"/>"><c:out value="${list.mtPmKeyNm}"/></span></td>
-									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderPmQuantity)}"/></td>
-									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderPmUprice)}"/></td>
-									<td class="textalignR"><c:out value="${displayUtil.makeMultiNumber(list.mtOrderPmQuantity, list.mtOrderPmUprice)}"/></td>
-									<td><c:out value="${list.mtPmSerialNum}"/></td>
-									<td><c:out value="${displayUtil.displayDate(list.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(list.mtEndDt)}"/></td>
-								</tr>
-							</c:forEach>
-								<!-- <tr>
+							<tbody>							
+								<tr>
 									<td>1</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
+									<td>기업은행</td>
+									<td class="textalignC">777-127624-43-126</td>
+									<td class="textalignC">홍길동</td>
+									<td class="textalignC">Y</td>
 								</tr>
 								<tr>
 									<td>2</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
+									<td>기업은행</td>
+									<td class="textalignC">777-127624-43-126</td>
+									<td class="textalignC">홍길동</td>
+									<td class="textalignC">N</td>
 								</tr>
 								<tr>
 									<td>3</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
+									<td>기업은행</td>
+									<td class="textalignC">777-127624-43-126</td>
+									<td class="textalignC">홍길동</td>
+									<td class="textalignC">N</td>
 								</tr>
 								<tr>
 									<td>4</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
+									<td>기업은행</td>
+									<td class="textalignC">777-127624-43-126</td>
+									<td class="textalignC">홍길동</td>
+									<td class="textalignC">N</td>
 								</tr>
 								<tr>
-									<td>5</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
+									<td>4</td>
+									<td>기업은행</td>
+									<td class="textalignC">777-127624-43-126</td>
+									<td class="textalignC">홍길동</td>
+									<td class="textalignC">N</td>
 								</tr>
-								<tr>
-									<td>6</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
-								</tr>
-								<tr>
-									<td>7</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span></td>
-									<td class="textalignR">3</td>
-									<td class="textalignR">600,000,000</td>
-									<td class="textalignR">1,800,000,000</td>
-									<td>CKM0014450026112323</td>
-									<td>2020-01-01 ~ 2020-12-31</td>
-								</tr> -->
 							</tbody>
 						</table>
 					</div>
