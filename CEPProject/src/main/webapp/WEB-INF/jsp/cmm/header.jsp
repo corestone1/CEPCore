@@ -12,6 +12,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
 	<style>
@@ -141,6 +142,7 @@
 					<a href="#">공통관리</a>
 					<div class="">
 						<ul>
+							<li><a href="/mngCommon/account/list.do">거래처관리</a></li>
 							<li><a href="/mngCommon/product/list.do">제품관리</a></li>
 							<li><a href="/mngCommon/employee/list.do">사용자관리</a></li>
 							<li><a href="/mngProject/mapping/list.do">발주·계산서 매핑</a></li>
