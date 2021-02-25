@@ -10,11 +10,13 @@ import com.cmm.vo.SalesVO;
 
 @SuppressWarnings("serial")
 @Alias("projectContractSalesVO")
-public class ProjectContractSalesVO extends SalesVO implements Serializable {
+public class ProjectContractSalesVO extends ProjectSalesVO implements Serializable {
 	
 	private String ctKey;
 	private String pjKey;
 	private int ctAmount;
+	private String ctDt;
+	private String ctPayTerms;
 	private String taxYn;
 	private int collectTurn;
 	private String regEmpKey;
@@ -31,6 +33,7 @@ public class ProjectContractSalesVO extends SalesVO implements Serializable {
 	private String salesGbYn;
 	private String salesStatusCd;
 	private String statusCd;
+	private String isNew;
 	private List<ProjectContractSalesVO> projectContractSalesVOList;
 	
 	public String getCtKey() {
@@ -50,6 +53,18 @@ public class ProjectContractSalesVO extends SalesVO implements Serializable {
 	}
 	public void setCtAmount(int ctAmount) {
 		this.ctAmount = ctAmount;
+	}
+	public String getCtDt() {
+		return ctDt;
+	}
+	public void setCtDt(String ctDt) {
+		this.ctDt = ctDt;
+	}
+	public String getCtPayTerms() {
+		return ctPayTerms;
+	}
+	public void setCtPayTerms(String ctPayTerms) {
+		this.ctPayTerms = ctPayTerms;
 	}
 	public String getTaxYn() {
 		return taxYn;
@@ -140,6 +155,12 @@ public class ProjectContractSalesVO extends SalesVO implements Serializable {
 	}
 	public void setSalesStatusCd(String salesStatusCd) {
 		this.salesStatusCd = salesStatusCd;
+	}
+	public String getIsNew() {
+		return isNew;
+	}
+	public void setIsNew(String isNew) {
+		this.isNew = isNew;
 	}
 	public List<ProjectContractSalesVO> getProjectContractSalesVOList() {
 		return projectContractSalesVOList;

@@ -161,7 +161,6 @@
 			 }
 			
 			var sendData = JSON.stringify(object);
-			console.log(sendData);
 			
 			$.ajax({
 				url:"/project/update/basicInfo.do",
@@ -178,6 +177,20 @@
 			    	if(response!= null && response.successYN == 'Y') {
 			    		alert('저장되었습니다.');
 			    		countSave++;
+			    		
+			    		var url = '/project/write/finishInfo.do';
+						var dialogId = 'program_layer';
+						var varParam = {
+							"pjKey" : $('#pjKey').val(),
+							"turnNo":$("#turnNo").val(),
+							"ctKey":ctKeyList,
+							"salesKey":salesKeyList
+						}
+						var button = new Array;
+						button = [];
+						showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			    	} else {
+			    		alert('프로젝트 완료 정보 등록이 실패했습니다.');
 			    	}
 			    },
 				error: function(request, status, error) {
@@ -188,11 +201,25 @@
 			});   
 		}
 		
+		var ctKeyList = new Array();
+		var salesKeyList = new Array();
+		
+		<c:forEach items="${ctKey}" var="item">
+			ctKeyList.push("${item}");
+		</c:forEach>
+		
+		<c:forEach items="${salesKey}" var="item">
+			salesKeyList.push("${item}");
+		</c:forEach>
+		
 		function fn_prevView(){
-			var url = '/project/write/workInfo.do';
+			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val()
+				"pjKey" : $('#pjKey').val(),
+				"turnNo":$("#turnNo").val(),
+				"ctKey":ctKeyList,
+				"salesKey":salesKeyList
 			}
 			var button = new Array;
 			button = [];
@@ -216,12 +243,14 @@
 		<div class="contents">
 			<div>
 				<form id="infoForm" name="infoForm" method="post">
-					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }"/>
+					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey[0]}"/>"/>
+					<input type="hidden" id="turnNo" name="turnNo"  value="<c:out value="${turnNo[0]}"/>"/>
+					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="PJST5000" />
 					<table>
 						<tr>
 							<td class="tdTitle">고객사</td>
 							<td class="tdContents" colspan="2">
-								<input type="text" class="pname"  value="<c:out value="${resultList[0].acKey}"/>" readonly/>
+								<input type="text" class="pname"  value="<c:out value="${resultList[0].acNm}"/>" readonly/>
 							</td>
 						</tr>
 						<tr>

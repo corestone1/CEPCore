@@ -64,25 +64,31 @@
 
 	<select id="selectProjectDetail" parameterType="String" resultType="egovMap">
 		SELECT
-			(SELECT CA.AC_NM FROM CMM_ACCOUNT_TB CA WHERE CA.AC_KEY = PJ_MAIN_TB.AC_KEY) AS AC_NM 
-			, AC_KEY
-			, AC_DIRECTOR_KEY
-			, PJ_NM
-			, PJ_START_DT
-			, PJ_END_DT
-			, PJ_SALE_EMP_KEY
-			, PJ_SUPPORT_EMP_KEY
-			, REMARK
-			, PJ_INSPECT_DT
-			, FINISH_REMARK
-			, DELETE_YN
-			, REG_DT
-			, REG_EMP_KEY
-			, REG_TM
-			, SP_KEY
-		FROM PJ_MAIN_TB
+			CA.AC_NM
+			, CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM , ' / ' , AD.AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
+			, PJ.AC_KEY
+			, PJ.AC_DIRECTOR_KEY
+			, AD.AC_DIRECTOR_NM
+			, PJ.PJ_NM
+			, PJ.PJ_START_DT
+			, PJ.PJ_END_DT
+			, PJ.CT_DT
+			, PJ.PJ_SALE_EMP_KEY
+			, CE.EMP_NM
+			, PJ.PJ_SUPPORT_EMP_KEY
+			, PJ.REMARK
+			, PJ.PJ_INSPECT_DT
+			, PJ.FINISH_REMARK
+			, PJ.SP_KEY
+			, PJ.PJ_LOSE_CAUSE
+			, PJ.PJ_SJ_YN
+		FROM PJ_MAIN_TB PJ, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
 		WHERE PJ_KEY=#{pjKey}
-			AND DELETE_YN = 'N'
+			AND PJ.AC_KEY = CA.AC_KEY		
+		  	AND PJ.AC_KEY = AD.AC_KEY			
+		  	AND PJ.AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+		  	AND PJ.PJ_SALE_EMP_KEY = CE.EMP_KEY
+		  	AND DELETE_YN='N';
 	</select>
 	
 	<update id="updateStatusCd" parameterType="String">
@@ -99,6 +105,7 @@
 			, PJ_NM
 			, PJ_START_DT
 			, PJ_END_DT
+			, CT_DT
 			, PJ_SALE_EMP_KEY
 			, PJ_SUPPORT_EMP_KEY
 			, REMARK
@@ -115,6 +122,7 @@
 			, #{pjNm}
 			, #{pjStartDt}
 			, #{pjEndDt}
+			, #{ctDt}
 			, #{pjSaleEmpKey}
 			, #{pjSupportEmpKey}
 			, #{remark}
@@ -145,6 +153,9 @@
 			<if test="pjEndDt != null and pjEndDt != ''">
 				PJ_END_DT = #{pjEndDt},
 			</if>
+			<if test="ctDt != null and ctDt != ''">
+				CT_DT = #{ctDt},
+			</if>
 			<if test="pjSaleEmpKey != null and pjSaleEmpKey != ''">
 				PJ_SALE_EMP_KEY = #{pjSaleEmpKey},
 			</if>
@@ -163,8 +174,14 @@
 			<if test="spKey != null and spKey != ''">
 				SP_KEY = #{spKey},
 			</if>
-			<if test="pjInspectDt != null and pjInspectDt != ''">
-				PJ_STATUS_CD = "PJST5000",
+			<if test="pjStatusCd != null and pjStatusCd != ''">
+				PJ_STATUS_CD = #{pjStatusCd},
+			</if>
+			<if test="pjSjYn != null and pjSjYn != ''">
+				PJ_SJ_YN = 'N',
+			</if>
+			<if test="pjLoseCause != null and pjLoseCause != ''" >
+				PJ_LOSE_CAUSE = #{pjLoseCause},
 			</if>
 			MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
@@ -177,43 +194,7 @@
 		
 	</update>
 	
-	<insert id="insertContractInfo" parameterType="projectContractSalesVO">
-		INSERT INTO PJ_CONTRACT_TB (
-			CT_KEY
-			, PJ_KEY
-			, CT_AMOUNT
-			, TAX_YN
-			, COLLECT_TURN
-			, REG_DT
-			, REG_TM
-			, REG_EMP_KEY
-			, DELETE_YN
-		) VALUES 
-		<foreach collection="projectContractSalesVOList" item="item" separator=",">
-			(
-				#{item.ctKey}
-				, #{pjKey}
-				, #{item.ctAmount}
-				, #{item.taxYn}
-				, #{item.collectTurn}
-				, DATE_FORMAT(NOW(),'%Y%m%d')
-				, DATE_FORMAT(NOW(),'%H%i%s')
-				, #{regEmpKey}
-				, 'N'
-			)
-		</foreach>
-	</insert>
-	
-	<select id="selectContractDetail" parameterType="String" resultType="egovMap">
-		SELECT *
-		FROM PJ_CONTRACT_TB 
-		JOIN CMM_SALES_DETAIL_TB 
-		ON PJ_CONTRACT_TB.PJ_KEY = CMM_SALES_DETAIL_TB.SALES_CT_FK_KEY 
-		AND PJ_CONTRACT_TB.COLLECT_TURN = CMM_SALES_DETAIL_TB.SALES_TURN
-		WHERE PJ_CONTRACT_TB.PJ_KEY=#{pjKey} ORDER BY COLLECT_TURN
-	</select>
-	
-	<select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
+	<!-- <select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT 
 			PJ_NM
 			, M.AC_KEY
@@ -231,9 +212,407 @@
 		ON M.PJ_KEY = B.PJ_KEY
 		WHERE M.PJ_KEY = #{pjKey}
 		AND B.DELETE_YN = 'N'
+	</select> -->
+	
+	<select id="selectBiddingDetail" parameterType="projectBiddingVO" resultType="projectBiddingVO">
+		SELECT 
+			BD_KEY AS bdKey
+			, PJ_KEY AS pjKey
+			, BD_GB_YN AS bdGbYn
+			, BD_GB_START_DT AS bdGbStartDt
+			, BD_GB_END_DT AS bdGbEndDt
+			, BD_GB_FINISH_DT AS bdGbFinishDt
+			, BD_GB_FINISH_YN AS bdGbFinishYn
+			, BD_GB_AMOUNT AS bdGbAmount
+			, BD_LIMIT_DT AS bdLimitDt
+			, BD_LIMIT_TM AS bdLimitTm
+			, BD_PROPOSAL_YN AS bdProposalYn
+			, BD_PROPOSAL_DUE_DT AS bdProposalDueDt
+			, BD_PROPOSAL_DUE_TM AS bdProposalDueTm
+			, BD_PROPOSAL_PRESENT_YN AS bdProposalPresentYn
+			, BD_PROPOSAL_PRESENT_DT AS bdProposalPresentDt
+			, BD_PROPOSAL_PRESENT_TM AS bdProposalPresentTm
+		FROM PJ_BIDDING_TB 
+		WHERE PJ_KEY = #{pjKey}
+		AND DELETE_YN = 'N'
 	</select>
 	
-	<insert id="insertBiddingInfo" parameterType="guarantyBondVO">
+	<select id="selectBiddingFileList" parameterType="projectBiddingVO" resultType="egovMap">
+		SELECT 
+			BD_KEY 
+			, BD_SEQ 
+			, BD_FILE_KIND_CD
+			, BD_DOC_CNT
+			, BD_FILE_DOC_NM
+		FROM PJ_BIDDING_FILE_INFO_TB 
+		WHERE BD_KEY = #{bdKey}
+		AND DELETE_YN='N'
+	</select>
+	
+	<insert id="insertBiddingInfo" parameterType="projectBiddingVO">
+		INSERT INTO PJ_BIDDING_TB (
+			BD_KEY
+			, PJ_KEY
+			, BD_GB_YN
+			<if test="bdGbStartDt != null and bdGbStartDt != ''">
+			, BD_GB_START_DT
+			</if>
+			<if test="bdGbEndDt != null and bdGbEndDt != ''">
+			, BD_GB_END_DT
+			</if>
+			<if test="bdGbFinishDt != null and bdGbFinishDt != ''">
+			, BD_GB_FINISH_DT
+			</if>
+			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
+			, BD_GB_AMOUNT
+			</if>
+			, BD_GB_FINISH_YN
+			, BD_LIMIT_DT
+			<if test="bdLimitTm != null and bdLimitTm != ''">
+			, BD_LIMIT_TM
+			</if>
+			, BD_PROPOSAL_YN
+			<if test="bdProposalDueDt != null and bdProposalDueDt != ''">
+			, BD_PROPOSAL_DUE_DT
+			</if>
+			<if test="bdProposalDueTm != null and bdProposalDueTm != ''">
+			, BD_PROPOSAL_DUE_TM
+			</if>
+			, BD_PROPOSAL_PRESENT_YN
+			<if test="bdProposalPresentDt != null and bdProposalPresentDt != ''">
+			, BD_PROPOSAL_PRESENT_DT
+			</if>
+			<if test="bdProposalPresentTm != null and bdProposalPresentTm != ''">
+			, BD_PROPOSAL_PRESENT_TM
+			</if>
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{bdKey}
+			, #{pjKey}
+			, #{bdGbYn}
+			<if test="bdGbStartDt != null and bdGbStartDt != ''">
+			, #{bdGbStartDt}
+			</if>
+			<if test="bdGbEndDt != null and bdGbEndDt != ''">
+			, #{bdGbEndDt}
+			</if>
+			<if test="bdGbFinishDt != null and bdGbFinishDt != ''">
+			, #{bdGbFinishDt}
+			</if>
+			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
+			, #{bdGbAmount}
+			</if>
+			, #{bdGbFinishYn}
+			, #{bdLimitDt}
+			<if test="bdLimitTm != null and bdLimitTm != ''">
+			, #{bdLimitTm}
+			</if>
+			, #{bdProposalYn}
+			<if test="bdProposalDueDt != null and bdProposalDueDt != ''">
+			, #{bdProposalDueDt}
+			</if>
+			<if test="bdProposalDueTm != null and bdProposalDueTm != ''">
+			, #{bdProposalDueTm}
+			</if>
+			, #{bdProposalPresentYn}
+			<if test="bdProposalPresentDt != null and bdProposalPresentDt != ''">
+			, #{bdProposalPresentDt}
+			</if>
+			<if test="bdProposalPresentTm != null and bdProposalPresentTm != ''">
+			, #{bdProposalPresentTm}
+			</if>
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(), '%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<update id="updateBiddingInfo" parameterType="projectBiddingVO">
+		UPDATE PJ_BIDDING_TB SET
+			BD_GB_YN = #{bdGbYn}
+			, BD_LIMIT_DT = #{bdLimitDt}
+			, BD_PROPOSAL_PRESENT_YN = #{bdProposalPresentYn}
+			, BD_PROPOSAL_YN = #{bdProposalYn}
+			, BD_GB_FINISH_YN = #{bdGbFinishYn}
+			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
+				, BD_GB_AMOUNT=#{bdGbAmount}
+			</if>
+			<if test="bdGbStartDt != null and bdGbStartDt != ''">
+				, BD_GB_START_DT=#{bdGbStartDt}
+			</if>
+			<if test="bdGbEndDt != null and bdGbEndDt != ''">
+				, BD_GB_END_DT=#{bdGbEndDt}
+			</if>
+			<if test="bdGbFinishDt != null and bdGbFinishDt != ''">
+				, BD_GB_FINISH_DT=#{bdGbFinishDt}
+			</if>
+			<if test="bdLimitTm != null and bdLimitTm != ''">
+				, BD_LIMIT_TM=#{bdLimitTm}
+			</if>
+			<if test="bdProposalDueDt != null and bdProposalDueDt != ''">
+				, BD_PROPOSAL_DUE_DT=#{bdProposalDueDt}
+			</if>
+			<if test="bdProposalDueTm != null and bdProposalDueTm != ''">
+				, BD_PROPOSAL_DUE_TM=#{bdProposalDueTm}
+			</if>
+			<if test="bdProposalPresentDt != null and bdProposalPresentDt != ''">
+				, BD_PROPOSAL_PRESENT_DT=#{bdProposalPresentDt}
+			</if>
+			<if test="bdProposalPresentTm != null and bdProposalPresentTm != ''">
+				, BD_PROPOSAL_PRESENT_TM=#{bdProposalPresentTm}
+			</if>
+				, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+				, MOD_EMP_KEY=#{modEmpKey}
+			WHERE BD_KEY = #{bdKey}
+				AND DELETE_YN = 'N'
+	</update>
+	
+	<insert id="insertBiddingFileInfo" parameterType="java.util.Map">
+		INSERT INTO PJ_BIDDING_FILE_INFO_TB (
+			BD_KEY
+			, BD_SEQ
+			, BD_FILE_KIND_CD
+			, BD_FILE_DOC_NM
+			, BD_DOC_CNT
+			, DELETE_YN
+		) VALUES
+		<foreach collection="biddingFileVOList" item="item" separator=",">
+			 (
+				#{bdKey}
+				, (SELECT (SELECT COUNT(*) FROM PJ_BIDDING_FILE_INFO_TB BFI WHERE BFI.BD_KEY=#{bdKey}) + 1)
+				, #{item.bdFileKindCd}
+				, #{item.bdFileDocNm}
+				, #{item.bdDocCnt}
+				, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updateBiddingFileInfo" parameterType="java.util.Map">
+		<foreach collection="biddingFileVOList" item="item" separator=";" close=";">
+			UPDATE PJ_BIDDING_FILE_INFO_TB SET
+				BD_DOC_CNT = #{item.bdDocCnt}
+				<if test="item.bdDocCnt == 0">
+				, DELETE_YN='Y'
+				</if>
+			WHERE 
+				BD_KEY = #{bdKey}
+				AND BD_SEQ = #{item.bdSeq}
+		</foreach>
+	</update>
+	
+	<insert id="insertContractInfo" parameterType="projectContractSalesVO">
+		INSERT INTO PJ_CONTRACT_TB (
+			CT_KEY
+			, PJ_KEY
+			, CT_AMOUNT
+			, TAX_YN
+			, COLLECT_TURN
+			, CT_DT
+			, CT_PAY_TERMS
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{ctKey}
+			, #{pjKey}
+			, #{ctAmount}
+			, #{taxYn}
+			, #{collectTurn}
+			, #{ctDt}
+			, #{ctPayTerms}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<select id="selectSalesList" parameterType="String" resultType="egovMap">
+		SELECT 
+			SALES_KEY
+			, SALES_CHARGE_DT
+			, SALES_TURN
+			, SALES_COLLECT_RATE
+			, SALES_TURN_AMOUNT
+			, SALES_COLLECT_FC_DT
+			, SALES_COLLECT_FINISH_DT
+		FROM PJ_SALES_DETAIL_TB 
+		WHERE SALES_CT_FK_KEY=#{pjKey}
+		AND DELETE_YN='N'
+	</select>
+	
+	<!-- <select id="selectSalesList" parameterType="String" resultType="egovMap">
+		SELECT 
+			BL.BILL_ISSUE_DT
+			, PS.SALES_CHARGE_DT
+			, AC.AC_NM
+			, PS.SALES_TURN
+			, PS.SALES_COLLECT_RATE
+			, PS.SALES_TURN_AMOUNT
+			, PS.SALES_COLLECT_FC_DT
+			, PS.SALES_COLLECT_FINISH_DT
+		FROM CMM_SALES_DETAIL_TB PS
+		JOIN CMM_BILLING_TB BL
+		ON PS.SALES_KEY = BL.BILL_CT_FK_KEY
+		JOIN CMM_ACCOUNT_TB AC
+		ON AC.AC_KEY = BL.BILL_AC_KEY
+		WHERE PS.SALES_CT_FK_KEY=#{pjKey}
+		AND PS.DELETE_YN='N'
+		AND BL.DELETE_YN='N'
+	</select> -->
+	
+	<insert id="insertSalesInfo" parameterType="java.util.Map">
+		INSERT INTO PJ_SALES_DETAIL_TB (
+			SALES_KEY
+			, SALES_CT_FK_KEY
+			, SALES_TURN
+			, SALES_COLLECT_RATE
+			, SALES_TURN_AMOUNT
+			, SALES_CHARGE_DT
+			, SALES_BILL_FC_DT
+			, SALES_COLLECT_FC_DT
+			, SALES_COLLECT_FINISH_DT
+			, SALES_GB_YN
+			, SALES_STATUS_CD
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES 
+		<foreach collection="SalesVOList" item="item" separator=",">
+			(
+				#{item.salesKey}
+				, #{salesCtFkKey}
+				, #{item.salesTurn}
+				, #{item.salesCollectRate}
+				, #{item.salesTurnAmount}
+				, #{item.salesChargeDt}
+				, #{item.salesBillFcDt}
+				, #{item.salesCollectFcDt}
+				, #{item.salesCollectFinishDt}
+				, #{item.salesGbYn}
+				, #{item.salesStatusCd}
+				, DATE_FORMAT(NOW(),'%Y%m%d')
+				, DATE_FORMAT(NOW(),'%H%i%s')
+				, #{regEmpKey}
+				, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<select id="selectPurchaseList" parameterType="String" resultType="egovMap">
+		SELECT
+			OP.ORDER_UPRICE
+			, OP.ORDER_QUANTITY
+			, OD.ORDER_AMOUNT
+			, AC.AC_NM
+			, BL.BILL_MAPPING_YN
+			, BL.BILL_ISSUE_DT
+			, BL.BILL_TURN_NO
+			, PC.BUY_KEY
+			, (SELECT CC.AC_NM FROM CMM_ACCOUNT_TB CC WHERE PP.MF_AC_KEY = CC.AC_KEY) AS MF_AC_NM
+		FROM 
+			CMM_ORDER_TB OD, 
+			CMM_ORDER_PRODUCT_TB OP,
+			CMM_ACCOUNT_TB AC,
+			CMM_PURCHASE_TB PC,
+			CMM_BILLING_TB BL,
+			PM_PRODUCT_MNG_TB PP
+		WHERE OD.ORDER_KEY = OP.ORDER_KEY
+			AND OD.ORDER_AC_KEY = AC.AC_KEY
+			AND OD.ORDER_KEY = PC.BUY_ORDER_FK_KEY
+			AND PC.BUY_KEY = BL.BILL_CT_FK_KEY
+			AND OP.ORDER_PM_FK_KEY = PP.PM_KEY
+			AND OD.ORDER_CT_FK_KEY=#{pjKey}
+			AND BL.BILL_CLASS="PC"
+			AND OD.DELETE_YN='N'
+			AND PC.DELETE_YN='N'
+	</select>
+	
+	<update id="updateContractInfo" parameterType="projectContractSalesVO">
+		<!-- <foreach collection="projectContractSalesVOList" item="item" separator=";" close=";"> -->
+			UPDATE PJ_CONTRACT_TB SET
+				CT_AMOUNT = #{ctAmount}
+				, CT_PAY_TERMS = #{ctPayTerms}
+				, CT_DT = #{ctDt}
+				, TAX_YN=#{taxYn}
+				, COLLECT_TURN = #{collectTurn}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE CT_KEY=#{ctKey}
+		<!-- </foreach> -->
+	</update>
+	
+	<update id="updateSalesInfo" parameterType="projectContractSalesVO">
+		<foreach collection="projectContractSalesVOList" item="item" separator=";" close=";">
+			UPDATE PJ_SALES_DETAIL_TB SET
+			<if test="item.salesCollectRate != null and item.salesCollectRate != '' and item.salesCollectRate != 0">
+				SALES_COLLECT_RATE=#{item.salesCollectRate},
+			</if>
+			<if test="item.salesTurnAmount != null and item.salesTurnAmount != '' and item.salesTurnAmount != 0">
+				SALES_TURN_AMOUNT=#{item.salesTurnAmount},
+			</if>
+			<if test="item.salesChargeDt != null and item.salesChargeDt != ''">
+				SALES_CHARGE_DT=#{item.salesChargeDt},
+			</if>
+			<if test="item.salesBillFcDt != null and item.salesBillFcDt != ''"> 
+				SALES_BILL_FC_DT=#{item.salesBillFcDt},
+			</if> 
+			<if test="item.salesCollectFcDt != null and item.salesCollectFcDt != ''"> 
+				SALES_COLLECT_FC_DT=#{item.salesCollectFcDt},
+			</if>
+			<if test="item.salesCollectFinishDt != null and item.salesCollectFinishDt != ''">
+				SALES_COLLECT_FINISH_DT=#{item.salesCollectFinishDt},
+			</if>
+			<if test="item.salesGbYn != null and item.salesGbYn != ''">
+				SALES_GB_YN=#{item.salesGbYn},
+			</if>
+			<if test="item.salesStatusCd != null and item.salesStatusCd != ''">
+				SALES_STATUS_CD=#{item.salesStatusCd},
+			</if>
+				MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d'),
+				MOD_TM=DATE_FORMAT(NOW(),'%H%i%s'),
+				MOD_EMP_KEY=#{modEmpKey}
+			WHERE SALES_KEY = #{item.salesKey}
+				AND DELETE_YN = 'N'
+		</foreach>
+	</update>
+	
+	<select id="selectContractDetail" parameterType="String" resultType="projectContractVO">
+		SELECT 
+			CT_KEY AS ctKey
+			, CT_AMOUNT AS ctAmount
+			, CT_DT AS ctDt
+			, CT_PAY_TERMS AS ctPayTerms
+			, TAX_YN AS taxYn
+			, COLLECT_TURN AS collectTurn
+		FROM PJ_CONTRACT_TB 
+		WHERE PJ_KEY=#{pjKey}
+		AND DELETE_YN='N'
+	</select>
+	
+	<select id="selectGuarantyList" parameterType="String" resultType="egovMap">
+		SELECT 
+			GB.GB_KIND_CD
+			, GB.GB_ISSUE_YN
+			, GB.GB_PUBLISH_DT
+			, GB.GB_AMOUNT
+		FROM CMM_GUARANTY_BOND_TB GB
+		JOIN CMM_SALES_DETAIL_TB  SD
+		ON GB.SALES_KEY = SD.SALES_KEY
+		WHERE SD.SALES_CT_FK_KEY=#{pjKey}
+		AND GB.DELETE_YN='N'
+	</select>
+	
+	<insert id="insertGuarantyInfo" parameterType="guarantyBondVO">
 		INSERT INTO CMM_GUARANTY_BOND_TB (
 			GB_KEY
 			, CT_KEY
@@ -242,7 +621,9 @@
 			, GB_START_DT
 			, GB_END_DT
 			, GB_ISSUE_YN
+			, GB_PUBLISH_DT
 			, GB_AMOUNT
+			, DELETE_YN
 		) VALUES (
 			#{gbKey}
 			, #{ctKey}
@@ -251,9 +632,34 @@
 			, #{gbStartDt}
 			, #{gbEndDt}
 			, #{gbIssueYn}
+			, #{gbPublishDt}
 			, #{gbAmount}
+			, 'N'
 		)
 	</insert>
+	
+	<update id="updateGuarantyInfo" parameterType="guarantyBondVO">
+		UPDATE CMM_GUARANTY_BOND_TB SET
+			GB_START_DT = #{gbStartDt}
+			, GB_END_DT = #{gbEndDt}
+			, GB_ISSUE_YN = #{gbIssueYn}
+			, GB_AMOUNT = #{gbAmount}
+			, GB_PUBLISH_DT = #{gbPublishDt}
+		WHERE GB_KEY=#{gbKey}
+	</update>
+	
+	<update id="deleteGuarantyInfo" parameterType="guarantyBondVO">
+		UPDATE CMM_GUARANTY_BOND_TB SET
+			DELETE_YN='Y'
+		WHERE GB_KEY=#{gbKey}
+	</update>
+	
+	<select id="selectOrderInfo" parameterType="orderVO" resultType="egovMap">
+		SELECT *  
+		FROM CMM_ORDER_TB 
+		WHERE ORDER_CT_FK_KEY = #{pjKey}
+		AND DELETE_YN='N'
+	</select>
 	
 	<insert id="insertOrderInfo" parameterType="orderVO">
 		INSERT INTO CMM_ORDER_TB (
@@ -287,7 +693,24 @@
 		)
 	</insert>
 	
-	<insert id="insertOrderProductInfo" parameterType="java.util.HashMap">
+	<update id="updateOrderInfo" parameterType="orderVO">
+		UPDATE CMM_ORDER_TB
+		SET
+			ORDER_CT_CLASS = #{orderCtClass}
+			, ORDER_CT_FK_KEY = #{orderCtFkKey}
+			, ORDER_DT = #{orderDt}
+			, ORDER_AC_KEY = #{orderAcKey}
+			, ORDER_AC_DIRECTOR_KEY = #{orderAcDirectorKey}
+			, ORDER_PAY_TERMS = #{orderPayTerms}
+			, ORDER_AMOUNT = #{orderAmount}
+			, TAX_YN = #{taxYn}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE ORDER_KEY = #{orderKey}	
+	</update>
+	
+	<insert id="insertOrderProductInfo" parameterType="java.util.Map">
 		INSERT INTO CMM_ORDER_PRODUCT_TB (
 			ORDER_KEY
 			, ORDER_SEQ
@@ -298,23 +721,61 @@
 			, MT_RATE
 			, FREE_MT_START_DT
 			, FREE_MT_END_DT
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
 			, DELETE_YN
 		) VALUES 
 		<foreach collection="orderProductVOList" item="item" separator=",">
 		    (
 			#{orderKey}
-			, #{item.orderSeq} 
-			, #{orderPmFkKey}
+			, (SELECT IFNULL(MAX(OP.ORDER_SEQ) + 1, 1) FROM CMM_ORDER_PRODUCT_TB OP WHERE OP.ORDER_KEY=#{orderKey})
+			, #{item.orderPmFkKey}
 			, #{item.orderQuantity}
 			, #{item.orderUprice}
 			, #{item.orderReceiptDt}
-			, #{mtRate}
-			, #{freeMtStartDt}
-			, #{freeMtEndDt}
+			, #{item.mtRate}
+			, #{item.freeMtStartDt}
+			, #{item.freeMtEndDt}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey}
 			, 'N'
 			)
 		</foreach>
 	</insert>
+	
+	<update id="updateOrderProductInfo" parameterType="java.util.HashMap">
+		<foreach collection="orderProductVOList" item="item" separator=";" close=";">
+			UPDATE CMM_ORDER_PRODUCT_TB
+			SET ORDER_PM_FK_KEY=#{item.orderPmFkKey} 
+				, ORDER_QUANTITY = #{item.orderQuantity}
+				, ORDER_UPRICE = #{item.orderUprice}
+				, ORDER_RECEIPT_DT = #{item.orderReceiptDt}
+				, MT_RATE = #{item.mtRate}
+				, FREE_MT_START_DT = #{item.freeMtStartDt}
+				, FREE_MT_END_DT = #{item.freeMtEndDt}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE ORDER_KEY = #{item.orderKey}
+				AND ORDER_SEQ = #{item.orderSeq}
+		</foreach>
+	</update>
+	
+	<update id="deleteOrderProductInfo" parameterType="java.util.HashMap">
+		UPDATE CMM_ORDER_PRODUCT_TB
+		SET 
+			DELETE_YN = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE ORDER_KEY = #{orderKey}
+			AND ORDER_SEQ IN
+			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+	</update>
 	
 	<select id="selectOrderSelectBoxList" parameterType="String" resultType="egovMap">
 		SELECT
@@ -327,29 +788,28 @@
 			AND PO.ORDER_AC_KEY = CA.AC_KEY
 	</select>
 	
-	<select id="selectOrderDetail" parameterType="String" resultType="orderVO">
+	<select id="selectOrderDetail" parameterType="String" resultType="projectOrderVO">
 		SELECT
-			CO.ORDER_KEY AS orderKey
-			, CO.ORDER_CT_CLASS AS orderCtClass
-			, CO.ORDER_CT_FK_KEY AS orderCtFkKey
-			, CO.ORDER_DT AS orderDt
-			, CO.ORDER_AC_KEY AS orderAcKey
+			PJ_ORDER_KEY AS pjOrderKey
+			, ORDER_DT AS orderDt
+			, ORDER_AC_KEY AS orderAcKey
 			, (SELECT A.AC_NM FROM CMM_ACCOUNT_TB A WHERE A.AC_KEY = CO.ORDER_AC_KEY ) AS orderAcNm
-			, CO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
+			, ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
 			, (SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = CO.ORDER_AC_DIRECTOR_KEY ) AS orderAcDirectorNm
 			, (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = CO.ORDER_AC_DIRECTOR_KEY) AS orderAcDirectorMbNum
-			, CO.ORDER_PAY_TERMS AS orderPayTerms
-			, CO.ORDER_AMOUNT AS orderAmount
-			, CO.TAX_YN AS taxYn
-		FROM CMM_ORDER_TB CO, CMM_ACCOUNT_TB CA
-		WHERE CO.ORDER_KEY = #{orderKey}
-			AND CO.DELETE_YN='N'
-			AND CO.ORDER_AC_KEY = CA.AC_KEY
+			, (SELECT PJ.PJ_NM  FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS pjNm
+			, (SELECT CA.AC_NM FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PJ.AC_KEY = CA.AC_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS acNm
+			, ORDER_PAY_TERMS AS orderPayTerms
+			, ORDER_AMOUNT AS orderAmount
+			, TAX_YN AS taxYn
+		FROM PJ_ORDER_TB 
+		WHERE PJ_ORDER_KEY = #{orderKey}
+			AND DELETE_YN='N'
 	</select>
 	
-	<select id="selectOrderProductList" parameterType="String" resultType="orderProductVO">
+	<select id="selectOrderProductList" parameterType="String" resultType="projectOrderProductVO">
 		SELECT
-			OP.ORDER_KEY AS orderKey
+			OP.PJ_ORDER_KEY AS pjOrderKey
 			, OP.ORDER_SEQ AS orderSeq
 			, OP.ORDER_PM_FK_KEY AS orderPmFkKey
 			, OP.ORDER_QUANTITY AS orderQuantity
@@ -359,11 +819,31 @@
 			, OP.FREE_MT_START_DT AS freeMtStartDt
 			, OP.FREE_MT_END_DT AS freeMtEndDt
 			, PM.PM_NM_CD AS pmNmCd
-		FROM CMM_ORDER_PRODUCT_TB OP, PM_PRODUCT_MNG_TB PM
-		WHERE OP.ORDER_KEY = #{orderKey}
+		FROM PJ_ORDER_PRODUCT_TB OP, PM_PRODUCT_MNG_TB PM
+		WHERE OP.PJ_ORDER_KEY = #{orderKey}
 			AND OP.DELETE_YN='N'
 			AND OP.ORDER_PM_FK_KEY = PM.PM_KEY
 	</select>
+	
+	<update id="deleteOrderInfo" parameterType="orderVO">
+		UPDATE CMM_ORDER_TB
+		SET
+			DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE ORDER_KEY = #{orderKey}
+	</update>
+	
+	<update id="deleteOrderProductAll" parameterType="java.util.HashMap">
+		UPDATE CMM_ORDER_PRODUCT_TB
+		SET
+			DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE ORDER_KEY = #{orderKey}
+	</update>
 	
 	<select id="selectAcDirector" parameterType="Integer" resultType="egovMap">			
 			SELECT AC_DIRECTOR_KEY
@@ -391,39 +871,67 @@
 		WHERE FD.DOC_UP_TYPE_CD LIKE 'PJBD000%'
 	</select>
 	
-	<insert id="insertBuildInfo" parameterType="projectBuildVO">
+	<insert id="insertBuildInfo" parameterType="projectBuildVO" useGeneratedKeys="true" keyProperty="inbSeq">
 		INSERT INTO PJ_INSTALL_AND_BUILD_TB (
 			PJ_KEY
+			<if test="inbPlace != null and inbPlace != ''">
 			, INB_PLACE
+			</if>
 			, INB_CLASS
 			, INB_PM_KEY
 			, INB_PM_SERIAL_NO
 			, INB_DELIVERY_DT
+			<if test="inbPmVer != null and inbPmVer != ''">
 			, INB_PM_VER
+			</if>
+			<if test="inbSpecInfo != null and inbSpecInfo != ''">
 			, INB_SPEC_INFO
+			</if>
+			<if test="inbCacheMem != null and inbCacheMem != '' and inbCacheMem != 0">
 			, INB_CACHE_MEM
+			</if>
+			<if test="inbPortInfo != null and inbPortInfo != ''">
 			, INB_PORT_INFO
+			</if>
+			<if test="inbMngIp != null and inbMngIp != ''">
 			, INB_MNG_IP
-			, INB_PM_TYPE
+			</if>
+			<if test="remark != null and remark != ''">
 			, REMARK
+			</if>
+			, INB_PM_TYPE
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
 			, DELETE_YN
 		) VALUES (
 			#{pjKey}
+			<if test="inbPlace != null and inbPlace != ''">
 			, #{inbPlace}
+			</if>
 			, #{inbClass}
 			, #{inbPmKey}
 			, #{inbPmSerialNo}
 			, #{inbDeliveryDt}
+			<if test="inbPmVer != null and inbPmVer != ''">
 			, #{inbPmVer}
+			</if>
+			<if test="inbSpecInfo != null and inbSpecInfo != ''">
 			, #{inbSpecInfo}
+			</if>
+			<if test="inbCacheMem != null and inbCacheMem != '' and inbCacheMem != 0">
 			, #{inbCacheMem}
+			</if>
+			<if test="inbPortInfo != null and inbPortInfo != ''">
 			, #{inbPortInfo}
+			</if>
+			<if test="inbMngIp != null and inbMngIp != ''">
 			, #{inbMngIp}
-			, #{inbPmType}
+			</if>
+			<if test="remark != null and remark != ''">
 			, #{remark}
+			</if>
+			, #{inbPmType}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{regEmpKey}
@@ -431,9 +939,47 @@
 		)
 	</insert>
 	
-	<select id="selectBuildDetail" parameterType="String" resultType="egovMap">
+	<update id="updateBuildInfo" parameterType="projectBuildVO">
+		UPDATE PJ_INSTALL_AND_BUILD_TB 
+		SET
+			INB_PM_TYPE = #{inbPmType}
+			<if test="inbPlace != null and inbPlace != ''">
+			, INB_PLACE = #{inbPlace}
+			</if>
+			, INB_CLASS = #{inbClass}
+			, INB_PM_KEY = #{inbPmKey}
+			, INB_PM_SERIAL_NO = #{inbPmSerialNo}
+			, INB_DELIVERY_DT = #{inbDeliveryDt}
+			<if test="inbPmVer != null and inbPmVer != ''">
+			, INB_PM_VER = #{inbPmVer}
+			</if>
+			<if test="inbSpecInfo != null and inbSpecInfo != ''">
+			, INB_SPEC_INFO = #{inbSpecInfo}
+			</if>
+			<if test="inbCacheMem != null and inbCacheMem != '' and inbCacheMem != 0">
+			, INB_CACHE_MEM = #{inbCacheMem}
+			</if>
+			<if test="inbPortInfo != null and inbPortInfo != ''">
+			, INB_PORT_INFO = #{inbPortInfo}
+			</if>
+			<if test="inbMngIp != null and inbMngIp != ''">
+			, INB_MNG_IP = #{inbMngIp}
+			</if>
+			<if test="remark != null and remark != ''">
+			, REMARK = #{remark}
+			</if>
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PJ_KEY=#{pjKey}
+		AND INB_SEQ = #{selectKey}
+		AND DELETE_YN='N'
+	</update>
+	
+	<select id="selectBuildDetail" parameterType="projectBuildVO" resultType="egovMap">
 		SELECT
 			INB.PJ_KEY
+			, INB.INB_SEQ
 			, INB.INB_PLACE
 			, INB.INB_CLASS
 			, INB.INB_PM_KEY
@@ -449,11 +995,12 @@
 			, INB.REMARK
 		FROM PJ_INSTALL_AND_BUILD_TB INB, PM_PRODUCT_MNG_TB PM
 		WHERE PJ_KEY=#{pjKey}
+			AND INB.INB_SEQ = #{inbSeq}
 			AND INB.INB_PM_KEY = PM.PM_KEY
 			AND DELETE_YN = 'N'
 	</select>
 	
-	<insert id="insertWorkInfo" parameterType="projectWorkVO">
+	<insert id="insertWorkInfo" parameterType="projectWorkVO"  useGeneratedKeys="true" keyProperty="pjWorkSeq">
 		INSERT INTO PJ_WORK_TB (
 			PJ_KEY
 			, PJ_WORK_CLASS_CD
@@ -485,9 +1032,28 @@
 		)
 	</insert>
 	
-	<select id="selectWorkDetail" parameterType="String" resultType="egovMap">
+	<update id="updateWorkInfo" parameterType="projectWorkVO">
+		UPDATE PJ_WORK_TB SET 
+			PJ_WORK_CLASS_CD = #{pjWorkClassCd}
+			, PJ_WORK_DT = #{pjWorkDt}
+			, PJ_WORK_TM = #{pjWorkTm}
+			, PJ_WORK_TAKE_TM = #{pjWorkTakeTm}
+			, PJ_WORK_NM = #{pjWorkNm}
+			, PJ_WORK_CONT = #{pjWorkCont}
+			, PJ_WORK_RESULT = #{pjWorkResult}
+			, REMARK = #{remark}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PJ_KEY=#{pjKey}
+		AND PJ_WORK_SEQ = #{selectKey}
+		AND DELETE_YN='N'
+	</update>
+	
+	<select id="selectWorkDetail" parameterType="projectWorkVO" resultType="egovMap">
 		SELECT
 			PJ_KEY
+			, PJ_WORK_SEQ
 			, PJ_WORK_CLASS_CD
 			, PJ_WORK_DT
 			, PJ_WORK_TM
@@ -498,6 +1064,7 @@
 			, REMARK
 		FROM PJ_WORK_TB
 		WHERE PJ_KEY=#{pjKey}
+			AND PJ_WORK_SEQ=#{pjWorkSeq}
 			AND DELETE_YN = 'N'
 	</select>
 </mapper>

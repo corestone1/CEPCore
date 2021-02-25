@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.cep.project.vo.ProjectContractSalesVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.vo.PaymentVO;
@@ -55,17 +56,19 @@ public class ComServiceImpl implements ComService {
 	}
 	
 	@Override
-	public Map<String, Object> insertSalesInfo(String key, String regEmpKey, List<?> insertList) throws Exception {
+	public Map<String, Object> insertSalesInfo(ProjectContractSalesVO projectContractSalesVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		Map<String, Object> insertParam = null;
+		String salesKey = null;
 		try {
-			insertParam = new Hashtable<>();
-			insertParam.put("salesCtFkKey", key);
-			insertParam.put("regEmpKey", regEmpKey);
-			insertParam.put("SalesVOList", insertList);
 			
+			insertParam = new Hashtable<>();
+			insertParam.put("salesCtFkKey", projectContractSalesVO.getPjKey());
+			insertParam.put("regEmpKey", projectContractSalesVO.getRegEmpKey());
+			insertParam.put("SalesVOList", projectContractSalesVO.getProjectContractSalesVOList());
+
 			comMapper.insertSalesInfo(insertParam);
-			returnMap.put("salesKey", key);
+			returnMap.put("salesKey", salesKey);
 		    
 		} catch(Exception e) {
 			throw new Exception(e);
@@ -95,6 +98,47 @@ public class ComServiceImpl implements ComService {
 	@Override
 	public PurchaseVO selectPurchaseDetail(String orderKey) throws Exception {
 		return comMapper.selectPurchaseDetail(orderKey);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, PurchaseVO purchaseVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		String buyKey = "";
+		
+		try {
+			buyKey = makePrimaryKey(PrimaryKeyType.PURCHASE);
+			purchaseVO.setBuyKey(buyKey);
+			
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			purchaseVO.setRegEmpKey(session.get("empKey"));
+			
+			comMapper.insertPurchaseInfo(purchaseVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		return returnMap;
+	}
+	
+	@Override
+	public void deletePurchaseInfo(PurchaseVO purchaseVO) throws Exception {
+		PaymentVO paymentVO = new PaymentVO();
+		try {
+			paymentVO.setPaymentBuyFkKey(comMapper.selectPurchaseDetail(purchaseVO.getBuyOrderFkKey()).getBuyKey());
+			paymentVO.setModEmpKey(purchaseVO.getModEmpKey());
+			
+			comMapper.deletePaymentAllInfo(paymentVO);
+			/* 지급 정보 삭제 */
+			comMapper.deletePurchaseInfo(purchaseVO);
+			
+			/* 발주 계산서 매핑 정보 삭제*/
+			
+			
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
 	}
 	
 	@Override
@@ -145,6 +189,7 @@ public class ComServiceImpl implements ComService {
 				purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
 				purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
 				purchaseVO.setBuyKey(paymentVO.getBuyKey());
+				purchaseVO.setModEmpKey(session.get("empKey"));
 				
 				comMapper.updatePurchaseInfo(purchaseVO);
 			} 
@@ -161,4 +206,5 @@ public class ComServiceImpl implements ComService {
 	public List<?> selectPrePaymentList(String buyKey)  throws Exception {
 		return comMapper.selectPrePaymentList(buyKey);
 	}
+	
 }

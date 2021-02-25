@@ -36,9 +36,14 @@ public class ForecastSearchVO implements Serializable {
 	private String spKeyDomId;     //Search Popup Return값을 넘기는 객체의 ID(Forecast키)
 	private String spBusiNmDomId;  //Search Popup Return값을 넘기는 객체의 ID(사업명)
 	
-	
-	
-	
+	/*
+	 *  - funtion return : returnType=F
+	 *  - Object return : returnType=O
+	 */
+	private String returnType; 	
+	private String returnKey;	//Search Popup Return값을 넘기는 객체의 ID(Forecast키)
+	private String returnNm;	//Search Popup Return값을 넘기는 객체의 ID(사업명)
+	private String returnFunctionNm; //호출될 function명
 	/**
 	 * @return the spKey
 	 */
@@ -128,6 +133,54 @@ public class ForecastSearchVO implements Serializable {
 	 */
 	public void setSpBusiNmDomId(String spBusiNmDomId) {
 		this.spBusiNmDomId = spBusiNmDomId;
+	}
+	/**
+	 * @return the returnType
+	 */
+	public String getReturnType() {
+		return returnType;
+	}
+	/**
+	 * @param returnType the returnType to set
+	 */
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
+	}
+	/**
+	 * @return the returnKey
+	 */
+	public String getReturnKey() {
+		return returnKey;
+	}
+	/**
+	 * @param returnKey the returnKey to set
+	 */
+	public void setReturnKey(String returnKey) {
+		this.returnKey = returnKey;
+	}
+	/**
+	 * @return the returnNm
+	 */
+	public String getReturnNm() {
+		return returnNm;
+	}
+	/**
+	 * @param returnNm the returnNm to set
+	 */
+	public void setReturnNm(String returnNm) {
+		this.returnNm = returnNm;
+	}
+	/**
+	 * @return the returnFunctionNm
+	 */
+	public String getReturnFunctionNm() {
+		return returnFunctionNm;
+	}
+	/**
+	 * @param returnFunctionNm the returnFunctionNm to set
+	 */
+	public void setReturnFunctionNm(String returnFunctionNm) {
+		this.returnFunctionNm = returnFunctionNm;
 	}
 	
 }

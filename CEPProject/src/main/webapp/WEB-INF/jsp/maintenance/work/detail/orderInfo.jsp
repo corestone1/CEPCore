@@ -81,6 +81,7 @@
 		form .bsc tr td:last-child {
 			width: 400px;
 			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		/* 기본정보 틀 */
 		form .contents .bsc {
@@ -140,7 +141,7 @@
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */
 			padding: 13px 13px 13px 20px;
 		}
 		form .contents > .fxd .title ul {
@@ -347,7 +348,7 @@
 			
 			$('#detailForm .dtl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="radio" name="orderGubun" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" name="orderGubun" class="tRadio" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
 			});
 			
@@ -381,7 +382,11 @@
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
-									<td>프로젝트명</td>
+									<td>FORECAST명</td>
+									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
+								<tr>
+									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
 								<tr>

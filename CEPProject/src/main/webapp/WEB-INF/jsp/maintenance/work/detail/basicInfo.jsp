@@ -74,6 +74,11 @@
 			width: 400px;
 			font-weight: 200;
 		}
+		form .contents .bsc tr td:last-child {
+			width: 400px;
+			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
+		}
 		/* 기본정보 내용 글자 굵기 */
 		form .bsc tr td:last-child {
 			width: 400px;
@@ -100,8 +105,7 @@
 		}
 		/* 기본정보 세로줄 나오는것 */
 		form .contents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */			
 			padding: 13px 13px 13px 20px;
 		}
 		form .contents > .fxd .title ul {
@@ -491,7 +495,11 @@
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
-									<td>프로젝트명</td>
+									<td>FORECAST명</td>
+									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
+								<tr>
+									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
 								<tr>
@@ -668,9 +676,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtWorkPmYn" value="Y" id="m_workPmYn1"/><label for="m_workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="mtWorkPmYn" value="Y" id="m_workPmYn1"/><label for="m_workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtWorkPmYn" value="N" id="m_workPmYn2" checked="checked"/><label for="m_workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N					
+										<input type="radio" class="tRadio" name="mtWorkPmYn" value="N" id="m_workPmYn2" checked="checked"/><label for="m_workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N					
 									</td>
 								</tr>	
 								<tr>
@@ -680,9 +688,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtWorkOrderYn" value="Y" id="m_workOrderYn1"/><label for="m_workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="mtWorkOrderYn" value="Y" id="m_workOrderYn1"/><label for="m_workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtWorkOrderYn" value="N" id="m_workOrderYn2" checked="checked"/><label for="m_workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N									
+										<input type="radio" class="tRadio" name="mtWorkOrderYn" value="N" id="m_workOrderYn2" checked="checked"/><label for="m_workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N									
 									</td>
 								</tr>	
 								<tr>

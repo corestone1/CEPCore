@@ -8,4 +8,6 @@ input[type="checkbox"] { -webkit-appearance: checkbox; }
 input[type="radio"] { border: none; }
 button, input[type="button"], input[type="submit"], input[type="reset"], input[type="file"] { -webkit-appearance: button; }
 table { border-spacing: 0; }
+button { background: none; }
 iframe { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
+*, *:focus, *:hover { outline: none; }

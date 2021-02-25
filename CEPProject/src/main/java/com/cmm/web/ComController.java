@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
-import com.cmm.util.CepStringUtil;
 import com.cmm.vo.OrderVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
@@ -95,7 +95,7 @@ public class ComController {
 	 */
 	@RequestMapping(value="/request/purchase/main.do")
 	public String viewPurchaseInfo(HttpServletRequest request, ModelMap model) throws Exception {
-		OrderVO orderVO = null;
+		ProjectOrderVO orderVO = null;
 		PurchaseVO purchaseVO = null;
 		List<?> paymentList = null;
 		List<?> resultList = null;
@@ -147,7 +147,7 @@ public class ComController {
 	 */
 	@RequestMapping(value="/request/purchase/paymentForm.do")
 	public String viewPaymentForm(HttpServletRequest request, ModelMap model) throws Exception {
-		OrderVO orderVO = null;
+		ProjectOrderVO orderVO = null;
 		PurchaseVO purchaseVO = null;
 		List<?> paymentList = null;
 		List<?> resultList = null;

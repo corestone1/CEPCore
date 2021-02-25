@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngProject.mapping.service.impl.MngProjectMappingMapper">
+	<resultMap id="orderBillResult" type="orderBillVO">
+		<id property="pjOrderKey" column="PJ_ORDER_KEY" />
+		<result property="orderDt" column="ORDER_DT" />
+		<result property="billMappingNum" column="BILL_MAPPING_NUM" />
+		<result property="buyTurn" column="BUY_TURN" />
+		<result property="pjNm" column="PJ_NM" />
+		<result property="pmNmCd" column="PM_NM_CD" />
+		<result property="orderAcNm" column="ORDER_AC_NM" />
+		<result property="orderAcKey" column="ORDER_AC_KEY" />
+		<result property="acKey" column="AC_KEY" />
+		<result property="orderAmount" column="ORDER_AMOUNT" />
+		<result property="orderEmpNm" column="ORDER_EMP_NM" />
+		<result property="orderDtFrom" column="ORDER_DT_FROM" />
+		<result property="orderDtTo" column="ORDER_DT_TO" />
+		<result property="orderCtFkKey" column="ORDER_CT_FK_KEY" />
+		<result property="buyKey" column="BUY_KEY" />
+		<result property="billIssueDt" column="BILL_ISSUE_DT" />
+		<result property="billMappingYn" column="BILL_MAPPING_YN" />
+		<result property="billAcNm" column="BILL_AC_NM" />
+		<result property="billAcKey" column="BILL_AC_KEY" />
+		<result property="billAmount" column="BILL_AMOUNT" />
+		<result property="billNo" column="BILL_NO" />
+		<result property="billDtFrom" column="BILL_DT_FROM" />
+		<result property="billDtTo" column="BILL_DT_TO" />
+		<result property="modEmpKey" column="MOD_EMP_KEY" />
+		<collection property="productList" ofType="orderProductVO" column="orderKey=PJ_ORDER_KEY" javaType="List" select="selectOrderProduct" />
+	</resultMap>
+	
+	<select id="selectOrderBillList" parameterType="orderBillVO" resultMap="orderBillResult">
+		<!-- SELECT DAT.ORDER_KEY               AS ORDER_KEY
+		     , DAT.AC_NM                   AS AC_NM
+		     , DAT.PJ_NM                   AS PJ_NM
+		     , DAT.ORDER_AC_NM             AS ORDER_AC_NM
+		     , DAT.ORDER_DT                AS ORDER_DT
+		     , DAT.ORDER_AMOUNT            AS ORDER_AMOUNT
+		     , DAT.ORDER_COUNT             AS ORDER_COUNT
+		     , DAT.ORDER_EMP_NM            AS ORDER_EMP_NM
+		     , DAT.SALES_EMP_NM            AS SALES_EMP_NM
+		     , DAT.ORDER_CT_CLASS          AS ORDER_CT_CLASS
+		     , DAT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
+		     , DAT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
+		     , DAT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
+		     , DAT.TAX_YN                  AS TAX_YN
+		     , DAT.REG_DT                  AS REG_DT
+		     , DAT.REG_TM                  AS REG_TM
+		     , DAT.REG_EMP_KEY             AS REG_EMP_KEY
+		     , DAT.MOD_DT                  AS MOD_DT
+		     , DAT.MOD_TM                  AS MOD_TM
+		     , DAT.MOD_EMP_KEY             AS MOD_EMP_KEY
+		     , DAT.ORDER_AC_KEY                  AS AC_KEY
+		     , DAT.BILL_MAPPING_NUM	AS BILL_MAPPING_NUM
+		     , DAT.BUY_TURN				AS BUY_TURN
+		FROM 
+			(
+				<if test="orderCtClass == null or orderCtClass == '' or orderCtClass == 'P'.toString()">
+					SELECT COT.ORDER_KEY                AS ORDER_KEY                  /* 발주번호 */
+					     , CAT1.AC_NM                   AS AC_NM                      /* 고객사 명 */
+						  , PMT.PJ_NM                   AS PJ_NM                      /* 프로젝트명 */
+						  , CAT2.AC_NM                  AS ORDER_AC_NM                /* 매입처명 */
+						  , COT.ORDER_DT                AS ORDER_DT                   /* 발주일 */
+						  , COT.ORDER_AMOUNT            AS ORDER_AMOUNT               /* 발주금액합계 */
+						  , (SELECT SUM(COPT.ORDER_QUANTITY) 
+						     FROM   CMM_ORDER_PRODUCT_TB COPT
+						     WHERE  COPT.ORDER_KEY = COT.ORDER_KEY)
+						                                AS ORDER_COUNT                /* 발주수량 */
+						  , CET1.EMP_NM                 AS ORDER_EMP_NM               /* 발주자명 */
+						  , CET2.EMP_NM                 AS SALES_EMP_NM               /* 담당영업명 */
+						  , COT.ORDER_CT_CLASS          AS ORDER_CT_CLASS
+						  , COT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
+						  , COT.ORDER_AC_KEY            AS ORDER_AC_KEY
+						  , COT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
+						  , COT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
+						  , COT.TAX_YN                  AS TAX_YN
+						  , COT.REG_DT                  AS REG_DT
+						  , COT.REG_TM                  AS REG_TM
+						  , COT.MOD_DT                  AS MOD_DT
+						  , COT.MOD_TM                  AS MOD_TM
+						  , COT.MOD_EMP_KEY             AS MOD_EMP_KEY
+						  , COT.ORDER_AC_KEY                  AS AC_KEY
+          				  , COT.BILL_MAPPING_NUM	AS BILL_MAPPING_NUM
+		     			  , PC.BUY_TURN				AS BUY_TURN
+					  	  , COT.REG_EMP_KEY              AS REG_EMP_KEY
+					FROM   CMM_ORDER_TB    COT
+					  JOIN PJ_MAIN_TB      PMT      ON COT.ORDER_CT_FK_KEY  = PMT.PJ_KEY   /* 프로젝트 정보 */
+					  JOIN CMM_ACCOUNT_TB  CAT1     ON PMT.AC_KEY           = CAT1.AC_KEY  /* 고객사 정보 */
+					  JOIN CMM_ACCOUNT_TB  CAT2     ON COT.ORDER_AC_KEY     = CAT2.AC_KEY  /* 발주처 정보 */ 
+					  JOIN CMM_EMPLOYEE_TB CET1     ON COT.REG_EMP_KEY      = CET1.EMP_KEY /* 발주자 정보 */
+					  JOIN CMM_EMPLOYEE_TB CET2     ON PMT.PJ_SALE_EMP_KEY  = CET2.EMP_KEY /* 담당영업정보 */
+            JOIN CMM_PURCHASE_TB PC       ON COT.ORDER_KEY = PC.BUY_ORDER_FK_KEY
+					WHERE  COT.ORDER_CT_CLASS = 'P'
+					  AND  COT.DELETE_YN      = 'N'
+					<if test="orderEmpNm != null and orderEmpNm != ''">
+					  	AND  CET1.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%')) /* 발주담당자 조건검색  */
+					</if>
+					<if test="pjNm != null and pjNm != ''">
+					  	AND  PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
+					</if>
+					<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
+					  	AND  COT.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
+					</if>
+					<if test="acKey != null and acKey != ''">
+					  	AND  COT.ORDER_AC_KEY LIKE CONCAT('%', CONCAT(#{acKey}, '%'))  /* 사업자번호 조건검색 */
+					</if>
+					<if test="orderAcNm != null and orderAcNm != ''">
+					  	AND  CAT2.AC_NM LIKE CONCAT('%', CONCAT(#{orderAcNm}, '%'))  /* 거래처상호 조건검색 */
+					</if>
+				</if>
+			<if test="orderCtClass == null or orderCtClass == ''">
+		      	UNION
+		    </if>
+		    <if test="orderCtClass == null or ''.equals(orderCtClass) or orderCtClass == 'M'.toString()">
+				SELECT COT.ORDER_KEY                AS ORDER_KEY                  /* 발주번호 */
+				     , CAT1.AC_NM                   AS AC_NM                      /* 고객사 명 */
+					  , MCT.MT_NM                   AS PJ_NM                      /* 유지보수명 */
+					  , CAT2.AC_NM                  AS ORDER_AC_NM                /* 매입처명 */
+					  , COT.ORDER_DT                AS ORDER_DT                   /* 발주일 */
+					  , COT.ORDER_AMOUNT            AS ORDER_AMOUNT               /* 발주금액합계 */
+					  , (SELECT SUM(COPT.ORDER_QUANTITY) 
+					     FROM   CMM_ORDER_PRODUCT_TB COPT
+					     WHERE  COPT.ORDER_KEY = COT.ORDER_KEY)
+					                                AS ORDER_COUNT                /* 발주수량 */
+					  , CET1.EMP_NM                 AS ORDER_EMP_NM               /* 발주자명 */
+					  , CET2.EMP_NM                 AS SALES_EMP_NM               /* 담당영업명 */
+					  , COT.ORDER_CT_CLASS          AS ORDER_CT_CLASS
+					  , COT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
+					  , COT.ORDER_AC_KEY            AS ORDER_AC_KEY
+					  , COT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
+					  , COT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
+					  , COT.TAX_YN                  AS TAX_YN
+					  , COT.REG_DT                  AS REG_DT
+					  , COT.REG_TM                  AS REG_TM
+					  , COT.MOD_DT                  AS MOD_DT
+					  , COT.MOD_TM                  AS MOD_TM
+					  , COT.MOD_EMP_KEY             AS MOD_EMP_KEY
+					  , COT.ORDER_AC_KEY               AS AC_KEY
+					  , COT.BILL_MAPPING_NUM	AS BILL_MAPPING_NUM
+	     			  , PC.BUY_TURN				AS BUY_TURN
+					  , COT.REG_EMP_KEY              AS REG_EMP_KEY
+				FROM   CMM_ORDER_TB    COT
+				  JOIN MT_CONTRACT_TB  MCT  ON COT.ORDER_CT_FK_KEY  = MCT.MT_INTEGRATE_KEY   /* 프로젝트 정보 */
+				  JOIN CMM_ACCOUNT_TB  CAT1 ON MCT.MT_AC_KEY        = CAT1.AC_KEY  /* 고객사 정보 */
+				  JOIN CMM_ACCOUNT_TB  CAT2 ON COT.ORDER_AC_KEY     = CAT2.AC_KEY  /* 발주처 정보 */ 
+				  JOIN CMM_EMPLOYEE_TB CET1 ON COT.REG_EMP_KEY      = CET1.EMP_KEY /* 발주자 정보 */
+				  JOIN CMM_EMPLOYEE_TB CET2 ON MCT.MT_SALE_EMP_KEY  = CET2.EMP_KEY /* 담당영업정보 */
+          JOIN CMM_PURCHASE_TB PC       ON COT.ORDER_KEY = PC.BUY_ORDER_FK_KEY
+				WHERE  COT.ORDER_CT_CLASS = 'M'
+				  AND  COT.DELETE_YN      = 'N'
+				<if test="orderEmpNm != null and orderEmpNm != ''">
+				  	AND  CET1.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%')) /* 발주담당자 조건검색  */
+				</if>
+				<if test="pjNm != null and pjNm != ''">
+				  	AND  PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
+				</if>
+				<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
+				  	AND  COT.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
+				</if>
+				<if test="acKey != null and acKey != ''">
+				  	AND  COT.ORDER_AC_KEY LIKE CONCAT('%', CONCAT(#{acKey}, '%'))  /* 사업자번호 조건검색 */
+				</if>
+				<if test="orderAcNm != null and orderAcNm != ''">
+				  	AND  CAT2.AC_NM LIKE CONCAT('%', CONCAT(#{orderAcNm}, '%'))  /* 거래처상호 조건검색 */
+				</if>
+			</if>
+			) DAT
+		ORDER BY DAT.REG_DT DESC -->
+		
+		
+		
+		
+		SELECT 
+			PO.PJ_ORDER_KEY AS PJ_ORDER_KEY
+		     , CA.AC_NM AS ORDER_AC_NM
+		     , PM.PJ_NM AS PJ_NM
+		     , PO.ORDER_DT AS ORDER_DT
+		     , PO.ORDER_AC_KEY AS ORDER_AC_KEY
+		     , PO.ORDER_AMOUNT AS ORDER_AMOUNT
+		     , CE.EMP_NM AS ORDER_EMP_NM
+		     , PO.BILL_MAPPING_NUM AS BILL_MAPPING_NUM
+		     , PC.BUY_TURN AS BUY_TURN
+		FROM PJ_ORDER_TB PO
+		JOIN PJ_MAIN_TB PM  
+		ON PO.ORDER_CT_FK_KEY  = PM.PJ_KEY
+		JOIN CMM_ACCOUNT_TB CA
+		ON PO.ORDER_AC_KEY = CA.AC_KEY
+		JOIN CMM_EMPLOYEE_TB CE
+		ON PO.REG_EMP_KEY = CE.EMP_KEY
+		JOIN PJ_PURCHASE_TB PC       
+		ON PO.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
+		WHERE PO.DELETE_YN='N'
+    	ORDER BY ORDER_DT
+		
+	</select>
+	
+	<select id="selectOrderDetail" parameterType="orderBillVO" resultMap="orderBillResult">
+		SELECT 
+			PO.PJ_ORDER_KEY AS PJ_ORDER_KEY
+		     , CA.AC_NM AS ORDER_AC_NM
+		     , PM.PJ_NM AS PJ_NM
+		     , PO.ORDER_DT AS ORDER_DT
+		     , PO.ORDER_AC_KEY AS ORDER_AC_KEY
+		     , PO.ORDER_AMOUNT AS ORDER_AMOUNT
+		     , CE.EMP_NM AS ORDER_EMP_NM
+		     , PO.BILL_MAPPING_NUM AS BILL_MAPPING_NUM
+		     , PC.BUY_TURN AS BUY_TURN
+		     , PC.BUY_KEY AS BUY_KEY
+		     , PO.ORDER_CT_FK_KEY AS ORDER_CT_FK_KEY
+		FROM PJ_ORDER_TB PO
+		JOIN PJ_MAIN_TB PM  
+		ON PO.ORDER_CT_FK_KEY  = PM.PJ_KEY
+		JOIN CMM_ACCOUNT_TB CA
+		ON PO.ORDER_AC_KEY = CA.AC_KEY
+		JOIN CMM_EMPLOYEE_TB CE
+		ON PO.REG_EMP_KEY = CE.EMP_KEY
+		JOIN PJ_PURCHASE_TB PC       
+		ON PO.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
+		WHERE PO.DELETE_YN='N'
+		AND PO.PJ_ORDER_KEY=#{pjOrderKey}
+    	ORDER BY ORDER_DT
+	</select>
+	
+	<select id="selectOrderProduct" resultType="orderProductVO">
+		SELECT 
+			PM.PM_NM_CD AS pmNmCd
+		FROM PJ_ORDER_PRODUCT_TB OP
+		JOIN PM_PRODUCT_MNG_TB PM
+		ON OP.ORDER_PM_FK_KEY = PM.PM_KEY
+		WHERE PJ_ORDER_KEY = #{orderKey}
+		AND DELETE_YN='N'
+	</select>
+	
+	<select id="selectBillDetail" parameterType="orderBillVO" resultType="egovMap">
+		SELECT 
+			BILL_ISSUE_DT 
+		     , BILL_MAPPING_YN 
+		     , CA.AC_NM 
+		     , BILL_AC_KEY
+		     , BILL_AMOUNT 
+		     , BILL_NO 
+		     , TAX_YN
+		FROM PJ_PC_BILLING_TB PPB
+		JOIN CMM_ACCOUNT_TB CA
+		ON PPB.BILL_AC_KEY  = CA.AC_KEY
+		WHERE PPB.DELETE_YN='N'
+		AND PPB.BILL_AC_KEY=#{orderAcKey}
+		<if test="billDtFrom != null and billDtFrom != '' and billDtTo != null and billDtTo != ''">
+		  	AND  BILL_ISSUE_DT BETWEEN REPLACE(#{billDtFrom}, '-', '') AND REPLACE(#{billDtTo}, '-', '')
+		</if>
+	</select>
+	
+	<update id="updateOrder" parameterType="orderBillVO">
+		UPDATE PJ_ORDER_TB
+		SET 
+			BILL_MAPPING_NUM = #{billMappingNum}
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE PJ_ORDER_KEY=#{pjOrderKey}
+		AND DELETE_YN='N'
+	</update>
+	
+	<update id="updatePurchaseBill" parameterType="java.util.HashMap">
+		<foreach collection="billList" item="item" separator=";" close=";">
+			UPDATE PJ_PC_BILLING_TB 
+			SET
+				BILL_MAPPING_YN='Y'
+				, BILL_CT_FK_KEY = #{item.billCtFkKey}
+				, BILL_FK_PJ_KEY=#{item.billFkPjKey}
+				, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY=#{modEmpKey}
+			WHERE BILL_NO=#{item.billNo}
+			AND DELETE_YN='N'
+		</foreach>
+	</update>
+	
+	<insert id="insertPaymentInfo" parameterType="java.util.HashMap">
+		INSERT INTO PJ_PAYMENT_TB (
+		    PAYMENT_KEY
+		    , BILL_FK_KEY
+		    , CALL_AMOUNT 
+		    , CALL_AMOUNT_TAX_YN
+		    , PAYMENT_AC_FK_KEY
+		    , PAYMENT_BUY_FK_KEY
+		    , PAYMENT_STATUS_CD
+		    , PAYMENT_TURN
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY
+		    , DELETE_YN
+		) VALUES
+		<foreach collection="billList" item="item" separator=",">
+		    (
+		    (SELECT make_key('PY'))
+		    , #{item.billNo} 
+		    , #{item.billAmount}
+		    , #{item.taxYn}
+		    , #{item.billAcKey}
+		    , #{item.billCtFkKey} 
+		    , 'PYST1000'
+		    , (SELECT (SELECT COUNT(*) FROM PJ_PAYMENT_TB PY WHERE PY.PAYMENT_BUY_FK_KEY=#{item.billCtFkKey} AND PY.DELETE_YN='N') + 1) 
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s') 
+		    , #{regEmpKey}
+		    , 'N'
+		    )
+		</foreach>    	
+	</insert>
+</mapper>

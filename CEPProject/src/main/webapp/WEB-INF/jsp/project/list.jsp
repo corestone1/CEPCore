@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 list)</title>
+	<title>프로젝트</title>
 	<style>
 		.middle tbody a {
 			color: #000;
@@ -255,7 +255,10 @@
 		function fn_detail(pjKey) {
 			form = document.listForm;
 			form.pjKey.value = pjKey;
-			form.action = "<c:url value='/project/detail/bidding.do'/>";
+			form.workClass.value = "입찰";
+			/* form.action = "<c:url value='/project/detail/bidding.do'/>"; */
+			// 첨부파일 예제
+			form.action = "<c:url value='/egovSampleList2.do'/>";
 			form.submit(); 
 		}
 		
@@ -314,7 +317,10 @@
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065"
+				"pjKey":"PJ210065",
+				"turnNo":"2",
+				"ctKey":["CT210110", "CT210111"],
+				"salesKey":["SD210050", "SD210051"]
 			}
 			var button = new Array;
 			button = [];
@@ -325,7 +331,7 @@
 			var url = '/project/write/contractInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065"
+				"pjKey":"PJ210078"
 			}
 			var button = new Array;
 			button = [];
@@ -333,10 +339,22 @@
 		}
 		
 		function tmp2() {
+			//등록
+			/* var url = '/project/write/buildInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":"PJ210064",
+				"inbSeq":0
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); */
+			// 수정
 			var url = '/project/write/buildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210064"
+				"pjKey":"PJ210064",
+				"inbSeq":9
 			}
 			var button = new Array;
 			button = [];
@@ -347,7 +365,8 @@
 			var url = '/project/write/workInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210064"
+				"pjKey":"PJ210065",
+				"pjWorkSeq":5
 			}
 			var button = new Array;
 			button = [];
@@ -355,7 +374,7 @@
 		}
 		
 		function tmp4() {
-			var url = '/project/write/biddingInfo.do';
+			var url = '/project/write/guarantyInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 				"pjKey":"PJ210065",
@@ -367,12 +386,53 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
+		
+		function tmp5() {
+			var url = '/project/write/finishInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":"PJ210065",
+				"turnNo":"2",
+				"ctKey":["CT210110", "CT210111"],
+				"salesKey":["SD210050", "SD210051"]
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		function tmp6() {
+			var url = '/project/write/loseInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":"PJ210065"
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		function tmp7() {
+			location.href="http://localhost:8080/project/viewApproval.do?pjKey=PJ210065";
+		}
+		
+		function tmp8() {
+			var url = '/project/write/biddingInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":"PJ210073"
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
 	</script>
 </head>
 <body>
 	<form:form commandName="searchVO"  id="listForm" name="listForm" method="post" onsubmit="return false">
 		<input type="hidden" value="<c:out value="${resultCode}"/>"/>
 		<input type="hidden" name="pjKey" value=""/>
+		<input type="hidden" name="workClass" value=""/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -386,6 +446,10 @@
 						<div class="addBtn floatL cursorP" onclick="tmp();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">발주화면</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp2();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">수행화면</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp3();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">수행일지</label></div>
+						<div class="addBtn floatL cursorP" onclick="tmp5();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">완료정보</label></div>
+						<div class="addBtn floatL cursorP" onclick="tmp6();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">실주정보</label></div>
+						<div class="addBtn floatL cursorP" onclick="tmp7();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">판매품의서</label></div>
+						<div class="addBtn floatL cursorP" onclick="tmp8();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">입찰정보</label></div>
 					</div>
 					<div class="floatR">
 						<input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value=""/>

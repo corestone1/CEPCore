@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -37,6 +41,11 @@ import org.springmodules.validation.commons.DefaultBeanValidator;
 import com.cep.example.service.EgovSampleService;
 import com.cep.example.vo.SampleDefaultVO;
 import com.cep.example.vo.SampleVO;
+import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectVO;
+import com.cep.project.web.ProjectController;
+import com.cmm.service.FileMngService;
+import com.cmm.vo.FileVO;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -60,14 +69,31 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @Controller
 public class EgovSampleController2 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(EgovSampleController2.class);
 
 	/** EgovSampleService */
 	@Resource(name = "sampleService")
 	private EgovSampleService sampleService;
+	
+	@Resource(name = "projectService")
+	private ProjectService projectService;
+	
+	@Resource(name="fileMngService")
+	private FileMngService fileMngService;
 
 	/** EgovPropertyService */
 	@Resource(name = "propertiesService")
 	protected EgovPropertyService propertiesService;
+	
+	@Value("#{comProps['maxFileCnt']}")
+	private String maxFileCnt;	// 허용 파일 개수
+	
+	@Value("#{comProps['maxFileSize']}")
+	private String maxFileSize;	// 허용 파일 사이즈
+	
+	@Value("#{comProps['fileExtn']}")
+	private String fileExtn;		// 허용 파일 확장자
 
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -78,8 +104,37 @@ public class EgovSampleController2 {
 	 * @return "egovSampleList2"
 	 * @exception Exception
 	 */
-	@RequestMapping(value = "/egovSampleList.do", method=RequestMethod.GET)
-	public String selectSampleListView() throws Exception {
+	@RequestMapping(value = "/egovSampleList2.do", method={RequestMethod.GET, RequestMethod.POST})
+	@Transactional
+	public String selectSampleListView(ProjectVO projectVO, ModelMap model) throws Exception {
+		Map<String, Object> result = null;
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
+		try {
+			/*result = projectService.selectBiddingDetail(projectVO);*/
+			
+			fileVO.setFileCtKey(projectVO.getPjKey());
+			fileVO.setFileWorkClass(projectVO.getWorkClass());
+			
+			/*fileVO.setFileCtKey(projectVO.getPjKey());*/
+			fileResult = fileMngService.selectFileList(fileVO);
+			
+			/*if(fileResult == null) {
+				fileResult = new HashMap<String, Object>();
+				fileResult.put("atchFileCnt", 0);
+			}*/
+			
+			/*model.addAttribute("resultList", result);*/
+			model.addAttribute("projectVO", projectVO);
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
+		} catch(Exception e) {
+			logger.error("project error", e);
+		}
+		
 		return "sample/egovSampleList2";
 	}
 	

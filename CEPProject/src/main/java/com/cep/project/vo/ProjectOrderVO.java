@@ -9,33 +9,28 @@ import com.cep.example.vo.SampleDefaultVO;
 
 @SuppressWarnings("serial")
 @Alias("projectOrderVO")
-public class ProjectOrderVO extends SampleDefaultVO implements Serializable {
+public class ProjectOrderVO extends ProjectVO implements Serializable {
 	
-	private String orderKey;
-	private String orderCtClass;
+	private String pjOrderKey;
 	private String orderCtFkKey;
 	private String orderDt;
 	private String orderAcKey;
 	private String orderAcNm;
 	private String orderAcDirectorKey;
+	private String orderAcDirectorNm;
+	private String orderAcDirectorMbNum;
 	private String orderPayTerms;
 	private int orderAmount;
 	private int mtOrderAmount;
 	private String orderReceiptDt;
 	private String taxYn;
-	private List<ProjectOrderProductVO> projectOrderProductVOList;
+	private List<ProjectOrderProductVO> orderProductVOList;
 	
-	public String getOrderKey() {
-		return orderKey;
+	public String getPjOrderKey() {
+		return pjOrderKey;
 	}
-	public void setOrderKey(String orderKey) {
-		this.orderKey = orderKey;
-	}
-	public String getOrderCtClass() {
-		return orderCtClass;
-	}
-	public void setOrderCtClass(String orderCtClass) {
-		this.orderCtClass = orderCtClass;
+	public void setPjOrderKey(String pjOrderKey) {
+		this.pjOrderKey = pjOrderKey;
 	}
 	public String getOrderCtFkKey() {
 		return orderCtFkKey;
@@ -67,6 +62,18 @@ public class ProjectOrderVO extends SampleDefaultVO implements Serializable {
 	public void setOrderAcDirectorKey(String orderAcDirectorKey) {
 		this.orderAcDirectorKey = orderAcDirectorKey;
 	}
+	public String getOrderAcDirectorNm() {
+		return orderAcDirectorNm;
+	}
+	public void setOrderAcDirectorNm(String orderAcDirectorNm) {
+		this.orderAcDirectorNm = orderAcDirectorNm;
+	}
+	public String getOrderAcDirectorMbNum() {
+		return orderAcDirectorMbNum;
+	}
+	public void setOrderAcDirectorMbNum(String orderAcDirectorMbNum) {
+		this.orderAcDirectorMbNum = orderAcDirectorMbNum;
+	}
 	public String getOrderPayTerms() {
 		return orderPayTerms;
 	}
@@ -97,11 +104,11 @@ public class ProjectOrderVO extends SampleDefaultVO implements Serializable {
 	public void setOrderReceiptDt(String orderReceiptDt) {
 		this.orderReceiptDt = orderReceiptDt;
 	}
-	public List<ProjectOrderProductVO> getProjectOrderProductVOList() {
-		return projectOrderProductVOList;
+	public List<ProjectOrderProductVO> getOrderProductVOList() {
+		return orderProductVOList;
 	}
-	public void setProjectOrderProductVOList(List<ProjectOrderProductVO> projectOrderProductVOList) {
-		this.projectOrderProductVOList = projectOrderProductVOList;
+	public void setOrderProductVOList(List<ProjectOrderProductVO> orderProductVOList) {
+		this.orderProductVOList = orderProductVOList;
 	}
 	
 }

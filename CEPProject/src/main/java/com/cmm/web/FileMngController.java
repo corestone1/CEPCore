@@ -8,9 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -33,13 +36,16 @@ public class FileMngController {
 	private FileDownloadView fileDownloadView;
 	
 	@RequestMapping(value = "/file/download.do")
-	public ModelAndView download(@RequestParam Map<String, Object> param, HttpServletRequest request) throws Exception{
+	public ModelAndView downloadFile(@RequestParam Map<String, Object> param, HttpServletRequest request) throws Exception{
 		
 		FileVO vo = new FileVO();
-		vo.setFileKey((String)param.get("fileKey"));
+		System.out.println(param.get("fileKey"));
+		System.out.println(param.get("fileOrgNm"));
+		int x = Integer.parseInt((param.get("fileKey")).toString());
+		vo.setFileKey(x);
 		FileVO fileVO = service.selectFile(vo);
 		if(fileVO == null) {
-			throw new EgovBizException(messageSource.getMessage("FILENOTEXIST", null, null, new SessionLocaleResolver().resolveLocale(request)));
+			throw new EgovBizException("파일이 없습니다.");
 		}
 		
 		File file = new File(fileVO.getServerFilePath() + File.separator + fileVO.getServerFileNm());
@@ -53,5 +59,21 @@ public class FileMngController {
 		mav.addObject("fileOrgNm", fileOrgNm);
 		
 		return mav;
+	}
+	
+	@RequestMapping(value = "/file/upload.do", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> uploadFile(FileVO fileVO, MultipartHttpServletRequest multiRequest) throws Exception {
+		Map<String, Object> returnMap = null;
+		returnMap = service.insertFile(fileVO, multiRequest);
+		
+	   	return returnMap;
+	}
+	
+	@RequestMapping(value = "/file/delete.do", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> deleteFile(@RequestBody FileVO fileVO, HttpServletRequest request) throws Exception {
+		Map<String, Object> returnMap = null;
+		returnMap = service.deleteFile(fileVO, request);
+		
+	   	return returnMap;
 	}
 }

@@ -1,19 +1,19 @@
 package com.cmm.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cmm.service.FileMngService;
+import com.cmm.util.FileMngUtil;
 import com.cmm.vo.FileVO;
 
 @Service("fileMngService")
@@ -22,8 +22,11 @@ public class FileMngServiceImpl implements FileMngService {
 	@Resource(name="fileMngMapper")
 	private FileMngMapper mapper;
 	
+	@Resource(name="fileMngUtil")
+	private FileMngUtil fileUtils;
+	
 	@Override
-	public List<FileVO> selectFileList(FileVO fileVO) throws Exception {
+	public List<?> selectFileList(FileVO fileVO) throws Exception {
 		return mapper.selectFileList(fileVO);
 	}
 	
@@ -33,41 +36,18 @@ public class FileMngServiceImpl implements FileMngService {
 	}
 	
 	@Override
-	public Object insertFile(MultipartHttpServletRequest multiRequest, Map<String, Object> param) throws Exception {
-		List<HashMap> fileArrayList = new ArrayList<HashMap>();
-	    HashMap fileHashMap;
-	 
-	    String filePath = "C:/test"; //파일 저장 경로, 설정파일로 따로 관리한다.
-	 
-	    File dir = new File(filePath); //파일 저장 경로 확인, 없으면 만든다.
-	    if (!dir.exists()) {
-	        dir.mkdirs();
-	    }
-	 
-	    Iterator<String> itr =  multiRequest.getFileNames(); //파일들을 Iterator 에 넣는다.
-	 
-	    while (itr.hasNext()) { //파일을 하나씩 불러온다.
-	 
-	        MultipartFile mpf = multiRequest.getFile(itr.next());
-	        fileHashMap = new HashMap();
-	 
-	        String originalFilename = mpf.getOriginalFilename(); //파일명
-	        String fileFullPath = filePath+"/"+originalFilename; //파일 전체 경로
-	 
-	        try {
-	            mpf.transferTo(new File(fileFullPath)); //파일저장
-	            fileHashMap.put("originalFilename", originalFilename);
-	 
-	            fileArrayList.add(fileHashMap);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	 
-	    Map<String, Object> retVal = new HashMap<String, Object>(); //응답값 셋팅
+	@Transactional
+	public Map<String, Object> insertFile(FileVO fileVO, MultipartHttpServletRequest multiRequest) throws Exception {
+		List<Map<String, Object>> list = fileUtils.parseInsertFileInfo(multiRequest);
+		Map<String, Object> retVal = new HashMap<String, Object>(); //응답값 셋팅
 	 
 	    try{
-	        retVal.put("fileInfoList", fileArrayList);    
+	    	for(int i = 0; i < list.size(); i++) {
+				Map<String, Object> vo = list.get(i);
+				mapper.insertFile(vo);
+				mapper.insertFileBizInfo(vo);
+			}
+	        /*retVal.put("fileInfoList", fileArrayList);    */
 	        retVal.put("successYN", "Y");
 	    }catch(Exception e){
 	        retVal.put("successYN", "N");
@@ -75,4 +55,45 @@ public class FileMngServiceImpl implements FileMngService {
 	    
 	    return retVal;
 	}
+	
+	@Override
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> deleteFile(FileVO fileVO, HttpServletRequest request) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+		
+		File file = null;
+		
+		FileVO vo = mapper.selectFile(fileVO);
+		
+		// 파일이 db에 존재하지 않음.
+		if(vo == null){
+			throw new Exception("파일이 DB에 존재하지 않습니다.");
+		}
+		// 파일이 물리적 경로에 존재하지 않음.
+		file = new File(vo.getServerFilePath() + File.separator + vo.getServerFileNm());
+		if(!file.exists()){
+			throw new Exception("파일이 경로에 존재하지 않습니다.");
+		}
+		
+		// 첨부파일 물리적 경로에서 삭제 
+		/*if (file.exists() && !file.delete()){
+			file.delete();
+			throw new EgovBizException("삭제에 실패하였습니다.");
+		}*/
+	
+		// 첨부파일 DB 삭제
+		if(vo != null || file.exists()) {
+			fileVO.setModEmpKey(session.get("empKey"));
+			mapper.deleteFile(fileVO);
+			mapper.deleteFileBizInfo(fileVO);
+		}
+		
+		returnMap.put("successYN", "Y");
+	    
+	    return returnMap;
+	}
+	
 }

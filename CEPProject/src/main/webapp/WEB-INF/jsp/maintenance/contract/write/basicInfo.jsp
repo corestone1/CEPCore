@@ -155,6 +155,11 @@
 			font-size: 14px;
 			color: #21a17e;
 		}
+		/* .search_in{display: block;margin: 4px 79px 0 10px;}  
+
+		.search_in input{width:100%} */
+
+
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -182,10 +187,18 @@
 				} else {
 					$('#back_order').hide();
 					$('#back_buy').hide();
-				}
+				}				
 				//보증증권유무 셋팅
 				//$('#gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
 				$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
+			'</c:if>'
+			
+			'<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
+				$('#sp_delete_forecast').show();
+			'</c:if>'
+			
+			'<c:if test="${basicContractInfo.mtProjectLinkVo.mtLinkKey != null }">'
+				$('#pj_delete_forecast').show();
 			'</c:if>'
 			
 				//거래처 검색
@@ -198,6 +211,79 @@
 				});
 			
 		});//end $(document).ready()
+		
+		$(function(){			
+			//var acDirectorList; // 고객 담당자 정보 리스트
+
+			/* 고객사 선택하면 고객담당자 정보 가져오기. */
+			$('#mtAcKey').change(function(){
+				
+		        $.ajax({
+		        	url:"/maintenance/contract/selectAcDirectorList.do",
+		            dataType: 'json',
+		            type:"post",  
+		            data: $('#mtAcKey').val(),
+		     	   	contentType: "application/json; charset=UTF-8",
+		     	  	beforeSend: function(xhr) {
+		        		xhr.setRequestHeader("AJAX", true);
+		        		//xhr.setRequestHeader(header, token);
+		        	},
+		            success:function(data){		            	
+						if ( data.acDirectorList.length > 0 ) {
+							//acDirectorList = data.acDirectorList;/* 값이 있는 경우  전역변수에 넣는다. */
+							//console.log("===============>"+data.acDirectorList[0].acDirectorInfo);
+							$('#acDirectorInfo').val(data.acDirectorList[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
+							$ ('#mtAcDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+							for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
+                        		$ ('#mtAcDirectorKey' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorNm + '</option>' );
+                      		}
+							
+							$ ('#mtAcDirectorCheck' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+							for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
+                        		$ ('#mtAcDirectorCheck' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorInfo + '</option>' );
+                      		}
+		                }else{
+		                	//acDirectorList = null;
+							$ ( '#mtAcDirectorKey' ).find ( 'option' ).remove ();
+		                 	$ ( '#mtAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
+		                 	//acDirectorInfo 값 지움
+		                 	$('#acDirectorInfo').val('');
+		                 	
+		                 	$( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
+		                }
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		        });
+				
+			}); 
+			
+			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
+			$('#mtAcDirectorKey').change(function(){
+				var checkVal = $('#mtAcDirectorKey option:selected').val();
+				
+				$('#mtAcDirectorCheck option').each(function() { 
+					if (this.value == $('#mtAcDirectorKey').val()) { 
+						
+						$('#acDirectorInfo').val(this.text);
+						return false;
+					}
+				});
+				
+				/* if(acDirectorList.length>0){
+					for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {
+						if(checkVal == acDirectorList[idx].mtAcDirectorKey ){
+							$('#acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
+							break;
+						}
+					}					
+				}	 */			
+			});			
+			
+		}); // end $(function(){}
 		
 		//거래처 검색
 		function fnSearchAccoutList(pObject, pstAccountNm) {
@@ -369,6 +455,8 @@
 		function saveBasicInfo(){
 			$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
+			var splinkObject = {};
+			var pjlinkObject = {};
            	var formData = $("#mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
                 
@@ -382,6 +470,30 @@
                 	object[formData[i]['name']] = formData[i]['value'];
                 }      
              }
+           	//Forecast 정보 등록
+           	if($('#sp_mtLinkCtKey').val() !='' || $('#sp_linkDeleteKey').val() !='') {
+           		splinkObject['mtLinkKey'] = $('#sp_mtLinkKey').val();
+           		splinkObject['mtLinkCtKey'] = $('#sp_mtLinkCtKey').val();
+           		splinkObject['linkDeleteKey'] = $('#sp_linkDeleteKey').val();
+           		
+           		object["mtForcastLinkVo"]=splinkObject;     
+           	}
+           	
+           	//project정보 등록
+           	/* if($('#pj_mtLinkCtKey').val() !='' || $('#pj_linkDeleteKey').val() !='') {
+           		pjlinkObject['mtLinkKey'] = $('#pj_mtLinkKey').val();
+           		pjlinkObject['mtLinkCtKey'] = $('#pj_mtLinkCtKey').val();
+           		pjlinkObject['linkDeleteKey'] = $('#pj_linkDeleteKey').val();
+           		
+           		object["mtProjectLinkVo"]=pjlinkObject;     
+           	} */
+           	if($('#id').val() !='' || $('#pj_linkDeleteKey').val() !='') {
+           		pjlinkObject['mtLinkKey'] = $('#pj_mtLinkKey').val();
+           		pjlinkObject['mtLinkCtKey'] = $('#id').val();
+           		pjlinkObject['linkDeleteKey'] = $('#pj_linkDeleteKey').val();
+           		
+           		object["mtProjectLinkVo"]=pjlinkObject;     
+           	}
            	var sendData = JSON.stringify(object);
            	
            	 $.ajax({
@@ -475,81 +587,152 @@
 			}
 		}
 		
-		$(function(){
-			
-			//var acDirectorList; // 고객 담당자 정보 리스트
-
-			/* 고객사 선택하면 고객담당자 정보 가져오기. */
-			$('#mtAcKey').change(function(){
-				
+		
+		//Forecast연계
+		function fn_forecastPop() {
+			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function pop_forecastCall(returnKey,returnNm) {
+			if(returnKey !=$('#sp_mtLinkCtKey').val()){
+				//기존값이 다른경우 프로세스 진행
 		        $.ajax({
-		        	url:"/maintenance/contract/selectAcDirectorList.do",
+		        	url:"/maintenance/contract/selectForecastMappingInfo.do",
 		            dataType: 'json',
 		            type:"post",  
-		            data: $('#mtAcKey').val(),
+		            data: returnKey,
 		     	   	contentType: "application/json; charset=UTF-8",
 		     	  	beforeSend: function(xhr) {
 		        		xhr.setRequestHeader("AJAX", true);
 		        		//xhr.setRequestHeader(header, token);
 		        	},
-		            success:function(data){		            	
-						if ( data.acDirectorList.length > 0 ) {
-							//acDirectorList = data.acDirectorList;/* 값이 있는 경우  전역변수에 넣는다. */
-							//console.log("===============>"+data.acDirectorList[0].acDirectorInfo);
-							$('#acDirectorInfo').val(data.acDirectorList[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
-							$ ('#mtAcDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
-							for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
-                        		$ ('#mtAcDirectorKey' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorNm + '</option>' );
-                      		}
-							
-							$ ('#mtAcDirectorCheck' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
-							for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
-                        		$ ('#mtAcDirectorCheck' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorInfo + '</option>' );
-                      		}
-		                }else{
-		                	//acDirectorList = null;
-							$ ( '#mtAcDirectorKey' ).find ( 'option' ).remove ();
-		                 	$ ( '#mtAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
-		                 	//acDirectorInfo 값 지움
-		                 	$('#acDirectorInfo').val('');
-		                 	
-		                 	$( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
-		                }
+		            success:function(data){
+		            	
+		            	
+		            	if(''==$('#mtNm').val()){ 
+		            		//유지보수 명이 존재하지 않는 경우 해당 Forecast사업명을 넣어준다.
+		            		$('#mtNm').val(data.forecastVO.spBusiNm);
+		            	}
+		            	if($('#mtAcKey').val() !=data.forecastVO.acKey){ 
+		            		
+		            		$('#mtAcKey').val(data.forecastVO.acKey);
+		            		$('#mtAcNm').val(data.forecastVO.mfAcNm);
+		            		
+		            		if (data.acDirectorList.length > 0 ) {
+								//acDirectorList = data.acDirectorList;/* 값이 있는 경우  전역변수에 넣는다. */
+								//console.log("===============>"+data.acDirectorList[0].acDirectorInfo);
+								$('#acDirectorInfo').val(data.acDirectorList[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
+								$ ('#mtAcDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+								for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
+	                        		$ ('#mtAcDirectorKey' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorNm + '</option>' );
+	                      		}
+								
+								$ ('#mtAcDirectorCheck' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+								for ( var idx = 0 ; idx < data.acDirectorList.length ; idx++ ) {
+	                        		$ ('#mtAcDirectorCheck' ).append ( "<option value='"+data.acDirectorList[idx].acDirectorKey+"'>" + data.acDirectorList[idx].acDirectorInfo + '</option>' );
+	                      		}
+			                }else{
+			                	//acDirectorList = null;
+								$ ( '#mtAcDirectorKey' ).find ( 'option' ).remove ();
+			                 	$ ( '#mtAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
+			                 	//acDirectorInfo 값 지움
+			                 	$('#acDirectorInfo').val('');
+			                 	
+			                 	$( '#mtAcDirectorCheck' ).find ( 'option' ).remove ();
+			                }
+		            	}
+		            	
+		            	
 		            },
 		        	error: function(request, status, error) {
 		        		if(request.status != '0') {
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-		        });
+		        });				
 				
-			}); 
-			
-			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
-			$('#mtAcDirectorKey').change(function(){
-				var checkVal = $('#mtAcDirectorKey option:selected').val();
 				
-				$('#mtAcDirectorCheck option').each(function() { 
-					if (this.value == $('#mtAcDirectorKey').val()) { 
-						
-						$('#acDirectorInfo').val(this.text);
-						return false;
-					}
-				});
-				
-				/* if(acDirectorList.length>0){
-					for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {
-						if(checkVal == acDirectorList[idx].mtAcDirectorKey ){
-							$('#acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
-							break;
-						}
-					}					
-				}	 */			
-			});
+				$('#sp_mtLinkCtKey').val(returnKey);
+				$('#sp_mtLinkCtKeyNm').val(returnNm);
+				if($('#sp_mtLinkCtKey').val() !='') {
+					$('#sp_delete_forecast').show();
+				}
+			}
 			
-			
-		});
+		}
 		
+		function fn_deleteForecast() {
+			if(confirm("FORECAST 연계정보를 삭제하시겠습니까?")) {
+				//console.log("sp_mtLinkKey==============>"+$('#sp_mtLinkKey').val());
+				if($('#sp_mtLinkKey').val() !='') {
+					$('#sp_linkDeleteKey').val($('#sp_mtLinkKey').val());
+					$('#sp_mtLinkKey').val('');
+				}
+				//console.log("sp_linkDeleteKey==============>"+$('#sp_linkDeleteKey').val());
+				$('#sp_mtLinkCtKey').val('');
+				$('#sp_mtLinkCtKeyNm').val('');
+				$('#sp_delete_forecast').hide();
+			} else {
+				return false;
+			}
+			
+		}
+
+		
+		
+		//Project연계
+		function fn_projectPop() {
+			window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall','PROJECT_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function pop_projectCall(returnKey,returnNm) {
+			$('#pj_mtLinkCtKey').val(returnKey);
+			$('#pj_mtLinkCtKeyNm').val(returnNm);
+			if($('#pj_mtLinkCtKey').val() !='') {
+				$('#pj_delete_forecast').show();
+			}
+			
+		}
+		
+		/* function fn_deleteProject() {
+			if(confirm("PROJECT 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#pj_mtLinkKey').val() !='') {
+					$('#pj_linkDeleteKey').val($('#pj_mtLinkKey').val());
+					$('#pj_mtLinkKey').val('');
+				}
+				$('#pj_mtLinkCtKey').val('');
+				$('#pj_mtLinkCtKeyNm').val('');
+				$('#pj_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		} */
+		function fn_deleteProject() {
+			if(confirm("PROJECT 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#pj_mtLinkKey').val() !='') {
+					$('#pj_linkDeleteKey').val($('#pj_mtLinkKey').val());
+					$('#id').val('');
+				}
+				$('#id').val('');
+				$('#no').val('');
+				//$('#pj_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		}
+	    /*
+	      hidden값 변경하면 이벤트 발생
+	    */
+		/* survey('#mtLinkCtKey', function(){
+			//console.log('changed');
+			//mtLinkCtKey값이 존재하면 삭제 이미지 활성화 시킴.
+			if($('#mtLinkCtKey').val() !='') {
+				$('#delete_forecast').show();
+			}
+		}); */
 		
 	</script>
 </head>
@@ -558,7 +741,8 @@
 	<%-- <form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post"> --%>		 
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
 		<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
-						
+		<input type="hidden" id="sp_linkDeleteKey" name="linkDeleteKey"/>	
+		<input type="hidden" id="pj_linkDeleteKey" name="linkDeleteKey"/>
 		<div class="popContainer">
 			<div class="top">
 				<div>
@@ -578,13 +762,45 @@
 			<div class="contents">
 				<div>
 					<table>
+						<%-- <tr>
+							<td class="btnFc" colspan="2">
+								<button type="button" onclick="javascript:fn_forecastPop()"><img src="<c:url value='/images/forecast.png'/>" /></button>
+								<input type="text" name="pmNm" id="pmNm" class="pname" value="<c:out value="${basicContractInfo.acDirectorInfo}"/>" readonly/>
+								<input type="hidden" name="pmKey" id="pmKey"  value="<c:out value="${basicContractInfo.mtAcKey}"/>" />
+							</td>
+							
+						</tr> --%>
 						<tr>
-							<td class="btnFc" colspan="2"><button type="button"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+							<td class="tdTitle">FORECAST명</td>
+							<td class="tdContents">
+								<button type="button" onclick="javascript:fn_forecastPop()" style="vertical-align: middle;">
+									<img src="<c:url value='/images/forecast_icon.png'/>" />
+								</button>
+								<input type="text" name="mtLinkCtKeyNm" id="sp_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>
+								
+								<input type="hidden" name="mtLinkCtKey" id="sp_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
+								<input type="hidden" name="mtLinkKey" id="sp_mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
+								<img id="sp_delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteForecast();" style="width: 11px;display:none"/>
+							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label> 프로젝트명</td>
+							<td class="tdTitle">PRJECT명</td>
 							<td class="tdContents">
-								<input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
+								<button type="button" onclick="javascript:fn_projectPop()" style="vertical-align: middle;">
+									<img src="<c:url value='/images/btn_project_connect.png'/>" />
+								</button>
+								<%-- <input type="text" id="pj_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
+								<input type="hidden" id="pj_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" /> --%>
+								<input type="text" id="no" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
+								<input type="hidden" id="id"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" />
+								<input type="hidden" id="pj_mtLinkKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkKey}"/>" />
+								<img id="pj_delete_project" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteProject();" style="width: 11px;"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label> 유지보수명</td>
+							<td class="tdContents">
+								<input type="text" id="mtNm" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
 							</td>
 						</tr>
 						<tr id="tr_account">
@@ -664,9 +880,9 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>
@@ -682,9 +898,9 @@
 									<option value="온라인">온라인</option>
 									<option value="오프라인">오프라인</option>
 								</select> -->
-								<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="hasImCd1" /><label for="hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+								<input type="radio" class="tRadio" name="mtImCd" value="온라인" id="hasImCd1" /><label for="hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
 								&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="hasImCd2" checked="checked"/><label for="hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
+								<input type="radio" class="tRadio" name="mtImCd" value="오프라인" id="hasImCd2" checked="checked"/><label for="hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
 							</td>
 						</tr>
 						<tr>
@@ -700,9 +916,9 @@
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select> -->
-								<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="hasSbCt1" onclick="mtSbCtYnClick('Y');"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="mtSbCtYn" value="Y" id="hasSbCt1" onclick="mtSbCtYnClick('Y');"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="hasSbCt2" checked="checked" onclick="mtSbCtYnClick('N');"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="mtSbCtYn" value="N" id="hasSbCt2" checked="checked" onclick="mtSbCtYnClick('N');"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>
@@ -712,9 +928,9 @@
 									<option value="N">N</option>
 									<option value="Y">Y</option>
 								</select> -->	
-								<input type="radio" class="tCheck" name="gbYn" value="Y" id="hasGbYn1" /><label for="hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+								<input type="radio" class="tRadio" name="gbYn" value="Y" id="hasGbYn1" /><label for="hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="gbYn" value="N" id="hasGbYn2" checked="checked"/><label for="hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+								<input type="radio" class="tRadio" name="gbYn" value="N" id="hasGbYn2" checked="checked"/><label for="hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
 						</tr>
 						<tr>

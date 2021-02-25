@@ -9,6 +9,7 @@ import org.apache.ibatis.type.Alias;
 public class ProjectWorkVO extends ProjectVO implements Serializable {
 	
 	private String pjKey;
+	private int pjWorkSeq;
 	private String pjWorkClassCd;
 	private String pjWorkDt;
 	private String pjWorkTm;
@@ -26,6 +27,12 @@ public class ProjectWorkVO extends ProjectVO implements Serializable {
 	}
 	public void setPjKey(String pjKey) {
 		this.pjKey = pjKey;
+	}
+	public int getPjWorkSeq() {
+		return pjWorkSeq;
+	}
+	public void setPjWorkSeq(int pjWorkSeq) {
+		this.pjWorkSeq = pjWorkSeq;
 	}
 	public String getPjWorkClassCd() {
 		return pjWorkClassCd;

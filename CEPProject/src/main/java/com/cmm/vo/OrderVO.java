@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
-import com.cep.example.vo.SampleDefaultVO;
+import com.cep.project.vo.ProjectVO;
 
 @SuppressWarnings("serial")
 @Alias("orderVO")
-public class OrderVO extends SampleDefaultVO implements Serializable {
+public class OrderVO extends ProjectVO implements Serializable {
 	
 	private String orderKey;
 	private String orderCtClass;
@@ -22,6 +22,7 @@ public class OrderVO extends SampleDefaultVO implements Serializable {
 	private String orderAcDirectorMbNum;
 	private String orderPayTerms;
 	private int orderAmount;
+	private int buyTurn;
 	private String taxYn;
 	private List<OrderProductVO> orderProductVOList;
 	
@@ -90,6 +91,12 @@ public class OrderVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setOrderAmount(int orderAmount) {
 		this.orderAmount = orderAmount;
+	}
+	public int getBuyTurn() {
+		return buyTurn;
+	}
+	public void setBuyTurn(int buyTurn) {
+		this.buyTurn = buyTurn;
 	}
 	public String getTaxYn() {
 		return taxYn;

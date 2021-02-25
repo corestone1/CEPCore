@@ -86,6 +86,17 @@ public class SampleDefaultVO implements Serializable {
 	//선택한 항목의 key값
 	private String selectKey; 
 	
+	//리스트 항목에서 삭제를 선택한 목록의 관리키.
+	private String deleteListKeys; 
+	
+	// 상태값
+	private String statusCd;
+	
+	// 작업 구분
+	private String workClass;
+	
+	private String deleteYn;
+	
 	public int getFirstIndex() {
 		return firstIndex;
 	}
@@ -204,6 +215,37 @@ public class SampleDefaultVO implements Serializable {
 
 	public void setSelectKey(String selectKey) {
 		this.selectKey = selectKey;
+	}
+
+	public String getDeleteListKeys() {
+		return deleteListKeys;
+	}
+
+	public void setDeleteListKeys(String deleteListKeys) {
+		this.deleteListKeys = deleteListKeys;
+	}
+	
+	public String getStatusCd() {
+		return statusCd;
+	}
+
+	public void setStatusCd(String statusCd) {
+		this.statusCd = statusCd;
+	}
+	public String getWorkClass() {
+		return workClass;
+	}
+
+	public void setWorkClass(String workClass) {
+		this.workClass = workClass;
+	}
+	
+	public String getDeleteYn() {
+		return deleteYn;
+	}
+
+	public void setDeleteYn(String deleteYn) {
+		this.deleteYn = deleteYn;
 	}
 
 	@Override

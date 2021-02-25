@@ -288,7 +288,7 @@ $.extend({
             } else {
 
                 //create a temporary iframe that is used to request the fileUrl as a GET request
-            	$iframe = $("<iframe style='display: none' src='"+fileUrl+"'></iframe>").appendTo("body");
+		$iframe = $("<iframe style='display: none' src='"+fileUrl+"'></iframe>").appendTo("body");
             }
 
         } else {

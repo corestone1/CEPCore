@@ -66,7 +66,7 @@
 		.mContents table tr td {
 			padding: 13px 18px;
 		}
-		.mContents > div > div > div > table tr td:first-child {
+		/* .mContents > div > div > div > table tr td:first-child {
 			width: 124px;
 			font-weight: 400;
 			padding: 13px 20px 13px 45px;
@@ -74,12 +74,22 @@
 		.mContents > div > div > div > table tr td:last-child {
 			width: 400px;
 			font-weight: 200;
-		}
+		} */
 		.mContents .bsc {
 			border-top: 4px solid #32bc94 !important;
 			background-color: #ddf0ec;
 			/* border: 1px solid #bee2da; */
 		    border-bottom: 2px solid #bfe3db;
+		}
+		.mContents .bsc tr td:first-child {
+			width: 124px;
+			font-weight: 400;
+			padding: 13px 20px 13px 45px;
+		} 
+		.mContents .bsc tr td:last-child {
+			width: 400px;
+			font-weight: 200;
+			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
 		
 		.mContents .bsc tbody {			
@@ -93,7 +103,7 @@
 			color: #26a07d;
 		}
 		.mContents .bsc tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;			
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */			
 			width: 153px;
 			font-weight: 400;
 			padding: 13px 13px 13px 20px;
@@ -158,7 +168,8 @@
 		}
 		.mContents .dtl tbody {
 			width: 997px;
-			height: 534px;
+			/* height: 534px; */
+			height: 487px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -261,8 +272,7 @@
 		}
 		
 		#modBasicTable tr td:first-child {
-			box-shadow: inset -7px 0 9px -4px #d0e2de;
-			
+			/* box-shadow: inset -7px 0 9px -4px #d0e2de; */			
 			width: 132px;
 			font-weight: 400;
 			padding: 11px 8px 11px 17px;
@@ -343,6 +353,11 @@
 			font-size: 14px;
 			color: #21a17e;
 		}
+		.bottomtr {
+			color: #26a07d;
+    		background-color: #ccf4d7;
+    		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
+		}
 			
 	</style>
 	<script>
@@ -367,6 +382,10 @@
 				//보증증권유무 셋팅
 				//$('#m_gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
 				$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
+			'</c:if>'
+			
+			'<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
+				$('#m_delete_forecast').show();
 			'</c:if>'
 			
 			$('li[id^=LI_TOPBar]').click(function(event){
@@ -433,7 +452,7 @@
 			
 			
 			var html = '';
-			$('#prodList table tbody tr').click(function() {
+			$('#prodList .dtl tbody tr').click(function() {
 				/* alert("=====>"+$(this).attr('class')); */
 				if($(this).attr('class') != "viewOpen trcheckcolor") {
 					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
@@ -659,6 +678,7 @@
 		function saveBasicInfo(){
 			//$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
+			var linkObject = {};
            	var formData = $("#m_mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
                 
@@ -672,6 +692,14 @@
                 	object[formData[i]['name']] = formData[i]['value'];
                 }      
              }
+           	
+           	if($('#m_mtLinkCtKey').val() !='' || $('#m_linkDeleteKey').val() !='') {
+           		linkObject['mtLinkKey'] = $('#m_mtLinkKey').val();
+           		linkObject['mtLinkCtKey'] = $('#m_mtLinkCtKey').val();
+           		linkObject['linkDeleteKey'] = $('#m_linkDeleteKey').val();
+           		
+           		object["mtForcastLinkVo"]=linkObject;     
+           	}
            	var sendData = JSON.stringify(object);
            	
            	 $.ajax({
@@ -810,7 +838,45 @@
 				return false;
 			}
 		} // end deleteBasicInfo()
+		
+	    /*
+	      hidden값 변경하면 이벤트 발생
+	    */
+/* 		survey('#m_mtLinkCtKey', function(){
+			//console.log('changed');
+			//mtLinkCtKey값이 존재하면 삭제 이미지 활성화 시킴.
+			if($('#m_mtLinkCtKey').val() !='') {
+				$('#m_delete_forecast').show();
+			}
+		}); */
 
+		function fn_mforecastPop() {
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=main_forecastCall&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function main_forecastCall(returnKey,returnNm) {
+			
+			$('#m_mtLinkCtKey').val(returnKey);
+			$('#m_mtLinkCtKeyNm').val(returnNm);
+			if($('#m_mtLinkCtKey').val() !='') {
+				$('#m_delete_forecast').show();
+			}
+		}
+		
+		function fn_mdeleteForecast() {
+			if(confirm("FORECAST 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#m_mtLinkKey').val() !='') {
+					$('#m_linkDeleteKey').val($('#m_mtLinkKey').val());
+					$('#m_mtLinkKey').val('');
+				}
+				$('#m_mtLinkCtKey').val('');
+				$('#m_mtLinkCtKeyNm').val('');
+				$('#m_delete_forecast').hide();
+			} else {
+				return false;
+			}			
+		}
 	</script>
 </head>
 <body>
@@ -831,10 +897,19 @@
 					<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
 						<input type="hidden" id="m2_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
+						<input type="hidden" id="m_linkDeleteKey" name="linkDeleteKey"/>
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
-									<td>프로젝트명</td>
+									<td>FORECAST명</td>
+									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
+								<tr>
+									<td>PROJECT명</td>
+									<td><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
+								<tr>
+									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
 								<tr>
@@ -900,7 +975,19 @@
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
 								<tr>
-									<td><label>*</label>프로젝트명</td>
+									<td>FORECAST명</td>
+									<td>
+										<button type="button" onclick="javascript:fn_mforecastPop()" style="vertical-align: middle;">
+											<img src="<c:url value='/images/forecast_icon.png'/>" style="width: 180px"/>
+										</button>
+										<input type="text" name="mtLinkCtKeyNm" id="m_mtLinkCtKeyNm" class="pname"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" style="width: 215px" readonly="readonly"/>
+										<input type="hidden" name="mtLinkCtKey" id="m_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
+										<input type="hidden" name="mtLinkKey" id="m_mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
+										<img id="m_delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_mdeleteForecast();" style="width: 11px;display:none"/>
+									</td>
+								</tr>
+								<tr>
+									<td><label>*</label>유지보수명</td>
 									<td><input type="text" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/></td>
 								</tr>
 								<tr id="m_tr_account">
@@ -948,9 +1035,9 @@
 								<tr>
 									<td><label>*</label>부가세포함</td>
 									<td>
-										<input type="radio" class="tCheck" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+										<input type="radio" class="tRadio" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</td>
 								</tr>
 								<tr>
@@ -966,9 +1053,9 @@
 											<option value="온라인">온라인</option>
 											<option value="오프라인">오프라인</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtImCd" value="온라인" id="m_hasImCd1" /><label for="m_hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
+										<input type="radio" class="tRadio" name="mtImCd" value="온라인" id="m_hasImCd1" /><label for="m_hasImCd1" class="cursorP"></label>&nbsp;&nbsp;온라인
 										&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtImCd" value="오프라인" id="m_hasImCd2" checked="checked"/><label for="m_hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
+										<input type="radio" class="tRadio" name="mtImCd" value="오프라인" id="m_hasImCd2" checked="checked"/><label for="m_hasImCd2" class="cursorP"></label>&nbsp;&nbsp;오프라인
 									</td>
 								</tr>
 								<tr>
@@ -984,9 +1071,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="mtSbCtYn" value="Y" id="m_hasSbCt1"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="mtSbCtYn" value="Y" id="m_hasSbCt1"/><label for="hasSbCt1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="mtSbCtYn" value="N" id="m_hasSbCt2" checked="checked"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
+										<input type="radio" class="tRadio" name="mtSbCtYn" value="N" id="m_hasSbCt2" checked="checked"/><label for="hasSbCt2" class="cursorP"></label>&nbsp;&nbsp;N
 									</td>
 								</tr>
 								<tr>
@@ -996,9 +1083,9 @@
 											<option value="N">N</option>
 											<option value="Y">Y</option>
 										</select> -->
-										<input type="radio" class="tCheck" name="gbYn" value="Y" id="m_hasGbYn1" /><label for="m_hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+										<input type="radio" class="tRadio" name="gbYn" value="Y" id="m_hasGbYn1" /><label for="m_hasGbYn1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="radio" class="tCheck" name="gbYn" value="N" id="m_hasGbYn2" checked="checked"/><label for="m_hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
+										<input type="radio" class="tRadio" name="gbYn" value="N" id="m_hasGbYn2" checked="checked"/><label for="m_hasGbYn2" class="cursorP"></label>&nbsp;&nbsp;N
 										
 										<button type="button" class="veralignM"><img class="cursorP" src="<c:url value='/images/btn_file_upload.png'/>" /></button>
 										<label class="file">보증증권.pdf</label>
@@ -1073,9 +1160,9 @@
 						제품정보
 						<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/>
 					</div>
-					<div class="stitle2 floatR">
+					<%-- <div class="stitle2 floatR">
 						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>
-					</div>
+					</div> --%>
 					<div class="floatC middle">
 						<table class="dtl">
 							<thead class="ftw400">
@@ -1096,7 +1183,7 @@
 							<c:forEach var="list" items="${productList}" varStatus="status">
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtPmKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtPmKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 									</td>
 									<td><c:out value="${status.count}"/></td>
 									<td class="textalignL"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${list.pmNmCd}"/></span> <img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
@@ -1113,9 +1200,9 @@
 									</td>
 								</tr>
 							</c:forEach>
-								<%-- <tr>
+								 <%-- <tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
 									</td>
 									<td>11</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" class="down" /></td>
@@ -1133,7 +1220,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check8" /><label for="check8" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check8" /><label for="check8" class="cursorP"/>
 									</td>
 									<td>12</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1151,7 +1238,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check9" /><label for="check9" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check9" /><label for="check9" class="cursorP"/>
 									</td>
 									<td>13</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1169,7 +1256,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check10" /><label for="check10" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check10" /><label for="check10" class="cursorP"/>
 									</td>
 									<td>15</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1187,7 +1274,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check11" /><label for="check11" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check11" /><label for="check11" class="cursorP"/>
 									</td>
 									<td>16</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1205,7 +1292,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check12" /><label for="check12" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check12" /><label for="check12" class="cursorP"/>
 									</td>
 									<td>17</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1223,7 +1310,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check13" /><label for="check13" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check13" /><label for="check13" class="cursorP"/>
 									</td>
 									<td>18</td>
 									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1241,7 +1328,7 @@
 								</tr>
 								<tr>
 									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tCheck" name="m_gubun" id="check15" /><label for="check15" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check15" /><label for="check15" class="cursorP"/>
 									</td>
 									<td>19</td>
 									<td class="textalignL"><span title="PowerEdge R640PowerEdge R640">PowerEdge R640PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
@@ -1256,8 +1343,14 @@
 									<td style="max-width: 0px; display: none;">
 										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
 									</td>
-								</tr>  --%>
+								</tr> --%>
 							</tbody>
+						</table>
+						<table style="width: 997px">
+							<tr class="bottomtr">
+								<td class="textalignR" style="width: 230px">제품합계</td>
+								<td style="width: 92px"><c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/></td>
+							</tr>
 						</table>
 					</div>
 					<div class="bottom">
@@ -1265,7 +1358,7 @@
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-							<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>
 					</div>
 				</div>

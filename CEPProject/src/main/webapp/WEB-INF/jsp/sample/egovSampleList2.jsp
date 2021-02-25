@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form"   uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="ui"     uri="http://egovframework.gov/ctl/ui"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -24,10 +25,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><spring:message code="title.sample" /></title>
-    <link type="text/css" rel="stylesheet" href="<c:url value='/css/egovframework/sample.css'/>"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <%-- <link type="text/css" rel="stylesheet" href="<c:url value='/css/egovframework/sample.css'/>"/> --%>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="<c:url value='/js/popup.js'/>"></script>
+	<script src="<c:url value='/js/common.js'/>"></script>
+	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
     <script type="text/javaScript" language="javascript" defer="defer">
         
         /* 글 수정 화면 function */
@@ -91,13 +97,86 @@
         }
         
         $(document).ready(function() {
-        	fn_egov_selectList();
+        	
+       		$("#save").click(function() {
+       			/* var formData = new FormData($('#fileForm')[0]);  */
+       			var existFileNum = $('#atchFileCnt').val();        
+				var maxFileNum = $('#maxFileCnt').val();
+				
+				if(existFileNum == maxFileNum) {
+					alert('첨부 가능 최대 개수를 초과했습니다.\n 최대 개수 : '+maxFileNum+'개');
+				} else {
+	       			var formData = new FormData($('#fileForm')[0]); 
+	       			$.ajax({ 
+	       				type: "POST", 
+	       				enctype: 'multipart/form-data',  
+	       				url: '/file/upload.do', 
+	       				data: formData, // 필수 
+	       				processData: false, // 필수 
+	       				contentType: false, // 필수 
+	       				cache: false, 
+	       				success: function (response) { 
+	       					if(response.successYN=='Y') {
+	       						alert('저장되었습니다.');
+	       					}
+	       				}, 
+	       				error: function(request, status, error) {
+	       					if(request.status != '0') {
+	       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	       					}
+	       				}
+	       			});
+				}
+       		});
+       		
+       		$("#add").click(function() {
+       			if($('input[type=file]').length) {
+       				var index = $('input[type=file]').last().attr('name').replace(/[^0-9]/g,'');
+       			} else {
+       				var index = 0;
+       			}
+       			/* $(".uploadContainer").append('<br /><input type="file" name="file'+(Number(index)+1)+'" multiple="multiple" />'); */
+       		});
+       		
         });
+        
+        function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
+        
+        function fn_deleteFile(fileKey) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			var data = JSON.stringify({"fileKey":fileKey});
+			$.ajax({ 
+   				url: '/file/delete.do', 
+   				dataType:'json',
+   				type: "POST", 
+   				data: data, // 필수 
+   				contentType: "application/json; charset=UTF-8", 
+   				success: function (response) { 
+	   				if(response.successYN=='Y') {
+						alert('삭제되었습니다.');
+					} else {
+						alert('삭제 실패');
+					}
+   				},
+   				error: function(request, status, error) {
+   					if(request.status != '0') {
+   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+   					}
+   				}
+   			});
+		}
     </script>
 </head>
 
 <body style="text-align:center; margin:0 auto; display:inline; padding-top:100px;">
-    <form:form commandName="searchVO" id="listForm" name="listForm" method="post">
+    <%-- <form:form commandName="searchVO" id="listForm" name="listForm" method="post">
         <input type="hidden" name="selectedId" />
         <div id="content_pop">
         	<!-- 타이틀 -->
@@ -151,7 +230,7 @@
 	        			</tr>
 	        		</thead>
 	        		<tbody></tbody>
-        			<%-- 
+        			
         			<c:forEach var="result" items="${resultList}" varStatus="status">
             			<tr>
             				<td align="center" class="listtd">
@@ -164,7 +243,7 @@
             				<td align="center" class="listtd"><c:out value="${result.userid}"/>&nbsp;</td>
             				<td align="center" class="listtd"><c:out value="${result.createdt}"/>&nbsp;</td>
             			</tr>
-        			</c:forEach> --%>
+        			</c:forEach>
         		</table> 
         	</div>
         	<!-- /List -->
@@ -184,10 +263,10 @@
 				<input type="hidden" id="pageNum" name="pageNum" value="${paginationInfo.cri.pageNum }"/>
 				<input type="hidden" id="amount" name="amount" value="${paginationInfo.cri.amount }"/>
 			</form> 
-			<%-- <div id="paging">
+			<div id="paging">
         		<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="fn_egov_link_page" />
         		<form:hidden path="pageIndex" />
-        	</div> --%>
+        	</div>
         	<div id="sysbtn">
         	  <ul>
         	      <li>
@@ -199,6 +278,26 @@
               </ul> 
         	</div>
         </div>
-    </form:form>
+    </form:form> --%>
+    <form id="fileForm" method="post" enctype="multipart/form-data" style="position: absolute; top: 200px;"> 
+    	<button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br />
+		<input type="hidden" name="docTypeNm" value="${projectVO.workClass}" />
+		<input type="hidden" name="fileCtKey" value="${projectVO.pjKey}" />
+		<input type="hidden" name="pjNm" value="${resultList.pjNm }"/>
+		<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+		<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+		<c:forEach var="result" items="${fileList }" varStatus="status">
+			<input class="upload-name" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+			<a class="close" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>')">x</a>
+			<c:if test="${status.last eq false}"><br /></c:if>
+		</c:forEach>
+		<div class="uploadContainer"><input type="file" name="file" multiple="multiple" /></div>
+		<button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button>
+	</form>
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
+	</form:form>
 </body>
 </html>

@@ -9,6 +9,7 @@ import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.account.vo.AccountVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 /**
  * @File Name : AccountMapper.java
@@ -29,4 +30,6 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 public interface AccountMapper {
 
 	public List<AccountVO> selectAccountList(AccountSearchVO searchVO) throws Exception;
+	
+	public List<EgovMap> selectDirectorList(AccountSearchVO acountSearchVO) throws Exception;
 }

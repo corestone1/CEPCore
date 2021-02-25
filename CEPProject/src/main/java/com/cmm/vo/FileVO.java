@@ -8,7 +8,7 @@ import org.apache.ibatis.type.Alias;
 @Alias("fileVO")
 public class FileVO implements Serializable {
 	
-	public String fileKey;
+	public int fileKey;
 	public String fileOrgNm;
 	public String serverFilePath;
 	public String serverFileNm;
@@ -26,10 +26,10 @@ public class FileVO implements Serializable {
 	public String modTm;
 	public String modEmpKey;
 	
-	public String getFileKey() {
+	public int getFileKey() {
 		return fileKey;
 	}
-	public void setFileKey(String fileKey) {
+	public void setFileKey(int fileKey) {
 		this.fileKey = fileKey;
 	}
 	public String getFileOrgNm() {

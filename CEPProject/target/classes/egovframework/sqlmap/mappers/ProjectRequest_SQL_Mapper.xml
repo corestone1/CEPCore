@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.project.service.impl.ProjectRequestMapper">
+	<resultMap id="salesGuarantyResult" type="projectSalesVO">
+		<id property="salesKey" column="SALES_KEY" />
+		<result property="salesCtFkKey" column="SALES_CT_FK_KEY" />
+		<result property="salesTurn" column="SALES_TURN" />
+		<result property="salesCollectRate" column="SALES_COLLECT_RATE" />
+		<result property="salesTurnAmount" column="SALES_TURN_AMOUNT" />
+		<result property="salesChargeDt" column="SALES_CHARGE_DT" />
+		<result property="salesBillFcDt" column="SALES_BILL_FC_DT" />
+		<result property="salesCollectFcDt" column="SALES_COLLECT_FC_DT" />
+		<result property="salesCollectFinishDt" column="SALES_COLLECT_FINISH_DT" />
+		<result property="salesGbYn" column="SALES_GB_YN" />
+		<result property="salesStatusCd" column="SALES_STATUS_CD" />
+		<result property="regEmpKey" column="REG_EMP_KEY" />
+		<result property="modEmpKey" column="MOD_EMP_KEY" />
+		<collection property="guarantyList" ofType="projectGuarantyBondVO" column="salesKey=SALES_KEY" javaType="List" select="selectGuarantyDetail" />
+	</resultMap>
+	<!-- ######################################################################  -->
+	
+	<insert id="insertSalesInfo" parameterType="java.util.Map">
+		INSERT INTO PJ_SALES_DETAIL_TB (
+			SALES_KEY
+			, SALES_CT_FK_KEY
+			, SALES_TURN
+			, SALES_COLLECT_RATE
+			, SALES_TURN_AMOUNT
+			, SALES_CHARGE_DT
+			, SALES_BILL_FC_DT
+			, SALES_COLLECT_FC_DT
+			, SALES_COLLECT_FINISH_DT
+			, SALES_GB_YN
+			, SALES_STATUS_CD
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES 
+		<foreach collection="SalesVOList" item="item" separator=",">
+			(
+				#{item.salesKey}
+				, #{salesCtFkKey}
+				, #{item.salesTurn}
+				, #{item.salesCollectRate}
+				, #{item.salesTurnAmount}
+				, #{item.salesChargeDt}
+				, #{item.salesBillFcDt}
+				, #{item.salesCollectFcDt}
+				, #{item.salesCollectFinishDt}
+				, #{item.salesGbYn}
+				, #{item.salesStatusCd}
+				, DATE_FORMAT(NOW(),'%Y%m%d')
+				, DATE_FORMAT(NOW(),'%H%i%s')
+				, #{regEmpKey}
+				, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<select id="selectSalesGuarantyDetail" parameterType="String" resultMap="salesGuarantyResult">
+		SELECT *
+		FROM PJ_SALES_DETAIL_TB
+		WHERE SALES_KEY = #{salesKey}
+		AND DELETE_YN='N'
+	</select>
+	
+	<select id="selectGuarantyDetail" resultType="projectGuarantyBondVO">
+		SELECT 
+			GB_KEY AS gbKey
+			, CT_KEY AS ctKey
+			, SALES_KEY AS salesKey
+			, GB_KIND_CD AS gbKindCd
+			, GB_START_DT AS gbStartDt
+			, GB_END_DT AS gbEndDt
+			, GB_ISSUE_YN AS gbIssueYn
+			, GB_AMOUNT AS gbAmount
+			, GB_PUBLISH_DT AS gbPublishDt
+		FROM PJ_GUARANTY_BOND_TB
+		WHERE SALES_KEY = #{salesKey}
+		AND DELETE_YN='N'
+	</select>
+	
+	<update id="updateSalesInfo" parameterType="projectSalesVO">
+		<foreach collection="guarantyList" item="item" separator=";" close=";">
+			UPDATE CMM_SALES_DETAIL_TB SET
+			<if test="item.salesCollectRate != null and item.salesCollectRate != '' and item.salesCollectRate != 0">
+				SALES_COLLECT_RATE=#{item.salesCollectRate},
+			</if>
+			<if test="item.salesTurnAmount != null and item.salesTurnAmount != '' and item.salesTurnAmount != 0">
+				SALES_TURN_AMOUNT=#{item.salesTurnAmount},
+			</if>
+			<if test="item.salesChargeDt != null and item.salesChargeDt != ''">
+				SALES_CHARGE_DT=#{item.salesChargeDt},
+			</if>
+			<if test="item.salesBillFcDt != null and item.salesBillFcDt != ''"> 
+				SALES_BILL_FC_DT=#{item.salesBillFcDt},
+			</if> 
+			<if test="item.salesCollectFcDt != null and item.salesCollectFcDt != ''"> 
+				SALES_COLLECT_FC_DT=#{item.salesCollectFcDt},
+			</if>
+			<if test="item.salesCollectFinishDt != null and item.salesCollectFinishDt != ''">
+				SALES_COLLECT_FINISH_DT=#{item.salesCollectFinishDt},
+			</if>
+			<if test="item.salesGbYn != null and item.salesGbYn != ''">
+				SALES_GB_YN=#{item.salesGbYn},
+			</if>
+			<if test="item.salesStatusCd != null and item.salesStatusCd != ''">
+				SALES_STATUS_CD=#{item.salesStatusCd},
+			</if>
+				MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d'),
+				MOD_TM=DATE_FORMAT(NOW(),'%H%i%s'),
+				MOD_EMP_KEY=#{modEmpKey}
+			WHERE SALES_KEY = #{item.salesKey}
+				AND DELETE_YN = 'N'
+		</foreach>
+	</update>
+	
+	<select id="selectPurchaseDetail" parameterType="String" resultType="projectPurchaseVO">
+		SELECT 
+			BUY_KEY AS buyKey
+			, BUY_ORDER_FK_KEY AS buyOrderFkKey
+			, BUY_AMOUNT AS buyAmount
+			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, BUY_TURN AS buyTurn
+		FROM PJ_PURCHASE_TB
+		WHERE BUY_ORDER_FK_KEY = #{orderKey}
+			AND DELETE_YN='N'
+	</select>
+	
+	<select id="insertPurchaseInfo" parameterType="projectPurchaseVO">
+		INSERT INTO CMM_PURCHASE_TB (
+			BUY_KEY
+			, BUY_ORDER_FK_KEY
+			, BUY_CLASS
+			, BUY_AMOUNT
+			, DONE_PAYMENT_AMOUNT
+			, YET_PAYMENT_AMOUNT
+			, BUY_TURN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{buyKey}
+			, #{buyOrderFkKey}
+			, #{buyClass}
+			, #{buyAmount}
+			, #{donePaymentAmount}
+			, #{yetPaymentAmount}
+			, #{buyTurn}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		) 
+	</select>
+	
+	<update id="updatePurchaseInfo" parameterType="projectPurchaseVO">
+		UPDATE CMM_PURCHASE_TB 
+		SET
+			<if test="buyAmount != null and buyAmount != '' and buyAmount != 0"> 
+				BUY_AMOUNT = #{buyAmount},
+			</if>
+			<if test="donePaymentAmount != null and donePaymentAmount != '' and donePaymentAmount != 0">
+				DONE_PAYMENT_AMOUNT =#{donePaymentAmount},
+			</if>
+			<if test="yetPaymentAmount != null and yetPaymentAmount != '' and yetPaymentAmount != 0"> 
+				YET_PAYMENT_AMOUNT=#{yetPaymentAmount},
+			</if>
+			<if test="buyTurn != null and buyTurn != '' and buyTurn != 0">
+				BUY_TURN =#{buyTurn},
+			</if>
+			MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+			, DELETE_YN='N'
+		WHERE BUY_KEY = #{buyKey}
+	</update>
+	
+	<update id="deletePurchaseInfo" parameterType="projectPurchaseVO">
+		UPDATE CMM_PURCHASE_TB 
+		SET
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE BUY_ORDER_FK_KEY = #{buyOrderFkKey}
+	</update>
+	
+	<select id="selectPaymentList" parameterType="String" resultType="egovMap">
+		SELECT 
+			PAYMENT_KEY 
+			, PAYMENT_BUY_FK_KEY 
+			, PAYMENT_STATUS_CD 
+			, PAYMENT_TURN 
+			, PAYMENT_CALL_DT 
+			, PAYMENT_DT 
+			, CALL_AMOUNT 
+			, CALL_AMOUNT_TAX_YN
+			, PAYMENT_AC_FK_KEY 
+			, PAYMENT_ACC_SEQ_FK_KEY 
+			, REMARK 
+		FROM PJ_PAYMENT_TB
+		WHERE PAYMENT_BUY_FK_KEY = #{buyKey}
+			AND DELETE_YN='N'
+			AND PAYMENT_STATUS_CD NOT IN('PYST3000','PYST4000')
+		ORDER BY PAYMENT_TURN
+	</select>
+	
+	<select id="selectPaymentDetail" parameterType="projectPaymentVO" resultType="egovMap">
+		SELECT 
+			PAYMENT_KEY
+			, PAYMENT_BUY_FK_KEY 
+			, PAYMENT_STATUS_CD 
+			, PAYMENT_TURN 
+			, PAYMENT_CALL_DT 
+			, PAYMENT_DT 
+			, CALL_AMOUNT 
+			, CALL_AMOUNT_TAX_YN 
+			, PAYMENT_AC_FK_KEY 
+			, PAYMENT_ACC_SEQ_FK_KEY 
+			, REMARK 
+		FROM PJ_PAYMENT_TB
+		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
+			AND PAYMENT_TURN = #{paymentTurn}
+			AND DELETE_YN='N'
+	</select>
+	
+	<insert id="insertPaymentInfo" parameterType="projectPaymentVO">
+		INSERT INTO CMM_PAYMENT_TB (
+			PAYMENT_KEY
+			, PAYMENT_BUY_FK_KEY
+			, PAYMENT_STATUS_CD
+			, PAYMENT_TURN
+			, PAYMENT_CALL_DT
+			, CALL_AMOUNT
+			, CALL_AMOUNT_TAX_YN
+			, PAYMENT_AC_FK_KEY
+			, PAYMENT_ACC_SEQ_FK_KEY
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{paymentKey}
+			, #{paymentBuyFkKey}
+			, #{paymentStatusCd}
+			, #{paymentTurn}
+			, #{paymentCallDt}
+			, #{callAmount}
+			, #{callAmountTaxYn}
+			, #{paymentAcFkKey}
+			, #{paymentAccSeqFkKey}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<update id="updatePaymentInfo" parameterType="projectPaymentVO">
+		UPDATE CMM_PAYMENT_TB AS PM, CMM_PURCHASE_TB AS PC 
+		SET 
+			<if test="paymentStatusCd != null and paymentStatusCd != ''">
+				PM.PAYMENT_STATUS_CD = #{paymentStatusCd},
+			</if>
+			<if test="paymentCallDt != null and paymentCallDt != ''">
+				PM.PAYMENT_CALL_DT = #{paymentCallDt},
+			</if>
+			<if test="paymentStatusCd.equals('PYST4000') ">
+				PM.PAYMENT_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			</if>
+			<if test="callAmount != null and callAmount != ''">
+				PM.CALL_AMOUNT = #{callAmount},
+			</if>
+			<if test="callAmountTaxYn != null and callAmountTaxYn != ''">
+				PM.CALL_AMOUNT_TAX_YN = #{callAmountTaxYn},
+			</if>
+			<if test="paymentAccSeqFkKey != null and paymentAccSeqFkKey != ''">
+				PM.PAYMENT_ACC_SEQ_FK_KEY = #{paymentAccSeqFkKey},
+			</if>
+			<if test="remark != null and remark != ''">
+				PM.REMARK = #{remark},
+			</if>
+			PM.MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			PM.MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, PM.MOD_EMP_KEY = #{modEmpKey}
+		WHERE PM.PAYMENT_KEY = #{paymentKey}
+			AND PC.BUY_KEY = PM.PAYMENT_BUY_FK_KEY
+	</update>
+	
+	<select id="selectPrePaymentList" parameterType="String" resultType="egovMap">
+		SELECT 
+			BL.BILL_NO
+			, BL.BILL_ISSUE_DT 
+			, CONCAT((SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BL.BILL_AC_DIRECTOR_KEY ), ' / ' , (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BL.BILL_AC_DIRECTOR_KEY)) AS BILL_AC_DIRECTOR_KEY 
+			, BL.BILL_AMOUNT 
+			, BL.BILL_TURN_NO
+			, PM.CALL_AMOUNT 
+			, PM.PAYMENT_KEY
+			, PM.CALL_AMOUNT_TAX_YN
+			, PM.PAYMENT_STATUS_CD
+			, PM.PAYMENT_DT
+			, PM.PAYMENT_BUY_FK_KEY
+			, PM.CALL_AMOUNT_TAX_YN
+		FROM CMM_BILLING_TB BL, CMM_PAYMENT_TB PM
+		WHERE PM.PAYMENT_BUY_FK_KEY = #{buyKey}
+			AND PM.PAYMENT_BUY_FK_KEY = BL.BILL_CT_FK_KEY
+			AND PM.BILL_FK_KEY = BL.BILL_NO
+			AND PAYMENT_STATUS_CD IN('PYST3000', 'PYST4000')
+			AND BL.DELETE_YN='N'
+		ORDER BY PM.PAYMENT_TURN
+	</select>
+	
+	<update id="deletePaymentAllInfo" parameterType="projectPaymentVO">
+		UPDATE CMM_PAYMENT_TB 
+		SET
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
+	</update>
+</mapper>

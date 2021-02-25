@@ -100,7 +100,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 160px;
+			height: 113px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -178,9 +178,30 @@
 				},
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
-			    		alert('저장되었습니다.');
-			    		$('#newKey').val(response.pjKey);
-			    		countSave++;
+			    		if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+				    		alert('프로젝트 기본 정보가 저장되었습니다.');
+				    		$('#newKey').val(response.pjKey);
+				    		countSave++;
+				    		
+			    		} else {
+			    			alert('프로젝트 기본 정보가 수정되었습니다.');
+			    			$('#newKey').val(response.pjKey);
+			    		}
+			    		
+			    		var url='/project/write/basicInfo.do';
+		    			var dialogId = 'program_layer';
+		    			var varParam = {
+							"pjKey":$("#newKey").val()
+		    			}
+		    			var button = new Array;
+		    			button = [];
+		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    	} else {
+			    		if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			    			alert("프로젝트 기본 정보 등록이 실패하였습니다.");
+			    		} else {
+			    			alert("프로젝트 기본 정보 수정이 실패하였습니다.");
+			    		}
 			    	}
 			    },
 				error: function(request, status, error) {
@@ -251,7 +272,7 @@
 			
 			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
 				$('.btnSave').children().eq(0).html('');
-				$('.btnSave').children().eq(0).html('<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_mod.png'/>" /></button>');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
 			}
 		});
 		
@@ -269,7 +290,7 @@
 	            success:function(data){		            	
 					if ( data.result.length > 0 ) {
 						acDirectorList = data.result;/* 값이 있는 경우  전역변수에 넣는다. */
-						$('#acDirectorInfo').val(data.result[0].acDirectorInfo);/* 첫번째 값을 셋팅해준다. */
+						/* $('#acDirectorInfo').val(data.result[0].acDirectorInfo); *//* 첫번째 값을 셋팅해준다. */
 						$ ('#acDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
 						for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
 							if(data.result[idx].acDirectorKey == "${resultList[0].acDirectorKey}") {
@@ -307,8 +328,8 @@
 				</ul>
 			</div>
 			<div class="contents">
-				<input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
-				<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/>
+				<!-- <input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
+				<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/> -->
 				<input type="hidden" id="dialogId" />
 				<input type="hidden" id="spKey" name="spKey" />
 				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
@@ -336,7 +357,7 @@
 										<option <c:if test="${resultList[0].acDirectorKey == emp.empKey }">selected</c:if> value="${emp.empKey}">${emp.empNm}</option>
 									</c:forEach>  --%>
 								</select>				
-								<input type="text" class="pname"  id="acDirectorInfo" readonly/>
+								<input type="text" class="pname"  id="acDirectorInfo" value="<c:out value="${resultList[0].acDirectorInfo }" />" readonly/>
 							</td>
 						</tr>
 						<tr>
@@ -367,6 +388,15 @@
 							</td>
 						</tr>
 						<tr>
+							<td class="tdTitle"><label>*</label>계약일자</td>
+							<td class="tdContents">
+								<c:set var="today" value="<%=new java.util.Date()%>" />
+								<c:set var="now"><fmt:formatDate value="${today}" pattern="yyyy-MM-dd" /></c:set> 
+								<input type="text" class="calendar fromDt" name="ctDt" 
+									value="<c:choose><c:when test="${resultList[0].ctDt eq null || resultList[0].ctDt eq '' }">${now }</c:when><c:otherwise>${displayUtil.displayDate(resultList[0].ctDt)}</c:otherwise></c:choose>" required/>
+							</td>
+						</tr>
+						<tr>
 							<td class="tdTitle veralignT">비고</td>
 							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}" /></textarea></td>
 						</tr>
@@ -380,7 +410,7 @@
 						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatR">
-						<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" onclick="javascript:fn_next('biddingInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

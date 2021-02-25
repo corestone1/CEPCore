@@ -211,7 +211,7 @@
 			margin-bottom: 4px;
 		}
 		input[class="calendar"] {
-		    background-image: url(./images/calendar_icon.png);
+		    background-image: url(/images/calendar_icon.png);
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
@@ -221,7 +221,7 @@
 		    border: 1px solid #e9e9e9;
 		    padding: 0 10px;
 		    -webkit-appearance: none;
-		    background: url(./images/arrow_down.png) no-repeat 91% 50%;
+		    background: url(/images/arrow_down.png) no-repeat 91% 50%;
 		    background-color: #fff;
 		    color: #535353;
 		    font-size: 15px;
@@ -406,19 +406,21 @@
 				} else {
 					/* alert('수정되었습니다.'); */
 					var object = {};
-		           	var formData = $("#viewForm").serializeArray();
+		           	var formData = $("#listForm").serializeArray();
 		           	for (var i = 0; i<formData.length; i++){
 		                
 		                object[formData[i]['name']] = formData[i]['value'];
 		             }
-		           	var data = JSON.stringify(object);
-		           
+		           	var data = JSON.stringify(object); 
+		           console.log(data);
 					$.ajax ({
 						url:"/project/update/biddingInfo.do",
 						type:'post',
 						data: data,
-						dataType:'json',
-						contentType: "application/json; charset=UTF-8", 
+						enctype: 'multipart/form-data',
+					  	processData: false,
+					  	contentType: false,
+
 						success:function(data){	
 			            	alert('첨부파일 저장');
 			            	 
@@ -428,7 +430,7 @@
 			        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 			        		}
 			        	} 
-					});
+					}); 
 					/* location.reload(); */
 				}
 				modCh++;
@@ -521,7 +523,7 @@
 	</script>
 </head>
 <body>
-	<form:form id="listForm" name="listForm" method="post">
+	<form id="listForm" name="listForm" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="<c:out value=''/>" />
 		<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
 		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
@@ -849,7 +851,7 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<input type="file" class="floatL" id="fileUploader" />
+										<input type="file" class="floatL" id="fileUploader" name="file"/>
 										<label for="fileUploader" class="fileName"></label>
 										<input class="upload-name" value="<c:out value="${fileList.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${fileList.fileKey}"/>, <c:out value="${fileList.fileOrgNm}"/>')" readonly/>
 									</td>
@@ -871,7 +873,7 @@
 				<div class="floatC"></div>
 			</div>
 		</div>	
-	</form:form>
+	</form>
 	<script type="text/javascript">
 		var existFileNum = $('#atchFileCnt').val();        
 		var maxFileNum = $('#maxFileCnt').val();
@@ -890,22 +892,18 @@
 			uploadableFileNum = 0;
 		}               
 	    
-	    if (uploadableFileNum != 0) {
+	   /*  if (uploadableFileNum != 0) {
 	        fn_check_file('Y');
 	        var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
 	        multi_selector.addElement(document.getElementById('fileUploader'));   
 	    } else{
 	    	fn_check_file('N');
-	    }
+	    } */
 	             
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">
-		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
-		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
-		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
 		<input type="hidden" name="fileKey" value="${fileList.fileKey}"/>
 		<input type="hidden" name="fileOrgNm" value="${fileList.fileOrgNm}"/>
-		<input type="hidden" name="fileType" value="cdc"/>
 	</form:form>
 </body>
 </html>

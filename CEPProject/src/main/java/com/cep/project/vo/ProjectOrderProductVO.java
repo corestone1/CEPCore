@@ -6,23 +6,26 @@ import org.apache.ibatis.type.Alias;
 
 
 @SuppressWarnings("serial")
-@Alias("projectOrderVO")
+@Alias("projectOrderProductVO")
 public class ProjectOrderProductVO extends ProjectOrderVO implements Serializable {
 	
-	private String orderKey;
+	private String pjOrderKey;
 	private int orderSeq;
 	private String orderPmFkKey;
 	private int orderQuantity;
 	private int orderUprice;
+	private String orderReceiptDt;
 	private int mtRate;
-	private String freeMtMonth;
+	private String freeMtStartDt;
+	private String freeMtEndDt;
 	private String pmNmCd;
+	private String isNew;
 	
-	public String getOrderKey() {
-		return orderKey;
+	public String getPjOrderKey() {
+		return pjOrderKey;
 	}
-	public void setOrderKey(String orderKey) {
-		this.orderKey = orderKey;
+	public void setOrderKey(String pjOrderKey) {
+		this.pjOrderKey = pjOrderKey;
 	}
 	public int getOrderSeq() {
 		return orderSeq;
@@ -48,17 +51,29 @@ public class ProjectOrderProductVO extends ProjectOrderVO implements Serializabl
 	public void setOrderUprice(int orderUprice) {
 		this.orderUprice = orderUprice;
 	}
+	public String getOrderReceiptDt() {
+		return orderReceiptDt;
+	}
+	public void setOrderReceiptDt(String orderReceiptDt) {
+		this.orderReceiptDt = orderReceiptDt;
+	}
 	public int getMtRate() {
 		return mtRate;
 	}
 	public void setMtRate(int mtRate) {
 		this.mtRate = mtRate;
 	}
-	public String getFreeMtMonth() {
-		return freeMtMonth;
+	public String getFreeMtStartDt() {
+		return freeMtStartDt;
 	}
-	public void setFreeMtMonth(String freeMtMonth) {
-		this.freeMtMonth = freeMtMonth;
+	public void setFreeMtStartDt(String freeMtStartDt) {
+		this.freeMtStartDt = freeMtStartDt;
+	}
+	public String getFreeMtEndDt() {
+		return freeMtEndDt;
+	}
+	public void setFreeMtEndDt(String freeMtEndDt) {
+		this.freeMtEndDt = freeMtEndDt;
 	}
 	public String getPmNmCd() {
 		return pmNmCd;
@@ -66,4 +81,14 @@ public class ProjectOrderProductVO extends ProjectOrderVO implements Serializabl
 	public void setPmNmCd(String pmNmCd) {
 		this.pmNmCd = pmNmCd;
 	}
+	public String getIsNew() {
+		return isNew;
+	}
+	public void setIsNew(String isNew) {
+		this.isNew = isNew;
+	}
+	public void setPjOrderKey(String pjOrderKey) {
+		this.pjOrderKey = pjOrderKey;
+	}
+	
 }

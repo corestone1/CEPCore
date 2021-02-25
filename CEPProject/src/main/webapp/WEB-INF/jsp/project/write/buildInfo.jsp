@@ -138,11 +138,16 @@
 	<script>
 		$(document).ready(function() {
 			$("input:radio[name='inbClass']:radio[value='${resultList[0].inbClass}']").prop('checked', true);	
+			
+			if($('input[id=selectKey]').val() != "" || $('input[id=selectKey]').val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			}
 		});
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/searchListPopup.do','product_list','width=1000px,height=400,left=600');
+			window.open('/mngCommon/product/popup/searchListPopup.do?parentNm='+obj.id+'&parentId='+obj.nextElementSibling.id+'','product_list','width=1000px,height=400,left=600');
 		}
 		
 		function fn_chkVali() {
@@ -190,8 +195,30 @@
 				},
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
-			    		alert('저장되었습니다.');
-			    		countSave++;
+			    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+				    		alert("프로젝트 installbase 정보가 등록되었습니다.");
+				    		$("#selectKey").val(response.inbSeq);
+				    		countSave++;
+			    		} else {
+			    			alert("프로젝트 installbase 정보가 수정되었습니다.");
+			    		}
+			    		
+			    		var inbSeq = $("#selectKey").val();
+			    		var url='/project/write/buildInfo.do';
+		    			var dialogId = 'program_layer';
+		    			var varParam = {
+							"pjKey":$("#pjKey").val(),
+							"inbSeq":inbSeq
+		    			}
+		    			var button = new Array;
+		    			button = [];
+		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    	} else {
+			    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+			    			alert("프로젝트 installbase 정보 등록이 실패하였습니다.");
+			    		} else {
+			    			alert("프로젝트 installbase 정보 수정이 실패하였습니다.");
+			    		}
 			    	}
 			    },
 				error: function(request, status, error) {
@@ -202,7 +229,7 @@
 			});  
 		}
 	
-		function fn_next(link) {
+		/* function fn_next(link) {
 			if(countSave > 0) {
 				var url = '/project/write/'+link+'.do';
 				var dialogId = 'program_layer';
@@ -214,7 +241,7 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
 			}
 			else {
-				if($('#resultList').val() != "" || $('#resultList').val().length != 0) {
+				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
@@ -238,7 +265,7 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
+		} */
 	</script>
 </head>
 <body>
@@ -259,7 +286,7 @@
 				<form id="infoForm" name="infoForm" method="post">
 					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
 					<input type="hidden" id="resultList" value="<c:out value="${resultList}"/>" />
-					<input type="hidden" name="statusCd" value="PJST4000" />
+					<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${resultList[0].inbSeq}"/>" />
 					<table>
 						<tr>
 							<td class="tdTitle">설치 장소</td>
@@ -335,15 +362,15 @@
 				</form>
 			</div>
 			<div class="btnWrap floatR">
-				<div class="floatL btnPrev">
+				<%-- <div class="floatL btnPrev">
 					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-				</div>
-				<div class="floatL btnSave">
+				</div> --%>
+				<div class="btnSave" style="width: 100%;">
 					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>
-				<div class="floatR">
+				<%-- <div class="floatR">
 					<button type="button" onclick="javascript:fn_next('finishInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
-				</div>
+				</div> --%>
 				<div class="floatN floatC"></div>
 			</div>
 		</div>

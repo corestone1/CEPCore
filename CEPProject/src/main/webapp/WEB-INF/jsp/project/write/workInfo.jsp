@@ -124,6 +124,11 @@
 	<script>
 		$(document).ready(function() {
 			$("input:radio[name='pjWorkClassCd']:radio[value='${resultList[0].pjWorkClassCd}']").prop('checked', true);	
+		
+			if($('input[id=selectKey]').val() != "" || $('input[id=selectKey]').val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			}
 		});
 		
 		function fn_chkVali() {
@@ -183,8 +188,29 @@
 					},
 				    success:function(response){	
 				    	if(response!= null && response.successYN == 'Y') {
-				    		alert('저장되었습니다.');
-				    		countSave++;
+				    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+					    		alert("프로젝트 수행일지 정보가 등록되었습니다.");
+					    		$("#selectKey").val(response.workSeq);
+				    		} else {
+				    			alert("프로젝트 수행일지 정보가 수정되었습니다.");
+				    		}
+				    		
+				    		var workSeq = $("#selectKey").val();
+				    		var url='/project/write/workInfo.do';
+			    			var dialogId = 'program_layer';
+			    			var varParam = {
+								"pjKey":$("#pjKey").val(),
+								"pjWorkSeq":workSeq
+			    			}
+			    			var button = new Array;
+			    			button = [];
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+				    	} else {
+				    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+				    			alert("프로젝트 수행일지 정보 등록이 실패하였습니다.");
+				    		} else {
+				    			alert("프로젝트 수행일지 정보 수정이 실패하였습니다.");
+				    		}
 				    	}
 				    },
 					error: function(request, status, error) {
@@ -196,7 +222,7 @@
 			}
 		}
 	
-		function fn_next(link) {
+		/* function fn_next(link) {
 			if(countSave > 0) {
 				var url = '/project/write/'+link+'.do';
 				var dialogId = 'program_layer';
@@ -232,7 +258,7 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		}
+		} */
 	</script>
 </head>
 <body>
@@ -252,7 +278,7 @@
 				<form id="infoForm" name="infoForm" method="post">
 					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
 					<input type="hidden" id="resultList" value="<c:out value="${resultList}"/>" />
-					<input type="hidden" name="statusCd" value="PJST4000" />
+					<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${resultList[0].pjWorkSeq}"/>" />
 					<table>
 						<tr>
 							<td class="tdTitle">구분</td>
@@ -306,15 +332,15 @@
 				</form>
 			</div>
 			<div class="btnWrap floatR">
-				<div class="floatL btnPrev">
+				<%-- <div class="floatL btnPrev">
 					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-				</div>
-				<div class="floatL btnSave">
+				</div> --%>
+				<div class="btnSave" style="width: 100%;">
 					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>
-				<div class="floatR">
+				<%-- <div class="floatR">
 					<button type="button" onclick="javascript:fn_next('finishInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
-				</div>
+				</div> --%>
 				<div class="floatN floatC"></div>
 			</div>
 		</div>

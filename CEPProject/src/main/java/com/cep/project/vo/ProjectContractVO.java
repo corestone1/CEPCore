@@ -1,6 +1,7 @@
 package com.cep.project.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
@@ -10,16 +11,11 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	
 	private String ctKey;
 	private int ctAmount;
+	private String ctDt;
 	private String ctPayTerms;
 	private String taxYn;
 	private int collectTurn;
-	private String regDt;
-	private String regTm;
-	private String regEmpKey;
-	private String modDt;
-	private String modTm;
-	private String modEmpKey;
-	private String deleteYn;
+	private List<ProjectContractVO> projectContractVOList;
 	
 	public String getCtKey() {
 		return ctKey;
@@ -32,6 +28,12 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	}
 	public void setCtAmount(int ctAmount) {
 		this.ctAmount = ctAmount;
+	}
+	public String getCtDt() {
+		return ctDt;
+	}
+	public void setCtDt(String ctDt) {
+		this.ctDt = ctDt;
 	}
 	public String getCtPayTerms() {
 		return ctPayTerms;
@@ -51,46 +53,11 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	public void setCollectTurn(int collectTurn) {
 		this.collectTurn = collectTurn;
 	}
-	public String getRegDt() {
-		return regDt;
+	public List<ProjectContractVO> getProjectContractVOList() {
+		return projectContractVOList;
 	}
-	public void setRegDt(String regDt) {
-		this.regDt = regDt;
+	public void setProjectContractVOList(List<ProjectContractVO> projectContractVOList) {
+		this.projectContractVOList = projectContractVOList;
 	}
-	public String getRegTm() {
-		return regTm;
-	}
-	public void setRegTm(String regTm) {
-		this.regTm = regTm;
-	}
-	public String getRegEmpKey() {
-		return regEmpKey;
-	}
-	public void setRegEmpKey(String regEmpKey) {
-		this.regEmpKey = regEmpKey;
-	}
-	public String getModDt() {
-		return modDt;
-	}
-	public void setModDt(String modDt) {
-		this.modDt = modDt;
-	}
-	public String getModTm() {
-		return modTm;
-	}
-	public void setModTm(String modTm) {
-		this.modTm = modTm;
-	}
-	public String getModEmpKey() {
-		return modEmpKey;
-	}
-	public void setModEmpKey(String modEmpKey) {
-		this.modEmpKey = modEmpKey;
-	}
-	public String getDeleteYn() {
-		return deleteYn;
-	}
-	public void setDeleteYn(String deleteYn) {
-		this.deleteYn = deleteYn;
-	}
+	
 }

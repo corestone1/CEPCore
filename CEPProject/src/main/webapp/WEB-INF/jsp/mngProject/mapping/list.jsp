@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>발주-계산서 매핑</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -158,6 +158,7 @@
 		}
 		input[type="text"] {
 		    height: 36px;
+		    width: 150px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -168,37 +169,39 @@
 			color: #535353;
 		}
 		input[class="calendar"] {
-			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
-		}
-		input[class="search"] {
-			width: 150px;
 		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			$('.middle table tbody tr td').attr('onclick',"fn_addView('mappingBill')");
+			/* $('.middle table tbody tr td').attr('onclick',"fn_addView('mappingBill', )"); */
 		});
-		function fn_addView(link){
+		
+		function fn_addView(link, key){
 			/* if(link == "forecastList") {
 				location.href="<c:url value='/forecastList.do'/>";
 			} else { */
 				var url = '/mngProject/mapping/'+link+'.do';
 				var dialogId = 'program_layer';
 				var varParam = {
-		
+					"pjOrderKey":key
 				}
 				var button = new Array;
 				button = [];
 				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
 			/* } */
 		}
+		
+		function fn_search() {
+			document.listForm.action = "<c:url value='/mngProject/mapping/list.do'/>";
+           	document.listForm.submit(); 
+		}
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -206,16 +209,15 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">발주 - 계산서 매핑</label></div>
-						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">담당자</option>
-						</select>
-						<input type="text" class="calendar" placeholder="from"/><label> ~ </label><input type="text" class="calendar" placeholder="to"/>
-						<input type="text" class="search" placeholder="사업자번호" />
-						<input type="text" class="search" placeholder="거래처상호" />
-						<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<form:input path="orderDtFrom" type="text" class="calendar" placeholder="from" />
+						<label> ~ </label>
+						<form:input path="orderDtTo" type="text" class="calendar" placeholder="to"/>
+						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" />
+						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호"/>
+						<form:input path="orderAcNm" type="text" class="search" placeholder="거래처상호" title="거래처상호"/>
+						<span onclick="fn_search();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -230,164 +232,44 @@
 								<th scope="row">제품</th>
 								<th scope="row">거래처 상호</th>
 								<th scope="row">사업자번호</th>
-								<th scope="row">합계</th>
+								<th scope="row">제품 합계</th>
 								<th scope="row">담당자</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>9</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>10</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>11</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>12</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
-							<tr>
-								<td>13</td>
-								<td>2018-12-12</td>
-								<td>N</td>
-								<td><span title="기간계 응답속도 개선을 위한 인프라 교체">기간계 응답속도 개선을 위한 인프라 교체</span></td>
-								<td><span title="VMAX250F">VMAX250F</span></td>
-								<td><span title="DB Inc.">DB Inc.</span></td>
-								<td><span>555-66-88888</span></td>
-								<td><span title="100,000,000">100,000,000</span></td>
-								<td><span>홍길동</span></td>
-							</tr>
+							<c:forEach var="result" items="${orderList}" varStatus="status">
+								<tr onclick="fn_addView('mappingBill', '${result.pjOrderKey}')">
+									<td>${status.count }</td>
+									<td>${displayUtil.displayDate(result.orderDt) }</td>
+									<td>
+										<c:choose>
+											<c:when test="${result.billMappingNum eq result.buyTurn }">
+												<label>Y</label>
+											</c:when>
+											<c:otherwise>
+												<label>N<c:out value="(${result.billMappingNum } / ${result.buyTurn })" /></label>
+											</c:otherwise>
+										</c:choose>
+									</td>
+									<td><span title="${result.pjNm }">${result.pjNm }</span></td>
+									<td>
+										<span>
+											<c:forEach var="pResult" items="${result.productList }" varStatus="pStatus">
+												${pResult.pmNmCd }<c:if test="${pStatus.last eq false}">,</c:if>
+											</c:forEach>
+										</span>
+									</td>
+									<td><span title="${result.orderAcNm }">${result.orderAcNm }</span></td>
+									<td><span>${result.orderAcKey }</span></td>
+									<td><span title="${displayUtil.commaStr(result.orderAmount) }">${displayUtil.commaStr(result.orderAmount) }</span></td>
+									<td><span>${result.orderEmpNm }</span></td>
+								</tr>
+							</c:forEach>
 						</tbody>
 					</table>
 				</div>
-				<div class="bottom">
-					<div class="floatR">
-						<button type="button" value="완료"><img class="cursorP" src="<c:url value='/images/btn_complete.png'/>" /></button>
-					</div>
-				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

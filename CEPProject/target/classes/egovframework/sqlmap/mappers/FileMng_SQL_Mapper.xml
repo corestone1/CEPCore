@@ -11,6 +11,23 @@
 		FROM FM_FILE_MNG_TB
 		WHERE
 			FILE_KEY = #{fileKey}
+			AND DELETE_YN='N'
+	</select>
+	
+	<select id="selectFileList" parameterType="fileVO" resultType="egovMap">
+		SELECT 
+			FF.FILE_KEY
+			, FB.FILE_CT_KEY
+			, FF.FILE_ORG_NM
+			, FF.SERVER_FILE_PATH
+			, FF.SERVER_FILE_NM
+			, FF.DOC_TYPE_KEY
+		FROM FM_FILE_BIZ_INFO_TB  FB
+		JOIN FM_FILE_MNG_TB FF
+		ON FF.FILE_KEY = FB.FILE_KEY
+		WHERE FB.FILE_CT_KEY = #{fileCtKey}
+		AND FB.FILE_WORK_CLASS = (SELECT DOC_TYPE_KEY FROM FM_DOCTYPE_MNG_TB WHERE DOC_TYPE_NM=#{fileWorkClass})
+		AND FB.DELETE_YN='N'
 	</select>
 	
 	<select id="getMaxFileKey" resultType="java.lang.Integer">
@@ -18,20 +35,58 @@
 				FROM FM_FILE_MNG_TB;
 	</select>
 	
-	<insert id="insertFile" parameterType="fileVO">
+	<insert id="insertFile" parameterType="hashMap">
 		INSERT INTO FM_FILE_MNG_TB (
 			SERVER_FILE_PATH
-			, SERVER_FILE_NAME
+			, SERVER_FILE_NM
 			, FILE_ORG_NM
-			<!-- , REG_DT
-			, REG_TM
-			, REG_EMP_KEY -->
 			, DOC_TYPE_KEY
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
 		) VALUES (
 			#{serverFilePath}
 			, #{serverFileNm}
 			, #{fileOrgNm}
-			, #{docTypeKey}
+			, (SELECT DOC_TYPE_KEY FROM FM_DOCTYPE_MNG_TB WHERE DOC_TYPE_NM=#{docTypeNm})
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+		<selectKey keyProperty="fileKey" resultType="String" order="AFTER">
+			SELECT LAST_INSERT_ID()
+    	</selectKey>
+	</insert>
+	
+	<insert id="insertFileBizInfo" parameterType="hashMap">
+		INSERT INTO FM_FILE_BIZ_INFO_TB (
+			FILE_KEY
+			, FILE_CT_KEY
+			, FILE_WORK_CLASS
+			, DELETE_YN
+		) VALUES (
+			#{fileKey}
+			, #{fileCtKey}
+			, (SELECT DOC_TYPE_KEY FROM FM_DOCTYPE_MNG_TB WHERE DOC_TYPE_NM=#{docTypeNm})
+			, 'N'
 		)
 	</insert>
+	
+	<delete id="deleteFile" parameterType="fileVO">
+		UPDATE FM_FILE_MNG_TB
+		SET 
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE FILE_KEY=#{fileKey}
+	</delete>
+	
+	<delete id="deleteFileBizInfo" parameterType="fileVO">
+		UPDATE FM_FILE_BIZ_INFO_TB
+		SET DELETE_YN='Y'
+		WHERE FILE_KEY=#{fileKey}
+	</delete>
 </mapper>

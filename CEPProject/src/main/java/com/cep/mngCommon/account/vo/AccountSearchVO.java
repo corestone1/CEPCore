@@ -25,9 +25,24 @@ public class AccountSearchVO implements Serializable {
 
 	private static final long serialVersionUID = -2709806820615818683L;
 	
+	private String acKey;
 	private String acNm;
 	private String acSalesYN;
 	private String acBuyYN;
+	
+	
+	/**
+	 * @return the acKey
+	 */
+	public String getAcKey() {
+		return acKey;
+	}
+	/**
+	 * @param acKey the acKey to set
+	 */
+	public void setAcKey(String acKey) {
+		this.acKey = acKey;
+	}
 	/**
 	 * @return the acNm
 	 */

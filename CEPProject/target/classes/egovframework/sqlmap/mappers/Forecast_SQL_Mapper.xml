@@ -116,7 +116,7 @@
 
 	</insert>
 	
-	<select id="selectForecast" parameterType="com.cep.forecast.vo.ForecastVO" resultType="com.cep.forecast.vo.ForecastVO">				
+	<select id="selectForecast" parameterType="com.cep.forecast.vo.ForecastVO" resultMap="forecastVO">				
 		
 		SELECT SM.SP_KEY              AS SP_KEY 
 		     , SM.AC_KEY              AS AC_KEY

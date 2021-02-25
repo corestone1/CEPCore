@@ -20,5 +20,16 @@
 		<typeAlias alias="projectWorkVO" type="com.cep.project.vo.ProjectWorkVO" />
 		<typeAlias alias="purchaseVO" type="com.cmm.vo.PurchaseVO" />
 		<typeAlias alias="paymentVO" type="com.cmm.vo.PaymentVO" />
+		<typeAlias alias="orderBillVO" type="com.cep.mngProject.mapping.vo.OrderBillVO" />
+		<typeAlias alias="purchaseBillVO" type="com.cep.mngProject.mapping.vo.PurchaseBillVO" />
+		<typeAlias alias="mtOrderBillVO" type="com.cep.mngMaint.mapping.vo.MtOrderBillVO" />
+    	<typeAlias alias="projectSalesVO" type="com.cep.project.vo.ProjectSalesVO" />
+    	<typeAlias alias="projectGuarantyBondVO" type="com.cep.project.vo.ProjectGuarantyBondVO" />
+    	<typeAlias alias="projectPurchaseVO" type="com.cep.project.vo.ProjectPurchaseVO" />
+    	<typeAlias alias="projectPaymentVO" type="com.cep.project.vo.ProjectPaymentVO" />
+    	<typeAlias alias="projectOrderVO" type="com.cep.project.vo.ProjectOrderVO" />
+    	<typeAlias alias="projectOrderProductVO" type="com.cep.project.vo.ProjectOrderProductVO" />
+    	<typeAlias alias="projectBiddingVO" type="com.cep.project.vo.ProjectBiddingVO" />
+    	<typeAlias alias="projectBiddingFileVO" type="com.cep.project.vo.ProjectBiddingFileVO" />
     </typeAliases>
 </configuration>

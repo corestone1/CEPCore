@@ -16,7 +16,11 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	private String gbStartDt;
 	private String gbEndDt;
 	private String gbIssueYn;
+	private String gbPublishDt;
 	private int gbAmount;
+	private String ctGbKey;
+	private String dfGbKey;
+	private String ppGbKey;
 	private String ctGuarantyYN;
 	private String dfGuarantyYN;
 	private String ppGuarantyYN;
@@ -29,6 +33,9 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	private String ctGbIssueYn;
 	private String dfGbIssueYn;
 	private String ppGbIssueYn;
+	private String ctGbPublishDt;
+	private String dfGbPublishDt;
+	private String ppGbPublishDt;
 	private int ctGuarantyAmount;
 	private int dfGuarantyAmount;
 	private int ppGuarantyAmount;
@@ -75,11 +82,35 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	public void setGbIssueYn(String gbIssueYn) {
 		this.gbIssueYn = gbIssueYn;
 	}
+	public String getGbPublishDt() {
+		return gbPublishDt;
+	}
+	public void setGbPublishDt(String gbPublishDt) {
+		this.gbPublishDt = gbPublishDt;
+	}
 	public int getGbAmount() {
 		return gbAmount;
 	}
 	public void setGbAmount(int gbAmount) {
 		this.gbAmount = gbAmount;
+	}
+	public String getCtGbKey() {
+		return ctGbKey;
+	}
+	public void setCtGbKey(String ctGbKey) {
+		this.ctGbKey = ctGbKey;
+	}
+	public String getDfGbKey() {
+		return dfGbKey;
+	}
+	public void setDfGbKey(String dfGbKey) {
+		this.dfGbKey = dfGbKey;
+	}
+	public String getPpGbKey() {
+		return ppGbKey;
+	}
+	public void setPpGbKey(String ppGbKey) {
+		this.ppGbKey = ppGbKey;
 	}
 	public String getCtGuarantyYN() {
 		return ctGuarantyYN;
@@ -152,6 +183,24 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	}
 	public void setPpGbIssueYn(String ppGbIssueYn) {
 		this.ppGbIssueYn = ppGbIssueYn;
+	}
+	public String getCtGbPublishDt() {
+		return ctGbPublishDt;
+	}
+	public void setCtGbPublishDt(String ctGbPublishDt) {
+		this.ctGbPublishDt = ctGbPublishDt;
+	}
+	public String getDfGbPublishDt() {
+		return dfGbPublishDt;
+	}
+	public void setDfGbPublishDt(String dfGbPublishDt) {
+		this.dfGbPublishDt = dfGbPublishDt;
+	}
+	public String getPpGbPublishDt() {
+		return ppGbPublishDt;
+	}
+	public void setPpGbPublishDt(String ppGbPublishDt) {
+		this.ppGbPublishDt = ppGbPublishDt;
 	}
 	public int getCtGuarantyAmount() {
 		return ctGuarantyAmount;

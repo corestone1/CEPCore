@@ -19,6 +19,7 @@ public class OrderProductVO extends OrderVO implements Serializable {
 	private String freeMtStartDt;
 	private String freeMtEndDt;
 	private String pmNmCd;
+	private String isNew;
 	
 	public String getOrderKey() {
 		return orderKey;
@@ -80,4 +81,11 @@ public class OrderProductVO extends OrderVO implements Serializable {
 	public void setPmNmCd(String pmNmCd) {
 		this.pmNmCd = pmNmCd;
 	}
+	public String getIsNew() {
+		return isNew;
+	}
+	public void setIsNew(String isNew) {
+		this.isNew = isNew;
+	}
+	
 }

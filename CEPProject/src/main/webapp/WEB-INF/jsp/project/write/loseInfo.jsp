@@ -50,7 +50,7 @@
 		.popContainer .contents > div:first-child {
 			min-height: 529px;
 		}
-		.popContainer .contents > div > table {
+		.popContainer .contents > div > form > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
 		}
@@ -122,15 +122,48 @@
 		}
 	</style>
 	<script>		
-		function fn_finish(){
-			var url = '/project/write/finishInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-	
-			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		function fn_save(){
+			var object = {};
+			var formData = $("#infoForm").serializeArray();
+			
+			for (var i = 0; i<formData.length; i++){
+               	object[formData[i]['name']] = formData[i]['value'];
+			 }
+			
+			var sendData = JSON.stringify(object);
+			$.ajax({
+				url:"/project/update/basicInfo.do",
+			    dataType: 'json', 
+			    type:"POST",  
+			    data: sendData,
+			 	contentType: "application/json; charset=UTF-8", 
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("AJAX", true);
+					//xhr.setRequestHeader(header, token);
+					
+				},
+			    success:function(response){	
+			    	if(response!= null && response.successYN == 'Y') {
+			    		alert('저장되었습니다.');
+			    		
+			    		var url = '/project/write/loseInfo.do';
+						var dialogId = 'program_layer';
+						var varParam = {
+							"pjKey" : $('#pjKey').val()
+						}
+						var button = new Array;
+						button = [];
+						showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    	} else {
+			    		alert('프로젝트 실주 정보 등록이 실패했습니다.');
+			    	}
+			    },
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					}
+				} 
+			});    
 		}
 	</script>
 </head>
@@ -148,31 +181,33 @@
 		</div>
 		<div class="contents">
 			<div>
-				<table>
-					<tr>
-						<td class="tdTitle">프로젝트명</td>
-						<td class="tdContents">
-							<input type="text" class="pname"  value="경신홀딩스 백업시스템 구축" readonly/>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle">작성자</td>
-						<td class="tdContents">
-							<select>
-								<option value="">홍길동</option>
-								<option value="">김철수</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td class="tdTitle veralignT">사유분석</td>
-						<td class="tdContents"><textarea></textarea></td>
-					</tr>
-				</table>
+				<form id="infoForm" name='infoForm'>
+					<input type="hidden" name="pjKey" id="pjKey" value="<c:out value="${pjKey}"/>"/>
+					<input type="hidden" name="pjSjYn" id="pjSjYn" value="N" />
+					<input type="hidden" name="pjStatusCd" id="pjStatusCd" value="PJST6000" />
+					<table>
+						<tr>
+							<td class="tdTitle">프로젝트명</td>
+							<td class="tdContents">
+								<input type="text" class="pname"  value="<c:out value="${resultList[0].pjNm}"/>" readonly/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">작성자</td>
+							<td class="tdContents">
+								<input type="text" class="pname"  value="<c:out value="${resultList[0].empNm}"/>" readonly/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle veralignT">사유분석</td>
+							<td class="tdContents"><textarea name="pjLoseCause"><c:out value="${resultList[0].pjLoseCause}"/></textarea></td>
+						</tr>
+					</table>
+				</form>
 			</div>
 			<div class="btnWrap">
 				<div class="floatR">
-					<button onclick="fn_finish();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					<button onclick="fn_save();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>
 				
 			</div>

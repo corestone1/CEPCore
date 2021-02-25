@@ -31,7 +31,9 @@ public class PurchaseVO implements Serializable {
 	private int buyAmount;
 	private int donePaymentAmount;
 	private int yetPaymentAmount;
-	private String buyTurn;
+	private int buyTurn;
+	private String regEmpKey;
+	private String modEmpKey;
 	private String deleteYn;
 	
 	public String getBuyKey() {
@@ -70,11 +72,23 @@ public class PurchaseVO implements Serializable {
 	public void setYetPaymentAmount(int yetPaymentAmount) {
 		this.yetPaymentAmount = yetPaymentAmount;
 	}
-	public String getBuyTurn() {
+	public int getBuyTurn() {
 		return buyTurn;
 	}
-	public void setBuyTurn(String buyTurn) {
+	public void setBuyTurn(int buyTurn) {
 		this.buyTurn = buyTurn;
+	}
+	public String getRegEmpKey() {
+		return regEmpKey;
+	}
+	public void setRegEmpKey(String regEmpKey) {
+		this.regEmpKey = regEmpKey;
+	}
+	public String getModEmpKey() {
+		return modEmpKey;
+	}
+	public void setModEmpKey(String modEmpKey) {
+		this.modEmpKey = modEmpKey;
 	}
 	public String getDeleteYn() {
 		return deleteYn;

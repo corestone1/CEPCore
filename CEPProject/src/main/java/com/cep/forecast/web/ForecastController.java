@@ -132,11 +132,17 @@ public class ForecastController {
 		logger.debug("searchVO.getSearchFlag()  :: {}", searchVO.getSearchFlag());
 		logger.debug("searchVO.getSearchValue() :: {}", searchVO.getSearchValue());
 		
+		
+		
 		List<ForecastVO> lltForecast = service.selectForecastList(searchVO);
 		
 		model.put("forecastList", lltForecast);
-		
-		
+//		model.put("spKeyDomId", searchVO.getSpKeyDomId());
+//		model.put("spBusiNmDomId", searchVO.getSpBusiNmDomId());
+		model.put("returnType", searchVO.getReturnType());
+		model.put("returnKey", searchVO.getReturnKey());
+		model.put("returnNm", searchVO.getReturnNm());
+		model.put("returnFunctionNm", searchVO.getReturnFunctionNm());
 		return "forecast/popup/searchList"; 
 	}
 	

@@ -13,19 +13,22 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	
 	private String pjKey;
 	private String acKey;
+	private String acNm;
 	private String acDirectorKey;
 	private String pjNm;
 	private String pjStartDt;
 	private String pjInspectDt;
 	private String pjEndDt;
+	private String ctDt;
 	private String pjStatusCd;
 	private String pjSaleEmpKey;
 	private String pjSupportEmpKey;
 	private String remark;
 	private String finishRemark;
 	private String deleteYn;
-	private String regEmpKey;
 	private String spKey;
+	private String pjLoseCause;
+	private String pjSjYn;
 	
 	public String getPjKey() {
 		return pjKey;
@@ -38,6 +41,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setAcKey(String acKey) {
 		this.acKey = acKey;
+	}
+	public String getAcNm() {
+		return acNm;
+	}
+	public void setAcNm(String acNm) {
+		this.acNm = acNm;
 	}
 	public String getAcDirectorKey() {
 		return acDirectorKey;
@@ -68,6 +77,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setPjEndDt(String pjEndDt) {
 		this.pjEndDt = pjEndDt;
+	}
+	public String getCtDt() {
+		return CepDateUtil.convertDate(ctDt, null, null, "D");
+	}
+	public void setCtDt(String ctDt) {
+		this.ctDt = ctDt;
 	}
 	public String getPjStatusCd() {
 		return pjStatusCd;
@@ -105,17 +120,31 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setDeleteYn(String deleteYn) {
 		this.deleteYn = deleteYn;
 	}
-	public String getRegEmpKey() {
-		return regEmpKey;
-	}
-	public void setRegEmpKey(String regEmpKey) {
-		this.regEmpKey = regEmpKey;
-	}
 	public String getSpKey() {
 		return spKey;
 	}
 	public void setSpKey(String spKey) {
 		this.spKey = spKey;
+	}
+	public String getPjLoseCause() {
+		return pjLoseCause;
+	}
+	public void setPjLoseCause(String pjLoseCause) {
+		this.pjLoseCause = pjLoseCause;
+	}
+	public String getPjSjYn() {
+		return pjSjYn;
+	}
+	public void setPjSjYn(String pjSjYn) {
+		this.pjSjYn = pjSjYn;
+	}
+	@Override
+	public String toString() {
+		return "ProjectVO [pjKey=" + pjKey + ", acKey=" + acKey + ", acDirectorKey=" + acDirectorKey + ", pjNm=" + pjNm
+				+ ", pjStartDt=" + pjStartDt + ", pjInspectDt=" + pjInspectDt + ", pjEndDt=" + pjEndDt + ", ctDt="
+				+ ctDt + ", pjStatusCd=" + pjStatusCd + ", pjSaleEmpKey=" + pjSaleEmpKey + ", pjSupportEmpKey="
+				+ pjSupportEmpKey + ", remark=" + remark + ", finishRemark=" + finishRemark + ", deleteYn=" + deleteYn
+				+ ", spKey=" + spKey + ", pjLoseCause=" + pjLoseCause + ", pjSjYn=" + pjSjYn + "]";
 	}
 	
 }

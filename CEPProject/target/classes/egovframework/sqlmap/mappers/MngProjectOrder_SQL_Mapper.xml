@@ -1,4 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cep.mngProject.order.service.impl.MngProjectOrderMapper">
+
+
+	<select id="selectOrderList" parameterType="com.cep.mngProject.order.vo.MngOrderSearchVO" resultType="egovMap">
+	
+		SELECT DAT.ORDER_KEY               AS ORDER_KEY
+		     , DAT.AC_NM                   AS AC_NM
+		     , DAT.PJ_NM                   AS PJ_NM
+		     , DAT.ORDER_AC_NM             AS ORDER_AC_NM
+		     , DAT.ORDER_DT                AS ORDER_DT
+		     , DAT.ORDER_AMOUNT            AS ORDER_AMOUNT
+		     , DAT.ORDER_COUNT             AS ORDER_COUNT
+		     , DAT.ORDER_EMP_NM            AS ORDER_EMP_NM
+		     , DAT.SALES_EMP_NM            AS SALES_EMP_NM
+		     , DAT.ORDER_CT_CLASS          AS ORDER_CT_CLASS
+		     , DAT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
+		     , DAT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
+		     , DAT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
+		     , DAT.TAX_YN                  AS TAX_YN
+		     , DAT.REG_DT                  AS REG_DT
+		     , DAT.REG_TM                  AS REG_TM
+		     , DAT.REG_EMP_KEY             AS REG_EMP_KEY
+		     , DAT.MOD_DT                  AS MOD_DT
+		     , DAT.MOD_TM                  AS MOD_TM
+		     , DAT.MOD_EMP_KEY             AS MOD_EMP_KEY
+		     , DAT.AC_KEY                  AS AC_KEY
+		FROM 
+			(
+				<if test="orderCtClass == null or orderCtClass == '' or orderCtClass == 'P'.toString()">
+					SELECT COT.ORDER_KEY                AS ORDER_KEY                  /* 발주번호 */
+					     , CAT1.AC_NM                   AS AC_NM                      /* 고객사 명 */
+						  , PMT.PJ_NM                   AS PJ_NM                      /* 프로젝트명 */
+						  , CAT2.AC_NM                  AS ORDER_AC_NM                /* 매입처명 */
+						  , COT.ORDER_DT                AS ORDER_DT                   /* 발주일 */
+						  , COT.ORDER_AMOUNT            AS ORDER_AMOUNT               /* 발주금액합계 */
+						  , (SELECT SUM(COPT.ORDER_QUANTITY) 
+						     FROM   CMM_ORDER_PRODUCT_TB COPT
+						     WHERE  COPT.ORDER_KEY = COT.ORDER_KEY)
+						                                AS ORDER_COUNT                /* 발주수량 */
+						  , CET1.EMP_NM                 AS ORDER_EMP_NM               /* 발주자명 */
+						  , CET2.EMP_NM                 AS SALES_EMP_NM               /* 담당영업명 */
+						  , COT.ORDER_CT_CLASS          AS ORDER_CT_CLASS
+						  , COT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
+						  , COT.ORDER_AC_KEY            AS ORDER_AC_KEY
+						  , COT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
+						  , COT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
+						  , COT.TAX_YN                  AS TAX_YN
+						  , COT.REG_DT                  AS REG_DT
+						  , COT.REG_TM                  AS REG_TM
+						  , COT.REG_EMP_KEY             AS REG_EMP_KEY
+						  , COT.MOD_DT                  AS MOD_DT
+						  , COT.MOD_TM                  AS MOD_TM
+						  , COT.MOD_EMP_KEY             AS MOD_EMP_KEY
+						  , PMT.AC_KEY                  AS AC_KEY
+					FROM   CMM_ORDER_TB    COT
+					  JOIN PJ_MAIN_TB      PMT  ON COT.ORDER_CT_FK_KEY  = PMT.PJ_KEY   /* 프로젝트 정보 */
+					  JOIN CMM_ACCOUNT_TB  CAT1 ON PMT.AC_KEY           = CAT1.AC_KEY  /* 고객사 정보 */
+					  JOIN CMM_ACCOUNT_TB  CAT2 ON COT.ORDER_AC_KEY     = CAT2.AC_KEY  /* 발주처 정보 */ 
+					  JOIN CMM_EMPLOYEE_TB CET1 ON COT.REG_EMP_KEY      = CET1.EMP_KEY /* 발주자 정보 */
+					  JOIN CMM_EMPLOYEE_TB CET2 ON PMT.PJ_SALE_EMP_KEY  = CET2.EMP_KEY /* 담당영업정보 */
+					WHERE  COT.ORDER_CT_CLASS = 'P'
+					  AND  COT.DELETE_YN      = 'N'
+					<if test="orderKey != null and orderKey != ''">
+					  	AND  COT.ORDER_KEY      = #{orderKeySearch} /* 발주번호 조건검색  */
+					</if>
+					<if test="pjNm != null and pjNm != ''">
+					  	AND  PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
+					</if>
+					<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
+					  	AND  COT.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
+					</if>
+					<if test="orderEmpNm != null and orderEmpNm != ''">
+					  	AND  CET1.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%'))  /* 발주자 조건검색 */
+					</if>
+				</if>
+			<if test="orderCtClass == null or orderCtClass == ''">
+		      	UNION
+		    </if>
+		    <if test="orderCtClass == null or ''.equals(orderCtClass) or orderCtClass == 'M'.toString()">
+				SELECT COT.ORDER_KEY                AS ORDER_KEY                  /* 발주번호 */
+				     , CAT1.AC_NM                   AS AC_NM                      /* 고객사 명 */
+					  , MCT.MT_NM                   AS PJ_NM                      /* 유지보수명 */
+					  , CAT2.AC_NM                  AS ORDER_AC_NM                /* 매입처명 */
+					  , COT.ORDER_DT                AS ORDER_DT                   /* 발주일 */
+					  , COT.ORDER_AMOUNT            AS ORDER_AMOUNT               /* 발주금액합계 */
+					  , (SELECT SUM(COPT.ORDER_QUANTITY) 
+					     FROM   CMM_ORDER_PRODUCT_TB COPT
+					     WHERE  COPT.ORDER_KEY = COT.ORDER_KEY)
+					                                AS ORDER_COUNT                /* 발주수량 */
+					  , CET1.EMP_NM                 AS ORDER_EMP_NM               /* 발주자명 */
+					  , CET2.EMP_NM                 AS SALES_EMP_NM               /* 담당영업명 */
+					  , COT.ORDER_CT_CLASS          AS ORDER_CT_CLASS
+					  , COT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
+					  , COT.ORDER_AC_KEY            AS ORDER_AC_KEY
+					  , COT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
+					  , COT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
+					  , COT.TAX_YN                  AS TAX_YN
+					  , COT.REG_DT                  AS REG_DT
+					  , COT.REG_TM                  AS REG_TM
+					  , COT.REG_EMP_KEY             AS REG_EMP_KEY
+					  , COT.MOD_DT                  AS MOD_DT
+					  , COT.MOD_TM                  AS MOD_TM
+					  , COT.MOD_EMP_KEY             AS MOD_EMP_KEY
+					  , MCT.MT_AC_KEY               AS AC_KEY
+				FROM   CMM_ORDER_TB    COT
+				  JOIN MT_CONTRACT_TB  MCT  ON COT.ORDER_CT_FK_KEY  = MCT.MT_INTEGRATE_KEY   /* 프로젝트 정보 */
+				  JOIN CMM_ACCOUNT_TB  CAT1 ON MCT.MT_AC_KEY        = CAT1.AC_KEY  /* 고객사 정보 */
+				  JOIN CMM_ACCOUNT_TB  CAT2 ON COT.ORDER_AC_KEY     = CAT2.AC_KEY  /* 발주처 정보 */ 
+				  JOIN CMM_EMPLOYEE_TB CET1 ON COT.REG_EMP_KEY      = CET1.EMP_KEY /* 발주자 정보 */
+				  JOIN CMM_EMPLOYEE_TB CET2 ON MCT.MT_SALE_EMP_KEY  = CET2.EMP_KEY /* 담당영업정보 */
+				WHERE  COT.ORDER_CT_CLASS = 'M'
+				  AND  COT.DELETE_YN      = 'N'
+				<if test="orderKey != null and orderKey != ''">
+				  	AND  COT.ORDER_KEY      = #{orderKeySearch} /* 발주번호 조건검색  */
+				</if>
+				<if test="pjNm != null and pjNm != ''">
+				  	AND  MCT.MT_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
+				</if>
+				<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
+				  	AND  COT.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
+				</if>
+				<if test="orderEmpNm != null and orderEmpNm != ''">
+				  	AND  CET1.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%'))  /* 발주자 조건검색 */
+				</if>
+			</if>
+			) DAT
+		ORDER BY DAT.REG_DT DESC
+	
+	</select>
+
+	<update id="deleteOrder" parameterType="com.cep.mngProject.order.vo.MngOrderSearchVO">
+		
+		UPDATE CMM_ORDER_TB
+		SET    DELETE_YN = 'Y'
+		     , MOD_EMP_KEY = #{regEmpKey}
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		WHERE  ORDER_KEY = #{orderKey}
+		
+	</update>
 </mapper>

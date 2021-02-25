@@ -130,6 +130,19 @@ public interface ComMapper {
 	
 	/**
 	* 
+	* @Method Name : insertPurchaseInfo
+	* @Cdate       : 2021. 01. 29.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입 정보 등록
+	* @param purchaseVO
+	* @return
+	* @throws Exception
+	*/
+	public void insertPurchaseInfo(PurchaseVO purchaseVO) throws Exception;
+	
+	/**
+	* 
 	* @Method Name : updatePurchaseInfo
 	* @Cdate       : 2021. 01. 29.
 	* @Author      : sylim
@@ -140,6 +153,19 @@ public interface ComMapper {
 	* @throws Exception
 	*/
 	public void updatePurchaseInfo(PurchaseVO purchaseVO) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : deletePurchaseInfo
+	* @Cdate       : 2021. 01. 29.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입 정보 삭제
+	* @param purchaseVO
+	* @return
+	* @throws Exception
+	*/
+	public void deletePurchaseInfo(PurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -197,7 +223,7 @@ public interface ComMapper {
 	/**
 	* 
 	* @Method Name : selectPrePaymentList
-	* @Cdate       : 2021. 02. 23.
+	* @Cdate       : 2021. 01. 23.
 	* @Author      : sylim
 	* @Modification: 
 	* @Method Description : 기 지급 정보 조회
@@ -207,6 +233,18 @@ public interface ComMapper {
 	*/
 	public List<?> selectPrePaymentList(String buyKey) throws Exception;
 
-	
-	
+	/**
+	* 
+	* @Method Name : deletePaymentAllInfo
+	* @Cdate       : 2021. 02. 10.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입별 지급 정보 전체 삭제
+	* @param buyKey
+	* @return
+	* @throws Exception
+	*/
+	public void deletePaymentAllInfo(PaymentVO paymentVO) throws Exception;
+
+
 }

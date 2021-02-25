@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cep.project.vo.ProjectBiddingFileVO;
+import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
+import com.cep.project.vo.ProjectContractSalesVO;
+import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectOrderProductVO;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
-import com.cmm.vo.OrderProductVO;
 import com.cmm.vo.OrderVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -58,14 +63,6 @@ public interface ProjectMapper {
 	
 	
 	/**
-	 * 프로젝트 입찰 상세정보를 조회한다.
-	 * @param projectVO - 조회할 정보가 담긴 VO
-	 * @return 프로젝트 상세 정보
-	 * @exception
-	 */
-	public Map<String, Object> selectBiddingDetail(ProjectVO projectVO);
-	
-	/**
 	 * 프로젝트 기본 정보를 등록한다.
 	 * @param projectVO - 등록할 정보가 담긴 VO
 	 * @return 
@@ -83,19 +80,107 @@ public interface ProjectMapper {
 	
 	/**
 	 * 프로젝트 기본 정보를 삭제한다.
-	 * @param projectVO - 등록할 정보가 담긴 VO
+	 * @param projectVO - 삭제할 정보가 담긴 VO
 	 * @return 
 	 * @exception
 	 */
 	public Map<String, Object> deleteProject(ProjectVO projectVO);
 	
 	/**
-	 * 프로젝트 계약 정보를 등록한다.
-	 * @param projectVO - 등록할 정보가 담긴 VO
+	 * 프로젝트 입찰 상세정보를 조회한다.
+	 * @param projectVO - 조회할 정보가 담긴 VO
+	 * @return 프로젝트 입찰 상세 정보
+	 * @exception
+	 */
+	public ProjectBiddingVO selectBiddingDetail(ProjectBiddingVO projectBiddingVO);
+	
+	/**
+	 * 프로젝트 입찰 파일 정보를 조회한다.
+	 * @param projectBiddingFileVO - 조회할 정보가 담긴 VO
+	 * @return 프로젝트 입찰 파일 정보
+	 * @exception
+	 */
+	public List<?> selectBiddingFileList(ProjectBiddingFileVO projectBiddingFileVO);
+	
+	/**
+	 * 프로젝트 입찰 정보를 등록한다.
+	 * @param projectBiddingVO - 등록할 정보가 담긴 VO
 	 * @return 
 	 * @exception
 	 */
-	public int insertContractInfo(Map<String, Object> insertParam);
+	public void insertBiddingInfo(ProjectBiddingVO projectBiddingVO);
+	
+	/**
+	 * 프로젝트 입찰 정보를 수정한다.
+	 * @param projectBiddingVO - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public void updateBiddingInfo(ProjectBiddingVO projectBiddingVO);
+	
+	/**
+	 * 프로젝트 입찰 파일 정보를 등록한다.
+	 * @param insertParam - 등록할 정보가 담긴 map
+	 * @return 
+	 * @exception
+	 */
+	public void insertBiddingFileInfo(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	 * 프로젝트 입찰 파일 정보를 수정한다.
+	 * @param insertParam - 수정할 정보가 담긴 map
+	 * @return 
+	 * @exception
+	 */
+	public void updateBiddingFileInfo(Map<String, Object> updateParam) throws Exception;
+	
+	/**
+	 * 프로젝트 계약 정보를 등록한다.
+	 * @param insertParam
+	 * @return 
+	 * @exception
+	 */
+	public int insertContractInfo(ProjectContractSalesVO projectContractSalesVO) throws Exception;
+	
+	/**
+	 * 프로젝트 매출 리스트를 조회한다.
+	 * @param pjKey
+	 * @return 
+	 * @exception
+	 */
+	public List<?> selectSalesList(String pjKey);
+	
+	/**
+	 * 프로젝트 매입 리스트를 조회한다.
+	 * @param pjKey
+	 * @return 
+	 * @exception
+	 */
+	public List<?> selectPurchaseList(String pjKey);
+	
+	/**
+	 * 프로젝트 계약 정보를 수정한다.
+	 * @param updateParam
+	 * @return 
+	 * @exception
+	 */
+	public void updateContractInfo(ProjectContractSalesVO projectContractSalesVO);
+	
+	/**
+	 * 프로젝트 매출 정보를 등록한다.
+	 * @param insertParam
+	 * @return 
+	 * @exception
+	 */
+	public void insertSalesInfo(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	 * 프로젝트 매출 정보를 수정한다.
+	 * @param updateParam
+	 * @return 
+	 * @exception
+	 */
+	public int updateSalesInfo(Map<String, Object> updateParam);
 	
 	/**
 	 * 프로젝트 계약 보증 증권 정보를 등록한다.
@@ -103,10 +188,34 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public int insertBiddingInfo(GuarantyBondVO guarantyBondVO);
+	public int insertGuarantyInfo(GuarantyBondVO guarantyBondVO);
 	
 	/**
-	 * 프로젝트 발주 정보를 등록한다.
+	 * 프로젝트 계약 보증 증권 정보를 수정한다.
+	 * @param guarantyBondVO - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int updateGuarantyInfo(GuarantyBondVO guarantyBondVO);
+	
+	/**
+	 * 프로젝트 계약 보증 증권 정보를 삭제한다.
+	 * @param guarantyBondVO - 삭제할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int deleteGuarantyInfo(GuarantyBondVO guarantyBondVO);
+	
+	/**
+	 * 프로젝트 발주 리스트 정보를 조회한다.
+	 * @param OrderVO - 조회할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public List<?> selectOrderInfo(OrderVO orderVO);
+	
+	/**
+	 * 프로젝트 발주 메인 정보를 등록한다.
 	 * @param OrderVO - 등록할 정보가 담긴 VO
 	 * @return 
 	 * @exception
@@ -114,12 +223,36 @@ public interface ProjectMapper {
 	public void insertOrderInfo(OrderVO orderVO);
 	
 	/**
-	 * 프로젝트 발주 품목 리스트를 등록한다.
-	 * @param ProjectOrderProductVO - 등록할 정보가 담긴 VO
+	 * 프로젝트 발주 메인 정보를 수정한다.
+	 * @param OrderVO - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public void updateOrderInfo(OrderVO orderVO);
+	
+	/**
+	 * 프로젝트 발주 제품 리스트를 등록한다.
+	 * @param insertParam - 등록할 정보가 담긴 VO
 	 * @return 
 	 * @exception
 	 */
 	public int insertOrderProductInfo(Map<String, Object> insertParam);
+	
+	/**
+	 * 프로젝트 발주 제품 리스트를 수정한다.
+	 * @param updateParam - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public void updateOrderProductInfo(Map<String, Object> updateParam);
+	
+	/**
+	 * 프로젝트 발주 제품 리스트를 삭제한다.
+	 * @param deleteParam - 삭제할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public void deleteOrderProductInfo(Map<String, Object> deleteParam);
 	
 	/**
 	 * 프로젝트 계약 상세 정보를 조회한다.
@@ -127,7 +260,15 @@ public interface ProjectMapper {
 	 * @return 프로젝트 상세 정보
 	 * @exception
 	 */
-	public List<?> selectContractDetail(String pjKey);
+	public ProjectContractVO selectContractDetail(String pjKey);
+	
+	/**
+	 * 프로젝트 보증 증권 리스트를 조회한다.
+	 * @param pjKey - 조회할 정보의 key
+	 * @return 프로젝트 보증 증권 리스트
+	 * @exception
+	 */
+	public List<?> selectGuarantyList(String pjKey);
 	
 	/**
 	 * 프로젝트 계약 회차를 조회한다.
@@ -145,7 +286,6 @@ public interface ProjectMapper {
 	 */
 	public Map<String, Object> selectFileList(FileVO fileVO);
 	
-	public Map<String, Object> updateBiddingInfo(ProjectVO projectVO);
 	
 	public String makePrimaryKey(String keyType) throws Exception;
 	
@@ -171,7 +311,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public OrderVO selectOrderDetail(String orderKey);
+	public ProjectOrderVO selectOrderDetail(String orderKey);
 	
 	/**
 	 * 프로젝트 계약별 발주 제품목록 상세조회
@@ -179,7 +319,23 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public List<OrderProductVO> selectOrderProductList(String orderKey);
+	public List<ProjectOrderProductVO> selectOrderProductList(String orderKey);
+	
+	/**
+	 * 프로젝트 계약별 발주 삭제
+	 * @param orderVO
+	 * @return 
+	 * @exception
+	 */
+	public void deleteOrderInfo(OrderVO orderVO);
+	
+	/**
+	 * 프로젝트 계약별 발주 제품 삭제
+	 * @param orderVO
+	 * @return 
+	 * @exception
+	 */
+	public void deleteOrderProductAll(Map<String, Object> deleteParam);
 	
 	public List<?> selectAcDirector(int acDirectorKey);
 	
@@ -194,12 +350,20 @@ public interface ProjectMapper {
 	public int insertBuildInfo(ProjectBuildVO buildVO);
 	
 	/**
+	 * 프로젝트 설치구축 정보를 수정한다.
+	 * @param buildVO - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int updateBuildInfo(ProjectBuildVO buildVO);
+	
+	/**
 	 * 프로젝트 설치 및 구축 상세 정보를 조회한다..
 	 * @param pjKey - 조회할 정보의 key
 	 * @return 프로젝트 설치 및 구축 상세 정보
 	 * @exception
 	 */
-	public List<?> selectBuildDetail(String pjKey);
+	public List<?> selectBuildDetail(ProjectBuildVO buildVO);
 	
 	/**
 	 * 프로젝트 수행 정보를 등록한다.
@@ -210,10 +374,20 @@ public interface ProjectMapper {
 	public int insertWorkInfo(ProjectWorkVO workVO);
 	
 	/**
+	 * 프로젝트 수행 정보를 수정한다.
+	 * @param workVO - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int updateWorkInfo(ProjectWorkVO workVO);
+	
+	/**
 	 * 프로젝트 수행 상세 정보를 조회한다..
-	 * @param pjKey - 조회할 정보의 key
+	 * @param workVO - 조회할 정보
 	 * @return 프로젝트 수행 상세 정보
 	 * @exception
 	 */
-	public List<?> selectWorkDetail(String pjKey);
+	public List<?> selectWorkDetail(ProjectWorkVO workVO);
+
+
 }

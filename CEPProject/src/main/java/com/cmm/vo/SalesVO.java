@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
-import com.cep.project.vo.ProjectContractVO;
+import com.cep.example.vo.SampleDefaultVO;
 
 @SuppressWarnings("serial")
 @Alias("SalesVO")
-public class SalesVO implements Serializable {
+public class SalesVO extends SampleDefaultVO implements Serializable {
 	
 	private String salesKey;
 	private String salesCtFkKey;
@@ -25,7 +25,7 @@ public class SalesVO implements Serializable {
 	private String salesStatusCd;
 	private String regEmpKey;
 	private String modEmpKey;
-	private List<GuarantyBondVO> biddingList;
+	private List<GuarantyBondVO> guarantyList;
 	
 	public String getSalesKey() {
 		return salesKey;
@@ -111,11 +111,11 @@ public class SalesVO implements Serializable {
 	public void setModEmpKey(String modEmpKey) {
 		this.modEmpKey = modEmpKey;
 	}
-	public List<GuarantyBondVO> getBiddingList() {
-		return biddingList;
+	public List<GuarantyBondVO> getGuarantyList() {
+		return guarantyList;
 	}
-	public void setBiddingList(List<GuarantyBondVO> biddingList) {
-		this.biddingList = biddingList;
+	public void setGuarantyList(List<GuarantyBondVO> guarantyList) {
+		this.guarantyList = guarantyList;
 	}
 	
 }

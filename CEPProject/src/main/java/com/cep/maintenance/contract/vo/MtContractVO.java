@@ -4,6 +4,8 @@
 package com.cep.maintenance.contract.vo;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.type.Alias;
 
@@ -27,6 +29,7 @@ import com.cmm.util.CepStringUtil;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 public class MtContractVO extends MtDefaultVO implements Serializable{
+
 //	private String mtOption; // 등록(w), 조회(r)
 	private String mtIntegrateKey; //유지보수 계약 PK
 	private String mtCtKey; //유지보수 계약관리키
@@ -61,6 +64,10 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	private String modDt; // 유지보수 수정일자
 	private String modTm; // 유지보수 수정시간
 	private String modEmpKey; //유지보수 수정직원 관리키
+	
+//	private Map<String, List<MtContractLinkVO>> contractLinkList; // 유지보수계약 연계 정보(Forcast(S), Project(P))
+	private MtContractLinkVO mtForcastLinkVo;
+	private MtContractLinkVO mtProjectLinkVo;
 	/**
 	 * @return the mtIntegrateKey
 	 */
@@ -506,6 +513,31 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	public void setMtAcDirectorNm(String mtAcDirectorNm) {
 		this.mtAcDirectorNm = mtAcDirectorNm;
 	}
+	/**
+	 * @return the mtForcastLinkVo
+	 */
+	public MtContractLinkVO getMtForcastLinkVo() {
+		return mtForcastLinkVo;
+	}
+	/**
+	 * @param mtForcastLinkVo the mtForcastLinkVo to set
+	 */
+	public void setMtForcastLinkVo(MtContractLinkVO mtForcastLinkVo) {
+		this.mtForcastLinkVo = mtForcastLinkVo;
+	}
+	/**
+	 * @return the mtProjectLinkVo
+	 */
+	public MtContractLinkVO getMtProjectLinkVo() {
+		return mtProjectLinkVo;
+	}
+	/**
+	 * @param mtProjectLinkVo the mtProjectLinkVo to set
+	 */
+	public void setMtProjectLinkVo(MtContractLinkVO mtProjectLinkVo) {
+		this.mtProjectLinkVo = mtProjectLinkVo;
+	}
+
 	
 //	private String convertDate(String date){
 //		String convertDate = null;

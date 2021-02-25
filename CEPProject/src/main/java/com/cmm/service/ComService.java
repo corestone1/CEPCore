@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cep.project.vo.ProjectContractSalesVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
@@ -87,7 +88,7 @@ public interface ComService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> insertSalesInfo(String key, String regEmpKey, List<?> insertList) throws Exception;
+	public Map<String, Object> insertSalesInfo(ProjectContractSalesVO projectContractSalesVO) throws Exception;
 	
 	/**
 	 * 매출 정보를 조회한다.
@@ -125,6 +126,32 @@ public interface ComService {
 	* @throws Exception
 	*/
 	public PurchaseVO selectPurchaseDetail(String orderKey) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : insertPurchaseInfo
+	* @Cdate       : 2021. 01. 29.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입 정보 등록
+	* @param purchaseVO
+	* @return
+	* @throws Exception
+	*/
+	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, PurchaseVO purchaseVO) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : deletePurchaseInfo
+	* @Cdate       : 2021. 01. 29.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입 정보 삭제
+	* @param purchaseVO
+	* @return
+	* @throws Exception
+	*/
+	public void deletePurchaseInfo(PurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -190,6 +217,5 @@ public interface ComService {
 	* @throws Exception
 	*/
 	public List<?> selectPrePaymentList(String buyKey) throws Exception;
-
 	
 }

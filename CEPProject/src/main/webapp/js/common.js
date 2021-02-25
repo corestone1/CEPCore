@@ -225,6 +225,43 @@ function fn_date_format(e, oThis) {
     }
 }
 
+//자바 스크립트로 파라미터 받기
+function getParameter(name) {
+	var params = location.search.substr(location.search.indexOf("?") + 1);
+	var newVal = "";
+	
+	params = params.split("&");
+	for(var i = 0; i < params.length; i++) {
+		temp = params[i].split("=");
+		if([temp[0]] == name) { 
+			newVal = temp[1];
+		}
+	}
+	
+	return newVal;
+}
+
+/*
+ * hidden값 또는 readonly필드에서 값이 변경하면 이벤트 발생 시키는 function
+ * ex) mtLinkCtKey필드의 값이 변경되면 아래 function호출됨.
+ * survey('#mtLinkCtKey', function(){
+ * 	console.log('changed');
+ *  이벤트 발생시 원하는 로직 구현
+ * });
+ */
+/*function survey(selector, callback) {
+	var input = $(selector);
+	var oldvalue = input.val();
+	setInterval(function(){
+		if (input.val()!=oldvalue){
+			console.log("00000000000000000======================");
+			oldvalue = input.val();
+			callback();
+		}
+		console.log("111111======================");
+	}, 400);
+}*/	
+
 /* 추후 수정 필요
  * from날짜 이전 날짜는 to날짜에서 선택 못하도록, to날짜 이후 날짜는 from 날짜에서 선택 못하도록
  * */	
@@ -261,21 +298,22 @@ $(window).load(function() {
 		$(this).attr('onkeypress','fn_date_format(event, this)');
 	}); */
 	
-	$("body").delegate(".calendar", "focusin", function(){
-		$(this).datepicker({
-			dateFormat: 'yy-mm-dd',
-			changeMonth: true,
-			changeYear: true,
-			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-			numberOfMonths: 1,
-			onSelect: function( selectedDate ) {
-				$(this).datepicker();
-			}
-	    });
-		$(this).attr('onkeyup','fn_date_format(event, this)');
-		$(this).attr('onkeypress','fn_date_format(event, this)');
-		
-	});
+   $("body").delegate(".calendar", "focusin", function() {
+      $(this).removeClass('hasDatepicker').datepicker({
+         dateFormat: 'yy-mm-dd',
+         changeMonth: true,
+         changeYear: true,
+         monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+         numberOfMonths: 1,
+         onSelect: function( selectedDate ) {
+            //$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
+            $(this).datepicker();
+         }
+       });
+      $(this).attr('onkeyup','fn_date_format(event, this)');
+      $(this).attr('onkeypress','fn_date_format(event, this)');
+	      
+   	});
 	
 	/* 리스트 클릭하면 색깔 칠하기.*/
 	$('.middle table tbody tr').children().click(function() {
@@ -310,4 +348,5 @@ $(window).load(function() {
 		$(this).parent().next().addClass("trcheckcolor");
 	});
 	
+
 });

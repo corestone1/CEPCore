@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>CEP 샘플 화면(forecast list)</title>
+<title>로그인</title>
 <link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 <link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>

@@ -1,6 +1,7 @@
 package com.cep.project.web;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,16 +26,18 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.main.service.MainService;
 import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectBiddingFileVO;
+import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
-import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.OrderVO;
 import com.cmm.vo.SalesVO;
@@ -136,7 +138,7 @@ public class ProjectController {
 	@RequestMapping(value="/detail/bidding.do", method={RequestMethod.GET, RequestMethod.POST})
 	@Transactional
 	public String selectProjectDetailBd(@ModelAttribute("projectVO") ProjectVO projectVO, ModelMap model) throws Exception {
-		Map<String, Object> result = null;
+		/*Map<String, Object> result = null;
 		Map<String, Object> fileResult = null;
 		FileVO fileVO = new FileVO();
 		
@@ -145,7 +147,7 @@ public class ProjectController {
 			
 			// 프로젝트 관리키. 추후 수정 필요
 			fileVO.setFileCtKey("PJ210065");
-			/*fileVO.setFileCtKey(projectVO.getPjKey());*/
+			fileVO.setFileCtKey(projectVO.getPjKey());
 			fileResult = service.selectFileList(fileVO);
 			if(fileResult == null) {
 				fileResult = new HashMap<String, Object>();
@@ -161,7 +163,7 @@ public class ProjectController {
 		} catch(Exception e) {
 			model.put("successYN", "N");
 			logger.error("project error", e);
-		}
+		}*/
 		
 		return "project/detail/bidding";
 	}
@@ -193,7 +195,7 @@ public class ProjectController {
 	@RequestMapping(value="/write/basicInfo.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddBasicInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		String pjKey = request.getParameter("pjKey");
+		String pjKey = projectVO.getPjKey();
 		model.addAttribute("pjKey", pjKey);
 		
 		List<?> projectList = service.selectProjectDetail(pjKey);
@@ -235,6 +237,44 @@ public class ProjectController {
 		return "project/list";
 	}
 	
+	@RequestMapping(value="/write/biddingInfo.do", method={RequestMethod.GET, RequestMethod.POST})
+	public String viewAddBiddingInfo(HttpServletRequest request, ProjectBiddingFileVO projectBiddingFileVO, ModelMap model) throws Exception {
+		
+		List<?> biddingFileList = null;
+		
+		String pjKey = projectBiddingFileVO.getPjKey();
+		model.addAttribute("pjKey", pjKey);
+		
+		ProjectBiddingVO biddingVO = service.selectBiddingDetail(projectBiddingFileVO);
+		model.addAttribute("biddingVO", biddingVO);
+		
+		if(biddingVO != null) {
+			projectBiddingFileVO.setBdKey(biddingVO.getBdKey());
+			biddingFileList = service.selectBiddingFileList(projectBiddingFileVO);
+		}
+		model.addAttribute("biddingFileList", biddingFileList);
+		
+		model.put("displayUtil", new CepDisplayUtil());
+		
+		return "project/write/biddingInfo";
+	}
+	
+	@RequestMapping(value = "/insert/biddingInfo.do", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> addBiddingInfo(HttpServletRequest request, @RequestBody ProjectBiddingVO projectBiddingVO) throws Exception {
+		Map<String, Object> returnMap = null;
+		returnMap = service.insertBiddingInfo(request, projectBiddingVO);
+		
+	   	return returnMap;
+	}
+	
+	@RequestMapping(value = "/update/biddingInfo.do", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> updateBiddingInfo(MultipartHttpServletRequest multiRequest) throws Exception {
+		Map<String, Object> returnMap = null;
+		returnMap = service.updateBiddingInfo(multiRequest);
+		
+	   	return returnMap;
+	}
+	
 	@RequestMapping(value="/insert/contractInfo.do", method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addContractInfo(HttpServletRequest request, @RequestBody ProjectContractSalesVO projectContractSalesVO) throws Exception {
@@ -242,8 +282,13 @@ public class ProjectController {
 		int listCnt = projectContractSalesVO.getProjectContractSalesVOList().size();
 		
 		for(int i = 0; i < listCnt; i++) {
-			projectContractSalesVO.getProjectContractSalesVOList().get(i).setCtKey(comService.makePrimaryKey(PrimaryKeyType.PROJECT_CONTRACT));
-			projectContractSalesVO.getProjectContractSalesVOList().get(i).setSalesKey(comService.makePrimaryKey(PrimaryKeyType.SALES_DETAIL));
+			if("".equals(CepStringUtil.getDefaultValue(projectContractSalesVO.getProjectContractSalesVOList().get(i).getSalesKey(), ""))) {
+				projectContractSalesVO.getProjectContractSalesVOList().get(i).setSalesKey(comService.makePrimaryKey(PrimaryKeyType.SALES_DETAIL));
+			} 
+		}
+		
+		if("".equals(CepStringUtil.getDefaultValue(projectContractSalesVO.getCtKey(), ""))) {
+			projectContractSalesVO.setCtKey(comService.makePrimaryKey(PrimaryKeyType.PROJECT_CONTRACT));
 		}
 		
 		returnMap = service.insertContractInfo(request, projectContractSalesVO);
@@ -252,48 +297,64 @@ public class ProjectController {
 	}
 	
 	@RequestMapping(value="/write/contractInfo.do", method={RequestMethod.GET, RequestMethod.POST})
-	public String viewAddContractInfo(HttpServletRequest request, ProjectContractVO projectContractVO, ModelMap model) throws Exception {
-		Map<String, String> param = null;
+	public String viewAddContractInfo(HttpServletRequest request, ProjectContractSalesVO projectContractSalesVO, ModelMap model) throws Exception {
 		
-		String pjKey = request.getParameter("pjKey");
-		model.addAttribute("pjKey", pjKey);
+		model.addAttribute("pjKey", projectContractSalesVO.getPjKey());
 		
-		List<?> contractList = service.selectContractDetail(pjKey);
-		model.addAttribute("resultList", contractList);
+		ProjectContractVO contractVO = service.selectContractDetail(projectContractSalesVO.getPjKey());
+		model.addAttribute("contractVO", contractVO);
+		
+		List<?> salesList = service.selectSalesList(projectContractSalesVO.getPjKey());
+		model.addAttribute("salesList", salesList);
 		
 		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/write/contractInfo";
 	}
 	
-	@RequestMapping(value="/insert/biddingInfo.do", method=RequestMethod.POST)
+	@RequestMapping(value="/insert/guarantyInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addBiddingInfo(HttpServletRequest request, @RequestBody GuarantyBondVO guarantyBondVO) throws Exception {
+	public Map<String, Object> addGuarantyInfo(HttpServletRequest request, @RequestBody GuarantyBondVO guarantyBondVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap = service.insertBiddingInfo(request, guarantyBondVO);
+		returnMap = service.insertGuarantyInfo(request, guarantyBondVO);
 		
 		return returnMap;
 	}
 	
-	@RequestMapping(value="/write/biddingInfo.do", method={RequestMethod.GET, RequestMethod.POST})
-	public String viewAddBiddingInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
+	@RequestMapping(value="/write/guarantyInfo.do", method={RequestMethod.GET, RequestMethod.POST})
+	public String viewAddGuarnatyInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		String pjKey = request.getParameter("pjKey");
-		model.addAttribute("pjKey", pjKey);
+		Enumeration e = request.getParameterNames();
+		while ( e.hasMoreElements() ){
+			String name = (String) e.nextElement();
+			String[] values = request.getParameterValues(name);		
+			
+			for (String value : values) {
+				if(name.contains("[]")) {
+					name = name.replace("[]","");
+				}
+			}
+			model.addAttribute(name, values);
+		}
 		
-		String[] ctKey = request.getParameterValues("ctKey[]");
-		model.addAttribute("ctKey", ctKey);
+		/*List<SalesVO> salesList = new ArrayList<SalesVO>();
 		
-		String[] salesKey = request.getParameterValues("salesKey[]");
-		model.addAttribute("salesKey", salesKey);
+		for(String salesKeys : salesKey) {
+			SalesVO salesVO = new SalesVO();
+			salesVO = comService.selectSalesGuarantyDetail(salesKeys);
+			
+			salesList.add(salesVO);
+        }
 		
+		model.addAttribute("salesList", salesList);*/
+		model.put("displayUtil", new CepDisplayUtil());
 		
-		return "project/write/biddingInfo";
+		return "project/write/guarantyInfo";
 	}
 	
-	@RequestMapping(value="/select/biddingInfo.do", method=RequestMethod.POST)
+	@RequestMapping(value="/select/guarantyInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public List<SalesVO> selectBiddingInfo(@RequestParam(value="salesKeyList[]") List<String> salesKeyList) throws Exception {
+	public List<SalesVO> selectGuarantyInfo(@RequestParam(value="salesKeyList[]") List<String> salesKeyList) throws Exception {
 		
 		List<SalesVO> salesList = new ArrayList<SalesVO>();
 		
@@ -307,37 +368,37 @@ public class ProjectController {
 		return salesList;
 	}
 	
-	
-	@RequestMapping(value = "/update/biddingInfo.do", method=RequestMethod.POST)
-	public @ResponseBody Map<String, Object> updateBiddingInfol(MultipartHttpServletRequest multiRequest, @RequestParam Map<String, Object> param) throws Exception {
-		Map<String, Object> returnMap = null;
-		returnMap = service.updateBiddingInfo(multiRequest, param);
-		
-	   	return returnMap;
-	}
-	
 	@RequestMapping(value="/write/orderInfo.do", method={RequestMethod.GET, RequestMethod.POST})
-	@SuppressWarnings("unchecked")
-	public String viewAddOrderInfo(HttpServletRequest request, OrderVO orderVO, ModelMap model) throws Exception {
+	public String viewAddOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO, ModelMap model) throws Exception {
 		
-		OrderVO returnVO = null;
-		String pjKey = request.getParameter("pjKey");
-		model.addAttribute("pjKey", pjKey);
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		ProjectOrderVO returnVO = null;
 		
-		HashMap<String, String> sessionMap = null;
+		Enumeration e = request.getParameterNames();
+		while ( e.hasMoreElements() ){
+			String name = (String) e.nextElement();
+			String[] values = request.getParameterValues(name);		
+			
+			for (String value : values) {
+				if(name.contains("[]")) {
+					name = name.replace("[]","");
+				}
+			}
+			model.addAttribute(name, values);
+		}
+		
+		/*HashMap<String, String> sessionMap = null;
 		sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 		String userName = "";
 		
 		userName = mainService.selectName(sessionMap);
-		model.addAttribute("userName", userName);
+		model.addAttribute("userName", userName);*/
 		
 		List<?> orderSelectBox = null;
 		List<?> acDirectorList = null;
+		int listCount = 0;
 		
-		orderVO.setOrderCtFkKey(pjKey);
+		orderVO.setOrderCtFkKey(orderVO.getPjKey());
 		
-		//발주 등록  거래처 목록을 가져온다.
 		orderSelectBox = service.selectOrderSelectBoxList(orderVO.getOrderCtFkKey());			
 		if(orderSelectBox != null){
 			orderVO.setSaveCnt(orderSelectBox.size());
@@ -345,14 +406,13 @@ public class ProjectController {
 		
 		//발주 정보를 조회한다.
 		if(!"".equals(CepStringUtil.getDefaultValue(orderVO.getSelectKey(), ""))){
-			returnVO = service. selectOrderDetail(orderVO.getSelectKey());
+			returnVO = service.selectOrderDetail(orderVO.getSelectKey());
+			
 			if(null != returnVO){
-//				returnVO.setUpdateYn(orderVO.getUpdateYn());
 				returnVO.setSelectKey(orderVO.getSelectKey());
-//				returnVO.setMtSaveCnt(orderVO.getMtSaveCnt());
-				/*if(returnVO.getOrderProductVOList()!=null && returnVO.getOrderProductVOList().size()>1){
-					listCount = returnVo.getMtBackOrderProductVoList().size();
-				}*/
+				if(returnVO.getOrderProductVOList()!=null && returnVO.getOrderProductVOList().size()>1){
+					listCount = returnVO.getOrderProductVOList().size();
+				}
 				acDirectorList =service.selectAcDirectorList(returnVO.getOrderAcKey());
 			}
 		} else {
@@ -362,6 +422,7 @@ public class ProjectController {
 		model.put("orderSelectBoxList", orderSelectBox);
 		model.put("displayUtil", new CepDisplayUtil());
 		model.put("orderVO", returnVO);
+		model.put("listCount", listCount);
 		model.put("acDirectorList", acDirectorList);
 		
 		return "project/write/orderInfo";
@@ -384,14 +445,15 @@ public class ProjectController {
 	@ResponseBody
 	public Map<String, Object> addOrderInfo(HttpServletRequest request, @RequestBody OrderVO orderVO, ModelMap model) throws Exception {
 		Map<String, Object> returnMap = new HashMap<>();
-		String orederKey = null;
+		String orderKey = null;
 		
 		try {
-			orederKey = service.insertOrderInfo(request, orderVO);
+			orderKey = service.insertOrderInfo(request, orderVO);
+			
 			returnMap.put("successYN", "Y");
-			returnMap.put("orederKey", orederKey);
+			returnMap.put("orderKey", orderKey);
 		} catch (Exception e) {
-			model.put("successYN", "N");
+			returnMap.put("successYN", "N");
 			logger.error(null, e);
 		}
 		
@@ -413,8 +475,8 @@ public class ProjectController {
 	 */
 	@RequestMapping(value="/select/orderDetail.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> selectOrderInfo(HttpServletRequest request, @RequestBody OrderVO orderVO) throws Exception {
-		OrderVO returnVO = null;
+	public Map<String, Object> selectOrderInfo(HttpServletRequest request, @RequestBody ProjectOrderVO orderVO) throws Exception {
+		ProjectOrderVO returnVO = null;
 		List < ? > acDirector = null;
 		Map<String, Object> returnMap = new HashMap<>();
 		
@@ -437,6 +499,33 @@ public class ProjectController {
 			throw new Exception(e);
 		}
 		
+		
+		return returnMap;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : deleteOrderInfo
+	  * @Cdate       : 2021. 02. 10.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :프로젝트 발주정보 거래처별 삭제
+	  * @param orderVO
+	  * @param model
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/delete/orderInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, @RequestBody OrderVO orderVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			returnMap = service.deleteOrderInfo(request, orderVO);
+			returnMap.put("pjKey", orderVO.getOrderCtFkKey());
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
 		
 		return returnMap;
 	}
@@ -473,10 +562,12 @@ public class ProjectController {
 	@RequestMapping(value="/write/buildInfo.do")
 	public String viewAddBuildInfo(HttpServletRequest request, ProjectBuildVO buildVO, ModelMap model) throws Exception {
 		
-		String pjKey = request.getParameter("pjKey");
-		model.addAttribute("pjKey", pjKey);
+		String pjKey = buildVO.getPjKey();
+		int inbSeq = buildVO.getInbSeq();
 		
-		List<?> buildInfo = service.selectBuildDetail(pjKey);
+		List<?> buildInfo = service.selectBuildDetail(buildVO);
+		
+		model.addAttribute("pjKey", pjKey);
 		model.addAttribute("resultList", buildInfo);
 		
 		model.put("displayUtil", new CepDisplayUtil());
@@ -496,10 +587,12 @@ public class ProjectController {
 	@RequestMapping(value="/write/workInfo.do")
 	public String viewAddWorkInfo(HttpServletRequest request, ProjectWorkVO workVO, ModelMap model) throws Exception {
 		
-		String pjKey = request.getParameter("pjKey");
-		model.addAttribute("pjKey", pjKey);
+		String pjKey = workVO.getPjKey();
+		int workSeq = workVO.getPjWorkSeq();
 		
-		List<?> workInfo = service.selectWorkDetail(pjKey);
+		List<?> workInfo = service.selectWorkDetail(workVO);
+		
+		model.addAttribute("pjKey", pjKey);
 		model.addAttribute("resultList", workInfo);
 		
 		model.put("displayUtil", new CepDisplayUtil());
@@ -519,10 +612,20 @@ public class ProjectController {
 	@RequestMapping(value="/write/finishInfo.do")
 	public String addFinishInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		String pjKey = request.getParameter("pjKey");
-		model.addAttribute("pjKey", pjKey);
+		Enumeration e = request.getParameterNames();
+		while ( e.hasMoreElements() ){
+			String name = (String) e.nextElement();
+			String[] values = request.getParameterValues(name);		
+			
+			for (String value : values) {
+				if(name.contains("[]")) {
+					name = name.replace("[]","");
+				}
+			}
+			model.addAttribute(name, values);
+		}
 		
-		List<?> finishInfo = service.selectProjectDetail(pjKey);
+		List<?> finishInfo = service.selectProjectDetail(projectVO.getPjKey());
 		model.addAttribute("resultList", finishInfo);
 		
 		model.put("displayUtil", new CepDisplayUtil());
@@ -531,9 +634,11 @@ public class ProjectController {
 	}
 	
 	@RequestMapping(value="/write/loseInfo.do")
-	public String addLoseInfo(ProjectVO projectVO, ModelMap model) throws Exception {
+	public String addLoseInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		List<?> pjInfo = service.selectProjectDetail(projectVO.getPjKey());
+		model.addAttribute("pjKey", projectVO.getPjKey());
+		model.addAttribute("resultList", pjInfo);
 		
 		return "project/write/loseInfo";
 	}
@@ -546,10 +651,25 @@ public class ProjectController {
 		return "project/detail/requestBill";
 	}
 	
+	@Transactional
 	@RequestMapping(value="/viewApproval.do")
 	public String selectApproval(ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		model.addAttribute("pjKey", projectVO.getPjKey());
+		
+		List<?> pjInfo = service.selectProjectDetail(projectVO.getPjKey());
+		model.addAttribute("pjInfo", pjInfo);
+		
+		List<?> salesList = service.selectSalesList(projectVO.getPjKey());
+		model.addAttribute("salesList", salesList);
+		
+		List<?> purchaseList = service.selectPurchaseList(projectVO.getPjKey());
+		model.addAttribute("purchaseList", purchaseList);
+		
+		List<?> guarantyList = service.selectGuarantyList(projectVO.getPjKey());
+		model.addAttribute("guarantyList", guarantyList);
+		
+		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/viewApproval";
 	}

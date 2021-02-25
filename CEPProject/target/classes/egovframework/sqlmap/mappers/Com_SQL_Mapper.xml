@@ -16,7 +16,7 @@
 		<result property="salesStatusCd" column="SALES_STATUS_CD" />
 		<result property="regEmpKey" column="REG_EMP_KEY" />
 		<result property="modEmpKey" column="MOD_EMP_KEY" />
-		<collection property="biddingList" ofType="guarantyBondVO" column="salesKey=SALES_KEY" javaType="List" select="selectGuarantyDetail" />
+		<collection property="guarantyList" ofType="guarantyBondVO" column="salesKey=SALES_KEY" javaType="List" select="selectGuarantyDetail" />
 	</resultMap>
 	<!-- ######################################################################  -->
 	<!-- 거래처 리스트 조회 -->
@@ -66,10 +66,9 @@
 	</select>
 	
 	<insert id="insertSalesInfo" parameterType="java.util.Map">
-		INSERT INTO CMM_SALES_DETAIL_TB (
+		INSERT INTO PJ_SALES_DETAIL_TB (
 			SALES_KEY
 			, SALES_CT_FK_KEY
-			, SALES_CT_CLASS
 			, SALES_TURN
 			, SALES_COLLECT_RATE
 			, SALES_TURN_AMOUNT
@@ -88,7 +87,6 @@
 			(
 				#{item.salesKey}
 				, #{salesCtFkKey}
-				, #{item.salesCtClass}
 				, #{item.salesTurn}
 				, #{item.salesCollectRate}
 				, #{item.salesTurnAmount}
@@ -110,6 +108,7 @@
 		SELECT *
 		FROM CMM_SALES_DETAIL_TB
 		WHERE SALES_KEY = #{salesKey}
+		AND DELETE_YN='N'
 	</select>
 	
 	<select id="selectGuarantyDetail" resultType="guarantyBondVO">
@@ -122,12 +121,14 @@
 			, GB_END_DT AS gbEndDt
 			, GB_ISSUE_YN AS gbIssueYn
 			, GB_AMOUNT AS gbAmount
+			, GB_PUBLISH_DT AS gbPublishDt
 		FROM CMM_GUARANTY_BOND_TB
 		WHERE SALES_KEY = #{salesKey}
+		AND DELETE_YN='N'
 	</select>
 	
 	<update id="updateSalesInfo" parameterType="salesVO">
-		<foreach collection="biddingList" item="item" separator=";" close=";">
+		<foreach collection="guarantyList" item="item" separator=";" close=";">
 			UPDATE CMM_SALES_DETAIL_TB SET
 			<if test="item.salesCollectRate != null and item.salesCollectRate != '' and item.salesCollectRate != 0">
 				SALES_COLLECT_RATE=#{item.salesCollectRate},
@@ -175,6 +176,34 @@
 			AND DELETE_YN='N'
 	</select>
 	
+	<select id="insertPurchaseInfo" parameterType="purchaseVO">
+		INSERT INTO CMM_PURCHASE_TB (
+			BUY_KEY
+			, BUY_ORDER_FK_KEY
+			, BUY_CLASS
+			, BUY_AMOUNT
+			, DONE_PAYMENT_AMOUNT
+			, YET_PAYMENT_AMOUNT
+			, BUY_TURN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{buyKey}
+			, #{buyOrderFkKey}
+			, #{buyClass}
+			, #{buyAmount}
+			, #{donePaymentAmount}
+			, #{yetPaymentAmount}
+			, #{buyTurn}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		) 
+	</select>
+	
 	<update id="updatePurchaseInfo" parameterType="purchaseVO">
 		UPDATE CMM_PURCHASE_TB 
 		SET
@@ -190,8 +219,21 @@
 			<if test="buyTurn != null and buyTurn != '' and buyTurn != 0">
 				BUY_TURN =#{buyTurn},
 			</if>
-			DELETE_YN='N'
+			MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+			, DELETE_YN='N'
 		WHERE BUY_KEY = #{buyKey}
+	</update>
+	
+	<update id="deletePurchaseInfo" parameterType="purchaseVO">
+		UPDATE CMM_PURCHASE_TB 
+		SET
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE BUY_ORDER_FK_KEY = #{buyOrderFkKey}
 	</update>
 	
 	<select id="selectPaymentList" parameterType="String" resultType="egovMap">
@@ -320,4 +362,14 @@
 			AND BL.DELETE_YN='N'
 		ORDER BY PM.PAYMENT_TURN
 	</select>
+	
+	<update id="deletePaymentAllInfo" parameterType="paymentVO">
+		UPDATE CMM_PAYMENT_TB 
+		SET
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
+	</update>
 </mapper>

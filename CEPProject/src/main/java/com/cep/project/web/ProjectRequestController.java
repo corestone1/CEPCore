@@ -1,0 +1,261 @@
+package com.cep.project.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.cep.project.service.ProjectRequestService;
+import com.cep.project.service.ProjectService;
+import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectPaymentVO;
+import com.cep.project.vo.ProjectPurchaseVO;
+import com.cmm.service.ComService;
+import com.cmm.util.CepDisplayUtil;
+import com.cmm.vo.PaymentVO;
+
+
+@Controller
+@RequestMapping("/project/request")
+public class ProjectRequestController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ProjectRequestController.class);
+	
+	@Resource(name="projectRequestService")
+	private ProjectRequestService reqService;
+	
+	@Resource(name="projectService")
+	private ProjectService service;
+	
+	@Resource(name="comService")
+	private ComService comService;
+	
+	
+	/*@RequestMapping(value="/insert/salesInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addSalesInfo(HttpServletRequest request, @RequestBody SalesVO salesVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap = service.insertSalesInfo(request, salesVO);
+		
+		return returnMap;
+	}*/
+	
+	/**
+	 * 
+	  * @Method Name : viewPurchaseInfo
+	  * @Cdate       : 2021. 01. 31.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :매입금지급요청 메인 화면
+	  * @param request
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/purchase/main.do")
+	public String viewPurchaseInfo(HttpServletRequest request, ModelMap model) throws Exception {
+		ProjectOrderVO orderVO = null;
+		ProjectPurchaseVO purchaseVO = null;
+		List<?> paymentList = null;
+		List<?> resultList = null;
+		List<?> depositList = null;
+		
+		String key = request.getParameter("mainKey");
+		String orderKey = request.getParameter("orderKey");
+		String acKey = "";
+		
+		try {
+			resultList = service.selectProjectDetail(key);
+			model.addAttribute("resultList", resultList);
+			
+			orderVO = service.selectOrderDetail(orderKey);
+			model.addAttribute("orderVO", orderVO);
+			
+			purchaseVO = reqService.selectPurchaseDetail(orderKey);
+			acKey = orderVO.getOrderAcKey();
+			depositList = comService.selectDepositList(acKey);
+			paymentList = reqService.selectPaymentList(purchaseVO.getBuyKey());
+			
+			model.addAttribute("mainKey", key);
+			model.addAttribute("purchaseVO", purchaseVO);
+			model.addAttribute("depositList", depositList);
+			model.addAttribute("paymentList", paymentList);
+			model.put("displayUtil", new CepDisplayUtil());
+			model.put("pmNm", request.getParameter("pmNm"));
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return "project/request/purchase/main";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : viewPaymentForm
+	  * @Cdate       : 2021. 01. 31.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :매입금지급요청 지급 정보 화면
+	  * @param request
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/purchase/paymentForm.do")
+	public String viewPaymentForm(HttpServletRequest request, ModelMap model) throws Exception {
+		ProjectOrderVO orderVO = null;
+		ProjectPurchaseVO purchaseVO = null;
+		List<?> paymentList = null;
+		List<?> resultList = null;
+		List<?> depositList = null;
+		
+		String key = request.getParameter("mainKey");
+		String orderKey = request.getParameter("orderKey");
+		String acKey = "";
+		
+		try {
+			/*resultList = service.selectProjectDetail(key);
+			model.addAttribute("resultList", resultList);*/
+			
+			orderVO = service.selectOrderDetail(orderKey);
+			model.addAttribute("orderVO", orderVO);
+			
+			purchaseVO = reqService.selectPurchaseDetail(orderKey);
+			acKey = orderVO.getOrderAcKey();
+			depositList = comService.selectDepositList(acKey);
+			paymentList = reqService.selectPaymentList(purchaseVO.getBuyKey());
+			
+			model.addAttribute("mainKey", key);
+			model.addAttribute("purchaseVO", purchaseVO);
+			model.addAttribute("depositList", depositList);
+			model.addAttribute("paymentList", paymentList);
+			model.put("displayUtil", new CepDisplayUtil());
+			model.put("pmNm", request.getParameter("pmNm"));
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return "project/request/purchase/paymentForm";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : viewPaymentList
+	  * @Cdate       : 2021. 01. 31.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :기 지급 정보 화면
+	  * @param request
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/purchase/prePaymentList.do")
+	public String viewPrePaymentList(HttpServletRequest request, ModelMap model) throws Exception {
+		ProjectPurchaseVO purchaseVO = null;
+		List<?> prePaymentList = null;
+		
+		String orderKey = request.getParameter("orderKey");
+		
+		try {
+			
+			purchaseVO = reqService.selectPurchaseDetail(orderKey);
+			prePaymentList = reqService.selectPrePaymentList(purchaseVO.getBuyKey());
+			
+			model.addAttribute("prePaymentList", prePaymentList);
+			model.put("displayUtil", new CepDisplayUtil());
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		return "project/request/purchase/prePaymentList";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : selectPurchaseInfo
+	  * @Cdate       : 2021. 01. 31.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :매입금지급 상세 정보 조회
+	  * @param 
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/detail/payment.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> selectPaymentInfo(HttpServletRequest request, @RequestBody ProjectPaymentVO paymentVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<>();
+		List<?> depositList = null;
+		
+		try {
+			//매입금지급 정보를 조회한다.
+			returnMap = reqService.selectPaymentDetail(paymentVO);
+			if(returnMap != null){
+				depositList = comService.selectDepositList(paymentVO.getPaymentAcFkKey());
+			}
+			
+			returnMap.put("depositList", depositList);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;
+	}
+	
+	/**
+	 * 
+	  * @Method Name : addPaymentInfo
+	  * @Cdate       : 2021. 01. 31.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 매입금 지급 정보 등록
+	  * @param paymentVO
+	  * @return
+	  * @throws Exception
+	 */
+	/*@RequestMapping(value="/insert/paymentInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addPaymentInfo(HttpServletRequest request, @RequestBody PaymentVO paymentVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			returnMap = service.insertPaymentInfo(request, paymentVO);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return returnMap;
+	}
+	*/
+	
+	/**
+	 * 
+	  * @Method Name : updatePaymentInfo
+	  * @Cdate       : 2021. 01. 31.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 매입금 지급 정보 수정
+	  * @param paymentVO
+	  * @return
+	  * @throws Exception
+	 */
+	@RequestMapping(value="/update/paymentInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, @RequestBody PaymentVO paymentVO) throws Exception {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap = reqService.updatePaymentInfo(request, paymentVO);
+		
+		return returnMap;
+	}
+	
+}
