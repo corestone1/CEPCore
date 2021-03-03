@@ -108,7 +108,7 @@ public class ComServiceImpl implements ComService {
 		String buyKey = "";
 		
 		try {
-			buyKey = makePrimaryKey(PrimaryKeyType.PURCHASE);
+			buyKey = makePrimaryKey(PrimaryKeyType.PROJECT_PURCHASE);
 			purchaseVO.setBuyKey(buyKey);
 			
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");

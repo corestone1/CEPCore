@@ -9,13 +9,16 @@ import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderProductVO;
 import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectPaymentVO;
+import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.vo.FileVO;
-import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.OrderVO;
+import com.cmm.vo.PurchaseVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -188,7 +191,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public int insertGuarantyInfo(GuarantyBondVO guarantyBondVO);
+	public int insertGuarantyInfo(ProjectGuarantyBondVO guarantyBondVO);
 	
 	/**
 	 * 프로젝트 계약 보증 증권 정보를 수정한다.
@@ -196,7 +199,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public int updateGuarantyInfo(GuarantyBondVO guarantyBondVO);
+	public int updateGuarantyInfo(ProjectGuarantyBondVO guarantyBondVO);
 	
 	/**
 	 * 프로젝트 계약 보증 증권 정보를 삭제한다.
@@ -204,7 +207,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public int deleteGuarantyInfo(GuarantyBondVO guarantyBondVO);
+	public int deleteGuarantyInfo(ProjectGuarantyBondVO guarantyBondVO);
 	
 	/**
 	 * 프로젝트 발주 리스트 정보를 조회한다.
@@ -220,7 +223,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public void insertOrderInfo(OrderVO orderVO);
+	public void insertOrderInfo(ProjectOrderVO orderVO);
 	
 	/**
 	 * 프로젝트 발주 메인 정보를 수정한다.
@@ -228,7 +231,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public void updateOrderInfo(OrderVO orderVO);
+	public void updateOrderInfo(ProjectOrderVO orderVO);
 	
 	/**
 	 * 프로젝트 발주 제품 리스트를 등록한다.
@@ -248,11 +251,53 @@ public interface ProjectMapper {
 	
 	/**
 	 * 프로젝트 발주 제품 리스트를 삭제한다.
-	 * @param deleteParam - 삭제할 정보가 담긴 VO
+	 * @param deleteParam - 삭제할 정보가 담긴 map
 	 * @return 
 	 * @exception
 	 */
 	public void deleteOrderProductInfo(Map<String, Object> deleteParam);
+	
+	/**
+	 * 프로젝트 매입 정보를 등록한다.
+	 * @param purchaseVO - 등록할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public void insertPurchaseInfo(ProjectPurchaseVO purchaseVO);
+	
+	/**
+	 * 프로젝트 매입 정보를 수정한다.
+	 * @param purchaseVO - 수정할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public void updatePurchaseInfo(ProjectPurchaseVO purchaseVO);
+	
+	/**
+	* 
+	* @Method Name : deletePurchaseInfo
+	* @Cdate       : 2021. 01. 29.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입 정보 삭제
+	* @param purchaseVO
+	* @return
+	* @throws Exception
+	*/
+	public void deletePurchaseInfo(ProjectPurchaseVO purchaseVO) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : deletePaymentAllInfo
+	* @Cdate       : 2021. 02. 10.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입별 지급 정보 전체 삭제
+	* @param buyKey
+	* @return
+	* @throws Exception
+	*/
+	public void deletePaymentAllInfo(ProjectPaymentVO paymentVO) throws Exception;
 	
 	/**
 	 * 프로젝트 계약 상세 정보를 조회한다.
@@ -314,6 +359,14 @@ public interface ProjectMapper {
 	public ProjectOrderVO selectOrderDetail(String orderKey);
 	
 	/**
+	 * 프로젝트 계약별 매입 상세조회
+	 * @param purchaseVO
+	 * @return 
+	 * @exception
+	 */
+	public ProjectPurchaseVO selectPurchaseDetail(ProjectPurchaseVO purchaseVO);
+	
+	/**
 	 * 프로젝트 계약별 발주 제품목록 상세조회
 	 * @param orderKey
 	 * @return 
@@ -327,7 +380,7 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public void deleteOrderInfo(OrderVO orderVO);
+	public void deleteOrderInfo(ProjectOrderVO orderVO);
 	
 	/**
 	 * 프로젝트 계약별 발주 제품 삭제

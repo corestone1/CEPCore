@@ -246,5 +246,4 @@
 	</div>
 </fieldset>
 </form:form>
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
             

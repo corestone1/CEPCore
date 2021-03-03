@@ -317,10 +317,7 @@
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065",
-				"turnNo":"2",
-				"ctKey":["CT210110", "CT210111"],
-				"salesKey":["SD210050", "SD210051"]
+				"pjKey":"PJ210091"
 			}
 			var button = new Array;
 			button = [];
@@ -331,7 +328,7 @@
 			var url = '/project/write/contractInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210078"
+				"pjKey":"PJ210091"
 			}
 			var button = new Array;
 			button = [];
@@ -365,8 +362,8 @@
 			var url = '/project/write/workInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065",
-				"pjWorkSeq":5
+				"pjKey":"PJ210073",
+				/* "pjWorkSeq":5 */
 			}
 			var button = new Array;
 			button = [];
@@ -377,10 +374,7 @@
 			var url = '/project/write/guarantyInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065",
-				"turnNo":"2",
-				"ctKey":["CT210110", "CT210111"],
-				"salesKey":["SD210050", "SD210051"]
+				"pjKey":"PJ210075"
 			}
 			var button = new Array;
 			button = [];
@@ -391,10 +385,10 @@
 			var url = '/project/write/finishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065",
+				"pjKey":"PJ210065"/* ,
 				"turnNo":"2",
 				"ctKey":["CT210110", "CT210111"],
-				"salesKey":["SD210050", "SD210051"]
+				"salesKey":["SD210050", "SD210051"] */
 			}
 			var button = new Array;
 			button = [];
@@ -413,14 +407,18 @@
 		}
 		
 		function tmp7() {
-			location.href="http://localhost:8080/project/viewApproval.do?pjKey=PJ210065";
+			form = document.listForm;
+			form.pjKey.value = "PJ210065";
+			form.action = "<c:url value='/project/viewApproval.do'/>";
+			form.submit(); 
+			/* location.href="http://localhost:8080/project/viewApproval.do?pjKey=PJ210065"; */
 		}
 		
 		function tmp8() {
 			var url = '/project/write/biddingInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210073"
+				"pjKey":"PJ210091"
 			}
 			var button = new Array;
 			button = [];

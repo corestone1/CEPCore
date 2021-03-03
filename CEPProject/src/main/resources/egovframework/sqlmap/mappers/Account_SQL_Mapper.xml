@@ -5,8 +5,8 @@
 	<resultMap id="accountVO" type="com.cep.mngCommon.account.vo.AccountVO">
 		<result property="rowNum"          column="ROW_NUM"/>
 		<result property="acKey"           column="AC_KEY"/>
-		<result property="acSalesYN"       column="AC_SALES_YN"/>
-		<result property="acBuyYN"         column="AC_BUY_TN"/>
+		<result property="acSalesYn"       column="AC_SALES_YN"/>
+		<result property="acBuyYn"         column="AC_BUY_TN"/>
 		<result property="acBusiNum"       column="AC_BUSI_NUM"/>
 		<result property="acNm"            column="AC_NM"/>
 		<result property="acAddr"          column="AC_ADDR"/>
@@ -24,9 +24,9 @@
 	
 
 	<!--
-		고객 목록 조회 쿼리
+		거래처 목록 조회 쿼리
 	  -->
-	<select id="selectAccountList" parameterType="com.cep.mngCommon.account.vo.AccountSearchVO" resultMap="accountVO">				
+	<select id="selectAccountList" parameterType="com.cep.mngCommon.account.vo.AccountSearchVO" resultType="egovMap">				
 		
 		SELECT AC_KEY
 		     , AC_SALES_YN
@@ -60,8 +60,27 @@
 				AND AC_NM LIKE CONCAT('%', CONCAT(#{acNm}, '%'))
 			]]> 
 		</if>
-		
+		AND DELETE_YN='N'
 		ORDER BY AC_NM ASC		
+		
+	</select>
+	
+	<select id="selectAccountDetail" parameterType="com.cep.mngCommon.account.vo.AccountSearchVO" resultType="com.cep.mngCommon.account.vo.AccountVO">				
+		
+		SELECT 
+			AC_KEY AS acKey
+		     , AC_SALES_YN AS acSalesYn
+		     , AC_BUY_YN AS acBuyYn
+		     , AC_BUSI_NUM AS acBusiNum
+		     , AC_NM AS acNm
+		     , AC_ADDR AS acAddr
+		     , AC_ADDR_DETAIL AS acAddrDetail
+		     , AC_CEO_NM AS acCeoNm
+		     , AC_REP_TEL AS acRepTel
+		     , AC_REP_FAX AS acRepFax
+		FROM   CMM_ACCOUNT_TB
+		WHERE AC_KEY = #{acKey}
+		AND DELETE_YN='N'
 		
 	</select>
 	
@@ -82,4 +101,61 @@
 		
 	</select>
 	
+	<select id="selectAcDepositList" parameterType="com.cep.mngCommon.account.vo.AccountSearchVO" resultType="egovMap">
+	
+		SELECT AC_KEY
+			 , AC_AD_SEQ
+			 , AC_BANK_NM
+			 , AC_BKNO
+			 , AC_ACHOLDER
+			 , AC_REP_BKNO_YN
+		FROM  CMM_ACCOUNT_DEPOSIT_TB
+		WHERE AC_KEY = #{acKey}
+		AND DELETE_YN='N'
+		
+	</select>
+	
+	<select id="isExist" parameterType="com.cep.mngCommon.account.vo.AccountVO" resultType="Integer">
+		
+		SELECT COUNT(*)
+		FROM CMM_ACCOUNT_TB
+		WHERE AC_KEY=#{acKey}
+		AND DELETE_YN='N'
+		
+	</select>
+	
+	<insert id="insertAccountInfo" parameterType="java.util.Map">
+		
+		INSERT INTO CMM_ACCOUNT_TB (
+			AC_KEY
+			, AC_BUSI_NUM
+			, AC_SALES_YN
+			, AC_BUY_YN
+			, AC_NM
+			, AC_ADDR
+			, AC_ADDR_DETAIL
+			, AC_CEO_NM
+			, AC_REP_TEL
+			, AC_REP_FAX
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{acKey}
+			, #{acBusiNum}
+			, #{acSalesYn}
+			, #{acBuyYn}
+			, #{acNm}
+			, #{acAddr}
+			, #{acAddrDetail}
+			, #{acCeoNm}
+			, #{acRepTel}
+			, #{acRepFax}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
 </mapper>

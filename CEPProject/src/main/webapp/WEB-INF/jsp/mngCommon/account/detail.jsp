@@ -435,35 +435,51 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>사업자 번호</td>
-									<td>220-88-34136</td>
+									<td>${accountList[0].acKey }</td>
 								</tr>
 								<tr>
 									<td>거래처명</td>
-									<td>미래에셋생명</td>
+									<td>${accountList[0].acNm }</td>
 								</tr>
 								<tr>
 									<td>대표자명</td>
-									<td>홍길동</td>
+									<td>${accountList[0].acCeoNm }</td>
 								</tr>
 								<tr>
 									<td>거래처구분</td>
-									<td>매출거래처</td>
+									<td>
+										<c:choose>
+											<c:when test="${accountList[0].acSalesYn eq 'Y'}">
+												<c:choose>
+													<c:when test="${accountList[0].acBuyYn eq 'Y' }">
+														매출거래처, 매입거래처
+													</c:when>
+													<c:otherwise>
+														매출 거래처
+													</c:otherwise>
+												</c:choose>
+											</c:when>
+											<c:otherwise>
+												매입거래처
+											</c:otherwise>
+										</c:choose>
+									</td>
 								</tr>
 								<tr>
 									<td>연락처</td>
-									<td>032-2084-3547</td>
+									<td>${accountList[0].acRepTel }</td>
 								</tr>
 								<tr>
 									<td>FAX</td>
-									<td>032-2084-3547</td>
+									<td>${accountList[0].acRepFax }</td>
 								</tr>
 								<tr>
 									<td>주소</td>
-									<td>서울시 송파구 법원로 127</td>
+									<td>${accountList[0].acAddr }</td>
 								</tr>
 								<tr>
 									<td></td>
-									<td>1601-1603호 (문정대명벨리온)</td>
+									<td>${accountList[0].acAddrDetail }</td>
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
@@ -556,51 +572,17 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>1</td>
-									<td>홍길동</td>
-									<td>기술지원팀</td>
-									<td>차장</td>
-									<td>010-2568-5789</td>
-									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
-									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
-								</tr>
-								<tr>
-									<td>2</td>
-									<td>홍길동</td>
-									<td>기술지원팀</td>
-									<td>차장</td>
-									<td>010-2568-5789</td>
-									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
-									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
-								</tr>
-								<tr>
-									<td>3</td>
-									<td>홍길동</td>
-									<td>기술지원팀</td>
-									<td>차장</td>
-									<td>010-2568-5789</td>
-									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
-									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
-								</tr>
-								<tr>
-									<td>4</td>
-									<td>홍길동</td>
-									<td>기술지원팀</td>
-									<td>차장</td>
-									<td>010-2568-5789</td>
-									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
-									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
-								</tr>
-								<tr>
-									<td>5</td>
-									<td>홍길동</td>
-									<td>기술지원팀</td>
-									<td>차장</td>
-									<td>010-2568-5789</td>
-									<td><span title="abcdefef@corestone.co.kr">abcdefef@corestone.co.kr</span></td>
-									<td><span>담장자 비고정보담장자 비고정보담장자 비고정보담장자 비고정보</span></td>
-								</tr>
+								<c:forEach var="result" items="${acDirectorList }" varStatus="status">
+									<tr>
+										<td>${status.count }</td>
+										<td>${result.acDirectorNm }</td>
+										<td>${result.acDirectorDeptNm }</td>
+										<td>${result.acDirectorPositionNm }</td>
+										<td>${result.acDirectorMbNum }</td>
+										<td><span title="${result.acDirectorEmail }">${result.acDirectorEmail }</span></td>
+										<td><span>${result.acDirectorDesc }</span></td>
+									</tr>
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
@@ -617,8 +599,17 @@
 									<th scope="row">주거래계좌</th>
 								</tr>
 							</thead>
-							<tbody>							
-								<tr>
+							<tbody>			
+								<c:forEach var="result" items="${acDepositList}" varStatus="status">
+									<tr>
+										<td>${status.count }</td>
+										<td>${result.acBankNm }</td>
+										<td class="textalignC">${result.acBkno }</td>
+										<td class="textalignC">${result.acAcholder }</td>
+										<td class="textalignC">${result.acRepBknoYn }</td>
+									</tr>
+								</c:forEach>
+								<!-- <tr>
 									<td>1</td>
 									<td>기업은행</td>
 									<td class="textalignC">777-127624-43-126</td>
@@ -652,7 +643,7 @@
 									<td class="textalignC">777-127624-43-126</td>
 									<td class="textalignC">홍길동</td>
 									<td class="textalignC">N</td>
-								</tr>
+								</tr> -->
 							</tbody>
 						</table>
 					</div>

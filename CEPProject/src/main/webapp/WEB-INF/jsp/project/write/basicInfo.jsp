@@ -387,7 +387,7 @@
 								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjEndDt)}"/>" required/>
 							</td>
 						</tr>
-						<tr>
+						<%-- <tr>
 							<td class="tdTitle"><label>*</label>계약일자</td>
 							<td class="tdContents">
 								<c:set var="today" value="<%=new java.util.Date()%>" />
@@ -395,7 +395,7 @@
 								<input type="text" class="calendar fromDt" name="ctDt" 
 									value="<c:choose><c:when test="${resultList[0].ctDt eq null || resultList[0].ctDt eq '' }">${now }</c:when><c:otherwise>${displayUtil.displayDate(resultList[0].ctDt)}</c:otherwise></c:choose>" required/>
 							</td>
-						</tr>
+						</tr> --%>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
 							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}" /></textarea></td>

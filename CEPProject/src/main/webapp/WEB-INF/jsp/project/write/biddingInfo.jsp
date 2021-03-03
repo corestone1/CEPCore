@@ -264,7 +264,6 @@
 			object["biddingFileVOList"]=listData;
 			
 			var sendData = JSON.stringify(object);
-			console.log(sendData);
 			$.ajax({
 				url: "/project/insert/biddingInfo.do",
 			    dataType: 'json', 
@@ -288,10 +287,7 @@
 			    		var url='/project/write/biddingInfo.do';
 		    			var dialogId = 'program_layer';
 		    			var varParam = {
-							"pjKey":$("#pjKey").val()/* ,
-							"turnNo":$("#turnNo").val(),
-							"ctKey":ctKeyList,
-							"salesKey": salesKeyList */
+							"pjKey":$("#pjKey").val()
 		    			}
 			   			var button = new Array;
 		    			button = [];
@@ -309,7 +305,7 @@
 						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 					}
 				} 
-			});     
+			});      
 		}
 		
 		function fn_next(link) {
@@ -566,6 +562,7 @@
 					<input type="hidden" id="bdGbFinishYn" value="${biddingVO.bdGbFinishYn }" name="bdGbFinishYn" />
 					<input type="hidden" id="bdProposalYn" value="${biddingVO.bdProposalYn }" name="bdProposalYn" />
 					<input type="hidden" id="bdProposalPresentYn" value="${biddingVO.bdProposalPresentYn }" name="bdProposalPresentYn" />
+					<input type="hidden" id="pjStatusCd" value="PJST1000" name="pjStatusCd" />
 					<div>
 						<div id="infoTable">
 							<table>
@@ -586,7 +583,8 @@
 									<td>완료</td>
 									<td colspan="3">
 									 	<input type='text' id='bdGbFinishDt' placeholder='발행 일자' class='calendar publish' name='bdGbFinishDt'  value='${displayUtil.displayDate(biddingVO.bdGbFinishDt) }' disabled/>
-									 	<input type='text' id='bdGbAmount' placeholder='금액' amountOnly class='amount publish' width='177px' name='bdGbAmount' value='${displayUtil.commaStr(biddingVO.bdGbAmount) }' disabled/>
+									 	<input type='text' id='bdGbAmount' placeholder='금액' amountOnly class='amount publish' width='177px' name='bdGbAmount' 
+									 		<c:choose><c:when test="${biddingVO.bdGbAmount ne null && biddingVO.bdGbAmount ne 0}">value="${displayUtil.commaStr(biddingVO.bdGbAmount) }"</c:when><c:otherwise>value=""</c:otherwise></c:choose> disabled/>
 									 </td>
 							 	</tr>
 							 	<tr class='ftw200 first'>
@@ -594,7 +592,7 @@
 							 		<td>입찰 기한</td>
 							 		<td colspan="8">
 									 	<input type='text' id='bdLimitDt' placeholder='입찰 기한' class='calendar' name='bdLimitDt' value="${displayUtil.displayDate(biddingVO.bdLimitDt) }" required/>
-									 	<input type='time' id='bdLimitTm' placeholder='입찰 시간' name='bdLimitTm' value="${displayUtil.displayDate(biddingVO.bdLimitTm) }"/>
+									 	<input type='time' id='bdLimitTm' placeholder='입찰 시간' name='bdLimitTm' value="${displayUtil.displayTime(biddingVO.bdLimitTm) }"/>
 									 </td>
 							 	</tr>
 								<tr class='ftw200'>

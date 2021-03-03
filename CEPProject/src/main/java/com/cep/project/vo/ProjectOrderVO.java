@@ -9,7 +9,7 @@ import com.cep.example.vo.SampleDefaultVO;
 
 @SuppressWarnings("serial")
 @Alias("projectOrderVO")
-public class ProjectOrderVO extends ProjectVO implements Serializable {
+public class ProjectOrderVO extends ProjectPurchaseVO implements Serializable {
 	
 	private String pjOrderKey;
 	private String orderCtFkKey;
@@ -24,6 +24,7 @@ public class ProjectOrderVO extends ProjectVO implements Serializable {
 	private int mtOrderAmount;
 	private String orderReceiptDt;
 	private String taxYn;
+	private int buyTurn;
 	private List<ProjectOrderProductVO> orderProductVOList;
 	
 	public String getPjOrderKey() {
@@ -109,6 +110,12 @@ public class ProjectOrderVO extends ProjectVO implements Serializable {
 	}
 	public void setOrderProductVOList(List<ProjectOrderProductVO> orderProductVOList) {
 		this.orderProductVOList = orderProductVOList;
+	}
+	public int getBuyTurn() {
+		return buyTurn;
+	}
+	public void setBuyTurn(int buyTurn) {
+		this.buyTurn = buyTurn;
 	}
 	
 }

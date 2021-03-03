@@ -163,15 +163,25 @@
 			white-space:nowrap;
 			width: 95%;
 			margin: 2px 5px 0px 10px;
+		}
+		.middle tbody tr td a {
+			color: #000;
+			font-weight: 300;
 		}			
 	</style>
 	<script>
+		function fn_detail(acKey) {
+			var form = document.listForm;
+			form.acKey.value = acKey;
+			form.action = "/mngCommon/account/detail.do";	
+			form.submit();
+		}
+	
 		$(document).ready(function() {
-			$('#fl tr').click(function() {
-				/* location.href = "/maintenance/detail/prodInfo.do"; */
-				document.listForm.action = "/mngCommon/account/detail.do";
-	           	document.listForm.submit(); 
-				
+			$("input:radio[id*='check']").each(function() {
+				$(this).click(function() {
+					$("#acKey").val($(this).val());
+				});
 			});
 			
 			$('#btn_delete').click(function() {
@@ -216,12 +226,20 @@
 			});
 		});
 
-		function fn_addView(){
+		function fn_addView(type){
+
 			var url = '/mngCommon/account/write.do';
 			var dialogId = 'program_layer';
-			
 			var varParam = {};
-			
+			if(type == "write") {
+				varParam = {
+					acKey:""
+				};
+			} else {
+				varParam = {
+					acKey: $("#acKey").val()
+				}; 
+			}
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:615px'); 
@@ -232,6 +250,7 @@
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		<input type="hidden" name="acKey" id="acKey" />
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -239,7 +258,7 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">거래처 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('basic')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('write')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">						
 						<input type="text" placeholder="거래처명"/>
@@ -264,166 +283,29 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check1"/><label for="check1" class="cursorP"/>
-								</td>
-								<td>999</td>
-								<td>미래에셋생명</td>
-								<td>김대표</td>
-								<td>220-88-34136</td>
-								<td>Y</td>
-								<td>Y</td>
-								<td>032-2084-3547</td>
-								<td>032-2084-3547</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check2"/><label for="check2" class="cursorP"/>
-								</td>
-								<td>2</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check3"/><label for="check3" class="cursorP"/>
-								</td>
-								<td>3</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check4"/><label for="check4" class="cursorP"/>
-								</td>
-								<td>4</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check5"/><label for="check5" class="cursorP"/>
-								</td>
-								<td>5</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check6"/><label for="check6" class="cursorP"/>
-								</td>
-								<td>6</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check7"/><label for="check7" class="cursorP"/>
-								</td>
-								<td>7</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check8"/><label for="check8" class="cursorP"/>
-								</td>
-								<td>8</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check9"/><label for="check9" class="cursorP"/>
-								</td>
-								<td>9</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check10"/><label for="check10" class="cursorP"/>
-								</td>
-								<td>10</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
-							<tr>
-								<td onclick="event.cancelBubble = true;">
-									<input type="radio" class="tRadio" name="m_gubun" id="check11"/><label for="check11" class="cursorP"/>
-								</td>
-								<td>11</td>
-								<td>거래처명</td>
-								<td>대표자명</td>
-								<td>사업자번호</td>
-								<td>Y</td>
-								<td>N</td>
-								<td>대표번호</td>
-								<td>대표FAX</td>
-								<td class="textalignL"><span title="서울시 송파구 법원로 127 1601-1603호 (문정대명벨리온)">주소</span></td>
-							</tr>
+							<c:forEach var="result" items="${accountList }" varStatus="status">
+								<tr>
+									<td onclick="event.cancelBubble = true;">
+										<input type="radio" class="tRadio" name="m_gubun" id="check${status.count }" value="${result.acKey }"/>
+										<label for="check${status.count }" class="cursorP"/>
+									</td>
+									<td>${status.count }</td>
+									<td><a href="javascript:fn_detail('${result.acKey}')" ><c:out value="${result.acNm}"/></a></td>
+									<td>${result.acCeoNm }</td>
+									<td>${result.acKey }</td>
+									<td>${result.acSalesYn }</td>
+									<td>${result.acBuyYn }</td>
+									<td>${result.acRepTel }</td>
+									<td>${result.acRepFax }</td>
+									<td class="textalignL"><span title="${result.acAddr } ${result.acAddrDetail }">${result.acAddr } ${result.acAddrDetail }</span></td>
+								</tr>
+							</c:forEach>
 						</tbody>
 					</table>
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<button type="button" value="수정" onclick="javascript:fn_addView('mod')"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 						<button type="button" id='btn_delete' value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>

@@ -1,6 +1,5 @@
 package com.cep.project.web;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -31,16 +29,16 @@ import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
-import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.OrderVO;
-import com.cmm.vo.SalesVO;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -314,7 +312,7 @@ public class ProjectController {
 	
 	@RequestMapping(value="/insert/guarantyInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addGuarantyInfo(HttpServletRequest request, @RequestBody GuarantyBondVO guarantyBondVO) throws Exception {
+	public Map<String, Object> addGuarantyInfo(HttpServletRequest request, @RequestBody ProjectGuarantyBondVO guarantyBondVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap = service.insertGuarantyInfo(request, guarantyBondVO);
 		
@@ -324,35 +322,22 @@ public class ProjectController {
 	@RequestMapping(value="/write/guarantyInfo.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddGuarnatyInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		Enumeration e = request.getParameterNames();
-		while ( e.hasMoreElements() ){
-			String name = (String) e.nextElement();
-			String[] values = request.getParameterValues(name);		
-			
-			for (String value : values) {
-				if(name.contains("[]")) {
-					name = name.replace("[]","");
-				}
-			}
-			model.addAttribute(name, values);
-		}
+		ProjectContractVO ctVO = service.selectContractDetail(projectVO.getPjKey());
+		List<?> salesList = service.selectSalesList(projectVO.getPjKey());
+		List<?> guarantyList = service.selectGuarantyList(projectVO.getPjKey());
 		
-		/*List<SalesVO> salesList = new ArrayList<SalesVO>();
+		model.addAttribute("pjKey", projectVO.getPjKey());
+		model.addAttribute("ctVO", ctVO);
+		model.addAttribute("salesList", salesList);
+		model.addAttribute("guarantyList", guarantyList);
 		
-		for(String salesKeys : salesKey) {
-			SalesVO salesVO = new SalesVO();
-			salesVO = comService.selectSalesGuarantyDetail(salesKeys);
-			
-			salesList.add(salesVO);
-        }
-		
-		model.addAttribute("salesList", salesList);*/
 		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/write/guarantyInfo";
 	}
 	
-	@RequestMapping(value="/select/guarantyInfo.do", method=RequestMethod.POST)
+	// 보증 증권 등록 ajax 방식
+	/*@RequestMapping(value="/select/guarantyInfo.do", method=RequestMethod.POST)
 	@ResponseBody
 	public List<SalesVO> selectGuarantyInfo(@RequestParam(value="salesKeyList[]") List<String> salesKeyList) throws Exception {
 		
@@ -366,38 +351,29 @@ public class ProjectController {
         }
 		
 		return salesList;
-	}
+	}*/
 	
 	@RequestMapping(value="/write/orderInfo.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO, ModelMap model) throws Exception {
 		
 		ProjectOrderVO returnVO = null;
 		
-		Enumeration e = request.getParameterNames();
-		while ( e.hasMoreElements() ){
-			String name = (String) e.nextElement();
-			String[] values = request.getParameterValues(name);		
-			
-			for (String value : values) {
-				if(name.contains("[]")) {
-					name = name.replace("[]","");
-				}
-			}
-			model.addAttribute(name, values);
-		}
-		
-		/*HashMap<String, String> sessionMap = null;
-		sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
-		String userName = "";
-		
-		userName = mainService.selectName(sessionMap);
-		model.addAttribute("userName", userName);*/
-		
 		List<?> orderSelectBox = null;
 		List<?> acDirectorList = null;
 		int listCount = 0;
+		List salesList = null;
+		List<Map<String, Object>> listMap = null;
+		int buyTurn = 0;
+		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
 		
 		orderVO.setOrderCtFkKey(orderVO.getPjKey());
+		
+		salesList = service.selectSalesList(orderVO.getPjKey());
+		listMap = salesList;
+		
+		if(listMap.size() != 0) {
+			buyTurn = Integer.parseInt(listMap.get(listMap.size() - 1).get("salesTurn").toString());
+		}
 		
 		orderSelectBox = service.selectOrderSelectBoxList(orderVO.getOrderCtFkKey());			
 		if(orderSelectBox != null){
@@ -407,6 +383,8 @@ public class ProjectController {
 		//발주 정보를 조회한다.
 		if(!"".equals(CepStringUtil.getDefaultValue(orderVO.getSelectKey(), ""))){
 			returnVO = service.selectOrderDetail(orderVO.getSelectKey());
+			purchaseVO.setBuyOrderFkKey(orderVO.getSelectKey());
+			purchaseVO = service.selectPurchaseDetail(purchaseVO);
 			
 			if(null != returnVO){
 				returnVO.setSelectKey(orderVO.getSelectKey());
@@ -419,9 +397,12 @@ public class ProjectController {
 			returnVO = orderVO;
 		}
 		
+		model.put("pjKey", orderVO.getPjKey());
+		model.put("buyTurn", buyTurn);
 		model.put("orderSelectBoxList", orderSelectBox);
 		model.put("displayUtil", new CepDisplayUtil());
 		model.put("orderVO", returnVO);
+		model.put("purchaseVO", purchaseVO);
 		model.put("listCount", listCount);
 		model.put("acDirectorList", acDirectorList);
 		
@@ -443,7 +424,7 @@ public class ProjectController {
 	 */
 	@RequestMapping(value="/insert/orderInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addOrderInfo(HttpServletRequest request, @RequestBody OrderVO orderVO, ModelMap model) throws Exception {
+	public Map<String, Object> addOrderInfo(HttpServletRequest request, @RequestBody ProjectOrderVO orderVO, ModelMap model) throws Exception {
 		Map<String, Object> returnMap = new HashMap<>();
 		String orderKey = null;
 		
@@ -517,7 +498,7 @@ public class ProjectController {
 	 */
 	@RequestMapping(value="/delete/orderInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, @RequestBody OrderVO orderVO) throws Exception {
+	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, @RequestBody ProjectOrderVO orderVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		try {
@@ -612,22 +593,10 @@ public class ProjectController {
 	@RequestMapping(value="/write/finishInfo.do")
 	public String addFinishInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		Enumeration e = request.getParameterNames();
-		while ( e.hasMoreElements() ){
-			String name = (String) e.nextElement();
-			String[] values = request.getParameterValues(name);		
-			
-			for (String value : values) {
-				if(name.contains("[]")) {
-					name = name.replace("[]","");
-				}
-			}
-			model.addAttribute(name, values);
-		}
-		
 		List<?> finishInfo = service.selectProjectDetail(projectVO.getPjKey());
 		model.addAttribute("resultList", finishInfo);
 		
+		model.addAttribute("pjKey", projectVO.getPjKey());
 		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/write/finishInfo";
@@ -669,6 +638,12 @@ public class ProjectController {
 		List<?> guarantyList = service.selectGuarantyList(projectVO.getPjKey());
 		model.addAttribute("guarantyList", guarantyList);
 		
+		ProjectBiddingVO biddingVO = new ProjectBiddingVO();
+		biddingVO.setPjKey(projectVO.getPjKey());
+		
+		biddingVO = service.selectBiddingDetail(biddingVO);
+		model.addAttribute("biddingVO", biddingVO);
+				
 		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/viewApproval";

@@ -4,6 +4,9 @@
 package com.cep.mngCommon.account.vo;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.cep.example.vo.SampleDefaultVO;
 
 /**
  * @File Name : AccountVO.java
@@ -21,15 +24,15 @@ import java.io.Serializable;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 
-public class AccountVO implements Serializable {
+public class AccountVO extends SampleDefaultVO implements Serializable {
 
 	private static final long serialVersionUID = -2709806820615818683L;
 
 	private int    rowNum;
 	private String acKey;
 	private int    acBusiNum;
-	private String acSalesYN;
-	private String acBuyYN;
+	private String acSalesYn;
+	private String acBuyYn;
 	private String acNm;
 	private String acAddr;
 	private String acAddrDetail;
@@ -42,7 +45,8 @@ public class AccountVO implements Serializable {
 	private String modDt;
 	private String modTm;
 	private String modEmpKey;
-	
+	private List<AccountDirectorVO> accountDirectorVO;
+	private List<AccountDepositVO> accountDepositVO;
 	
 	/**
 	 * @return the rowNum
@@ -83,26 +87,26 @@ public class AccountVO implements Serializable {
 	/**
 	 * @return the acSalesYN
 	 */
-	public String getAcSalesYN() {
-		return acSalesYN;
+	public String getAcSalesYn() {
+		return acSalesYn;
 	}
 	/**
 	 * @param acSalesYN the acSalesYN to set
 	 */
-	public void setAcSalesYN(String acSalesYN) {
-		this.acSalesYN = acSalesYN;
+	public void setAcSalesYn(String acSalesYn) {
+		this.acSalesYn = acSalesYn;
 	}
 	/**
 	 * @return the acBuyYN
 	 */
-	public String getAcBuyYN() {
-		return acBuyYN;
+	public String getAcBuyYn() {
+		return acBuyYn;
 	}
 	/**
 	 * @param acBuyYN the acBuyYN to set
 	 */
-	public void setAcBuyYN(String acBuyYN) {
-		this.acBuyYN = acBuyYN;
+	public void setAcBuyYn(String acBuyYn) {
+		this.acBuyYn = acBuyYn;
 	}
 	/**
 	 * @return the acNm
@@ -251,9 +255,25 @@ public class AccountVO implements Serializable {
 	/**
 	 * @return the serialversionuid
 	 */
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 	
+	public List<AccountDirectorVO> getAccountDirectorVO() {
+		return accountDirectorVO;
+	}
+	
+	public void setAccountDirectorVO(List<AccountDirectorVO> accountDirectorVO) {
+		this.accountDirectorVO = accountDirectorVO;
+	}
+	
+	public List<AccountDepositVO> getAccountDepositVO() {
+		return accountDepositVO;
+	}
+	
+	public void setAccountDepositVO(List<AccountDepositVO> accountDepositVO) {
+		this.accountDepositVO = accountDepositVO;
+	}
 	
 }

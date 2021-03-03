@@ -143,7 +143,6 @@
 	         }
 		}
 		
-		var countSave = 0;
 		
 		function fn_save() {
 			var object = {};
@@ -176,15 +175,11 @@
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
 			    		alert('저장되었습니다.');
-			    		countSave++;
 			    		
 			    		var url = '/project/write/finishInfo.do';
 						var dialogId = 'program_layer';
 						var varParam = {
-							"pjKey" : $('#pjKey').val(),
-							"turnNo":$("#turnNo").val(),
-							"ctKey":ctKeyList,
-							"salesKey":salesKeyList
+							"pjKey" : $('#pjKey').val()
 						}
 						var button = new Array;
 						button = [];
@@ -201,30 +196,29 @@
 			});   
 		}
 		
-		var ctKeyList = new Array();
-		var salesKeyList = new Array();
-		
-		<c:forEach items="${ctKey}" var="item">
-			ctKeyList.push("${item}");
-		</c:forEach>
-		
-		<c:forEach items="${salesKey}" var="item">
-			salesKeyList.push("${item}");
-		</c:forEach>
-		
 		function fn_prevView(){
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val(),
-				"turnNo":$("#turnNo").val(),
-				"ctKey":ctKeyList,
-				"salesKey":salesKeyList
+				"pjKey" : $('#pjKey').val()
 			}
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
+		
+		$(document).ready(function() {
+			$('#remarkCnt').html("("+$("#remark").val().length+" / 500)");
+			
+			$('#remark').on('keyup', function() {
+				$('#remarkCnt').html("("+$(this).val().length+" / 500)");
+				
+				if($(this).val().length > 500) {
+					$(this).val($(this).val().substring(0, 500));
+					$('#remarkCnt').html("(500 / 500)");
+				}
+			});
+		});
 	</script>
 </head>
 <body>
@@ -243,8 +237,7 @@
 		<div class="contents">
 			<div>
 				<form id="infoForm" name="infoForm" method="post">
-					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey[0]}"/>"/>
-					<input type="hidden" id="turnNo" name="turnNo"  value="<c:out value="${turnNo[0]}"/>"/>
+					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="PJST5000" />
 					<table>
 						<tr>
@@ -276,7 +269,10 @@
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
-							<td class="tdContents"  colspan="2"><textarea name="finishRemark"><c:out value="${resultList[0].finishRemark}"/></textarea></td>
+							<td class="tdContents"  colspan="2">
+								<textarea name="finishRemark" id="remark"><c:out value="${resultList[0].finishRemark}"/></textarea>
+								<div id="remarkCnt">(0 / 500)</div>
+							</td>
 						</tr>
 					</table>
 				</form>

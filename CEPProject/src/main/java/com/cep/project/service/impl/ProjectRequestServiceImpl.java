@@ -84,7 +84,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 		String buyKey = "";
 		
 		try {
-			buyKey = comService.makePrimaryKey(PrimaryKeyType.PURCHASE);
+			buyKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_PURCHASE);
 			purchaseVO.setBuyKey(buyKey);
 			
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");

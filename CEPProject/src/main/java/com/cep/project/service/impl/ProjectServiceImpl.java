@@ -20,8 +20,11 @@ import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderProductVO;
 import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectPaymentVO;
+import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.PrimaryKeyType;
@@ -30,9 +33,6 @@ import com.cmm.service.FileMngService;
 import com.cmm.service.impl.ComMapper;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
-import com.cmm.vo.GuarantyBondVO;
-import com.cmm.vo.OrderProductVO;
-import com.cmm.vo.OrderVO;
 import com.cmm.vo.PurchaseVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -212,9 +212,20 @@ public class ProjectServiceImpl implements ProjectService {
 				projectBiddingVO.setRegEmpKey(session.get("empKey"));
 			    
 			    mapper.insertBiddingInfo(projectBiddingVO);
-			    writeBiddingFileInfo(bdKey, projectBiddingVO.getBiddingFileVOList());
+			    
+			    for(int i = 0; i <listCnt; i++) {
+					if(CepStringUtil.getDefaultValue(projectBiddingVO.getBiddingFileVOList().get(i).getBdSeq(), "0").equals("0") && 
+							projectBiddingVO.getBiddingFileVOList().get(i).getBdGuarantyCheck().equals("Y")) {
+						// 새로 등록되는 입찰 파일
+						insertList.add(projectBiddingVO.getBiddingFileVOList().get(i));
+					} 
+				}
+			    writeBiddingFileInfo(bdKey, insertList);
 			    
 			}
+			
+			mapper.updateStatusCd(projectBiddingVO.getPjKey(), projectBiddingVO.getStatusCd());
+			
 			returnMap.put("successYN", "Y");
 		} catch(Exception e) {
 			returnMap.put("successYN", "N");
@@ -318,12 +329,15 @@ public class ProjectServiceImpl implements ProjectService {
 			mapper.updateStatusCd(projectContractSalesVO.getPjKey(), projectContractSalesVO.getStatusCd());
         	returnMap.put("pjKey", projectContractSalesVO.getPjKey());
         	
-        	/*for(int i = 0; i < listCnt; i++) {
-        		ctKeyList.add(projectContractSalesVO.getProjectContractSalesVOList().get(i).getCtKey());
+        	for(int i = 0; i < listCnt; i++) {
+        		/*ctKeyList.add(projectContractSalesVO.getProjectContractSalesVOList().get(i).getCtKey());*/
+        		salesKeyList.add(projectContractSalesVO.getProjectContractSalesVOList().get(i).getSalesKey());
         	}
         	
-        	returnMap.put("ctKey", ctKeyList);*/
-        	returnMap.put("salesKey", projectContractSalesVO.getSalesKey());
+        	/*returnMap.put("ctKey", ctKeyList);*/
+        	returnMap.put("salesKey", salesKeyList);
+        	returnMap.put("ctKey", projectContractSalesVO.getCtKey());
+        	/*returnMap.put("salesKey", projectContractSalesVO.getSalesKey());*/
         	returnMap.put("successYN", "Y");
 		} catch(Exception e) {
 			throw new Exception(e);
@@ -494,19 +508,21 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public Map<String, Object> insertGuarantyInfo(HttpServletRequest request, GuarantyBondVO guarantyBondVO) throws Exception {
+	public Map<String, Object> insertGuarantyInfo(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
+		List<ProjectGuarantyBondVO> updateList = new ArrayList<ProjectGuarantyBondVO>();
 		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			guarantyBondVO.setModEmpKey(session.get("empKey"));
-			comService.updateSalesInfo(guarantyBondVO);
+			/*mapper.updateSalesInfo(guarantyBondVO);*/
 			
 			for(int i = 0; i < guarantyBondVO.getGuarantyList().size(); i++) {
 				guarantyBondVO.setCtKey(guarantyBondVO.getGuarantyList().get(i).getCtKey());
 				guarantyBondVO.setSalesKey(guarantyBondVO.getGuarantyList().get(i).getSalesKey());
 				
+				updateList.add(guarantyBondVO.getGuarantyList().get(i));
 				if(guarantyBondVO.getGuarantyList().get(i).getCtGuarantyYN().equals("Y")) {
 					
 					guarantyBondVO.setGbKindCd("계약");
@@ -526,7 +542,8 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						mapper.insertGuarantyInfo(guarantyBondVO);
 					}
-				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getCtGbKey(), ""))) {
+				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getCtGbKey(), "")) && 
+						guarantyBondVO.getGuarantyList().get(i).getCtGuarantyYN().equals("N")) {
 					// 삭제
 					guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getCtGbKey());
 					mapper.deleteGuarantyInfo(guarantyBondVO);
@@ -551,7 +568,8 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						mapper.insertGuarantyInfo(guarantyBondVO);
 					}
-				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getDfGbKey(), ""))) {
+				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getDfGbKey(), "")) && 
+						guarantyBondVO.getGuarantyList().get(i).getDfGuarantyYN().equals("N")) {
 					// 삭제
 					guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getDfGbKey());
 					mapper.deleteGuarantyInfo(guarantyBondVO);
@@ -576,11 +594,14 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						mapper.insertGuarantyInfo(guarantyBondVO);
 					}
-				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getPpGbKey(), ""))) {
+				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getPpGbKey(), "")) && 
+						guarantyBondVO.getGuarantyList().get(i).getPpGuarantyYN().equals("N")) {
 					// 삭제
 					guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getPpGbKey());
 					mapper.deleteGuarantyInfo(guarantyBondVO);
 				}
+				
+				updateSalesInfo(guarantyBondVO.getModEmpKey(), updateList);
 			}
 			
 			
@@ -616,15 +637,15 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	@Transactional
 	@SuppressWarnings("unchecked")
-	public String insertOrderInfo(HttpServletRequest request, OrderVO orderVO) throws Exception {
+	public String insertOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO) throws Exception {
 		
 		String[] deleteKeyList = null;
-		List<OrderProductVO> insertList = null;
-		List<OrderProductVO> updateList = null;
+		List<ProjectOrderProductVO> insertList = null;
+		List<ProjectOrderProductVO> updateList = null;
 		int listCnt = 0;
-		OrderProductVO productVO = null;
+		ProjectOrderProductVO productVO = null;
 		HashMap<String, String> session = null;
-		PurchaseVO purchaseVO = new PurchaseVO();
+		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
 		
 		String orderKey = null;
 		try {
@@ -632,19 +653,19 @@ public class ProjectServiceImpl implements ProjectService {
 			orderVO.setRegEmpKey(session.get("empKey"));
 			orderVO.setModEmpKey(session.get("empKey"));
 			
-			if((CepStringUtil.getDefaultValue((orderVO.getOrderKey()), "")).equals("")) {
+			if((CepStringUtil.getDefaultValue((orderVO.getPjOrderKey()), "")).equals("")) {
+				
 				// 해당 내용 신규등록
 				orderKey = writeOrderInfo(orderVO.getRegEmpKey(), orderVO);
 				
 				// 매입 정보 생성
-				purchaseVO.setBuyOrderFkKey(orderVO.getOrderKey());
-				purchaseVO.setBuyClass(orderVO.getOrderCtClass());
+				purchaseVO.setBuyOrderFkKey(orderVO.getPjOrderKey());
+				purchaseVO.setBuyFkPjKey(orderVO.getOrderCtFkKey());
 				purchaseVO.setBuyAmount(orderVO.getOrderAmount());
 				purchaseVO.setDonePaymentAmount(0);
 				purchaseVO.setYetPaymentAmount(orderVO.getOrderAmount());
 				purchaseVO.setBuyTurn(orderVO.getBuyTurn());
-				purchaseVO.setRegEmpKey(session.get("empKey"));
-				comService.insertPurchaseInfo(request, purchaseVO);
+				insertPurchaseInfo(request, purchaseVO);
 				
 			} else {
 				if(orderVO.getOrderProductVOList() != null && orderVO.getOrderProductVOList().size() > 0) {
@@ -669,11 +690,11 @@ public class ProjectServiceImpl implements ProjectService {
 				}
 				
 				if(deleteKeyList != null && deleteKeyList.length > 0) {
-					deleteOrderProductList(orderVO.getModEmpKey(), orderVO.getOrderKey(), deleteKeyList);
+					deleteOrderProductList(orderVO.getModEmpKey(), orderVO.getPjOrderKey(), deleteKeyList);
 				}
 				
 				if(insertList != null && insertList.size() > 0) {
-					writeOrderList(orderVO.getOrderKey(), orderVO.getRegEmpKey(), insertList);
+					writeOrderList(orderVO.getPjOrderKey(), orderVO.getRegEmpKey(), insertList);
 				}
 				
 				if(updateList != null && updateList.size() > 0) {
@@ -681,6 +702,13 @@ public class ProjectServiceImpl implements ProjectService {
 				}
 				
 				mapper.updateOrderInfo(orderVO);
+				
+				// 매입 정보 수정
+				purchaseVO.setBuyOrderFkKey(orderVO.getPjOrderKey());
+				purchaseVO.setBuyFkPjKey(orderVO.getOrderCtFkKey());
+				purchaseVO.setBuyAmount(orderVO.getOrderAmount());
+				purchaseVO.setBuyKey(orderVO.getBuyKey());
+				updatePurchaseInfo(request, purchaseVO);
 			}
 			
 			mapper.updateStatusCd(orderVO.getOrderCtFkKey(), orderVO.getStatusCd());
@@ -704,27 +732,27 @@ public class ProjectServiceImpl implements ProjectService {
 	  * @return
 	  * @throws Exception
 	 */
-	private String writeOrderInfo(String regEmpKey, OrderVO orderVO) throws Exception {
+	private String writeOrderInfo(String regEmpKey, ProjectOrderVO orderVO) throws Exception {
 		
 		String orderKey = null;
 		Map<String, Object> insertParam = null;
 		try {
-			orderKey = comService.makePrimaryKey(PrimaryKeyType.ORDER);
+			orderKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_ORDER);
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(orderKey, ""))){
-				orderVO.setOrderKey(orderKey);
+				orderVO.setPjOrderKey(orderKey);
 				// 발주 메인을 등록한다.
 				mapper.insertOrderInfo(orderVO);
 				
 				insertParam = new HashMap<>();
 				insertParam.put("regEmpKey", regEmpKey);
-				insertParam.put("orderKey", orderKey);
+				insertParam.put("pjOrderKey", orderKey);
 				insertParam.put("orderProductVOList", orderVO.getOrderProductVOList());
 				// 제품목록을 등록한다.
 				mapper.insertOrderProductInfo(insertParam);
 				
 			} else {
-				throw new Exception("Can't make CMM_ORDER_TB.ORDER_KEY !!!! ..");
+				throw new Exception("Can't make PJ_ORDER_TB.PJ_ORDER_KEY !!!! ..");
 			}
 			
 		} catch (Exception e) {
@@ -733,11 +761,11 @@ public class ProjectServiceImpl implements ProjectService {
 		return orderKey;
 	}
 	
-	private void writeOrderList(String orderKey, String regEmpKey, List<OrderProductVO> insertList) throws Exception {
+	private void writeOrderList(String orderKey, String regEmpKey, List<ProjectOrderProductVO> insertList) throws Exception {
 		Map<String, Object> insertParam = null;
 		try {
 			insertParam = new HashMap<>();
-			insertParam.put("orderKey", orderKey);
+			insertParam.put("pjOrderKey", orderKey);
 			insertParam.put("regEmpKey", regEmpKey);
 			insertParam.put("orderProductVOList", insertList);
 			
@@ -747,7 +775,7 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
-	private void updateOrderList(String modEmpKey, List<OrderProductVO> updateList) throws Exception {
+	private void updateOrderList(String modEmpKey, List<ProjectOrderProductVO> updateList) throws Exception {
 		Map<String, Object> updateParam = null;
 		try {
 			updateParam = new HashMap<>();
@@ -765,7 +793,7 @@ public class ProjectServiceImpl implements ProjectService {
 		try {
 			deleteParam = new HashMap<>();
 			deleteParam.put("modEmpKey", modEmpKey);
-			deleteParam.put("orderKey", orderKey);
+			deleteParam.put("pjOrderKey", orderKey);
 			deleteParam.put("deleteKeyList", deleteKeyList);
 			mapper.deleteOrderProductInfo(deleteParam);
 		} catch(Exception e) {
@@ -789,13 +817,25 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	public ProjectPurchaseVO selectPurchaseDetail(ProjectPurchaseVO purchaseVO) throws Exception {
+		ProjectPurchaseVO vo = null;
+		try {
+			vo = mapper.selectPurchaseDetail(purchaseVO);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		
+		return vo;
+	}
+	
+	@Override
 	@Transactional
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, OrderVO orderVO) throws Exception {
+	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		Map<String, Object> deleteParam = null;
 		HashMap<String, String> session = null;
-		PurchaseVO purchaseVO = new PurchaseVO();
+		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
 		
 		try {
 			
@@ -804,16 +844,16 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			deleteParam = new HashMap<>();
 			deleteParam.put("modEmpKey", orderVO.getModEmpKey());
-			deleteParam.put("orderKey", orderVO.getOrderKey());
+			deleteParam.put("pjOrderKey", orderVO.getPjOrderKey());
 			
 			mapper.deleteOrderProductAll(deleteParam);
 			
 			mapper.deleteOrderInfo(orderVO);
 			
-			purchaseVO.setBuyOrderFkKey(orderVO.getOrderKey());
-			purchaseVO.setModEmpKey(session.get("empKey"));
+			purchaseVO.setBuyOrderFkKey(orderVO.getPjOrderKey());
+			purchaseVO.setBuyKey(orderVO.getBuyKey());
 			/*매입 목록 삭제*/
-			comService.deletePurchaseInfo(purchaseVO);
+			deletePurchaseInfo(request, purchaseVO);
 			returnMap.put("successYN", "Y");
 		} catch(Exception e) {
 			returnMap.put("successsYN", "N");
@@ -826,6 +866,71 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<ProjectOrderProductVO> selectOrderProductList(String orderKey) throws Exception {
 		return mapper.selectOrderProductList(orderKey);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		String buyKey = "";
+		
+		try {
+			buyKey = comService.makePrimaryKey(PrimaryKeyType.PROJECT_PURCHASE);
+			purchaseVO.setBuyKey(buyKey);
+			
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			purchaseVO.setRegEmpKey(session.get("empKey"));
+			
+			mapper.insertPurchaseInfo(purchaseVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		return returnMap;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> updatePurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			purchaseVO.setModEmpKey(session.get("empKey"));
+			
+			mapper.updatePurchaseInfo(purchaseVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+		return returnMap;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void deletePurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception {
+		ProjectPaymentVO paymentVO = new ProjectPaymentVO();
+		HashMap<String, String> session = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			purchaseVO.setModEmpKey(session.get("empKey"));
+			
+			paymentVO.setPaymentBuyFkKey(purchaseVO.getBuyKey());
+			paymentVO.setModEmpKey(purchaseVO.getModEmpKey());
+			
+			mapper.deletePaymentAllInfo(paymentVO);
+			/* 지급 정보 삭제 */
+			mapper.deletePurchaseInfo(purchaseVO);
+			
+			/* 발주 계산서 매핑 정보 삭제*/
+			
+			
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
 	}
 	
 	@Override

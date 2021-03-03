@@ -175,7 +175,7 @@
 									<tr>
 										<th>계산서 매핑 여부</th>
 										<th>계산서 일자</th>
-										<th>계산서 회차</th>
+										<th>계산서 번호</th>
 										<th>매입처</th>
 										<th>매입제품</th>
 										<th>단가</th>
@@ -188,7 +188,7 @@
 									<tr>
 										<td>${result.billMappingYn}</td>
 										<td>${displayUtil.displayDate(result.billIssueDt) }</td>
-										<td>${result.billTurnNo}</td>
+										<td>${result.billNo}</td>
 										<td>${result.acNm }</td>
 										<td>${result.mfAcNm }</td>
 										<td class="textalignR">${displayUtil.commaStr(result.orderUprice) }</td>
@@ -213,7 +213,7 @@
 								<thead>
 									<tr>
 										<th>보증보험</th>
-										<th>발행여부</th>
+										<th>완료여부</th>
 										<th>증권발행일자</th>
 										<th>보험료</th>
 									</tr>
@@ -228,6 +228,15 @@
 										<c:set var= "gSum" value="${gSum + result.gbAmount}"/>
 									</tr>
 								</c:forEach>
+								<c:if test="${biddingVO ne null }"> 
+									<tr>
+										<td>입찰</td>
+										<td>${biddingVO.bdGbFinishYn}</td>
+										<td>${displayUtil.displayDate(biddingVO.bdGbFinishDt)}</td>
+										<td class="textalignR">${displayUtil.commaStr(biddingVO.bdGbAmount) }</td>
+										<c:set var= "gSum" value="${gSum + biddingVO.bdGbAmount}"/>
+									</tr>
+								</c:if> 
 								<tr></tr>
 							</table>
 						</div>

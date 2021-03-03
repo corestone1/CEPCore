@@ -13,12 +13,13 @@ import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderProductVO;
 import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.vo.FileVO;
-import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.OrderVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -85,7 +86,7 @@ public interface ProjectService {
 	 * @return Map
 	 * @exception
 	 */
-	public Map<String, Object> insertGuarantyInfo(HttpServletRequest request, GuarantyBondVO guarantyBondVO) throws Exception;
+	public Map<String, Object> insertGuarantyInfo(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception;
 	
 	/**
 	 * 프로젝트 계약 상세 정보를 조회한다.
@@ -159,7 +160,7 @@ public interface ProjectService {
 	 * @return Map
 	 * @exception
 	 */
-	public String insertOrderInfo(HttpServletRequest request, OrderVO orderVO) throws Exception;
+	public String insertOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO) throws Exception;
 	
 	/**
 	 * 프로젝트 발주 정보를 조회한다.
@@ -170,12 +171,20 @@ public interface ProjectService {
 	public ProjectOrderVO selectOrderDetail(String orderKey) throws Exception;
 	
 	/**
+	 * 프로젝트 매입 정보를 조회한다.
+	 * @param 
+	 * @return key
+	 * @exception
+	 */
+	public ProjectPurchaseVO selectPurchaseDetail(ProjectPurchaseVO purchaseVO) throws Exception;
+	
+	/**
 	 * 프로젝트 발주 정보를 삭제한다.
 	 * @param 
 	 * @return orderVO
 	 * @exception
 	 */
-	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, OrderVO orderVO) throws Exception;
+	public Map<String, Object> deleteOrderInfo(HttpServletRequest request, ProjectOrderVO orderVO) throws Exception;
 	
 	/**
 	 * 프로젝트 계약별 발주 제품목록 조회
@@ -184,6 +193,30 @@ public interface ProjectService {
 	 * @exception
 	 */
 	public List<ProjectOrderProductVO> selectOrderProductList(String orderKey) throws Exception;
+	
+	/**
+	 * 프로젝트 매입 등록
+	 * @param 
+	 * @return purchaseVO
+	 * @exception
+	 */
+	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception;
+	
+	/**
+	 * 프로젝트 매입 수정
+	 * @param 
+	 * @return purchaseVO
+	 * @exception
+	 */
+	public Map<String, Object> updatePurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception;
+	
+	/**
+	 * 프로젝트 매입 삭제
+	 * @param 
+	 * @return purchaseVO
+	 * @exception
+	 */
+	public void deletePurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception;
 	
 	public List<EgovMap> selectOrderSelectBoxList(String key) throws Exception;
 	

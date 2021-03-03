@@ -4,6 +4,9 @@
 package com.cep.mngCommon.account.service;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.account.vo.AccountVO;
@@ -37,4 +40,53 @@ public interface AccountService {
 	  * @throws Exception
 	  */
 	List<AccountVO> selectAccountList(AccountSearchVO searchVO) throws Exception;
+	
+	/**
+	  * @Method Name : selectAccountDetail
+	  * @Cdate       : 2021. 2. 24.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	  */
+	AccountVO selectAccountDetail(AccountSearchVO searchVO) throws Exception;
+	
+	/**
+	  * @Method Name : selectAcDirectorList
+	  * @Cdate       : 2021. 2. 24.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	  */
+	List<?> selectAcDirectorList(AccountSearchVO searchVO) throws Exception;
+	
+	/**
+	  * @Method Name : selectAcDepositList
+	  * @Cdate       : 2021. 2. 24.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description :
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	  */
+	List<?> selectAcDepositList(AccountSearchVO searchVO) throws Exception;
+	
+	/**
+	  * @Method Name : insertAccountInfo
+	  * @Cdate       : 2021. 2. 24.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 거래처 정보 추가
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	  */
+	Map<String, Object> insertAccountInfo(HttpServletRequest request, AccountVO accountVO) throws Exception;
+	
 }

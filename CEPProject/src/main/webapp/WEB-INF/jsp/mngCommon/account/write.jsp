@@ -276,7 +276,62 @@
 			$(obj).closest('tr').remove();
 		}
 				
+		function fn_chkVali() {
+            if ($("#basicForm")[0].checkValidity()){
+               //필수값 모두 통과하여 저장 프로세스 호출.
+            	fn_save();
+            } else {
+                $("#bdInfoForm")[0].reportValidity();   
+            }            
+		}
 		
+		function fn_save() {
+			$.ajax({
+				url: "/mngCommon/insert/accountInfo.do",
+			    dataType: 'json', 
+			    type:"POST",  
+			    data: sendData,
+			 	contentType: "application/json; charset=UTF-8", 
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("AJAX", true);
+					//xhr.setRequestHeader(header, token);
+					
+				},
+			    success:function(response){	
+			    	if(response!= null && response.successYN == 'Y') {
+			    		if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
+				    		alert("프로젝트 입찰 정보가 등록되었습니다.");
+				    		countSave++;
+			    		} else {
+			    			alert("프로젝트 입찰 정보가 수정되었습니다.");
+			    		}
+			    		
+			    		var url='/project/write/biddingInfo.do';
+		    			var dialogId = 'program_layer';
+		    			var varParam = {
+							"pjKey":$("#pjKey").val()/* ,
+							"turnNo":$("#turnNo").val(),
+							"ctKey":ctKeyList,
+							"salesKey": salesKeyList */
+		    			}
+			   			var button = new Array;
+		    			button = [];
+		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    	} else {
+			    		if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
+			    			alert("프로젝트 계약 정보 등록이 실패하였습니다.");
+			    		} else {
+			    			alert("프로젝트 계약 정보 수정이 실패하였습니다.");
+			    		}
+			    	}
+			    },
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					}
+				} 
+			});     
+		}
 	</script>
 </head>
 <body>
@@ -294,63 +349,65 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 사업자번호</td>
 							<td class="tdContents">
-								<input type="text" id="acBusiNum" name="acBusiNum" required/>
+								<input type="text" id="acBusiNum" name="acBusiNum" value="${accountVO.acKey }" required/>
 								<img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;"/>
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label> 거래처명</td>
 							<td class="tdContents">
-								<input type="text" id="acNm" name="acNm" required/>
+								<input type="text" id="acNm" name="acNm" value="${accountVO.acNm }" required/>
 							</td>
 						</tr>	
 						<tr>
 							<td class="tdTitle">&nbsp;&nbsp;대표자명</td>
 							<td class="tdContents">
-								<input type="text" id="acCeoNm" name="acCeoNm" required/>
+								<input type="text" id="acCeoNm" name="acCeoNm" value="${accountVO.acCeoNm }" required/>
 							</td>
 						</tr>							
 						<tr>
 							<td class="tdTitle">&nbsp;&nbsp;거래처구분</td>
 							<td class="tdContents">
-								<input type="checkbox" class="tCheck" name="acSalesYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;매출거래처
+								<input type="checkbox" class="tCheck" name="acSalesYn" value="Y" <c:if test="${accountVO.acSalesYn eq 'Y'}">checked</c:if> id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;매출거래처
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="checkbox" class="tCheck" name="acBuyYn" value="Y" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;매입거래처
+								<input type="checkbox" class="tCheck" name="acBuyYn" value="Y" <c:if test="${accountVO.acBuyYn eq 'Y'}">checked</c:if> id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;매입거래처
 							</td>
 						</tr>							
 						<tr>
 							<td class="tdTitle"><label>*</label> 연락처</td>
 							<td class="tdContents">
+								<c:set var="tel" value="${fn:split(accountVO.acRepTel, '-')}" />
 								<select id="acRepTel1" name="acRepTel1" required>
-									<option value="02">02</option>
-									<option value="031">031</option>
-									<option value="010">010</option>
+									<option value="02" <c:if test="${tel[0] eq '02'}">selected</c:if>>02</option>
+									<option value="031" <c:if test="${tel[0] eq '031'}">selected</c:if>>031</option>
+									<option value="010" <c:if test="${tel[0] eq '010'}">selected</c:if>>010</option>
 								</select> -
-								<input type="text" id="acRepTel2" name="acRepTel2" style="width: 53px" required/> -
-								<input type="text" id="acRepTel3" name="acRepTel3" style="width: 53px" required/>
+								<input type="text" id="acRepTel2" name="acRepTel2" style="width: 53px" value="${tel[1] }" required/> -
+								<input type="text" id="acRepTel3" name="acRepTel3" style="width: 53px" value="${tel[2] }" required/>
 							</td>
 						</tr>							
 						<tr>
 							<td class="tdTitle">&nbsp;&nbsp;FAX</td>
 							<td class="tdContents">
+								<c:set var="fax" value="${fn:split(accountVO.acRepFax, '-')}" />
 								<select id="acRepFax1" name="acRepFax1">
-									<option value="02">02</option>
-									<option value="031">031</option>
+									<option value="02" <c:if test="${fax[0] eq '02'}">selected</c:if>>02</option>
+									<option value="031" <c:if test="${fax[0] eq '031'}">selected</c:if>>031</option>
 								</select> -
-								<input type="text" id="acRepFax2" name="acRepFax2" style="width: 53px"/> -
-								<input type="text" id="acRepFax3" name="acRepFax3" style="width: 53px"/>
+								<input type="text" id="acRepFax2" name="acRepFax2" value="${fax[1] }" style="width: 53px"/> -
+								<input type="text" id="acRepFax3" name="acRepFax3" value="${fax[2] }"style="width: 53px"/>
 							</td>
 						</tr>													
 						<tr>
 							<td class="tdTitle"><label>*</label> 주소</td>
 							<td class="tdContents">
-								<input type="text" id="acAddr" name="acAddr" style="width: 897px" required/>
+								<input type="text" id="acAddr" name="acAddr" value="${accountVO.acAddr }" style="width: 897px" required/>
 							</td>
 						</tr>																				
 						<tr>
 							<td class="tdTitle"></td>
 							<td class="tdContents">
-								<input type="text" id="acAddrDetail" name="acAddrDetail" style="width: 897px"/>
+								<input type="text" id="acAddrDetail" name="acAddrDetail" value="${accountVO.acAddrDetail }" style="width: 897px"/>
 							</td>
 						</tr>	
 					</table>			
@@ -375,29 +432,31 @@
 								</tr>
 							</thead>
 							<tbody id="director_tbody">							
-								<tr>
-									<td>
-										<input type="text" id="acDirectorNm" name="acDirectorNm" style="width: 60px" autocomplete="off" required/>
-									</td>
-									<td>
-										<input type="text" id="acDirectorDeptNm" name="acDirectorDeptNm" style="width: 96px" autocomplete="off"/>
-									</td>
-									<td>
-										<input type="text" id="acDirectorPositionNm" name="acDirectorPositionNm" style="width: 55px" autocomplete="off"/>
-									</td>
-									<td>
-										<input type="text" id="acDirectorMbNum" name="acDirectorMbNum" style="width: 117px" autocomplete="off" required/>
-									</td>
-									<td>
-										<input type="text" id="acDirectorEmail" name="acDirectorEmail" style="width: 193px" autocomplete="off"/>
-									</td>
-									<td>
-										<input type="text" id="acDirectorDesc" name="acDirectorDesc" style="width: 264px" autocomplete="off"/>
-									</td>
-									<td>
-										<img src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteDirector(this);"/>
-									</td>
-								</tr>
+								<c:forEach var="result" items="${acDirectorList }" varStatus="status">
+									<tr>
+										<td>
+											<input type="text" id="acDirectorNm" name="acDirectorNm" value="${result.acDirectorNm }" style="width: 60px" autocomplete="off" required/>
+										</td>
+										<td>
+											<input type="text" id="acDirectorDeptNm" name="acDirectorDeptNm" value="${result.acDirectorDeptNm }" style="width: 96px" autocomplete="off"/>
+										</td>
+										<td>
+											<input type="text" id="acDirectorPositionNm" name="acDirectorPositionNm"  value="${result.acDirectorPositionNm }" style="width: 55px" autocomplete="off"/>
+										</td>
+										<td>
+											<input type="text" id="acDirectorMbNum" name="acDirectorMbNum" value="${result.acDirectorMbNum }" style="width: 117px" autocomplete="off" required/>
+										</td>
+										<td>
+											<input type="text" id="acDirectorEmail" name="acDirectorEmail" value="${result.acDirectorEmail }" style="width: 193px" autocomplete="off"/>
+										</td>
+										<td>
+											<input type="text" id="acDirectorDesc" name="acDirectorDesc" value="${result.acDirectorDesc }" style="width: 264px" autocomplete="off"/>
+										</td>
+										<td>
+											<img src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteDirector(this);"/>
+										</td>
+									</tr>
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
@@ -420,31 +479,34 @@
 									<th scope="row">삭제</th>
 								</tr>
 							</thead>
-							<tbody id="deposit_tbody">							
-								<!-- <tr>
-									<td>
-										<input type="text" id="acBankNm" name="acBankNm" style="width: 230px" autocomplete="off" required/>
-										<input type="hidden" id="acAdSeq" name="acAdSeq"/>
-									</td>
-									<td>
-										<input type="text" id="acBkno" name="acBkno" style="width: 299px" autocomplete="off" required/>
-									</td>
-									<td>
-										<input type="text" id="acAcholder" name="acAcholder" style="width: 212px" autocomplete="off" required/>
-									</td>
-									<td>
-										<input type="radio" class="tRadio" name="acRepBknoYn" value="Y" id="acRepBknoYn1" /><label for="acRepBknoYn1" class="cursorP"></label>
-									<td>
-										<img src="/images/btn_del_gray.png" onclick="fn_deleteDeposit(this);"/>
-									</td>
-								</tr> -->
+							<tbody id="deposit_tbody">	
+								<c:forEach var="result" items="${acDepositList }" varStatus="status">						
+									<tr>
+										<td>
+											<input type="text" id="acBankNm" name="acBankNm" value="${result.acBankNm }" style="width: 230px" autocomplete="off" required/>
+											<input type="hidden" id="acAdSeq" name="acAdSeq"/>
+										</td>
+										<td>
+											<input type="text" id="acBkno" name="acBkno" value="${result.acBkno }" style="width: 299px" autocomplete="off" required/>
+										</td>
+										<td>
+											<input type="text" id="acAcholder" name="acAcholder" value="${result.acAcholder }" style="width: 212px" autocomplete="off" required/>
+										</td>
+										<td>
+											<input type="checkbox" class="tCheck" name="acRepBknoYn" <c:if test="${result.acRepBknoYn eq 'Y' }"> value="Y" checked</c:if> id="acRepBknoYn${status.count }" />
+											<label for="acRepBknoYn${status.count } class="cursorP"></label>
+										<td>
+											<img src="/images/btn_del_gray.png" onclick="fn_deleteDeposit(this);"/>
+										</td>
+									</tr> 
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
 				</div>
 			</form>
 			<div class="btnWrap floatR">
-				<div id="m_btn_save" class="floatR" style="">
+				<div id="m_btn_save" class="floatR" onclick="fn_chkVali();">
 					<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>
 				<div class="floatN floatC"></div>

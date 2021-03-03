@@ -22,7 +22,7 @@ import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepStringUtil;
 
 @Alias("projectPurchaseVO")
-public class ProjectPurchaseVO implements Serializable {
+public class ProjectPurchaseVO extends ProjectVO implements Serializable {
 	private static final long serialVersionUID  = 1L;
 	
 	private String buyKey;

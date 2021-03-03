@@ -62,7 +62,7 @@
 			margin-bottom: 100px;
 		} */
 		.popContainer .contents input {
-			width: 110px;
+			width: 102px;
 			height: 40px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -77,8 +77,8 @@
 			outline: none;
 			background-color: #f6f7fc;
 		}
-		.popContainer .contents input[class="calendar"] {
-			width: 110px;
+		.popContainer .contents input[class^="calendar"] {
+			width: 102px;
 			height: 40px;
 			background-image: url('/images/icon_calendar.png');
 			background-repeat: no-repeat;
@@ -152,6 +152,7 @@
 					document.getElementById("from"+num1).value="";
 					document.getElementById("to"+num1).value="";
 					document.getElementById("amount"+num1).value="";
+					document.getElementById("publishDt" + num1).value = "";
 					document.getElementById("step"+num1+"-1").style.visibility = 'hidden';
 					document.getElementById("step"+num1+"-2").style.visibility = 'hidden';
 					document.getElementById("step"+num1+"-3").style.visibility = 'hidden';	
@@ -171,6 +172,7 @@
 					});
 				} else {
 					document.getElementById("amount"+num1).value="";
+					document.getElementById("publishDt" + num1).value = "";
 					document.getElementById("step"+num1+"-4").style.visibility = 'hidden';
 					$("#step"+num1+"-4").children().each(function() {
 						$(this).prop('required', false);
@@ -206,7 +208,7 @@
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('ppGuarantyAmount' == this.name){
+							if('dfGuarantyAmount' == this.name){
 								
 								objArry.push(obj);
 								obj = {};
@@ -239,6 +241,23 @@
 		var turnNo = $("#turnNo").val();
 		
 		function fn_save() {
+			
+			$("input[type='checkbox'][name*='GuarantyCheck']").each(function() {
+				if($(this).is(":checked") == true) {
+					$(this).next().next().val('Y');
+				} else {
+					$(this).next().next().val('N');
+				}
+			})
+			
+			$("input[type='checkbox'][name*='GbIssueCheck']").each(function() {
+				if($(this).is(":checked") == true) {
+					$(this).next().next().val('Y');
+				} else {
+					$(this).next().next().val('N');
+				}
+			})
+			
 			var object = {};
 			var formData = $("#infoForm").serializeArray();
 			var listData = $("#gbListForm").serializeObject();
@@ -264,7 +283,7 @@
 				},
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
-			    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
 				    		alert("프로젝트 계약 정보가 등록되었습니다.");
 				    		countSave++;
 			    		} else {
@@ -274,16 +293,13 @@
 			    		var url='/project/write/guarantyInfo.do';
 		    			var dialogId = 'program_layer';
 		    			var varParam = {
-							"pjKey":$("#pjKey").val(),
-							"turnNo":$("#turnNo").val(),
-							"ctKey":ctKeyList,
-							"salesKey": salesKeyList
+							"pjKey":$("#pjKey").val()
 		    			}
 		    			var button = new Array;
 		    			button = [];
 		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			    	} else {
-			    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
 			    			alert("프로젝트 계약 정보 등록이 실패하였습니다.");
 			    		} else {
 			    			alert("프로젝트 계약 정보 수정이 실패하였습니다.");
@@ -295,44 +311,26 @@
 						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 					}
 				} 
-			});   
+			});    
 		}
-		
-		var ctKeyList = new Array();
-		var salesKeyList = new Array();
-		var salesList = new Array();
-		
-		<c:forEach items="${ctKey}" var="item">
-			ctKeyList.push("${item}");
-		</c:forEach>
-		
-		<c:forEach items="${salesKey}" var="item">
-			salesKeyList.push("${item}");
-		</c:forEach>
 		
 		function fn_next(link) {
 			if(countSave > 0) {
 				var url = '/project/write/'+link+'.do';
 				var dialogId = 'program_layer';
 				var varParam = {
-						"pjKey": $("#pjKey").val(),
-						"turnNo":$("#turnNo").val(),
-						"ctKey":ctKeyList,
-						"salesKey": salesKeyList
+						"pjKey": $("#pjKey").val()
 				}
 				var button = new Array;
 				button = [];
 				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
 			}
 			else {
-				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
+				if($("input[name='ctGbKey']").val().length != 0 || $("input[name='dfGbKey']").val().length != 0 || $("input[name='ppGbKey']").val().length != 0) {
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey": $("#pjKey").val(),
-							"turnNo":$("#turnNo").val(),
-							"ctKey":ctKeyList,
-							"salesKey": salesKeyList
+							"pjKey": $("#pjKey").val()
 					}
 					var button = new Array;
 					button = [];
@@ -354,181 +352,41 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		}
 		
-		var temp = 0;
-		
-		function fn_addView(data) {
-			for(var i = 0; i < turnNo; i++) {
-				
-				var salesBillFcDt = addDateMinus(data[i].salesBillFcDt)==null?"":addDateMinus(data[i].salesBillFcDt);
-				var salesCollectFcDt = addDateMinus(data[i].salesCollectFcDt)==null?"":addDateMinus(data[i].salesCollectFcDt);
-				
-				var html = "<table name='table"+i+"'><tr class='first'>";
-				html += "<input type='hidden' name='pjKey' value='"+$('#pjKey').val() +"' />";
-				html += "<td colspan='2' style='min-width: 96px;'>"+(i+1)+"회차 일정</td>";
-				html += "<td>";
-				html += "<input type='text' placeholder='계산서 예정 일정' title='계산서 예정 일정' class='calendar' name='salesBillFcDt' value='"+ salesBillFcDt +"' required/> &nbsp;";
-				html += "<input type='text' placeholder='수금 예상 일정' title='수금 예상 일정' class='calendar' name='salesCollectFcDt' value='"+ salesCollectFcDt +"' required/>";
-				html += "<input type='hidden' name='ctKey' id='ctKey' value='"+ctKeyList[i]+"' />";
-				html += "<input type='hidden' name='salesKey' value='"+salesKeyList[i]+"' />";
-				html += "<input type='hidden' value='"+(i+1)+"' name='salesTurn' />"
-				html += "</td>";
-				html += "<td colspan='3'></td>";
-				html += "</tr>";
-				
-				
-				html += "<tr class='ftw200'>";
-				html += "<td>";
-				html += "<input type='hidden' name='ctKey' id='ctKey' value='"+ctKeyList[i]+"' />";
-				html += "<input type='hidden' name='salesKeyList' id='salesKeyList' value='"+salesKeyList[i]+"' />";
-				html += "<input type='hidden' name='ctGbKey' id='ctGbKey"+ i +"' value='' />";
-				html += "<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check"+(temp+1)+"-"+1+"' onclick='check_click("+(temp+1)+","+1+")'/><label for='check"+(temp+1)+"-"+1+"' class='cursorP'></label>";
-				html += "<input type='hidden' name='ctGuarantyYN' value='N' />";
-				html += "</td>";						
-				html += "<td>계약 보증 증권 정보</td>";
-				html += "<td id='step"+(temp+1)+"-"+1+"' style='visibility:hidden'>";
-				html += "<input type='text' id='from"+(temp+1)+"' title='시작 일자' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ ";
-				html += "<input type='text' id='to"+(temp+1)+"' title='종료 일자' placeholder='to' class='calendar' name='ctGuarantyEndDt' />";
-				html += "</td>";
-				html += "<td id='step"+(temp+1)+"-"+2+"' style='visibility:hidden'>";
-				html += "<input type='checkbox' class='tCheck' name='ctGbIssueCheck' id='check"+(temp+1)+"-"+2+"' onclick='check_click("+(temp+1)+","+2+")' /><label for='check"+(temp+1)+"-"+2+"' class='cursorP'></label>";
-				html += "<input type='hidden' name='ctGbIssueYn' value='N'/>";
-				html += "</td>";
-				html += "<td id='step"+(temp+1)+"-"+3+"' style='visibility:hidden'>완료</td>";
-				html += "<td id='step"+(temp+1)+"-"+4+"' style='visibility:hidden'>";
-				html += "<input type='text' id='publishDt"+(temp+1)+"' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' />&nbsp;&nbsp;";
-				html += "<input type='text' id='amount"+(temp+1)+"' placeholder='금액' amountOnly class='amount' name='ctGuarantyAmount'/>";
-				html += "</td>";
-				html += "</tr>";
-
-				
-				html += "<tr class='ftw200'>";
-				html += "<td>";
-				html += "<input type='hidden' name='ctKey' id='ctKey' value='"+ctKeyList[i]+"' />";
-				html += "<input type='hidden' name='salesKeyList' id='salesKeyList' value='"+salesKeyList[i]+"' />";
-				html += "<input type='hidden' name='dfGbKey' id='dfGbKey"+ i +"' value='' />";
-				html += "<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check"+(temp+2)+"-"+1+"' onclick='check_click("+(temp+2)+","+1+")' /><label for='check"+(temp+2)+"-"+1+"' class='cursorP'></label>";
-				html += "<input type='hidden' name='dfGuarantyYN' value='N' />";
-				html += "</td>";
-				html += "<td>하자 보증 증권 정보</td>";
-				html += "<td id='step"+(temp+2)+"-"+1+"' style='visibility:hidden'>";
-				html += "<input type='text' id='from"+(temp+2)+"' title='시작 일자' placeholder='from' class='calendar' name='dfGuarantyStartDt' /> ~ "; 
-				html += "<input type='text' id='to"+(temp+2)+"' title='종료 일자' placeholder='to' class='calendar' name='dfGuarantyEndDt' />";
-				html += "</td>";
-				html += "<td id='step"+(temp+2)+"-"+2+"' style='visibility:hidden'>";
-				html += "<input type='checkbox' class='tCheck' name='dfGbIssueCheck' id='check"+(temp+2)+"-"+2+"' onclick='check_click("+(temp+2)+","+2+")' /><label for='check"+(temp+2)+"-"+2+"' class='cursorP'></label>"; 
-				html += "<input type='hidden' name='dfGbIssueYn' value='N'/>";
-				html += "</td>";
-				html += "<td id='step"+(temp+2)+"-"+3+"' style='visibility:hidden'>완료</td>";
-				html += "<td id='step"+(temp+2)+"-"+4+"' style='visibility:hidden'>";
-				html += "<input type='text' id='publishDt"+(temp+2)+"' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt' />&nbsp;&nbsp;";
-				html += "<input type='text' id='amount"+(temp+2)+"' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount' />";
-				html += "</td>";
-				html += "</tr>";
-				
-				
-				html += "<tr class='ftw200'>";
-				html += "<td>";
-				html += "<input type='hidden' name='ctKey' id='ctKey' value='"+ctKeyList[i]+"' />";
-				html += "<input type='hidden' name='salesKeyList' id='salesKeyList' value='"+salesKeyList[i]+"' />";
-				html += "<input type='hidden' name='ppGbKey' id='ppGbKey"+ i +"' value='' />";
-				html += "<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check"+(temp+3)+"-"+1+"' onclick='check_click("+(temp+3)+","+1+")' /><label for='check"+(temp+3)+"-"+1+"' class='cursorP'></label>";
-				html += "<input type='hidden' name='ppGuarantyYN' value='N' />";
-				html += "</td>";
-				html += "<td>선급금 보증 증권 정보</td>";
-				html += "<td id='step"+(temp+3)+"-"+1+"' style='visibility:hidden'>";
-				html += "<input type='text' id='from"+(temp+3)+"' title='시작 일자' placeholder='from' class='calendar' name='ppGuarantyStartDt' /> ~ ";
-				html += "<input type='text' id='to"+(temp+3)+"' title='종료 일자' placeholder='to' class='calendar' name='ppGuarantyEndDt' />";
-				html += "</td>";
-				html += "<td id='step"+(temp+3)+"-"+2+"' style='visibility:hidden'>";
-				html += "<input type='checkbox' class='tCheck' name='ppGbIssueCheck' id='check"+(temp+3)+"-"+2+"' onclick='check_click("+(temp+3)+","+2+")' /><label for='check"+(temp+3)+"-"+2+"' class='cursorP'></label>";
-				html += "<input type='hidden' name='ppGbIssueYn' value='N'/>";
-				html += "</td>";
-				html += "<td id='step"+(temp+3)+"-"+3+"' style='visibility:hidden'>완료</td>";
-				html += "<td id='step"+(temp+3)+"-"+4+"' style='visibility:hidden'>";
-				html += "<input type='text' id='publishDt"+(temp+3)+"' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' />&nbsp;&nbsp;";
-				html += "<input type='text' id='amount"+(temp+3)+"' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount'/>";
-				html += "</td>";
-				html += "</tr></table>";
-				/* </form>"; */
-				
-				$('#infoTable').append(html);
-				
-				for(var j = 0; j < data[i].guarantyList.length; j++) {
-					if(data[i].guarantyList[j].gbKindCd == "계약") {
-						fn_fillView(data, i,j,'ct');
-						$("#ctGbKey"+i).val(data[i].guarantyList[j].gbKey);
-					} else if(data[i].guarantyList[j].gbKindCd == "하자") {
-						fn_fillView(data, i,j,'df');
-						$("#dfGbKey"+i).val(data[i].guarantyList[j].gbKey);
-					} else if(data[i].guarantyList[j].gbKindCd == "선급금") {
-						fn_fillView(data, i,j,'pp');
-						$("#ppGbKey"+i).val(data[i].guarantyList[j].gbKey);
-					}
-					
-					$("#selectKey").val(data[i].guarantyList[j].gbKey);
-				}
-			
-				temp = temp+3; 
-			}
-			
-			$('input[class=tCheck]').on('click', function() { 
-				 if($(this).is(":checked") == true) {
-					 $(this).next().next().val('Y');
-				 } else {
-					 $(this).next().next().val('N');
-				 }
-		 	}); 
-			
-			if($('input[id=selectKey]').val() != "" || $('input[id=selectKey]').val().length != 0) {
-				$('.btnSave').children().eq(0).html('');
-				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
-			}
+		function fn_remove(obj) {
+			$('.'+obj).remove();
+			fn_view();
 		}
 		
-		function fn_fillView(data, index, jindex, kind) {
-			$('table[name=table'+index+'] input[name='+kind+'GuarantyCheck]').prop('checked', true);
-			$('table[name=table'+index+'] input[name='+kind+'GuarantyYN]').val('Y');
-			var valueId = $('table[name=table'+index+'] input[name='+kind+'GuarantyCheck]').attr('id').split('-');
-			var value1 = valueId[0].replace(/[^0-9]/g,'');
-			var value2 = valueId[1].replace(/[^0-9]/g,''); 
-			check_click(value1, value2);
-			$('table[name=table'+index+'] input[name='+kind+'GuarantyStartDt]').val(addDateMinus(data[index].guarantyList[jindex].gbStartDt));
-			$('table[name=table'+index+'] input[name='+kind+'GuarantyEndDt]').val(addDateMinus(data[index].guarantyList[jindex].gbEndDt));
-			if(data[index].guarantyList[jindex].gbIssueYn == 'Y') {
-				$('table[name=table'+index+'] input[name='+kind+'GbIssueCheck]').prop('checked', true);
-				$('table[name=table'+index+'] input[name='+kind+'GbIssueYn]').val('Y');
-				$('table[name=table'+index+'] input[name='+kind+'GbIssueCheck]').attr('onclick', 'return false;');
-				var valueId = $('table[name=table'+index+'] input[name='+kind+'GbIssueCheck]').attr('id').split('-');
-				var value1 = valueId[0].replace(/[^0-9]/g,'');
-				var value2 = valueId[1].replace(/[^0-9]/g,''); 
-				check_click(value1, value2);
-				$('table[name=table'+index+'] input[name='+kind+'GbPublishDt]').val(addDateMinus(data[index].guarantyList[jindex].gbPublishDt));
-				$('table[name=table'+index+'] input[name='+kind+'GuarantyAmount]').val(addCommas(data[index].guarantyList[jindex].gbAmount));
-			}
-		} 
+		function fn_view() {
+			$("input[id*=from]").each(function() {
+				if($(this).val() != null && $(this).val().length != 0) {
+					var num = $(this).parent().attr('id').split('-')[0].charAt($(this).parent().attr('id').split('-')[0].length - 1);
+					document.getElementById("step"+num+"-1").style.visibility = 'visible';
+					document.getElementById("step"+num+"-2").style.visibility = 'visible';
+					document.getElementById("step"+num+"-3").style.visibility = 'visible';
+					$("#step"+num+"-1").children().each(function() {
+						$(this).prop('required', true);
+					});
+				}
+			});
+			$("input[name*='GbIssueCheck']").each(function() {
+				if($(this).is(':checked') == true) {
+					var num = $(this).parent().attr('id').split('-')[0].charAt($(this).parent().attr('id').split('-')[0].length - 1);
+					document.getElementById("step"+num+"-4").style.visibility = 'visible';
+					$("#step"+num+"-4").children().each(function() {
+						$(this).prop('required', true);
+					});
+				}
+			}); 
+		}
 		
 		$(document).ready(function() {
-			console.log(salesKeyList);
-			var objParams = {
-				"salesKeyList" : salesKeyList
-			};
-			
-			$.ajax({
-	        	url:"/project/select/guarantyInfo.do",
-	        	dataType:"json",
-                contentType:"application/x-www-form-urlencoded; charset=UTF-8",
-	            type:"post",
-	            data: objParams,
-	            success:function(response){	
-	            	fn_addView(response)
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	        });
+			if($("input[name='ctGbKey']").val().length != 0 || $("input[name='dfGbKey']").val().length != 0 || $("input[name='ppGbKey']").val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			} 
 		});
+		
 	</script>
 </head>
 <body>
@@ -549,87 +407,266 @@
  			<div class="contents">
 				<div>
 					<div id="infoTable">
-					<%-- <c:set var="temp" value="0" />
-					<c:forEach var="result" items="${ctKey }" varStatus="status">
-						<table>
-							<tr class='first'>
-								<td colspan='2' style='min-width: 96px;'><c:out value="${status.count }" />회차 일정</td>
-								<td>
-									<input type='text' placeholder='계산서 예정일정' class='calendar' name='salesBillFcDt' value='${displayUtil.displayDate(salesList[status.index].salesBillFcDt) }' required/> &nbsp;
-									<input type='text' placeholder='수금 예상 일정' class='calendar' name='salesCollectFcDt' value='${displayUtil.displayDate(salesList[status.index].salesCollectFcDt) }' required/>
-									<input type='hidden' name='ctKey' id='ctKey' value='${result }' />
-									<input type='hidden' name='salesKey' value='${salesKey[status.index]}' />
-									<input type='hidden' value='${status.count }' name='salesTurn' />
-								</td>
-								<td colspan='3'></td>
-						 	</tr>
-							 <tr class='ftw200'>
-								 <td>
-									 <input type='hidden' name='ctKey' id='ctKey' value='${result }' />
-									 <input type='hidden' name='salesKey' value='${salesKey[status.index]}' />
-									 <input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)'/>
-									 <label for='check${ temp + 1}-1' class='cursorP'></label>
-									 <input type='hidden' name='ctGuarantyYN' value='N' />
-								 </td>						
-								 <td>계약 보증 증권 정보</td>
-								 <td id='step${ temp + 1}-1' style='visibility:hidden'>
-									 <input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ 
-									 <input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' />
-								 </td>
-								 <td id='step${ temp + 1}-2' style='visibility:hidden'>
-									 <input type='checkbox' class='tCheck' name='ctGbIssueCheck' id='check${ temp + 1}-2' onclick='check_click(${temp+1},2)' /><label for='check${ temp + 1}-2' class='cursorP'></label>
-									 <input type='hidden' name='ctGbIssueYn' value='N'/>
-								 </td>
-								 <td id='step${ temp + 1}-3' style='visibility:hidden'>완료</td>
-								 <td id='step${ temp + 1}-4' style='visibility:hidden'>
-								 	<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount'/>
-								 </td>
-							 </tr>
-							 <tr class='ftw200'>
-								 <td>
-									 <input type='hidden' name='ctKey' id='ctKey' value='${result }' />
-									 <input type='hidden' name='salesKey' value='${salesKey[status.index]}' />
-									 <input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' /><label for='check${ temp + 2}-1' class='cursorP'></label>
-									 <input type='hidden' name='dfGuarantyYN' value='N' />
-								 </td>
-								 <td>하자 보증 증권 정보</td>
-								 <td id='step${ temp + 2}-1' style='visibility:hidden'>
-									 <input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' /> ~  
-									 <input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' />
-								 </td>
-								 <td id='step${ temp + 2}-2' style='visibility:hidden'>
-									 <input type='checkbox' class='tCheck' name='dfGbIssueCheck' id='check${ temp + 2}-2' onclick='check_click(${ temp + 2},2)' /><label for='check${ temp + 2}-2' class='cursorP'></label> 
-									 <input type='hidden' name='dfGbIssueYn' value='N'/>
-								 </td>
-								 <td id='step${ temp + 2}-3' style='visibility:hidden'>완료</td>
-								 <td id='step${ temp + 2}-4' style='visibility:hidden'>
-								 	<input type='text' id='amount${ temp + 2}' placeholder='금액' numberOnly class='amount' width='177px' name='dfGuarantyAmount'/>
-								 </td>
-							 </tr>
-							 <tr class='ftw200'>
-								 <td>
-									  <input type='hidden' name='ctKey' id='ctKey' value='${result }' />
-									 <input type='hidden' name='salesKey' value='${salesKey[status.index]}' />
-									 <input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' /><label for='check${ temp + 3}-1' class='cursorP'></label>
-									 <input type='hidden' name='ppGuarantyYN' value='N' />
-								 </td>
-								 <td>선급금 보증 증권 정보</td>
-								 <td id='step${ temp + 3}-1' style='visibility:hidden'>
-									 <input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt'/> ~ 
-									 <input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt'/>
-								 </td>
-								 <td id='step${ temp + 3}-2' style='visibility:hidden'>
-									 <input type='checkbox' class='tCheck' name='ppGbIssueCheck' id='check${ temp + 3}-2' onclick='check_click(${ temp + 3},2)' /><label for='check${ temp + 3}-2' class='cursorP'></label>
-									 <input type='hidden' name='ppGbIssueYn' value='N'/>
-								 </td>
-								 <td id='step${ temp + 3}-3' style='visibility:hidden'>완료</td>
-								 <td id='step${ temp + 3}-4' style='visibility:hidden'>
-								 	<input type='text' id='amount${ temp + 3}' placeholder='금액' numberOnly class='amount' width='177px' name='ppGuarantyAmount'/>
-								 </td>
-							 </tr>
-							</table> 
-							<c:set var="temp" value="${temp + 3}"/>
-						</c:forEach> --%>
+					<c:set var="temp" value="0" />
+					<c:set var="length" value="0" />
+					<c:choose>
+						<c:when test="${guarantyList eq null || fn:length(guarantyList) eq 0}">
+							<c:forEach var="result" items="${salesList }" varStatus="status">
+								<table>
+									<tr class='first'>
+										<td colspan='2' style='min-width: 96px;'><c:out value="${result.salesTurn}" />회차 일정</td>
+										<td>
+											<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' value='${displayUtil.displayDate(result.salesBillFcDt) }' required/> &nbsp;
+											<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' value='${displayUtil.displayDate(result.salesCollectFcDt) }' required/>
+											<input type='hidden' name='ctKey' id='ctKey' value='${ctVO.ctKey }' />
+											<input type='hidden' name='salesKey' value='${result.salesKey}' />
+											<input type='hidden' value='${status.count }' name='salesTurn' />
+										</td>
+										<td colspan='3'></td>
+								 	</tr>
+									 <tr class='ftw200'>
+										 <td>
+										 	 <input type="hidden" name="ctGbKey" id="ctGbKey${status.count }" value="" />
+											 <input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)'/>
+											 <label for='check${ temp + 1}-1' class='cursorP'></label>
+											 <input type='hidden' name='ctGuarantyYN' value='N' />
+										 </td>						
+										 <td>계약 보증 증권 정보</td>
+										 <td id='step${ temp + 1}-1' style='visibility:hidden'>
+											 <input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ 
+											 <input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' />
+										 </td>
+										 <td id='step${ temp + 1}-2' style='visibility:hidden'>
+											 <input type='checkbox' class='tCheck' name='ctGbIssueCheck' id='check${ temp + 1}-2' onclick='check_click(${temp+1},2)' />
+											 <label for='check${ temp + 1}-2' class='cursorP'></label>
+											 <input type='hidden' name='ctGbIssueYn' value='N'/>
+										 </td>
+										 <td id='step${ temp + 1}-3' style='visibility:hidden'>완료</td>
+										 <td id='step${ temp + 1}-4' style='visibility:hidden'>
+											<input type='text' id='publishDt${ temp + 1}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' />&nbsp;&nbsp;
+										 	<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount'/>
+										 </td>
+									 </tr>
+									 <tr class='ftw200'>
+										 <td>
+										 	 <input type="hidden" name="ppGbKey" id="ppGbKey${status.count }" value="" />
+											 <input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' /><label for='check${ temp + 3}-1' class='cursorP'></label>
+											 <input type='hidden' name='ppGuarantyYN' value='N' />
+										 </td>
+										 <td>선급금 보증 증권 정보</td>
+										 <td id='step${ temp + 3}-1' style='visibility:hidden'>
+											 <input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt'/> ~ 
+											 <input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt'/>
+										 </td>
+										 <td id='step${ temp + 3}-2' style='visibility:hidden'>
+											 <input type='checkbox' class='tCheck' name='ppGbIssueCheck' id='check${ temp + 3}-2' onclick='check_click(${ temp + 3},2)' /><label for='check${ temp + 3}-2' class='cursorP'></label>
+											 <input type='hidden' name='ppGbIssueYn' value='N'/>
+										 </td>
+										 <td id='step${ temp + 3}-3' style='visibility:hidden'>완료</td>
+										 <td id='step${ temp + 3}-4' style='visibility:hidden'>
+										 	<input type='text' id='publishDt${ temp + 3}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' />&nbsp;&nbsp;
+										 	<input type='text' id='amount${ temp + 3}' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount'/>
+										 </td>
+									 </tr>
+									 <tr class='ftw200'>
+										 <td>
+										 	 <input type="hidden" name="dfGbKey" id="dfGbKey${status.count }" value="" />
+											 <input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' /><label for='check${ temp + 2}-1' class='cursorP'></label>
+											 <input type='hidden' name='dfGuarantyYN' value='N' />
+										 </td>
+										 <td>하자 보증 증권 정보</td>
+										 <td id='step${ temp + 2}-1' style='visibility:hidden'>
+											 <input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' /> ~  
+											 <input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' />
+										 </td>
+										 <td id='step${ temp + 2}-2' style='visibility:hidden'>
+											 <input type='checkbox' class='tCheck' name='dfGbIssueCheck' id='check${ temp + 2}-2' onclick='check_click(${ temp + 2},2)' /><label for='check${ temp + 2}-2' class='cursorP'></label> 
+											 <input type='hidden' name='dfGbIssueYn' value='N'/>
+										 </td>
+										 <td id='step${ temp + 2}-3' style='visibility:hidden'>완료</td>
+										 <td id='step${ temp + 2}-4' style='visibility:hidden'>
+										 	<input type='text' id='publishDt${ temp + 2}' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt' />&nbsp;&nbsp;
+										 	<input type='text' id='amount${ temp + 2}' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount'/>
+										 </td>
+									 </tr>
+									</table> 
+									<c:set var="temp" value="${temp + 3}"/>
+									<c:set var="length" value="${length + 1 }" />
+								</c:forEach> 
+							</c:when>
+							<c:otherwise>
+								<c:forEach var="entry" items="${salesList }" varStatus="status">
+									<table>
+										<tr class='first'>
+											<td colspan='2' style='min-width: 96px;'><c:out value="${entry.salesTurn }" />회차 일정</td>
+											<td>
+												<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' value='${displayUtil.displayDate(entry.salesBillFcDt) }' required/> &nbsp;
+												<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' value='${displayUtil.displayDate(entry.salesCollectFcDt) }' required/>
+												<input type='hidden' name='salesKey' value='${entry.salesKey}' />
+												<input type='hidden' name='ctKey' id='ctKey' value='${ctVO.ctKey }' />
+												<input type='hidden' value='${entry.salesTurn }' name='salesTurn' />
+											</td>
+											<td colspan='3'></td>
+										</tr>
+										<c:forEach var="result" items="${guarantyList }" varStatus="status">
+											<c:if test="${entry.salesKey eq result.salesKey && result.gbKindCd eq '계약'}">
+												<script>fn_remove('nData${temp+1}');</script>
+												<tr class='ftw200'>
+													<td>
+														<input type='hidden' name='ctGbKey' id='ctGbKey${status.count }' <c:if test="${result.gbKindCd eq  '계약'}">value='${result.gbKey }'</c:if>/>
+														<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)' <c:if test="${result.gbKindCd eq  '계약'}">checked</c:if>/>
+														<label for='check${ temp + 1}-1' class='cursorP'></label>
+														<input type='hidden' name='ctGuarantyYN' <c:choose><c:when test="${result.gbKindCd eq '계약'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
+													</td>						
+													<td>계약 보증 증권 정보</td>
+													<td id='step${ temp + 1}-1' style='visibility:hidden'>
+														<input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' <c:if test="${result.gbKindCd eq '계약'}">value="${displayUtil.displayDate(result.gbStartDt) }"</c:if>name='ctGuarantyStartDt' /> ~ 
+														<input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' <c:if test="${result.gbKindCd eq '계약'}">value="${displayUtil.displayDate(result.gbEndDt) }"</c:if>/>
+													</td>
+													<td id='step${ temp + 1}-2' style='visibility:hidden'>
+														<input type='checkbox' class='tCheck' name='ctGbIssueCheck' id='check${ temp + 1}-2' onclick='check_click(${temp+1},2)' <c:if test="${result.gbKindCd eq '계약' && result.gbIssueYn eq 'Y'}">checked</c:if>/>
+														<label for='check${ temp + 1}-2' class='cursorP'></label>
+														<input type='hidden' name='ctGbIssueYn' <c:choose><c:when test="${result.gbKindCd eq '계약' && result.gbIssueYn eq 'Y'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
+													</td>
+													<td id='step${ temp + 1}-3' style='visibility:hidden'>완료</td>
+													<td id='step${ temp + 1}-4' style='visibility:hidden'>
+														<input type='text' id='publishDt${ temp + 1}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' <c:if test="${result.gbKindCd eq '계약' && result.gbIssueYn eq 'Y'}">value="${displayUtil.displayDate(result.gbPublishDt) }"</c:if>/>&nbsp;&nbsp;
+														<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount' <c:if test="${result.gbKindCd eq '계약' && result.gbIssueYn eq 'Y'}">value="${displayUtil.commaStr(result.gbAmount) }"</c:if>/>
+													</td>
+												</tr>
+											</c:if>
+										</c:forEach>
+										<tr class='ftw200 nData${temp+1 }'>
+											<td>
+												<input type='hidden' name='ctGbKey' id='ctGbKey${status.count }' />
+												<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)' />
+												<label for='check${ temp + 1}-1' class='cursorP'></label>
+												<input type='hidden' name='ctGuarantyYN' />
+											</td>						
+											<td>계약 보증 증권 정보</td>
+											<td id='step${ temp + 1}-1' style='visibility:hidden'>
+												<input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ 
+												<input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' />
+											</td>
+											<td id='step${ temp + 1}-2' style='visibility:hidden'>
+												<input type='checkbox' class='tCheck' name='ctGbIssueCheck' id='check${ temp + 1}-2' onclick='check_click(${temp+1},2)' />
+												<label for='check${ temp + 1}-2' class='cursorP'></label>
+												<input type='hidden' name='ctGbIssueYn' />
+											</td>
+											<td id='step${ temp + 1}-3' style='visibility:hidden'>완료</td>
+											<td id='step${ temp + 1}-4' style='visibility:hidden'>
+												<input type='text' id='publishDt${ temp + 1}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' />&nbsp;&nbsp;
+												<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount' />
+											</td>
+										</tr>
+										<c:forEach var="result" items="${guarantyList }" varStatus="status">
+											<c:if test="${entry.salesKey eq result.salesKey && result.gbKindCd eq '선급금'}">
+												<script>fn_remove('nData${temp+3}');</script>
+												<tr class='ftw200'>
+													<td>
+														<input type='hidden' name='ppGbKey' id='ppGbKey${status.count }' <c:if test="${result.gbKindCd eq  '선급금'}">value='${result.gbKey }'</c:if> />
+														<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' <c:if test="${result.gbKindCd eq  '선급금'}">checked</c:if>/>
+														<label for='check${ temp + 3}-1' class='cursorP'></label>
+														<input type='hidden' name='ppGuarantyYN' <c:choose><c:when test="${result.gbKindCd eq '선급금'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
+													</td>
+													<td>선급금 보증 증권 정보</td>
+													<td id='step${ temp + 3}-1' style='visibility:hidden'>
+														<input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt' <c:if test="${result.gbKindCd eq  '선급금'}">value="${displayUtil.displayDate(result.gbStartDt) }"</c:if>/> ~ 
+														<input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt' <c:if test="${result.gbKindCd eq  '선급금'}">value="${displayUtil.displayDate(result.gbEndDt) }"</c:if>/>
+													</td>
+													<td id='step${ temp + 3}-2' style='visibility:hidden'>
+														<input type='checkbox' class='tCheck' name='ppGbIssueCheck' id='check${ temp + 3}-2' onclick='check_click(${ temp + 3},2)' <c:if test="${result.gbKindCd eq  '선급금' && result.gbIssueYn eq 'Y'}">checked</c:if>/>
+														<label for='check${ temp + 3}-2' class='cursorP'></label>
+														<input type='hidden' name='ppGbIssueYn' value='N' <c:choose><c:when test="${result.gbKindCd eq '선급금' && result.gbIssueYn eq 'Y'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
+													</td>
+													<td id='step${ temp + 3}-3' style='visibility:hidden'>완료</td>
+													<td id='step${ temp + 3}-4' style='visibility:hidden'>
+														<input type='text' id='publishDt${ temp + 3}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' <c:if test="${result.gbKindCd eq  '선급금' && result.gbIssueYn eq 'Y'}">value="${displayUtil.displayDate(result.gbPublishDt) }"</c:if>/>&nbsp;&nbsp;
+														<input type='text' id='amount${ temp + 3}' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount' <c:if test="${result.gbKindCd eq  '선급금' && result.gbIssueYn eq 'Y'}">value="${displayUtil.commaStr(result.gbAmount) }"</c:if>/>
+													</td>
+												</tr>
+											</c:if>
+										</c:forEach>
+										<tr class='ftw200 nData${temp+3 }'>
+											<td>
+												<input type='hidden' name='ppGbKey' id='ppGbKey${status.count }' />
+												<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' />
+												<label for='check${ temp + 3}-1' class='cursorP'></label>
+												<input type='hidden' name='ppGuarantyYN' />
+											</td>
+											<td>선급금 보증 증권 정보</td>
+											<td id='step${ temp + 3}-1' style='visibility:hidden'>
+												<input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt' /> ~ 
+												<input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt' />
+											</td>
+											<td id='step${ temp + 3}-2' style='visibility:hidden'>
+												<input type='checkbox' class='tCheck' name='ppGbIssueCheck' id='check${ temp + 3}-2' onclick='check_click(${ temp + 3},2)' />
+												<label for='check${ temp + 3}-2' class='cursorP'></label>
+												<input type='hidden' name='ppGbIssueYn' value='N' />
+											</td>
+											<td id='step${ temp + 3}-3' style='visibility:hidden'>완료</td>
+												<td id='step${ temp + 3}-4' style='visibility:hidden'>
+												<input type='text' id='publishDt${ temp + 3}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' />&nbsp;&nbsp;
+												<input type='text' id='amount${ temp + 3}' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount' />
+											</td>
+										</tr>
+										<c:forEach var="result" items="${guarantyList }" varStatus="status">
+											<c:if test="${entry.salesKey eq result.salesKey && result.gbKindCd eq '하자'}">
+												<script>fn_remove('nData${temp+2}');</script>
+												<tr class='ftw200'>
+													<td>
+														<input type='hidden' name='dfGbKey' id='dfGbKey${status.count }' <c:if test="${result.gbKindCd eq  '하자'}">value='${result.gbKey }'</c:if> />
+														<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' <c:if test="${result.gbKindCd eq  '하자'}">checked</c:if>/>
+														<label for='check${ temp + 2}-1' class='cursorP'></label>
+														<input type='hidden' name='dfGuarantyYN' <c:choose><c:when test="${result.gbKindCd eq '하자'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose> />
+													</td>
+													<td>하자 보증 증권 정보</td>
+													<td id='step${ temp + 2}-1' style='visibility:hidden'>
+														<input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' <c:if test="${result.gbKindCd eq  '하자'}">value="${displayUtil.displayDate(result.gbStartDt) }"</c:if>/> ~  
+														<input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' <c:if test="${result.gbKindCd eq  '하자'}">value="${displayUtil.displayDate(result.gbEndDt) }"</c:if>/>
+													</td>
+													<td id='step${ temp + 2}-2' style='visibility:hidden'>
+														<input type='checkbox' class='tCheck' name='dfGbIssueCheck' id='check${ temp + 2}-2' onclick='check_click(${ temp + 2},2)' <c:if test="${result.gbKindCd eq  '하자' && result.gbIssueYn eq 'Y'}">checked</c:if>/>
+														<label for='check${ temp + 2}-2' class='cursorP'></label> 
+														<input type='hidden' name='dfGbIssueYn' <c:choose><c:when test="${result.gbKindCd eq '하자' && result.gbIssueYn eq 'Y'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
+													</td>
+													<td id='step${ temp + 2}-3' style='visibility:hidden'>완료</td>
+													<td id='step${ temp + 2}-4' style='visibility:hidden'>
+														<input type='text' id='publishDt${ temp + 2}' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt' <c:if test="${result.gbKindCd eq  '하자' && result.gbIssueYn eq 'Y'}">value="${displayUtil.displayDate(result.gbPublishDt) }"</c:if> />&nbsp;&nbsp;
+														<input type='text' id='amount${ temp + 2}' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount' <c:if test="${result.gbKindCd eq  '하자' && result.gbIssueYn eq 'Y'}">value="${displayUtil.commaStr(result.gbAmount) }"</c:if>/>
+													</td>
+												</tr>
+											</c:if>
+										</c:forEach>
+										<tr class='ftw200 nData${temp+2 }'>
+											<td>
+												<input type='hidden' name='dfGbKey' id='dfGbKey${status.count }'  />
+												<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' />
+												<label for='check${ temp + 2}-1' class='cursorP'></label>
+												<input type='hidden' name='dfGuarantyYN'  />
+											</td>
+											<td>하자 보증 증권 정보</td>
+											<td id='step${ temp + 2}-1' style='visibility:hidden'>
+												<input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' /> ~  
+												<input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' />
+											</td>
+											<td id='step${ temp + 2}-2' style='visibility:hidden'>
+												<input type='checkbox' class='tCheck' name='dfGbIssueCheck' id='check${ temp + 2}-2' onclick='check_click(${ temp + 2},2)' />
+												<label for='check${ temp + 2}-2' class='cursorP'></label> 
+												<input type='hidden' name='dfGbIssueYn' />
+											</td>
+											<td id='step${ temp + 2}-3' style='visibility:hidden'>완료</td>
+											<td id='step${ temp + 2}-4' style='visibility:hidden'>
+												<input type='text' id='publishDt${ temp + 2}' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt'  />&nbsp;&nbsp;
+												<input type='text' id='amount${ temp + 2}' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount' />
+											</td>
+										</tr>
+									</table> 
+									<c:set var="temp" value="${temp + 3}"/>
+									<c:set var="length" value="${length + 1 }" />
+								</c:forEach>  
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 				<div class="btnWrap floatR">
@@ -647,10 +684,9 @@
 			</div>
 		</form:form>
 		<form id="infoForm" name="infoForm">
-			<input type="hidden" name="pjKey" id="pjKey" value="<c:out value="${pjKey[0]}"/>" />
-			<input type="hidden" name="salesCtFkKey" value="<c:out value="${pjKey[0]}"/>" />
-			<input type="hidden" id="turnNo" value="<c:out value="${turnNo[0]}"/>"/>
-			<input type="hidden" name="selectKey" id="selectKey" value=""/>
+			<input type="hidden" name="pjKey" id="pjKey" value="<c:out value="${pjKey}"/>" />
+			<input type="hidden" name="salesCtFkKey" value="<c:out value="${pjKey}"/>" />
+			<input type="hidden" id="turnNo" value="<c:out value="${length}"/>"/>
 			<input type="hidden" name="statusCd" value="PJST2000" />
 		</form>
 	</div>

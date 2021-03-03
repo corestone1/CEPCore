@@ -39,6 +39,7 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	private int ctGuarantyAmount;
 	private int dfGuarantyAmount;
 	private int ppGuarantyAmount;
+	private int collectTurn;
 	
 	public String getGbKey() {
 		return gbKey;
@@ -219,6 +220,12 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	}
 	public void setPpGuarantyAmount(int ppGuarantyAmount) {
 		this.ppGuarantyAmount = ppGuarantyAmount;
+	}
+	public int getCollectTurn() {
+		return collectTurn;
+	}
+	public void setCollectTurn(int collectTurn) {
+		this.collectTurn = collectTurn;
 	}
 	
 }

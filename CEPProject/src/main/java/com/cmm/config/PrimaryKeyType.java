@@ -35,10 +35,10 @@ public enum PrimaryKeyType {
 	, MAINTENACE_BACK_ORDER("MB")
 	, MAINTENACE_WORK("MW")
 	, SALES_DETAIL("SD")
-	, ORDER("OD")
+	, PROJECT_ORDER("PO")
 	, PAYMENT("PY")
 	, FORECAST("SP")
-	, PURCHASE("BY")
+	, PROJECT_PURCHASE("PP")
 	, PROJECT_BIDDING("BD");
 	
 	private String value;

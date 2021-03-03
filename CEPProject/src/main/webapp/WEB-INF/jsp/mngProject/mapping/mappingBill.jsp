@@ -434,7 +434,7 @@
 										<td><input type="text" name="billNo"  value="${result.billNo }" readOnly style="width: 140px;" /></td>
 									</tr>
 									<input type="hidden" value="${orderVO.buyKey }" name="billCtFkKey"/>
-									<input type="hidden" value="${orderVO.pjOrderKey }" name="billFkPjKey"/>
+									<input type="hidden" value="${orderVO.orderCtFkKey }" name="billFkPjKey"/>
 								</c:forEach>
 							</tbody>
 						</table>

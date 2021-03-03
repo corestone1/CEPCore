@@ -217,6 +217,9 @@
 			word-wrap: break-word;
 			z-index: 9999;
 		}
+		.btnSave {
+			width: auto;
+		}
 	</style>
 	<script>
 		var turnNo = $("#turnNo").val();
@@ -418,10 +421,7 @@
 					var dialogId = 'program_layer';
 					var varParam = {
 							"pjKey":$('#pjKey').val(),
-							"selectKey":selectKey,
-							"turnNo":$("#buyTurn").val(),
-							"ctKey": ctKeyList,
-							"salesKey":salesKeyList
+							"selectKey":selectKey
 					}
 					var button = new Array;
 					button = [];
@@ -509,9 +509,6 @@
 			var dialogId = 'program_layer';
 			var varParam = {
 					"pjKey":$('#pjKey').val(),
-					"turnNo":$("#buyTurn").val(),
-					"ctKey": ctKeyList,
-					"salesKey":salesKeyList,
 					"selectKey":$('#saveOrderAcKey option:selected').val()
 			}
 			var button = new Array;
@@ -525,10 +522,7 @@
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-					"pjKey":$('#pjKey').val(),
-					"turnNo":$("#buyTurn").val(),
-					"ctKey": ctKeyList,
-					"salesKey":salesKeyList
+					"pjKey":$('#pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -537,7 +531,7 @@
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/searchListPopup.do?parentNm='+obj.id+'&parentId='+obj.nextElementSibling.id+'','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
 		}
 		
 		
@@ -595,16 +589,13 @@
 	            	if(response.successYN == "Y") {
 	            		var countSave = 0;
 	            		
-	            		if($('#popSelectKey').val() !=''){
+	            		if($('#popSelectKey').val().length != 0){
 	            			alert("발주 정보를 수정하였습니다.");
 	            		} else {
 	            			alert("발주 정보를 등록하였습니다.");
 	            		}
 	            			var varParam = {
 	            					"pjKey":$('#pjKey').val(),
-	            					"turnNo":$("#buyTurn").val(),
-	            					"ctKey": ctKeyList,
-	            					"salesKey":salesKeyList,
 	            					"selectKey":$('#saveOrderAcKey option:selected').val()
 	            			}
 	            			
@@ -616,7 +607,7 @@
 			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 		            	
 	            	} else {
-	            		if($('#popSelectKey').val() !=''){
+	            		if($('#popSelectKey').val().length != 0){
 	            			alert("발주 정보 수정이 실패하였습니다.");
 	            		} else {
 	            			alert("발주 정보 등록이 실패하였습니다.");
@@ -635,10 +626,11 @@
 		//해당 거래처의 발주 내용을 삭제한다.
 		function fn_deleteOrderBtn() {
 			var acNm = $('#orderAcNm').val();
-			if($('#popSelectKey').val() !='') {
+			if($('#popSelectKey').val().length != 0) {
 				var sendData = {
-						"orderKey":$('#orderKey').val(),
-						"selectKey":$('#popSelectKey').val()
+						"pjOrderKey":$('#pjOrderKey').val(),
+						"selectKey":$('#popSelectKey').val(),
+						"buyKey":$("#buyKey").val()
 				}				
 				
 				if(confirm(acNm+"의 발주 정보를 삭제하시겠습니까?")){
@@ -662,9 +654,6 @@
 				    			var dialogId = 'program_layer';
 				    			var varParam = {
 		            					"pjKey":$('#pjKey').val(),
-		            					"turnNo":$("#buyTurn").val(),
-										"ctKey": ctKeyList,
-										"salesKey":salesKeyList,
 										"selectKey":$('#saveOrderAcKey option:selected').val()
 		            			}
 				    			var button = new Array;
@@ -711,7 +700,7 @@
 			
 			// 등록된 거래처 selectBox 맵핑.
 			if(parseInt('${orderSelectBoxList.size()}') >0 ){
-				$('#saveOrderAcKey').val("${orderVO.orderKey}").attr("selected", "true");
+				$('#saveOrderAcKey').val("${orderVO.pjOrderKey}").attr("selected", "true");
 			}
 			
 			fn_calculate();
@@ -723,6 +712,11 @@
 			'<c:if test="${listCount > 2 }">'
 			fn_viewSummaryUpAll();
 			'</c:if>'
+			
+			if($('#popSelectKey').val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			} 
 		
 		});
 		
@@ -743,10 +737,7 @@
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey": $("#pjKey").val(),
-							"turnNo":$("#buyTurn").val(),
-							"ctKey":ctKeyList,
-							"salesKey":salesKeyList
+							"pjKey": $("#pjKey").val()
 					}
 					var button = new Array;
 					button = [];
@@ -761,10 +752,7 @@
 			var url = '/project/write/guarantyInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val(),
-				"turnNo":$("#buyTurn").val(),
-				"ctKey":ctKeyList,
-				"salesKey":salesKeyList
+				"pjKey" : $('#pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -795,12 +783,12 @@
 								<c:if test="${orderSelectBoxList.size() >0 }">
 									<select id="saveOrderAcKey" name="saveOrderAcKey" style="width: 127px; height: 34px;">															
 										<c:forEach var="order" items="${orderSelectBoxList}" varStatus="status">
-											<option value="<c:out value="${order.orderKey}"/>"><c:out value="${order.acNm}"/></option>
+											<option value="<c:out value="${order.pjOrderKey}"/>"><c:out value="${order.acNm}"/></option>
 										</c:forEach>							
 									</select>
 									<select id="saveOrderCheck"  style="display:none">															
 										<c:forEach var="order" items="${orderSelectBoxList}" varStatus="status">
-											<option value="<c:out value="${order.orderAcKey}"/>"><c:out value="${order.orderKey}"/></option>
+											<option value="<c:out value="${order.orderAcKey}"/>"><c:out value="${order.pjOrderKey}"/></option>
 										</c:forEach>							
 									</select>
 								</c:if> 
@@ -816,12 +804,13 @@
 								<input type="hidden" id="prodLength" name="prodLength" value="<c:out value="${listCount}"/>" />
 							</c:otherwise>
 						</c:choose> 
-						<input type="hidden" id="orderKey" name="orderKey" value="<c:out value="${orderVO.orderKey}"/>" />
-						<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey[0]}"/>"/>
-						<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${pjKey[0]}"/>"/>
+						<input type="hidden" id="pjOrderKey" name="pjOrderKey" value="<c:out value="${orderVO.pjOrderKey}"/>" />
+						<input type="hidden" id="buyKey" name="buyKey" value="<c:out value="${purchaseVO.buyKey }"/>" />
+						<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
+						<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${pjKey}"/>"/>
 						<input type="hidden" name="orderCtClass" value="P"/>
 						<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
-						<input type="hidden" id="buyTurn" name="buyTurn"  value="<c:out value="${turnNo[0]}"/>"/>
+						<input type="hidden" id="buyTurn" name="buyTurn"  value="<c:out value="${buyTurn}"/>"/> 
 						<input type="hidden" name="statusCd" value="PJST3000" />
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${orderVO.selectKey}"/>"/> 
 					<table>
@@ -938,7 +927,7 @@
 								<c:forEach var="list" items="${orderVO.orderProductVOList}" varStatus="status">
 								<div class="prodTable">
 									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
-									<input type="hidden" name="orderKey" value="<c:out value="${list.orderKey}"/>" />
+									<input type="hidden" name="pjOrderKey" value="<c:out value="${list.pjOrderKey}"/>" />
 									<table>								
 										<tr>
 											<td class="tdTitle firstTd"><label>*</label>제품</td>
@@ -989,7 +978,7 @@
 					</form>		
 				</div>
 				<div class="btnWrap floatR">
-					<div class="floatL" onclick="fn_saveBtn();">
+					<div class="floatL btnSave" onclick="fn_saveBtn();">
 						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<%-- <c:if test="${not empty orderVO.selectKey}"> --%>

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cep.mngCommon.account.service.AccountService;
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.account.vo.AccountVO;
-import com.cep.project.vo.ProjectVO;
-import com.cmm.util.CepDisplayUtil;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -56,17 +55,14 @@ public class AccountController {
 	
 	@RequestMapping(value="/list.do")
 	public String selectAccountListMain(@ModelAttribute("searchVO") AccountSearchVO searchVO, ModelMap model) throws Exception {
-		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
+		List<?> accountList = null;
 		try {
 			logger.debug("searchVO.getAcBuyYN()   :: {}", searchVO.getAcBuyYN());
 			logger.debug("searchVO.getAcSalesYN() :: {}", searchVO.getAcSalesYN());
 			logger.debug("searchVO.getAcNm(11)      :: {}", searchVO.getAcNm());
 			
-			//List<AccountVO> lltAccountList = service.selectAccountList(searchVO);
-			
-			//Map<String, Object> returnMap = new HashMap<String, Object>();
-			//returnMap.put("accountList", lltAccountList);
+			accountList = service.selectAccountList(searchVO);
+			model.put("accountList", accountList);
 		} catch (Exception e) {
 			logger.error("selectAccountListMain :: {}", e);
 		}		
@@ -77,9 +73,18 @@ public class AccountController {
 	
 	@RequestMapping(value="/write.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddAccountInfo(HttpServletRequest request, AccountSearchVO searchVO, ModelMap model) throws Exception {
+		AccountVO accountVO = null;
+		List<?> acDirectorList = null;
+		List<?> acDepositList = null;
 		
 		try {
+			accountVO = service.selectAccountDetail(searchVO);
+			acDirectorList = service.selectAcDirectorList(searchVO);
+			acDepositList = service.selectAcDepositList(searchVO);
 			
+			model.put("accountVO", accountVO);
+			model.put("acDirectorList", acDirectorList);
+			model.put("acDepositList", acDepositList);
 		} catch (Exception e) {
 			logger.error("viewAddAccountInfo :: {}", e);
 		}
@@ -87,11 +92,29 @@ public class AccountController {
 		return "mngCommon/account/write";
 	}
 	
+	@RequestMapping(value="/insert/acocuntInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addAccountInfo(HttpServletRequest request, @RequestBody AccountVO accountVO) throws Exception {
+		Map<String, Object> returnMap = null;
+		returnMap = service.insertAccountInfo(request, accountVO);
+		
+		return returnMap;
+	}
+	
 	@RequestMapping(value="/detail.do")
 	public String selectDetail(HttpServletRequest request, AccountSearchVO searchVO, ModelMap model) throws Exception {
+		List<?> accountList = null;
+		List<?> acDirectorList = null;
+		List<?> acDepositList = null;
 		
 		try {
+			accountList = service.selectAccountList(searchVO);
+			acDirectorList = service.selectAcDirectorList(searchVO);
+			acDepositList = service.selectAcDepositList(searchVO);
 			
+			model.put("accountList", accountList);
+			model.put("acDirectorList", acDirectorList);
+			model.put("acDepositList", acDepositList);
 		} catch (Exception e) {
 			logger.error("viewAddAccountInfo :: {}", e);
 		}

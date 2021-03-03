@@ -111,6 +111,10 @@
 			background-color: #fff;
 			font-size: 14px;
 		}
+		.popContainer .contents .disc {
+			font-size: 14px;
+		    color: #afafaf;
+		}
 		.popContainer .contents input[class="rateInfo"] {
 			width: 90px;
 			height: 38px;
@@ -240,9 +244,9 @@
 		}
 		
 		var countSave = 0;
-		/* var ctKeyList = [];
+		var ctKeyList = "";
 		var salesKeyList = [];
-		var successYn = 'N'; */
+		var successYn = 'N'; 
 		
 		function fn_save() {
 			var sum = null;
@@ -308,9 +312,9 @@
 				    	if(response!= null && response.successYN == 'Y') {
 				    		countSave++; 
 				    		/* for(var i = 0; i < response.ctKey.length; i++) {
-				    			ctKeyList.push(response.ctKey[i]);
+				    			salesKeyList.push(response.saleKey[i]); 
 				    		} 
-				    		salesKeyList.push(response.saleKey); */
+				    		ctKeyList.push(response.ctKey); */
 				    		
 				    		if($("input[name=selectKey]").val() == null || $("input[name=selectKey]").val() == "" || $("input[name=selectKey]").val().length == 0) {
 					    		alert("프로젝트 계약 정보가 등록되었습니다.");
@@ -350,10 +354,10 @@
 				var dialogId = 'program_layer';
 
 				var varParam = {
-						"pjKey": $("#pjKey").val()
-						/* "turnNo": $("#beforeTurn").val(),
+						"pjKey": $("#pjKey").val()/* ,
+						"turnNo": $("#beforeTurn").val(),
 						"ctKey": ctKeyList,
-						"salesKey": salesKeyList */
+						"salesKey": salesKeyList  */
 				}
 				var button = new Array;
 				button = [];
@@ -361,20 +365,20 @@
 			}
 			else {
 				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
-					var ctKey = [];
+					var ctKey = "";
 					var salesKey = [];
-					for(var i = 1; i <= $('#beforeTurn').val(); i++) {
-						ctKey.push($('#ctKey'+i).val());
+					for(var i = 0; i < $('#beforeTurn').val(); i++) {
 						salesKey.push($('#salesKey'+i).val());
 					}
-
+					ctKey = $('#ctKey').val();
+					console.log(salesKey);
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey": $("#pjKey").val(),
-						/* 	"turnNo": $("#beforeTurn").val(),
+							"pjKey": $("#pjKey").val()/* ,
+						 	"turnNo": $("#beforeTurn").val(),
 							"ctKey":ctKey,
-							"salesKey":salesKey */
+							"salesKey":salesKey  */
 					}
 					var button = new Array;
 					button = [];
@@ -425,6 +429,7 @@
 				<form id="basicForm">
 					<c:forEach var="result" items="${salesList}" varStatus="status">     
 						<input type="hidden" id="selectKey${status.index }" name="selectKey" value="${result.salesKey }" />
+						<input type="hidden" id="salesKey${status.index }" name="salesKey" value="${result.salesKey }" />
 					</c:forEach> 
 					<input type="hidden" id="selectKey" name="selectKey" value="${contractVO.ctKey }" />
 					<input type="hidden" id="ctKey" name="ctKey" value="${contractVO.ctKey }" />
@@ -448,6 +453,7 @@
 							</td> --%>
 							<td>
 								<input type="text" id="ctPayTerms" name="ctPayTerms" placeholder="결제조건" value="<c:out value="${contractVO.ctPayTerms}"/>" />
+								<label class="disc">&nbsp;&nbsp;&nbsp;ex. 계산서 발행 후 30일</label>
 							</td>
 						</tr>
 						<tr class="ftw200">
@@ -484,7 +490,7 @@
 										<input type='text' name='salesCollectRate' id='rate${result.salesTurn }' placeholder='${result.salesTurn }회차 비율' numberOnly class='rateInfo' value="${result.salesCollectRate }" required/>
 										&nbsp;%&nbsp;&nbsp;&nbsp;
 										<input type='text' name='salesTurnAmount' id='amount${result.salesTurn }' placeholder='${result.salesTurn }회차 금액' amountOnly class='amount' value="${displayUtil.commaStr(result.salesTurnAmount) }" required/>&nbsp;원
-										<%-- <input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.collectTurn }'/> --%>
+										<%-- <input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.collectTurn }'/>  --%>
 										<input type='hidden' name='salesKey' value="${result.salesKey }" id='salesKey${result.salesTurn }' />
 										<!-- <input type='hidden' name='salesCtClass' value='P' /> -->
 										<%-- <input type='hidden' class='salesChargeDt' name='salesChargeDt' value='${result.salesChargeDt }' /> --%>

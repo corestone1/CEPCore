@@ -165,6 +165,19 @@
 				} 
 			});    
 		}
+		
+		$(document).ready(function() {
+			$('#remarkCnt').html("("+$("#remark").val().length+" / 500)");
+			
+			$('#remark').on('keyup', function() {
+				$('#remarkCnt').html("("+$(this).val().length+" / 500)");
+				
+				if($(this).val().length > 500) {
+					$(this).val($(this).val().substring(0, 500));
+					$('#remarkCnt').html("(500 / 500)");
+				}
+			});
+		});
 	</script>
 </head>
 <body>
@@ -200,7 +213,10 @@
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">사유분석</td>
-							<td class="tdContents"><textarea name="pjLoseCause"><c:out value="${resultList[0].pjLoseCause}"/></textarea></td>
+							<td class="tdContents">
+								<textarea name="pjLoseCause" id="remark"><c:out value="${resultList[0].pjLoseCause}"/></textarea>
+								<div id="remarkCnt">(0 / 500)</div>
+							</td>
 						</tr>
 					</table>
 				</form>

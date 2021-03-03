@@ -64,7 +64,8 @@
 
 	<select id="selectProjectDetail" parameterType="String" resultType="egovMap">
 		SELECT
-			CA.AC_NM
+			PJ.PJ_KEY
+			, CA.AC_NM
 			, CONCAT(AD.AC_DIRECTOR_POSITION_NM , ' / ' , AD.AC_DIRECTOR_MB_NUM , ' / ' , AD.AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
 			, PJ.AC_KEY
 			, PJ.AC_DIRECTOR_KEY
@@ -72,7 +73,6 @@
 			, PJ.PJ_NM
 			, PJ.PJ_START_DT
 			, PJ.PJ_END_DT
-			, PJ.CT_DT
 			, PJ.PJ_SALE_EMP_KEY
 			, CE.EMP_NM
 			, PJ.PJ_SUPPORT_EMP_KEY
@@ -82,13 +82,14 @@
 			, PJ.SP_KEY
 			, PJ.PJ_LOSE_CAUSE
 			, PJ.PJ_SJ_YN
+			, (SELECT CT.CT_DT FROM PJ_CONTRACT_TB CT, PJ_MAIN_TB PJ1 WHERE CT.PJ_KEY = PJ1.PJ_KEY AND PJ1.PJ_KEY=#{pjKey} AND CT.DELETE_YN='N') AS CT_DT
 		FROM PJ_MAIN_TB PJ, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
 		WHERE PJ_KEY=#{pjKey}
 			AND PJ.AC_KEY = CA.AC_KEY		
 		  	AND PJ.AC_KEY = AD.AC_KEY			
 		  	AND PJ.AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
 		  	AND PJ.PJ_SALE_EMP_KEY = CE.EMP_KEY
-		  	AND DELETE_YN='N';
+		  	AND PJ.DELETE_YN='N'
 	</select>
 	
 	<update id="updateStatusCd" parameterType="String">
@@ -105,7 +106,6 @@
 			, PJ_NM
 			, PJ_START_DT
 			, PJ_END_DT
-			, CT_DT
 			, PJ_SALE_EMP_KEY
 			, PJ_SUPPORT_EMP_KEY
 			, REMARK
@@ -122,7 +122,6 @@
 			, #{pjNm}
 			, #{pjStartDt}
 			, #{pjEndDt}
-			, #{ctDt}
 			, #{pjSaleEmpKey}
 			, #{pjSupportEmpKey}
 			, #{remark}
@@ -152,9 +151,6 @@
 			</if>
 			<if test="pjEndDt != null and pjEndDt != ''">
 				PJ_END_DT = #{pjEndDt},
-			</if>
-			<if test="ctDt != null and ctDt != ''">
-				CT_DT = #{ctDt},
 			</if>
 			<if test="pjSaleEmpKey != null and pjSaleEmpKey != ''">
 				PJ_SALE_EMP_KEY = #{pjSaleEmpKey},
@@ -436,16 +432,25 @@
 	
 	<select id="selectSalesList" parameterType="String" resultType="egovMap">
 		SELECT 
-			SALES_KEY
-			, SALES_CHARGE_DT
-			, SALES_TURN
-			, SALES_COLLECT_RATE
-			, SALES_TURN_AMOUNT
-			, SALES_COLLECT_FC_DT
-			, SALES_COLLECT_FINISH_DT
-		FROM PJ_SALES_DETAIL_TB 
-		WHERE SALES_CT_FK_KEY=#{pjKey}
-		AND DELETE_YN='N'
+			SD.SALES_KEY
+			, SD.SALES_CHARGE_DT
+			, SD.SALES_TURN
+			, SD.SALES_COLLECT_RATE
+			, SD.SALES_TURN_AMOUNT
+			, SD.SALES_COLLECT_FC_DT
+			, SD.SALES_COLLECT_FINISH_DT
+			, SD.SALES_BILL_FC_DT
+			, (SELECT CA.AC_NM FROM CMM_ACCOUNT_TB CA, PJ_MAIN_TB PJ WHERE CA.AC_KEY = PJ.AC_KEY AND PJ.PJ_KEY = #{pjKey}) AS AC_NM
+			, SB.BILL_ISSUE_DT
+		FROM PJ_SALES_DETAIL_TB SD 
+		LEFT OUTER JOIN (
+			SELECT BILL_CT_FK_KEY, BILL_ISSUE_DT
+			FROM PJ_SD_BILLING_TB
+			WHERE DELETE_YN='N'
+			GROUP BY BILL_CT_FK_KEY
+		) AS SB ON (SD.SALES_KEY = SB.BILL_CT_FK_KEY )
+		WHERE SD.SALES_CT_FK_KEY=#{pjKey}
+		AND SD.DELETE_YN='N';
 	</select>
 	
 	<!-- <select id="selectSalesList" parameterType="String" resultType="egovMap">
@@ -515,23 +520,22 @@
 			, AC.AC_NM
 			, BL.BILL_MAPPING_YN
 			, BL.BILL_ISSUE_DT
-			, BL.BILL_TURN_NO
+			, BL.BILL_NO
 			, PC.BUY_KEY
 			, (SELECT CC.AC_NM FROM CMM_ACCOUNT_TB CC WHERE PP.MF_AC_KEY = CC.AC_KEY) AS MF_AC_NM
 		FROM 
-			CMM_ORDER_TB OD, 
-			CMM_ORDER_PRODUCT_TB OP,
+			PJ_ORDER_TB OD, 
+			PJ_ORDER_PRODUCT_TB OP,
 			CMM_ACCOUNT_TB AC,
-			CMM_PURCHASE_TB PC,
-			CMM_BILLING_TB BL,
+			PJ_PURCHASE_TB PC,
+			PJ_PC_BILLING_TB BL,
 			PM_PRODUCT_MNG_TB PP
-		WHERE OD.ORDER_KEY = OP.ORDER_KEY
+		WHERE OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
 			AND OD.ORDER_AC_KEY = AC.AC_KEY
-			AND OD.ORDER_KEY = PC.BUY_ORDER_FK_KEY
+			AND OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
 			AND PC.BUY_KEY = BL.BILL_CT_FK_KEY
 			AND OP.ORDER_PM_FK_KEY = PP.PM_KEY
 			AND OD.ORDER_CT_FK_KEY=#{pjKey}
-			AND BL.BILL_CLASS="PC"
 			AND OD.DELETE_YN='N'
 			AND PC.DELETE_YN='N'
 	</select>
@@ -601,19 +605,24 @@
 	
 	<select id="selectGuarantyList" parameterType="String" resultType="egovMap">
 		SELECT 
-			GB.GB_KIND_CD
+			GB.GB_KEY
+			, GB.GB_KIND_CD
 			, GB.GB_ISSUE_YN
 			, GB.GB_PUBLISH_DT
 			, GB.GB_AMOUNT
-		FROM CMM_GUARANTY_BOND_TB GB
-		JOIN CMM_SALES_DETAIL_TB  SD
+			, GB.SALES_KEY
+			, GB.GB_START_DT
+			, GB.GB_END_DT
+		FROM PJ_GUARANTY_BOND_TB GB
+		JOIN PJ_SALES_DETAIL_TB  SD
 		ON GB.SALES_KEY = SD.SALES_KEY
 		WHERE SD.SALES_CT_FK_KEY=#{pjKey}
 		AND GB.DELETE_YN='N'
+		ORDER BY SALES_KEY ASC, GB_KIND_CD ASC
 	</select>
 	
 	<insert id="insertGuarantyInfo" parameterType="guarantyBondVO">
-		INSERT INTO CMM_GUARANTY_BOND_TB (
+		INSERT INTO PJ_GUARANTY_BOND_TB (
 			GB_KEY
 			, CT_KEY
 			, SALES_KEY
@@ -639,7 +648,7 @@
 	</insert>
 	
 	<update id="updateGuarantyInfo" parameterType="guarantyBondVO">
-		UPDATE CMM_GUARANTY_BOND_TB SET
+		UPDATE PJ_GUARANTY_BOND_TB SET
 			GB_START_DT = #{gbStartDt}
 			, GB_END_DT = #{gbEndDt}
 			, GB_ISSUE_YN = #{gbIssueYn}
@@ -649,7 +658,7 @@
 	</update>
 	
 	<update id="deleteGuarantyInfo" parameterType="guarantyBondVO">
-		UPDATE CMM_GUARANTY_BOND_TB SET
+		UPDATE PJ_GUARANTY_BOND_TB SET
 			DELETE_YN='Y'
 		WHERE GB_KEY=#{gbKey}
 	</update>
@@ -661,10 +670,9 @@
 		AND DELETE_YN='N'
 	</select>
 	
-	<insert id="insertOrderInfo" parameterType="orderVO">
-		INSERT INTO CMM_ORDER_TB (
-			ORDER_KEY
-			, ORDER_CT_CLASS
+	<insert id="insertOrderInfo" parameterType="projectOrderVO">
+		INSERT INTO PJ_ORDER_TB (
+			PJ_ORDER_KEY
 			, ORDER_CT_FK_KEY
 			, ORDER_DT
 			, ORDER_AC_KEY
@@ -677,8 +685,7 @@
 			, REG_EMP_KEY
 			, DELETE_YN
 		) VALUES (
-			#{orderKey} 
-			, #{orderCtClass}
+			#{pjOrderKey} 
 			, #{orderCtFkKey}
 			, #{orderDt}
 			, #{orderAcKey}
@@ -693,11 +700,10 @@
 		)
 	</insert>
 	
-	<update id="updateOrderInfo" parameterType="orderVO">
-		UPDATE CMM_ORDER_TB
+	<update id="updateOrderInfo" parameterType="projectOrderVO">
+		UPDATE PJ_ORDER_TB
 		SET
-			ORDER_CT_CLASS = #{orderCtClass}
-			, ORDER_CT_FK_KEY = #{orderCtFkKey}
+			ORDER_CT_FK_KEY = #{orderCtFkKey}
 			, ORDER_DT = #{orderDt}
 			, ORDER_AC_KEY = #{orderAcKey}
 			, ORDER_AC_DIRECTOR_KEY = #{orderAcDirectorKey}
@@ -707,12 +713,12 @@
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
-		WHERE ORDER_KEY = #{orderKey}	
+		WHERE PJ_ORDER_KEY = #{pjOrderKey}	
 	</update>
 	
 	<insert id="insertOrderProductInfo" parameterType="java.util.Map">
-		INSERT INTO CMM_ORDER_PRODUCT_TB (
-			ORDER_KEY
+		INSERT INTO PJ_ORDER_PRODUCT_TB (
+			PJ_ORDER_KEY
 			, ORDER_SEQ
 			, ORDER_PM_FK_KEY
 			, ORDER_QUANTITY
@@ -728,8 +734,8 @@
 		) VALUES 
 		<foreach collection="orderProductVOList" item="item" separator=",">
 		    (
-			#{orderKey}
-			, (SELECT IFNULL(MAX(OP.ORDER_SEQ) + 1, 1) FROM CMM_ORDER_PRODUCT_TB OP WHERE OP.ORDER_KEY=#{orderKey})
+			#{pjOrderKey}
+			, (SELECT IFNULL(MAX(OP.ORDER_SEQ) + 1, 1) FROM PJ_ORDER_PRODUCT_TB OP WHERE OP.PJ_ORDER_KEY=#{pjOrderKey})
 			, #{item.orderPmFkKey}
 			, #{item.orderQuantity}
 			, #{item.orderUprice}
@@ -747,7 +753,7 @@
 	
 	<update id="updateOrderProductInfo" parameterType="java.util.HashMap">
 		<foreach collection="orderProductVOList" item="item" separator=";" close=";">
-			UPDATE CMM_ORDER_PRODUCT_TB
+			UPDATE PJ_ORDER_PRODUCT_TB
 			SET ORDER_PM_FK_KEY=#{item.orderPmFkKey} 
 				, ORDER_QUANTITY = #{item.orderQuantity}
 				, ORDER_UPRICE = #{item.orderUprice}
@@ -758,19 +764,19 @@
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
-			WHERE ORDER_KEY = #{item.orderKey}
+			WHERE PJ_ORDER_KEY = #{item.pjOrderKey}
 				AND ORDER_SEQ = #{item.orderSeq}
 		</foreach>
 	</update>
 	
 	<update id="deleteOrderProductInfo" parameterType="java.util.HashMap">
-		UPDATE CMM_ORDER_PRODUCT_TB
+		UPDATE PJ_ORDER_PRODUCT_TB
 		SET 
 			DELETE_YN = 'Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
-		WHERE ORDER_KEY = #{orderKey}
+		WHERE PJ_ORDER_KEY = #{pjOrderKey}
 			AND ORDER_SEQ IN
 			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
 				#{item}
@@ -779,10 +785,10 @@
 	
 	<select id="selectOrderSelectBoxList" parameterType="String" resultType="egovMap">
 		SELECT
-			PO.ORDER_KEY
+			PO.PJ_ORDER_KEY
 			, PO.ORDER_AC_KEY
 			, CA.AC_NM
-		FROM CMM_ORDER_TB PO, CMM_ACCOUNT_TB CA
+		FROM PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA
 		WHERE PO.ORDER_CT_FK_KEY=#{key}
 			AND PO.DELETE_YN='N'
 			AND PO.ORDER_AC_KEY = CA.AC_KEY
@@ -793,18 +799,38 @@
 			PJ_ORDER_KEY AS pjOrderKey
 			, ORDER_DT AS orderDt
 			, ORDER_AC_KEY AS orderAcKey
-			, (SELECT A.AC_NM FROM CMM_ACCOUNT_TB A WHERE A.AC_KEY = CO.ORDER_AC_KEY ) AS orderAcNm
+			, (SELECT A.AC_NM FROM CMM_ACCOUNT_TB A WHERE A.AC_KEY = PO.ORDER_AC_KEY ) AS orderAcNm
 			, ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
-			, (SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = CO.ORDER_AC_DIRECTOR_KEY ) AS orderAcDirectorNm
-			, (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = CO.ORDER_AC_DIRECTOR_KEY) AS orderAcDirectorMbNum
+			, (SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = PO.ORDER_AC_DIRECTOR_KEY ) AS orderAcDirectorNm
+			, (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = PO.ORDER_AC_DIRECTOR_KEY) AS orderAcDirectorMbNum
 			, (SELECT PJ.PJ_NM  FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS pjNm
 			, (SELECT CA.AC_NM FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PJ.AC_KEY = CA.AC_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS acNm
 			, ORDER_PAY_TERMS AS orderPayTerms
 			, ORDER_AMOUNT AS orderAmount
 			, TAX_YN AS taxYn
-		FROM PJ_ORDER_TB 
+		FROM PJ_ORDER_TB PO
 		WHERE PJ_ORDER_KEY = #{orderKey}
 			AND DELETE_YN='N'
+	</select>
+	
+	<select id="selectPurchaseDetail" parameterType="projectPurchaseVO" resultType="projectPurchaseVO">
+		SELECT 
+			BUY_KEY AS buyKey
+			, BUY_FK_PJ_KEY AS buyFkPjKey
+			, BUY_ORDER_FK_KEY AS buyOrderFkKey
+			, BUY_AMOUNT AS buyAmount
+			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, BUY_TURN buyTurn
+		FROM PJ_PURCHASE_TB
+		WHERE DELETE_YN='N'
+		<if test="buyKey != null and buyKey != ''">
+			AND BUY_KEY = #{buyKey}
+		</if>
+		<if test="buyOrderFkKey != null and buyOrderFkKey != ''">
+			AND BUY_ORDER_FK_KEY = #{buyOrderFkKey}
+		</if>
+			
 	</select>
 	
 	<select id="selectOrderProductList" parameterType="String" resultType="projectOrderProductVO">
@@ -825,24 +851,92 @@
 			AND OP.ORDER_PM_FK_KEY = PM.PM_KEY
 	</select>
 	
-	<update id="deleteOrderInfo" parameterType="orderVO">
-		UPDATE CMM_ORDER_TB
+	<update id="deleteOrderInfo" parameterType="projectOrderVO">
+		UPDATE PJ_ORDER_TB
 		SET
 			DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
-		WHERE ORDER_KEY = #{orderKey}
+		WHERE PJ_ORDER_KEY = #{pjOrderKey}
 	</update>
 	
 	<update id="deleteOrderProductAll" parameterType="java.util.HashMap">
-		UPDATE CMM_ORDER_PRODUCT_TB
+		UPDATE PJ_ORDER_PRODUCT_TB
 		SET
 			DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
-		WHERE ORDER_KEY = #{orderKey}
+		WHERE PJ_ORDER_KEY = #{pjOrderKey}
+	</update>
+	
+	<insert id="insertPurchaseInfo" parameterType="projectPurchaseVO">
+		INSERT INTO PJ_PURCHASE_TB (
+			BUY_KEY
+			, BUY_FK_PJ_KEY
+			, BUY_ORDER_FK_KEY
+			, BUY_AMOUNT
+			, DONE_PAYMENT_AMOUNT
+			, YET_PAYMENT_AMOUNT
+			, BUY_TURN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{buyKey}
+			, #{buyFkPjKey}
+			, #{buyOrderFkKey}
+			, #{buyAmount}
+			, #{donePaymentAmount}
+			, #{yetPaymentAmount}
+			, #{buyTurn}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		) 
+	</insert>
+	
+	<update id="updatePurchaseInfo" parameterType="projectPurchaseVO">
+		UPDATE PJ_PURCHASE_TB SET
+			MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+			<if test="buyAmount != null and buyAmount != '' and buyAmount != 0">
+			, BUY_AMOUNT = #{buyAmount}
+			</if>
+			<if test="donePaymentAmount != null and donePaymentAmount != '' and donePaymentAmount != 0">
+			, DONE_PAYMENT_AMOUNT = #{donePaymentAmount}
+			</if>
+			<if test="yetPaymentAmount != null and yetPaymentAmount != '' and yetPaymentAmount != 0">
+			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
+			</if>
+			<if test="buyTurn != null and buyTurn != '' and buyTurn != 0">
+			, BUY_TURN = #{buyTurn}
+			</if>
+		WHERE BUY_KEY = #{buyKey}
+	</update>
+	
+	<update id="deletePurchaseInfo" parameterType="projectPurchaseVO">
+		UPDATE PJ_PURCHASE_TB 
+		SET
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE BUY_KEY = #{buyKey}
+	</update>
+	
+	<update id="deletePaymentAllInfo" parameterType="projectPaymentVO">
+		UPDATE PJ_PAYMENT_TB 
+		SET
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
 	</update>
 	
 	<select id="selectAcDirector" parameterType="Integer" resultType="egovMap">			

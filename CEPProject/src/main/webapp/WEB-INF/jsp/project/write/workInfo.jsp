@@ -302,7 +302,7 @@
 								<input type="hidden" name="pjWorkTm" id="pjWorkTm"/> 
 								<c:set var="takeTm" value="${resultList[0].pjWorkTakeTm}"/>
 								<c:set var="length" value="${fn:length(takeTm)}"/>
-								소요시간 <input type="text" numberOnly class="timeInfo" id="pjWorkTakeTm1" value="${fn:substring(tm,0,2) }"/> : <input type="text" numberOnly class="timeInfo" id="pjWorkTakeTm2" value="${fn:substring(tm,length-2,length) }">
+								소요시간 <input type="text" numberOnly class="timeInfo" id="pjWorkTakeTm1" value="${fn:substring(takeTm,0,2) }"/> : <input type="text" numberOnly class="timeInfo" id="pjWorkTakeTm2" value="${fn:substring(takeTm,length-2,length) }">
 								<input type="hidden" name="pjWorkTakeTm" id="pjWorkTakeTm" /> 
 							</td>
 						</tr>
