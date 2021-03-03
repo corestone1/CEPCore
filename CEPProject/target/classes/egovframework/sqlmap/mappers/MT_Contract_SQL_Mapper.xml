@@ -223,7 +223,7 @@
 				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
 				AND MC.MT_MNG_EMP_KEY= CE2.EMP_KEY
 				AND MC.MT_SUPPORT_EMP_KEY = CE3.EMP_KEY 
-			  	AND DELETE_YN='N'
+			  	AND MC.DELETE_YN='N'
 			  	ORDER BY MT_CT_DT DESC 
 		) M			
 	</select>
@@ -260,7 +260,7 @@
 		  	AND MC.MT_AC_KEY = CA.AC_KEY		
 		  	AND MC.MT_AC_KEY = AD.AC_KEY			
 		  	AND MC.MT_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
-		  	AND DELETE_YN='N';
+		  	AND MC.DELETE_YN='N';
 	</select>
 	
 	<!-- 
@@ -718,7 +718,7 @@
 			, MB.REMARK AS remark
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
 		WHERE MT_ORDER_KEY = #{mtOrderKey} 
-			AND DELETE_YN='N'  
+			AND MB.DELETE_YN='N'  
 		  	AND MB.MT_ORDER_AC_KEY = CA.AC_KEY
 	</select>
 	
