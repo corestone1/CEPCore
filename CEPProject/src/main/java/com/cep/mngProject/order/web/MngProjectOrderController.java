@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngProject.order.service.MngProjectOrderService;
+import com.cep.mngProject.order.vo.MngOrderInsertVO;
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.mngProject.order.vo.MngProjectOrderVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
+
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 @Controller
 @RequestMapping("/mngProject/order")
@@ -58,27 +61,70 @@ public class MngProjectOrderController {
 	}
 	
 	@RequestMapping(value="/addInfo.do")
-	public String addOrderInfo(MngProjectOrderVO mngProjectOrderVO, ModelMap model) throws Exception {
-		
-		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
-		
-		/*for(MngProjectOrderVO str : mngProjectOrderVO.getList()) {
-			System.out.println("orderPmFkKet----------->"+str.getOrderPmFkKey());
-			System.out.println("orderUprice-------->"+str.getOrderUprice());
-		}*/
+	public String addOrderInfo(@ModelAttribute("searchVO") MngOrderSearchVO searchVO, HttpServletRequest request, ModelMap model) throws Exception {
 		
 		try{
-		
+			
+			logger.debug("orderKey : {}", request.getParameter("orderKey"));
+			logger.debug("searchVO.getOrderKey() : {}", searchVO.getOrderKey());
+//			MngOrderSearchVO searchVO = new MngOrderSearchVO();
+//			searchVO.setOrderKey(request.getParameter("orderKey"));
+			
+			model.addAttribute("orderKey",     searchVO.getOrderKey());
 			model.addAttribute("employeeList", comService.selectEmployeeList());
-			model.addAttribute("today", CepDateUtil.getToday("yyyy-MM-dd"));
+			model.addAttribute("today",        CepDateUtil.getToday("yyyyMMdd"));
+			model.addAttribute("displayUtil",  new CepDisplayUtil());
+			
+			if(searchVO != null && searchVO.getOrderKey() != null && searchVO.getOrderKey().length() == 8){
+				
+				logger.debug("-----------------------------------------------------");
+				
+				//CMM_ORDER_TB select
+				EgovMap orderInfoMap = service.selectOrderInfo(searchVO);
+				model.addAttribute("orderInfo", orderInfoMap);
+				
+				//고객 담당자 조회
+				AccountSearchVO accoutSearchVO = new AccountSearchVO();
+				accoutSearchVO.setAcKey((String)orderInfoMap.get("orderAcKey"));
+				model.addAttribute("directorList", service.selectDirectorList(accoutSearchVO));
+				
+				//CMM_ORDER_PRODUCT_TB select
+//				model.addAttribute("productList", service.selectOrderProductList(searchVO));
+			}
+			
+		}catch(Exception e){
+			logger.debug("{}", e);
+			throw e;
+		}
+		
+		return "mngProject/order/addInfo";
+	}
+	
+	
+	@RequestMapping(value="/selectOrderProductList.do")
+	@ResponseBody
+	public Map<String, Object> selectOrderProductList(@ModelAttribute("searchVO") MngOrderSearchVO searchVO, HttpServletRequest request, ModelMap model) throws Exception {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try{
+			
+			logger.debug("orderKey : {}", request.getParameter("orderKey"));
+			logger.debug("searchVO.getOrderKey() : {}", searchVO.getOrderKey());
+			
+			if(searchVO.getOrderKey() != null || searchVO.getOrderKey().length() == 8){
+				//CMM_ORDER_PRODUCT_TB select
+				returnMap.put("productList", service.selectOrderProductList(searchVO));
+			}
 			
 		}catch(Exception e){
 			logger.debug("{}", e);
 		}
 		
 		
-		return "mngProject/order/addInfo";
+		return returnMap;
 	}
+	
 	
 	@RequestMapping(value="/test.do", method=RequestMethod.POST)
 	@ResponseBody
@@ -132,6 +178,36 @@ public class MngProjectOrderController {
 		}catch(Exception e){
 			logger.error("{}", e);
 		}
+		
+		return returnMap;
+	}
+	
+	@RequestMapping(value="/write/wirteProductInfo.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> writeOrderInfo(HttpServletRequest request, @RequestBody MngOrderInsertVO orderVO) throws Exception {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		
+		try{
+			
+			logger.debug("======================= writeOrderInfo =========================");
+			logger.debug("orderVO.getOrderKey()       : {}", orderVO.getOrderKey());
+			logger.debug("orderVO.getOrderCtFkKey()   : {}", orderVO.getOrderCtFkKey());
+			logger.debug("mngOrderInsertVOList.size() : {}", orderVO.getMngOrderInsertVOList().size());
+			
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+//			orderVO.setRegEmpKey(sessionMap.get("empKey"));
+			
+			service.writeOrderInfo(orderVO);
+			
+			
+		}catch(Exception e){
+			logger.error("{}", e);
+			throw e;
+		}
+		
 		
 		return returnMap;
 	}

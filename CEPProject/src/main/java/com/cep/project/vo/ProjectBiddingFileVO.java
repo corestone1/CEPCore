@@ -15,6 +15,8 @@ public class ProjectBiddingFileVO extends ProjectBiddingVO implements Serializab
 	private int bdDocCnt;
 	private String bdFileCheck;
 	
+	private String bdGuarantyCheck;
+	
 	public String getBdKey() {
 		return bdKey;
 	}
@@ -50,6 +52,18 @@ public class ProjectBiddingFileVO extends ProjectBiddingVO implements Serializab
 	}
 	public void setBdFileCheck(String bdFileCheck) {
 		this.bdFileCheck = bdFileCheck;
+	}
+	/**
+	 * @return the bdGuarantyCheck
+	 */
+	public String getBdGuarantyCheck() {
+		return bdGuarantyCheck;
+	}
+	/**
+	 * @param bdGuarantyCheck the bdGuarantyCheck to set
+	 */
+	public void setBdGuarantyCheck(String bdGuarantyCheck) {
+		this.bdGuarantyCheck = bdGuarantyCheck;
 	}
 	
 }

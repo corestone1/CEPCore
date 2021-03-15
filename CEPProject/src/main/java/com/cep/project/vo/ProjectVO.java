@@ -30,6 +30,9 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String pjLoseCause;
 	private String pjSjYn;
 	
+	private String bdKey;  //ynk
+	private String regEmpKey;
+	
 	public String getPjKey() {
 		return pjKey;
 	}
@@ -137,6 +140,33 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setPjSjYn(String pjSjYn) {
 		this.pjSjYn = pjSjYn;
+	}
+	
+	/**
+	 * @return the bdKey
+	 */
+	public String getBdKey() {
+		return bdKey;
+	}
+	/**
+	 * @param bdKey the bdKey to set
+	 */
+	public void setBdKey(String bdKey) {
+		this.bdKey = bdKey;
+	}
+	
+	
+	/**
+	 * @return the regEmpKey
+	 */
+	public String getRegEmpKey() {
+		return regEmpKey;
+	}
+	/**
+	 * @param regEmpKey the regEmpKey to set
+	 */
+	public void setRegEmpKey(String regEmpKey) {
+		this.regEmpKey = regEmpKey;
 	}
 	@Override
 	public String toString() {

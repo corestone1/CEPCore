@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngProject.fundSchedule.service.impl.MngProjectFundScheduleMapper">
+
+	<resultMap id="codeVO" type="com.cep.mngCommon.code.vo.CodeVO">
+		<result property="rowNum"          column="ROW_NUM"/>
+		<result property="cdKey"           column="CD_KEY"/>
+		<result property="cdClass"         column="CD_CLASS"/>
+		<result property="cdNm"            column="CD_NM"/>
+		<result property="cdUpCd"          column="CD_UP_CD"/>
+		<result property="cdDesc"          column="CD_DESC"/>
+		<result property="regDt"           column="REG_DT"/>
+		<result property="regTm"           column="REG_TM"/>
+		<result property="regEmpKey"       column="REG_EMP_KEY"/>
+		<result property="modDt"           column="MOD_DT"/>
+		<result property="modTm"           column="MOD_TM"/>
+		<result property="modEmpKey"       column="MOD_EMP_KEY"/>
+	</resultMap>
+	
+
+	<select id="selectBillScheduleList" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="egovMap">				
+		
+		
+		
+	</select>
+	
+</mapper>

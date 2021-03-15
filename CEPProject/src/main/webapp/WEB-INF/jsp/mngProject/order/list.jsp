@@ -89,18 +89,23 @@
 		.middle table tbody tr td:nth-child(4) {
 			font-weight: 400;
 		}
-		.middle table thead th, .middle table tbody tr td {
+		
+		.middle table tbody tr td a{
+			color: #535353;
+		}
+		
+		.middle table thead th
+		, .middle table tbody tr td {
 			padding: 10px 0;
 			border: 1px solid #edebef;
 			color: #535353;
 		}
 		.middle table thead th:first-child,
-		.middle table tbody td:first-child,
-		.middle table thead th:nth-child(11),
-		.middle table tbody td:nth-child(11) {
+		.middle table tbody td:first-child {
 			width: 50px;
 			max-width: 50px;
 		}
+		
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
 			width: 48px;
@@ -108,44 +113,57 @@
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
-			width: 145px;
-			max-width: 145px;
+			width: 195px;
+			max-width: 195px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 320px;
-			max-width: 320px;
+			width: 350px;
+			max-width: 350px;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
-			width: 100px;
-			max-width: 100px;
+			width: 110px;
+			max-width: 110px;
 		}
+		
 		.middle table thead th:nth-child(6),
+		.middle table tbody td:nth-child(6) {
+			width: 110px;
+			max-width: 110px;
+		}
+		
 		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 190px;
+			max-width: 190px;
+		}
+		
 		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(6),
-		.middle table tbody td:nth-child(7),
-		.middle table tbody td:nth-child(8),
+		.middle table tbody td:nth-child(8) {
+			width: 90px;
+			max-width: 90px;
+		}
+		
 		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9),
+		.middle table tbody td:nth-child(9) {
+			width: 150px;
+			max-width: 150px;
+		}
+		
 		.middle table thead th:nth-child(10),
 		.middle table tbody td:nth-child(10) {
-			width: 100px;
-			max-width: 100px;
+			width: 110px;
+			max-width: 110px;
 		}
-		.middle table thead th:nth-child(12),
-		.middle table tbody td:nth-child(12) {
-			width: 140px;
-			max-width: 140px;
+		
+		.middle table thead th:nth-child(11),
+		.middle table tbody td:nth-child(11) {
+			width: 110px;
+			max-width: 110px;
 		}
-		.middle table thead th:nth-child(13),
-		.middle table tbody td:nth-child(13),
-		.middle table thead th:nth-child(14),
-		.middle table tbody td:nth-child(14) {
-			width: 80px;
-			max-width: 80px;
-		}
+		
+		
 		.middle table tbody tr td > img {
 			width: 25px;
 			vertical-align: middle;
@@ -195,6 +213,7 @@
 	</style>
 	<script>
 		$(document).ready(function() {
+			/* 
 			var html = '';
 			$('.middle table tbody tr').click(function() {
 				if($(this).attr('class') != "viewOpen") {
@@ -219,11 +238,72 @@
 					$(this).next().remove();
 				}
 			});
-			
+			*/
 			$('#fl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'"  class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
+			});
+			
+			
+			
+			$('#btnMelete').click(function() {
+				
+				alert('btnMelete');
+				
+				if($('input[name="gubun"]').is(':checked')) {
+					var litIdx = parseInt($('input[name="gubun"]:checked').val());
+					var jsonData = {'SP_KEY' : $('input[name="spKey"]').eq(litIdx).val()};
+						
+			        //수정 팝업 호출
+					
+				} else {
+					alert("수정할 대상을 선택하세요 !!");
+					
+					return false;
+				}				
+			});
+			
+			$('#btnDelete').click(function() {
+				
+				alert('btnDelete');
+				
+				if($('input[name="gubun"]').is(':checked')) {
+					if(confirm("선택한 내용을 삭제하시겠습니까?")) {
+						
+						var litIdx = parseInt($('input[name="gubun"]:checked').val());
+						
+						var jsonData = {'ORDER_KEY' : $('input[name="orderKey"]').eq(litIdx).val()};
+						
+						//alert($('input[name="orderKey"]').eq(litIdx).val() + "\n" + litIdx);
+						
+			           $.ajax({
+				        	url :"/mngProject/order/delete.do",
+				        	type:"POST",  
+				            data: jsonData,
+				     	   contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+				     	   dataType: 'json',
+				           async : false,
+				        	success:function(data){		  
+				            	alert("삭제되었습니다.!");
+				            },
+				        	error: function(request, status, error) {
+				        		if(request.status != '0') {
+				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				        		}
+				        	} 
+				        }); 
+			           	
+			           	
+					} else {
+						return false;
+					}
+					
+				} else {
+					alert("삭제할 대상을 선택하세요 !!");
+					
+					return false;
+				}				
 			});
 		});
 
@@ -241,11 +321,31 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
 			/* } */
 		}
+		
+		function fn_searchList()
+		{                
+			document.listForm.action = "/mngProject/order/list.do";
+           	document.listForm.submit(); 
+		}
 
+		function fn_detailPop(pstOrderKey) {
+			
+			//alert(pstOrderKey);
+			
+			var url = '/mngProject/order/addInfo.do?orderKey=' + pstOrderKey;
+			//var url = '/mngProject/order/addInfo.do';
+			var dialogId = 'program_layer';
+			//var varParam = { 'orderKey' : pstOrderKey };
+			var varParam = { };
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+		}
+		
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -256,16 +356,18 @@
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">구분</option>
-						</select>
-						<select>
-							<option value="">상태</option>
-						</select>
-						<input type="text" class="calendar" placeholder="from"/><label> ~ </label><input type="text" class="calendar" placeholder="to"/>
-						<input type="text" placeholder="발주번호" style="width: 80px;"/>
-						<input type="text" class="search" placeholder="프로젝트명"/>
-						<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<!-- 
+						<form:select path="orderCtClass">
+							<form:option value="">구분</form:option>
+							<form:option value="P">프로젝트</form:option>
+							<form:option value="M">유지보수</form:option>
+						</form:select>
+						 -->
+						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="from"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="to"/>
+						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;"/>
+						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;"/>
+						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명"/>
+						<span><img onclick="javascript:fn_searchList();" src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -278,11 +380,8 @@
 								<th scope="row">고객사</th>
 								<th scope="row">프로젝트명</th>
 								<th scope="row">발주일</th>
-								<th scope="row">입고일</th>
-								<th scope="row">계산서일자</th>
 								<th scope="row">발주번호</th>
 								<th scope="row">매입처</th>
-								<th scope="row">단가</th>
 								<th scope="row">수량</th>
 								<th scope="row">합계(VAT별도)</th>
 								<th scope="row">발주자</th>
@@ -290,226 +389,51 @@
 							</tr>
 						</thead>
 						<tbody>
+						
+							<c:forEach var="result" items="${orderList}" varStatus="status">
+								<tr>
+									<td></td>
+									<td><c:out value="${status.count}"/></td>
+									<td><c:out value="${result.acNm}"/></td>
+									<td><a href="javascript:fn_detailPop('${result.orderKey}')" ><c:out value="${result.pjNm}"/></a></td>
+									<td><c:out value="${displayUtil.displayDate(result.orderDt)}"/></td>
+									<td><c:out value="${result.orderKey}"/></td>
+									<td><c:out value="${result.orderAcNm}"/></td>
+									<td><c:out value="${result.orderCount}"/></td>
+									<td><c:out value="${displayUtil.commaStr(result.orderAmount)}"/></td>
+									<td><c:out value="${result.orderEmpNm}"/></td>
+									<td><c:out value="${result.salseEmpNm}"/></td>
+								</tr>
+								<input type="hidden" name="orderKey" value="${result.orderKey}"/>
+							</c:forEach>						
+						
+						<!-- 
 							<tr>
 								<td></td>
 								<td>1</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체dddddddddddddddddddddddddddddd">VDI 중요단말기 환경 구축 및 노후장비 교체dddddddddddddddddddddddddddddd</span></td>
 								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
 								<td>78945612</td>
 								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
 								<td>5</td>
 								<td><span title="5,000,000">5,000,000</span></td>
 								<td>김규민</td>
 								<td>박영수</td>
 							</tr>
-							<tr>
-								<td></td>
-								<td>2</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>3</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>4</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>5</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>6</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>7</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>8</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>9</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>10</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>11</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>12</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>13</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
-							</tr>
+						-->
 						</tbody>
 					</table>
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-						<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button type="button" id="btnModify" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

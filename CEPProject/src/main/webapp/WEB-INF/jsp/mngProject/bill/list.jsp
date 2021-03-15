@@ -192,6 +192,7 @@
 	</style>
 	<script>
 		$(document).ready(function() {
+			/* 
 			var html = '';
 			$('.middle table tbody tr').click(function() {
 				if($(this).attr('class') != "viewOpen") {
@@ -212,13 +213,67 @@
 					$(this).next().remove();
 				}
 			});
+			*/
 			
 			$('#fl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'"  class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
 			});
+			
+			$('#btnDelete').click(function() {
+				
+				//alert('btnDelete');
+				
+				if($('input[name="gubun"]').is(':checked')) {
+					if(confirm("선택한 내용을 삭제하시겠습니까?")) {
+						
+						var litIdx = parseInt($('input[name="gubun"]:checked').val());
+						
+						//alert(litIdx + ":" + $('input[name="billNo"]').eq(litIdx).val());
+						
+						var jsonData = {'billNo' : $('input[name="billNo"]').eq(litIdx).val()};
+						
+						//alert($('input[name="orderKey"]').eq(litIdx).val() + "\n" + litIdx);
+						
+			           $.ajax({
+				        	url :"/mngProject/bill/delete.do",
+				        	type:"POST",  
+				            data: jsonData,
+				     	   contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+				     	   dataType: 'json',
+				           async : false,
+				        	success:function(data){		  
+				            	alert("삭제되었습니다.!");
+				            	//현재 화면 새로고침
+				            	location.reload();
+				            },
+				        	error: function(request, status, error) {
+				        		if(request.status != '0') {
+				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				        		}
+				        	} 
+				        }); 
+			           	
+			           	
+					} else {
+						return false;
+					}
+					
+				} else {
+					alert("삭제할 대상을 선택하세요 !!");
+					
+					return false;
+				}				
+			});
+			
 		});
+		
+		function fn_searchList()
+		{                
+			document.listForm.action = "/mngProject/bill/list.do";
+           	document.listForm.submit(); 
+		}
 
 		/* function fn_addView(link){
 			if(link == "forecastList") {
@@ -234,11 +289,22 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
 			}
 		} */
+		
+		
+		function fnViewDetail(pstBillNo){
+			
+			form = document.listForm;
+			form.billNo.value = pstBillNo;
+			form.action = "<c:url value='/mngProject/bill/detail/main.do'/>";
+			form.submit(); 
+			
+		}
 
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
+		<input type="hidden" name="billNo" value=""/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -249,12 +315,16 @@
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">구분</option>
-						</select>
-						<input type="text" class="calendar" placeholder="from"/><label> ~ </label><input type="text" class="calendar" placeholder="to"/>
-						<input type="text" class="search" placeholder="프로젝트명" />
-						<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<form:select path="searchClassCd">
+							<form:option value="">구분</form:option>
+							<form:option value="PC">매입</form:option>
+							<form:option value="SD">매출</form:option>
+						</form:select>
+						<form:input path="searchFromDate" type="text" class="calendar" placeholder="from"/>
+						<label> ~ </label>
+						<form:input path="searchToDate" type="text" class="calendar" placeholder="to"/>
+						<form:input path="searchAcNm" type="text" class="search" placeholder="상호명" />
+						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -279,22 +349,25 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td></td>
-								<td>1</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
+							<c:forEach var="result" items="${billList}" varStatus="status">
+								<tr>
+									<td></td>
+									<td><c:out value="${status.count}"/></td>
+									<td><c:out value="${result.billClassNm}"/></td>
+									<td><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></td>
+									<td><c:out value="${result.acKey}"/></td>
+									<td onclick="javascript:fnViewDetail('${result.billNo}');"><span title="${result.acNm}"><c:out value="${result.acNm}"/></span></td>
+									<td><c:out value="${result.acCeoNm}"/></td>
+									<td><span><c:out value="${displayUtil.commaStr(result.billAmount)}"/></span></td>
+									<td><span><c:out value="${displayUtil.commaStr(result.billTax)}"/></span></td>
+									<td><span><c:out value="${displayUtil.commaStr(result.billTotalAmount)}"/></span></td>
+									<td><span><c:out value="${result.remark}"/></span></td>
+									<td><span><c:out value="${result.billNo}"/></span></td>
+									<td><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></td>
+									<td></td>
+								</tr>
+							</c:forEach>
+							<!-- 
 							<tr>
 								<td></td>
 								<td>2</td>
@@ -311,194 +384,19 @@
 								<td>2018-12-12</td>
 								<td></td>
 							</tr>
-							<tr>
-								<td></td>
-								<td>3</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>4</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>5</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>6</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>7</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>8</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>9</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>10</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>11</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>12</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>13</td>
-								<td>매입</td>
-								<td>2018-12-12</td>
-								<td>254-66-45879</td>
-								<td><span title="에이제이파크 주식회사">에이제이파크 주식회사</span></td>
-								<td>홍길동</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td><span title="디비손해보험(디비손해보험)">디비손해보험(디비손해보험)</span></td>
-								<td><span title="202004512100009845600254">승인번호</span></td>
-								<td>2018-12-12</td>
-								<td></td>
-							</tr>
+							 -->
 						</tbody>
 					</table>
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-						<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button type="button" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

@@ -27,6 +27,7 @@ public class ProjectBuildVO extends ProjectVO implements Serializable {
 	private String modEmpKey;
 	private String StatusCd;
 	
+	
 	public String getPjKey() {
 		return pjKey;
 	}

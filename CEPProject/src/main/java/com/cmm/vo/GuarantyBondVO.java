@@ -41,6 +41,10 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	private int ppGuarantyAmount;
 	private int collectTurn;
 	
+	private int gbRate;
+	private String gbInspectDt;
+	private int gbSkAmount;
+	
 	public String getGbKey() {
 		return gbKey;
 	}
@@ -226,6 +230,42 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	}
 	public void setCollectTurn(int collectTurn) {
 		this.collectTurn = collectTurn;
+	}
+	/**
+	 * @return the gbRate
+	 */
+	public int getGbRate() {
+		return gbRate;
+	}
+	/**
+	 * @param gbRate the gbRate to set
+	 */
+	public void setGbRate(int gbRate) {
+		this.gbRate = gbRate;
+	}
+	/**
+	 * @return the gbInspectDt
+	 */
+	public String getGbInspectDt() {
+		return gbInspectDt;
+	}
+	/**
+	 * @param gbInspectDt the gbInspectDt to set
+	 */
+	public void setGbInspectDt(String gbInspectDt) {
+		this.gbInspectDt = gbInspectDt;
+	}
+	/**
+	 * @return the gbSkAmount
+	 */
+	public int getGbSkAmount() {
+		return gbSkAmount;
+	}
+	/**
+	 * @param gbSkAmount the gbSkAmount to set
+	 */
+	public void setGbSkAmount(int gbSkAmount) {
+		this.gbSkAmount = gbSkAmount;
 	}
 	
 }
