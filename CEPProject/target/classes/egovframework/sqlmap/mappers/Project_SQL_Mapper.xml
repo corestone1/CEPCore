@@ -82,7 +82,6 @@
 			, PJ.SP_KEY
 			, PJ.PJ_LOSE_CAUSE
 			, PJ.PJ_SJ_YN
-			, (SELECT CT.CT_DT FROM PJ_CONTRACT_TB CT, PJ_MAIN_TB PJ1 WHERE CT.PJ_KEY = PJ1.PJ_KEY AND PJ1.PJ_KEY=#{pjKey} AND CT.DELETE_YN='N') AS CT_DT
 		FROM PJ_MAIN_TB PJ, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
 		WHERE PJ_KEY=#{pjKey}
 			AND PJ.AC_KEY = CA.AC_KEY		
@@ -262,7 +261,9 @@
 			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
 			, BD_GB_AMOUNT
 			</if>
+			<if test="bdGbFinishYn != null and bdGbFinishYn != ''">
 			, BD_GB_FINISH_YN
+			</if>
 			, BD_LIMIT_DT
 			<if test="bdLimitTm != null and bdLimitTm != ''">
 			, BD_LIMIT_TM
@@ -333,7 +334,9 @@
 			, BD_LIMIT_DT = #{bdLimitDt}
 			, BD_PROPOSAL_PRESENT_YN = #{bdProposalPresentYn}
 			, BD_PROPOSAL_YN = #{bdProposalYn}
-			, BD_GB_FINISH_YN = #{bdGbFinishYn}
+			<if test="bdGbFinishYn != null and bdGbFinishYn != '' ">
+				, BD_GB_FINISH_YN = #{bdGbFinishYn}
+			</if>
 			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
 				, BD_GB_AMOUNT=#{bdGbAmount}
 			</if>

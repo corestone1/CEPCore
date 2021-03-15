@@ -189,7 +189,7 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				for(int i = 0; i <listCnt; i++) {
 					if(CepStringUtil.getDefaultValue(projectBiddingVO.getBiddingFileVOList().get(i).getBdSeq(), "0").equals("0") && 
-							projectBiddingVO.getBiddingFileVOList().get(i).getBdGuarantyCheck().equals("Y")) {
+							projectBiddingVO.getBiddingFileVOList().get(i).getBdFileCheck().equals("Y")) {
 						// 새로 등록되는 입찰 파일
 						insertList.add(projectBiddingVO.getBiddingFileVOList().get(i));
 					} else if(!CepStringUtil.getDefaultValue(projectBiddingVO.getBiddingFileVOList().get(i).getBdSeq(), "0").equals("0")) {
@@ -215,16 +215,17 @@ public class ProjectServiceImpl implements ProjectService {
 			    
 			    for(int i = 0; i <listCnt; i++) {
 					if(CepStringUtil.getDefaultValue(projectBiddingVO.getBiddingFileVOList().get(i).getBdSeq(), "0").equals("0") && 
-							projectBiddingVO.getBiddingFileVOList().get(i).getBdGuarantyCheck().equals("Y")) {
+							projectBiddingVO.getBiddingFileVOList().get(i).getBdFileCheck().equals("Y")) {
 						// 새로 등록되는 입찰 파일
 						insertList.add(projectBiddingVO.getBiddingFileVOList().get(i));
 					} 
 				}
-			    writeBiddingFileInfo(bdKey, insertList);
-			    
+			    if(insertList.size() != 0) {
+			    	writeBiddingFileInfo(bdKey, insertList);
+			    }
 			}
 			
-			mapper.updateStatusCd(projectBiddingVO.getPjKey(), projectBiddingVO.getStatusCd());
+			mapper.updateStatusCd(projectBiddingVO.getPjKey(), projectBiddingVO.getPjStatusCd());
 			
 			returnMap.put("successYN", "Y");
 		} catch(Exception e) {

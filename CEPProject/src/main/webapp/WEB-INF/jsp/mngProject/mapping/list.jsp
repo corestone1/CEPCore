@@ -217,6 +217,7 @@
 						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" />
 						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호"/>
 						<form:input path="orderAcNm" type="text" class="search" placeholder="거래처상호" title="거래처상호"/>
+						<form:input path="pjNm" type="text" class="search" placeholder="프로젝트명" title="프로젝트명"/>
 						<span onclick="fn_search();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>

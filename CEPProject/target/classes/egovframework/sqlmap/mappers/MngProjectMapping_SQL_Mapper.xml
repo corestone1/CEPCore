@@ -180,6 +180,7 @@
 		     , CE.EMP_NM AS ORDER_EMP_NM
 		     , PO.BILL_MAPPING_NUM AS BILL_MAPPING_NUM
 		     , PC.BUY_TURN AS BUY_TURN
+		     , PO.ORDER_AC_KEY
 		FROM PJ_ORDER_TB PO
 		JOIN PJ_MAIN_TB PM  
 		ON PO.ORDER_CT_FK_KEY  = PM.PJ_KEY
@@ -190,6 +191,21 @@
 		JOIN PJ_PURCHASE_TB PC       
 		ON PO.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
 		WHERE PO.DELETE_YN='N'
+		<if test="orderEmpNm != null and orderEmpNm != ''">
+		  	AND  CE.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%')) /* 발주담당자 조건검색  */
+		</if>
+		<if test="pjNm != null and pjNm != ''">
+		  	AND  PM.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
+		</if>
+		<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
+		  	AND  PO.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
+		</if>
+		<if test="acKey != null and acKey != ''">
+		  	AND  PO.ORDER_AC_KEY LIKE CONCAT('%', CONCAT(#{acKey}, '%'))  /* 사업자번호 조건검색 */
+		</if>
+		<if test="orderAcNm != null and orderAcNm != ''">
+		  	AND  CA.AC_NM LIKE CONCAT('%', CONCAT(#{orderAcNm}, '%'))  /* 거래처상호 조건검색 */
+		</if>
     	ORDER BY ORDER_DT
 		
 	</select>
@@ -276,6 +292,65 @@
 		</foreach>
 	</update>
 	
+	<insert id="insertPcBillingOpInfo" parameterType="java.util.HashMap">
+		INSERT INTO PJ_PC_BILLING_OP_TB (
+			BILL_CALL_KEY
+			, BILL_NO
+			, BILL_FK_PJ_KEY
+			, BILL_CT_FK_KEY
+			, BILL_TURN_NO
+			, BILL_AMOUNT
+			, BILL_ISSUE_STATUS
+			, BILL_AC_KEY
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES
+		<foreach collection="billList" item="item" separator=",">
+			(
+			(SELECT make_key('PB'))
+			, #{item.billNo}
+			, #{item.billFkPjKey}
+			, #{item.billCtFkKey}
+			, (SELECT (SELECT COUNT(*) FROM PJ_PC_BILLING_OP_TB BO WHERE BO.BILL_CT_FK_KEY=#{item.billCtFkKey} AND BO.DELETE_YN='N') + 1) 
+			, #{item.billAmount}
+			, 'M'
+			, #{item.billAcKey}
+			, DATE_FORMAT(NOW(), '%Y%m%d')
+			, DATE_FORMAT(NOW(), '%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updatePcBillingOpInfo" parameterType="purchaseBillOpVO">
+		UPDATE PJ_PC_BILLING_OP_TB SET
+			MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			<if test="billNo != null and billNo != '' and billNo != 0">
+				, BILL_TURN_NO = #{billNo}
+			</if>
+			<if test="billAmount != null and billAmount != '' and billAmount != 0">
+				, BILL_AMOUNT = #{billAmount}
+			</if>
+			<if test="billIssueStatus != null and billIssueStatus != ''">
+				, BILL_ISSUE_STATUS = #{billIssueStatus}
+			</if>
+			<if test="billAcKey != null and billAcKey != ''">
+				, BILL_AC_KEY = #{billAcKey}
+			</if>
+			MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE 1=1
+			<if test="billCallKey != null and billCallKey != ''">
+				AND BILL_CALL_KEY = #{billCallKey}
+			</if>
+			<if test="billNo != null and billNo != ''">
+				AND BILL_NO = #{billNo}
+			</if>
+	</update>
+
 	<insert id="insertPaymentInfo" parameterType="java.util.HashMap">
 		INSERT INTO PJ_PAYMENT_TB (
 		    PAYMENT_KEY

@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
-import com.cmm.vo.PaymentVO;
-import com.cmm.vo.PurchaseVO;
 import com.cmm.vo.SalesVO;
 
 public interface ProjectRequestService {
@@ -74,7 +72,7 @@ public interface ProjectRequestService {
 	* @return
 	* @throws Exception
 	*/
-	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, PurchaseVO purchaseVO) throws Exception;
+	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -87,7 +85,7 @@ public interface ProjectRequestService {
 	* @return
 	* @throws Exception
 	*/
-	public void deletePurchaseInfo(PurchaseVO purchaseVO) throws Exception;
+	public void deletePurchaseInfo(ProjectPurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -126,7 +124,7 @@ public interface ProjectRequestService {
 	* @return
 	* @throws Exception
 	*/
-	public Map<String, Object> insertPaymentInfo(HttpServletRequest request, PaymentVO paymentVO) throws Exception;
+	public Map<String, Object> insertPaymentInfo(HttpServletRequest request, ProjectPaymentVO paymentVO) throws Exception;
 	
 	/**
 	* 
@@ -139,7 +137,7 @@ public interface ProjectRequestService {
 	* @return
 	* @throws Exception
 	*/
-	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, PaymentVO paymentVO) throws Exception;
+	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, ProjectPaymentVO paymentVO) throws Exception;
 
 	/**
 	* 

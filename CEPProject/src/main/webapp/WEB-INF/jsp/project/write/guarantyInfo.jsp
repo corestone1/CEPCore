@@ -136,7 +136,7 @@
 		}
 	</style>
 	<script>
-		function check_click(num1, num2) {
+		/* function check_click(num1, num2) {
 			var check1 = document.getElementById("check"+num1+"-"+num2).checked;			
 			
 			if(num2==1){
@@ -179,7 +179,7 @@
 					});
 				}				
 			}			
-		}
+		} */
 		
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
@@ -269,7 +269,6 @@
 			object["guarantyList"] = listData;
 			
 			var sendData = JSON.stringify(object);
-			console.log(sendData);
 			$.ajax({
 				url: "/project/insert/guarantyInfo.do",
 			    dataType: 'json', 
@@ -427,12 +426,13 @@
 									 <tr class='ftw200'>
 										 <td>
 										 	 <input type="hidden" name="ctGbKey" id="ctGbKey${status.count }" value="" />
-											 <input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)'/>
+											 <input type='checkbox' name='ctGuarantyCheck'  class='tCheck' id='check${ temp + 1}-1' />
+											 <%-- class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)'/> --%>
 											 <label for='check${ temp + 1}-1' class='cursorP'></label>
 											 <input type='hidden' name='ctGuarantyYN' value='N' />
 										 </td>						
 										 <td>계약 보증 증권 정보</td>
-										 <td id='step${ temp + 1}-1' style='visibility:hidden'>
+										 <%-- <td id='step${ temp + 1}-1' style='visibility:hidden'>
 											 <input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ 
 											 <input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' />
 										 </td>
@@ -445,16 +445,17 @@
 										 <td id='step${ temp + 1}-4' style='visibility:hidden'>
 											<input type='text' id='publishDt${ temp + 1}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' />&nbsp;&nbsp;
 										 	<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount'/>
-										 </td>
+										 </td> --%>
 									 </tr>
 									 <tr class='ftw200'>
 										 <td>
 										 	 <input type="hidden" name="ppGbKey" id="ppGbKey${status.count }" value="" />
-											 <input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' /><label for='check${ temp + 3}-1' class='cursorP'></label>
+											 <input type="checkbox" class="tCheck" name="ppGuarantyCheck" id="check${ temp + 3}-1'"<%-- onclick='check_click(${ temp + 3},1)'  --%>/>
+											 <label for='check${ temp + 3}-1' class='cursorP'></label>
 											 <input type='hidden' name='ppGuarantyYN' value='N' />
 										 </td>
 										 <td>선급금 보증 증권 정보</td>
-										 <td id='step${ temp + 3}-1' style='visibility:hidden'>
+										<%--  <td id='step${ temp + 3}-1' style='visibility:hidden'>
 											 <input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt'/> ~ 
 											 <input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt'/>
 										 </td>
@@ -466,16 +467,17 @@
 										 <td id='step${ temp + 3}-4' style='visibility:hidden'>
 										 	<input type='text' id='publishDt${ temp + 3}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' />&nbsp;&nbsp;
 										 	<input type='text' id='amount${ temp + 3}' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount'/>
-										 </td>
+										 </td> --%>
 									 </tr>
 									 <tr class='ftw200'>
 										 <td>
 										 	 <input type="hidden" name="dfGbKey" id="dfGbKey${status.count }" value="" />
-											 <input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' /><label for='check${ temp + 2}-1' class='cursorP'></label>
+											 <input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' <%-- onclick='check_click(${ temp + 2},1)' --%> />
+											 <label for='check${ temp + 2}-1' class='cursorP'></label>
 											 <input type='hidden' name='dfGuarantyYN' value='N' />
 										 </td>
 										 <td>하자 보증 증권 정보</td>
-										 <td id='step${ temp + 2}-1' style='visibility:hidden'>
+										 <%-- <td id='step${ temp + 2}-1' style='visibility:hidden'>
 											 <input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' /> ~  
 											 <input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' />
 										 </td>
@@ -487,7 +489,7 @@
 										 <td id='step${ temp + 2}-4' style='visibility:hidden'>
 										 	<input type='text' id='publishDt${ temp + 2}' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt' />&nbsp;&nbsp;
 										 	<input type='text' id='amount${ temp + 2}' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount'/>
-										 </td>
+										 </td> --%>
 									 </tr>
 									</table> 
 									<c:set var="temp" value="${temp + 3}"/>
@@ -514,12 +516,12 @@
 												<tr class='ftw200'>
 													<td>
 														<input type='hidden' name='ctGbKey' id='ctGbKey${status.count }' <c:if test="${result.gbKindCd eq  '계약'}">value='${result.gbKey }'</c:if>/>
-														<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)' <c:if test="${result.gbKindCd eq  '계약'}">checked</c:if>/>
+														<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' <%-- onclick='check_click(${temp+1},1)' --%> <c:if test="${result.gbKindCd eq  '계약'}">checked</c:if>/>
 														<label for='check${ temp + 1}-1' class='cursorP'></label>
 														<input type='hidden' name='ctGuarantyYN' <c:choose><c:when test="${result.gbKindCd eq '계약'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
 													</td>						
 													<td>계약 보증 증권 정보</td>
-													<td id='step${ temp + 1}-1' style='visibility:hidden'>
+													<%-- <td id='step${ temp + 1}-1' style='visibility:hidden'>
 														<input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' <c:if test="${result.gbKindCd eq '계약'}">value="${displayUtil.displayDate(result.gbStartDt) }"</c:if>name='ctGuarantyStartDt' /> ~ 
 														<input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' <c:if test="${result.gbKindCd eq '계약'}">value="${displayUtil.displayDate(result.gbEndDt) }"</c:if>/>
 													</td>
@@ -532,19 +534,19 @@
 													<td id='step${ temp + 1}-4' style='visibility:hidden'>
 														<input type='text' id='publishDt${ temp + 1}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' <c:if test="${result.gbKindCd eq '계약' && result.gbIssueYn eq 'Y'}">value="${displayUtil.displayDate(result.gbPublishDt) }"</c:if>/>&nbsp;&nbsp;
 														<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount' <c:if test="${result.gbKindCd eq '계약' && result.gbIssueYn eq 'Y'}">value="${displayUtil.commaStr(result.gbAmount) }"</c:if>/>
-													</td>
+													</td> --%>
 												</tr>
 											</c:if>
 										</c:forEach>
 										<tr class='ftw200 nData${temp+1 }'>
 											<td>
 												<input type='hidden' name='ctGbKey' id='ctGbKey${status.count }' />
-												<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)' />
+												<input type='checkbox' name='ctGuarantyCheck' class='tCheck' id='check${ temp + 1}-1' <%-- onclick='check_click(${temp+1},1)' --%> />
 												<label for='check${ temp + 1}-1' class='cursorP'></label>
 												<input type='hidden' name='ctGuarantyYN' />
 											</td>						
 											<td>계약 보증 증권 정보</td>
-											<td id='step${ temp + 1}-1' style='visibility:hidden'>
+											<%-- <td id='step${ temp + 1}-1' style='visibility:hidden'>
 												<input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ 
 												<input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' />
 											</td>
@@ -557,7 +559,7 @@
 											<td id='step${ temp + 1}-4' style='visibility:hidden'>
 												<input type='text' id='publishDt${ temp + 1}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ctGbPublishDt' />&nbsp;&nbsp;
 												<input type='text' id='amount${ temp + 1}' placeholder='금액' amountOnly class='amount' width='177px' name='ctGuarantyAmount' />
-											</td>
+											</td> --%>
 										</tr>
 										<c:forEach var="result" items="${guarantyList }" varStatus="status">
 											<c:if test="${entry.salesKey eq result.salesKey && result.gbKindCd eq '선급금'}">
@@ -565,12 +567,12 @@
 												<tr class='ftw200'>
 													<td>
 														<input type='hidden' name='ppGbKey' id='ppGbKey${status.count }' <c:if test="${result.gbKindCd eq  '선급금'}">value='${result.gbKey }'</c:if> />
-														<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' <c:if test="${result.gbKindCd eq  '선급금'}">checked</c:if>/>
+														<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' <%-- onclick='check_click(${ temp + 3},1)'  --%><c:if test="${result.gbKindCd eq  '선급금'}">checked</c:if>/>
 														<label for='check${ temp + 3}-1' class='cursorP'></label>
 														<input type='hidden' name='ppGuarantyYN' <c:choose><c:when test="${result.gbKindCd eq '선급금'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose>/>
 													</td>
 													<td>선급금 보증 증권 정보</td>
-													<td id='step${ temp + 3}-1' style='visibility:hidden'>
+													<%-- <td id='step${ temp + 3}-1' style='visibility:hidden'>
 														<input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt' <c:if test="${result.gbKindCd eq  '선급금'}">value="${displayUtil.displayDate(result.gbStartDt) }"</c:if>/> ~ 
 														<input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt' <c:if test="${result.gbKindCd eq  '선급금'}">value="${displayUtil.displayDate(result.gbEndDt) }"</c:if>/>
 													</td>
@@ -583,19 +585,19 @@
 													<td id='step${ temp + 3}-4' style='visibility:hidden'>
 														<input type='text' id='publishDt${ temp + 3}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' <c:if test="${result.gbKindCd eq  '선급금' && result.gbIssueYn eq 'Y'}">value="${displayUtil.displayDate(result.gbPublishDt) }"</c:if>/>&nbsp;&nbsp;
 														<input type='text' id='amount${ temp + 3}' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount' <c:if test="${result.gbKindCd eq  '선급금' && result.gbIssueYn eq 'Y'}">value="${displayUtil.commaStr(result.gbAmount) }"</c:if>/>
-													</td>
+													</td> --%>
 												</tr>
 											</c:if>
 										</c:forEach>
 										<tr class='ftw200 nData${temp+3 }'>
 											<td>
 												<input type='hidden' name='ppGbKey' id='ppGbKey${status.count }' />
-												<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' onclick='check_click(${ temp + 3},1)' />
+												<input type='checkbox' class='tCheck' name='ppGuarantyCheck' id='check${ temp + 3}-1' <%-- onclick='check_click(${ temp + 3},1)'  --%>/>
 												<label for='check${ temp + 3}-1' class='cursorP'></label>
 												<input type='hidden' name='ppGuarantyYN' />
 											</td>
 											<td>선급금 보증 증권 정보</td>
-											<td id='step${ temp + 3}-1' style='visibility:hidden'>
+											<%-- <td id='step${ temp + 3}-1' style='visibility:hidden'>
 												<input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt' /> ~ 
 												<input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt' />
 											</td>
@@ -608,7 +610,7 @@
 												<td id='step${ temp + 3}-4' style='visibility:hidden'>
 												<input type='text' id='publishDt${ temp + 3}' title='발행 일자' placeholder='발행 일자' class='calendar' name='ppGbPublishDt' />&nbsp;&nbsp;
 												<input type='text' id='amount${ temp + 3}' placeholder='금액' amountOnly class='amount' width='177px' name='ppGuarantyAmount' />
-											</td>
+											</td> --%>
 										</tr>
 										<c:forEach var="result" items="${guarantyList }" varStatus="status">
 											<c:if test="${entry.salesKey eq result.salesKey && result.gbKindCd eq '하자'}">
@@ -616,12 +618,12 @@
 												<tr class='ftw200'>
 													<td>
 														<input type='hidden' name='dfGbKey' id='dfGbKey${status.count }' <c:if test="${result.gbKindCd eq  '하자'}">value='${result.gbKey }'</c:if> />
-														<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' <c:if test="${result.gbKindCd eq  '하자'}">checked</c:if>/>
+														<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' <%-- onclick='check_click(${ temp + 2},1)'  --%><c:if test="${result.gbKindCd eq  '하자'}">checked</c:if>/>
 														<label for='check${ temp + 2}-1' class='cursorP'></label>
 														<input type='hidden' name='dfGuarantyYN' <c:choose><c:when test="${result.gbKindCd eq '하자'}">value="Y"</c:when><c:otherwise>value="N"</c:otherwise></c:choose> />
 													</td>
 													<td>하자 보증 증권 정보</td>
-													<td id='step${ temp + 2}-1' style='visibility:hidden'>
+													<%-- <td id='step${ temp + 2}-1' style='visibility:hidden'>
 														<input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' <c:if test="${result.gbKindCd eq  '하자'}">value="${displayUtil.displayDate(result.gbStartDt) }"</c:if>/> ~  
 														<input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' <c:if test="${result.gbKindCd eq  '하자'}">value="${displayUtil.displayDate(result.gbEndDt) }"</c:if>/>
 													</td>
@@ -634,19 +636,19 @@
 													<td id='step${ temp + 2}-4' style='visibility:hidden'>
 														<input type='text' id='publishDt${ temp + 2}' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt' <c:if test="${result.gbKindCd eq  '하자' && result.gbIssueYn eq 'Y'}">value="${displayUtil.displayDate(result.gbPublishDt) }"</c:if> />&nbsp;&nbsp;
 														<input type='text' id='amount${ temp + 2}' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount' <c:if test="${result.gbKindCd eq  '하자' && result.gbIssueYn eq 'Y'}">value="${displayUtil.commaStr(result.gbAmount) }"</c:if>/>
-													</td>
+													</td> --%>
 												</tr>
 											</c:if>
 										</c:forEach>
 										<tr class='ftw200 nData${temp+2 }'>
 											<td>
 												<input type='hidden' name='dfGbKey' id='dfGbKey${status.count }'  />
-												<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' onclick='check_click(${ temp + 2},1)' />
+												<input type='checkbox' class='tCheck' name='dfGuarantyCheck' id='check${ temp + 2}-1' <%-- onclick='check_click(${ temp + 2},1)' --%> />
 												<label for='check${ temp + 2}-1' class='cursorP'></label>
 												<input type='hidden' name='dfGuarantyYN'  />
 											</td>
 											<td>하자 보증 증권 정보</td>
-											<td id='step${ temp + 2}-1' style='visibility:hidden'>
+											<%-- <td id='step${ temp + 2}-1' style='visibility:hidden'>
 												<input type='text' id='from${ temp + 2}' placeholder='from' class='calendar' name='dfGuarantyStartDt' /> ~  
 												<input type='text' id='to${ temp + 2}' placeholder='to' class='calendar' name='dfGuarantyEndDt' />
 											</td>
@@ -659,7 +661,7 @@
 											<td id='step${ temp + 2}-4' style='visibility:hidden'>
 												<input type='text' id='publishDt${ temp + 2}' title='발행 일자' placeholder='발행 일자' class='calendar' name='dfGbPublishDt'  />&nbsp;&nbsp;
 												<input type='text' id='amount${ temp + 2}' placeholder='금액' amountOnly class='amount' width='177px' name='dfGuarantyAmount' />
-											</td>
+											</td> --%>
 										</tr>
 									</table> 
 									<c:set var="temp" value="${temp + 3}"/>

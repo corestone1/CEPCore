@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.mngProject.mapping.vo.OrderBillVO;
+import com.cep.mngProject.mapping.vo.PurchaseBillOpVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -71,10 +72,32 @@ public interface MngProjectMappingMapper {
 	  * @Author      : sylim
 	  * @Modification: 
 	  * @Method Description : 발주 - 계산서 맵핑
-	  * @param orderBillVO
+	  * @param param
 	  * @return
 	  */
 	public int updatePurchaseBill(Map<String, Object> param) throws Exception;
+	
+	/**
+	  * @Method Name : insertPcBillingOpInfo
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 매입 계산서 정보 등록(요청) 
+	  * @param param
+	  * @return
+	  */
+	public int insertPcBillingOpInfo(Map<String, Object> param) throws Exception;
+	
+	/**
+	  * @Method Name : insertPcBillingOpInfo
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 매입 계산서 정보 등록(요청) 
+	  * @param param
+	  * @return
+	  */
+	public int updatePcBillingOpInfo(PurchaseBillOpVO purchasecBillOpVO) throws Exception;
 	
 	/**
 	  * @Method Name : insertPaymentInfo

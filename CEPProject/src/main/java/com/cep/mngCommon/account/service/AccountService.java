@@ -42,6 +42,18 @@ public interface AccountService {
 	List<AccountVO> selectAccountList(AccountSearchVO searchVO) throws Exception;
 	
 	/**
+	  * @Method Name : selectAcBusiNum
+	  * @Cdate       : 2021. 1. 6.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 사업자번호 중복체크
+	  * @param accountVO
+	  * @return
+	  * @throws Exception
+	  */
+	Map<String, Object> selectAcBusiNum(AccountVO accountVO) throws Exception;
+	
+	/**
 	  * @Method Name : selectAccountDetail
 	  * @Cdate       : 2021. 2. 24.
 	  * @Author      : sylim

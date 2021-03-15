@@ -1,19 +1,30 @@
 package com.cmm.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.cep.main.service.impl.MainMapper;
+import com.cep.main.vo.EmpVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
+import com.cmm.util.CepMailMngUtil;
+import com.cmm.util.CepStringUtil;
+import com.cmm.vo.MailVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
 import com.cmm.vo.SalesVO;
@@ -21,8 +32,16 @@ import com.cmm.vo.SalesVO;
 @Service("comService")
 public class ComServiceImpl implements ComService {
 	
+	private static final Logger logger = LoggerFactory.getLogger(ComServiceImpl.class);
+	
 	@Resource(name="comMapper")
 	private ComMapper comMapper;
+	
+	@Resource(name="mailMapper")
+	private MailMapper mailMapper;
+	
+	@Resource(name="mainMapper")
+	private MainMapper mainMapper;
 	
 	@Override
 	public List<?> selectAccountList() throws Exception {
@@ -37,6 +56,11 @@ public class ComServiceImpl implements ComService {
 	@Override
 	public List<?> selectEmployeeList() throws Exception {
 		return comMapper.selectEmployeeList();
+	}
+	
+	@Override
+	public List<?> selectDeptEmployeeList(String dept) throws Exception {
+		return comMapper.selectDeptEmployeeList(dept);
 	}
 	
 	@Override
@@ -205,6 +229,77 @@ public class ComServiceImpl implements ComService {
 	@Override
 	public List<?> selectPrePaymentList(String buyKey)  throws Exception {
 		return comMapper.selectPrePaymentList(buyKey);
+	}
+	
+	@Override
+	@Transactional
+	public int sendMail(HttpServletRequest request, MailVO mailVO) throws Exception {
+		EmpVO empVO = new EmpVO();
+		int result = 1;
+		HashMap<String, String> map = new HashMap<String, String>();
+		ArrayList<String> receiverList = new ArrayList<String>();
+		
+		CepMailMngUtil mail = new CepMailMngUtil();
+        // 받는 사람 이메일 설정
+        mail.setToEmail(CepStringUtil.getDefaultValue(mailVO.getEmpKey(),""));
+        // 메일 제목 설정
+        mail.setSubject(mailVO.getSubject());
+        // 메일 바로가기 설정
+        mail.setLink(mailVO.getLink());
+        // 메일 내용 설정
+        mail.setContent(mailVO.getContent());
+        
+        if(!CepStringUtil.getDefaultValue(mailVO.getIsNewPw(), "").equals("") && mailVO.getIsNewPw() == true) {
+        	empVO.setEmpKey(mailVO.getEmpKey());
+        	empVO.setEmpPw(mailVO.getEmpPw());
+        	
+        	mainMapper.updatePassword(empVO);
+        }
+        
+		StringTokenizer stMailAddress = new StringTokenizer(mailVO.getEmpKey(), ";");
+		while(stMailAddress.hasMoreElements()) {
+			receiverList.add(stMailAddress.nextToken());
+		}
+        
+        for(int i = 0; i < receiverList.size(); i++) {
+        	map.put("empKey", receiverList.get(i));
+        	
+        	result = mainMapper.selectEmp(map) & result;
+        }
+        
+        try {
+        	if(result != 0) { // 찾고자 하는 이메일 계정이 DB에 있을 때
+        		logger.info("Sending...");
+        		mail.sendMail();
+        		for(int i = 0; i < receiverList.size(); i++) {
+	            	mailVO.setFromEmail(mail.getFromEmail());
+	            	mailVO.setSubject(mail.getSubject());
+	            	mailVO.setContent(mail.getContent());
+	            	mailVO.setToEmail(receiverList.get(i));
+	        		mailVO.setSuccessYn("Y");
+	        		mailMapper.insertMailInfo(mailVO);
+        		}
+        		logger.info("Email sent!");
+        	} else {
+        		for(int i = 0; i < receiverList.size(); i++) {
+	            	mailVO.setFromEmail(mail.getFromEmail());
+	            	mailVO.setSubject(mail.getSubject());
+	            	mailVO.setContent(mail.getContent());
+	            	mailVO.setToEmail(receiverList.get(i));
+	        		mailVO.setSuccessYn("N");
+	        		mailMapper.insertMailInfo(mailVO);
+        		}
+        	}
+			
+        } catch(UnsupportedEncodingException e) {
+        	e.printStackTrace();
+        } catch(MessagingException e) {
+        	e.printStackTrace();
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
+    	
+        return result;
 	}
 	
 }

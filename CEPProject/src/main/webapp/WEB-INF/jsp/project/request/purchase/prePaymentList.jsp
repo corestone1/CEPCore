@@ -159,7 +159,6 @@
 					<th>No</th>
 					<th>계산서 번호</th>
 					<th>계산서 발행일자</th>
-					<th>계산서 거래처 담당자</th>
 					<th>계산서 금액</th>
 					<th>지급 금액</th>
 					<th>부가세 여부</th>
@@ -170,7 +169,6 @@
 						<td>${status.count }</td>
 						<td><span>${result.billNo }</span></td>
 						<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
-						<td><span>${result.billAcDirectorKey }</span></td>
 						<td><span>${displayUtil.commaStr(result.billAmount) }</span></td>
 						<td><span>${displayUtil.commaStr(result.callAmount) }</span></td>
 						<td><span>${result.callAmountTaxYn }</span></td>

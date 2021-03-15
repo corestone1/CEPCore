@@ -2,6 +2,8 @@ package com.cmm.util;
 
 import java.text.DecimalFormat;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,5 +105,19 @@ public class CepStringUtil {
         }
         rtnStr.append(nextStr);
         return rtnStr.toString();
+    }
+    
+    public static String getUrl(HttpServletRequest request) {
+    	String uri = request.getRequestURI();
+    	String query = request.getQueryString();
+    	
+    	if(getDefaultValue(query, "").equals("")) {
+    		query = "";
+    	} else {
+    		query = "?" + query;
+    	}
+    	
+    	return (uri + query);
+    	
     }
 }

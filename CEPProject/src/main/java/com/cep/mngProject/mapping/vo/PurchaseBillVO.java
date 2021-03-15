@@ -1,15 +1,14 @@
 package com.cep.mngProject.mapping.vo;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
-import com.cmm.vo.OrderProductVO;
+import com.cep.project.vo.ProjectPaymentVO;
 
 @SuppressWarnings("serial")
 @Alias("purchaseBillVO")
-public class PurchaseBillVO implements Serializable {
+public class PurchaseBillVO extends ProjectPaymentVO implements Serializable {
 	
 	private String acKey;
 	private String buyKey;

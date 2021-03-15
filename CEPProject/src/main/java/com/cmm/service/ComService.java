@@ -5,8 +5,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cep.main.vo.EmpVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cmm.config.PrimaryKeyType;
+import com.cmm.vo.MailVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
 import com.cmm.vo.SalesVO;
@@ -51,6 +53,19 @@ public interface ComService {
 	  * @throws Exception
 	 */
 	public List<?> selectEmployeeList() throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectDeptEmployeeList
+	  * @Cdate       : 2020. 12. 20.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 부서별 직원을 조회하는 메소드(메일용)
+	  * @param 
+	  * @return
+	  * @throws Exception
+	 */
+	public List<?> selectDeptEmployeeList(String dept) throws Exception;
 	
 	/**
 	 * 
@@ -217,5 +232,18 @@ public interface ComService {
 	* @throws Exception
 	*/
 	public List<?> selectPrePaymentList(String buyKey) throws Exception;
+	
+	/**
+	* 
+	* @Method Name : sendMail
+	* @Cdate       : 2021. 02. 03.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 메일 전송
+	* @param empVO
+	* @return
+	* @throws Exception
+	*/
+	int sendMail(HttpServletRequest request, MailVO mailVO) throws Exception; 
 	
 }

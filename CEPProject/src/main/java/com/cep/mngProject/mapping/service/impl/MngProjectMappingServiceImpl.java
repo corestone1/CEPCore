@@ -77,6 +77,7 @@ public class MngProjectMappingServiceImpl implements MngProjectMappingService {
 			param.put("billList", orderBillVO.getBillList());
 				
 			mapper.updatePurchaseBill(param);
+			mapper.insertPcBillingOpInfo(param);
 			mapper.insertPaymentInfo(param);
 			
 			returnMap.put("successYN", "Y");

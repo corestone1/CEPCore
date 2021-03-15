@@ -21,7 +21,8 @@ import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectOrderVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
-import com.cmm.vo.OrderVO;
+import com.cmm.util.CepMailMngUtil;
+import com.cmm.vo.MailVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
 
@@ -297,4 +298,14 @@ public class ComController {
 		return returnMap;
 	}
 	
+	/*@RequestMapping(value = "/sendMail.do")
+	public @ResponseBody int sendMail(HttpServletRequest request, MailVO mailVO) throws Exception {
+		int result = service.sendMail(request, mailVO);
+		
+		CepMailMngUtil cepMailMngUtil = new CepMailMngUtil();
+		cepMailMngUtil.setSubject("");
+		cepMailMngUtil.sendMail();
+		
+		return result;
+	}*/
 }

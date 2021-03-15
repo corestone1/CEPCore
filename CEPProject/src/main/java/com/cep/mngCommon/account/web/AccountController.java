@@ -70,6 +70,13 @@ public class AccountController {
 		return "mngCommon/account/list";
 	}
 	
+	@RequestMapping(value="/isExist.do", method={RequestMethod.POST})
+	@ResponseBody
+	public Map<String, Object> checkAcBusiNum(HttpServletRequest request, @RequestBody AccountVO accountVO) throws Exception {
+		Map<String, Object> returnMap = null;
+		returnMap = service.selectAcBusiNum(accountVO);
+		return returnMap;
+	}
 	
 	@RequestMapping(value="/write.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddAccountInfo(HttpServletRequest request, AccountSearchVO searchVO, ModelMap model) throws Exception {
@@ -92,7 +99,7 @@ public class AccountController {
 		return "mngCommon/account/write";
 	}
 	
-	@RequestMapping(value="/insert/acocuntInfo.do", method=RequestMethod.POST)
+	@RequestMapping(value="/insert/accountInfo.do", method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addAccountInfo(HttpServletRequest request, @RequestBody AccountVO accountVO) throws Exception {
 		Map<String, Object> returnMap = null;

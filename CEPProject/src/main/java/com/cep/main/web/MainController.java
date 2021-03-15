@@ -1,6 +1,7 @@
 package com.cep.main.web;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -9,11 +10,13 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cep.main.service.MainService;
 import com.cep.main.vo.EmpVO;
+import com.cmm.vo.MailVO;
 
 @Controller
 public class MainController {
@@ -26,13 +29,15 @@ public class MainController {
 
 	@RequestMapping(value = "/login.do")
 	@ResponseBody
-	public int login(String key, String pw, HttpServletRequest request){
+	public Map<String, Object> login(HttpServletRequest request, @RequestBody EmpVO empVO) throws Exception {
 		HttpSession session = request.getSession();
 		HashMap<String, String> map = new HashMap<String, String>();
 		String name = "";
+		String prevUrl = "";
+		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
-		key = request.getParameter("key");
-		pw = request.getParameter("pw");
+		String key = empVO.getEmpKey();
+		String pw = empVO.getEmpPw();
 		
 		map.put("empKey", key);
 		map.put("empPw", pw);
@@ -54,13 +59,17 @@ public class MainController {
 			//session.setAttribute("pw", pw);
 			session.setAttribute("name", name);
 			session.setAttribute("userInfo", map);
-
+			
+			prevUrl = (String)session.getAttribute("url");
+			returnMap.put("successYN", "Y");
+			returnMap.put("prevUrl", prevUrl);
 		}
 		else {
 			log.info("로그인 실패");
+			returnMap.put("successYN", "N");
 		}
 
-		return loginIdentify;
+		return returnMap;
 	}
 
 	
@@ -79,8 +88,8 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "/resetPw.do")
-	public @ResponseBody int resetPw(HttpServletRequest request) throws Exception {
-		int result = service.resetPw(request);
+	public @ResponseBody int resetPw(HttpServletRequest request, @RequestBody MailVO mailVO) throws Exception {
+		int result = service.resetPw(request, mailVO);
 		
 		return result;
 	}

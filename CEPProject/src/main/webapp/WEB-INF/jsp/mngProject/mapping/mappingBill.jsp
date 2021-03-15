@@ -296,7 +296,6 @@
 				object["billList"]=listData;
 				
 				var sendData = JSON.stringify(object);
-				console.log(sendData);
 				$.ajax({
 					url:"/mngProject/mapping/compMapping.do",
 					dataType:'json',
@@ -335,7 +334,7 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">계산서 -발주 매핑</div>
+				<div class="floatL ftw500">계산서 - 발주 매핑</div>
 			</div>
 		</div>
 		<div class="contents">

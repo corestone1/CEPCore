@@ -30,24 +30,26 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
+import com.cmm.config.EmailInfo;
 import com.cmm.service.impl.MailMapper;
-import com.cmm.vo.MailVO;
 
 public class CepMailMngUtil {
 	// 메일 서버
-	private String mailServer = null;
+	private String mailServer =EmailInfo.MAIL_SERVER.getValue();
+	
 	// port 정보
-	private int port = 0;
+	private int port = Integer.parseInt(EmailInfo.MAIL_PORT.getValue());
+//	EmailInfo.MAIL_PORT.toString()
 	
 	private MimeMessage message = null;
 	private Session session = null;
 	
 	// 보내는 사람
-	private String fromEmail = null;
+	private String fromEmail = EmailInfo.MAIL_FROM.getValue();
 	// 보내는 사람 이름
-	private String senderName = null;
+	private String senderName = EmailInfo.MAIL_SEND_NAME.getValue();
 	// 보내는 사람 메일 계정 비밀번호
-	private String senderPassword = null;
+	private String senderPassword = EmailInfo.MAIL_SEND_PW.getValue();
 	
 	// 메일 제목
 	private String subject = null;
@@ -55,6 +57,8 @@ public class CepMailMngUtil {
 	private String content = null;
 	// 받는 사람
 	private String toEmail = null;
+	// 바로가기 링크
+	private String link = null;
 	
 	// 보내는 사람 주소
 	private Address senderAddress = null;
@@ -151,15 +155,30 @@ public class CepMailMngUtil {
 	}
 	
 	public void setSubject(String subject) {
-		this.subject = subject;
+		this.subject = "[COBI] " + subject + " 안내";
 	}
 	
 	public String getSubject() {
 		return subject;
 	}
 	
+	public void setLink(String link) {
+		this.link = link;
+	}
+	
+	public String getLink() {
+		return link;
+	}
 	public void setContent(String content) {
-		this.content = content;
+		this.content = String.join(
+                System.getProperty("line.separator"),
+                "<div style='width:740px; margin: 0 auto; background-color: #7764cb; padding: 20px 50px; line-height: 1.5; font-family: sans-serif; font-size: 18px; border-bottom: 5px solid #4b3a93;'>",
+				"<p style='color: #fff; text-align: center; font-size: 25px;'>"+subject+"</p>",
+				"</div>",
+				"<div style='width:740px; margin: 0 auto; border:1px solid #d8d8d8; padding: 50px; line-height: 1.5; font-family: sans-serif; font-size: 18px; text-align: center;'>",
+				"<p>"+content+"</p>",
+				"<a href='"+link+"' style='border: none; background-color: #2ebd95; color: #fff; font-size: 16px; margin: 0 auto; padding: 3px 20px; cursor: pointer; text-decoration: none;'>바로가기</a>",
+				"</div>");
 	}
 	
 	public String getContent() {

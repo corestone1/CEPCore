@@ -35,10 +35,8 @@ public class ProjectPaymentVO extends ProjectPurchaseVO implements Serializable 
 	private String callAmountTaxYn;
 	private String paymentAcFkKey;
 	private int paymentAccSeqFkKey;
+	private String billFkKey;
 	private String remark;
-	private String regEmpKey;
-	private String modEmpKey;
-	private String deleteYn;
 	
 	public String getPaymentKey() {
 		return paymentKey;
@@ -100,29 +98,17 @@ public class ProjectPaymentVO extends ProjectPurchaseVO implements Serializable 
 	public void setPaymentAccSeqFkKey(int paymentAccSeqFkKey) {
 		this.paymentAccSeqFkKey = paymentAccSeqFkKey;
 	}
+	public String getBillFkKey() {
+		return billFkKey;
+	}
+	public void setBillFkKey(String billFkKey) {
+		this.billFkKey = billFkKey;
+	}
 	public String getRemark() {
 		return remark;
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-	public String getRegEmpKey() {
-		return regEmpKey;
-	}
-	public void setRegEmpKey(String regEmpKey) {
-		this.regEmpKey = regEmpKey;
-	}
-	public String getModEmpKey() {
-		return modEmpKey;
-	}
-	public void setModEmpKey(String modEmpKey) {
-		this.modEmpKey = modEmpKey;
-	}
-	public String getDeleteYn() {
-		return deleteYn;
-	}
-	public void setDeleteYn(String deleteYn) {
-		this.deleteYn = deleteYn;
 	}
 	
 }
