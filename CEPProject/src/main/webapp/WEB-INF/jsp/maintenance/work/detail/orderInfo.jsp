@@ -335,7 +335,10 @@
 			var html = '';			
 			var objectClass =$(obj).children().children().eq(1);
 			var className = objectClass.attr('class');
-			if($(obj).attr('class') != "viewOpen trcheckcolor" ) {
+			//console.log("className======>"+className);
+			
+			if($(obj).attr('class') != "viewOpen trcheckcolor" && $(obj).attr('class') != "viewOpen" ) {
+				//console.log("obj.attr(class111)======>"+$(obj).attr('class')+"<====");
 				html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 				       + '<div style="margin: 5px 71px;">'
 				       + '<ul class="detailList">'
@@ -348,7 +351,7 @@
 				       $(obj).attr('class', 'viewOpen trcheckcolor');				
 				
 				
-				if(className === "down") {
+		       if(className === "down") {
 					objectClass.attr('src','<c:url value='/images/arrow_up.png'/>');
 					objectClass.attr('class', "up");
 					
@@ -362,10 +365,22 @@
 					$(obj).next().remove();
 				}
 			} else {
-				objectClass.attr('src','<c:url value='/images/arrow_down.png'/>');
-				objectClass.attr('class', "down");
-				$(obj).removeClass('viewOpen');
-				$(obj).next().remove();
+				//console.log("obj.attr(class22)======>"+$(obj).attr('class')+"<====");
+				if(className === "down") {
+					objectClass.attr('src','<c:url value='/images/arrow_up.png'/>');
+					objectClass.attr('class', "up");
+					
+					$(".submiddle table tbody tr").removeClass("trcheckcolor");
+					
+					$(obj).attr('class', 'viewOpen trcheckcolor');
+				} else {
+					objectClass.attr('src','<c:url value='/images/arrow_down.png'/>');
+					objectClass.attr('class', "down");
+					$(obj).removeClass('viewOpen');
+					$(".submiddle table tbody tr").removeClass("trcheckcolor");
+					$(obj).attr('class', 'trcheckcolor');
+					$(obj).next().remove();
+				}
 			}
 			
 		}
