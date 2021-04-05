@@ -19,15 +19,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cep.maintenance.contract.service.MtContractService;
+import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
+import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.work.service.MtWorkService;
+import com.cep.maintenance.work.vo.MtOrderProductVO;
+import com.cep.maintenance.work.vo.MtOrderVO;
 import com.cep.maintenance.work.vo.MtWorkProductVO;
 import com.cep.maintenance.work.vo.MtWorkVO;
+import com.cep.mngCommon.code.service.CodeService;
+import com.cep.mngCommon.code.vo.CodeSearchVO;
+import com.cep.mngCommon.code.vo.CodeVO;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
+
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 @Controller
 @RequestMapping("/maintenance/work")
@@ -39,6 +48,9 @@ public class MtWorkController {
 
 	@Resource(name="mtContractService")
 	private MtContractService mtcService;
+	
+	@Resource(name="codeService")
+	private CodeService codeService;
 	/**
 	 * 
 	  * @Method Name : selectMtWorkList
@@ -611,7 +623,10 @@ public class MtWorkController {
 		}		
 		return returnMap;
 	}	
-
+	
+	
+	
+	//=============================================== 유지보수 작업 발주 =============================================
 	/**
 	 * 
 	  * @Method Name : writeOrderInfoView
@@ -619,28 +634,89 @@ public class MtWorkController {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description : 유지보수작업 발주등록 화면 이동
-	  * @param mtWorkVO
+	  * @param mtWorkVO : MtOrderVO.getOrderCtFkKey() == MtWorkVO.getMtWorkKey()
 	  * @param model
 	  * @return
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/write/orderInfoView.do")
-	public String writeOrderInfoView(HttpServletRequest request, MtWorkVO mtWorkVO,ModelMap model) throws Exception {
+	public String writeOrderInfoView(HttpServletRequest request, MtOrderVO mtOrderVO,ModelMap model) throws Exception {
 		MtWorkVO basicWorkInfo = null;
+		List<EgovMap> workOrderSelectBox = null;
+		EgovMap map = null;
 		List<?> empList = null;
-		logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtWorkVO.getMtIntegrateKey()+" / "+mtWorkVO.getMtWorkKey());
+		List < ? > acDirectorList = null;
+		MtOrderVO returnVo = null;
+		List<CodeVO> orderKindCodeList = null;
+		CodeSearchVO searchVO = null;
+		int listCount = 1;
+		logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtOrderVO.getMtIntegrateKey()+" / "+mtOrderVO.getOrderCtFkKey());
+		logger.debug("mtOrderVO.getSelectKey()=====>"+mtOrderVO.getSelectKey());
 		try {
-			basicWorkInfo = mtwService.selectWorkDetail(mtWorkVO.getMtWorkKey());
 			
-			logger.debug("request======>"+request);
-			empList = mtcService.selectEmployeeList();
-			model.put("mtWorkKey", mtWorkVO.getMtWorkKey());
+			mtOrderVO.setOrderDt(CepDateUtil.getToday("yyyyMMdd")); //등록일자 오늘날짜 셋팅.
+			
+			basicWorkInfo = mtwService.selectWorkDetail(mtOrderVO.getOrderCtFkKey()); //유지보수 작업키를 이용하여 기본정보 조회.
+			
+			//유지보수작업 키를 이용하여 유지보수 작업 발주 등록 거래처 목록을 가져온다.(selectBox에서 사용)
+			workOrderSelectBox = mtwService.selectWorkOrderSelectBoxList(mtOrderVO.getOrderCtFkKey());
+			
+			if(null !=workOrderSelectBox && workOrderSelectBox.size()>0) {
+				//발주등록된 거래처가 있는 경우
+				//등록된 거래처 갯수를 체크한다.
+				mtOrderVO.setMtSaveCnt(workOrderSelectBox.size());
+				if("newOrder".equals(CepStringUtil.getDefaultValue(mtOrderVO.getBtnOption(), ""))){
+					//신규저장
+					returnVo = mtOrderVO;
+				} else {
+					//저장된 발주정보를 조회한다.
+					if(!"".equals(CepStringUtil.getDefaultValue(mtOrderVO.getSelectKey(), ""))){
+						//메인정보와 품목정보를 조회한다.
+						returnVo = mtwService.selectWorkOrderDetail(mtOrderVO.getSelectKey());
+					} else {
+						//선택된 정보가 없는경우 첫번째 거래처 발주정보를 조회한다.
+						map = workOrderSelectBox.get(0);
+						returnVo = mtwService.selectWorkOrderDetail((String)map.get("mtOrderKey"));
+						mtOrderVO.setSelectKey((String)map.get("mtOrderKey"));
+						
+					}
+					
+					if(null != returnVo){
+						returnVo.setSelectKey(mtOrderVO.getSelectKey());
+						returnVo.setMtSaveCnt(mtOrderVO.getMtSaveCnt());
+						if(null !=returnVo.getMtOrderProductVoList() && returnVo.getMtOrderProductVoList().size()>1){
+							listCount = returnVo.getMtOrderProductVoList().size();
+						}
+						logger.debug("returnVo.getOrderAcKey()=====>"+returnVo.getOrderAcKey());
+						acDirectorList =mtcService.selectAcDirectorList(returnVo.getOrderAcKey());
+						logger.debug("acDirectorList.size()=====>"+acDirectorList.size());
+						
+					}
+				}
+			} else {
+				returnVo = mtOrderVO;
+			}
+			searchVO = new CodeSearchVO();
+			searchVO.setCdUpCd("PRODUCT");
+			orderKindCodeList = codeService.selectCodeList(searchVO);
+			logger.debug("returnVo.getMtSaveCnt()=====>"+returnVo.getMtSaveCnt());
+			logger.debug("returnVo.getSelectKey()=====>"+returnVo.getSelectKey());
+//			empList = mtcService.selectEmployeeList();
+			model.put("workOrderSelectBox", workOrderSelectBox);
+			model.put("mtWorkOrderVO", returnVo);
+
+			model.put("listCount", listCount);
+			model.put("displayUtil", new CepDisplayUtil());
+			model.put("acDirectorList", acDirectorList);
+			
+			model.put("orderCtFkKey", mtOrderVO.getOrderCtFkKey());
+			
 			model.put("mtIntegrateKey", basicWorkInfo.getMtIntegrateKey());
 
 			model.put("mtWorkPmYn", basicWorkInfo.getMtWorkPmYn());
 			model.put("mtWorkOrderYn", basicWorkInfo.getMtWorkOrderYn());
-			model.put("empList", empList);
-			
+			model.put("selectKey", mtOrderVO.getSelectKey());		
+			model.put("orderKindCodeList", orderKindCodeList);
 			model.put("successYN", "Y");
 		} catch (Exception e) {
 			model.put("successYN", "Y");
@@ -662,8 +738,33 @@ public class MtWorkController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/write/orderInfo.do", method=RequestMethod.POST)
-	public void writeOrderInfo(@ModelAttribute("mtWorkVO") MtWorkVO mtWorkVO, ModelMap model) throws Exception {
-		logger.debug("writeMtWorkInfo=====");
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> writeOrderInfo(HttpServletRequest request, @RequestBody  MtOrderVO mtOrderVO, ModelMap model) throws Exception {
+		HashMap<String, String> sessionMap = null;
+		Map<String, Object> returnMap = new HashMap<>();
+		String mtOrderKey = null;
+		
+		try {
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			mtOrderVO.setRegEmpKey(sessionMap.get("empKey"));
+			mtOrderVO.setModEmpKey(sessionMap.get("empKey"));
+			
+//			if(null !=mtOrderVO.getMtOrderProductVoList()) {
+//				System.out.println("size====>"+mtOrderVO.getMtOrderProductVoList().size());
+//				for (int i = 0; i < mtOrderVO.getMtOrderProductVoList().size(); i++) {
+//					System.out.println(mtOrderVO.getMtOrderProductVoList().get(i).getOrderPmFkNm());
+//				}
+//			}
+			
+			mtOrderKey = mtwService.writeMtWorkOrder(mtOrderVO);
+			returnMap.put("successYN", "Y");
+			returnMap.put("mtOrderKey", mtOrderKey);
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("", e);
+		}
+		return returnMap;
 	}
 	
 	
@@ -685,18 +786,53 @@ public class MtWorkController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/detail/orderInfo.do")
-	public String orderDetailInfo(MtWorkVO mtWorkVO, ModelMap model) throws Exception {
+	public String orderDetailInfo(MtOrderVO mtOrderVO, ModelMap model) throws Exception {
 		MtContractVO basicContractInfo = null;
 		MtWorkVO basicWorkInfo = null;
 		
+		List<MtOrderVO> mtOrderList = null;
+		List<MtOrderProductVO> mtOrderProductList = null;
+		Map<String, Object> searchParam = null;
+		String selectMtOrderAcKeyNm = null;
 		try {
+			
+			logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtOrderVO.getMtIntegrateKey()+" / "+mtOrderVO.getOrderCtFkKey());
+			logger.debug("mtOrderVO.getSelectKey()=====>"+mtOrderVO.getSelectKey());
 			//유지보수계약 기본정보를 가져온다.
-			basicContractInfo = mtcService.selectContractBasicDetail(mtWorkVO.getMtIntegrateKey());	
+			basicContractInfo = mtcService.selectContractBasicDetail(mtOrderVO.getMtIntegrateKey());	
 			if(null !=basicContractInfo) {
-				basicWorkInfo = mtwService.selectWorkDetail(mtWorkVO.getMtWorkKey());
+				
+				//유지보수 작업 기본정보조회
+				basicWorkInfo = mtwService.selectWorkDetail(mtOrderVO.getOrderCtFkKey());
+				
+				//유지보수 작업 발주거래처 정보 조회.
+				searchParam = new HashMap<>();
+				searchParam.put("orderCtFkKey", mtOrderVO.getOrderCtFkKey());
+				
+				mtOrderList = mtwService.selectWorkOrderList(searchParam);
+				
+				if(null != mtOrderList && mtOrderList.size()>0) {
+					if("".equals(CepStringUtil.getDefaultValue(mtOrderVO.getSelectKey(), ""))) {
+						//선택된 내용이 없으면 첫번째 거래처의 발주품목을 가져온다.
+						mtOrderVO.setSelectKey(mtOrderList.get(0).getMtOrderKey());
+						//발주거래처명
+						selectMtOrderAcKeyNm = mtOrderList.get(0).getOrderAcKeyNm();
+					}
+					/*
+					 * 선택한 거래처의 발주품목을 조회한다.
+					 * mtOrderVO.getSelectKey() : mtOrderKey
+					 */
+					mtOrderProductList = mtwService.selectWorkOrderProductList(mtOrderVO.getSelectKey());
+				}
+				
 			}
 			model.put("basicContractInfo", basicContractInfo);
-			model.put("basicWorkInfo", basicWorkInfo);	
+			model.put("basicWorkInfo", basicWorkInfo);			
+			model.put("mtOrderList", mtOrderList);	
+			model.put("mtOrderProductList", mtOrderProductList);	
+			model.put("selectMtOrderAcKeyNm", selectMtOrderAcKeyNm);	
+			model.put("selectKey", mtOrderVO.getSelectKey());	
+			
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
 			
@@ -708,7 +844,71 @@ public class MtWorkController {
 		return "maintenance/work/detail/orderInfo";
 	}
 	
-	//////////////////////////////////////////////////////
+	
+	@ResponseBody
+	@RequestMapping(value="/detail/selectWorkOrderProductList.do", method=RequestMethod.POST)
+	public Map<String, Object>  selectWorkOrderProductList( @RequestBody String mtOrderKey) throws Exception {
+
+		List<MtOrderProductVO> mtOrderProductList = null;	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+	     try {
+	    	 
+	    	 logger.debug("mtOrderKey=======>"+mtOrderKey);
+	    	 if(!"".equals(CepStringUtil.getDefaultValue(mtOrderKey, ""))) {
+	    		 returnMap = new HashMap<String, Object>();
+	    	     
+	    		 mtOrderProductList = mtwService.selectWorkOrderProductList(mtOrderKey);
+		         
+		         logger.debug("productList.size=====>"+mtOrderProductList.size());
+		//         modelAndView.setViewName("jsonView");
+		         returnMap.put("productList", mtOrderProductList);
+		         returnMap.put("successYN", "Y");
+	    	 } else {
+	    		 returnMap.put("successYN", "N");
+	    	 }
+	    	
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("selectWorkOrderProductList error", e);
+		}
+	    
+	     return returnMap; 
+	}
+	
+	
+	@RequestMapping(value="/delete/workOrder.do", method=RequestMethod.POST)
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> deleteWorkOrder(HttpServletRequest request, @RequestBody MtOrderVO mtOrderVO) throws Exception {
+
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		try {		
+			
+//			model.put("toDay", CepDateUtil.getToday("yyyy-MM-dd"));
+//			model.put("toDay", CepDateUtil.getToday("yyyyMMdd"));
+//			mtOrderVO.setMtOrderDt(CepDateUtil.getToday("yyyyMMdd"));
+			logger.debug("mtBackOrderVO.getMtIntegrateKey()===>"+mtOrderVO.getMtIntegrateKey());
+			logger.debug("mtBackOrderVO.getSelectKey()===>"+mtOrderVO.getSelectKey());
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+//			service.deleteBackOrder(sessionMap.get("empKey"), mtOrderVO.getSelectKey(), mtOrderVO.getMtIntegrateKey());
+			
+			mtwService.deleteWorkOrder(sessionMap.get("empKey"), mtOrderVO.getSelectKey());
+			
+			returnMap.put("mtIntegrateKey", mtOrderVO.getMtIntegrateKey());
+			returnMap.put("orderCtFkKey", mtOrderVO.getOrderCtFkKey());
+			returnMap.put("successYN", "Y");
+			
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("error", e);
+		}
+		
+		return returnMap;
+	} 
+	
+	////////////////////////////////////////////유지보수 계약발주 끝.////////////////////////////////////////////////////////////
 	/**
 	 * 
 	  * @Method Name : selectMtCustomerInfo

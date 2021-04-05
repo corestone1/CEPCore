@@ -1321,7 +1321,7 @@
 							</tr>
 						</table>
 						<c:choose>
-							<c:when test="${mtBackOrderVO.selectKey eq '' ||  mtBackOrderVO.selectKey eq 'null'||  mtBackOrderVO.selectKey eq null}">
+							<c:when test="${mtBackOrderVO.mtBackOrderProductVoList.size() eq '' ||  mtBackOrderVO.mtBackOrderProductVoList.size() eq '0'||  mtBackOrderVO.mtBackOrderProductVoList.size() eq null}">
 							<div class="prodTable">
 								<input type="hidden" name="lastNum" value="0" />
 								<table>								

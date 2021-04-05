@@ -394,7 +394,8 @@
 <body>
 	<form id="m_listForm" name="m_listForm" method="post">
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
-		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>"/>		
+		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>"/>
+		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${mtWorkKey}"/>"/>		
 		<input type="hidden" id="mtWorkSeq" name="mtWorkSeq" />		
 		<div class="sfcnt"></div>
 		<div class="nav"></div>

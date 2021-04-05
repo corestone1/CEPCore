@@ -1127,6 +1127,7 @@ public class MtContractController {
 			mtBackOrderVO.setMtOrderDt(CepDateUtil.getToday("yyyyMMdd"));
 			logger.debug("mtBackOrderVO.getMtIntegrateKey()===>"+mtBackOrderVO.getMtIntegrateKey());
 			logger.debug("mtBackOrderVO.getSelectKey()===>"+mtBackOrderVO.getSelectKey());
+			logger.debug("mtBackOrderVO.getBtnOption()===>"+mtBackOrderVO.getBtnOption());
 //			if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))){
 //				mtBackOrderVO.setMtIntegrateKey("MA200024");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
 //			}
@@ -1309,7 +1310,7 @@ public class MtContractController {
 			returnMap.put("successYN", "Y");
 			returnMap.put("mtOrderKey", mtOrderKey);
 		} catch (Exception e) {
-			model.put("successYN", "N");
+			returnMap.put("successYN", "N");
 			logger.error(null, e);
 		}
 //		logger.debug("writeMtBasicInfo=====");
