@@ -3,9 +3,15 @@ package com.cep.maintenance.work.service;
 import java.util.List;
 import java.util.Map;
 
+import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
+import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.work.vo.MtOrderProductVO;
+import com.cep.maintenance.work.vo.MtOrderVO;
 import com.cep.maintenance.work.vo.MtWorkProductVO;
 import com.cep.maintenance.work.vo.MtWorkVO;
+
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 
 public interface MtWorkService {
@@ -138,6 +144,106 @@ public interface MtWorkService {
 	 */
 	void deleteWorkProductAll(String modEmpKey, String mtWorkKey)throws Exception;
 	
+	
+
+	
+	/* ============================== 유지보수작업 발주  ======================================*/
+		
+	/**
+	 * 
+	  * @Method Name : writeMtWorkOrder
+	  * @Cdate       : 2021. 3. 10.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description : 유지보수 발주를 등록한다(발주메인, 발주품목)
+	  * @param orderVo
+	  * @return 발주키
+	  * @throws Exception
+	 */
+	 String writeMtWorkOrder(MtOrderVO orderVo) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectWorkOrderSelectBoxList
+	   * @Cdate       : 2021. 3. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수작업별 발주메인 등록 SELECT_BOX 리스트조회 
+	   * @param orderCtFkKey
+	   * @return
+	   * @throws Exception
+	  */
+
+	 List<EgovMap> selectWorkOrderSelectBoxList(String orderCtFkKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectWorkOrderDetail
+	   * @Cdate       : 2021. 3. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수작업 발주 메인상세
+	   * @param mtOrderKey
+	   * @return
+	   * @throws Exception
+	  */
+	 MtOrderVO selectWorkOrderDetail(String mtOrderKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : selectWorkOrderList
+	   * @Cdate       : 2021. 3. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description : 유지보수 작업 발주 메인리스트
+	   * @param searchParam ({mtIntegrateKey}, {orderCtFkKey}) 조건검색.
+	   * @return
+	   * @throws Exception
+	  */
+	 List<MtOrderVO> selectWorkOrderList(Map<String, Object> searchParam) throws Exception;
+	 
+	 
+	 /**
+	  * 
+	   * @Method Name : selectWorkOrderProductList
+	   * @Cdate       : 2021. 3. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수작업별 발주별 제품목록 조회
+	   * @param mtOrderKey
+	   * @return
+	   * @throws Exception
+	  */
+	 List<MtOrderProductVO> selectWorkOrderProductList(String mtOrderKey) throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : deleteWorkOrder
+	   * @Cdate       : 2021. 3. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수작업별 거래처별 발주 메인, 발주 품목, 매입정보를 삭제한다.
+	   *                       MT_PURCHASE_TB(매입..개발해야함.), deleteWorkOrderProductAll, deleteWorkOrder 수행
+	   * @param modEmpKey : 수정자
+	   * @param mtOrderKey : 수정키
+	   * @throws Exception
+	  */
+	 void deleteWorkOrder(String modEmpKey, String mtOrderKey)  throws Exception;
+	 
+	 /**
+	  * 
+	   * @Method Name : updateWorkOrder
+	   * @Cdate       : 2021. 3. 10.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수작업별 발주 정보수정 
+	   *         deleteWorkOrderProductList, updateWorkOrderProductList, updateWorkOrder 수행, MT_PURCHASE_TB(매입테이블 업데이트 수행해야함..개발해야함)
+	   * @param mtOrderVO
+	   * @throws Exception
+	  */
+//	 void updateWorkOrder(MtOrderVO mtOrderVO) throws Exception;
+	 
+	 
 	
 	
 }

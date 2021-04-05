@@ -198,7 +198,7 @@
 			'</c:if>'
 			
 			'<c:if test="${basicContractInfo.mtProjectLinkVo.mtLinkKey != null }">'
-				$('#pj_delete_forecast').show();
+				$('#pj_delete_project').show();
 			'</c:if>'
 			
 				//거래처 검색
@@ -690,7 +690,7 @@
 			$('#pj_mtLinkCtKey').val(returnKey);
 			$('#pj_mtLinkCtKeyNm').val(returnNm);
 			if($('#pj_mtLinkCtKey').val() !='') {
-				$('#pj_delete_forecast').show();
+				$('#pj_delete_project').show();
 			}
 			
 		}
@@ -704,7 +704,7 @@
 				}
 				$('#pj_mtLinkCtKey').val('');
 				$('#pj_mtLinkCtKeyNm').val('');
-				$('#pj_delete_forecast').hide();
+				$('#pj_delete_project').hide();
 			} else {
 				return false;
 			}			
@@ -718,7 +718,7 @@
 				}
 				$('#id').val('');
 				$('#no').val('');
-				//$('#pj_delete_forecast').hide();
+				//$('#pj_delete_project').hide();
 			} else {
 				return false;
 			}			
@@ -794,7 +794,7 @@
 								<input type="text" id="no" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
 								<input type="hidden" id="id"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" />
 								<input type="hidden" id="pj_mtLinkKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkKey}"/>" />
-								<img id="pj_delete_project" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteProject();" style="width: 11px;"/>
+								<img id="pj_delete_project" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteProject();" style="width: 11px;display:none"/>
 							</td>
 						</tr>
 						<tr>

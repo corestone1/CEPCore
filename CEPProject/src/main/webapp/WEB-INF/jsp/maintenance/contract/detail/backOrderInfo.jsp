@@ -1303,7 +1303,7 @@
 					</div>
 					
 					<div class="stitle cg colorBlack">제품정보</div>
-					<div class="floatC" style="border-bottom: 2px solid #c4c4c4;">
+					<div class="floatC submiddle" style="border-bottom: 2px solid #c4c4c4;">
 						<table class="dtl2">
 							<thead class="ftw400">
 								<tr>
