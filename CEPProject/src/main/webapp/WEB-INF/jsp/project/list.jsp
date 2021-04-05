@@ -257,8 +257,10 @@
 			form.pjKey.value = pjKey;
 			form.workClass.value = "입찰";
 			/* form.action = "<c:url value='/project/detail/bidding.do'/>"; */
+			form.action = "<c:url value='/project/detail/main.do'/>";
+			
 			// 첨부파일 예제
-			form.action = "<c:url value='/egovSampleList2.do'/>";
+			/* form.action = "<c:url value='/egovSampleList2.do'/>"; */
 			form.submit(); 
 		}
 		

@@ -38,5 +38,10 @@ public interface MngProjectBillMapper {
 	public void updateBillMapping(MngProjectBillVO mngProjectBillVO) throws Exception;
 	
 	public void updateSalesDetailPayments(MngProjectBillVO mngProjectBillVO) throws Exception;
+ 
+	public EgovMap selectSdBillingOp(MngProjectBillVO mngProjectBillVO) throws Exception;
 	
+	public void insertSdBillingXml(MngProjectBillVO mngProjectBillVO) throws Exception;
+	
+	public void insertPcBillInfo(MngProjectBillVO mngProjectBillVO) throws Exception;
 }

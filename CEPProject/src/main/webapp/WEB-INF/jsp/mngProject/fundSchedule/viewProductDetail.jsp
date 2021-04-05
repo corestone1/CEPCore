@@ -125,6 +125,17 @@
 						</tr>
 					</thead>
 					<tbody class="floatL">
+						<c:forEach var="result" items="${productList}" varStatus="status">
+							<tr>
+								<td><span><c:out value="${result.pmNm}" /></span></td>
+								<td><c:out value="${result.orderQuantity}" /></td>
+								<td><span><c:out value="${displayUtil.commaStr(result.orderUprice)}" /></span></td>
+								<td><span><c:out value="${displayUtil.commaStr(result.orderAmount)}" /></span></td>
+								<td><span><c:out value="${displayUtil.commaStr(result.totalTax)}" /></span></td>
+								<td><span><c:out value="${displayUtil.commaStr(result.totalAmount)}" /></span></td>
+							</tr>
+						</c:forEach>
+						<!-- 
 						<tr>
 							<td><span title="ISILON X210">ISILON X210</span></td>
 							<td>1</td>
@@ -133,102 +144,7 @@
 							<td><span title="100,000,000">100,000,000</span></td>
 							<td><span title="100,000,000">100,000,000</span></td>
 						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
-						<tr>
-							<td><span title="ISILON X210">ISILON X210</span></td>
-							<td>1</td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-							<td><span title="100,000,000">100,000,000</span></td>
-						</tr>
+						 -->
 					</tbody>
 				</table>
 			</div>

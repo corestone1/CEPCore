@@ -13,6 +13,7 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
+	
 	<style>
 		body {
 			width: 100%;
@@ -354,6 +355,20 @@
 			form.submit(); 
 		 }
 		 
+		 function fnViewBillInsert() {
+			 var url = '/mngProject/bill/popup/viewWriteSdBilling.do';
+			 var dialogId = 'program_layer';
+			 var varParam = {"pjKey" : $('#ipt_pjKey').val(), "billCallKey" : $('#ipt_billCallKey').val()};
+			
+			 var button = new Array;
+			 button = [];
+			 
+			 
+			 
+			 /* showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); */ 
+			 parent.showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:545px');
+			
+		 }
 		 
 		 function fnBillInsert() {
 			 
@@ -502,9 +517,10 @@
 		</div>
 		<div class="btnWrap rt">
 			<div class="floatR">
-				 
+				<!-- 	 
 				<button type="button" id="req"   value="계산서 발행 요청" onclick="javascript:fnBillInsert();" style="" >계산서등록임시</button>
-				
+				 -->
+				<button type="button" id="req"   value="계산서 XML등록" onclick="javascript:fnViewBillInsert();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_xml.png'/>" style=""/></button>
 				<button type="button" id="req"   value="계산서 발행 요청" onclick="javascript:fnBillRequest();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_request.png'/>" style=""/></button>
 				<button type="button" id="check" value="발행완료"      onclick="javascript:fnBillComplate();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_end.png'/>"     style=""/></button>
 			</div>

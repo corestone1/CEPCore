@@ -716,6 +716,17 @@
 			form.submit(); 
 			
 		}
+		
+		function fnWorkInfoPopup() {
+			var url = '/project/write/workInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey": $('#iph_pjKey').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
 	</script>
 </head>
 <body>
@@ -870,7 +881,7 @@
 						<!-- 입찰정보 버튼 시작 -->
 						<div class="btnWrap rt">
 							<div class="floatR">
-								<button type="button" value="수행일지"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
+								<button type="button" value="수행일지" onclick="javascript:fnWorkInfoPopup();"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
 								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
 								<button type="button" value="수정" id="modMinInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>

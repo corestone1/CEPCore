@@ -1,6 +1,7 @@
 package com.cep.mngProject.bill.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
@@ -36,6 +37,8 @@ public class MngProjectBillVO implements Serializable {
 	private String modEmpKey;
 	
 	private String salesKey;
+	
+	private List<MngProjectBillVO> mngBillInsertVOList;
 	
 	/**
 	 * @return the billNo
@@ -332,6 +335,18 @@ public class MngProjectBillVO implements Serializable {
 	 */
 	public void setSalesKey(String salesKey) {
 		this.salesKey = salesKey;
+	}
+	/**
+	 * @return the mngBillInsertVOList
+	 */
+	public List<MngProjectBillVO> getMngBillInsertVOList() {
+		return mngBillInsertVOList;
+	}
+	/**
+	 * @param mngBillInsertVOList the mngBillInsertVOList to set
+	 */
+	public void setMngBillInsertVOList(List<MngProjectBillVO> mngBillInsertVOList) {
+		this.mngBillInsertVOList = mngBillInsertVOList;
 	}
 	
 	

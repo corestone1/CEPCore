@@ -151,7 +151,7 @@
 	
 	<select id="selectCollectTurn" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="int">
 	
-		SELECT COLLECT_TURN
+		SELECT IFNULL(COLLECT_TURN, 0)   AS COLLECT_TURN
 		FROM   PJ_CONTRACT_TB
 		WHERE  DELETE_YN = 'N'
 		  AND  PJ_KEY    = #{pjKey}
@@ -347,8 +347,83 @@
 	
 	</update>
 	
+	<!-- XML 계산서 등록 시 '요청' 상태의 계산서 요청 정보 조회 -->
+	<select id="selectSdBillingOp" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO" resultType="egovMap">
+	
+		SELECT BILL_CALL_KEY       AS BILL_CALL_KEY
+		     , BILL_FK_PJ_KEY      AS BILL_FK_PJ_KEY
+			 , BILL_CT_FK_KEY      AS BILL_CT_FK_KEY
+			 , BILL_TURN_NO        AS BILL_TURN_NO
+			 , BILL_AMOUNT         AS BILL_AMOUNT
+			 , BILL_ISSUE_EMAIL    AS BILL_ISSUE_EMAIL
+			 , BILL_ISSUE_STATUS   AS BILL_ISSUE_STATUS
+			 , BILL_AC_KEY         AS BILL_AC_KEY
+			 , BILL_TAX_YN         AS BILL_TAX_YN
+		FROM   PJ_SD_BILLING_OP_TB
+		WHERE  BILL_CALL_KEY  = #{billCallKey}
+	
+	</select>
 	
 	
+	<insert id="insertSdBillingXml" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
+	
+		INSERT INTO PJ_SD_BILLING_TB
+		(
+			  BILL_NO
+			, BILL_FK_PJ_KEY
+			, BILL_CT_FK_KEY
+			, BILL_AMOUNT
+			, BILL_ISSUE_DT
+			, BILL_MAPPING_YN
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+		)
+		VALUES
+		(
+			  #{billNo}
+			, #{pjKey}
+			, #{billCtFkKey}
+			, #{billAmount}
+			, #{billIssueDt}
+			, 'Y'
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+		)	
+	
+	</insert>
+	
+	<insert id="insertPcBillInfo" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
+		
+		INSERT INTO PJ_PC_BILLING_TB
+		(
+			  BILL_NO
+			, BILL_AMOUNT
+			, BILL_ISSUE_DT
+			, BILL_MAPPING_YN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, BILL_AC_KEY
+			, TAX_YN
+		)
+		VALUES
+		(
+			  #{billNo}
+			, #{billAmount}
+			, #{billIssueDt}
+			, 'N'
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+			, #{acKey}
+			, 'N'
+		)
+	
+	</insert>
 	
 	
 </mapper>

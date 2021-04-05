@@ -4,6 +4,21 @@ import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
 
+/**
+ * @File Name : ForecastVO.java
+ * @Project   : CEPProject
+ * @Author    : ynk
+ * @Cdate     : 2021. 1. 21.
+ * @version   : 1.0
+ * @Description : 
+ * @Modification Information
+ * @
+ * @  수정일                        수정자            수정내용
+ * @ ------------   ---------   -------------------------------
+ * @ 2021. 1. 21.                최초생성
+ *
+ *  Copyright (C) by CORESTONE All right reserved.
+ */
 @Alias("forecastVO")
 public class ForecastVO implements Serializable {
 
@@ -26,6 +41,16 @@ public class ForecastVO implements Serializable {
 	private String salesAcKey;    //매출 거래처 관리키
 	private String buyAcKey;      //매입 거래처 관리키
 	private String remark;        //비고(영업 진행상황)
+	private String pmDetail2;
+	
+	private String fcSalesDtYr; 
+	private String fcSalesDtMt;
+
+	private String fcCollectDtYr;
+	private String fcCollectDtMt;
+	
+	private String fcBuyPayDtYr;
+	private String fcBuyPayDtMt;
 	
 	private String regDt;         //등록일
 	private String regTm;         //등록시간
@@ -243,6 +268,92 @@ public class ForecastVO implements Serializable {
 	 */
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	
+	/**
+	 * @return the pmDetail2
+	 */
+	public String getPmDetail2() {
+		return pmDetail2;
+	}
+	/**
+	 * @param pmDetail2 the pmDetail2 to set
+	 */
+	public void setPmDetail2(String pmDetail2) {
+		this.pmDetail2 = pmDetail2;
+	}
+	/**
+	 * @return the fcSalesDtYr
+	 */
+	public String getFcSalesDtYr() {
+		return fcSalesDtYr;
+	}
+	/**
+	 * @param fcSalesDtYr the fcSalesDtYr to set
+	 */
+	public void setFcSalesDtYr(String fcSalesDtYr) {
+		this.fcSalesDtYr = fcSalesDtYr;
+	}
+	/**
+	 * @return the fcSalesDtMt
+	 */
+	public String getFcSalesDtMt() {
+		return fcSalesDtMt;
+	}
+	/**
+	 * @param fcSalesDtMt the fcSalesDtMt to set
+	 */
+	public void setFcSalesDtMt(String fcSalesDtMt) {
+		this.fcSalesDtMt = fcSalesDtMt;
+	}
+	
+	/**
+	 * @return the fcCollectDtYr
+	 */
+	public String getFcCollectDtYr() {
+		return fcCollectDtYr;
+	}
+	/**
+	 * @param fcCollectDtYr the fcCollectDtYr to set
+	 */
+	public void setFcCollectDtYr(String fcCollectDtYr) {
+		this.fcCollectDtYr = fcCollectDtYr;
+	}
+	/**
+	 * @return the fcCollectDtMt
+	 */
+	public String getFcCollectDtMt() {
+		return fcCollectDtMt;
+	}
+	/**
+	 * @param fcCollectDtMt the fcCollectDtMt to set
+	 */
+	public void setFcCollectDtMt(String fcCollectDtMt) {
+		this.fcCollectDtMt = fcCollectDtMt;
+	}
+	/**
+	 * @return the fcBuyPayDtYr
+	 */
+	public String getFcBuyPayDtYr() {
+		return fcBuyPayDtYr;
+	}
+	/**
+	 * @param fcBuyPayDtYr the fcBuyPayDtYr to set
+	 */
+	public void setFcBuyPayDtYr(String fcBuyPayDtYr) {
+		this.fcBuyPayDtYr = fcBuyPayDtYr;
+	}
+	/**
+	 * @return the fcBuyPayDtMt
+	 */
+	public String getFcBuyPayDtMt() {
+		return fcBuyPayDtMt;
+	}
+	/**
+	 * @param fcBuyPayDtMt the fcBuyPayDtMt to set
+	 */
+	public void setFcBuyPayDtMt(String fcBuyPayDtMt) {
+		this.fcBuyPayDtMt = fcBuyPayDtMt;
 	}
 	/**
 	 * @return the regDt

@@ -27,5 +27,10 @@ public interface MngProjectBillService {
 	
 	public void updatePaymentsComplate(MngProjectBillVO mngProjectBillVO) throws Exception;
 	
+	public void insertSdBillingXml(MngProjectBillVO mngProjectBillVO) throws Exception;
+	
+	public EgovMap selectSdBillingOp(MngProjectBillVO mngProjectBillVO) throws Exception;
+	
+	public void insertBillingExcelBatch(MngProjectBillVO mngProjectBillVO) throws Exception;
 	
 }

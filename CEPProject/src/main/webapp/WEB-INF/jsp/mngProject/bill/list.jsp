@@ -300,6 +300,27 @@
 			
 		}
 
+		function fnViewBillbatchInsertPop(){
+			window.open('/mngProject/bill/popup/viewWritePcBillingExcel.do','BILLING_EXCEL','width=1600px,height=713px,left=600');
+			
+		}
+		
+		function fnViewBillXmlInsertPop(){
+			var url = '/mngProject/bill/popup/viewWriteSdBilling.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+	
+			}
+			
+			var button = new Array;
+			button = [];
+			
+			/* showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); */ 
+			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:545px');
+			
+		}
+		
+		
 	</script>
 </head>
 <body>
@@ -390,6 +411,10 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
+					<!-- 
+						<button type="button" value="XML 파일 등록" onclick="javascript:fnViewBillXmlInsertPop();"><img class="cursorP" src="<c:url value='/images/btn_bill_xml.png'/>" /></button>
+					 -->
+						<button type="button" value="계산서 일괄 등록" onclick="javascript:fnViewBillbatchInsertPop();"><img class="cursorP" src="<c:url value='/images/btn_bill_batch.png'/>" /></button>
 						<button type="button" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>

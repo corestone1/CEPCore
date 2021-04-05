@@ -32,7 +32,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -209,7 +209,7 @@
 			 
 			$('#fl tr.mchkbox').each(function(index, item) {
 				
-				$(this).children().eq(0).append('<input type="checkbox" name="gubun" value="'+ index +'" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+				$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				
 			});
 			
@@ -224,7 +224,7 @@
 						
 						var litIdx = parseInt($('input[name="gubun"]:checked').val());
 						
-						var jsonData = {'SP_KEY' : $('input[name="spKey"]').eq(litIdx).val()};
+						var jsonData = {'spKey' : $('input[name="spKey"]').eq(litIdx).val()};
 						
 			           $.ajax({
 				        	url :"/forecast/delete.do",
@@ -256,6 +256,26 @@
 				}				
 			});
 		});
+		
+		
+		function fnViewModify() {
+			if($('input[name="gubun"]').is(':checked')) {
+				
+				var litIdx   = parseInt($('input[name="gubun"]:checked').val());
+				
+				var url = '/forecast/write/basic.do';
+				var dialogId = 'program_layer';
+				var varParam = {'spKey' : $('input[name="spKey"]').eq(litIdx).val()};
+				
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); 
+				
+				
+			} else {
+				alert("수정할 Forecast를 선택하세요!!");
+			}
+		}
 
 		function fn_addView(link){
 			
@@ -283,10 +303,25 @@
 			window.open('/forecast/popup/searchList.do?spKeyDomId=domIdSpKey&spBusiNm=domIdSpBusiNm','FORECAST_LIST','width=1000px,height=713px,left=600');
 		}
 		
+		
+		function fn_searchList()
+		{                
+			document.listForm.action = "/forecast/list.do";
+           	document.listForm.submit(); 
+		}
+		
+		
+		//영업회의
+		function fn_moveSalesMeeting() {
+			document.listForm.action = "/forecast/salesMeetingList.do";
+			document.listForm.submit();	
+		}
+		
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<!-- <form id="listForm" name="listForm" method="post"> -->
+	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -296,18 +331,29 @@
 						<div class="title floatL"><label class="ftw500">Forecast list</label></div>
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('basic')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_searchListPop()"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="javascript:fn_moveSalesMeeting()"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">구분</option>
-						</select>
-						<select>
-							<option value="">진행상태</option>
-						</select>
-						<select>
-							<option value="">검색조건</option>
-						</select>
-						<input type="text" />
+						<form:select path="pjFlag">
+							<form:option value="">구분</form:option>
+							<form:option value="P">프로젝트</form:option>
+							<form:option value="M">유지보수</form:option>
+						</form:select>
+						<form:select path="spState">
+							<form:option value="">진행상태</form:option>
+							<form:option value="E">E</form:option>
+							<form:option value="D">D</form:option>
+							<form:option value="C">C</form:option>
+							<form:option value="B">B</form:option>
+							<form:option value="A">A</form:option>
+						</form:select>
+						<form:select path="searchFlag">
+							<form:option value="">검색조건</form:option>
+							<form:option value="AC">고객명</form:option>
+							<form:option value="BN">사업명</form:option>
+							<form:option value="SE">담당자</form:option>
+						</form:select>
+						<form:input type="text" path="searchValue"/>
 						<span id="span_search" class="veralignT" onclick="javascript:fn_searchList()"><img src="/images/icon_search.png" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -339,13 +385,13 @@
 								<td><c:out value="${result.spBusiNm}"/> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
 								<td><c:out value="${result.pmNm}"/></td>
 								<td><c:out value="${result.fcSjConfQt}"/> Q</td>
-								<td><c:out value="${result.fcSalesAmount}"/></td>
-								<td><c:out value="${result.fcBuyAmount}"/></td>
-								<td><c:out value="${result.fcSalesProfit}"/></td>
-								<td><c:out value="${result.fcSalesDt}"/></td>
-								<td><c:out value="${result.fcCollectDt}"/></td>
-								<td><c:out value="${result.fcBuyPayDt}"/></td>
-								<td><c:out value="${result.fcBuyPayDt}"/></td>
+								<td><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></td>
+								<td><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></td>
+								<td><c:out value="${displayUtil.commaStr(result.fcSalesProfit)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.fcSalesDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.fcCollectDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.fcBuyPayDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.fcBuyPayDt)}"/></td>
 								<td><c:out value="${result.spState}"/></td>
 							</tr>
 							<tr class="dpNone" style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">
@@ -371,13 +417,13 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<button type="button" value="수정" onclick="javascript:fnViewModify();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 						<button type="button" id='btn_delete' value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>
