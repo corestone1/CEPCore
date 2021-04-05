@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 package com.cep.mngProject.fundSchedule.service.impl;
 
 import java.util.List;
@@ -24,20 +24,3 @@ public interface MngProjectFundScheduleMapper {
 	
 	public List<EgovMap> selectOrderProductPcList(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception;
 }
-=======
-package com.cep.mngProject.fundSchedule.service.impl;
-
-import java.util.List;
-
-import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
-
-import egovframework.rte.psl.dataaccess.mapper.Mapper;
-import egovframework.rte.psl.dataaccess.util.EgovMap;
-
-@Mapper("mngProjectFundScheduleMapper")
-public interface MngProjectFundScheduleMapper {
-	
-	public List<EgovMap> selectBillScheduleList(MngProjectBillSearchVO searchVO ) throws Exception;
-
-}
->>>>>>> branch 'master' of https://github.com/corestone1/CEPCore.git
