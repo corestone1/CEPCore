@@ -5,8 +5,6 @@ import java.util.Map;
 
 import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
-import com.cmm.vo.PaymentVO;
-import com.cmm.vo.PurchaseVO;
 import com.cmm.vo.SalesVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -78,7 +76,7 @@ public interface ProjectRequestMapper {
 	* @return
 	* @throws Exception
 	*/
-	public void insertPurchaseInfo(PurchaseVO purchaseVO) throws Exception;
+	public void insertPurchaseInfo(ProjectPurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -91,7 +89,7 @@ public interface ProjectRequestMapper {
 	* @return
 	* @throws Exception
 	*/
-	public void updatePurchaseInfo(PurchaseVO purchaseVO) throws Exception;
+	public void updatePurchaseInfo(ProjectPurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -104,7 +102,7 @@ public interface ProjectRequestMapper {
 	* @return
 	* @throws Exception
 	*/
-	public void deletePurchaseInfo(PurchaseVO purchaseVO) throws Exception;
+	public void deletePurchaseInfo(ProjectPurchaseVO purchaseVO) throws Exception;
 	
 	/**
 	* 
@@ -143,7 +141,7 @@ public interface ProjectRequestMapper {
 	* @return
 	* @throws Exception
 	*/
-	public void insertPaymentInfo(PaymentVO paymentVO) throws Exception;
+	public void insertPaymentInfo(ProjectPaymentVO paymentVO) throws Exception;
 
 	/**
 	* 
@@ -156,7 +154,7 @@ public interface ProjectRequestMapper {
 	* @return
 	* @throws Exception
 	*/
-	public void updatePaymentInfo(PaymentVO paymentVO) throws Exception;
+	public void updatePaymentInfo(ProjectPaymentVO paymentVO) throws Exception;
 
 	/**
 	* 
@@ -182,7 +180,7 @@ public interface ProjectRequestMapper {
 	* @return
 	* @throws Exception
 	*/
-	public void deletePaymentAllInfo(PaymentVO paymentVO) throws Exception;
+	public void deletePaymentAllInfo(ProjectPaymentVO paymentVO) throws Exception;
 
 
 }

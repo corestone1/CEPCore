@@ -1,5 +1,8 @@
 package com.cep.project.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -9,16 +12,20 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.cep.mngProject.mapping.service.impl.MngProjectMappingMapper;
+import com.cep.mngProject.mapping.vo.PurchaseBillOpVO;
 import com.cep.project.service.ProjectRequestService;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
+import com.cmm.config.EmailInfo;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
-import com.cmm.vo.PaymentVO;
-import com.cmm.vo.PurchaseVO;
+import com.cmm.util.CepStringUtil;
+import com.cmm.vo.MailVO;
 import com.cmm.vo.SalesVO;
 
 @Service("projectRequestService")
@@ -26,6 +33,9 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	
 	@Resource(name="projectRequestMapper")
 	private ProjectRequestMapper mapper;
+	
+	@Resource(name="mngProjectMappingMapper")
+	private MngProjectMappingMapper mngPjMapper;
 	
 	@Resource(name="comService")
 	private ComService comService;
@@ -78,7 +88,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, PurchaseVO purchaseVO) throws Exception {
+	public Map<String, Object> insertPurchaseInfo(HttpServletRequest request, ProjectPurchaseVO purchaseVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		String buyKey = "";
@@ -99,8 +109,8 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	}
 	
 	@Override
-	public void deletePurchaseInfo(PurchaseVO purchaseVO) throws Exception {
-		PaymentVO paymentVO = new PaymentVO();
+	public void deletePurchaseInfo(ProjectPurchaseVO purchaseVO) throws Exception {
+		ProjectPaymentVO paymentVO = new ProjectPaymentVO();
 		try {
 			paymentVO.setPaymentBuyFkKey(mapper.selectPurchaseDetail(purchaseVO.getBuyOrderFkKey()).getBuyKey());
 			paymentVO.setModEmpKey(purchaseVO.getModEmpKey());
@@ -129,7 +139,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> insertPaymentInfo(HttpServletRequest request, PaymentVO paymentVO) throws Exception {
+	public Map<String, Object> insertPaymentInfo(HttpServletRequest request, ProjectPaymentVO paymentVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		String paymentKey = "";
@@ -152,27 +162,87 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, PaymentVO paymentVO) throws Exception {
+	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, ProjectPaymentVO paymentVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
-		PurchaseVO purchaseVO = new PurchaseVO();
+		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
+		PurchaseBillOpVO purchaseBillOpVO = new PurchaseBillOpVO();
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		MailVO mailVO = new MailVO();
+		String content = "";
+		String subject = "";
+		String url = "";
+		String name = "";
+		int result = 0;
+		List<String> mailList = new ArrayList<String>();
 		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			name = (String)request.getSession().getAttribute("name");
+			url = paymentVO.getLink();
+			subject = EmailInfo.MAIL_SUBJECT.getValue();
 			paymentVO.setModEmpKey(session.get("empKey"));
 			
-			if(paymentVO.getPaymentStatusCd().equals("PYST4000")) {
-				purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
-				purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
-				purchaseVO.setBuyKey(paymentVO.getBuyKey());
-				purchaseVO.setModEmpKey(session.get("empKey"));
+			mailVO.setSubject(subject);
+			mailVO.setLink(url);
+			if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST2000")) {
 				
-				mapper.updatePurchaseInfo(purchaseVO);
-			} 
-			
-			mapper.updatePaymentInfo(paymentVO);
-			returnMap.put("successYN", "Y");
+				content = String.join(
+		                System.getProperty("line.separator"),
+		                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 요청하셨습니다. <br>(요청자: " +name+",",
+		                " 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
+				
+				for(Object obj : comService.selectDeptEmployeeList("OPER_101")) {
+					String email = obj.toString().substring(obj.toString().indexOf("=") + 1, obj.toString().length() - 1);
+					mailList.add(email);
+				}
+				
+				mailVO.setContent(content);
+				mailVO.setEmpKey(StringUtils.join(mailList, ";"));
+				
+				result = comService.sendMail(request, mailVO);
+				if(result == 0) {
+					returnMap.put("successYN", "N");
+				} else {
+					returnMap.put("successYN", "Y");
+					mapper.updatePaymentInfo(paymentVO);
+				}
+			} else {
+				if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST4000")) {
+					purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
+					purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
+					purchaseVO.setBuyKey(paymentVO.getBuyKey());
+					purchaseVO.setModEmpKey(session.get("empKey"));
+					
+					mapper.updatePurchaseInfo(purchaseVO);
+					
+					purchaseBillOpVO.setBillNo(paymentVO.getBillFkKey());
+					purchaseBillOpVO.setBillIssueStatus("E");
+					purchaseBillOpVO.setModEmpKey(session.get("empKey"));
+					
+					mngPjMapper.updatePcBillingOpInfo(purchaseBillOpVO);
+					
+				} else if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("")) {
+					content = String.join(
+			                System.getProperty("line.separator"),
+			                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 확인하셨습니다. <br>(확인자: " +name+",",
+			                " 확인 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
+					
+					mailVO.setContent(content);
+					mailVO.setEmpKey(paymentVO.getPjSaleEmpKey());
+					
+					result = comService.sendMail(request, mailVO);
+					
+					if(result == 0) {
+						throw new Exception();
+					} 
+				}
+				
+				mapper.updatePaymentInfo(paymentVO);
+				returnMap.put("successYN", "Y");
+			}
 		} catch(Exception e) {
+			returnMap.put("successYN", "N");
 			throw new Exception(e);
 		}
 		return returnMap;

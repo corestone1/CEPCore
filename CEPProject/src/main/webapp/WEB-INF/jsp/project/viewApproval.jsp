@@ -228,7 +228,7 @@
 										<c:set var= "gSum" value="${gSum + result.gbAmount}"/>
 									</tr>
 								</c:forEach>
-								<c:if test="${biddingVO ne null }"> 
+								<c:if test="${biddingVO.bdGbYn eq 'Y' }"> 
 									<tr>
 										<td>입찰</td>
 										<td>${biddingVO.bdGbFinishYn}</td>

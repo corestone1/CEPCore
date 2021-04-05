@@ -226,6 +226,7 @@
 				    var anselected = $('#infoList li').not($except)[i].children[0];
 					$(anselected).removeClass('on');
 			    }
+			    
 			});
 			
 			$('.tCheck').on('click', function() {
@@ -236,14 +237,14 @@
 				 } 
 			});
 			
-			 var turnNoList = new Array();
+			 /* var turnNoList = new Array();
 			
 			<c:forEach items="${paymentList}" var="item">
 				amount.push(Number("${item.amount}"));
 			</c:forEach>
 			
 			/*회차별 금액 입력하면 전체 매입금과 비교 */
-			$("#callAmount").change(function(){
+	/*		$("#callAmount").change(function(){
 				var sum = 0;
 				var inputValue = Number(removeCommas($(this).val()));
 				
@@ -255,7 +256,7 @@
 					$(this).val('');
 					$(this).focus();
 				}
-			});
+			}); */
 			
 			$("#paymentTurn").change(function(){
 				var idx = $("#paymentTurn option").index( $("#paymentTurn option:selected") );
@@ -282,7 +283,6 @@
 				 }
 				
 				var sendData = JSON.stringify(object);
-	
 				$.ajax({
 					url:"/project/request/detail/payment.do",
 					dataType:'json',
@@ -292,17 +292,21 @@
 					contentType: "application/json; charset=UTF-8", 
 					success:function(response){
 						if(response != null && response.successYN=='Y') {
-							$.each(response, function(index, item) {
-								/* console.log(index+":"+item) */
-							});
 							
-							responseMap["callAmount"] = addCommas(response.callAmount);
-							responseMap["paymentCallDt"] = addDateMinus(response.paymentCallDt);
-							responseMap["remark"] = response.remark;
-							responseMap["paymentKey"] = response.paymentKey;
-							responseMap["callAmountTaxYn"] = response.callAmountTaxYn;
+							for(var key in response) {
+								var value = response[key];
+								$("#"+key).val(value);
+								
+								if(key == "callAmountTaxYn") {
+									if(value == 'Y') {
+										$("#callAmountTaxYn").prop("checked",true);
+									} else {
+										$("#callAmountTaxYn").prop("checked",false);
+									}
+								}
+							}
 							
-							$("#paymentAccSeqFkKey").val(""+response.paymentAccSeqFkKey+"").attr("selected", "selected");
+							/* $("#paymentAccSeqFkKey").val(""+response.paymentAccSeqFkKey+"").attr("selected", "selected"); */ 
 							
 							if(response.paymentStatusCd == "PYST2000") {
 								fn_setBtn("req", "true");
@@ -320,21 +324,7 @@
 							alert("code: " + request.status + "\r\nmessage" + request.responseText + "\r\nerror: " + error)
 						}
 					}
-				}); 
-	
-				for(var key in responseMap) {
-					var value = responseMap[key];
-					$("#"+key).val(value);
-					console.log("key:" + key + "value:" + value)
-					if(key == "callAmountTaxYn") {
-						if(value == 'Y') {
-							$("#callAmountTaxYn").prop("checked",true);
-						} else {
-							$("#callAmountTaxYn").prop("checked",false);
-						}
-					}
-				}
-				
+				});   
 				
 			});
 			
@@ -344,6 +334,9 @@
 			})
 			
 			$('a[id^=A_TOPMenu_]').click(function(event){ location.href = this.title; });
+			
+			$("#link").val(parent.document.location.href);
+			
 		});
 		
 		function fn_chkVali(kind) {
@@ -364,6 +357,8 @@
 			
 			if(kind == "req") {
 				$("#paymentStatusCd").val("PYST2000");
+			} else if(kind == "mod") {
+				$("#paymentStatusCd").val("");
 			} else if(kind == "check") {
 				$("#paymentStatusCd").val("PYST3000");
 			}
@@ -384,48 +379,67 @@
 			 }
 			
 			var sendData = JSON.stringify(object);
-			/* console.log(sendData); */
-			/* if(payNoList.length == 1) {
-				var sum = 0;
-				var inputValue = Number(removeCommas($("#callAmount").val()));
-				
-				for(var i = 0; i < amount.length; i++) {
-					sum += amount[i];
-				}
-				if((sum + inputValue) != Number($("#buyAmount").val())) {
-					alert("회차별 금액 합계가 전체 매입금과 같아야 합니다.");	
-					$("#callAmount").focus();
-				} else {
-					fn_req(sendData);
-				}
-			} else {
-				fn_req(sendData);
-			} */
 			
-			$.ajax({
-				url:"/project/request/update/paymentInfo.do",
-			    dataType: 'json', 
-			    type:"POST",  
-			    data: sendData,
-			    async:false,
-			 	contentType: "application/json; charset=UTF-8", 
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader("AJAX", true);
-					//xhr.setRequestHeader(header, token);
-					
-				},
-			    success:function(response){	
-			    	if(response!= null && response.successYN == 'Y') {
-			    		alert('완료되었습니다.');
-			    		location.reload();
-			    	}
-			    },
-				error: function(request, status, error) {
-					if(request.status != '0') {
-						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-					}
-				} 
-			});        
+			var sum = 0;
+			var amount = [];
+			
+			$("input[id*=turnAmount]").each(function() {
+				if($("#paymentTurn").val() == $(this).attr('id').replace("turnAmount", "")) {
+					$(this).remove();
+				} else {
+					amount.push(Number($(this).val()));
+				}
+			});
+			
+			for(var i = 0; i < amount.length; i++) {
+				sum += amount[i];
+			}
+			
+			if(Number(removeCommas($("#callAmount").val())) > Number(removeCommas($("#buyAmount", parent.document).val()))) {
+				alert("회차 금액이 전체 매입금보다 큽니다.");	
+				$("#callAmount").focus();
+			} else if(sum + Number(removeCommas($("#callAmount").val())) > Number(removeCommas($("#buyAmount", parent.document).val()))) {
+				alert("회차별 금액 합계가 전체 매입금보다 큽니다.");	
+				$("#callAmount").focus();
+			} else {
+				console.log(sendData);
+				$.ajax({
+					url:"/project/request/update/paymentInfo.do",
+				    dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				    async:true,
+				 	contentType: "application/json; charset=UTF-8", 
+				 	beforeSend:function(){
+				        $('.wrap-loading', parent.document).removeClass('dpNone');
+				    },
+	
+				   	complete:function(){
+				        $('.wrap-loading', parent.document).addClass('dpNone');
+				    }, 
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		if($("#paymentStatusCd").val() == "PYST2000" && kind == "req") {
+				    			alert($("#paymentTurn").val() + '회차 지급이 요청되었습니다.');
+				    		} else {
+				    			alert('지급 정보가 수정되었습니다.');
+				    		}
+				    		location.reload();
+				    	} else {
+				    		if($("#paymentStatusCd").val() == "PYST2000") {
+				    			alert($("#paymentTurn").val() + '회차 지급이 요청이 실패하였습니다.');
+				    		} else {
+				    			alert('지급 정보 수정이 실패하였습니다.');
+				    		}
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});    
+			}
 		}
 		
 		function fn_setBtn(obj, ablable) { 
@@ -459,58 +473,84 @@
 			<input type="hidden" name="paymentStatusCd" id="paymentStatusCd" value="<c:out value="${paymentList[0].paymentStatusCd}"/>" />
 			<input type="hidden" id="donePaymentAmount" name="donePaymentAmount" value="" />
 			<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="" />
+			<input type="hidden" name="pjKey" value="${mainKey }" />
+			<input type="hidden" name="pjNm" value="${resultList[0].pjNm }" />
+			<input type="hidden" name="pjSaleEmpKey" value="${resultList[0].pjSaleEmpKey }" />
+			<input type="hidden" name="link" id="link" value="" />
 			<table class="dtl" id="info0">
-				<tr>
-					<td>회차</td>
-					<td>
-						<select name="paymentTurn" id="paymentTurn" style="width:80px;">
-							<c:forEach var="result" items="${paymentList }" varStatus="status">
-								<option value="${result.paymentTurn }"><c:out value="${result.paymentTurn}" />회차</option>
-							</c:forEach>
-						</select> 
-					</td>
-				</tr>
-				<tr>
-					<td><label>*</label>금액</td>
-					<td>
-						<input type="text" name="callAmount" id="callAmount" value="<c:out value="${displayUtil.commaStr(paymentList[0].callAmount)}"/>" amountOnly required/>
-						<input type='checkbox' class='tCheck' id='callAmountTaxYn' name="callAmountTaxYn" value='<c:choose><c:when test="${paymentList[0].callAmountTaxYn== 'Y'}">Y</c:when><c:otherwise>N</c:otherwise></c:choose>' <c:if test="${paymentList[0].callAmountTaxYn== 'Y'}">checked</c:if>/>
-						<label for='callAmountTaxYn' class='cursorP tclabel'></label>
-						<span class="cbspan">부가세 포함</span>
-					</td>
-				</tr>
-				<tr>
-					<td><label>*</label>요청지급일</td>	
-					<td>
-						<input type="text"  class="calendar" name="paymentCallDt" id="paymentCallDt" value="<c:out value="${displayUtil.displayDate(paymentList[0].paymentCallDt)}"/>" required/>
-					</td>
-				</tr>
-				<tr>
-					<td>계산서정보</td>
-					<td><button type="button"><img src="<c:url value='/images/btn_view.png'/>" /></button></td>
-				</tr>
-				<tr>
-					<td>지급계좌</td>
-					<td>
-						<select name="paymentAccSeqFkKey" id="paymentAccSeqFkKey">
-							<c:forEach var="result" items="${depositList }" varStatus="status">
-								<option <c:if test="${paymentList[0].paymentAccSeqFkKey == result.acAdSeq }">selected</c:if> value="${result.acAdSeq }"><c:out value="${result.acBkno}" /> / <c:out value="${result.acBankNm}" /> / <c:out value="${result.acAcholder}" /></option>
-							</c:forEach>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td>요청사항</td>
-					<td><textarea name="remark" id="remark"><c:out value="${paymentList[0].remark}"/></textarea></td>
-				</tr>
+				<c:choose>
+					<c:when test="${!empty paymentList }">
+						<tr>
+							<td>회차</td>
+							<td>
+								<select name="paymentTurn" id="paymentTurn" style="width:80px;">
+									<c:forEach var="result" items="${paymentList }" varStatus="status">
+										<option value="${result.paymentTurn }"><c:out value="${result.paymentTurn}" />회차</option>
+									</c:forEach>
+								</select> 
+							</td>
+						</tr>
+						<tr>
+							<td><label>*</label>금액</td>
+							<td>
+								<input type="text" name="callAmount" id="callAmount" value="<c:out value="${displayUtil.commaStr(paymentList[0].callAmount)}"/>" amountOnly required/>
+								<c:forEach var="result" items="${paymentList }" varStatus="status">
+									<input type="hidden" id="turnAmount${status.count }" value="${result.callAmount }" />
+								</c:forEach>
+								<input type='checkbox' class='tCheck' id='callAmountTaxYn' name="callAmountTaxYn" value='<c:choose><c:when test="${paymentList[0].callAmountTaxYn== 'Y'}">Y</c:when><c:otherwise>N</c:otherwise></c:choose>' <c:if test="${paymentList[0].callAmountTaxYn== 'Y'}">checked</c:if>/>
+								<label for='callAmountTaxYn' class='cursorP tclabel'></label>
+								<span class="cbspan">부가세 포함</span>
+							</td>
+						</tr>
+						<tr>
+							<td><label>*</label>요청지급일</td>	
+							<td>
+								<input type="text"  class="calendar" name="paymentCallDt" id="paymentCallDt" value="<c:out value="${displayUtil.displayDate(paymentList[0].paymentCallDt)}"/>" required/>
+							</td>
+						</tr>
+						<tr>
+							<td>계산서정보</td>
+							<td>
+								<button type="button"><img src="<c:url value='/images/btn_view.png'/>" /></button>
+								<input type="hidden" name="billFkKey" value="${result.billFkKey }" />
+							</td>
+						</tr>
+						<tr>
+							<td>지급계좌</td>
+							<td>
+								<select name="paymentAccSeqFkKey" id="paymentAccSeqFkKey">
+									<c:forEach var="result" items="${depositList }" varStatus="status">
+										<option <c:if test="${paymentList[0].paymentAccSeqFkKey == result.acAdSeq }">selected</c:if> value="${result.acAdSeq }"><c:out value="${result.acBkno}" /> / <c:out value="${result.acBankNm}" /> / <c:out value="${result.acAcholder}" /></option>
+									</c:forEach>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>요청사항</td>
+							<td><textarea name="remark" id="remark"><c:out value="${paymentList[0].remark}"/></textarea></td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td style="width: 956px;">요청할 회차 정보가 없습니다.</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
 			</table>
 		</form>
 	</div>
 	<div class="btnWrap rt">
 		<div class="floatR">
-			<button type="button" id="req" value="매입금 지급 요청" onclick="fn_chkVali('req');" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST2000' }">cursorP</c:if>" src="<c:url value='/images/btn_req_purchase.png'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
-			<button type="button" id="mod" value="수정" onclick="fn_chkVali('mod');" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_mod.png'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
-			<button type="button" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check');"style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+			<c:choose>
+				<c:when test="${!empty paymentList }">
+					<button type="button" id="req" value="매입금 지급 요청" onclick="fn_chkVali('req');" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST2000' }">cursorP</c:if>" src="<c:url value='/images/btn_req_purchase.png'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+					<button type="button" id="mod" value="수정" onclick="fn_chkVali('mod');" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_mod.png'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+					<button type="button" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check');"style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+				</c:when>
+				<c:otherwise>
+					
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</div> 
 </body>

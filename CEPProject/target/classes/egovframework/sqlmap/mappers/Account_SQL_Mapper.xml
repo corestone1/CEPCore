@@ -124,7 +124,7 @@
 		
 	</select>
 	
-	<insert id="insertAccountInfo" parameterType="java.util.Map">
+	<insert id="insertAccountInfo" parameterType="com.cep.mngCommon.account.vo.AccountVO">
 		
 		INSERT INTO CMM_ACCOUNT_TB (
 			AC_KEY
@@ -143,7 +143,7 @@
 			, DELETE_YN
 		) VALUES (
 			#{acKey}
-			, #{acBusiNum}
+			, #{acKey}
 			, #{acSalesYn}
 			, #{acBuyYn}
 			, #{acNm}
@@ -157,5 +157,67 @@
 			, #{regEmpKey}
 			, 'N'
 		)
+	</insert>
+	
+	<insert id="insertAcDirectorInfo" parameterType="java.util.Map">
+		INSERT INTO CMM_ACCOUNT_DIRECTOR_TB (
+			AC_KEY
+			, AC_DIRECTOR_NM
+			, AC_DIRECTOR_MB_NUM
+			, AC_DIRECTOR_TEL_NUM
+			, AC_DIRECTOR_EMAIL
+			, AC_DIRECTOR_DEPT_NM
+			, AC_DIRECTOR_POSITION_NM
+			, AC_DIRECTOR_DESC
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES
+		<foreach collection="accountDirectorVO" item="item" separator=",">
+			(
+				#{acKey}
+				, #{item.acDirectorNm}
+				, #{item.acDirectorMbNum}
+				, #{item.acDirectorTelNum}
+				, #{item.acDirectorEmail}
+				, #{item.acDirectorDeptNm}
+				, #{item.acDirectorPositionNm}
+				, #{item.acDirectorDesc}
+				, DATE_FORMAT(NOW(), '%Y%m%d')
+				, DATE_FORMAT(NOW(), '%H%i%s')
+				, #{regEmpKey}
+				, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<insert id="insertAcDepositInfo" parameterType="java.util.Map">
+		INSERT INTO CMM_ACCOUNT_DEPOSIT_TB (
+			AC_KEY
+			, AC_AD_SEQ
+			, AC_BANK_NM
+			, AC_BKNO
+			, AC_ACHOLDER
+			, AC_REP_BKNO_YN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES
+		<foreach collection="accountDepositVO" item="item" separator=",">
+			(
+				#{acKey}
+				, (SELECT (SELECT COUNT(*) FROM CMM_ACCOUNT_DEPOSIT_TB CAD WHERE CAD.AC_KEY=#{acKey}) + 1)
+				, #{item.acBankNm}
+				, #{item.acBkno}
+				, #{item.acAcholder}
+				, #{item.acRepBknoYn}
+				, DATE_FORMAT(NOW(), '%Y%m%d')
+				, DATE_FORMAT(NOW(), '%H%i%s')
+				, #{regEmpKey}
+				, 'N'
+			)
+		</foreach>
 	</insert>
 </mapper>

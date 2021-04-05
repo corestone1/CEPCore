@@ -26,6 +26,11 @@ public class ProjectBiddingVO extends ProjectVO implements Serializable {
 	private String bdProposalYn;
 	private List<ProjectBiddingFileVO> biddingFileVOList;
 	
+	//ynk
+	private int bdGbBdAmount;
+	private int bdGbDay;
+	private int bdGbRate;
+	
 	public String getBdKey() {
 		return bdKey;
 	}
@@ -122,5 +127,42 @@ public class ProjectBiddingVO extends ProjectVO implements Serializable {
 	public void setBiddingFileVOList(List<ProjectBiddingFileVO> biddingFileVOList) {
 		this.biddingFileVOList = biddingFileVOList;
 	}
+	/**
+	 * @return the bdGbBdAmount
+	 */
+	public int getBdGbBdAmount() {
+		return bdGbBdAmount;
+	}
+	/**
+	 * @param bdGbBdAmount the bdGbBdAmount to set
+	 */
+	public void setBdGbBdAmount(int bdGbBdAmount) {
+		this.bdGbBdAmount = bdGbBdAmount;
+	}
+	/**
+	 * @return the bdGbDay
+	 */
+	public int getBdGbDay() {
+		return bdGbDay;
+	}
+	/**
+	 * @param bdGbDay the bdGbDay to set
+	 */
+	public void setBdGbDay(int bdGbDay) {
+		this.bdGbDay = bdGbDay;
+	}
+	/**
+	 * @return the bdGbRate
+	 */
+	public int getBdGbRate() {
+		return bdGbRate;
+	}
+	/**
+	 * @param bdGbRate the bdGbRate to set
+	 */
+	public void setBdGbRate(int bdGbRate) {
+		this.bdGbRate = bdGbRate;
+	}
+	
 	
 }

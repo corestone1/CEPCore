@@ -145,28 +145,23 @@
 	
 	function fn_ProductSelect(id, nm)
 	{
-		var pmKeyDomId = '${pmKeyDomId}';
-		var pmNmDomId  = '${pmNmDomId}';
+		var lstReturnType = '${returnType}';
+		var pmKeyDomId    = '${returnKey}';
+		var pmNmDomId     = '${returnNm}';
 		
-		//var parentId = getParameter("parentNm");
-		
-		alert(pmKeyDomId + ' : ID : ' + id + '\n' 
-			+ pmNmDomId  + ' : NM : ' + nm);
-		/* 
+		console.log(pmKeyDomId + ' : ID : ' + id + '\n'  + pmNmDomId  + ' : NM : ' + nm);
+
 		try
 		{
-		
-			opener.document.getElementById(""+parentId+"").value  = nm;
-		}
-		catch(e)
-		{
-			alert(e);
-		}
-		 */
-		try
-		{
-			opener.document.getElementById(pmKeyDomId).value = id;
-			opener.document.getElementById(pmNmDomId).value  = nm;
+			if(lstReturnType == 'O')
+			{
+				opener.document.getElementById(pmKeyDomId).value = id;
+				opener.document.getElementById(pmNmDomId).value  = nm;	
+			}
+			else if(lstReturnType == "F")
+			{
+				window.opener.fnSetProductInfo(id, no);
+			}
 		}
 		catch(e)
 		{
@@ -174,8 +169,6 @@
 		}
 	
 		close();
-	   /*  var dialogLayer = $('#dialogId').val();
-	    $("#" +dialogLayer).dialog('close'); */
 	}
 	
 	function fn_searchList()

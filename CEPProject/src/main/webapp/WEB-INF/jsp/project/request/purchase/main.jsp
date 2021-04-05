@@ -437,5 +437,8 @@
 			</div>
 		</div>	
 	</div>
+	<div class="wrap-loading dpNone">
+    	<div><img src="<c:url value='/images/ajax_loader.gif'/>" /></div>
+	</div> 
 </body>
 </html>

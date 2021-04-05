@@ -97,6 +97,9 @@ public class SampleDefaultVO implements Serializable {
 	
 	private String deleteYn;
 	
+	// 메일 발송할 때 필요한 링크
+	private String link;
+	
 	public int getFirstIndex() {
 		return firstIndex;
 	}
@@ -246,6 +249,14 @@ public class SampleDefaultVO implements Serializable {
 
 	public void setDeleteYn(String deleteYn) {
 		this.deleteYn = deleteYn;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 	@Override

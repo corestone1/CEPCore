@@ -328,7 +328,8 @@
 			var url = '/project/write/contractInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210091"
+				/* "pjKey":"PJ210091" */
+				"pjKey":"PJ210080"
 			}
 			var button = new Array;
 			button = [];
@@ -374,7 +375,7 @@
 			var url = '/project/write/guarantyInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210075"
+				"pjKey":"PJ210080"
 			}
 			var button = new Array;
 			button = [];
@@ -408,7 +409,7 @@
 		
 		function tmp7() {
 			form = document.listForm;
-			form.pjKey.value = "PJ210065";
+			form.pjKey.value = "PJ210092";
 			form.action = "<c:url value='/project/viewApproval.do'/>";
 			form.submit(); 
 			/* location.href="http://localhost:8080/project/viewApproval.do?pjKey=PJ210065"; */
@@ -419,6 +420,17 @@
 			var dialogId = 'program_layer';
 			var varParam = {
 				"pjKey":"PJ210091"
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		function tmp9() {
+			var url = '/project/write/basicInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":"PJ210081"
 			}
 			var button = new Array;
 			button = [];
@@ -448,6 +460,7 @@
 						<div class="addBtn floatL cursorP" onclick="tmp6();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">실주정보</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp7();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">판매품의서</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp8();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">입찰정보</label></div>
+						<div class="addBtn floatL cursorP" onclick="tmp9();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">기본정보</label></div>
 					</div>
 					<div class="floatR">
 						<input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value=""/>

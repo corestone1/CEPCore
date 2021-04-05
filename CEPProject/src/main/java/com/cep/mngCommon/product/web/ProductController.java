@@ -90,13 +90,16 @@ public class ProductController {
 		logger.debug("searchVO.getProductMake()     :: {}", searchVO.getProductMake());
 		logger.debug("searchVO.getProductName()     :: {}", searchVO.getProductName());
 		
-		logger.debug("searchVO.getPmKeyDomId()      :: {}", searchVO.getPmKeyDomId());
-		logger.debug("searchVO.getPmNmDomId()       :: {}", searchVO.getPmNmDomId());
+		logger.debug("searchVO.getReturnType()    :: {}", searchVO.getReturnType());
+		logger.debug("searchVO.getReturnKey()     :: {}", searchVO.getReturnKey());
+		logger.debug("searchVO.getReturnNm()      :: {}", searchVO.getReturnNm());
+		
 		
 		List<ProductVO> lltProduct = service.selectProductList(searchVO);
 		
-		model.put("pmKeyDomId", searchVO.getPmKeyDomId());
-		model.put("pmNmDomId",  searchVO.getPmNmDomId());
+		model.put("returnType", searchVO.getReturnType());
+		model.put("returnKey",  searchVO.getReturnKey());
+		model.put("returnNm",   searchVO.getReturnNm());
 		
 		model.put("productList", lltProduct);
 		

@@ -11,8 +11,10 @@
 
 		SELECT COUNT(*)
 		FROM CMM_EMPLOYEE_TB
-		WHERE EMP_KEY=#{empKey}		
-		AND EMP_PW=#{empPw}
+		WHERE EMP_KEY=#{empKey}	
+		<if test="empPw != null and empPw != ''">
+			AND EMP_PW=#{empPw}		
+		</if>	
 
 	</select>
 	

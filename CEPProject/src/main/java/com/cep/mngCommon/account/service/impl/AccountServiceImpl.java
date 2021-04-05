@@ -55,6 +55,21 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
+	public Map<String, Object> selectAcBusiNum(AccountVO accountVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			int result = mapper.isExist(accountVO);
+			returnMap.put("acCount", result);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
+	}
+	
+	@Override
 	public AccountVO selectAccountDetail(AccountSearchVO searchVO) throws Exception {
 		return mapper.selectAccountDetail(searchVO);
 	}
@@ -77,6 +92,9 @@ public class AccountServiceImpl implements AccountService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+		
+		accountVO.setRegEmpKey(session.get("empKey"));
+		
 		List<AccountDirectorVO> insertDirecList = new ArrayList<>();
 		List<AccountDirectorVO> updateDirecList = new ArrayList<>();
 		List<AccountDepositVO> insertDepoList = new ArrayList<>();
@@ -87,8 +105,10 @@ public class AccountServiceImpl implements AccountService {
 				// 수정
 			} else {
 				mapper.insertAccountInfo(accountVO);
-				writeAcDirectorInfo(accountVO.getAccountDirectorVO());
-				writeAcDepositInfo(accountVO.getAccountDepositVO());
+				writeAcDirectorInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), accountVO.getAccountDirectorVO());
+				if(accountVO.getAccountDepositVO().size() != 0) {
+					writeAcDepositInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), accountVO.getAccountDepositVO());
+				}
 			}
 			
 			returnMap.put("successYN", "Y");
@@ -100,11 +120,13 @@ public class AccountServiceImpl implements AccountService {
 		return returnMap;
 	}
 	
-	private void writeAcDirectorInfo(List<?> insertDirecList) throws Exception {
+	private void writeAcDirectorInfo(String acKey, String regEmpKey, List<?> insertDirecList) throws Exception {
 		Map<String, Object> insertParam = null;
 		try {
 			insertParam = new Hashtable<>();
 			
+			insertParam.put("acKey", acKey);
+			insertParam.put("regEmpKey", regEmpKey);
 			insertParam.put("accountDirectorVO", insertDirecList);
 			mapper.insertAcDirectorInfo(insertParam);
 		} catch(Exception e) {
@@ -112,11 +134,13 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 	
-	private void writeAcDepositInfo(List<?> insertDepoList) throws Exception {
+	private void writeAcDepositInfo(String acKey, String regEmpKey, List<?> insertDepoList) throws Exception {
 		Map<String, Object> insertParam = null;
 		try {
 			insertParam = new Hashtable<>();
 			
+			insertParam.put("acKey", acKey);
+			insertParam.put("regEmpKey", regEmpKey);
 			insertParam.put("accountDepositVO", insertDepoList);
 			mapper.insertAcDepositInfo(insertParam);
 		} catch(Exception e) {

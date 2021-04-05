@@ -39,8 +39,6 @@ public class FileMngController {
 	public ModelAndView downloadFile(@RequestParam Map<String, Object> param, HttpServletRequest request) throws Exception{
 		
 		FileVO vo = new FileVO();
-		System.out.println(param.get("fileKey"));
-		System.out.println(param.get("fileOrgNm"));
 		int x = Integer.parseInt((param.get("fileKey")).toString());
 		vo.setFileKey(x);
 		FileVO fileVO = service.selectFile(vo);

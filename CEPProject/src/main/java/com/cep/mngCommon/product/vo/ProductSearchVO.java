@@ -26,8 +26,11 @@ public class ProductSearchVO implements Serializable {
 	private String productMake;     //제조사
 	private String productName;     //제품명
 	
-	private String pmKeyDomId; //Search Popup Return값을 넘기는 객체의 ID(제품키)
-	private String pmNmDomId;  //Search Popup Return값을 넘기는 객체의 ID(제품명)
+	
+	private String returnType;//F : function 호출, O : 부모창 DOM객체에 값입력
+	private String returnKey; //Search Popup Return값을 넘기는 객체의 ID(제품키)
+	private String returnNm;  //Search Popup Return값을 넘기는 객체의 ID(제품명)
+	
 	
 	public String getProductDivision() {
 		return productDivision;
@@ -56,29 +59,42 @@ public class ProductSearchVO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
 	/**
-	 * @return the pmKeyDomId
+	 * @return the returnType
 	 */
-	public String getPmKeyDomId() {
-		return pmKeyDomId;
+	public String getReturnType() {
+		return returnType;
 	}
 	/**
-	 * @param pmKeyDomId the pmKeyDomId to set
+	 * @param returnType the returnType to set
 	 */
-	public void setPmKeyDomId(String pmKeyDomId) {
-		this.pmKeyDomId = pmKeyDomId;
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
 	}
 	/**
-	 * @return the pmNmDomId
+	 * @return the returnKey
 	 */
-	public String getPmNmDomId() {
-		return pmNmDomId;
+	public String getReturnKey() {
+		return returnKey;
 	}
 	/**
-	 * @param pmNmDomId the pmNmDomId to set
+	 * @param returnKey the returnKey to set
 	 */
-	public void setPmNmDomId(String pmNmDomId) {
-		this.pmNmDomId = pmNmDomId;
+	public void setReturnKey(String returnKey) {
+		this.returnKey = returnKey;
+	}
+	/**
+	 * @return the returnNm
+	 */
+	public String getReturnNm() {
+		return returnNm;
+	}
+	/**
+	 * @param returnNm the returnNm to set
+	 */
+	public void setReturnNm(String returnNm) {
+		this.returnNm = returnNm;
 	}
 	
 	

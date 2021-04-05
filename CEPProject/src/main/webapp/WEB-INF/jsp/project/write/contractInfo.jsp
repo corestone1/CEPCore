@@ -244,9 +244,8 @@
 		}
 		
 		var countSave = 0;
-		var ctKeyList = "";
-		var salesKeyList = [];
-		var successYn = 'N'; 
+		/* var ctKeyList = "";
+		var salesKeyList = []; */
 		
 		function fn_save() {
 			var sum = null;

@@ -23,7 +23,6 @@ import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
-import com.cmm.vo.PaymentVO;
 
 
 @Controller
@@ -123,8 +122,8 @@ public class ProjectRequestController {
 		String acKey = "";
 		
 		try {
-			/*resultList = service.selectProjectDetail(key);
-			model.addAttribute("resultList", resultList);*/
+			resultList = service.selectProjectDetail(key);
+			model.addAttribute("resultList", resultList);
 			
 			orderVO = service.selectOrderDetail(orderKey);
 			model.addAttribute("orderVO", orderVO);
@@ -205,6 +204,7 @@ public class ProjectRequestController {
 			returnMap.put("depositList", depositList);
 			returnMap.put("successYN", "Y");
 		} catch(Exception e) {
+			returnMap.put("successYN", "N");
 			throw new Exception(e);
 		}
 		
@@ -250,7 +250,7 @@ public class ProjectRequestController {
 	 */
 	@RequestMapping(value="/update/paymentInfo.do", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, @RequestBody PaymentVO paymentVO) throws Exception {
+	public Map<String, Object> updatePaymentInfo(HttpServletRequest request, @RequestBody ProjectPaymentVO paymentVO) throws Exception {
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap = reqService.updatePaymentInfo(request, paymentVO);

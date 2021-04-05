@@ -50,7 +50,7 @@
     </bean>
 
     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="defaultErrorView" value="cmmn/egovError"/>
+        <property name="defaultErrorView" value="cmm/error/egovError"/>
         <property name="exceptionMappings">
             <props>
                 <prop key="org.springframework.dao.DataAccessException">cmmn/dataAccessFailure</prop>

@@ -18,8 +18,11 @@ import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cep.main.vo.EmpVO;
+import com.cmm.util.CepMailMngUtil;
+
 @Alias("mailVO")
-public class MailVO extends ComDefaultVO implements Serializable {
+public class MailVO extends EmpVO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -28,6 +31,7 @@ public class MailVO extends ComDefaultVO implements Serializable {
 	private String content;
 	private String toEmail;
 	private String successYn;
+	private String link;
 	
 	public String getFromEmail() {
 		return fromEmail;
@@ -59,4 +63,11 @@ public class MailVO extends ComDefaultVO implements Serializable {
 	public void setSuccessYn(String successYn) {
 		this.successYn = successYn;
 	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	
 }

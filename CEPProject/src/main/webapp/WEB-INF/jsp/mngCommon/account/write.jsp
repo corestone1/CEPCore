@@ -78,6 +78,10 @@
 			color: red;
 			vertical-align: middle;
       	}
+      	.director_middle thead th span, .deposit_middle thead th span {
+      		font-size: 13px;
+    		font-weight: 200;
+      	}
 		.popContainer .contents select {
 			width: 70px;
 			height: 38px;
@@ -96,6 +100,7 @@
 		.popContainer .contents tbody img {
 			width: 57px;
     		margin-left: 10px;
+    		margin-bottom: 3px;
 		}
 		
 		/* 소타이틀(기본정보, 발주정보, 제품정보) 관련 css*/
@@ -174,8 +179,6 @@
 		.director_middle table tbody td:nth-child(7) {
 			width: 80px;
 		}
-		
-		
 		.deposit_middle table thead th:first-child,
 		.deposit_middle table tbody td:first-child {
 			width: 255px; 
@@ -201,39 +204,170 @@
 		.popContainer .contents .btnWrap {
 			margin : 20px 30px 15px 48px;
 		}
+		.popContainer .contents .btnSave {
+			width: auto;
+		}
 	</style>
-	
-	
 	<script>
-				
-		$(document).ready(function() {		
-
+		$(document).ready(function() {
+			if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />');
+			}
 		});
+		
+		$(document).on("keyup", ".phoneNumber", function() { 
+			$(this).val($(this).val().replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")); 
+		});
+		
+		jQuery.fn.serializeObject = function() { 
+			var obj = null; 
+			var objArry = null;
+				try { 
+					if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) {
+						var arr = this.serializeArray(); 
+						if(arr){ 
+							obj = {};
+							objArry = new Array();
+							jQuery.each(arr, function() {
+							
+							if((this.name).includes("acRepBknoYn")) {
+								this.name = this.name.replace(/[0-9]/g, "");
+							}
+							
+							obj[this.name] = this.value;
+							
+							/*
+							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
+							* 반복되는 필드값에서 아래부분만 변경사항 있음.
+							*/
+							if('acEnd' == this.name){
+								objArry.push(obj);
+								obj = {};
+							}
+						}); 	              
+					} 
+				} 
+			} catch(e) { 
+				alert(e.message); 
+			} finally {} 
+			return objArry; 
+		}
+		
+		function isExist(obj) {
+			obj.value = Number(obj.value) + 1;
+			
+			var object = {};
+			var formData = $("#basicForm").serializeArray();
+			
+			for(var i = 0; i < formData.length; i++) {
+				object[formData[i]['name']] = formData[i]['value'];
+			}
+			
+			var sendData = JSON.stringify(object);
+			
+			if($("#e_acKey").val().length == 0) {
+				alert('사업자 번호를 입력해주세요.');
+				$("#e_acKey").focus();
+			} else {
+				if(!fn_checkCorporateRegistrationNumber($("#e_acKey").val())){
+				   alert("유효한 사업자번호를 입력하세요.");
+				   $("#e_acKey").focus();
+				   $("#e_acKey").val("");
+				} else {
+					$.ajax({
+						url: "/mngCommon/account/isExist.do",
+						dataType: "json",
+						type: "POST",
+						data: sendData,
+					 	contentType: "application/json; charset=UTF-8", 
+						beforeSend: function(xhr) {
+							xhr.setRequestHeader("AJAX", true);
+							//xhr.setRequestHeader(header, token);
+							
+						},
+					    success:function(response){	
+					    	if(response.successYN == 'Y') {
+					    		if(response.acCount == 0) {
+					    			alert('사용 가능한 사업자 번호 입니다.');
+					    			$("#e_acKey").focus();
+					    		} else {
+					    			alert('이미 존재하는 거래처 입니다.');
+					    			$("#e_acKey").val('');
+					    			$("#chkExist").val(0);
+					    		}
+					    	}
+					    }, 
+					    error: function(request, status, error) {
+							if(request.status != '0') {
+								alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+							}
+						} 
+					}); 
+				}
+			}
+		}
+		
+		// 사업자 번호 정규식
+		function fn_checkCorporateRegistrationNumber(value) {
+			/* var valueMap = value.replace(/-/gi, '').split('').map(function(item) {
+				return parseInt(item, 10);
+			});
+			
+			if(valueMap.length == 10) {
+				var multiply = new Array(1, 3, 7, 1, 3, 7, 1, 3, 5);
+				var checkSum = 0;
+				
+				for(var i = 0; i < multiply.length; i++) {
+					checkSum += multiply[i] * valueMap[i];
+				}
+				
+				checkSum += parseInt((multiply[8] * valueMap[8]) / 10, 10);
+				return Math.floor(valueMap[9]) == (10 - (checkSum % 10));
+			}
+			
+			return false; */
+			
+			return true;
+		}
+		
+		// 이름 정규식
+		function fn_checkName(value) {
+			var regName = /^[가-힣]{2,4}$/;
+			if(!regName.test(value)) {
+				return false;
+			}
+			return true;
+		}
+		
+		var directorIndex = Number($("#direcIndex").val()) + 1;
 		
 		// 담당자 정보 추가
 		function fn_addDirector() {
 			var directorRow = document.getElementById("director_tbody").insertRow();
 			
 			var acDirectorNmCell = directorRow.insertCell(0);
-			acDirectorNmCell.innerHTML='<input type="text" id="acDirectorNm" name="acDirectorNm" style="width: 60px" autocomplete="off" required/>';
+			acDirectorNmCell.innerHTML='<input type="text" id="acDirectorNm'+directorIndex+'" name="acDirectorNm" style="width: 60px" autocomplete="off" required/>';
 			
 			var acDirectorDeptNm = directorRow.insertCell(1);
-			acDirectorDeptNm.innerHTML ='<input type="text" id="acDirectorDeptNm" name="acDirectorDeptNm" style="width: 96px" autocomplete="off"/>';
+			acDirectorDeptNm.innerHTML ='<input type="text" id="acDirectorDeptNm'+directorIndex+'" name="acDirectorDeptNm" style="width: 96px" autocomplete="off"/>';
 			
 			var acDirectorPositionNm = directorRow.insertCell(2);
-			acDirectorPositionNm.innerHTML ='<input type="text" id="acDirectorPositionNm" name="acDirectorPositionNm" style="width: 55px" autocomplete="off"/>';
+			acDirectorPositionNm.innerHTML ='<input type="text" id="acDirectorPositionNm'+directorIndex+'" name="acDirectorPositionNm" style="width: 55px" autocomplete="off"/>';
 			
 			var acDirectorMbNum = directorRow.insertCell(3);
-			acDirectorMbNum.innerHTML ='<input type="text" id="acDirectorMbNum" name="acDirectorMbNum" style="width: 117px" autocomplete="off" required/>';
+			acDirectorMbNum.innerHTML ='<input type="text" class="phoneNumber" id="acDirectorTelNum'+directorIndex+'" name="acDirectorTelNum" style="width: 117px" autocomplete="off" required numberOnly/>';
 			
 			var acDirectorEmail = directorRow.insertCell(4);
-			acDirectorEmail.innerHTML ='<input type="text" id="acDirectorEmail" name="acDirectorEmail" style="width: 193px" autocomplete="off"/>';
+			acDirectorEmail.innerHTML ='<input type="text" id="acDirectorEmail'+directorIndex+'" name="acDirectorEmail" style="width: 193px" autocomplete="off"/>';
 			
 			var acDirectorDesc = directorRow.insertCell(5);
-			acDirectorDesc.innerHTML ='<input type="text" id="acDirectorDesc" name="acDirectorDesc" style="width: 264px" autocomplete="off"/>';
+			acDirectorDesc.innerHTML ='<input type="text" id="acDirectorDesc'+directorIndex+'" name="acDirectorDesc" style="width: 264px" autocomplete="off"/><input type="hidden" name="acEnd" />';
 			
 			var deleteBtn = directorRow.insertCell(6);
 			deleteBtn.innerHTML ='<img src="/images/btn_del_gray.png" onclick="fn_deleteDirector(this);"/>';
+			
+			directorIndex++;
 		}
 		
 		//담당자 정보 삭제
@@ -245,92 +379,131 @@
 			}
 		}
 		
+		var depoIndex = Number($("#depoIndex").val()) + 1;
+		
 		//계좌정보 추가
 		function fn_addDeposit() {
-			var acRepBknoYnCnt = $("#acRepBknoYnCnt").val()*1+1;
-			$("#acRepBknoYnCnt").val(acRepBknoYnCnt);
 			var depositRow = document.getElementById("deposit_tbody").insertRow();
 			
 			var acBankNm = depositRow.insertCell(0);
-			acBankNm.innerHTML='<input type="text" id="acBankNm" name="acBankNm" style="width: 230px" autocomplete="off" required/><input type="hidden" id="acAdSeq" name="acAdSeq"/>';
+			acBankNm.innerHTML='<input type="text" id="acBankNm'+depoIndex+'" name="acBankNm" style="width: 230px" autocomplete="off" required/><input type="hidden" id="acAdSeq" name="acAdSeq"/>';
 			
 			var acBkno = depositRow.insertCell(1);
-			acBkno.innerHTML ='<input type="text" id="acBkno" name="acBkno" style="width: 299px" autocomplete="off" required/>';
+			acBkno.innerHTML ='<input type="text" id="acBkno'+depoIndex+'" name="acBkno" style="width: 299px" autocomplete="off" required numberOnly/>';
 			
 			var acAcholder = depositRow.insertCell(2);
-			acAcholder.innerHTML ='<input type="text" id="acAcholder" name="acAcholder" style="width: 212px" autocomplete="off" required/>';
+			acAcholder.innerHTML ='<input type="text" id="acAcholder'+depoIndex+'" name="acAcholder" style="width: 212px" autocomplete="off" required/>';
 			
 			var acRepBknoYn = depositRow.insertCell(3);
-			acRepBknoYn.innerHTML ='<input type="radio" class="tRadio" name="acRepBknoYn" value="Y" id="acRepBknoYn'+acRepBknoYnCnt+'" /><label for="acRepBknoYn'+acRepBknoYnCnt+'" class="cursorP"></label>';
+			acRepBknoYn.innerHTML ='<input type="checkbox" class="tCheck" id="acRepBknoYn'+depoIndex+'" /><label for="acRepBknoYn'+depoIndex+'" class="cursorP"></label><input type="hidden" name="acRepBknoYn'+depoIndex+'" /><input type="hidden" name="acEnd" />';
 			
 			var deleteBtn = depositRow.insertCell(4);
 			deleteBtn.innerHTML ='<img src="/images/btn_del_gray.png" onclick="fn_deleteDeposit(this);"/>';
+			
+			depoIndex++;
 		}
 		
 		function fn_deleteDeposit(obj) {
-			/* if($('#deposit_tbody tr').length>1) {
-				$(obj).closest('tr').remove();
-			} else {
-				alert("계좌 정보는 한개 이상 존재해야 합니다.");
-			} */
 			$(obj).closest('tr').remove();
 		}
 				
 		function fn_chkVali() {
             if ($("#basicForm")[0].checkValidity()){
                //필수값 모두 통과하여 저장 프로세스 호출.
-            	fn_save();
+               if($("#chkExist").val() == 0) {
+            	   alert("사업자 번호 중복체크를 해주세요.");
+            	   $('.contents').scrollTop(0);
+               } else {
+            	   if($("#accountDirectorForm")[0].checkValidity()){
+            	   		if($("#accountDepositForm")[0].checkValidity()) {
+            	   			fn_save();  
+            	   		} else {
+            	   			$("#accountDepositForm")[0].reportValidity(); 
+            	   		}
+            	   } else {
+            		   $("#accountDirectorForm")[0].reportValidity(); 
+            	   }
+               } 
             } else {
-                $("#bdInfoForm")[0].reportValidity();   
+                $("#basicForm")[0].reportValidity();   
             }            
 		}
 		
 		function fn_save() {
-			$.ajax({
-				url: "/mngCommon/insert/accountInfo.do",
-			    dataType: 'json', 
-			    type:"POST",  
-			    data: sendData,
-			 	contentType: "application/json; charset=UTF-8", 
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader("AJAX", true);
-					//xhr.setRequestHeader(header, token);
-					
-				},
-			    success:function(response){	
-			    	if(response!= null && response.successYN == 'Y') {
-			    		if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
-				    		alert("프로젝트 입찰 정보가 등록되었습니다.");
-				    		countSave++;
-			    		} else {
-			    			alert("프로젝트 입찰 정보가 수정되었습니다.");
-			    		}
-			    		
-			    		var url='/project/write/biddingInfo.do';
-		    			var dialogId = 'program_layer';
-		    			var varParam = {
-							"pjKey":$("#pjKey").val()/* ,
-							"turnNo":$("#turnNo").val(),
-							"ctKey":ctKeyList,
-							"salesKey": salesKeyList */
-		    			}
-			   			var button = new Array;
-		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-			    	} else {
-			    		if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
-			    			alert("프로젝트 계약 정보 등록이 실패하였습니다.");
-			    		} else {
-			    			alert("프로젝트 계약 정보 수정이 실패하였습니다.");
-			    		}
-			    	}
-			    },
-				error: function(request, status, error) {
-					if(request.status != '0') {
-						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-					}
-				} 
-			});     
+			$("input[type='checkbox']").each(function() {
+				if($(this).is(":checked") == true) {
+					$("input[name='"+$(this).attr("id")+"']").val('Y');
+				} else {
+					$("input[name='"+$(this).attr("id")+"']").val('N');
+				}
+			});
+			
+			$("input[name='acRepTel']").val($("#acRepTel1").val() + "-" + $("#acRepTel2").val() + "-" + $("#acRepTel3").val());
+			if($("#acRepFax2").val().length != 0 && $("#acRepFax3").val().length != 0) {
+				$("input[name='acRepFax']").val($("#acRepFax1").val() + "-" + $("#acRepFax2").val() + "-" + $("#acRepFax3").val());
+			}
+			
+			var object = {};
+			var formData = $("#basicForm").serializeArray();
+			var directorData = $("#accountDirectorForm").serializeObject();
+			var depositData = $("#accountDepositForm").serializeObject();
+			
+			for(var i = 0; i < formData.length; i++) {
+				object[formData[i]['name']] = formData[i]['value'];
+			}
+			
+			object["accountDirectorVO"] = directorData;
+			object["accountDepositVO"] = depositData;
+			
+			var sendData = JSON.stringify(object);
+			
+			if($('#director_tbody tr').length<1) {
+				alert('담당자 정보는 한 개 이상 존재해야 합니다.');
+			} else {
+				console.log(sendData);	 
+			
+				$.ajax({
+					url: "/mngCommon/account/insert/accountInfo.do",
+				    dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		if($("#e_acKey").val() == null || $("#e_acKey").val() == "" || $("#e_acKey").val().length == 0) {
+					    		alert("거래처 정보가 등록되었습니다.");
+				    		} else {
+				    			alert("거래처 정보가 수정되었습니다.");
+				    		}
+				    		
+				    		var url='/mngCommon/account/write.do';
+			    			var dialogId = 'program_layer';
+			    			var varParam = {
+								"acKey":$("#e_acKey").val()
+			    			}
+				   			var button = new Array;
+			    			button = [];
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:615px');
+				    	} else {
+				    		if($("#e_acKey").val() == null || $("#e_acKey").val() == "" || $("#e_acKey").val().length == 0) {
+				    			alert("거래처 정보 등록이 실패하였습니다.");
+				    		} else {
+				    			alert("거래처 정보 수정이 실패하였습니다.");
+				    		}
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});      
+			}
 		}
 	</script>
 </head>
@@ -349,8 +522,8 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 사업자번호</td>
 							<td class="tdContents">
-								<input type="text" id="acBusiNum" name="acBusiNum" value="${accountVO.acKey }" required/>
-								<img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;"/>
+								<input type="text" id="e_acKey" name="acKey" value="${accountVO.acKey }" required numberOnly/>
+								<button type="button" onclick="isExist(this);" value="0" id="chkExist"><img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;"/></button>
 							</td>
 						</tr>
 						<tr>
@@ -362,15 +535,17 @@
 						<tr>
 							<td class="tdTitle">&nbsp;&nbsp;대표자명</td>
 							<td class="tdContents">
-								<input type="text" id="acCeoNm" name="acCeoNm" value="${accountVO.acCeoNm }" required/>
+								<input type="text" id="acCeoNm" name="acCeoNm" value="${accountVO.acCeoNm }" />
 							</td>
 						</tr>							
 						<tr>
 							<td class="tdTitle">&nbsp;&nbsp;거래처구분</td>
 							<td class="tdContents">
-								<input type="checkbox" class="tCheck" name="acSalesYn" value="Y" <c:if test="${accountVO.acSalesYn eq 'Y'}">checked</c:if> id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;매출거래처
+								<input type="checkbox" class="tCheck" id="acSalesYn" <c:if test="${accountVO.acSalesYn eq 'Y'}">checked</c:if> /><label for="acSalesYn" class="cursorP"></label>&nbsp;&nbsp;매출거래처
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="checkbox" class="tCheck" name="acBuyYn" value="Y" <c:if test="${accountVO.acBuyYn eq 'Y'}">checked</c:if> id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;매입거래처
+								<input type="checkbox" class="tCheck" id="acBuyYn" <c:if test="${accountVO.acBuyYn eq 'Y'}">checked</c:if> /><label for="acBuyYn" class="cursorP"></label>&nbsp;&nbsp;매입거래처
+								<input type="hidden" name="acSalesYn" />
+								<input type="hidden" name="acBuyYn" />
 							</td>
 						</tr>							
 						<tr>
@@ -382,8 +557,9 @@
 									<option value="031" <c:if test="${tel[0] eq '031'}">selected</c:if>>031</option>
 									<option value="010" <c:if test="${tel[0] eq '010'}">selected</c:if>>010</option>
 								</select> -
-								<input type="text" id="acRepTel2" name="acRepTel2" style="width: 53px" value="${tel[1] }" required/> -
-								<input type="text" id="acRepTel3" name="acRepTel3" style="width: 53px" value="${tel[2] }" required/>
+								<input type="text" id="acRepTel2" name="acRepTel2" style="width: 53px" value="${tel[1] }" required numberOnly/> -
+								<input type="text" id="acRepTel3" name="acRepTel3" style="width: 53px" value="${tel[2] }" required numberOnly/>
+								<input type="hidden" name="acRepTel" />
 							</td>
 						</tr>							
 						<tr>
@@ -394,8 +570,9 @@
 									<option value="02" <c:if test="${fax[0] eq '02'}">selected</c:if>>02</option>
 									<option value="031" <c:if test="${fax[0] eq '031'}">selected</c:if>>031</option>
 								</select> -
-								<input type="text" id="acRepFax2" name="acRepFax2" value="${fax[1] }" style="width: 53px"/> -
-								<input type="text" id="acRepFax3" name="acRepFax3" value="${fax[2] }"style="width: 53px"/>
+								<input type="text" id="acRepFax2" name="acRepFax2" value="${fax[1] }" style="width: 53px" numberOnly/> -
+								<input type="text" id="acRepFax3" name="acRepFax3" value="${fax[2] }"style="width: 53px" numberOnly/>
+								<input type="hidden" name="acRepFax" />
 							</td>
 						</tr>													
 						<tr>
@@ -425,7 +602,7 @@
 									<th scope="row"><label>*</label> 이름</th>
 									<th scope="row">부서</th>
 									<th scope="row">직급</th>
-									<th scope="row"><label>*</label> 연락처</th>
+									<th scope="row"><label>*</label> 연락처<span></span></th>
 									<th scope="row">이메일</th>
 									<th scope="row">비고</th>
 									<th scope="row">삭제</th>
@@ -435,35 +612,37 @@
 								<c:forEach var="result" items="${acDirectorList }" varStatus="status">
 									<tr>
 										<td>
-											<input type="text" id="acDirectorNm" name="acDirectorNm" value="${result.acDirectorNm }" style="width: 60px" autocomplete="off" required/>
+											<input type="text" id="acDirectorNm${status.count }" name="acDirectorNm" value="${result.acDirectorNm }" style="width: 60px" autocomplete="off" required/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorDeptNm" name="acDirectorDeptNm" value="${result.acDirectorDeptNm }" style="width: 96px" autocomplete="off"/>
+											<input type="text" id="acDirectorDeptNm${status.count }" name="acDirectorDeptNm" value="${result.acDirectorDeptNm }" style="width: 96px" autocomplete="off"/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorPositionNm" name="acDirectorPositionNm"  value="${result.acDirectorPositionNm }" style="width: 55px" autocomplete="off"/>
+											<input type="text" id="acDirectorPositionNm${status.count }" name="acDirectorPositionNm"  value="${result.acDirectorPositionNm }" style="width: 55px" autocomplete="off"/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorMbNum" name="acDirectorMbNum" value="${result.acDirectorMbNum }" style="width: 117px" autocomplete="off" required/>
+											<input type="text" id="acDirectorTelNum${status.count }" class="phoneNumber" name="acDirectorTelNum" value="${result.acDirectorMbNum }" style="width: 117px" autocomplete="off" required numberOnly/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorEmail" name="acDirectorEmail" value="${result.acDirectorEmail }" style="width: 193px" autocomplete="off"/>
+											<input type="text" id="acDirectorEmail${status.count }" name="acDirectorEmail" value="${result.acDirectorEmail }" style="width: 193px" autocomplete="off"/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorDesc" name="acDirectorDesc" value="${result.acDirectorDesc }" style="width: 264px" autocomplete="off"/>
+											<input type="text" id="acDirectorDesc${status.count }" name="acDirectorDesc" value="${result.acDirectorDesc }" style="width: 264px" autocomplete="off"/>
+											<input type="hidden" name="acEnd" />
 										</td>
 										<td>
 											<img src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteDirector(this);"/>
 										</td>
 									</tr>
+									<c:if test="${status.last}"><c:set var="direcLastIndex" value="${status.last }" /></c:if>
 								</c:forEach>
 							</tbody>
 						</table>
+						<input type="hidden" id="direcIndex" <c:choose><c:when test="${direcLastIndex eq null }">value="0"</c:when><c:otherwise>value="${direcLastIndex }"</c:otherwise></c:choose> />
 					</div>
 				</div>
 			</form>
 			<form action="/" id="accountDepositForm" name="accountDepositForm"  method="post">
-			<input type="hidden" id="acRepBknoYnCnt" name="acRepBknoYnCnt" value="1"/>
 				<div id="pop_listForm">
 					<div class="stitle">
 						계좌 정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addDeposit()"/>
@@ -473,8 +652,8 @@
 							<thead class="ftw400">
 								<tr>
 									<th scope="row"><label>*</label> 은행명</th>
-									<th scope="row"><label>*</label> 계좌번호</th>
-									<th scope="row"><label>*</label> 에금주</th>
+									<th scope="row"><label>*</label> 계좌번호<span>('-'없이 입력)</span></th>
+									<th scope="row"><label>*</label> 예금주</th>
 									<th scope="row"><label>*</label> 주거래 계좌</th>
 									<th scope="row">삭제</th>
 								</tr>
@@ -483,30 +662,34 @@
 								<c:forEach var="result" items="${acDepositList }" varStatus="status">						
 									<tr>
 										<td>
-											<input type="text" id="acBankNm" name="acBankNm" value="${result.acBankNm }" style="width: 230px" autocomplete="off" required/>
-											<input type="hidden" id="acAdSeq" name="acAdSeq"/>
+											<input type="text" id="acBankNm${status.count }" name="acBankNm" value="${result.acBankNm }" style="width: 230px" autocomplete="off" required/>
+											<input type="hidden" id="acAdSeq${status.count }" name="acAdSeq"/>
 										</td>
 										<td>
-											<input type="text" id="acBkno" name="acBkno" value="${result.acBkno }" style="width: 299px" autocomplete="off" required/>
+											<input type="text" id="acBkno${status.count }" name="acBkno" value="${result.acBkno }" style="width: 299px" autocomplete="off" required numberOnly/>
 										</td>
 										<td>
-											<input type="text" id="acAcholder" name="acAcholder" value="${result.acAcholder }" style="width: 212px" autocomplete="off" required/>
+											<input type="text" id="acAcholder${status.count }" name="acAcholder" value="${result.acAcholder }" style="width: 212px" autocomplete="off" required/>
 										</td>
 										<td>
-											<input type="checkbox" class="tCheck" name="acRepBknoYn" <c:if test="${result.acRepBknoYn eq 'Y' }"> value="Y" checked</c:if> id="acRepBknoYn${status.count }" />
-											<label for="acRepBknoYn${status.count } class="cursorP"></label>
+											<input type="checkbox" class="tCheck" <c:if test="${result.acRepBknoYn eq 'Y' }"> value="Y" checked</c:if> id="acRepBknoYn${status.count }" />
+											<label for="acRepBknoYn${status.count }" class="cursorP"></label>
+											<input type="hidden" name="acRepBknoYn${status.count }" />
+											<input type="hidden" name="acEnd" />
 										<td>
 											<img src="/images/btn_del_gray.png" onclick="fn_deleteDeposit(this);"/>
 										</td>
 									</tr> 
+									<c:if test="${status.last}"><c:set var="depoLastIndex" value="${status.last }" /></c:if>
 								</c:forEach>
 							</tbody>
 						</table>
+						<input type="hidden" id="depoIndex" <c:choose><c:when test="${depoLastIndex eq null }">value="0"</c:when><c:otherwise>value="${depoLastIndex }"</c:otherwise></c:choose> />
 					</div>
 				</div>
 			</form>
 			<div class="btnWrap floatR">
-				<div id="m_btn_save" class="floatR" onclick="fn_chkVali();">
+				<div id="m_btn_save" class="floatR btnSave" onclick="fn_chkVali();">
 					<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>
 				<div class="floatN floatC"></div>

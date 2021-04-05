@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.project.service.impl.ProjectDetailMapper">
+
+	<resultMap id="project" type="com.cep.project.vo.ProjectVO">
+		<result property="pjKey" column="PJ_KEY"/>
+		<result property="acKey" column="AC_KEY"/>
+		<result property="acDirectorKey" column="AC_DIRECTOR_KEY" />
+		<result property="pjNm" column="PJ_NM"/>
+		<result property="pjStartDt" column="PJ_START_DT"/>
+		<result property="pjInspectDt" column="PJ_INSPECT_DT" />
+		<result property="pjEndDt" column="PJ_END_DT"/>
+		<result property="pjStatusCd" column="PJ_STATUS_CD"/>
+		<result property="pjSaleEmpKey" column="PJ_SALE_EMP_KEY"/>
+		<result property="pjSupportEmpKey" column="PJ_SUPPORT_EMP_KEY"/>
+		<result property="remark" column="REMARK" />
+		<result property="deleteYn" column="DELETE_YN" />
+		<result property="regEmpKey" column="REG_EMP_KEY" />
+		<result property="spKey" column="SP_KEY" />
+	</resultMap>
+
+	<select id="selectProjectDetail" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+		
+		SELECT   PJ.AC_KEY             AS AC_KEY
+			   , PJ.PJ_KEY             AS PJ_KEY
+			   , PJ.AC_DIRECTOR_KEY    AS AC_DIRECTOR_KEY
+			   , PJ.PJ_NM              AS PJ_NM
+			   , PJ.PJ_START_DT        AS PJ_START_DT
+			   , PJ.PJ_END_DT          AS PJ_END_DT
+			   , PJ.PJ_SALE_EMP_KEY    AS PJ_SALE_EMP_KEY
+			   , PJ.PJ_SUPPORT_EMP_KEY AS PJ_SUPPORT_EMP_KEY
+			   , PJ.REMARK             AS REMARK
+			   , PJ.PJ_INSPECT_DT      AS PJ_INSPECT_DT
+			   , PJ.FINISH_REMARK      AS FINISH_REMARK
+			   , PJ.DELETE_YN          AS DELETE_YN
+			   , PJ.REG_DT             AS REG_DT
+			   , PJ.REG_TM             AS REG_TM
+			   , PJ.REG_EMP_KEY        AS REG_EMP_KEY
+			   , PJ.SP_KEY             AS SP_KEY
+			   , AC.AC_NM              AS AC_NM
+			   , DRT.AC_DIRECTOR_NM          AS AC_DIRECTOR_NM
+			   , DRT.AC_DIRECTOR_MB_NUM      AS AC_DIRECTOR_MB_NUM
+			   , DRT.AC_DIRECTOR_EMAIL       AS AC_DIRECTOR_EMAIL 
+			   , DRT.AC_DIRECTOR_POSITION_NM AS AC_DIRECTOR_POSITION_NM
+			   , (SELECT AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB WHERE AC_DIRECTOR_KEY = PJ.AC_DIRECTOR_KEY)  AS AC_DIRETOR_NM
+			   , EM.EMP_NM             AS PJ_SALE_EMP_NM
+			   , EMS.EMP_NM            AS PJ_SUPPORT_EMP_NM
+		FROM PJ_MAIN_TB PJ
+		JOIN CMM_ACCOUNT_TB  AC  ON PJ.AC_KEY             = AC.AC_KEY
+		JOIN CMM_EMPLOYEE_TB EM  ON PJ.PJ_SALE_EMP_KEY    = EM.EMP_KEY
+		JOIN CMM_EMPLOYEE_TB EMS ON PJ.PJ_SUPPORT_EMP_KEY = EMS.EMP_KEY
+		LEFT JOIN CMM_ACCOUNT_DIRECTOR_TB DRT ON PJ.AC_DIRECTOR_KEY = DRT.AC_DIRECTOR_KEY
+		WHERE PJ.PJ_KEY=#{pjKey}
+		
+	</select>
+	
+	
+	<update id="updateBasicInfo" parameterType="com.cep.project.vo.ProjectVO">
+	
+		UPDATE PJ_MAIN_TB 
+		SET    AC_KEY             = #{acKey}
+			  , AC_DIRECTOR_KEY    = #{acDirectorKey}
+			  , PJ_NM              = #{pjNm}
+			  , PJ_START_DT        = #{pjStartDt}
+			  , PJ_END_DT          = #{pjEndDt}
+			  , PJ_SALE_EMP_KEY    = #{pjSaleEmpKey}
+			  , PJ_SUPPORT_EMP_KEY = #{pjSupportEmpKey}
+			  , REMARK             = #{remark}
+			  , MOD_DT             = DATE_FORMAT(NOW(),'%Y%m%d')
+			  , MOD_TM             = DATE_FORMAT(NOW(),'%H%i%s')
+			  , SP_KEY             = #{spKey}
+		WHERE  PJ_KEY = #{pjKey}
+	
+	</update>
+	
+		
+	
+	<select id="selectEmployeeList" resultType="egovMap">
+		SELECT EMP_KEY
+		     , EMP_NM
+		     , EMP_MB_NUM
+		FROM CMM_EMPLOYEE_TB
+	</select>
+	
+	
+	
+	<select id="selectBiddingInfo" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+	
+		SELECT PBT.BD_KEY                   AS BD_KEY
+		     , PBT.PJ_KEY                   AS PJ_KEY
+		     , PBT.BD_LIMIT_DT              AS BD_LIMIT_DT             /* 입찰 기한 일자 */
+		     , PBT.BD_LIMIT_TM              AS BD_LIMIT_TM             /* 임찰 기한 시간 */
+		     , PBT.BD_PROPOSAL_YN           AS BD_PROPOSAL_YN          /* 입찰 제안서 여부 */
+		     , PBT.BD_PROPOSAL_DUE_DT       AS BD_PROPOSAL_DUE_DT      /* 입찰 제안서 마감 일자 */
+		     , PBT.BD_PROPOSAL_DUE_TM       AS BD_PROPOSAL_DUE_TM      /* 입찰 제안서 마감 시간 */
+		     , PBT.BD_PROPOSAL_PRESENT_YN   AS BD_PROPOSAL_PRESENT_YN  /* 입찰 제안서 발표 여부 */
+		     , PBT.BD_PROPOSAL_PRESENT_DT   AS BD_PROPOSAL_PRESENT_DT  /* 입찰 제안서 발표 일자 */
+		     , PBT.BD_PROPOSAL_PRESENT_TM   AS BD_PROPOSAL_PRESENT_TM  /* 입찰 제안서 발표 시간 */
+		     , PBT.BD_GB_YN                 AS BD_GB_YN                /* 입찰 보증증권 여부 */
+		     , PBT.REG_DT                   AS REG_DT 
+		     , PBT.REG_TM                   AS REG_TM 
+		     , PBT.REG_EMP_KEY              AS REG_EMP_KEY
+		     , PBT.MOD_DT                   AS MOD_DT 
+		     , PBT.MOD_TM                   AS MOD_TM 
+		     , PBT.MOD_EMP_KEY              AS MOD_EMP_KEY
+		     , PBT.BD_GB_START_DT           AS BD_GB_START_DT          /* 입찰 보증증권 보증 시작일 */
+		     , PBT.BD_GB_END_DT             AS BD_GB_END_DT            /* 입찰 보증증권 보증 종료일 */
+		     , PBT.BD_GB_BD_AMOUNT          AS BD_GB_BD_AMOUNT         /* 입찰 보증증권 입찰금액 */
+		     , PBT.BD_GB_DAY                AS BD_GB_DAY               /* 입찰일로부터 보증 몇 일 보증 기간 */
+		     , PBT.BD_GB_RATE               AS BD_GB_RATE              /* 입찰 보증증권 요율 */
+		     , PBT.BD_GB_FINISH_DT          AS BD_GB_FINISH_DT         /* 입찰 보증증권 발행일 */
+		     , PBT.BD_GB_AMOUNT             AS BD_GB_AMOUNT            /* 입찰 보증증권 금액 */
+		     , PBT.BD_GB_FINISH_YN          AS BD_GB_FINISH_YN         /* 입찰 보증증권 상태 N:발행전, R:발행요청, Y:발행완료 */
+		     
+		FROM   PJ_BIDDING_TB   PBT
+		WHERE  PBT.DELETE_YN = 'N'
+		  AND  PBT.PJ_KEY    = #{pjKey}
+	
+	</select>
+	
+	
+	<select id="selectBiddingFileInfo" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+		/* 입찰 서류 정보 목록 조회 */
+		SELECT PBF.BD_KEY           AS BD_KEY
+		     , PBF.BD_SEQ           AS BD_SEQ
+		     , PBF.BD_FILE_KIND_CD  AS BD_FILE_KIND_CD
+		     , PBF.BD_DOC_CNT       AS BD_DOC_CNT
+		     , CCM.CD_NM            AS BD_FILE_DOC_NM
+		     , PBF.BD_FILE_DOC_NM   AS BD_FILE_DOC_NM_ETC
+		FROM   PJ_BIDDING_FILE_INFO_TB  PBF
+		JOIN   CMM_CODE_MNG_TB          CCM  ON PBF.BD_FILE_KIND_CD = CCM.CD_KEY
+		WHERE  PBF.BD_KEY    = #{bdKey}
+	
+	</select>
+	
+	
+	<select id="selectBdGbInfo" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+	
+		SELECT PMT.PJ_NM              AS PJ_NM
+		     , PMT.AC_KEY             AS AC_KEY
+		     , CAT.AC_NM              AS AC_NM
+		     , PBT.BD_KEY             AS BD_KEY
+		     , PBT.BD_LIMIT_DT        AS BD_LIMIT_DT
+		     , PBT.BD_GB_BD_AMOUNT    AS BD_GB_BD_AMOUNT
+		     , PBT.BD_GB_RATE         AS BD_GB_RATE
+		     , PBT.BD_GB_DAY          AS BD_GB_DAY
+		     , PBT.BD_GB_FINISH_DT    AS BD_GB_FINISH_DT
+		     , PBT.BD_GB_AMOUNT       AS BD_GB_AMOUNT
+		     , PBT.BD_GB_FINISH_YN    AS BD_GB_FINISH_YN
+		FROM   PJ_MAIN_TB     PMT
+		JOIN   PJ_BIDDING_TB  PBT ON PMT.PJ_KEY = PBT.PJ_KEY AND PBT.DELETE_YN = 'N'
+		JOIN   CMM_ACCOUNT_TB CAT ON PMT.AC_KEY = CAT.AC_KEY
+		WHERE  PMT.DELETE_YN = 'N'
+		  AND  PMT.PJ_KEY    = #{pjKey}
+	
+	</select>
+	
+	<update id="requestBiddingGb" parameterType="com.cep.project.vo.ProjectBiddingVO">
+		
+		UPDATE PJ_BIDDING_TB
+		SET    BD_GB_DAY       = #{bdGbDay}
+		     , BD_GB_RATE      = #{bdGbRate}
+		     , BD_GB_BD_AMOUNT = #{bdGbBdAmount} 
+		     , BD_GB_FINISH_YN = 'R'
+		WHERE BD_KEY = #{bdKey}
+	
+	</update>
+	
+	<update id="endBiddingGb" parameterType="com.cep.project.vo.ProjectBiddingVO">
+		
+		UPDATE PJ_BIDDING_TB
+		SET    BD_GB_FINISH_DT = #{bdGbFinishDt}
+		     , BD_GB_AMOUNT    = #{bdGbAmount} 
+		     , BD_GB_FINISH_YN = 'Y'
+		WHERE BD_KEY = #{bdKey}
+	
+	</update>
+	
+	<update id="modifyBiddingGb" parameterType="com.cep.project.vo.ProjectBiddingVO">
+		
+		UPDATE PJ_BIDDING_TB
+		SET    BD_GB_FINISH_DT = #{bdGbFinishDt}
+			<if test="bdGbAmount > 0">
+		     , BD_GB_AMOUNT    = #{bdGbAmount}
+		    </if> 
+		     , BD_GB_DAY       = #{bdGbDay}
+		     , BD_GB_RATE      = #{bdGbRate}
+		    <if test="bdGbBdAmount > 0">
+		     , BD_GB_BD_AMOUNT = #{bdGbBdAmount}
+		    </if> 
+		WHERE BD_KEY = #{bdKey}
+	
+	</update>
+	
+	
+	
+	<select id="selectBiddingGbInfo" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+		/* 사용안함 - 입찰보증증권 정보 조회 */	
+		SELECT GB_KEY        AS GB_KEY
+		     , CT_KEY        AS CT_KEY
+		     , GB_KIND_CD    AS GB_KIND_CD
+		     , GB_FC_CLASS   AS GB_FC_CLASS
+		     , GB_FC_PJ_KEY  AS GB_FC_PJ_KEY
+		     , GB_START_DT   AS GB_START_DT
+		     , GB_END_DT     AS GB_END_DT
+		     , GB_ISSUE_YN   AS GB_ISSUE_YN
+		     , GB_AMOUNT     AS GB_AMOUNT
+		     , SALES_KEY     AS SALES_KEY
+		FROM   CMM_GUARANTY_BOND_TB CGB
+		WHERE  GB_KIND_CD = 'GRBN1110'
+		  AND  GB_FC_CLASS = 'P'
+		  AND  GB_FC_PJ_KEY = #{pjKey}
+		  
+	</select>
+	
+	
+	<select id="selectContractInfo" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+	
+		SELECT PCT.CT_KEY       AS CT_KEY
+		     , PCT.PJ_KEY       AS PJ_KEY
+		     , PCT.CT_AMOUNT    AS CT_AMOUNT
+		     , PCT.CT_DT        AS CT_DT
+		     , PCT.CT_PAY_TERMS AS CT_PAY_TERMS
+		     , PCT.TAX_YN       AS TAX_YN
+		     , PCT.COLLECT_TURN AS COLLECT_TURN
+		     , PCT.REG_DT       AS REG_DT
+		     , PCT.REG_TM       AS REG_TM
+		     , PCT.REG_EMP_KEY  AS REG_EMP_KEY
+		     , PCT.MOD_DT       AS MOD_DT
+		     , PCT.MOD_TM       AS MOD_TM
+		     , PCT.MOD_EMP_KEY  AS MOD_EMP_KEY
+		FROM   PJ_CONTRACT_TB PCT
+		WHERE  PCT.PJ_KEY = #{pjKey}
+		  AND  PCT.DELETE_YN = 'N'
+		  
+	</select>
+	
+	<select id="selectOrderList" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+	
+		SELECT POT.PJ_ORDER_KEY          AS PJ_ORDER_KEY           /* 프로젝트 발주 관리키 */
+		     , POT.ORDER_CT_FK_KEY       AS ORDER_CT_FK_KEY        /* 프로젝트 관리키 */
+		     , POT.ORDER_DT              AS ORDER_DT               /* 발주 일자 */
+		     , POT.ORDER_AC_KEY          AS ORDER_AC_KEY           /* 사업자 번호 */
+		     , CAT.AC_NM                 AS ORDER_AC_NM            /* 발주처명 */
+		     , POT.ORDER_AC_DIRECTOR_KEY AS ORDER_AC_DIRECTOR_KEY  /* 발주 거래처 담당자 관리키 */
+		     , CAD.AC_DIRECTOR_NM        AS ORDER_AC_DIRECTOR_NM   /* 발주 거래처 담당자 명 */
+		     , POT.ORDER_PAY_TERMS       AS ORDER_PAY_TERMS        /* 발주 결제 조건 */
+		     , POT.ORDER_AMOUNT          AS ORDER_AMOUNT           /* 발주 총금액 */
+		     , POT.TAX_YN                AS TAX_YN                 /* 부가세 포함여부 */
+		     , POT.BILL_MAPPING_NUM      AS BILL_MAPPING_NUM       /* 계산서 맵핑 횟수 */
+		     , CET.EMP_NM                AS ORDER_EMP_NM           /* 발주자명 */
+		     , (SELECT SUM(POP.ORDER_QUANTITY) FROM PJ_ORDER_PRODUCT_TB POP WHERE POP.PJ_ORDER_KEY = POT.PJ_ORDER_KEY)
+		                                 AS ORDER_PRODUCT_CNT      /* 발주 품목 전체 수량 */		        
+		     , POT.REG_DT       AS REG_DT
+		     , POT.REG_TM       AS REG_TM
+		     , POT.REG_EMP_KEY  AS REG_EMP_KEY
+		     , POT.MOD_DT       AS MOD_DT
+		     , POT.MOD_TM       AS MOD_TM
+		     , POT.MOD_EMP_KEY  AS MOD_EMP_KEY
+		FROM   PJ_ORDER_TB              POT
+		JOIN   CMM_ACCOUNT_TB           CAT  ON CAT.AC_KEY          = POT.ORDER_AC_KEY
+		JOIN   CMM_ACCOUNT_DIRECTOR_TB  CAD  ON CAD.AC_DIRECTOR_KEY = POT.ORDER_AC_DIRECTOR_KEY
+		JOIN   CMM_EMPLOYEE_TB          CET  ON CET.EMP_KEY         = POT.REG_EMP_KEY
+		WHERE  POT.ORDER_CT_FK_KEY = #{pjKey}
+		  AND  POT.DELETE_YN       = 'N'
+		  
+	</select>
+	
+	
+	<select id="selectOrderProductList" parameterType="com.cep.mngProject.order.vo.MngOrderSearchVO" resultType="egovMap">
+		        
+		SELECT POP.PJ_ORDER_KEY         AS PJ_ORDER_KEY       /* PJ_ORDER_TB */
+		     , POP.ORDER_SEQ            AS ORDER_SEQ          /* 발주 순번 */
+		     , POP.ORDER_PM_FK_KEY      AS ORDER_PM_FK_KEY    /* 발주 제품 FK 관리키 */
+		     , PPM.PM_NM_CD             AS PM_NM              /* 발주 제품명 */
+		     , POP.ORDER_QUANTITY       AS ORDER_QUANTITY     /* 발주 수량 */
+		     , POP.ORDER_UPRICE         AS ORDER_UPRICE       /* 발주 단가 */
+		     , POP.ORDER_TOTAL_AMOUNT   AS ORDER_TOTAL_AMOUNT /* 발주 전체 금액 */
+		     , POP.MT_RATE              AS MT_RATE            /* 유지보수 비율 */
+		     , POP.ORDER_KIND           AS ORDER_KIND         /* 매입 구분(H/W, S/W, 서비스) */
+		     , CCM.CD_NM                AS ORDER_KIND_NM      /* 매입 구분 코드명 */
+		     , POP.REMARK               AS REMARK             /* 비고 */
+		     , POP.ORDER_RECEIPT_DT     AS ORDER_RECEIPT_DT   /* 발주 입고 일자 */
+		     , POP.REG_DT               AS REG_DT
+		     , POP.REG_TM               AS REG_TM
+		     , POP.REG_EMP_KEY          AS REG_EMP_KEY
+		     , POP.MOD_DT               AS MOD_DT
+		     , POP.MOD_TM               AS MOD_TM
+		     , POP.MOD_EMP_KEY          AS MOD_EMP_KEY 
+		FROM   PJ_ORDER_PRODUCT_TB  POP
+		JOIN   PM_PRODUCT_MNG_TB    PPM ON PPM.PM_KEY   = POP.ORDER_PM_FK_KEY
+		JOIN   CMM_CODE_MNG_TB      CCM ON CCM.CD_CLASS = 'PDFG' AND CCM.CD_KEY = POP.ORDER_KIND
+		WHERE  POP.PJ_ORDER_KEY = #{orderKey}
+		  AND  POP.DELETE_YN    = 'N'
+		  
+	</select>
+	
+	
+	<select id="selectInstallBaseList" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+		
+		SELECT PIB.PJ_KEY              AS PJ_KEY           /* PJ_MAIN_TB */
+		     , PIB.INB_SEQ             AS INB_SEQ  
+		     , PIB.INB_PLACE           AS INB_PLACE        /* 설치구축 장소 */
+		     , PIB.INB_CLASS           AS INB_CLASS        /* 설치구축 구분 */
+		     , PIB.INB_PM_KEY          AS INB_PM_KEY       /* 설치구축 제품 관리키 */
+		     , PPM.PM_NM_CD            AS PM_NM            /* 설치구축 제품명 */
+		     , PIB.INB_PM_SERIAL_NO    AS INB_PM_SERIAL_NO /* 설치구축 제품 시리얼 번호 */
+		     , PIB.INB_DELIVERY_DT     AS INB_DELIVERY_DT  /* 설치구축 납품 일자 */
+		     , PIB.INB_PM_VER          AS INB_PM_VER       /* 설치구축 제품 버전 */
+		     , PIB.INB_SPEC_INFO       AS INB_SPEC_INFO    /* 설치구축 스펙 정보 */
+		     , PIB.INB_CACHE_MEM       AS INB_CACHE_MEM    /* 설치구축 캐쉬 메모리 */
+		     , PIB.INB_PORT_INFO       AS INB_PORT_INFO    /* 설치구축 포트 정보 */
+		     , PIB.INB_MNG_IP          AS INB_MNG_IP       /* 설치구축 꽌리 아이피 */
+		     , PIB.INB_PM_TYPE         AS INB_PM_TYPE      /* 설치구축 제품 유형 */
+		     , PIB.REMARK              AS REMARK           /* 비고 */
+		     , CET.EMP_NM              AS INB_EMP_NM       /* 설차구축 작업자명 */
+		     , PIB.REG_DT       AS REG_DT
+		     , PIB.REG_TM       AS REG_TM
+		     , PIB.REG_EMP_KEY  AS REG_EMP_KEY
+		     , PIB.MOD_DT       AS MOD_DT
+		     , PIB.MOD_TM       AS MOD_TM
+		     , PIB.MOD_EMP_KEY  AS MOD_EMP_KEY
+		FROM   PJ_INSTALL_AND_BUILD_TB  PIB
+		JOIN   PM_PRODUCT_MNG_TB        PPM  ON PPM.PM_KEY  = PIB.INB_PM_KEY
+		JOIN   CMM_EMPLOYEE_TB          CET  ON CET.EMP_KEY = PIB.REG_EMP_KEY   
+		WHERE  PIB.PJ_KEY    = #{pjKey}
+		  AND  PIB.DELETE_YN = 'N'
+		  
+	</select>
+	
+	
+	<select id="selectWorkList" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+	
+		SELECT PWB.PJ_KEY              AS PJ_KEY            /* PJ_MAIN_TB */
+		     , PWB.PJ_WORK_CLASS_CD    AS PJ_WORK_CLASS_CD  /* 프로젝트 작업 순번 */
+		     , PWB.PJ_WORK_DT          AS PJ_WORK_DT        /* 프로젝트 작업 일자 */
+		     , PWB.PJ_WORK_TAKE_TM     AS PJ_WORK_TAKE_TM   /* 시간(2)분(2) */
+		     , PWB.PJ_WORK_NM          AS PJ_WORK_NM        /* 프로젝트 작업 명 */
+		     , PWB.PJ_WORK_CONT        AS PJ_WORK_CONT      /* 프로젝트 작업 내용 */
+		     , PWB.PJ_WORK_RESULT      AS PJ_WORK_RESULT    /* 프로젝트 작업 처리 결과 */
+		     , PWB.REMARK              AS REMARK            /* 비고 */
+		     , PWB.PJ_WORK_TM          AS PJ_WORK_TM        /* 프로젝트 작업 시간 */
+		     , CET.EMP_NM              AS PJ_WORK_EMP_NM    /* 작업자명 */
+		     , PWB.REG_DT            AS REG_DT
+		     , PWB.REG_TM            AS REG_TM
+		     , PWB.REG_EMP_KEY       AS REG_EMP_KEY
+		     , PWB.MOD_DT            AS MOD_DT
+		     , PWB.MOD_TM            AS MOD_TM
+		     , PWB.MOD_EMP_KEY       AS MOD_EMP_KEY
+		FROM   PJ_WORK_TB      PWB   
+		JOIN   CMM_EMPLOYEE_TB CET ON CET.EMP_KEY = PWB.REG_EMP_KEY
+		WHERE  PJ_KEY    = #{pjKey}
+		  AND  DELETE_YN = 'N'   
+	
+	</select>
+	
+	
+	
+	<select id="selectSalesDetailList" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
+		
+		SELECT PSD.SALES_CT_FK_KEY         AS PJ_KEY
+		     , PSD.SALES_KEY               AS SALES_KEY
+		     , PCT.CT_KEY                  AS CT_KEY
+		     , PSD.SALES_TURN              AS SALES_TURN              /* 수금회차 */
+		     , PSD.SALES_COLLECT_RATE      AS SALES_COLLECT_RATE      /* 수금비율 */
+     		 , PSD.SALES_TURN_AMOUNT       AS SALES_TURN_AMOUNT       /* 수금액 */
+		     , PCT.TAX_YN                  AS TAX_YN                  /* 부가세 포함여부 */
+		     , PSD.SALES_STATUS_CD         AS SALES_STATUS_CD         /* 수금 진행 상태 */
+		     , PSD.SALES_BILL_FC_DT        AS SALES_BILL_FC_DT        /* 계산서 예상일자 */
+		     , PBO.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일자 */
+		     , PSD.SALES_COLLECT_FC_DT     AS SALES_COLLECT_FC_DT     /* 수금 예상일자 */
+		     , PSD.SALES_COLLECT_FINISH_DT AS SALES_COLLECT_FINISH_DT /* 수금 완료 일자 */
+		FROM      PJ_SALES_DETAIL_TB      PSD
+		JOIN      PJ_CONTRACT_TB          PCT ON PSD.SALES_CT_FK_KEY = PCT.PJ_KEY         AND PCT.DELETE_YN = 'N'
+		LEFT JOIN PJ_SD_BILLING_OP_TB     PSO ON PSD.SALES_CT_FK_KEY = PSO.BILL_FK_PJ_KEY AND PSD.SALES_TURN = PSO.BILL_TURN_NO AND PSO.DELETE_YN = 'N'
+		LEFT JOIN PJ_SD_BILLING_TB        PBO ON PSO.BILL_NO = PBO.BILL_NO                AND PBO.DELETE_YN = 'N'
+		WHERE  PSD.DELETE_YN = 'N'
+		  AND  PSD.SALES_CT_FK_KEY = #{pjKey}
+		
+	</select>
+	
+	
+	<select id="selectGuarantyBondList" parameterType="com.cep.project.vo.ProjectContractSalesVO" resultType="egovMap">
+	
+		SELECT PGB.GB_KEY                      AS GB_KEY
+			 , PGB.CT_KEY                      AS CT_KEY
+			 , PGB.SALES_KEY                   AS SALES_KEY
+			 , PGB.GB_KIND_CD                  AS GB_KIND_CD
+			 , PGB.GB_ISSUE_YN                 AS GB_ISSUE_YN
+			 , IFNULL(PGB.GB_PUBLISH_DT, '')   AS GB_PUBLISH_DT
+			 , IFNULL(PGB.GB_AMOUNT, '-')      AS GB_AMOUNT
+		FROM   PJ_GUARANTY_BOND_TB   PGB
+		WHERE  PGB.DELETE_YN = 'N'
+		  AND  PGB.SALES_KEY = #{salesKey}
+	
+	</select>
+	
+	
+	<select id="selectGuarantyBondInfo" parameterType="com.cmm.vo.GuarantyBondVO" resultType="egovMap">
+	
+		SELECT PGB.GB_KEY         AS GB_KEY
+		     , PGB.CT_KEY         AS CT_KEY
+		     , PGB.SALES_KEY      AS SALES_KEY
+		     , PGB.GB_KIND_CD     AS GB_KIND_CD
+		     , PCT.CT_AMOUNT      AS CT_AMOUNT         /* 계약금약 */
+		     , PCT.TAX_YN         AS TAX_YN            /* 부가세 포함 여부 */
+		     , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
+		            WHEN TAX_YN = 'N' THEN FLOOR(PCT.CT_AMOUNT * 1.1)
+		       END                AS TOTAL_AMOUNT      /* 부가세 포함 전체 금액 */ 
+		     , PMT.PJ_NM          AS PJ_NM             /* 프로젝트 명 */
+		     , PMT.PJ_START_DT    AS PJ_START_DT       /* 계약 시작일 */
+		     , PMT.PJ_END_DT      AS PJ_END_DT         /* 계약 종료일 */
+		     , PGB.GB_RATE        AS GB_RATE           /* 보증 요율 */
+		     , PGB.GB_START_DT    AS GB_START_DT       /* 보증기간 시작일 */
+		     , PGB.GB_END_DT      AS GB_END_DT         /* 보증기간 종료일 */
+		     , PGB.GB_PUBLISH_DT  AS GB_PUBLISH_DT     /* 보증증권 발행일 */
+		     , PGB.GB_AMOUNT      AS GB_AMOUNT         /* 보증증권 금액 */
+		     /*, PGB.REMARK         AS REMARK*/            /* 요청사항 */
+		     , CAT.AC_NM          AS AC_NM             /* 고객사명 */
+		     , PGB.GB_ISSUE_YN    AS GB_ISSUE_YN
+		     , PGB.GB_INSPECT_DT  AS GB_INSPECT_DT
+		     , PGB.GB_SK_AMOUNT   AS GB_SK_AMOUNT
+		FROM   PJ_GUARANTY_BOND_TB  PGB
+		JOIN   PJ_SALES_DETAIL_TB   PSD  ON PGB.SALES_KEY       = PSD.SALES_KEY AND PSD.DELETE_YN = 'N'
+		JOIN   PJ_CONTRACT_TB       PCT  ON PSD.SALES_CT_FK_KEY = PCT.PJ_KEY    AND PCT.DELETE_YN = 'N'
+		JOIN   PJ_MAIN_TB           PMT  ON PCT.PJ_KEY          = PMT.PJ_KEY    AND PMT.DELETE_YN = 'N'
+		JOIN   CMM_ACCOUNT_TB       CAT  ON PMT.AC_KEY          = CAT.AC_KEY
+		WHERE  PGB.DELETE_YN = 'N'
+		  AND  PGB.GB_KEY = #{gbKey}
+	</select>
+	
+	<select id="selectBdGuarantyBondInfo" parameterType="com.cmm.vo.GuarantyBondVO" resultType="egovMap">
+	
+		SELECT PGB.GB_KEY         AS GB_KEY
+		     , PGB.CT_KEY         AS CT_KEY
+		     , PGB.SALES_KEY      AS SALES_KEY
+		     , PGB.GB_KIND_CD     AS GB_KIND_CD
+		     , PCT.CT_AMOUNT      AS CT_AMOUNT         /* 계약금약 */
+		     , PCT.TAX_YN         AS TAX_YN            /* 부가세 포함 여부 */
+		     , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
+		            WHEN TAX_YN = 'N' THEN FLOOR(PCT.CT_AMOUNT * 1.1)
+		       END                AS TOTAL_AMOUNT      /* 부가세 포함 전체 금액 */ 
+		     , PMT.PJ_NM          AS PJ_NM             /* 프로젝트 명 */
+		     , PMT.PJ_START_DT    AS PJ_START_DT       /* 계약 시작일 */
+		     , PMT.PJ_END_DT      AS PJ_END_DT         /* 계약 종료일 */
+		     , PGB.GB_RATE        AS GB_RATE           /* 보증 요율 */
+		     , PGB.GB_START_DT    AS GB_START_DT       /* 보증기간 시작일 */
+		     , PGB.GB_END_DT      AS GB_END_DT         /* 보증기간 종료일 */
+		     , PGB.GB_PUBLISH_DT  AS GB_PUBLISH_DT     /* 보증증권 발행일 */
+		     , PGB.GB_AMOUNT      AS GB_AMOUNT         /* 보증증권 금액 */
+		     /*, PGB.REMARK         AS REMARK*/            /* 요청사항 */
+		     , CAT.AC_NM          AS AC_NM             /* 고객사명 */
+		     , PGB.GB_ISSUE_YN    AS GB_ISSUE_YN
+		     , PGB.GB_INSPECT_DT  AS GB_INSPECT_DT
+		     , PGB.GB_SK_AMOUNT   AS GB_SK_AMOUNT
+		FROM   PJ_GUARANTY_BOND_TB  PGB
+		JOIN   PJ_SALES_DETAIL_TB   PSD  ON PGB.SALES_KEY       = PSD.SALES_KEY AND PSD.DELETE_YN = 'N'
+		JOIN   PJ_CONTRACT_TB       PCT  ON PSD.SALES_CT_FK_KEY = PCT.PJ_KEY    AND PCT.DELETE_YN = 'N'
+		JOIN   PJ_MAIN_TB           PMT  ON PCT.PJ_KEY          = PMT.PJ_KEY    AND PMT.DELETE_YN = 'N'
+		JOIN   CMM_ACCOUNT_TB       CAT  ON PMT.AC_KEY          = CAT.AC_KEY
+		WHERE  PGB.DELETE_YN = 'N'
+		  AND  PGB.GB_KEY = #{gbKey}
+	</select>
+	
+	<update id="requestGuarantyBond" parameterType="com.cmm.vo.GuarantyBondVO">
+	
+		UPDATE PJ_GUARANTY_BOND_TB
+		SET    GB_START_DT   = #{gbStartDt}
+		     , GB_END_DT     = #{gbEndDt}
+		     , GB_INSPECT_DT = #{gbInspectDt} 
+		     , GB_ISSUE_YN   = 'R'
+		     , GB_RATE       = #{gbRate}
+		     <if test="gbSkAmount > 0">
+		     , GB_SK_AMOUNT     = #{gbSkAmount}
+		     </if>
+		WHERE GB_KEY = #{gbKey}
+		
+	</update>
+	
+	
+	<update id="endGuarantyBond" parameterType="com.cmm.vo.GuarantyBondVO">
+	
+		UPDATE PJ_GUARANTY_BOND_TB
+		SET    GB_PUBLISH_DT = #{gbPublishDt}
+		     , GB_AMOUNT     = #{gbAmount}
+		     , GB_ISSUE_YN = 'Y'
+		WHERE GB_KEY = #{gbKey}
+		
+	</update>
+	
+	<update id="modifyGuarantyBond" parameterType="com.cmm.vo.GuarantyBondVO">
+	
+		UPDATE PJ_GUARANTY_BOND_TB
+		SET    GB_START_DT   = #{gbStartDt}
+		     , GB_END_DT     = #{gbEndDt}
+		     , GB_RATE       = #{gbRate}
+		     , GB_PUBLISH_DT = #{gbPublishDt}
+		     , GB_INSPECT_DT = #{gbInspectDt}
+		     <if test="gbAmount > 0">
+		     , GB_AMOUNT     = #{gbAmount}
+		     </if>
+		     <if test="gbSkAmount > 0">
+		     , GB_SK_AMOUNT     = #{gbSkAmount}
+		     </if>
+		WHERE GB_KEY = #{gbKey}
+		
+	</update>
+	
+	
+</mapper>

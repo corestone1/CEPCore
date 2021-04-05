@@ -95,13 +95,27 @@
 			$("#name").mouseout(function() {
 				$(this).html($("#nameVal").val());
 			});
+
+			$("ul#menu > li").each(function() {
+				if($(this).find("div").length) {
+					for(var i = 0; i < $(this).find("div").find("a").length; i++) {
+						if(window.location.pathname == $(this).find("div").find("a")[i].getAttribute("href")) {
+							$(this).addClass("on");
+						}
+					}
+				} else {
+					if(window.location.pathname == $(this).find("a").attr("href")) {
+						$(this).addClass("on");
+					}
+				}
+			});
 		});
 	</script>
 </head>
 <body>
 	<header>
 		<div class="wdt100">
-			<ul class="ftw400 mgauto hgt100 colorWhite">
+			<ul class="ftw400 mgauto hgt100 colorWhite" id="menu">
 				<li class="floatL textalignC cursorP"><a href="#">Dashboard</a></li>
 				<li class="floatL textalignC cursorP"><a href="/forecast/list.do">Forecast</a></li>
 				<li class="floatL textalignC cursorP"><a href="/project/list.do">프로젝트</a></li>
@@ -145,9 +159,9 @@
 							<li><a href="/mngCommon/account/list.do">거래처관리</a></li>
 							<li><a href="/mngCommon/product/list.do">제품관리</a></li>
 							<li><a href="/mngCommon/employee/list.do">사용자관리</a></li>
-							<li><a href="/mngProject/mapping/list.do">발주·계산서 매핑</a></li>
+							<!-- <li><a href="/mngProject/mapping/list.do">발주·계산서 매핑</a></li>
 							<li><a href="/mngProject/billCalendar/list.do">계산서 일정</a></li>
-							<li><a href="/mngProject/fundSchedule/list.do">수금·지급 일정</a></li>
+							<li><a href="/mngProject/fundSchedule/list.do">수금·지급 일정</a></li> -->
 						</ul>
 					</div>
 				</li>			

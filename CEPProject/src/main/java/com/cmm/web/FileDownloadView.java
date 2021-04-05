@@ -85,6 +85,7 @@ public class FileDownloadView extends AbstractView{
                 
                 if(out != null) {
                 	out.flush();
+                	out.close();
                 }
             }
         }
