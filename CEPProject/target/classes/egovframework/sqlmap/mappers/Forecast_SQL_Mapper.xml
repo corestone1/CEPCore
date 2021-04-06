@@ -78,19 +78,23 @@
 			 JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
 		WHERE 1=1	
 		
-		  <if test="spState != null and spState != ''" >
-		  	 AND SM.SP_STATE = #{spState}
-		  </if>
+			<if test="salesEmpKey != null and salesEmpKey != ''">
+				AND SM.REG_EMP_KEY = #{salesEmpKey}
+			</if>
+		
+		  	<if test="spState != null and spState != ''" >
+		  		AND SM.SP_STATE = #{spState}
+		  	</if>
 		  
-		  <if test="pjFlag != null and pjFlag != ''" >
-		  	  AND SM.SALES_CT_CLASS = #{pjFlag}
-		  </if>
+		  	<if test="pjFlag != null and pjFlag != ''" >
+		  		AND SM.SALES_CT_CLASS = #{pjFlag}
+		  	</if>
 		  
-		  <if test="searchFlag != null and searchFlag != ''" >
+		  	<if test="searchFlag != null and searchFlag != ''" >
 			
-			<if test="searchFlag.equals('AC')" >
-	  			AND AC.AC_NM LIKE CONCAT('%', #{searchValue}, '%')
-	  		</if>
+				<if test="searchFlag.equals('AC')" >
+	  				AND AC.AC_NM LIKE CONCAT('%', #{searchValue}, '%')
+	  			</if>
 			  	
 			<if test="searchFlag.equals('BN')" >
 	  			AND SM.SP_BUSI_NM LIKE CONCAT('%', #{searchValue}, '%')

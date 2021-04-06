@@ -203,10 +203,10 @@
 				<input type="hidden" name="spKey" id="m_ipt_spKey"/>
 				<table>
 					<tr>
-						<td><input type="text" name="fcSalesAmount" id="m_ipt_fcSalesAmount" placeholder="매출액" /></td>
+						<td><input type="text" name="fcSalesAmount" id="m_ipt_fcSalesAmount" placeholder="매출액" value="${displayUtil.commaStr(forecast.fcSalesAmount)}"/></td>
 					</tr>
 					<tr>
-						<td><input type="text" name="fcBuyAmount"  id="m_ipt_fcBuyAmount" placeholder="매입액" /></td>
+						<td><input type="text" name="fcBuyAmount"  id="m_ipt_fcBuyAmount" placeholder="매입액" value="${displayUtil.commaStr(forecast.fcBuyAmount)}"/></td>
 					</tr>
 					<tr>
 						<td>

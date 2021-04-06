@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cep.forecast.service.ForecastService;
 import com.cep.forecast.vo.ForecastSearchVO;
 import com.cep.forecast.vo.ForecastVO;
+import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -30,8 +31,11 @@ public class ForecastController {
 	@Resource(name="forecastService")
 	private ForecastService service;
 	
+	@Resource(name="comService")
+	private ComService  comService;
+	
 	@RequestMapping(value="/list.do")
-	public String selectForecast(@ModelAttribute("searchVO") ForecastSearchVO searchVO, ModelMap model) throws Exception {
+	public String selectForecast(@ModelAttribute("searchVO") ForecastSearchVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
@@ -42,6 +46,18 @@ public class ForecastController {
 		
 		try{
 		
+			if(searchVO.getSearchFlag() == null 
+			|| searchVO.getSearchFlag().equals("")
+			|| !searchVO.getSearchFlag().equals("SE"))
+			{
+				HashMap<String, String> sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+				searchVO.setSalesEmpKey(sessionMap.get("empKey"));
+				// 최초 조회 시 자신의 건만 보이게...
+				model.put("empKey", sessionMap.get("empKey"));
+			}
+			
+			model.put("employeeList", comService.selectEmployeeList());
+			
 			model.put("forecastList", service.selectForecastList(searchVO));
 			
 			model.put("displayUtil", new CepDisplayUtil());
@@ -123,7 +139,7 @@ public class ForecastController {
 		logger.debug("spKey : {}", forecastVO.getSpKey() );
 		
 		try {
-		
+			model.put("displayUtil", new CepDisplayUtil());
 			model.put("spKey", forecastVO.getSpKey());
 			
 			if(forecastVO.getSpKey() != null || !forecastVO.getSpKey().equals(""))

@@ -115,6 +115,7 @@
 				$('#m_ipt_spKey').val("${spKey}");
 				
 				$('#m_ipt_acMfAcNm').val('${forecast.mfAcNm}');
+				$('#m_ipt_acMfAcKey').val('${forecast.salesAcKey}');
 				$('#m_ipt_spBusiNm').val('${forecast.spBusiNm}');
 				
 				$('#m_slt_pmKey').val('${forecast.pmKey}');
@@ -230,7 +231,8 @@
 						<tr>
 							<td>
 								<!-- <input type="hidden" name="acKey" /> -->
-								<input type="text" id="m_ipt_acMfAcNm" name="acKey" placeholder="고객사(입력후 엔터를 눌러서 검색해 주세요!)" class="search" />
+								<input type="text"   id="m_ipt_acMfAcNm"  name="acNm"  placeholder="고객사(입력후 엔터를 눌러서 검색해 주세요!)" class="search" />
+								<input type="hidden" id="m_ipt_acMfAcKey" name="acKey" />
 							</td>
 						</tr>
 						<tr>
