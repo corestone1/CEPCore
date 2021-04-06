@@ -75,13 +75,14 @@ public class ForecastController {
 	
 	@RequestMapping(value="/delete.do")
 	@ResponseBody
-	public Map<String, Object> delete(HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	public Map<String, Object> delete(@ModelAttribute("forecastVO") ForecastVO forecastVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
 		
-		logger.debug(":::::: SP_KEY ======= {}", request.getParameter("SP_KEY"));
+		logger.debug(":::::: SP_KEY ======= {}", forecastVO.getSpKey());
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		try {
 			
+			service.delete(forecastVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);

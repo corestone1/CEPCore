@@ -48,6 +48,7 @@
 		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
 		     , SM.PM_KEY              AS PM_KEY
 		     , SM.PM_DETAIL           AS PM_DETAIL
+		     , SM.PM_DETAIL2          AS PM_DETAIL2
 		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
 		     , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT
 		     , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT
@@ -73,8 +74,8 @@
 		FROM SP_MAIN_TB          SM
 			 JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
 			 /* JOIN PM_PRODUCT_MNG_TB PM ON SM.PM_KEY = PM.PM_KEY */
-			 JOIN CMM_ACCOUNT_TB SAC   ON SM.SALES_AC_KEY = SAC.AC_KEY
-			 JOIN CMM_ACCOUNT_TB BAC   ON SM.BUY_AC_KEY = BAC.AC_KEY
+			 LEFT JOIN CMM_ACCOUNT_TB SAC   ON SM.SALES_AC_KEY = SAC.AC_KEY
+			 LEFT JOIN CMM_ACCOUNT_TB BAC   ON SM.BUY_AC_KEY = BAC.AC_KEY
 			 JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
 		WHERE 1=1	
 		
@@ -199,6 +200,40 @@
 		ORDER BY SM.REG_DT DESC, SM.REG_TM DESC		
 				
 	</select>
+	
+	<update id="updateFundInfo" parameterType="com.cep.forecast.vo.ForecastVO">
+		UPDATE SP_MAIN_TB 
+		SET   FC_SALES_AMOUNT  = REPLACE(#{fcSalesAmount}, ',', '')
+			, FC_BUY_AMOUNT    = REPLACE(#{fcBuyAmount}, ',', '')
+			, FC_SALES_PROFIT  = REPLACE(#{fcSalesProfit}, ',', '')
+			, FC_SALES_DT      = #{fcSalesDt}
+			, FC_COLLECT_DT    = #{fcCollectDt}
+			, FC_BUY_PAY_DT    = #{fcBuyPayDt}
+			, BUY_AC_KEY       = #{buyAcKey}
+			, MOD_DT           = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM           = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY      = #{modEmpKey}
+		WHERE  SP_KEY = #{spKey}
+	</update>
+	
+	<update id="updateProgress" parameterType="com.cep.forecast.vo.ForecastVO">
+		UPDATE SP_MAIN_TB 
+		SET   REMARK      = #{remark}
+			, PM_DETAIL2  = #{pmDetail2}
+			, MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM      = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE  SP_KEY = #{spKey}
+	</update>
+	
+	<delete id="delete" parameterType="com.cep.forecast.vo.ForecastVO">
+	
+		DELETE FROM SP_MAIN_TB
+		WHERE  SP_KEY = #{spKey}
+	
+	</delete>
+	
+	
 	
 	
 	<!-- 영업회의 관련 -->

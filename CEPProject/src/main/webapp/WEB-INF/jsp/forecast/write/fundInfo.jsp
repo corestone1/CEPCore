@@ -118,26 +118,118 @@
 			}		
 		}
 		
+		$("#m_ipt_buyAcNm").on("keyup", function(event){
+			
+			if(event.keyCode == 13)
+			{
+				fnSearchAccoutList(this, $(this).val());					
+			}
+				
+		});
 		/* $('#m_ipt_fcSalesAmount').on('Change', function(event){
 			alert('change');
 		}); */
+		
+		
+		$('#m_ipt_fcSalesAmount').focus(function(){
+			$(this).val(removeCommas($(this).val()));
+		});
+		
+		$('#m_ipt_fcSalesAmount').blur(function(){
+			$(this).val(addCommas($(this).val()));
+		});
+		
+		$('#m_ipt_fcBuyAmount').focus(function(){
+			$(this).val(removeCommas($(this).val()));
+		});
+		
+		$('#m_ipt_fcBuyAmount').blur(function(){
+			$(this).val(addCommas($(this).val()));
+		});
 	});
+	
+	function fnSearchAccoutList(pObject, pstAccountNm)
+	{
+		$('#m_div_accountList').remove();
+	
+		var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+		
+		 $.ajax({
+	        	url :"/mngCommon/account/searchList.do",
+	        	type:"POST",  
+	            data: jsonData,
+	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+	     	    dataType: 'json',
+	            async : false,
+	        	success:function(data){		  
+	        		//alert(data.accountList[0].acNm);
+	        		//선택 목록 생성
+	        		fnViewAccountList(pObject, data.accountList);
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	    }); 
+	}
+	
+	//
+	function fnViewAccountList(pObject, pjAccountList){
+			
+		var html = '<div id="m_div_accountList" style="width:362px; padding-top: 15px; padding-bottom: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+		         + '<ul class="accountList">'
+		       ;
+		       
+        for(var i=0; i < pjAccountList.length; i++)
+    	{
+    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+    	        ;
+    	} 
+		       
+		       
+		html +=  '</ul>'
+		     + '</div>'
+		     ;//+ '</div>';
+		//$('#m_td_account').after(html);
+		$('#m_tr_account').after(html);
+		
+		$("[id^='m_li_account']").click(function(event)
+		{
+			//alert(this.innerText);
+			
+			$('#m_ipt_buyAcKy').val(this.title); 
+			$('#m_ipt_buyAcNm').val(this.innerText);
+			
+			$('#m_div_accountList').remove();
+		});
+			
+	}
 	
 	var fnWriteFundInfo = function(){
 		
 		//alert("fnWriteFundInfo");
 		var ljsParam =  $("#m_fr_forecastFundInfo").serializeArray();
 		
-		//alert(ljsParam[3].value);
-		//console.log(ljsParam);
-		//return;
+		var object = {};
+		for (var i = 0; i<ljsParam.length; i++){
+            
+            if("fcSalesAmount" == ljsParam[i]['name']
+            || "fcBuyAmount" == ljsParam[i]['name']) {
+            	//날짜 - 제거
+            	object[ljsParam[i]['name']] = removeCommas(ljsParam[i]['value']);
+            } else {
+            	object[ljsParam[i]['name']] = ljsParam[i]['value'];
+            }           
+        }
+		
 		
 		$.ajax({
 	    	url :"/forecast/write/writeFundInfo.do"
 	       	,
 	       	type:"POST"
 	       	,  
-	        data: ljsParam
+	        data: object
 	        ,
 	        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
 	        ,
@@ -254,8 +346,11 @@
 							</select>
 						</td>
 					</tr>
-					<tr>
-						<td><input type="text" name="buyAcKey" id="m_ipt_buyAcKey" placeholder="매입처" class="search" /></td>
+					<tr id="m_tr_account">
+						<td>
+							<input type="text"   name="buyAcNm"  id="m_ipt_buyAcNm"  placeholder="매입처" class="search" />
+							<input type="hidden" name="buyAcKey" id="m_ipt_buyAcKey"/>
+						</td>
 					</tr>
 					<!-- 
 					<tr>

@@ -97,4 +97,7 @@ public interface ForecastService {
 	
 	
 	public EgovMap selectSalesMeeingInfo(ForecastSearchVO forecastSearchVO) throws Exception;
+	
+	
+	public void delete(ForecastVO forecastVO) throws Exception;
 }

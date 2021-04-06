@@ -39,4 +39,6 @@ public interface ForecastMapper {
 	public List<EgovMap> selectProjectList(ForecastSearchVO searchVO) throws Exception;
 	
 	public EgovMap selectProjectAmount(ForecastSearchVO searchVO) throws Exception;
+	
+	public void delete(ForecastVO forecastVO) throws Exception;
 }

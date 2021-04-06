@@ -55,6 +55,7 @@
 			margin-top: 16px;
 			border-collapse: collapse;
 			overflow: hidden;
+			text-overflow: ellipsis;
 			border-bottom: 2px solid #6a5bae;
 		}
 		.middle table thead {
@@ -79,6 +80,14 @@
 			width: 1662px;
 			cursor: pointer;
 		}
+		.middle table tbody tr td > span {
+			display: inline-block;
+	        overflow:hidden; 
+	        text-overflow:ellipsis; 
+	        white-space:nowrap;
+	        width: 84%;
+	        margin: 0 auto;
+		}
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
 		}
@@ -96,6 +105,7 @@
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
 			width: 125px;
+			max-width: 125px;
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
@@ -217,8 +227,6 @@
 			
 			$('#btn_delete').click(function() {
 				
-				alert('btn_delete');
-				
 				if($('input[name="gubun"]').is(':checked')) {
 					if(confirm("선택한 내용을 삭제하시겠습니까?")) {
 						
@@ -235,6 +243,7 @@
 				           async : false,
 				        	success:function(data){		  
 				            	alert("삭제되었습니다.!");
+				            	location.reload();
 				            },
 				        	error: function(request, status, error) {
 				        		if(request.status != '0') {
@@ -381,9 +390,9 @@
 						<c:forEach var="result" items="${forecastList}" varStatus="status">
 							<tr class="mchkbox">
 								<td></td>
-								<td><c:out value="${result.mfAcNm}"/></td>
-								<td><c:out value="${result.spBusiNm}"/> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-								<td><c:out value="${result.pmNm}"/></td>
+								<td><span><c:out value="${result.mfAcNm}"/></span></td>
+								<td><span><c:out value="${result.spBusiNm}"/></span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+								<td><c:out value="${result.pmDetail}"/></td>
 								<td><c:out value="${result.fcSjConfQt}"/> Q</td>
 								<td><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></td>
 								<td><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></td>
@@ -398,15 +407,15 @@
 								<td colspan="12" style="margin: 5px 71px;">
 									<ul class="detailList">
 										<li>매출처</li>
-										<li title='<c:out value="${result.salesAcNm}"/>'><c:out value="${result.salesAcNm}"/></li>
+										<li><c:out value="${result.salesAcNm}"/></li>
 										<li>매입처</li>
-										<li title='<c:out value="${result.buyAcNm}"/>'><c:out value="${result.buyAcNm}"/></li>
+										<li><c:out value="${result.buyAcNm}"/></li>
 										<li>수주확률</li>
-										<li title='<c:out value="${result.spState}"/>'><c:out value="${result.spState}"/></li>
+										<li><c:out value="${result.spState}"/></li>
 										<li>제품상세</li>
-										<li title='<c:out value="${result.remark}"/>'><c:out value="${result.remark}"/></li>
+										<li><c:out value="${result.pmDetail2}"/></li>
 										<li>진행사항</li>
-										<li>RFP 작업중</li>
+										<li><c:out value="${result.remark}"/></li>
 									</ul>
 								</td>
 							</tr>

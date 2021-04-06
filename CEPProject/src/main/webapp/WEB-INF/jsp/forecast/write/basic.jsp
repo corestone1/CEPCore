@@ -103,7 +103,7 @@
 				
 				if(event.keyCode == 13)
 				{
-					alert("검색");					
+					fnSearchAccoutList(this, $(this).val());					
 				}
 					
 			}); 
@@ -126,6 +126,64 @@
 				$('#m_slt_fcSjConfQt').val('${forecast.fcSjConfQt}');
 			}	
 		});
+		
+		function fnSearchAccoutList(pObject, pstAccountNm)
+		{
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		};
+		
+		
+		function fnViewAccountList(pObject, pjAccountList){
+			
+			var html = '<div id="m_div_accountList" style="width:362px; padding-top: 15px; padding-bottom: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			         + '<ul class="accountList">'
+			       ;
+			       
+	        for(var i=0; i < pjAccountList.length; i++)
+	    	{
+	    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+	    	        ;
+	    	} 
+			       
+			       
+			html +=  '</ul>'
+			     + '</div>'
+			     ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#m_tr_account').after(html);
+			
+			$("[id^='m_li_account']").click(function(event)
+			{
+				//alert(this.innerText);
+				
+				$('#m_ipt_acMfAcKey').val(this.title); 
+				$('#m_ipt_acMfAcNm').val(this.innerText);
+				
+				$('#m_div_accountList').remove();
+			});
+			
+		};
 		
 		
 		function fn_writeBasic(){
@@ -228,7 +286,7 @@
 								</select>
 							</td>
 						</tr>
-						<tr>
+						<tr id="m_tr_account">
 							<td>
 								<!-- <input type="hidden" name="acKey" /> -->
 								<input type="text"   id="m_ipt_acMfAcNm"  name="acNm"  placeholder="고객사(입력후 엔터를 눌러서 검색해 주세요!)" class="search" />

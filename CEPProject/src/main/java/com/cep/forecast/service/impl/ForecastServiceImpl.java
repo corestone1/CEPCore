@@ -121,4 +121,9 @@ public class ForecastServiceImpl implements ForecastService {
 		
 		return leMap;
 	}
+	
+	@Override
+	public void delete(ForecastVO forecastVO) throws Exception {
+		mapper.delete(forecastVO);
+	}
 }
