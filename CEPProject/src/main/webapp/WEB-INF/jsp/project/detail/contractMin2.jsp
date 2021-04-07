@@ -466,6 +466,24 @@
 		}
 		
 		
+		function fnViewModify() {
+			
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		
+		function fnViewDelete() {
+			alert("수금계획은 삭제할 수 없습니다.!");
+		}
+		
 		function fnShowStock(pstGbKey, pstGbKindCd) {
 			//alert('fnShowStockMod(' + pstGbKey + ')');
 			
@@ -502,6 +520,8 @@
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectInfo.pjKey}" />
+		
 		<div class="contentsWrap">
 			<div class="contents">
 				<div class="floatL dpBlock fxd">

@@ -4,8 +4,14 @@ import java.util.List;
 
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.project.vo.ProjectBiddingVO;
+import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
+import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
+import com.cep.project.vo.ProjectOrderProductVO;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
+import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.vo.GuarantyBondVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -71,4 +77,19 @@ public interface ProjectDetailMapper {
 	
 	public void modifyBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
+	public void deleteBidding(ProjectVO projectVO) throws Exception;
+	
+	public void deleteContract(ProjectContractVO projectContractVO) throws Exception;
+	
+	public void deleteSalesDetail(ProjectContractSalesVO projectContractSalesVO) throws Exception;
+		
+	public void deleteGuarantyBond(ProjectGuarantyBondVO projectGuarantyBondVO) throws Exception;
+	
+	public void deleteOrder(ProjectOrderVO projectOrderVO) throws Exception;
+	
+	public void deleteOrderProduct(ProjectOrderProductVO projectOrderProductVO) throws Exception;
+	
+	public void deleteInstallBase(ProjectBuildVO projectBuildVO) throws Exception;
+	
+	public void deleteWork(ProjectWorkVO projectWorkVO) throws Exception;
 }

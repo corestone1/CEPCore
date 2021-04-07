@@ -266,10 +266,64 @@
 		{
 			location.href = "/project/detail/workingMin.do?pjKey=${projectInfo.pjKey}";
 		}
+		
+		
+		
+		function fnViewModify() {
+			
+			//설치구축 key 구하기
+			
+			var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+			
+			//alert(litIdx + "\n" + $('input[name="pjWorkSeq"]').eq(litIdx).val());
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), "pjWorkSeq" :  $('input[name="pjWorkSeq"]').eq(litIdx).val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/workInfo.do", varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		function fnViewDelete() {
+			if(confirm("삭제하시겠습니까?")) {
+				
+				var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+				
+				var jsonData = {'pjKey' : $('#ipt_pjKey').val(), "pjWorkSeq" :  $('input[name="pjWorkSeq"]').eq(litIdx).val()};
+				
+				alert(litIdx + "\n" + $('input[name="pjWorkSeq"]').eq(litIdx).val());
+				
+				
+				$.ajax({
+		        	url :"/project/detail/workDelete.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		alert("삭제 되었습니다.!");
+		        		location.reload();
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	});
+			}
+		}
 	</script>
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectInfo.pjKey}" />
+		
 		<div class="contentsWrap">
 			<div class="contents">
 				<div class="floatL dpBlock fxd">
@@ -297,7 +351,7 @@
 									<c:forEach var="workList" items="${workList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">
-												<input type="radio" class="tCheck" name="m_gubun" id="check1${status.count}" />
+												<input type="radio" class="tCheck" name="m_gubun" id="check1${status.count}" value="${status.count}"/>
 												<label for="check1${status.count}" class="cursorP"/>
 											</td>
 											<td class="textalignC"><c:out value="${status.count}"/></td>
@@ -306,6 +360,7 @@
 											<td class="textalignC"><c:out value="${workList.pjWorkEmpNm}"/></td>
 											<td class="textalignC"><c:out value="${displayUtil.displayTime(workList.pjWorkTm)}"/></td>
 										</tr>
+										<input type="hidden" name="pjWorkSeq" value="${workList.pjWorkSeq}" />
 									</c:forEach>
 									<!-- 
 									<tr>

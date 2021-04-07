@@ -401,6 +401,24 @@
 			fileDownload("<c:url value='/file/download.do'/>", data); 
 		}
 		
+		function fnViewModify() {
+			
+			//설치구축 key 구하기
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/finishInfo.do", varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		
+		
+		
+		/* 
 		function fnViewModify(){
 			
 			
@@ -411,7 +429,7 @@
 				//$("#modInfo img").attr('src',"/images/btn_save.png");
 			} else {
 				// alert('수정되었습니다.'); 
-				/* var object = {};
+				 var object = {};
 	           	var formData = $("#viewForm").serializeArray();
 	           	for (var i = 0; i<formData.length; i++){
 	                
@@ -434,17 +452,19 @@
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-				}); */
+				});
 				// location.reload(); 
 			}
 			modCh++;
 		}
-		
+		 */
 		
 	</script>
 </head>
 <body>
 	<form:form id="listForm" name="listForm" method="post">
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectInfo.pjKey}" />
+		
 		<div class="contentsWrap">
 			<div class="contents">
 				<!-- 입찰정보 시작 -->

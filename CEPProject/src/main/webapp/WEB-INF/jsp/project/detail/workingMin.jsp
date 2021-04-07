@@ -205,40 +205,36 @@
 		}
 		.contents .dtl thead th:nth-child(2),
 		.contents .dtl tbody td:nth-child(2){
-			width: 40px;
+			width: 55px;
 		}
 		.contents .dtl thead th:nth-child(3),
 		.contents .dtl tbody td:nth-child(3) {
-			width: 150px;
-			max-width: 150px;
+			width: 170px;
 		}
 		.contents .dtl thead th:nth-child(4),
 		.contents .dtl tbody td:nth-child(4) {
-			width: 60px;
-			max-width: 60px;
+			width: 76x;
 		}
 		.contents .dtl thead th:nth-child(5),
 		.contents .dtl tbody td:nth-child(5){
-			width: 120px;
-			max-width: 120px;
+			width: 179px;
 		}
 		.contents .dtl thead th:nth-child(6),
 		.contents .dtl tbody td:nth-child(6) {
-			width: 198px;
-			max-width: 198px;
+			width: 181px;
 		}
 		
 		.contents .dtl thead th:nth-child(7),
 		.contents .dtl tbody td:nth-child(7) {
-			width: 105px;
+			width: 133px;
 		}
 		.contents .dtl thead th:nth-child(8),
 		.contents .dtl tbody td:nth-child(8) {
-			width: 69px;
+			width: 86px;
 		}
 		.contents .dtl thead th:last-child,
 		.contents .dtl tbody td:last-child {
-			width: 50px;
+			width: 69px;
 		}
 		
 		.contents .dtl tbody tr td > span {
@@ -279,10 +275,63 @@
 		{
 			location.href = "/project/detail/workingMin2.do?pjKey=${projectInfo.pjKey}";
 		}
+		
+		
+		function fnViewModify() {
+			
+			//설치구축 key 구하기
+			
+			var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+			
+			//alert(litIdx + "\n" + $('input[name="inbSeq"]').eq(litIdx).val());
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/buildInfo.do", varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		function fnViewDelete() {
+			if(confirm("삭제하시겠습니까?")) {
+				
+				var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+				
+				var jsonData = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
+				
+				//alert(litIdx + "\n" + $('input[name="pjOrderKey"]').eq(litIdx).val());
+				
+				
+				$.ajax({
+		        	url :"/project/detail/installBaseDelete.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		alert("삭제 되었습니다.!");
+		        		location.reload();
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	});
+			}
+		}
 	</script>
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectInfo.pjKey}" />
+		
 		<div class="contentsWrap">
 			<div class="contents">
 				<div class="floatL dpBlock fxd">
@@ -301,7 +350,7 @@
 										<th scope="row">선택</th>
 										<th scope="row">No</th>
 										<th scope="row">장비명</th>
-										<th scope="row">설치구분</th>
+										<th scope="row">구분</th>
 										<th scope="row">시리얼번호</th>
 										<th scope="row">설치장소</th>
 										<th scope="row">버전</th>
@@ -325,6 +374,7 @@
 											<td class="textalignC"><c:out value="${installList.inbCacheMem}"/>GB</td>
 											<td class="textalignC"><c:out value="${installList.inbPmType}"/></td>
 										</tr>
+										<input type="hidden" name="inbSeq" value="${installList.inbSeq}" />
 									</c:forEach>
 									
 									<!-- 

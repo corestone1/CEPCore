@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.project.service.ProjectDetailService;
 import com.cep.project.vo.ProjectBiddingVO;
+import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
+import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
+import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.vo.GuarantyBondVO;
@@ -163,6 +167,139 @@ public class ProjectDetailController {
 		}
 		         
 		return "/project/detail/biddingMin";
+	}
+	
+	
+	@RequestMapping(value="/biddingDelete.do")
+	@ResponseBody
+	public Map<String, Object> deleteBidding(@ModelAttribute("projectBiddingVO") ProjectBiddingVO projectBiddingVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		logger.debug(" ======================= deleteBidding =============================");
+		logger.debug(" projectBiddingVO.getPjKey() : {}", projectBiddingVO.getPjKey());
+		logger.debug(" projectBiddingVO.getBdKey() : {}", projectBiddingVO.getBdKey());
+		
+		try {
+			HashMap<String, String> sessionMap = null;
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			projectBiddingVO.setRegEmpKey(sessionMap.get("empKey"));
+				
+			service.deleteBidding(projectBiddingVO);
+		
+			
+		} catch(Exception e) {
+			logger.error("{}", e);
+			throw e ;
+		}
+		
+		return returnMap;
+	}
+	
+	
+	@RequestMapping(value="/contractDelete.do")
+	@ResponseBody
+	public Map<String, Object> deleteContract(@ModelAttribute("projectContractVO") ProjectContractVO projectContractVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		logger.debug(" ======================= deleteContract =============================");
+		logger.debug(" projectContractVO.getPjKey() : {}", projectContractVO.getPjKey());
+		logger.debug(" projectContractVO.getCtKey() : {}", projectContractVO.getCtKey());
+		
+		try {
+			HashMap<String, String> sessionMap = null;
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			projectContractVO.setRegEmpKey(sessionMap.get("empKey"));
+				
+			service.deleteContract(projectContractVO);
+		
+			
+		} catch(Exception e) {
+			logger.error("{}", e);
+			throw e ;
+		}
+		
+		return returnMap;
+	}
+	
+	
+	@RequestMapping(value="/orderDelete.do")
+	@ResponseBody
+	public Map<String, Object> deleteOrder(@ModelAttribute("projectOrderVO") ProjectOrderVO projectOrderVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		logger.debug(" ======================= deleteOrder =============================");
+		logger.debug(" projectOrderVO.getPjKey()      : {}", projectOrderVO.getPjKey());
+		logger.debug(" projectOrderVO.getPjOrderKey() : {}", projectOrderVO.getPjOrderKey());
+		
+		try {
+			HashMap<String, String> sessionMap = null;
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			projectOrderVO.setRegEmpKey(sessionMap.get("empKey"));
+				
+			service.deleteOrder(projectOrderVO);
+		
+			
+		} catch(Exception e) {
+			logger.error("{}", e);
+			throw e ;
+		}
+		
+		return returnMap;
+	}
+	
+	@RequestMapping(value="/installBaseDelete.do")
+	@ResponseBody
+	public Map<String, Object> deleteInstallBase(@ModelAttribute("projectBuildVO") ProjectBuildVO projectBuildVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		logger.debug(" ======================= deleteInstallBase =============================");
+		logger.debug(" projectBuildVO.getPjKey()  : {}", projectBuildVO.getPjKey());
+		logger.debug(" projectBuildVO.getInbSeq() : {}", projectBuildVO.getInbSeq());
+		
+		try {
+			HashMap<String, String> sessionMap = null;
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			projectBuildVO.setRegEmpKey(sessionMap.get("empKey"));
+				
+			service.deleteInstallBase(projectBuildVO);
+		
+			
+		} catch(Exception e) {
+			logger.error("{}", e);
+			throw e ;
+		}
+		
+		return returnMap;
+	}
+	
+	@RequestMapping(value="/workDelete.do")
+	@ResponseBody
+	public Map<String, Object> deleteWork(@ModelAttribute("projectWorkVO") ProjectWorkVO projectWorkVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		logger.debug(" ======================= deleteWork =============================");
+		logger.debug(" projectWorkVO.getPjKey()  : {}", projectWorkVO.getPjKey());
+		logger.debug(" projectWorkVO.getPjWorkSeq() : {}", projectWorkVO.getPjWorkSeq());
+		
+		try {
+			HashMap<String, String> sessionMap = null;
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			projectWorkVO.setRegEmpKey(sessionMap.get("empKey"));
+				
+			service.deleteWork(projectWorkVO);
+		
+			
+		} catch(Exception e) {
+			logger.error("{}", e);
+			throw e ;
+		}
+		
+		return returnMap;
 	}
 	
 	

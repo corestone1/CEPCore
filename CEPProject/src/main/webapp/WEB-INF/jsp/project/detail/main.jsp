@@ -371,40 +371,7 @@
 			
 			$('li[id^=LI_TOPBar]').click(function(event){
 				
-				$('li[id^=LI_TOPBar]').removeClass("on");
-				$('li[id^=LI_TOPBar]').removeClass("liArrow");
-				
-				
-				$(this).addClass("on");
-				$(this).addClass("liArrow");
-				
-				$('form .contents > .fxd .title ul li:nth-child(' +  ($('form .contents > .fxd .title ul li.on').index()+2) + ')').addClass("liArrow");
-				
-				//alert($(this).css());
-				
-				//요기다가 설정
-				var index = $('form .contents > .fxd .title ul li.on').index() + 2;
-				var length = $('form .contents > .fxd .title ul li').length;
-				
-				//alert("index : " + index + "\n length : " + length);
-				
-				for(var i = 0; i < length; i++) {
-				//	debugger;
-					if(i < index) {
-						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
-						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
-					}
-					else
-					{
-						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#d3d3d3");
-					}
-				}
-				
-				var lstUrl = this.title + "?pjKey=" + $('#iph_pjKey').val();
-				
-				//alert(lstUrl);
-				
-				$('#ifr_ProjectInfo').attr('src', lstUrl);
+				fnMoveMenu($(this).attr('id'));
 				
 			});
 			
@@ -456,8 +423,16 @@
 				//iframe의 수정화면 View 호출
 				$('#ifr_ProjectInfo').get(0).contentWindow.fnViewModify();
 				
-				$("#modMinInfo img").attr('src',"/images/btn_save.png");
+				//$("#modMinInfo img").attr('src',"/images/btn_save.png");
 			});
+			
+			
+			$('#delMinInfo').click(function() {
+			
+				$('#ifr_ProjectInfo').get(0).contentWindow.fnViewDelete();
+			
+			});
+			
 			
 			var modCh = 1;
 			$('#modBasicInfo').click(function() {
@@ -569,7 +544,77 @@
 			//select Box 선택
 			$('#slt_pjSaleEmpKey').val('${projectVO.pjSaleEmpKey}');
 			$('#slt_pjSupportEmpKey').val('${projectVO.pjSupportEmpKey}');
+			
+			
+			//현재 프로젝트 상태로 이동
+			var lstPjStatusCd = '${projectVO.pjStatusCd}';
+			//alert(lstPjStatusCd);
+			if(lstPjStatusCd == 'PJST1000') {  
+				//입찰 - /project/detail/biddingMin.do
+				fnMoveMenu('LI_TOPBar_BD');
+			} else if(lstPjStatusCd == 'PJST2000') {
+				//계약 - /project/detail/contractMin.do
+				fnMoveMenu('LI_TOPBar_CT');
+			} else if(lstPjStatusCd == 'PJST3000') {
+				//발주 - /project/detail/orderMin.do
+				fnMoveMenu('LI_TOPBar_OD');
+			} else if(lstPjStatusCd == 'PJST4000') {
+				//수행 - /project/detail/workingMin.do
+				fnMoveMenu('LI_TOPBar_WK');
+			} else if(lstPjStatusCd == 'PJST5000') {
+				//완료 - /project/detail/endMin.do
+				fnMoveMenu('LI_TOPBar_ED');
+			} else if(lstPjStatusCd == 'PJST6000') {
+				//실주
+				
+			}
+			
 		});
+		
+		function fnMoveMenu(pstId){
+		
+			var lobj = $('#' + pstId);
+			
+			//alert(pstId);
+			
+			$('li[id^=LI_TOPBar]').removeClass("on");
+			$('li[id^=LI_TOPBar]').removeClass("liArrow");
+			
+			
+			lobj.addClass("on");
+			lobj.addClass("liArrow");
+			
+			$('form .contents > .fxd .title ul li:nth-child(' +  ($('form .contents > .fxd .title ul li.on').index()+2) + ')').addClass("liArrow");
+			
+			//alert(lobj.attr('title'));
+			
+			
+			//요기다가 설정
+			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
+			var length = $('form .contents > .fxd .title ul li').length;
+			
+			//alert("index : " + index + "\n length : " + length);
+			
+			for(var i = 0; i < length; i++) {
+			//	debugger;
+				if(i < index) {
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
+				}
+				else
+				{
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#d3d3d3");
+				}
+			}
+			
+			var lstUrl = lobj.attr('title') + "?pjKey=" + $('#iph_pjKey').val();
+			
+			//alert(lstUrl);
+			
+			$('#ifr_ProjectInfo').attr('src', lstUrl);
+		
+		}
+		
 		
 		
 		function fnSearchAccoutList(pObject, pstAccountNm)
@@ -884,7 +929,7 @@
 								<button type="button" value="수행일지" onclick="javascript:fnWorkInfoPopup();"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
 								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
 								<button type="button" value="수정" id="modMinInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<button type="button" value="삭제" id="delMinInfo"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>

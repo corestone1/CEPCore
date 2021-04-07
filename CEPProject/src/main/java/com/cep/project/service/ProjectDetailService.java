@@ -7,8 +7,12 @@ import java.util.List;
 
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.project.vo.ProjectBiddingVO;
+import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
+import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
+import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.vo.GuarantyBondVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -95,5 +99,13 @@ public interface ProjectDetailService {
 	
 	public void modifyBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
+	public void deleteBidding(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
+	public void deleteContract(ProjectContractVO projectContractVO) throws Exception;
+	
+	public void deleteOrder(ProjectOrderVO projectOrderVO) throws Exception;
+	
+	public void deleteInstallBase(ProjectBuildVO projectBuildVO) throws Exception;
+	
+	public void deleteWork(ProjectWorkVO projectWorkVO) throws Exception;
 }
