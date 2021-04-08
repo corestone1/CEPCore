@@ -462,7 +462,8 @@
 				var dialogId = 'program_layer';
 				var varParam = {
 					"mtIntegrateKey": $('#mtIntegrateKey').val(),
-					"mtWorkKey":$('#mtWorkKey').val()
+					"mtWorkKey":$('#mtWorkKey').val(),
+					"orderCtFkKey":$('#mtWorkKey').val()
 				}
 				var button = new Array;
 				button = [];
@@ -499,7 +500,8 @@
 				var dialogId = 'program_layer';
 				var varParam = {
 						"mtIntegrateKey":$('#mtIntegrateKey').val(),
-						"mtWorkKey":$('#mtWorkKey').val()
+						"mtWorkKey":$('#mtWorkKey').val(),
+						"orderCtFkKey":$('#mtWorkKey').val()
 				}
 				var button = new Array;
 				button = [];

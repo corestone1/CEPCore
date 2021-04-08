@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.maintenance.amount.service.impl.MtAmountMapper">
+	<!-- 
+		유지보수 관련 매입, 매출, 계산서 관리 SQL
+	 -->
+	<!-- ===========================유지보수 매입 ========================================= -->
+	
+	<!-- 유지보수 작업 발주연계 매입데이타 등록. -->
+	<insert id="writeMtPurchaseInfo" parameterType="com.cep.maintenance.amount.vo.MtPurchaseVO">
+		INSERT INTO MT_PURCHASE_TB (
+			BUY_KEY
+			, BUY_FK_PJ_KEY
+			, BUY_ORDER_FK_KEY
+			, BUY_AMOUNT
+			, YET_PAYMENT_AMOUNT
+			, BUY_TURN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, FK_PJ_KEY_TYPE
+		) VALUES (
+			#{buyKey}
+			, #{buyFkPjKey}
+			, #{buyOrderFkKey}
+			, #{buyAmount}
+			, #{yetPaymentAmount}
+			, #{buyTurn}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, #{fkPjKeyType}
+		) 
+	</insert>	
+	
+	<!-- 유지보수작업별 발주에 해당하는 매입정보 수정-->
+	<!-- <update id="updateMtWorkPurchaseInfo" parameterType="projectPurchaseVO">	
+		UPDATE MT_PURCHASE_TB
+		SET BUY_AMOUNT = #{buyAmount}
+			, DONE_PAYMENT_AMOUNT = #{donePaymentAmount}
+			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BUY_ORDER_FK_KEY=#{buyOrderFkKey}
+			AND DONE_PAYMENT_AMOUNT = 0
+			AND DELETE_YN='N'
+	</update>	 -->
+	<update id="updateMtWorkPurchaseInfo" parameterType="projectPurchaseVO">	
+		UPDATE MT_PURCHASE_TB
+		SET BUY_AMOUNT = #{buyAmount}
+			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BUY_ORDER_FK_KEY=#{buyOrderFkKey}
+			AND DONE_PAYMENT_AMOUNT = 0
+			AND DELETE_YN='N'
+	</update>
+	
+	<!-- 유지보수작업별 거래처별 발주에 해당하는 매입정보 삭제 (유지보수 발주거래처가 삭제되는 경우 호출됨)-->
+	<update id="deleteMtWorkOrderPurchaseInfo" parameterType="java.util.HashMap">
+		UPDATE MT_PURCHASE_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BUY_ORDER_FK_KEY=#{buyOrderFkKey}
+			AND DONE_PAYMENT_AMOUNT = 0
+			AND DELETE_YN='N'
+	</update>	
+	
+	<!-- 유지보수작업별  발주에 해당하는 매입정보 전체삭제(유지보수 작업이 삭제되는 경우 호출됨) -->
+	<update id="deleteMtWorkPurchaseInfoAll" parameterType="java.util.HashMap">
+		UPDATE MT_PURCHASE_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BUY_FK_PJ_KEY=#{buyFkPjKey}
+			AND DONE_PAYMENT_AMOUNT = 0
+			AND DELETE_YN='N'
+	</update>	
+	
+	<!-- 유지보수 발주에 해당하는 매입정보 조회.  -->
+	<select id="selectMtPurchaseInfoList" parameterType="projectPurchaseVO"  resultType="com.cep.project.vo.ProjectPurchaseVO">	
+		SELECT
+			BUY_KEY AS buyKey 
+			, BUY_FK_PJ_KEY AS buyFkPjKey
+			, BUY_ORDER_FK_KEY AS buyOrderFkKey
+			, BUY_AMOUNT AS buyAmount
+			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, BUY_TURN AS buyTurn
+		FROM MT_PURCHASE_TB
+		WHERE 1=1
+		<if test="buyKey != null and buyKey != ''">
+			AND BUY_KEY = #{buyKey}
+		</if>
+		<if test="buyFkPjKey != null and buyFkPjKey != ''">
+			AND BUY_FK_PJ_KEY = #{buyFkPjKey}
+		</if>
+		<if test="buyOrderFkKey != null and buyOrderFkKey != ''">
+			AND BUY_ORDER_FK_KEY = #{buyOrderFkKey}
+		</if>
+			AND DELETE_YN='N'
+	</select>
+	
+	<!-- 유지보수 매입금액 합계 조회. -->
+	<select id="selectMtDonePaymentAmount" parameterType="projectPurchaseVO"  resultType="int">	
+		SELECT
+			SUM(DONE_PAYMENT_AMOUNT) AS donePaymentAmount
+		FROM MT_PURCHASE_TB
+		WHERE 1=1
+		<if test="buyKey != null and buyKey != ''">
+			AND BUY_KEY = #{buyKey}
+		</if>
+		<if test="buyFkPjKey != null and buyFkPjKey != ''">
+			AND BUY_FK_PJ_KEY = #{buyFkPjKey}
+		</if>
+		<if test="buyOrderFkKey != null and buyOrderFkKey != ''">
+			AND BUY_ORDER_FK_KEY = #{buyOrderFkKey}
+		</if>
+			AND DELETE_YN='N'
+	</select>
+	
+	
+	
+</mapper>
+

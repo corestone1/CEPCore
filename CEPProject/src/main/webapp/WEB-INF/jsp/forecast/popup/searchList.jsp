@@ -69,6 +69,7 @@
 		margin-top: 16px;
 		border-collapse: collapse;
 		overflow: hidden;
+		text-overflow: ellipsis;
 		border-bottom: 2px solid #6a5bae;
 	}
 	.popContainer .middle table thead {
@@ -88,6 +89,14 @@
 	.middle table tbody tr {
 		display: table;
 	}
+	.middle table tbody tr td > span {
+		display: inline-block;
+        overflow:hidden; 
+        text-overflow:ellipsis; 
+        white-space:nowrap;
+        width: 84%;
+        margin: 0 auto;
+	}
 	.popContainer .middle table thead th, .middle table tbody td {
 		width: 100px;
 		padding: 10px 0;
@@ -95,21 +104,28 @@
 	}
 	.popContainer .middle table thead th:first-child, 
 	.popContainer .middle table tbody td:first-child {
-		width: 50px;
+		width: 65px;
+	}
+	.popContainer .middle table thead th:nth-child(2), 
+	.popContainer .middle table tbody td:nth-child(2){
+		width: 159px;
 	}
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 120px;
+		width: 284px;
 	}
-	
+	.popContainer .middle table thead th:nth-child(4), 
+	.popContainer .middle table tbody td:nth-child(4) {
+		width: 203px;
+	}
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 180px;
+		width: 104px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
-		width: 80px;
+		width: 105px;
 	}
 	
 	.popContainer .top .floatR select {
@@ -222,10 +238,10 @@
 						<c:forEach var="result" items="${forecastList}" varStatus="status">
 	            			<tr>
 	            				<td><a href="#"    onclick="javascript:fn_ForecastSelect('${result.spKey}', '${result.spBusiNm}');" class="btn btn_gray">선택</a></td>
-	            				<td align="center" class="listtd">&nbsp;<c:out value="${result.mfAcNm}"/></td>
-	            				<td align="left"   class="listtd">&nbsp;<c:out value="${result.spBusiNm}"/>&nbsp;</td>
-	            				<td align="left"   class="listtd">&nbsp;<c:out value="${result.pmNm}"/>&nbsp;</td>
-	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.spState}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span><c:out value="${result.mfAcNm}"/></span></td>
+	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.spBusiNm}"/></span>&nbsp;</td>
+	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.pmNm}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span><c:out value="${result.spState}"/></span>&nbsp;</td>
 	            				<td align="center" class="listtd"><c:out value="${result.fcSjConfQt}"/>&nbsp;</td>
 	            			</tr>
 	        			</c:forEach>						

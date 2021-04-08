@@ -225,6 +225,48 @@
 			location.href = "/project/detail/contractMin2.do?pjKey=${projectInfo.pjKey}";
 		}
 		
+		
+		function fnViewDelete() {
+			if(confirm("삭제하시겠습니까?")) {
+				
+				var jsonData = {'pjKey' : $('#ipt_pjKey').val(), 'ctKey' :  $('#ipt_CtKey').val()};
+			
+				$.ajax({
+		        	url :"/project/detail/contractDelete.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		alert("삭제 되었습니다.!");
+		        		location.reload();
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	});
+			}
+		}
+		
+		
+		function fnViewModify() {
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'ctKey' : $('#ipt_CtKey').val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			
+		}
+		/* 
 		function fnViewModify(){
 			
 			alert('viewModify()');
@@ -236,7 +278,7 @@
 				$("#modInfo img").attr('src',"/images/btn_save.png");
 			} else {
 				// alert('수정되었습니다.'); 
-				/* var object = {};
+				 var object = {};
 	           	var formData = $("#viewForm").serializeArray();
 	           	for (var i = 0; i<formData.length; i++){
 	                
@@ -259,17 +301,21 @@
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-				}); */
+				}); 
 				// location.reload(); 
 			}
 			modCh++;
 			
 		}
-		
+		 */
 	</script>
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${contractInfo.pjKey}" />
+		<input type="hidden" id="ipt_CtKey" name="ctKey" value="${contractInfo.ctKey}" />
+		
 		<div class="contentsWrap">
 			<div class="contents">
 				<div class="floatL dpBlock fxd">

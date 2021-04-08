@@ -94,36 +94,35 @@
 		}
 		.middle table thead th:first-child,
 		.middle table tbody td:first-child,
+		.middle table thead th:nth-child(5),
+		.middle table tbody td:nth-child(5),
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6),
 		.middle table thead th:nth-child(7),
-		.middle table tbody td:nth-child(7),
-		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(8) {
-			width: 100px;
-			max-width: 100px;
+		.middle table tbody td:nth-child(7) {
+			width: 120px;
+			max-width: 120px;
 		}
 		.middle table thead th:nth-child(2),
-		.middle table tbody td:nth-child(2),
-		.middle table thead th:nth-child(5),
-		.middle table tbody td:nth-child(5) {
-			width: 200px;
-			max-width: 200px;
+		.middle table tbody td:nth-child(2){
+			/* width: 200px;
+			max-width: 200px; */
+			width : 320px;
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
-			width: 150px;
-			max-width: 150px;
+			width: 200px;
+			max-width: 200px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
 			width: 50px;
 			max-width: 50px;
 		}
-		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9) {
-			width: 80px;
-			max-width: 80px;
+		.middle table thead th:nth-child(8),
+		.middle table tbody td:nth-child(8) {
+			width: 120px;
+			max-width: 120px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -188,10 +187,16 @@
 		}
 	</style>
 	<script>
+	
+		function fn_searchList()
+		{                
+			document.listForm.action = "/mngProject/billSchedule/list.do";
+	       	document.listForm.submit(); 
+		}
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -202,13 +207,21 @@
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">분기</option>
-						</select>
-						<input type="text" class="calendar" placeholder="from"/><label> ~ </label><input type="text" class="calendar" placeholder="to"/>
-						<input type="text" class="search" placeholder="거래처명" />
-						<input type="text" class="search" style="width: 250px;" placeholder="프로젝트명" />
-						<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<form:select path="billType">
+							<form:option value="SD">매출</form:option>
+							<form:option value="PC">매입</form:option>
+						</form:select>
+						<form:select path="">
+							<option value="">선택</option>
+							<option value="1">1분기</option>
+							<option value="2">2분기</option>
+							<option value="3">3분기</option>
+							<option value="4">4분기</option>
+						</form:select>
+						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from"/><label> ~ </label><form:input type="text" path="searchToDt" class="calendar" placeholder="to"/>
+						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" />
+						<form:input type="text" path="searchPjNm" class="search" style="width: 250px;" placeholder="프로젝트명" />
+						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -220,7 +233,6 @@
 								<th scope="row">프로젝트</th>
 								<th scope="row">거래처명</th>
 								<th scope="row">구분</th>
-								<th scope="row">적요</th>
 								<th scope="row">금액</th>
 								<th scope="row">부가세</th>
 								<th scope="row">계산서일정</th>
@@ -228,149 +240,31 @@
 							</tr>
 						</thead>
 						<tbody>
+							<c:forEach var="result" items="${billList}" varStatus="status">
+								<tr>
+									<td><c:out value="${displayUtil.displayDate(result.regDt)}" /></td>
+									<td><span class="textalignL"><c:out value="${result.pjNm}" /></span></td>
+									<td><span><c:out value="${result.acNm}" /></span></td>
+									<td>구매</td>
+									<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesAmount)}" /></span></td>
+									<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesTax)}" /></span></td>
+									<td><c:out value="${displayUtil.displayDate(result.billDate)}" /></td>
+									<td><c:out value="${result.empNm}" /></td>
+								</tr>
+							</c:forEach>
+
+							<!--
 							<tr>
 								<td>2018-12-12</td>
 								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
 								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
 								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
 								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
 								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
 								<td>2018-12-12</td>
 								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
+							</tr> 
+							 -->
 						</tbody>
 					</table>
 				</div>
@@ -379,8 +273,8 @@
 						<tbody class="ftw400">
 							<tr>
 								<td colspan="5">합계</td>
-								<td><span>10,000,000,000</span></td>
-								<td><span>100,000,000</span></td>
+								<td><span><c:out value="${displayUtil.commaStr(totalAmount) }"/></span></td>
+								<td><span><c:out value="${displayUtil.commaStr(totalTax) }"/></span></td>
 								<td></td>
 								<td></td>
 							</tr>
@@ -389,6 +283,6 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

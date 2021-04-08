@@ -29,8 +29,8 @@ public class ForecastSearchVO implements Serializable {
 	
 	private String spKey;       //Forecast Key
 	private String spState;     //진행상태
-	private String pjFlag;      //구분(프로젝트/유지보수/기타)
-	private String searchFlag;  //검색조건 (사업명, 고객사, 제품) 추후 추가
+	private String pjFlag;      //구분(P:프로젝트/M:유지보수/기타)
+	private String searchFlag;  //검색조건 (BN:사업명, AC:고객사, SE:영업담당자) 추후 추가
 	private String searchValue; //검색조건 값
 	
 	private String spKeyDomId;     //Search Popup Return값을 넘기는 객체의 ID(Forecast키)
@@ -44,6 +44,12 @@ public class ForecastSearchVO implements Serializable {
 	private String returnKey;	//Search Popup Return값을 넘기는 객체의 ID(Forecast키)
 	private String returnNm;	//Search Popup Return값을 넘기는 객체의 ID(사업명)
 	private String returnFunctionNm; //호출될 function명
+	
+	
+	private String salesEmpKey;
+	private String searchFromDt;
+	private String searchToDt;
+	
 	/**
 	 * @return the spKey
 	 */
@@ -182,6 +188,43 @@ public class ForecastSearchVO implements Serializable {
 	public void setReturnFunctionNm(String returnFunctionNm) {
 		this.returnFunctionNm = returnFunctionNm;
 	}
+	/**
+	 * @return the salesEmpKey
+	 */
+	public String getSalesEmpKey() {
+		return salesEmpKey;
+	}
+	/**
+	 * @param salesEmpKey the salesEmpKey to set
+	 */
+	public void setSalesEmpKey(String salesEmpKey) {
+		this.salesEmpKey = salesEmpKey;
+	}
+	/**
+	 * @return the searchFromDt
+	 */
+	public String getSearchFromDt() {
+		return searchFromDt;
+	}
+	/**
+	 * @param searchFromDt the searchFromDt to set
+	 */
+	public void setSearchFromDt(String searchFromDt) {
+		this.searchFromDt = searchFromDt;
+	}
+	/**
+	 * @return the searchToDt
+	 */
+	public String getSearchToDt() {
+		return searchToDt;
+	}
+	/**
+	 * @param searchToDt the searchToDt to set
+	 */
+	public void setSearchToDt(String searchToDt) {
+		this.searchToDt = searchToDt;
+	}
+	
 	
 }
 

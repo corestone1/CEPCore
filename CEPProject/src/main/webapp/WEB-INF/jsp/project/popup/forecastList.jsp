@@ -120,12 +120,19 @@
 	});
 	
 	function fn_ProjectSelect(id, no){
+		/* 
 		opener.document.getElementById('id').value = id;
 		opener.document.getElementById('no').value = no;
+		 */
+		
+		 window.opener.fnSetPjInfo(id, no);
+		 
 		close();
 	   /*  var dialogLayer = $('#dialogId').val();
 	    $("#" +dialogLayer).dialog('close'); */
 	}
+	
+	
 </script>	
 <form:form id="projectForm" name="projectForm" modelAttribute="searchVO" method="post" onsubmit="return false" >
 <fieldset>

@@ -1,3 +1,4 @@
+
 package com.cep.mngProject.bill.service.impl;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import com.cep.mngProject.bill.service.MngProjectBillService;
 import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
 import com.cep.mngProject.bill.vo.MngProjectBillVO;
 import com.cep.mngProject.order.service.impl.MngProjectOrderServiceImpl;
+import com.cep.mngProject.order.vo.MngOrderInsertVO;
 import com.cmm.util.CepDateUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -140,4 +142,52 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 		mapper.updateSalesDetailPayments(mngProjectBillVO);
 	}
 	
+	@Override
+	public EgovMap selectSdBillingOp(MngProjectBillVO mngProjectBillVO) throws Exception {
+		
+		return  mapper.selectSdBillingOp(mngProjectBillVO);
+	}
+	
+	
+	@Override
+	@Transactional
+	public void insertSdBillingXml(MngProjectBillVO mngProjectBillVO) throws Exception {
+		
+		//PJ_SD_BILLING_TB Insert
+		mapper.insertSdBillingXml(mngProjectBillVO);
+		
+		
+		//PJ_SD_BILLING_OP_TB Update
+		mapper.updateBillMapping(mngProjectBillVO);
+	}
+	
+	
+	@Override
+	@Transactional
+	public void insertBillingExcelBatch(MngProjectBillVO mngProjectBillVO) throws Exception {
+		
+		List<MngProjectBillVO> lltBillVO = mngProjectBillVO.getMngBillInsertVOList();
+		int litListSize = lltBillVO.size();
+		
+		MngProjectBillVO billVO;
+		
+		for(int i = 0; i < litListSize; i++)
+		{
+			billVO = lltBillVO.get(i);
+			
+			billVO.setRegEmpKey(mngProjectBillVO.getRegEmpKey());
+			
+			logger.debug("billVO.getBillNo()          : {}", billVO.getBillNo());
+			logger.debug("billVO.getAcKey()           : {}", billVO.getAcKey());
+			logger.debug("billVO.getBillAmount()      : {}", billVO.getBillAmount());
+			logger.debug("billVO.getBillIssueDt()     : {}", billVO.getBillIssueDt());
+			logger.debug("billVO.getBillIssueStatus() : {}", billVO.getBillIssueStatus());
+			
+			
+			//PJ_PC_BILLING_TB Insert
+			mapper.insertPcBillInfo(billVO);
+		}
+	}
 }
+
+

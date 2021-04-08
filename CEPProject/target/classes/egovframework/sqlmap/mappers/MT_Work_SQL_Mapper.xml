@@ -300,4 +300,295 @@
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_WORK_KEY = #{mtWorkKey} 
 	</update>
+	
+	
+	
+	<!-- ===========================유지보수 작업 발주 ========================================= -->
+	
+	<!-- 유지보수작업 발주 등록 -->
+	<insert id="writeMtWorkOrder" parameterType="com.cep.maintenance.work.vo.MtOrderVO">
+	
+		<!-- 유지보수작업 발주 메인등록 -->
+		INSERT INTO MT_ORDER_TB (
+		    MT_ORDER_KEY 
+		    , MT_INTEGRATE_KEY
+		    , ORDER_CT_FK_KEY
+		    , ORDER_DT
+		    , ORDER_AC_KEY 
+		    , ORDER_AC_DIRECTOR_KEY 
+		    , ORDER_PAY_TERMS 
+		    , ORDER_AMOUNT 
+		    , TAX_YN 
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY
+		) VALUES (
+		    #{mtOrderKey} 
+		    , #{mtIntegrateKey} 
+		    , #{orderCtFkKey} 
+		    , #{orderDt}
+		    , #{orderAcKey}
+		    , #{orderAcDirectorKey}
+		    , #{orderPayTerms}
+		    , #{orderAmount}
+		    , #{taxYn}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey}
+		)				
+	</insert>
+	
+	<insert id="writeMtWorkOrderProductList" parameterType="java.util.HashMap">
+				
+		<!-- 유지보수작업 발주 제품등록 -->
+		INSERT INTO MT_ORDER_PRODUCT_TB (
+		    MT_ORDER_KEY 
+		    , ORDER_SEQ 
+		    , ORDER_PM_FK_KEY
+		    , ORDER_QUANTITY 
+		    , ORDER_UPRICE 
+		    , ORDER_RECEIPT_DT 
+		    , MT_RATE
+		    , ORDER_KIND
+		    , ORDER_PM_DETAIL
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY
+		    )
+		VALUES
+		<foreach collection="mtOrderProductVoList" item="item" separator=",">
+		    (
+		    #{mtOrderKey} 
+		    , (SELECT IFNULL(MAX(a.ORDER_SEQ) + 1, 1) FROM MT_ORDER_PRODUCT_TB a WHERE a.MT_ORDER_KEY=#{mtOrderKey})
+		    , #{item.orderPmFkKey}
+		    , #{item.orderQuantity}
+		    , #{item.orderUprice}
+		    , #{item.orderReceiptDt}
+		    , 0
+		    , #{item.orderKind}
+		    , #{item.orderPmDetail}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey}
+		    )
+		</foreach>    	
+	</insert>
+	
+	<!-- 유지보수작업별 발주메인 등록 SELECT_BOX 리스트조회 -->
+	<select id="selectWorkOrderSelectBoxList" parameterType="String" resultType="egovMap">			
+		SELECT 
+		  MO.MT_ORDER_KEY
+		  , MO.ORDER_AC_KEY
+		  , CA.AC_NM AS MT_AC_NM
+		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA
+		WHERE MO.ORDER_CT_FK_KEY=#{orderCtFkKey}
+			AND MO.DELETE_YN='N'	
+			AND MO.ORDER_AC_KEY = CA.AC_KEY	
+	</select>
+	
+	<!-- 유지보수작업 발주 메인상세 -->
+	<select id="selectWorkOrderDetail" parameterType="String" resultType="com.cep.maintenance.work.vo.MtOrderVO">	
+		SELECT 
+			MO.MT_ORDER_KEY AS mtOrderKey
+			, MO.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, MO.ORDER_CT_FK_KEY AS orderCtFkKey
+			, MO.ORDER_AC_KEY AS orderAcKey
+		  	, CA.AC_NM AS orderAcKeyNm
+			, MO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
+			, MO.ORDER_PAY_TERMS AS orderPayTerms
+			, MO.ORDER_AMOUNT AS orderAmount
+			, MO.TAX_YN AS taxYn
+			, MO.ORDER_DT AS orderDt
+		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA
+		WHERE MT_ORDER_KEY = #{mtOrderKey} 
+			AND MO.DELETE_YN='N'  
+		  	AND MO.ORDER_AC_KEY = CA.AC_KEY
+	</select>
+	
+	<!-- 유지보수작업 발주 목록조회 -->
+	<select id="selectWorkOrderList" parameterType="java.util.HashMap" resultType="com.cep.maintenance.work.vo.MtOrderVO">		
+		SELECT 
+			MO.MT_ORDER_KEY AS mtOrderKey
+			, MO.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, MO.ORDER_CT_FK_KEY AS orderCtFkKey
+			, MO.ORDER_AC_KEY AS orderAcKey
+		  	, CA.AC_NM AS orderAcKeyNm
+			, MO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
+      		, AD.AC_DIRECTOR_NM AS orderAcDirectorNm
+			, MO.ORDER_PAY_TERMS AS orderPayTerms
+			, MO.ORDER_AMOUNT AS orderAmount
+			, MO.TAX_YN AS taxYn
+			, MO.ORDER_DT AS orderDt
+		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
+		WHERE 1=1
+			<if test="mtIntegrateKey != null and mtIntegrateKey != ''">
+				AND MO.MT_INTEGRATE_KEY = #{mtIntegrateKey} 
+			</if>
+			<if test="orderCtFkKey != null and orderCtFkKey != ''">
+				AND MO.ORDER_CT_FK_KEY = #{orderCtFkKey} 
+			</if>			
+			AND MO.DELETE_YN='N'  
+		  	AND MO.ORDER_AC_KEY = CA.AC_KEY
+		  	AND MO.ORDER_AC_KEY = AD.AC_KEY
+		  	AND MO.ORDER_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+	</select>	
+	
+	
+	<!-- 유지보수작업별 발주 제품목록 -->
+	<select id="selectWorkOrderProductList" parameterType="String" resultType="com.cep.maintenance.work.vo.MtOrderProductVO">
+		SELECT
+			MP.MT_ORDER_KEY AS mtOrderKey
+			, MP.ORDER_SEQ AS orderSeq
+			, MP.ORDER_PM_FK_KEY AS orderPmFkKey
+			, PM.PM_NM_CD AS orderPmFkNm
+			, MP.ORDER_QUANTITY AS orderQuantity
+			, MP.ORDER_UPRICE AS orderUprice
+			, MP.ORDER_RECEIPT_DT AS orderReceiptDt
+  			, MP.MT_RATE AS mtRate
+			, MP.ORDER_KIND AS orderKind
+			, CD.CD_NM AS orderKindNm
+			, MP.ORDER_PM_DETAIL AS orderPmDetail
+		FROM MT_ORDER_PRODUCT_TB MP, PM_PRODUCT_MNG_TB PM, CMM_CODE_MNG_TB CD
+		WHERE MP.MT_ORDER_KEY = #{mtOrderKey}
+			AND MP.DELETE_YN='N'
+			AND CD.CD_UP_CD='PRODUCT'
+			AND MP.ORDER_PM_FK_KEY = PM.PM_KEY
+			AND MP.ORDER_KIND = CD.CD_KEY
+	</select>
+	
+	<!-- 유지보수작업별 거래처별 발주메인 삭제 -->
+	<update id="deleteWorkOrder" parameterType="java.util.HashMap">
+		UPDATE MT_ORDER_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY=#{mtOrderKey}
+			AND DELETE_YN='N'
+	</update>
+	
+		<!-- 유지보수작업별 거래처별 발주제품목록 전체삭제  -->
+	<update id="deleteWorkOrderProduct" parameterType="java.util.HashMap">
+		UPDATE MT_ORDER_PRODUCT_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY=#{mtOrderKey}
+			AND DELETE_YN='N'
+	</update>
+	
+	<!-- 유지보수작업별 전체 발주삭제 삭제(유지보수 작업 삭제시 호출)-->
+	<update id="deleteWorkOrderAll" parameterType="java.util.HashMap">
+		UPDATE MT_ORDER_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE ORDER_CT_FK_KEY=#{orderCtFkKey}
+			AND DELETE_YN='N'
+	</update>	
+
+	
+	<!-- 유지보수작업에 대한 전체 백계약 제품목록 전체삭제(유지보수작업이 삭제되는 경우 호출됨) -->
+	<update id="deleteWorkOrderProductAll" parameterType="java.util.HashMap">
+		UPDATE MT_ORDER_PRODUCT_TB MP
+			INNER JOIN MT_ORDER_TB MO 
+			ON MP.MT_ORDER_KEY = MO.MT_ORDER_KEY
+		SET MP.DELETE_YN='Y'
+			, MP.MOD_EMP_KEY = #{modEmpKey}
+			, MP.MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MP.MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE MO.ORDER_CT_FK_KEY=#{orderCtFkKey}
+			AND MP.DELETE_YN='N'
+	</update>	
+	
+	<!-- 유지보수계약별 전체 유지보수작업 발주삭제 삭제(유지보수계약 작업 삭제시 호출) -->
+	<update id="deleteContractWorkOrderAll" parameterType="java.util.HashMap">
+		UPDATE MT_ORDER_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
+			AND DELETE_YN='N'
+	</update>	
+
+	
+	<!-- 유지보수계약에 대한 전체 유지보수작업 제품목록 전체삭제(유지보수계약이 삭제되는 경우 호출됨)  -->
+	<update id="deleteContractWorkOrderProductAll" parameterType="java.util.HashMap">
+		UPDATE MT_ORDER_PRODUCT_TB MP
+			INNER JOIN MT_ORDER_TB MO 
+			ON MP.MT_ORDER_KEY = MO.MT_ORDER_KEY
+		SET MP.DELETE_YN='Y'
+			, MP.MOD_EMP_KEY = #{modEmpKey}
+			, MP.MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MP.MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE MO.MT_INTEGRATE_KEY=#{mtIntegrateKey}
+			AND MP.DELETE_YN='N'
+	</update>	
+	
+	
+	<!-- 유지보수작업별 거래처별 제품목록 리스트삭제 -->
+	<update id="deleteWorkOrderProductList" parameterType="java.util.HashMap">	
+		UPDATE MT_ORDER_PRODUCT_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_ORDER_KEY = #{mtOrderKey}
+				AND ORDER_SEQ IN
+			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
+				#{item}
+			</foreach>	
+	</update>
+	
+	<!-- 유지보수작업별 발주 메인정보수정 -->
+	<update id="updateWorkOrder" parameterType="com.cep.maintenance.work.vo.MtOrderVO">	
+		UPDATE MT_ORDER_TB
+		SET ORDER_AC_KEY = #{orderAcKey}
+			, ORDER_AC_DIRECTOR_KEY = #{orderAcDirectorKey}
+			, ORDER_PAY_TERMS = #{orderPayTerms}
+			, ORDER_AMOUNT = #{orderAmount}
+			, TAX_YN = #{taxYn}
+			, ORDER_DT = #{orderDt}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY = #{mtOrderKey}
+	</update>	
+	
+	<!-- 유지보수작업별 발주 계산서 맵핑회수 수정 -->
+	<update id="updateWorkOrderMappingNum" parameterType="java.util.HashMap">	
+		UPDATE MT_ORDER_TB
+		SET BILL_MAPPING_NUM = #{billMappingNum}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_ORDER_KEY = #{mtOrderKey}
+	</update>	
+	
+	<!-- 유지보수계약 백계약 제품리스트 정보수정. -->
+	<update id="updateWorkOrderProductList" parameterType="java.util.HashMap">
+		<foreach collection="mtOrderProductVoList" item="item" separator=";" close=";">
+			UPDATE MT_ORDER_PRODUCT_TB
+			SET ORDER_PM_FK_KEY=#{item.orderPmFkKey} 
+				, ORDER_QUANTITY = #{item.orderQuantity}
+				, ORDER_UPRICE = #{item.orderUprice}
+				, ORDER_RECEIPT_DT = #{item.orderReceiptDt}
+				<!-- , MT_RATE = #{item.mtRate} -->
+		    	, ORDER_KIND = #{item.orderKind}
+		    	, ORDER_PM_DETAIL = #{item.orderPmDetail}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_ORDER_KEY = #{mtOrderKey}
+				AND ORDER_SEQ = #{item.orderSeq}
+		</foreach>
+	</update>
+
+	
+	
+	
 </mapper>
+

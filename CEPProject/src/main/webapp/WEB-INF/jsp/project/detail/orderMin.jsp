@@ -242,28 +242,24 @@
 		
 		.contents .tbl2Width thead th:first-child,
 		.contents .tbl2Width tbody td:first-child {
-			width: 40px;
+			width: 50px;
 			padding: 0;
 		}
 		.contents .tbl2Width thead th:nth-child(2),
-		.contents .tbl2Width tbody td:nth-child(2){
-			width: 40px;
+		.contents .tbl2Width tbody td:nth-child(2) {
+			font-weight: 400;
+			width: 330px;
+			max-width: 330px;
 		}
 		.contents .tbl2Width thead th:nth-child(3),
 		.contents .tbl2Width tbody td:nth-child(3) {
-			font-weight: 400;
-			width: 320px;
-			max-width: 320px;
+			width: 150px;
+			max-width: 150px;
 		}
 		.contents .tbl2Width thead th:nth-child(4),
-		.contents .tbl2Width tbody td:nth-child(4) {
-			width: 140px;
-			max-width: 140px;
-		}
-		.contents .tbl2Width thead th:nth-child(5),
-		.contents .tbl2Width tbody td:nth-child(5){
-			width: 160px;
-			max-width: 160px;
+		.contents .tbl2Width tbody td:nth-child(4){
+			width: 170px;
+			max-width: 170px;
 		}
 		.contents .tbl2Width thead th:nth-child(5),
 		.contents .tbl2Width tbody td:nth-child(5){
@@ -342,7 +338,6 @@
 			html = '<table id="tbl_productList" class="dtl tbl2Width">'
 			     + '<thead class="ftw400">'
 			     +     '<tr>'
-			     +        '<th scope="row">선택</th>'
 			     +        '<th scope="row">No</th>'
 			     +        '<th scope="row">제품</th>'
 			     +        '<th scope="row">수량</th>'
@@ -370,10 +365,6 @@
 				 */
 				 
 				 html += '<tr>'
-				      +     '<td class="textlignC" onclick="event.cancelBubble = true;">'
-				      +         '<input type="radio" class="tCheck" name="m_gubun2" id="check2' + i + '"/>'
-				      +         '<label for="check2' + i + '" class="cursorP"></label>'
-				      +     '</td>'
 				      +     '<td class="textalignC">' + (i+1) + '</td>'
 				      +     '<td class="textalignL"><span title="' + pjProductList[i].pmNm + '">' + pjProductList[i].pmNm + '</span></td>'
 				      +     '<td class="textalignC">' + pjProductList[i].orderQuantity + '</td>'
@@ -391,10 +382,60 @@
 			
 		}
 		
+		
+		function fnViewModify() {
+			
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		
+		function fnViewDelete() {
+			if(confirm("삭제하시겠습니까?")) {
+				
+				var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+				
+				var jsonData = {'pjKey' : $('#ipt_pjKey').val(), "pjOrderKey" :  $('input[name="pjOrderKey"]').eq(litIdx).val()};
+				
+				//alert(litIdx + "\n" + $('input[name="pjOrderKey"]').eq(litIdx).val());
+				
+				
+				$.ajax({
+		        	url :"/project/detail/orderDelete.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		alert("삭제 되었습니다.!");
+		        		location.reload();
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	});
+			}
+		}
+		
+		
 	</script>
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectInfo.pjKey}" />
+		
 		<div class="contentsWrap">
 			<div class="contents">
 				<div class="floatL dpBlock fxd">
@@ -421,7 +462,7 @@
 									<c:forEach var="orderList" items="${orderList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">
-												<input type="radio" class="tCheck" name="m_gubun" id="check1" />
+												<input type="radio" class="tCheck" name="m_gubun" id="check1" value="${status.count}"/>
 												<label for="check1" class="cursorP"/>
 											</td>
 											<td class="textalignC"><c:out value="${status.count}"/></td>
@@ -433,6 +474,7 @@
 											<td class="textalignC"><c:out value="${displayUtil.commaStr(orderList.orderAmount)}"/></td>
 											<td class="textalignC"><c:out value="${orderList.orderEmpNm}"/></td>
 										</tr>
+										<input type="hidden" name="pjOrderKey" value="${orderList.pjOrderKey}" />
 									</c:forEach>
 									<!-- 
 									<tr>
@@ -460,7 +502,6 @@
 						<table id="tbl_productList" class="dtl tbl2Width">
 							<thead class="ftw400">
 								<tr>
-									<th scope="row">선택</th>
 									<th scope="row">No</th>
 									<th scope="row">제품</th>
 									<th scope="row">수량</th>

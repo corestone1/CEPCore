@@ -414,6 +414,59 @@
 			fileDownload("<c:url value='/file/download.do'/>", data); 
 		}
 		
+		
+		
+		function fnShowStock() {
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
+			
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, "/project/detail/viewStockPublishBD.do", varParam, button, '', 'width:648px;height:575px');
+		}
+		
+		
+		function fnViewDelete() {
+			
+			var jsonData = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' :  $('#ipt_bdKey').val()};
+			
+			$.ajax({
+	        	url :"/project/detail/biddingDelete.do",
+	        	type:"POST",  
+	            data: jsonData,
+	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+	     	    dataType: 'json',
+	            async : false,
+	        	success:function(data){		  
+	        		//alert(data.accountList[0].acNm);
+	        		//선택 목록 생성
+	        		alert("삭제 되었습니다.!");
+	        		location.reload();
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	    	});
+		}
+		
+		function fnViewModify() {
+		
+				
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/biddingInfo.do", varParam, button, '', 'width:1144px;height:708px');
+		}
+		
+		/* 
 		function fnViewModify(){
 			
 			alert('viewModify()');
@@ -425,7 +478,7 @@
 				$("#modInfo img").attr('src',"/images/btn_save.png");
 			} else {
 				// alert('수정되었습니다.'); 
-				/* var object = {};
+				 var object = {};
 	           	var formData = $("#viewForm").serializeArray();
 	           	for (var i = 0; i<formData.length; i++){
 	                
@@ -448,23 +501,12 @@
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-				}); */
+				}); 
 				// location.reload(); 
 			}
 			modCh++;
 		}
-		
-		function fnShowStock() {
-			
-			var dialogId = 'program_layer';
-			
-			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
-			
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, "/project/detail/viewStockPublishBD.do", varParam, button, '', 'width:648px;height:575px');
-		}
-		
+		 */
 	</script>
 </head>
 <body>

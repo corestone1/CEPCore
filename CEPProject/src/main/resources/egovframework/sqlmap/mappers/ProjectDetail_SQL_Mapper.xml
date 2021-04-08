@@ -37,6 +37,7 @@
 			   , PJ.REG_TM             AS REG_TM
 			   , PJ.REG_EMP_KEY        AS REG_EMP_KEY
 			   , PJ.SP_KEY             AS SP_KEY
+			   , PJ.PJ_STATUS_CD       AS PJ_STATUS_CD
 			   , AC.AC_NM              AS AC_NM
 			   , DRT.AC_DIRECTOR_NM          AS AC_DIRECTOR_NM
 			   , DRT.AC_DIRECTOR_MB_NUM      AS AC_DIRECTOR_MB_NUM
@@ -332,7 +333,8 @@
 	<select id="selectWorkList" parameterType="com.cep.project.vo.ProjectVO" resultType="egovMap">
 	
 		SELECT PWB.PJ_KEY              AS PJ_KEY            /* PJ_MAIN_TB */
-		     , PWB.PJ_WORK_CLASS_CD    AS PJ_WORK_CLASS_CD  /* 프로젝트 작업 순번 */
+		     , PWB.PJ_WORK_SEQ         AS PJ_WORK_SEQ       /* 프로젝트 작업 순번 */
+		     , PWB.PJ_WORK_CLASS_CD    AS PJ_WORK_CLASS_CD  /* 프로젝트 작업 구분 */
 		     , PWB.PJ_WORK_DT          AS PJ_WORK_DT        /* 프로젝트 작업 일자 */
 		     , PWB.PJ_WORK_TAKE_TM     AS PJ_WORK_TAKE_TM   /* 시간(2)분(2) */
 		     , PWB.PJ_WORK_NM          AS PJ_WORK_NM        /* 프로젝트 작업 명 */
@@ -506,5 +508,108 @@
 		
 	</update>
 	
+	
+	<update id="deleteBidding" parameterType="com.cep.project.vo.ProjectBiddingVO">
+		
+		UPDATE PJ_BIDDING_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT       = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM       = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  BD_KEY      = #{bdKey}	
+	
+	</update>
+	
+	
+	<update id="deleteGuarantyBond" parameterType="com.cep.project.vo.ProjectGuarantyBondVO">
+	
+		UPDATE PJ_GUARANTY_BOND_TB
+		SET    DELETE_YN   = 'Y'
+		WHERE  CT_KEY      = #{ctKey}
+		
+		<if test="gbKey != null and gbKey != ''">
+			AND GB_KEY = #{gbKey}
+		</if>
+			
+	</update>
+	
+	
+	<update id="deleteSalesDetail" parameterType="com.cep.project.vo.ProjectGuarantyBondVO">
+	
+		UPDATE PJ_SALES_DETAIL_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  SALES_CT_FK_KEY = #{pjKey}
+		
+		<if test="salesKey != null and salesKey != ''">
+			AND SALES_KEY = #{salesKey}
+		</if>
+			
+	</update>
+	
+	<update id="deleteContract" parameterType="com.cep.project.vo.ProjectContractVO">
+	
+		UPDATE PJ_CONTRACT_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  CT_KEY = #{ctKey}
+			
+	</update>
+	
+	
+	<update id="deleteOrderProduct" parameterType="com.cep.project.vo.ProjectOrderProductVO">
+	
+		UPDATE PJ_ORDER_PRODUCT_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  PJ_ORDER_KEY = #{pjOrderKey}
+		
+		<if test="orderSeq != null and orderSeq != ''">
+			AND ORDER_SEQ = #{orderSeq}
+		</if>
+			
+	</update>
+	
+	
+	<update id="deleteOrder" parameterType="com.cep.project.vo.ProjectOrderVO">
+	
+		UPDATE PJ_ORDER_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  PJ_ORDER_KEY = #{pjOrderKey}
+			
+	</update>
+	
+	<update id="deleteInstallBase" parameterType="com.cep.project.vo.ProjectBuildVO">
+	
+		UPDATE PJ_INSTALL_AND_BUILD_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  PJ_KEY  = #{pjKey}
+		  AND  INB_SEQ = #{inbSeq} 
+			
+	</update>
+	
+	<update id="deleteWork" parameterType="com.cep.project.vo.ProjectWorkVO">
+	
+		UPDATE PJ_WORK_TB
+		SET    DELETE_YN   = 'Y'
+		     , MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			 , MOD_TM      = DATE_FORMAT(NOW(),'%H%i%s') 
+		     , MOD_EMP_KEY = #{regEmpKey}
+		WHERE  PJ_KEY      = #{pjKey}
+		  AND  PJ_WORK_SEQ = #{pjWorkSeq} 
+			
+	</update>
 	
 </mapper>

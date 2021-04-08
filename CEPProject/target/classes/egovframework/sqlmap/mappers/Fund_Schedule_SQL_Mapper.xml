@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngProject.fundSchedule.service.impl.MngProjectFundScheduleMapper">
+
+	
+	<select id="selectFundScheduleSdList" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="egovMap">				
+		
+		SELECT DAT.PJ_KEY                AS PJ_KEY
+		     , DAT.SALES_KEY             AS SALES_KEY		
+		     , DAT.SALES_STATUS_CD       AS SALES_STATUS_CD
+		     , DAT.CT_DT                 AS CT_DT
+		     , DAT.PJ_NM                 AS PJ_NM
+		     , DAT.AC_NM                 AS AC_NM
+		     , DAT.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT
+		     , DAT.SALES_AMOUNT          AS SALES_AMOUNT
+		     , DAT.EMP_NM                AS EMP_NM
+		     , DAT.SALES_COLLECT_DT      AS SALES_COLLECT_DT
+		FROM (
+				SELECT PMT.PJ_KEY              AS PJ_KEY
+				     , PSD.SALES_KEY           AS SALES_KEY
+				     , PSD.SALES_STATUS_CD     AS SALES_STATUS_CD
+				     , PCT.CT_DT               AS CT_DT               /* 거래일자*/
+				     , PMT.PJ_NM               AS PJ_NM               /* 프로젝트명 */
+				     , CAT.AC_NM               AS AC_NM               /* 거래처명 */
+				     , PSD.SALES_TURN_AMOUNT   AS SALES_TURN_AMOUNT   /* 수금액 */
+				     , CASE WHEN PCT.TAX_YN = 'Y'
+				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
+				            ELSE PSD.SALES_TURN_AMOUNT
+				       END                     AS SALES_AMOUNT        /* 수금액(부가세별도) */
+				     , CET.EMP_NM              AS EMP_NM              /* 영업담당자 */
+				     , PSD.SALES_COLLECT_FC_DT AS SALES_COLLECT_FC_DT /* 수금예상일정 */
+				     /*
+					  , CASE WHEN PSD.SALES_STATUS_CD = 'E'
+					  */
+					  , CASE WHEN PSD.SALES_COLLECT_FINISH_DT IS NOT NULL
+				            THEN PSD.SALES_COLLECT_FINISH_DT
+				            ELSE PSD.SALES_COLLECT_FC_DT
+				       END                     AS SALES_COLLECT_DT    /* 수금 일정 */
+				      
+				FROM   PJ_SALES_DETAIL_TB    PSD
+				JOIN   PJ_MAIN_TB            PMT  ON PSD.SALES_CT_FK_KEY = PMT.PJ_KEY AND PMT.DELETE_YN = 'N'
+				JOIN   PJ_CONTRACT_TB        PCT  ON PMT.PJ_KEY          = PCT.PJ_KEY AND PCT.DELETE_YN = 'N'
+				JOIN   CMM_ACCOUNT_TB        CAT  ON PMT.AC_KEY          = CAT.AC_KEY
+				JOIN   CMM_EMPLOYEE_TB       CET  ON PMT.PJ_SALE_EMP_KEY = CET.EMP_KEY
+				WHERE PSD.DELETE_YN = 'N'
+				  AND PSD.SALES_COLLECT_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				
+				<if test="searchAcNm != null and searchAcNm != ''">
+				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+				</if>
+				
+		) DAT
+		ORDER BY SALES_COLLECT_DT ASC		  
+				  
+		
+	</select>
+	
+	<select id="selectFundScheduleSdTotalAmount" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="Integer">
+	
+		SELECT IFNULL(SUM(DAT.SALES_AMOUNT), 0)     AS SALES_AMOUNT
+		FROM (
+				SELECT CASE WHEN PCT.TAX_YN = 'Y'
+				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
+				            ELSE PSD.SALES_TURN_AMOUNT
+				       END                     AS SALES_AMOUNT        /* 수금액(부가세별도) */ 
+				FROM   PJ_SALES_DETAIL_TB    PSD
+				JOIN   PJ_MAIN_TB            PMT  ON PSD.SALES_CT_FK_KEY = PMT.PJ_KEY AND PMT.DELETE_YN = 'N'
+				JOIN   PJ_CONTRACT_TB        PCT  ON PMT.PJ_KEY          = PCT.PJ_KEY AND PCT.DELETE_YN = 'N'
+				JOIN   CMM_ACCOUNT_TB        CAT  ON PMT.AC_KEY          = CAT.AC_KEY
+				WHERE PSD.DELETE_YN = 'N'
+				  AND PSD.SALES_COLLECT_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				
+				<if test="searchAcNm != null and searchAcNm != ''">
+				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+				</if>
+		) DAT
+		
+	</select>
+	
+	
+	<select id="selectFundSchedulePcList" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="egovMap">				
+		
+		SELECT DAT.PJ_KEY              AS PJ_KEY
+		     , DAT.BUY_KEY             AS BUY_KEY
+		     , DAT.PAYMENT_STATUS_CD   AS PAYMENT_STATUS_CD
+		     , DAT.CT_DT               AS CT_DT
+			 , DAT.PJ_NM               AS PJ_NM
+			 , DAT.AC_NM               AS AC_NM
+			 , DAT.CALL_AMOUNT_ORG     AS CALL_AMOUNT_ORG
+			 , DAT.EMP_NM              AS EMP_NM
+			 , DAT.CALL_AMOUNT         AS CALL_AMOUNT
+			 , DAT.PAYMENT_DT          AS PAYMENT_DT
+		FROM (
+				SELECT PMT.PJ_KEY              AS PJ_KEY
+				     , PUR.BUY_KEY             AS BUY_KEY
+				     , PPT.PAYMENT_STATUS_CD   AS PAYMENT_STATUS_CD
+				     , PCT.CT_DT               AS CT_DT               /* 거래일자*/
+				     , PMT.PJ_NM               AS PJ_NM               /* 프로젝트명 */
+					 , CAT.AC_NM               AS AC_NM               /* 거래처명 */
+					 , PPT.CALL_AMOUNT         AS CALL_AMOUNT_ORG     /* 지급액 */
+					 , CET.EMP_NM              AS EMP_NM              /* 영업담당자 */
+					 , CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
+					        THEN FLOOR(PPT.CALL_AMOUNT/1.1)
+							ELSE PPT.CALL_AMOUNT
+					   END                     AS CALL_AMOUNT	     /* 지급액(부가세별도) */
+					 , PPT.PAYMENT_DT          AS PAYMENT_DT         /* 지급일정 */    
+				FROM   PJ_PAYMENT_TB    PPT
+				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
+				JOIN   PJ_MAIN_TB       PMT ON PMT.PJ_KEY            = PUR.BUY_FK_PJ_KEY         AND PMT.DELETE_YN = 'N'
+				JOIN   PJ_CONTRACT_TB   PCT ON PMT.PJ_KEY            = PCT.PJ_KEY                AND PCT.DELETE_YN = 'N'
+				JOIN   CMM_CODE_MNG_TB  CCM ON PPT.PAYMENT_STATUS_CD = CCM.CD_KEY
+				JOIN   CMM_ACCOUNT_TB   CAT ON PMT.AC_KEY            = CAT.AC_KEY
+				JOIN   CMM_EMPLOYEE_TB  CET ON PMT.PJ_SALE_EMP_KEY   = CET.EMP_KEY		
+				WHERE  PPT.DELETE_YN = 'N'
+				  AND PPT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				
+				<if test="searchAcNm != null and searchAcNm != ''">
+				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+				</if>
+				 
+		) DAT
+		ORDER BY DAT.PAYMENT_DT ASC		  
+				
+	</select>
+	
+	
+	<select id="selectFundSchedulePcTotalAmount" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="Integer">
+	            
+		SELECT IFNULL(SUM(DAT.CALL_AMOUNT), 0)   AS CALL_AMOUNT
+		FROM (
+				SELECT CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
+					         THEN FLOOR(PPT.CALL_AMOUNT/1.1)
+								ELSE PPT.CALL_AMOUNT
+						 END                     AS CALL_AMOUNT	     /* 지급액(부가세별도) */
+				FROM   PJ_PAYMENT_TB    PPT
+				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
+				JOIN   PJ_MAIN_TB       PMT ON PMT.PJ_KEY            = PUR.BUY_FK_PJ_KEY         AND PMT.DELETE_YN = 'N'
+				JOIN   CMM_ACCOUNT_TB   CAT ON PMT.AC_KEY            = CAT.AC_KEY
+				WHERE  PPT.DELETE_YN = 'N'
+				   AND PPT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				
+				<if test="searchAcNm != null and searchAcNm != ''">
+				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+				</if>
+		) DAT
+	</select>
+	
+	
+	 
+	 <select id="selectOrderProductSdList" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="egovMap">
+	 
+		SELECT DAT.PM_NM               AS PM_NM
+		     , DAT.ORDER_QUANTITY      AS ORDER_QUANTITY
+		     , DAT.ORDER_UPRICE        AS ORDER_UPRICE
+		     , DAT.ORDER_TOTAL_AMOUNT  AS ORDER_TOTAL_AMOUNT
+		     , DAT.TAX_YN              AS TAX_YN
+		     , CASE WHEN DAT.TAX_YN = 'Y'
+				            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 1.1)
+				            ELSE DAT.ORDER_TOTAL_AMOUNT
+				       END               AS ORDER_AMOUNT
+		     , CASE WHEN DAT.TAX_YN = 'Y'
+		            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 11)
+		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT / 0.1)
+		       END                     AS TOTAL_TAX
+		     , CASE WHEN DAT.TAX_YN = 'Y'
+		            THEN DAT.ORDER_TOTAL_AMOUNT
+		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT * 1.1)
+		       END                     AS TOTAL_AMOUNT
+		     
+		FROM (
+				SELECT PMT.PM_NM_CD           AS PM_NM
+				     , POP.ORDER_QUANTITY     AS ORDER_QUANTITY
+				     , POP.ORDER_UPRICE       AS ORDER_UPRICE
+				     , IFNULL(POP.ORDER_TOTAL_AMOUNT, POP.ORDER_UPRICE * POP.ORDER_QUANTITY)
+					                           AS ORDER_TOTAL_AMOUNT
+				     , POT.TAX_YN             AS TAX_YN
+				FROM   PJ_ORDER_TB         POT
+				JOIN   PJ_ORDER_PRODUCT_TB POP ON POT.PJ_ORDER_KEY    = POP.PJ_ORDER_KEY AND POP.DELETE_YN = 'N' 
+				JOIN   PM_PRODUCT_MNG_TB   PMT ON POP.ORDER_PM_FK_KEY = PMT.PM_KEY
+				WHERE  POT.DELETE_YN = 'N'
+				  AND  POT.ORDER_CT_FK_KEY = #{pjKey}
+		) DAT	 
+	 
+	 </select>
+	 
+	 
+	 <select id="selectOrderProductPcList" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="egovMap">
+	 
+	 	SELECT DAT.PM_NM               AS PM_NM
+		     , DAT.ORDER_QUANTITY      AS ORDER_QUANTITY
+		     , DAT.ORDER_UPRICE        AS ORDER_UPRICE
+		     , DAT.ORDER_TOTAL_AMOUNT  AS ORDER_TOTAL_AMOUNT
+		     , DAT.TAX_YN              AS TAX_YN
+		     , CASE WHEN DAT.TAX_YN = 'Y'
+				            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 1.1)
+				            ELSE DAT.ORDER_TOTAL_AMOUNT
+				       END               AS ORDER_AMOUNT
+		     , CASE WHEN DAT.TAX_YN = 'Y'
+		            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 11)
+		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT / 0.1)
+		       END                     AS TOTAL_TAX
+		     , CASE WHEN DAT.TAX_YN = 'Y'
+		            THEN DAT.ORDER_TOTAL_AMOUNT
+		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT * 1.1)
+		       END                     AS TOTAL_AMOUNT
+		     
+		FROM (
+				SELECT PMT.PM_NM_CD           AS PM_NM
+				     , POP.ORDER_QUANTITY     AS ORDER_QUANTITY
+				     , POP.ORDER_UPRICE       AS ORDER_UPRICE
+				     , IFNULL(POP.ORDER_TOTAL_AMOUNT, POP.ORDER_UPRICE * POP.ORDER_QUANTITY)
+					                           AS ORDER_TOTAL_AMOUNT
+				     , POT.TAX_YN             AS TAX_YN
+				FROM   PJ_PURCHASE_TB      PPT 
+				JOIN   PJ_ORDER_TB         POT ON POT.PJ_ORDER_KEY    = PPT.BUY_ORDER_FK_KEY AND POT.DELETE_YN = 'N'
+				JOIN   PJ_ORDER_PRODUCT_TB POP ON POT.PJ_ORDER_KEY    = POP.PJ_ORDER_KEY     AND POP.DELETE_YN = 'N'
+				JOIN   PM_PRODUCT_MNG_TB   PMT ON POP.ORDER_PM_FK_KEY = PMT.PM_KEY 
+				WHERE  PPT.DELETE_YN = 'N'
+				  AND  PPT.BUY_KEY = #{buyKey}
+				ORDER BY POP.ORDER_SEQ ASC
+		) DAT
+
+	 </select>
+</mapper>
