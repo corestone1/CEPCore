@@ -1295,7 +1295,7 @@
 							<c:forEach var="list" items="${purchaseAmountList}" varStatus="status">
 								<tbody>
 									<tr>
-										<td rowspan="2" style="width: 29px; max-width: 18px" >
+										<td rowspan="2" style="width: 10px;" >
 											<!-- <input type="checkbox" class="tRadio" id="check1"><label for="check1" class="cursorP"></label> -->
 											<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>:<c:out value="${list.mtBuyKey}"/>:<c:out value="${list.mtBuyYear}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 										</td>
