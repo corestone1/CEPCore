@@ -32,7 +32,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -72,8 +72,8 @@
 		}
 		.middle1 table tbody {
 			width: 1662px;
-			/* height: 545px; */
-			height: 270px;
+			height: 545px; 
+			/* height: 270px; */
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -108,7 +108,7 @@
 		}
 		.middle1 table thead th:nth-child(4),
 		.middle1 table tbody td:nth-child(4) {
-			width: 152px;
+			width: 190px;
 		}
 		.middle1 table thead th:nth-child(5),
 		.middle1 table tbody td:nth-child(5) {
@@ -128,7 +128,7 @@
 		}
 		.middle1 table thead th:nth-child(9),
 		.middle1 table tbody td:nth-child(9) {
-			width: 130px;
+			width: 89px;
 		}
 		.middle1 table thead th:nth-child(10),
 		.middle1 table tbody td:nth-child(10) {
@@ -150,7 +150,14 @@
 			width: 25px;
 			vertical-align: middle;
 		}
-		
+		.middle1 table tbody tr td > span {
+			display: inline-block;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		    width: 84%;
+		    margin: 0 auto
+		}
 		.totalAmount {
 			text-align: right !important;
 			font-size: 13px !important;
@@ -380,9 +387,13 @@
 		
 		
 		
-		
+		.detailList {
+			width: 90%;
+			margin: 0 auto;
+			min-width: 1495px;
+		}
 		.detailList li {
-			/* float: left; */
+			float: left; 
 			text-align: left;
 			margin-left: 10px;
 			line-height: 2.3;
@@ -391,19 +402,17 @@
 			width: 82px;
 			font-weight: 400;
 			color: #158566;
-			margin-left: 100px;
 		}
 		.detailList li:nth-child(2n) {
-			width: 305px;
+			width: 270px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			font-weight: 200;
 			color: #21a17e;
-			margin-left: 150px;
 		}
 		.detailList li:last-child {
-			width: 1409px;
+			width: 1059px;
    			height: 56px;
    			word-break: break-all;
    			white-space: normal;
@@ -481,6 +490,7 @@
 					$(this).next().addClass("dpNone");
 				}
 				
+				$(this).children(".arrow").css("transform","rotate(180deg)");
 				
 			});
 			 
@@ -499,14 +509,17 @@
 			 */
 		});
 
-				
+		function fn_searchList() {
+			document.listForm.action = "/forecast/salesMeetingList.do";
+           	document.listForm.submit(); 
+		}
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
-		<div class="contentsWrap" style="overflow-y: scroll; overflow-x: hidden;">
+		<div class="contentsWrap" style="overflow-y: auto; overflow-x: hidden;">
 			<div class="contents mgauto">
 			
 				<div class="top">
@@ -514,16 +527,27 @@
 						<div class="title floatL"><label class="ftw500">Forecast list</label></div>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">담당영업</option>
-						</select>
-						<select>
-							<option value="">구분</option>
-						</select>
-						<select>
-							<option value="">진행상태</option>
-						</select>
-						<input type="text" path="searchFromDt" class="calendar" placeholder="from"/><label> ~ </label><input type="text" path="searchToDt" class="calendar" placeholder="to"/>
+						<form:select path="salesEmpKey">
+							<form:option value="">담당영업</form:option>
+							<c:forEach var="result" items="${empolyeeList}" varStatus="status">
+								<form:option value="${result.empKey }"><c:out value="${result.empNm }" /></form:option>
+							</c:forEach>
+						</form:select>
+						<form:select path="pjFlag">
+							<form:option value="">구분</form:option>
+							<form:option value="P">프로젝트</form:option>
+							<form:option value="M">유지보수</form:option>
+						</form:select>
+						<form:select path="spState">
+							<form:option value="">진행상태</form:option>
+							<form:option value="A">A</form:option>
+							<form:option value="B">B</form:option>
+							<form:option value="C">C</form:option>
+							<form:option value="D">D</form:option>
+							<form:option value="E">E</form:option>
+						</form:select>
+						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from" value="${searchParam.searchFromDt}"/>
+						<label> ~ </label><form:input type="text" path="searchToDt" class="calendar" placeholder="to" value="${searchParam.searchToDt}"/>
 						<span id="span_search" class="veralignT" onclick="javascript:fn_searchList()"><img src="/images/icon_search.png" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -540,7 +564,8 @@
 								<th scope="row">수주확정</th>
 								<th scope="row">매출액</th>
 								<th scope="row">매입액</th>
-								<th scope="row">매출총이익</th>
+								<!-- <th scope="row">매출총이익</th> -->
+								<th scope="row">영업담당자</th>
 								<th scope="row">매출일정</th>
 								<th scope="row">수금일정</th>
 								<th scope="row">매입일정</th>
@@ -552,13 +577,14 @@
 							<tr class="mchkbox">
 								<td><c:out value="${status.count}" /></td>
 								<td><c:out value="${result.mfAcNm}"/></td>
-								<td><c:out value="${result.spBusiNm}"/> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-								<td><c:out value="${result.pmNm}"/></td>
+								<td><c:out value="${result.spBusiNm}"/> <img class="cursorP arrow" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+								<td><span title="${result.pmDetail }"><c:out value="${result.pmDetail}"/></span></td>
 								<td><c:out value="${result.spState}"/></td>
 								<td><c:out value="${result.fcSjConfQt}"/> Q</td>
 								<td><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></td>
 								<td><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></td>
-								<td><c:out value="${displayUtil.commaStr(result.fcSalesProfit)}"/></td>
+								<%-- <td><c:out value="${displayUtil.commaStr(result.fcSalesProfit)}"/></td> --%>
+								<td><c:out value="${result.empNm }" /></td>
 								<td><c:out value="${displayUtil.displayDate(result.fcSalesDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.fcCollectDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.fcBuyPayDt)}"/></td>
@@ -567,10 +593,40 @@
 							<tr class="dpNone" style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">
 								<td colspan="12" style="margin: 5px 71px;">
 									<ul class="detailList">
-										<li>제품상세</li>
+										<%-- <li>제품상세</li>
 										<li title='<c:out value="${result.remark}"/>'><c:out value="${result.remark}"/></li>
 										<li>진행사항</li>
-										<li>RFP 작업중</li>
+										<li>RFP 작업중</li> --%>
+										<li>매출처</li>
+										<li>
+											<c:choose>
+												<c:when test="${result.salesAcNm eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.salesAcNm}"/></c:otherwise>
+											</c:choose>
+										</li>
+										<li>매입처</li>
+										<li>
+											<c:choose>
+												<c:when test="${result.buyAcNm eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.buyAcNm}"/></c:otherwise>
+											</c:choose>
+										</li>
+										<li>수주확률</li>
+										<li>
+											<c:choose>
+												<c:when test="${result.spState eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.spState}"/></c:otherwise>
+											</c:choose>
+										</li>
+										<li>제품상세</li>
+										<li>
+											<c:choose>
+												<c:when test="${result.pmDetail2 eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.pmDetail2}"/></c:otherwise>
+											</c:choose>
+										</li>
+										<li>진행사항</li>
+										<li><c:out value="${result.remark}"/></li>
 									</ul>
 								</td>
 							</tr>
@@ -593,7 +649,7 @@
 					</div>
 				</div>
 				
-				<div class="top topMargin">
+				<%-- <div class="top topMargin">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">입찰 목록</label></div>
 					</div>
@@ -665,9 +721,9 @@
 							</tbody>
 						</table>
 					</div>
-				</div>
+				</div> --%>
 				
-				<div class="top topMargin">
+				<%-- <div class="top topMargin">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">프로젝트</label></div>
 					</div>
@@ -741,8 +797,8 @@
 								</tr>
 							</tbody>
 						</table>
-					</div>
-				</div>
+					</div> 
+				</div> --%>
 				<div class="bottom">
 					<div class="floatR">
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
@@ -750,6 +806,6 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

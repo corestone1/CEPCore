@@ -432,7 +432,8 @@
 			var url = '/project/write/basicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210081"
+				"pjKey":"PJ210101",
+				"workClass":"프로젝트"
 			}
 			var button = new Array;
 			button = [];

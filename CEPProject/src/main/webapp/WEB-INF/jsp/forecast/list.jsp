@@ -113,19 +113,21 @@
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 162px;
+			width: 204px;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
-			width: 102px;
+			width: 92px;
 		}
 		.middle table thead th:nth-child(6),
 		.middle table thead th:nth-child(7),
-		.middle table thead th:nth-child(8),
 		.middle table tbody td:nth-child(6),
-		.middle table tbody td:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 136px;
+		}
+		.middle table thead th:nth-child(8),
 		.middle table tbody td:nth-child(8) {
-			width: 146px;
+			width: 120px;
 		}
 		.middle table thead th:nth-child(9),
 		.middle table tbody td:nth-child(9) {
@@ -143,6 +145,11 @@
 			width: 25px;
 			vertical-align: middle;
 		}
+		.detailList {
+			width: 90%;
+			margin: 0 auto;
+			min-width: 1495px;
+		}
 		.detailList li {
 			float: left;
 			text-align: left;
@@ -155,7 +162,7 @@
 			color: #158566;
 		}
 		.detailList li:nth-child(2n) {
-			width: 305px;
+			width: 270px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -163,7 +170,7 @@
 			color: #21a17e;
 		}
 		.detailList li:last-child {
-			width: 1409px;
+			width: 1059px;
    			height: 56px;
    			word-break: break-all;
    			white-space: normal;
@@ -219,7 +226,7 @@
 			 
 			$('#fl tr.mchkbox').each(function(index, item) {
 				
-				$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+				$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'" class="tRadio" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				
 			});
 			
@@ -350,11 +357,11 @@
 						</form:select>
 						<form:select path="spState">
 							<form:option value="">진행상태</form:option>
-							<form:option value="E">E</form:option>
-							<form:option value="D">D</form:option>
-							<form:option value="C">C</form:option>
-							<form:option value="B">B</form:option>
 							<form:option value="A">A</form:option>
+							<form:option value="B">B</form:option>
+							<form:option value="C">C</form:option>
+							<form:option value="D">D</form:option>
+							<form:option value="E">E</form:option>
 						</form:select>
 						<form:select path="searchFlag">
 							<form:option value="">검색조건</form:option>
@@ -378,7 +385,7 @@
 								<th scope="row">수주확정</th>
 								<th scope="row">매출액</th>
 								<th scope="row">매입액</th>
-								<th scope="row">매출총이익</th>
+								<th scope="row">담당자</th>
 								<th scope="row">매출일정</th>
 								<th scope="row">수금일정</th>
 								<th scope="row">매입일정</th>
@@ -390,13 +397,13 @@
 						<c:forEach var="result" items="${forecastList}" varStatus="status">
 							<tr class="mchkbox">
 								<td></td>
-								<td><span><c:out value="${result.mfAcNm}"/></span></td>
-								<td><span><c:out value="${result.spBusiNm}"/></span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
-								<td><c:out value="${result.pmDetail}"/></td>
+								<td><span title="${result.mfAcNm}"><c:out value="${result.mfAcNm}"/></span></td>
+								<td><span title="${result.spBusiNm}"><c:out value="${result.spBusiNm}"/></span> <img class="cursorP" src="<c:url value='/images/arrow_down_18dp.png'/>" /></td>
+								<td><span title="${result.pmDetail}"><c:out value="${result.pmDetail}"/></span></td>
 								<td><c:out value="${result.fcSjConfQt}"/> Q</td>
 								<td><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></td>
 								<td><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></td>
-								<td><c:out value="${displayUtil.commaStr(result.fcSalesProfit)}"/></td>
+								<td><c:out value="${result.empNm}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.fcSalesDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.fcCollectDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.fcBuyPayDt)}"/></td>
@@ -407,13 +414,33 @@
 								<td colspan="12" style="margin: 5px 71px;">
 									<ul class="detailList">
 										<li>매출처</li>
-										<li><c:out value="${result.salesAcNm}"/></li>
+										<li>
+											<c:choose>
+												<c:when test="${result.salesAcNm eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.salesAcNm}"/></c:otherwise>
+											</c:choose>
+										</li>
 										<li>매입처</li>
-										<li><c:out value="${result.buyAcNm}"/></li>
+										<li>
+											<c:choose>
+												<c:when test="${result.buyAcNm eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.buyAcNm}"/></c:otherwise>
+											</c:choose>
+										</li>
 										<li>수주확률</li>
-										<li><c:out value="${result.spState}"/></li>
+										<li>
+											<c:choose>
+												<c:when test="${result.spState eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.spState}"/></c:otherwise>
+											</c:choose>
+										</li>
 										<li>제품상세</li>
-										<li><c:out value="${result.pmDetail2}"/></li>
+										<li>
+											<c:choose>
+												<c:when test="${result.pmDetail2 eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.pmDetail2}"/></c:otherwise>
+											</c:choose>
+										</li>
 										<li>진행사항</li>
 										<li><c:out value="${result.remark}"/></li>
 									</ul>

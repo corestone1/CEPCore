@@ -36,8 +36,10 @@ import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
+import com.cmm.service.FileMngService;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.FileVO;
 import com.cmm.vo.OrderVO;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
@@ -61,6 +63,9 @@ public class ProjectController {
 	
 	@Resource(name="propertiesService")
 	protected EgovPropertyService propertiesService;
+	
+	@Resource(name="fileMngService")
+	private FileMngService fileMngService;
 	
 	@Value("#{comProps['maxFileCnt']}")
 	private String maxFileCnt;	// 허용 파일 개수
@@ -192,6 +197,8 @@ public class ProjectController {
 	
 	@RequestMapping(value="/write/basicInfo.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddBasicInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		
 		String pjKey = projectVO.getPjKey();
 		model.addAttribute("pjKey", pjKey);
@@ -203,6 +210,17 @@ public class ProjectController {
 		model.addAttribute("empList", empList);
 		
 		model.put("displayUtil", new CepDisplayUtil());
+		
+		fileVO.setFileCtKey(projectVO.getPjKey());
+		fileVO.setFileWorkClass(projectVO.getWorkClass());
+		
+		fileResult = fileMngService.selectFileList(fileVO);
+		
+		model.addAttribute("projectVO", projectVO);
+		model.addAttribute("fileList", fileResult);
+		model.addAttribute("maxFileCnt", maxFileCnt);
+		model.addAttribute("fileExtn", fileExtn);		
+		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		return "project/write/basicInfo";
 	}

@@ -101,10 +101,10 @@
 			
 			$("#m_ipt_acMfAcNm").on("keyup", function(event){
 				
-				if(event.keyCode == 13)
-				{
+				/* if(event.keyCode == 13)
+				{ */
 					fnSearchAccoutList(this, $(this).val());					
-				}
+				/* } */
 					
 			}); 
 			
@@ -115,7 +115,7 @@
 				$('#m_ipt_spKey').val("${spKey}");
 				
 				$('#m_ipt_acMfAcNm').val('${forecast.mfAcNm}');
-				$('#m_ipt_acMfAcKey').val('${forecast.salesAcKey}');
+				$('#m_ipt_acMfAcKey').val('${forecast.acKey}');
 				$('#m_ipt_spBusiNm').val('${forecast.spBusiNm}');
 				
 				$('#m_slt_pmKey').val('${forecast.pmKey}');
@@ -124,6 +124,7 @@
 				$('#m_slt_salesCtClass').val('${forecast.salesCtClass}');
 				$('#m_slt_spState').val('${forecast.spState}');
 				$('#m_slt_fcSjConfQt').val('${forecast.fcSjConfQt}');
+				
 			}	
 		});
 		
@@ -156,7 +157,7 @@
 		
 		function fnViewAccountList(pObject, pjAccountList){
 			
-			var html = '<div id="m_div_accountList" style="width:362px; padding-top: 15px; padding-bottom: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			var html = '<div id="m_div_accountList">'
 			         + '<ul class="accountList">'
 			       ;
 			       
@@ -185,6 +186,19 @@
 			
 		};
 		
+		function fn_chkVali() {
+			if ($("#m_fr_forecastBasic")[0].checkValidity()){
+				//필수값 모두 통과하여 저장 프로세스 호출.
+				if($("#m_ipt_acMfAcKey").val() == null || $("#m_ipt_acMfAcKey").val().length == 0) {
+					alert("고객사를 선택해주세요.")
+				} else {
+					fn_writeBasic();	
+				}
+			} else {
+				// Validate Form
+				$("#m_fr_forecastBasic")[0].reportValidity();   
+			}
+		}
 		
 		function fn_writeBasic(){
 			
@@ -197,24 +211,16 @@
 			//return;
 			
 			$.ajax({
-		    	url :"/forecast/write/writeBasic.do"
-		       	,
-		       	type:"POST"
-		       	,  
-		        data: ljsParam
-		        ,
-		        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-		        ,
-		        dataType: 'json'
-		        ,
-		        async : false
-		        ,
+		    	url :"/forecast/write/writeBasic.do",
+		       	type:"POST",  
+		        data: ljsParam,
+		        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		        dataType: 'json',
+		        async : false,
 		    	success:function(data){		  
 		           	alert("저장되었습니다.! [" + data.spKey + "]");
 		           	$('#m_ipt_spKey').val(data.spKey);
-		        }
-		       	,
-		        error: function(request, status, error) {
+		        } ,error: function(request, status, error) {
 		        	if(request.status != '0') {
 		        		alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        	}
@@ -271,12 +277,12 @@
 					<table>
 						<tr>
 							<td>
-								<select name="salesCtClass" id="m_slt_salesCtClass">
+								<select name="salesCtClass" id="m_slt_salesCtClass" required>
 									<option value="">구분</option>
 									<option value="P">프로젝트</option>
 									<option value="M">유지보수</option>
 								</select>
-								<select name="spState" id="m_slt_spState" class="wdts">
+								<select name="spState" id="m_slt_spState" class="wdts" required>
 									<option value="">사업진행단계</option>
 									<option value="A">A</option>
 									<option value="B">B</option>
@@ -289,13 +295,13 @@
 						<tr id="m_tr_account">
 							<td>
 								<!-- <input type="hidden" name="acKey" /> -->
-								<input type="text"   id="m_ipt_acMfAcNm"  name="acNm"  placeholder="고객사(입력후 엔터를 눌러서 검색해 주세요!)" class="search" />
+								<input type="text"   id="m_ipt_acMfAcNm"  name="acNm"  placeholder="고객사" class="search" autocomplete="off" required />
 								<input type="hidden" id="m_ipt_acMfAcKey" name="acKey" />
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<input type="text" id="m_ipt_spBusiNm" name="spBusiNm" placeholder="사업명" />
+								<input type="text" id="m_ipt_spBusiNm" name="spBusiNm" placeholder="사업명" required/>
 							</td>
 						</tr>
 						<tr>
@@ -315,10 +321,8 @@
 						</tr>
 						<tr>
 							<td>
-								<select disabled='true'>
-									<option value="">수주확정Q</option>
-								</select>
 								<select name="fcSjConfQt" id="m_slt_fcSjConfQt" class="wdts">
+									<option>수주확정Q</option>
 									<option value="1">1분기</option>
 									<option value="2">2분기</option>
 									<option value="3">3분기</option>
@@ -353,7 +357,7 @@
 					
 					<!-- middle -->
 					<div class="floatL btnCenter">
-						<button type="button" onclick="javascript:fn_writeBasic()"><img src="<c:url value='/images/btn_save.png'/>" /></button>	
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>	
 					</div>
 					
 					<!-- right -->

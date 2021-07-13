@@ -19,7 +19,9 @@ import com.cep.forecast.service.ForecastService;
 import com.cep.forecast.vo.ForecastSearchVO;
 import com.cep.forecast.vo.ForecastVO;
 import com.cmm.service.ComService;
+import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -358,6 +360,8 @@ public class ForecastController {
 	
 	@RequestMapping(value="/salesMeetingList.do")
 	public String viewSalesMeetingList(@ModelAttribute("searchVO") ForecastSearchVO searchVO, ModelMap model) throws Exception {
+		String toDay = null;
+		Map<String, String> searchParam = null;
 		
 		try {
 			
@@ -368,8 +372,21 @@ public class ForecastController {
 			logger.debug("searchVO.getSearchValue() :: {}", searchVO.getSearchValue());
 			
 			
-			searchVO.setSearchFromDt("20210101");
-			searchVO.setSearchToDt("20210331");
+			/*searchVO.setSearchFromDt("20210101");
+			searchVO.setSearchToDt("20210331");*/
+			
+			toDay = CepDateUtil.getToday(null);		
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchFromDt(), ""))){
+				searchVO.setSearchFromDt(searchVO.getSearchFromDt().replace("-", ""));
+			} else {
+				searchVO.setSearchFromDt(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
+			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchToDt(), ""))){
+				searchVO.setSearchToDt(searchVO.getSearchToDt().replace("-", ""));
+			} else {
+				searchVO.setSearchToDt(toDay);
+			}
 			
 			EgovMap leMapSales =  service.selectSalesMeeingInfo(searchVO);
 			
@@ -395,6 +412,14 @@ public class ForecastController {
 //			model.put("projectSalesAmount",    leMapSales.get("projectSalesAmount"));
 //			model.put("projectPurchaseAmount", leMapSales.get("projectPurchaseAmount"));
 //			model.put("projectProfitAmount",   leMapSales.get("projectProfitAmount"));
+			
+			model.put("empolyeeList", comService.selectEmployeeList());
+			
+			searchParam = new HashMap<>();
+			searchParam.put("searchFromDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchFromDt(), null, null));
+			searchParam.put("searchToDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchToDt(), null, null));
+			
+			model.put("searchParam", searchParam);
 			
 		} catch(Exception e) {
 			logger.error("{}",e);

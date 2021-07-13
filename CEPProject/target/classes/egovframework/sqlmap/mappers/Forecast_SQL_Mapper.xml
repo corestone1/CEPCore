@@ -7,6 +7,7 @@
 	<resultMap id="forecastVO" type="com.cep.forecast.vo.ForecastVO">
 		<result property="spKey"           column="SP_KEY"/>
 		<result property="acKey"           column="AC_KEY"/>
+		<result property="salesCtClass"		column="SALES_CT_CLASS" />
 		<result property="spBusiNm"        column="SP_BUSI_NM"/>
 		<result property="pmKey"           column="PM_KEY"/>
 		<result property="pmDetail"        column="PM_DETAIL"/>
@@ -71,6 +72,7 @@
 			 , SAC.AC_NM              AS SALES_AC_NM
 			 , BAC.AC_NM              AS BUY_AC_NM
 			 , SM.SALES_CT_CLASS      AS SALES_CT_CLASS
+			 , EP.EMP_NM				AS EMP_NM
 		FROM SP_MAIN_TB          SM
 			 JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
 			 /* JOIN PM_PRODUCT_MNG_TB PM ON SM.PM_KEY = PM.PM_KEY */
@@ -170,6 +172,7 @@
 		
 		SELECT SM.SP_KEY              AS SP_KEY 
 		     , SM.AC_KEY              AS AC_KEY
+			 , SM.SALES_CT_CLASS	AS SALES_CT_CLASS
 		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
 		     , SM.PM_KEY              AS PM_KEY
 		     , SM.PM_DETAIL           AS PM_DETAIL
@@ -266,15 +269,26 @@
 			 , PM.PM_DETAIL_CLASS_CD  AS PM_DETAIL_CLASS_CD
 			 , SAC.AC_NM              AS SALES_AC_NM
 			 , BAC.AC_NM              AS BUY_AC_NM
+			 , EP.EMP_NM				AS EMP_NM
 		FROM   SP_MAIN_TB          SM
 		JOIN   CMM_ACCOUNT_TB      AC  ON SM.AC_KEY       = AC.AC_KEY
-		JOIN   PM_PRODUCT_MNG_TB   PM  ON SM.PM_KEY       = PM.PM_KEY
-		JOIN   CMM_ACCOUNT_TB      SAC ON SM.SALES_AC_KEY = SAC.AC_KEY
-		JOIN   CMM_ACCOUNT_TB      BAC ON SM.BUY_AC_KEY   = BAC.AC_KEY
+		LEFT JOIN   PM_PRODUCT_MNG_TB   PM  ON SM.PM_KEY       = PM.PM_KEY
+		LEFT JOIN   CMM_ACCOUNT_TB      SAC ON SM.SALES_AC_KEY = SAC.AC_KEY
+		LEFT JOIN   CMM_ACCOUNT_TB      BAC ON SM.BUY_AC_KEY   = BAC.AC_KEY
+		JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
 		WHERE  1 = 1
 		 
 		<if test="salesEmpKey != null and salesEmpKey != ''">
 			AND SM.REG_EMP_KEY = #{salesEmpKey}
+		</if>
+		<if test="pjFlag != null and pjFlag != ''">
+			AND SM.SALES_CT_CLASS = #{pjFlag}
+		</if>
+		<if test="spState != null and spState != ''">
+			AND SM.SP_STATE = #{spState}
+		</if>
+		<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+			AND SM.REG_DT BETWEEN #{searchFromDt} AND #{searchToDt}
 		</if>
 		
 		ORDER BY SM.REG_DT DESC, SM.REG_TM DESC	

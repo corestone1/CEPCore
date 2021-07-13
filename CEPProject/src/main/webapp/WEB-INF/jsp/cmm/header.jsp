@@ -15,6 +15,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
+	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
 			header {
 				position: fixed;
