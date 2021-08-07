@@ -18,13 +18,16 @@
 		<result property="deleteYn" column="DELETE_YN" />
 		<result property="regEmpKey" column="REG_EMP_KEY" />
 		<result property="spKey" column="SP_KEY" />
+		<result property="searchFlag" column="SEARCH_FLAG"/>
+		<result property="searchValue"  column="SEARCH_VALUE"/>
 	</resultMap>
 
 	<select id="selectProjectList" parameterType="projectVO" resultMap="project">
 
 			SELECT
 				PJ_KEY
-				, (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) AS acKey
+				, (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) AS acNm
+				, AC_KEY
 				, PJ_NM
 				, PJ_START_DT
 				, PJ_END_DT
@@ -43,6 +46,22 @@
 			<if test="searchKeyword != null and searchKeyword != ''">
 					AND PJ_NM LIKE CONCAT('%' , #{searchKeyword}, '%')
 			</if> 
+			
+			<if test="searchFlag != null and searchFlag != ''" >
+			
+				<if test="searchFlag.equals('PK')" >
+	  				AND PJ_KEY LIKE CONCAT('%', #{searchValue}, '%')
+	  			</if>
+			  	
+				<if test="searchFlag.equals('AC')" >
+		  			AND (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
+		  		<if test="searchFlag.equals('NM')" >
+		  			AND PJ_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+	  		
+		  </if>
 	</select>
 
 	<select id="selectProjectListTotCnt" parameterType="searchVO" resultType="int">

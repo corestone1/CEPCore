@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectVO;
+import com.cmm.util.CepDisplayUtil;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -40,6 +41,9 @@ public class PopupController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
+		// 검색 정보 저장.
+		model.addAttribute("searchVO", searchVO);
+		
 		List<?> projectList = service.selectProjectList(searchVO);
 		model.addAttribute("resultList", projectList);
 		
@@ -47,6 +51,8 @@ public class PopupController {
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		
-		return "project/popup/forecastList";
+		model.put("displayUtil", new CepDisplayUtil());
+		
+		return "project/popup/list";
 	}
 }

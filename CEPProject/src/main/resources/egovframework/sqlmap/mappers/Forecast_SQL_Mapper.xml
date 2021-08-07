@@ -11,9 +11,10 @@
 		<result property="spBusiNm"        column="SP_BUSI_NM"/>
 		<result property="pmKey"           column="PM_KEY"/>
 		<result property="pmDetail"        column="PM_DETAIL"/>
+		<result property="pmDetail2"        column="PM_DETAIL2"/>
 		<result property="fcSjConfQt"      column="FC_SJ_CONF_QT"/>
-		<result property="fcBuyAmount"     column="FC_SALES_AMOUNT"/>
-		<result property="fcSalesAmount"   column="FC_BUY_AMOUNT"/>
+		<result property="fcBuyAmount"     column="FC_BUY_AMOUNT"/>
+		<result property="fcSalesAmount"   column="FC_SALES_AMOUNT"/>
 		<result property="fcSalesProfit"   column="FC_SALES_PROFIT"/>
 		<result property="fcSalesDt"       column="FC_SALES_DT"/>
 		<result property="fcCollectDt"     column="FC_COLLECT_DT"/>
@@ -92,6 +93,10 @@
 		  	<if test="pjFlag != null and pjFlag != ''" >
 		  		AND SM.SALES_CT_CLASS = #{pjFlag}
 		  	</if>
+		  	
+		  	<if test="pmFlag != null and pmFlag != ''" >
+		  		AND SM.PM_KEY = #{pmFlag}
+		  	</if>
 		  
 		  	<if test="searchFlag != null and searchFlag != ''" >
 			
@@ -125,8 +130,12 @@
 			, SALES_CT_CLASS
 			, SP_BUSI_NM
 			, PM_KEY
+			<if test="pmDetail != null and pmDetail != ''">
 			, PM_DETAIL
+			</if>
+			<if test="fcSjConfQt != null and fcSjConfQt != ''">
 			, FC_SJ_CONF_QT
+			</if>
 			, SP_STATE
 			, REG_DT
 			, REG_TM
@@ -139,8 +148,12 @@
 			, #{salesCtClass}
 			, #{spBusiNm}
 			, #{pmKey}
+			<if test="pmDetail != null and pmDetail != ''">
 			, #{pmDetail}
+			</if>
+			<if test="fcSjConfQt != null and fcSjConfQt != ''">
 			, #{fcSjConfQt}
+			</if>
 			, #{spState}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%k%i%s')
@@ -176,6 +189,7 @@
 		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
 		     , SM.PM_KEY              AS PM_KEY
 		     , SM.PM_DETAIL           AS PM_DETAIL
+		     , SM.PM_DETAIL2			AS PM_DETAIL2
 		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
 		     , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT
 		     , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT
@@ -190,6 +204,7 @@
 		     , SM.REG_TM              AS REG_TM
 		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
 		     , EP.EMP_NM              AS EMP_NM
+		     , EP.EMP_KEY				AS EMP_KEY
 		     , SM.MOD_DT              AS MOD_DT
 		     , SM.MOD_TM              AS MOD_TM
 		     , SM.MOD_EMP_KEY         AS MOD_EMP_KEY
@@ -209,7 +224,7 @@
 		SET   FC_SALES_AMOUNT  = REPLACE(#{fcSalesAmount}, ',', '')
 			, FC_BUY_AMOUNT    = REPLACE(#{fcBuyAmount}, ',', '')
 			, FC_SALES_PROFIT  = REPLACE(#{fcSalesProfit}, ',', '')
-			, FC_SALES_DT      = #{fcSalesDt}
+			, FC_SALES_DT      = #{fcSalesDt} 
 			, FC_COLLECT_DT    = #{fcCollectDt}
 			, FC_BUY_PAY_DT    = #{fcBuyPayDt}
 			, BUY_AC_KEY       = #{buyAcKey}

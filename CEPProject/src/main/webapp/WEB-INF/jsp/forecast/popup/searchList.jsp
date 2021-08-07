@@ -43,7 +43,6 @@
 		top: 107px;
 		left: 0;			
 		z-index: 3;
-		background-color: #f6f7fc;
 		overflow-y: auto;
 	}
 	.popContainer .contents > div {
@@ -98,7 +97,7 @@
         margin: 0 auto;
 	}
 	.popContainer .middle table thead th, .middle table tbody td {
-		width: 100px;
+		width: 78px;
 		padding: 10px 0;
     	border: 1px solid #edebef;
 	}
@@ -108,11 +107,11 @@
 	}
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2){
-		width: 159px;
+		width: 162px;
 	}
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 284px;
+		width: 268px;
 	}
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
@@ -120,16 +119,16 @@
 	}
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 104px;
+		width: 81px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
-		width: 105px;
+		width: 60px;
 	}
 	
 	.popContainer .top .floatR select {
-		height: 40px;
+		height: 38px;
 		width: 130px;
 		border: 1px solid #e9e9e9;
 		padding: 0 10px;
@@ -146,11 +145,8 @@
 		border: 1px solid #e9e9e9;
 		padding: 0 10px;
 		background-color: #fff;
-		background-image: url('/images/search_icon.png');
-		background-repeat: no-repeat;
-		background-position: 95% 50%;
 		font-size: 15px;
-		margin-bottom: 3px;
+		margin-top: 3px;
 	}
 		
 </style>
@@ -207,17 +203,22 @@
 					<form:option value="C">C</form:option>
 					<form:option value="ET">기타</form:option>
 				</form:select>
-				<form:select path="pjFlag">
-					<option value="">구분</option>
-					<option value="HW">H/W</option>
-					<option value="SW">S/W</option>
-					<option value="ET">기티</option>
+				<form:select path="pmFlag">
+					<form:option value="">구분</form:option>
+					<form:option value="ST">Storage</form:option>
+					<form:option value="SV">Server</form:option>
+					<form:option value="BK">Backup</form:option>
+					<form:option value="SW">S/W</form:option>
+					<form:option value="ET">기타</form:option>
 				</form:select>
 				<form:select path="searchFlag">
-					<option value="">검색조건</option>
+					<form:option value="">검색조건</form:option>
+					<form:option value="AC">거래처명</form:option>
+					<form:option value="BN">사업명</form:option>
+					<form:option value="SE">담당자</form:option>
 				</form:select>
 				<form:input path="searchValue" type="text" placeholder="검색값"/>
-				<span id="span_search" class="veralignT" onclick="javascript:fn_searchList();"><img src="/images/icon_search.png" /></span>
+				<span id="span_search" class="veralignB" onclick="javascript:fn_searchList();"><img src="/images/icon_search.png" /></span>
 			</div>
 			<!-- <div class="floatC"></div>  -->
 		</div>
@@ -230,8 +231,9 @@
 							<th scope="row">고객사</th>
 							<th scope="row">사업명</th>
 							<th scope="row">제품</th>
+							<th scope="row">담당자</th>
 							<th scope="row">상태</th>
-							<th scope="row">수주확정</th>
+							<th scope="row">수주확정Q</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -240,9 +242,10 @@
 	            				<td><a href="#"    onclick="javascript:fn_ForecastSelect('${result.spKey}', '${result.spBusiNm}');" class="btn btn_gray">선택</a></td>
 	            				<td align="center" class="listtd">&nbsp;<span><c:out value="${result.mfAcNm}"/></span></td>
 	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.spBusiNm}"/></span>&nbsp;</td>
-	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.pmNm}"/></span>&nbsp;</td>
+	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.pmDetail}"/></span>&nbsp;</td>
+	            				<td align="center"   class="listtd">&nbsp;<span><c:out value="${result.empNm}"/></span>&nbsp;</td>
 	            				<td align="center" class="listtd">&nbsp;<span><c:out value="${result.spState}"/></span>&nbsp;</td>
-	            				<td align="center" class="listtd"><c:out value="${result.fcSjConfQt}"/>&nbsp;</td>
+	            				<td align="center" class="listtd"><c:out value="${result.fcSjConfQt}"/>분기&nbsp;</td>
 	            			</tr>
 	        			</c:forEach>						
 					</tbody>

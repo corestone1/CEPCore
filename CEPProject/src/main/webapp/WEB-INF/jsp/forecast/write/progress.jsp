@@ -119,6 +119,12 @@
 			}
 		}
 		
+		if($('#m_tta_pmDetail2').val().replace(" ", "").length != 0 || $('#m_tta_remark').val().replace(" ", "").length != 0) {
+			$('.btnCenter').children().eq(0).html('');
+			$('.btnCenter').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			$('#isUpdate').val("Y");
+		}
+		
 	});
 	
 	
@@ -131,24 +137,28 @@
 		//console.log(ljsParam);
 		//return;
 		
+		var object = {};
+		for (var i = 0; i<ljsParam.length; i++){
+			object[ljsParam[i]['name']] = ljsParam[i]['value'];
+        }
+		
+		var sendData = JSON.stringify(object);
+		
 		$.ajax({
-	    	url :"/forecast/write/writeProgress.do"
-	       	,
-	       	type:"POST"
-	       	,  
-	        data: ljsParam
-	        ,
-	        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-	        ,
-	        dataType: 'json'
-	        , 
-	        async : false
-	        ,
+	    	url :"/forecast/write/writeProgress.do",
+	       	type:"POST",  
+	        data: sendData,
+	        contentType: "application/json; charset=UTF-8", 
+	        dataType: 'json', 
 	    	success:function(data){		  
-	           	alert("저장되었습니다.! [" + data.spKey + "]");
-	        }
-	       	,
-	        error: function(request, status, error) {
+	           	if($('#isUpdate').val().replace(" ", "") == ("N")) {
+	    			alert("제품 및 진행사항 정보가 저장되었습니다.");	
+	    		} else {
+	    			alert("제품 및 진행사항 정보가 수정되었습니다.");	
+	    		}
+	           	
+	           	fnMoveTab('progress');
+	        } , error: function(request, status, error) {
 	        	if(request.status != '0') {
 	        		alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        	}
@@ -203,6 +213,8 @@
 			<div>
 				<!-- Forecast Key -->
 				<input type="hidden" name="spKey" id="m_ipt_spKey"/>
+				<input type="hidden" id="isUpdate" />
+				<input type="hidden" value="${forecast.pmDetail2 }"/>
 				<table>
 					<tr>
 						<td>

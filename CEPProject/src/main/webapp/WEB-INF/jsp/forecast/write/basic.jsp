@@ -126,6 +126,11 @@
 				$('#m_slt_fcSjConfQt').val('${forecast.fcSjConfQt}');
 				
 			}	
+			
+			if($('#m_ipt_spKey').val().replace(" ", "").length != 0) {
+				$('.btnCenter').children().eq(0).html('');
+				$('.btnCenter').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			}
 		});
 		
 		function fnSearchAccoutList(pObject, pstAccountNm)
@@ -204,22 +209,42 @@
 			
 			//입력값 정합성 Check
 			//alert("fn_writeBasic");
-			var ljsParam =  $("#m_fr_forecastBasic").serializeArray();
+			// var ljsParam =  $("#m_fr_forecastBasic").serializeArray();
 			
 			//alert(ljsParam[3].value);
 			//console.log(ljsParam);
 			//return;
 			
+			// 알람 예제
+			$("#m_fr_forecastBasic").append("<input type='hidden' name='alarmTitle' value='"+ $("#m_ipt_spBusiNm").val() +"' />");
+			$("#m_fr_forecastBasic").append("<input type='hidden' name='alarmKind' value='Forecast' />");
+			$("#m_fr_forecastBasic").append("<input type='hidden' name='alarmTo' value='sylim@corestone.co.kr' />");
+			$("#m_fr_forecastBasic").append("<input type='hidden' name='pjMtKey' value='PJ210089' />");
+			
+			
+			var object = {};
+			var formData = $("#m_fr_forecastBasic").serializeArray();
+			
+			for (var i = 0; i<formData.length; i++){
+			    object[formData[i]['name']] = formData[i]['value'];
+			 }
+			
+			var sendData = JSON.stringify(object);
+			
 			$.ajax({
 		    	url :"/forecast/write/writeBasic.do",
 		       	type:"POST",  
-		        data: ljsParam,
-		        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		        data: sendData,
+		        contentType: "application/json; charset=UTF-8", 
 		        dataType: 'json',
-		        async : false,
 		    	success:function(data){		  
-		           	alert("저장되었습니다.! [" + data.spKey + "]");
-		           	$('#m_ipt_spKey').val(data.spKey);
+		    		if($('#m_ipt_spKey').val().replace(" ", "").length == 0) {
+		    			$('#m_ipt_spKey').val(data.spKey);
+		    			fn_addAlarm(sendData);
+		    		} else {
+		    			alert("Forecast 기본 정보가 수정되었습니다.");	
+		    		}
+		           	fnMoveTab('basic');
 		        } ,error: function(request, status, error) {
 		        	if(request.status != '0') {
 		        		alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
@@ -228,6 +253,28 @@
 		    }); 
 		};
 		
+		// 알람 예제
+		function fn_addAlarm(sendData) {
+			
+			$.ajax({
+				url:"/alarm/add.do",
+				type:"POST",
+				data: sendData,
+		        contentType: "application/json; charset=UTF-8", 
+		        dataType: 'json',
+				success:function(data) {
+					if(data.successYN == "Y") {
+						alert("Forecast 기본 정보가 저장되었습니다.");
+					} else {
+						alert("Forecast 기본 정보가 저장이 실패하였습니다.");
+					}
+				} , error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+			});
+		}
 	/*
 		function fn_addView(link){
 			
@@ -292,7 +339,7 @@
 								</select>
 							</td>
 						</tr>
-						<tr id="m_tr_account">
+						<tr id="m_tr_account">							
 							<td>
 								<!-- <input type="hidden" name="acKey" /> -->
 								<input type="text"   id="m_ipt_acMfAcNm"  name="acNm"  placeholder="고객사" class="search" autocomplete="off" required />
@@ -322,7 +369,7 @@
 						<tr>
 							<td>
 								<select name="fcSjConfQt" id="m_slt_fcSjConfQt" class="wdts">
-									<option>수주확정Q</option>
+									<option value="0">수주확정Q</option>
 									<option value="1">1분기</option>
 									<option value="2">2분기</option>
 									<option value="3">3분기</option>

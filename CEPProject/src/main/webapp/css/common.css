@@ -56,6 +56,9 @@ body * {
 .veralignM {
 	vertical-align: middle;
 }
+.veralignB {
+	vertical-align: bottom;
+}
 .mgauto {
 	margin: 0 auto;
 }

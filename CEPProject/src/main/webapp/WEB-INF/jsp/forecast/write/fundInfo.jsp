@@ -78,7 +78,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer .contents input[class="search"] {
-			background-image: url('./images/search_icon.png');
+			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
@@ -103,27 +103,30 @@
 			//alert("spBusiNm : ${forecast.spBusiNm}, ${forecast.fcSalesDtYr}");
 			$('#m_ipt_spKey').val("${spKey}");
 			
-			if("${forecast.fcSalesDtYr}" != undefined && "${forecast.fcSalesDtYr}" != null && "${forecast.fcSalesDtYr}".length == 4)
+			if("${forecast.fcSalesDt}" != undefined && "${forecast.fcSalesDt}" != null && "${forecast.fcSalesDt}".replace(" ", "").length != 0)
 			{
-				$('#m_ipt_fcSalesAmount').val('${forecast.fcSalesAmount}');
-				$('#m_ipt_fcBuyAmount').val('${forecast.fcBuyAmount}');
+				/* $('#m_ipt_fcSalesAmount').val('${forecast.fcSalesAmount}');
+				$('#m_ipt_fcBuyAmount').val('${forecast.fcBuyAmount}'); */
 				
-				$('#m_ipt_buyAcKey').val('${forecast.buyAcKey}');
+				/* $('#m_ipt_buyAcKey').val('${forecast.buyAcKey}'); */
 				
-				$('#m_slt_fcSalesDtYr').val('${forecast.fcSalesDtYr}');
-				$('#m_slt_fcSalesDtMt').val('${forecast.fcSalesDtMt}');
+				$('#m_slt_fcSalesDtYear').val('${forecast.fcSalesDt}'.substring(0,4));
+				$('#m_slt_fcSalesDtMt').val('${forecast.fcSalesDt}'.substring(4,6));
 				
-				$('#m_slt_fcBuyPayDtYr').val('${forecast.fcBuyPayDtYr}');
-				$('#m_slt_fcBuyPayDtMt').val('${forecast.fcBuyPayDtMt}');	
+				$('#m_slt_fcCollectDtYr').val('${forecast.fcCollectDt}'.substring(0,4));
+				$('#m_slt_fcCollectDtMt').val('${forecast.fcCollectDt}'.substring(4,6));
+				
+				$('#m_slt_fcBuyPayDtYr').val('${forecast.fcBuyPayDt}'.substring(0,4));
+				$('#m_slt_fcBuyPayDtMt').val('${forecast.fcBuyPayDt}'.substring(4,6));	
 			}		
 		}
 		
 		$("#m_ipt_buyAcNm").on("keyup", function(event){
 			
-			if(event.keyCode == 13)
-			{
+			/* if(event.keyCode == 13)
+			{ */
 				fnSearchAccoutList(this, $(this).val());					
-			}
+			/* } */
 				
 		});
 		/* $('#m_ipt_fcSalesAmount').on('Change', function(event){
@@ -146,6 +149,12 @@
 		$('#m_ipt_fcBuyAmount').blur(function(){
 			$(this).val(addCommas($(this).val()));
 		});
+		
+		if($('#m_ipt_fcSalesAmount').val().replace(" ", "").length != 0 && $('#m_ipt_fcBuyAmount').val().replace(" ", "").length != 0) {
+			$('.btnCenter').children().eq(0).html('');
+			$('.btnCenter').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			$('#isUpdate').val("Y");
+		}
 	});
 	
 	function fnSearchAccoutList(pObject, pstAccountNm)
@@ -177,7 +186,7 @@
 	//
 	function fnViewAccountList(pObject, pjAccountList){
 			
-		var html = '<div id="m_div_accountList" style="width:362px; padding-top: 15px; padding-bottom: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+		var html = '<div id="m_div_accountList">'
 		         + '<ul class="accountList">'
 		       ;
 		       
@@ -198,7 +207,7 @@
 		{
 			//alert(this.innerText);
 			
-			$('#m_ipt_buyAcKy').val(this.title); 
+			$('#m_ipt_buyAcKey').val(this.title); 
 			$('#m_ipt_buyAcNm').val(this.innerText);
 			
 			$('#m_div_accountList').remove();
@@ -209,11 +218,12 @@
 	var fnWriteFundInfo = function(){
 		
 		//alert("fnWriteFundInfo");
+		
 		var ljsParam =  $("#m_fr_forecastFundInfo").serializeArray();
 		
 		var object = {};
 		for (var i = 0; i<ljsParam.length; i++){
-            
+			object[ljsParam[i]['name']] = ljsParam[i]['value'];
             if("fcSalesAmount" == ljsParam[i]['name']
             || "fcBuyAmount" == ljsParam[i]['name']) {
             	//날짜 - 제거
@@ -223,30 +233,37 @@
             }           
         }
 		
+		var sendData = JSON.stringify(object);
 		
-		$.ajax({
-	    	url :"/forecast/write/writeFundInfo.do"
-	       	,
-	       	type:"POST"
-	       	,  
-	        data: object
-	        ,
-	        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-	        ,
-	        dataType: 'json'
-	        ,
-	        async : false
-	        ,
-	    	success:function(data){		  
-	           	alert("저장되었습니다.! [" + data.spKey + "]");
-	        }
-	       	,
-	        error: function(request, status, error) {
-	        	if(request.status != '0') {
-	        		alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        	}
-	        } 
-	    }); 
+		if($("#m_ipt_fcSalesAmount").val().replace(" ","").length == 0) {
+			alert("매출액을 입력해주세요.");
+			$("#m_ipt_fcSalesAmount").focus();
+		} else if($("#m_ipt_fcBuyAmount").val().replace(" ","").length == 0) {
+			alert("매입액을 입력해주세요.");
+			$("#m_ipt_fcBuyAmount").focus();
+		} else {
+			$.ajax({
+		    	url :"/forecast/write/writeFundInfo.do",
+		       	type:"POST",  
+		        data: sendData,
+		        contentType: "application/json; charset=UTF-8", 
+		        dataType: 'json',
+		    	success:function(data){		  
+		           	if($('#isUpdate').val().replace(" ", "") == ("N")) {
+		    			alert("Forecast 매출/입 정보가 저장되었습니다.");	
+		    		} else {
+		    			alert("Forecast 매출/입 정보가 수정되었습니다.");	
+		    		}
+		           	
+		           	fnMoveTab('fundInfo');
+		        },
+		        error: function(request, status, error) {
+		        	if(request.status != '0') {
+		        		alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        	}
+		        } 
+		    }); 
+		} 
 	};
 	
 	/*
@@ -293,19 +310,42 @@
 			<div>
 				<!-- Forecast Key -->
 				<input type="hidden" name="spKey" id="m_ipt_spKey"/>
+				<input type="hidden" id="isUpdate"/>
 				<table>
 					<tr>
-						<td><input type="text" name="fcSalesAmount" id="m_ipt_fcSalesAmount" placeholder="매출액" value="${displayUtil.commaStr(forecast.fcSalesAmount)}"/></td>
+						<td><input type="text" name="fcSalesAmount" id="m_ipt_fcSalesAmount" placeholder="매출액" 
+							<c:choose>
+								<c:when test="${forecast.fcSalesAmount eq null or forecast.fcSalesAmount eq 0 }">
+									
+								</c:when>
+								<c:otherwise>
+									value="${displayUtil.commaStr(forecast.fcSalesAmount)}"
+								</c:otherwise>
+							</c:choose>
+							/>
+						</td>
 					</tr>
 					<tr>
-						<td><input type="text" name="fcBuyAmount"  id="m_ipt_fcBuyAmount" placeholder="매입액" value="${displayUtil.commaStr(forecast.fcBuyAmount)}"/></td>
+						<td><input type="text" name="fcBuyAmount"  id="m_ipt_fcBuyAmount" placeholder="매입액" 
+							<c:choose>
+								<c:when test="${forecast.fcBuyAmount eq null or forecast.fcBuyAmount eq 0 }">
+									
+								</c:when>
+								<c:otherwise>
+									value="${displayUtil.commaStr(forecast.fcBuyAmount)}"
+								</c:otherwise>
+							</c:choose>
+							/>
+						</td>
 					</tr>
 					<tr>
 						<td>
 							<span>매출일정</span>
 							<select id="m_slt_fcSalesDtYear" name="fcSalesDtYr" class="wdts">
-									<option value="2021">2021년</option>
-									<option value="2022">2022년</option>
+								<c:set var="now" value="<%=new java.util.Date() %>" />
+								<c:set var="sysYear"><fmt:formatDate value="${now }" pattern="yyyy" /></c:set>
+								<option value="${sysYear }"><c:out value="${sysYear }" />년</option>
+								<option value="${sysYear + 1}"><c:out value="${sysYear + 1}" />년</option>
 							</select>
 							<select id="m_slt_fcSalesDtMt" name="fcSalesDtMt" class="wdts">
 								<option value="01"> 1월</option>
@@ -327,8 +367,10 @@
 						<td>
 							<span>수금일정</span>
 							<select id="m_slt_fcCollectDtYr" name="fcCollectDtYr" class="wdts">
-									<option value="2021">2021년</option>
-									<option value="2022">2022년</option>
+								<c:set var="now" value="<%=new java.util.Date() %>" />
+								<c:set var="sysYear"><fmt:formatDate value="${now }" pattern="yyyy" /></c:set>
+								<option value="${sysYear }"><c:out value="${sysYear }" />년</option>
+								<option value="${sysYear + 1}"><c:out value="${sysYear + 1}" />년</option>
 							</select>
 							<select id="m_slt_fcCollectDtMt" name="fcCollectDtMt" class="wdts">
 								<option value="01"> 1월</option>
@@ -348,8 +390,8 @@
 					</tr>
 					<tr id="m_tr_account">
 						<td>
-							<input type="text"   name="buyAcNm"  id="m_ipt_buyAcNm"  placeholder="매입처" class="search" />
-							<input type="hidden" name="buyAcKey" id="m_ipt_buyAcKey"/>
+							<input type="text"   name="buyAcNm"  id="m_ipt_buyAcNm"  placeholder="매입처" class="search"  autocomplete="off" value="${forecast.buyAcNm }"/>
+							<input type="hidden" name="buyAcKey" id="m_ipt_buyAcKey" value="${forecast.buyAcKey }"/>
 						</td>
 					</tr>
 					<!-- 
@@ -381,8 +423,10 @@
 						<td>
 							<span>매입결제일정</span>
 							<select name="fcBuyPayDtYr" id="m_slt_fcBuyPayDtYr" class="wdts">
-									<option value="2021">2021년</option>
-									<option value="2022">2022년</option>
+								<c:set var="now" value="<%=new java.util.Date() %>" />
+								<c:set var="sysYear"><fmt:formatDate value="${now }" pattern="yyyy" /></c:set>
+								<option value="${sysYear }"><c:out value="${sysYear }" />년</option>
+								<option value="${sysYear + 1}"><c:out value="${sysYear + 1}" />년</option>
 							</select>
 							<select name="fcBuyPayDtMt" id="m_slt_fcBuyPayDtMt" class="wdts">
 								<option value="01"> 1월</option>
@@ -426,6 +470,7 @@
 					<button type="button" onclick="javascript:fnMoveTab('progress');"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>
 			</div>
+		</div>
 	</div>
 </form:form>
 </body>

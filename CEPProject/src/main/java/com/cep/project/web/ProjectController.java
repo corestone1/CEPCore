@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.cep.forecast.service.ForecastService;
+import com.cep.forecast.vo.ForecastVO;
 import com.cep.main.service.MainService;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectBiddingFileVO;
@@ -63,6 +65,9 @@ public class ProjectController {
 	
 	@Resource(name="propertiesService")
 	protected EgovPropertyService propertiesService;
+	
+	@Resource(name="forecastService")
+	private ForecastService forecastService;
 	
 	@Resource(name="fileMngService")
 	private FileMngService fileMngService;
@@ -665,5 +670,61 @@ public class ProjectController {
 		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/viewApproval";
+	}
+	
+	/**
+	 * 
+	  * @Method Name : selectForecastMappingInfo
+	  * @Cdate       : 2021. 8. 02.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : Forecast 거래처 및 해당 거래처 담당자 정보 조회(Selectbox용)
+	  * @param request
+	  * @param response
+	  * @param spKey(SP_MAIN_TB(ForecastTable key)
+	  * @return
+	  * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForecastMappingInfo.do", method=RequestMethod.POST)
+	public Map<String, Object>  selectForecastMappingInfo(HttpServletRequest request , HttpServletResponse response , @RequestBody String spKey) throws Exception {
+
+     List < ? > acDirectorList = null;
+     Map<String, Object> modelAndView = new HashMap<String, Object>();
+    
+     ForecastVO searchVO = null;
+     ForecastVO forecastVO = null;
+     try {
+
+    	 if(!"".equals(CepStringUtil.getDefaultValue(spKey, ""))) {
+    		 
+    		 searchVO = new ForecastVO();
+    		 searchVO.setSpKey(spKey);
+    		 forecastVO = forecastService.selectForecast(searchVO);
+    		 
+    		 if(null != forecastVO && !"".equals(CepStringUtil.getDefaultValue(forecastVO.getAcKey(), ""))) {
+    			 
+    			 modelAndView.put("forecastVO", forecastVO);
+    			 acDirectorList =service.selectAcDirectorList(forecastVO.getAcKey());                 
+                 
+                 modelAndView.put("acDirectorList", acDirectorList);
+                 modelAndView.put("successYN", "Y");
+    		 } else {
+    			 modelAndView.put("successYN", "N");
+    			 logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에 "+spKey+" 관리키에 대한 거래처 정보가 존재하지 않습니다.");
+    		 }
+    		 
+    	 } else {
+    		 modelAndView.put("successYN", "N");
+    		 logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에  대한 관리키 parameter가 null입니다.");
+    	 }
+        
+	} catch (Exception e) {
+		modelAndView.put("successYN", "N");
+		logger.error("selectFocastMappingInfo :: {}", e);
+	}
+
+    
+     return modelAndView; 
 	}
 }
