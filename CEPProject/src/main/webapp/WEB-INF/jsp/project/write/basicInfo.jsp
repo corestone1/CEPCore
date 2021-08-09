@@ -181,6 +181,15 @@
 		#fileForm .close {
 			vertical-align: middle;
 		}
+		#m_div_accountList {
+			left: 152px;
+    		margin-top: 38px;
+		}
+		#sp_delete_forecast {
+			position: absolute;
+		    right: 40px;
+		    top: 20px;
+		}
 	</style>
 	<script>
 		function fn_chkVali() {
@@ -216,6 +225,7 @@
 			 }
 			
 			var sendData = JSON.stringify(object);
+			console.log(sendData);
 			
 			$.ajax({
 				url:"/project/insert/basicInfo.do",
@@ -318,22 +328,41 @@
 			}
 		}
 		
-		function fn_viewPopup(){
-			window.open('/project/popup/list.do','project_list','width=1000px,height=400,left=600'); 
-		}
+		/* function fn_viewPopup(){
+			window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall','PROJECT_LIST','width=1000px,height=713px,left=600'); 
+		} */
 		
 		var acDirectorList;
 		
 		$(document).ready(function() {
 			
+			$("#acNm").on("keyup", function(event){
+				fn_searchAccoutList(this, $(this).val());					
+			}); 
+			
+			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+				$('.btnSave').children().eq(0).html('');
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
+			}
+			
+			var fileTarget = $(".exFile");
+			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename)
+			});
+			
+		});
+		
+		$(function() {
 			if(!($('#acKey').val() == "")) {
 				fn_selectAc();
 			}
 			
 			/* 고객사 선택하면 고객담당자 정보 가져오기. */
-			$('#acKey').change(function(){				
+			/* $('#acKey').on("change", function(){		
 				fn_selectAc();
-			}); 
+			});  */
 			
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
 			$('#acDirectorKey').change(function(){
@@ -348,20 +377,66 @@
 					}					
 				}				
 			});
-			
-			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
-				$('.btnSave').children().eq(0).html('');
-				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
-			}
-			
-			var fileTarget = $(".exFile");
-			
-			fileTarget.on('change', function() {
-				var filename = $(this)[0].files[0].name;
-				$(this).siblings('.uploadName').val(filename)
-			});
 		});
 		
+		function fn_searchAccoutList(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		}
+	
+		function fnViewAccountList(pObject, pjAccountList) {
+			
+			var html = '<div id="m_div_accountList">'
+			         + '<ul class="accountList">'
+			       ;
+			       
+	        for(var i=0; i < pjAccountList.length; i++)
+	    	{
+	    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+	    	        ;
+	    	} 
+			       
+			       
+			html +=  '</ul>'
+			     + '</div>'
+			     ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#m_tr_account').after(html);
+			
+			$("[id^='m_li_account']").click(function(event)
+			{
+				//alert(this.title);
+				
+				$('#acKey').val(this.title); 
+				$('#acNm').val(this.innerText);
+				fn_selectAc();
+				
+				$('#m_div_accountList').remove();
+			});
+			
+		}
+			
+			
 		function fn_selectAc() {
 			 $.ajax({
 	        	url:"/cmm/selectAcDirectorList.do",
@@ -375,14 +450,16 @@
 	        	},
 	            success:function(data){		            	
 					if ( data.result.length > 0 ) {
-						acDirectorList = data.result;/* 값이 있는 경우  전역변수에 넣는다. */
+						acDirectorList = data.result;
 						/* $('#acDirectorInfo').val(data.result[0].acDirectorInfo); *//* 첫번째 값을 셋팅해준다. */
-						$ ('#acDirectorKey' ).find ( 'option' ).remove (); /* select box 의 ID 기존의  option항목을 삭제 */
+						$ ('#acDirectorKey' ).find ( 'option' ).remove ();  
 						for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
 							if(data.result[idx].acDirectorKey == "${resultList[0].acDirectorKey}") {
 								$('#acDirectorKey').append("<option value='"+data.result[idx].acDirectorKey+"' selected>" + data.result[idx].acDirectorNm + '</option>');
+								$('#acDirectorInfo').val(data.result[idx].acDirectorInfo);
 							} else {
 								$('#acDirectorKey').append("<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>');
+								$('#acDirectorInfo').val(data.result[0].acDirectorInfo);
 							}
 						}
 	                } else{
@@ -436,6 +513,61 @@
 	   			});
 			}
 		}
+		
+		//Forecast연계
+		function fn_forecastPop() {
+			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P','FORECAST_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function pop_forecastCall(returnKey,returnNm) {
+	        $.ajax({
+	        	url:"/project/selectForecastMappingInfo.do",
+	            dataType: 'json',
+	            type:"post",  
+	            data: returnKey,
+	     	   	contentType: "application/json; charset=UTF-8",
+	     	  	beforeSend: function(xhr) {
+	        		xhr.setRequestHeader("AJAX", true);
+	        		//xhr.setRequestHeader(header, token);
+	        	},
+	            success:function(data){
+            		$('#pjNm').val(data.forecastVO.spBusiNm);
+            		$('#acKey').val(data.forecastVO.acKey);
+            		$('#acNm').val(data.forecastVO.mfAcNm);
+            		$("#pjSaleEmpKey").val(data.forecastVO.regEmpKey);
+            		
+            		fn_selectAc();
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	        });				
+				
+			$('#spKey').val(returnKey);
+			$('#sp_delete_forecast').removeClass('dpNone');
+			
+		}
+		
+		function fn_deleteForecast() {
+			if(confirm("FORECAST 연계정보를 삭제하시겠습니까?")) {
+				$('#spKey').val('');
+				$('#pjNm').val('');
+        		$('#acKey').val('');
+        		$('#acNm').val('');
+        		$('#acDirectorKey').val('');
+        		$('#acDirectorInfo').val('');
+        		
+        		$("#pjSaleEmpKey option:eq(0)").prop("selected", true);
+        		
+				$('#sp_delete_forecast').addClass('dpNone');
+			} else {
+				return false;
+			}
+			
+		}
 	</script>
 </head>
 <body>
@@ -459,10 +591,20 @@
 				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 				<input type="hidden" id="workClass" name="workClass" value="프로젝트"/>
 				<input type="hidden" id="newKey" name="newKey" value="<c:out value=""/>"/>
+				<img class="dpNone" id="sp_delete_forecast" src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteForecast();" />
 				<div>  
 					<table>
 						<tr>
-							<td class="btnFc" colspan="2"><button type="button" onclick="fn_viewPopup();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+							<c:choose>
+								<c:when test="${pjKey eq null or pjKey eq ''}">
+									<td class="btnFc" colspan="2"><button type="button" onclick="javascript:fn_forecastPop();"><img src="<c:url value='/images/forecast_icon.png'/>" /></button></td>
+								</c:when>
+								<c:otherwise>
+									<td>
+										<div style="width: 100px; height: 48px; line-height: 48px; font-size: 27px;"></div>
+									</td>
+								</c:otherwise>
+							</c:choose>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>프로젝트명</td>
@@ -470,8 +612,9 @@
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>고객사</td>
-							<td class="tdContents">
-								<input type="text" class="search" name="acKey" id="acKey" value="<c:out value="${resultList[0].acKey}"/>" required/>	
+							<td class="tdContents" id="m_tr_account">
+								<input type="text" class="search" name="acNm" id="acNm" value="<c:out value="${resultList[0].acNm}"/>" required autocomplete="off" />	
+								<input type="hidden" name="acKey" id="acKey" value="<c:out value="${resultList[0].acKey}"/>" />	
 							</td>
 						</tr>
 						<tr>
@@ -488,7 +631,7 @@
 						<tr>
 							<td class="tdTitle"><label>*</label>영업담당자</td>
 							<td class="tdContents">
-								<select name="pjSaleEmpKey">
+								<select name="pjSaleEmpKey" id="pjSaleEmpKey">
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
 										<option <c:if test="${resultList[0].pjSaleEmpKey == emp.empKey }">selected</c:if> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
 									</c:forEach>	

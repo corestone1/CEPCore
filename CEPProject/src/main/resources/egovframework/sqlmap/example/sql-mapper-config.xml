@@ -11,6 +11,7 @@
 		<typeAlias alias="projectContractVO" type="com.cep.project.vo.ProjectContractVO" />
 		<typeAlias alias="mailVO" type="com.cmm.vo.MailVO" />
 		<typeAlias alias="fileVO" type="com.cmm.vo.FileVO" />
+		<typeAlias alias="alarmVO" type="com.cmm.vo.AlarmVO" />
 		<typeAlias alias="guarantyBondVO" type="com.cmm.vo.GuarantyBondVO" />
 		<typeAlias alias="salesVO" type="com.cmm.vo.SalesVO" />
 		<typeAlias alias="projectContractSalesVO" type="com.cep.project.vo.ProjectContractSalesVO" />

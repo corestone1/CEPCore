@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>Forecast</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -249,7 +249,7 @@
 				     	   dataType: 'json',
 				           async : false,
 				        	success:function(data){		  
-				            	alert("삭제되었습니다.!");
+				            	alert("삭제되었습니다.");
 				            	location.reload();
 				            },
 				        	error: function(request, status, error) {
@@ -266,7 +266,7 @@
 					}
 					
 				} else {
-					alert("삭제할 대상을 선택하세요 !!");
+					alert("삭제할 대상을 선택하세요.");
 					
 					return false;
 				}				
@@ -289,7 +289,7 @@
 				
 				
 			} else {
-				alert("수정할 Forecast를 선택하세요!!");
+				alert("수정할 Forecast를 선택하세요.");
 			}
 		}
 
@@ -413,11 +413,11 @@
 							<tr class="dpNone" style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">
 								<td colspan="12" style="margin: 5px 71px;">
 									<ul class="detailList">
-										<li>매출처</li>
+										<li>고객사</li>
 										<li>
 											<c:choose>
-												<c:when test="${result.salesAcNm eq null}">&nbsp;</c:when>
-												<c:otherwise><c:out value="${result.salesAcNm}"/></c:otherwise>
+												<c:when test="${result.mfAcNm eq null}">&nbsp;</c:when>
+												<c:otherwise><c:out value="${result.mfAcNm}"/></c:otherwise>
 											</c:choose>
 										</li>
 										<li>매입처</li>

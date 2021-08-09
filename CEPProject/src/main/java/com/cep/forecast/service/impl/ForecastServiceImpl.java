@@ -1,8 +1,10 @@
 package com.cep.forecast.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,20 +76,40 @@ public class ForecastServiceImpl implements ForecastService {
 	
 	
 	@Override
-	public void updateFundInfo(ForecastVO forecastVO) throws Exception
+	@SuppressWarnings("unchecked")
+	public void updateFundInfo(HttpServletRequest request, ForecastVO forecastVO) throws Exception
 	{
+		HashMap<String, String> session = null;
+		
 		forecastVO.setFcSalesProfit(forecastVO.getFcSalesAmount() - forecastVO.getFcBuyAmount());
 		forecastVO.setFcSalesDt(forecastVO.getFcSalesDtYr() + forecastVO.getFcSalesDtMt());
 		forecastVO.setFcCollectDt(forecastVO.getFcCollectDtYr() + forecastVO.getFcCollectDtMt());
 		forecastVO.setFcBuyPayDt(forecastVO.getFcBuyPayDtYr() + forecastVO.getFcBuyPayDtMt());
 		
-		mapper.updateFundInfo(forecastVO);
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			forecastVO.setModEmpKey(session.get("empKey"));
+			
+			mapper.updateFundInfo(forecastVO);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
 	}
 	
 	@Override
-	public void updateProgress(ForecastVO forecastVO) throws Exception
+	@SuppressWarnings("unchecked")
+	public void updateProgress(HttpServletRequest request, ForecastVO forecastVO) throws Exception
 	{
-		mapper.updateProgress(forecastVO);
+		HashMap<String, String> session = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			forecastVO.setModEmpKey(session.get("empKey"));
+			
+			mapper.updateProgress(forecastVO);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
 	}
 	
 	

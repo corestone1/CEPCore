@@ -12,16 +12,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cep.forecast.service.ForecastService;
 import com.cep.forecast.vo.ForecastSearchVO;
 import com.cep.forecast.vo.ForecastVO;
+import com.cmm.service.AlarmService;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.AlarmVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -35,6 +38,9 @@ public class ForecastController {
 	
 	@Resource(name="comService")
 	private ComService  comService;
+	
+	@Resource(name="alarmService")
+	private AlarmService alarmService;
 	
 	@RequestMapping(value="/list.do")
 	public String selectForecast(@ModelAttribute("searchVO") ForecastSearchVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
@@ -181,7 +187,7 @@ public class ForecastController {
 	  */
 	@RequestMapping(value="/write/writeFundInfo.do")
 	@ResponseBody
-	public Map<String, Object> writeFundInfo(@ModelAttribute("forecastVO") ForecastVO forecastVO, ModelMap model) throws Exception {
+	public Map<String, Object> writeFundInfo(HttpServletRequest request, @RequestBody ForecastVO forecastVO, ModelMap model) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		logger.debug("forecastVO.getFcBuyAmount()     :: {}", forecastVO.getFcBuyAmount());
@@ -191,7 +197,7 @@ public class ForecastController {
 		
 		try
 		{
-			service.updateFundInfo(forecastVO);
+			service.updateFundInfo(request, forecastVO);
 			
 		}
 		catch(Exception e)
@@ -260,7 +266,7 @@ public class ForecastController {
 	  */
 	@RequestMapping(value="/write/writeProgress.do")
 	@ResponseBody
-	public Map<String, Object> writeProgress(@ModelAttribute("forecastVO") ForecastVO forecastVO, ModelMap model) throws Exception {
+	public Map<String, Object> writeProgress(HttpServletRequest request, @RequestBody ForecastVO forecastVO, ModelMap model) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		logger.debug("forecastVO.getPmDetail2()  :: \n{}", forecastVO.getPmDetail2());
@@ -268,7 +274,7 @@ public class ForecastController {
 		
 		try
 		{
-			service.updateProgress(forecastVO);
+			service.updateProgress(request, forecastVO);
 			
 		}
 		catch(Exception e)
@@ -310,7 +316,7 @@ public class ForecastController {
 	
 	@RequestMapping(value="/write/writeBasic.do")
 	@ResponseBody
-	public Map<String, Object> basicWrite(@ModelAttribute("forecastVO") ForecastVO forecastVO, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public Map<String, Object> basicWrite(@RequestBody ForecastVO forecastVO, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> sessionMap = null;
@@ -327,6 +333,12 @@ public class ForecastController {
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			forecastVO.setRegEmpKey(sessionMap.get("empKey"));
+			
+			// 임시 (참고용)
+			AlarmVO alarmVO = new AlarmVO();
+			alarmVO.setAlarmTitle(forecastVO.getSpBusiNm());
+			alarmVO.setAlarmKind("Forecast");
+			alarmService.insertAlarm(alarmVO, request);
 			
 			returnMap.put("spKey", service.insertBasic(forecastVO));
 			

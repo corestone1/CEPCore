@@ -32,6 +32,7 @@ public class ForecastSearchVO implements Serializable {
 	private String pjFlag;      //구분(P:프로젝트/M:유지보수/기타)
 	private String searchFlag;  //검색조건 (BN:사업명, AC:고객사, SE:영업담당자) 추후 추가
 	private String searchValue; //검색조건 값
+	private String pmFlag;	// 검색조건(ST:Storage/SV:Server/BK:Backup/SW:SoftWare/ET:기타)
 	
 	private String spKeyDomId;     //Search Popup Return값을 넘기는 객체의 ID(Forecast키)
 	private String spBusiNmDomId;  //Search Popup Return값을 넘기는 객체의 ID(사업명)
@@ -109,6 +110,13 @@ public class ForecastSearchVO implements Serializable {
 	 */
 	public void setSearchValue(String searchValue) {
 		this.searchValue = searchValue;
+	}
+	
+	public String getPmFlag() {
+		return pmFlag;
+	}
+	public void setPmFlag(String pmFlag) {
+		this.pmFlag = pmFlag;
 	}
 	/**
 	 * @return the serialversionuid

@@ -33,6 +33,9 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String bdKey;  //ynk
 	private String regEmpKey;
 	
+	private String searchFlag;
+	private String searchValue;
+	
 	public String getPjKey() {
 		return pjKey;
 	}
@@ -168,6 +171,20 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setRegEmpKey(String regEmpKey) {
 		this.regEmpKey = regEmpKey;
 	}
+	
+	public String getSearchFlag() {
+		return searchFlag;
+	}
+	public void setSearchFlag(String searchFlag) {
+		this.searchFlag = searchFlag;
+	}
+	public String getSearchValue() {
+		return searchValue;
+	}
+	public void setSearchValue(String searchValue) {
+		this.searchValue = searchValue;
+	}
+	
 	@Override
 	public String toString() {
 		return "ProjectVO [pjKey=" + pjKey + ", acKey=" + acKey + ", acDirectorKey=" + acDirectorKey + ", pjNm=" + pjNm

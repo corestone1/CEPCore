@@ -33,7 +33,7 @@ import com.cmm.service.FileMngService;
 import com.cmm.service.impl.ComMapper;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
-import com.cmm.vo.PurchaseVO;
+import com.cmm.vo.MailVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -513,6 +513,8 @@ public class ProjectServiceImpl implements ProjectService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		List<ProjectGuarantyBondVO> updateList = new ArrayList<ProjectGuarantyBondVO>();
+		int result = 0;
+		MailVO mailVO = new MailVO();
 		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
@@ -605,6 +607,17 @@ public class ProjectServiceImpl implements ProjectService {
 				updateSalesInfo(guarantyBondVO.getModEmpKey(), updateList);
 			}
 			
+			String subject = "보증 증권 정보";
+			String content = String.join(
+					                System.getProperty("line.separator"),
+					                ""+CepStringUtil.getDefaultValue(mailVO.getEmpKey(),"")+"님, 회원님의 CEP 계정 비밀번호를 안내합니다.<br>",
+					                "비밀번호는 전체관리자에 의해 관리됩니다.<br> 비밀번호 변경을 원할 시에는 관리자에게 문의하세요.<br><br>");
+			
+			mailVO.setSubject(subject);
+			mailVO.setContent(content);
+			mailVO.setIsNewPw(false);
+			
+			result = comService.sendMail(request, mailVO);
 			
 	    	returnMap.put("successYN", "Y");
 	    	returnMap.put("pjKey", request.getParameter("pjKey"));

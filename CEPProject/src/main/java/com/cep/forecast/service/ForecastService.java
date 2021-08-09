@@ -2,6 +2,8 @@ package com.cep.forecast.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.cep.forecast.vo.ForecastSearchVO;
 import com.cep.forecast.vo.ForecastVO;
 
@@ -81,7 +83,7 @@ public interface ForecastService {
 	  * @param forecastVO
 	  * @throws Exception
 	  */
-	public void updateFundInfo(ForecastVO forecastVO) throws Exception;
+	public void updateFundInfo(HttpServletRequest request, ForecastVO forecastVO) throws Exception;
 
 	
 	/**
@@ -93,7 +95,7 @@ public interface ForecastService {
 	  * @param forecastVO
 	  * @throws Exception
 	  */
-	public void updateProgress(ForecastVO forecastVO) throws Exception;
+	public void updateProgress(HttpServletRequest request, ForecastVO forecastVO) throws Exception;
 	
 	
 	public EgovMap selectSalesMeeingInfo(ForecastSearchVO forecastSearchVO) throws Exception;

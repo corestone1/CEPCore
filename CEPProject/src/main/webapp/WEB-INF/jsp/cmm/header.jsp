@@ -88,9 +88,54 @@
 			header ul > li > div > ul > li:hover {
 				background-color: #533db3
 			}
+			.alarmContent {
+				position: absolute;
+				top: 30px;
+				right: -79px;
+				width: 200px;
+				background: #fff;
+				border-radius: 5px;
+				box-shadow: 3px -1px 8px 0px rgb(0,0,0,0.6);
+				padding: 0 23px;
+			}
+			.alarmContent div {
+				font-weight: 200;
+				font-size: 15px;
+				margin-bottom: 10px;
+				padding-bottom: 5px;
+				border-bottom: 1px solid #E4E8EB;
+			}
+			.alarmContent  div  label {
+				display:block;
+			}
+			.alarmContent .alarmTitle {
+				width: 123px;
+			    display: block;
+			    word-break: break-all;
+			    white-space: nowrap;
+			    overflow: hidden;
+			    text-overflow: ellipsis;
+			}
+			.alarmContent .closeBtn {
+				padding-top: 11px;
+			}
+			.alarmContent .closeBtn img {
+				width: 13px;
+				height: 13px;
+			}
+			.alarmCnt {
+				width: 12px;
+			    height: 12px;
+			    background-color: red;
+			    position: absolute;
+			    top: -5px;
+			    left: 9px;
+			    border-radius: 50%;
+			}
 	</style>
 	<script>
 		$(document).ready(function() {
+			
 			$("#name").mouseover(function() {
 				$(this).html('Logout');
 			});
@@ -111,7 +156,156 @@
 					}
 				}
 			});
+			
+			var click = 1;
+			
+			$("#alarmContainer").click(function() {
+				if(click % 2 == 1) {
+					$(".alarmContent").removeClass("dpNone");
+				} else {
+					$(".alarmContent").addClass("dpNone");
+				}
+				click++;
+			});
+			
+			$(".closeBtn").click(function() {
+				$(".alarmContent").addClass("dpNone");
+			});
+			
+			var alarmCnt = 0;
+			var cnt = 0;
+
+			$.ajax({
+				url:"/alarm/viewAlarm.do",
+				type:"GET",
+				success:function(data) {
+					appendHtml(data);
+					
+					function appendHtml(content) {
+						var cnt = 0;
+						
+						if(content.length > 5) {
+							cnt = 5;
+						} else {
+							cnt = content.length;
+						}
+						
+						for(i = 0; i < cnt; i++) {
+							var today = new Date();   
+							var year = today.getFullYear(); 
+							var month = (today.getMonth() + 1 >= 10) ? today.getMonth() + 1 : "0"+(today.getMonth() + 1);
+							var date = (today.getDate() >= 10) ? today.getDate() : "0"+today.getDate();
+							var day = String(year) + String(month) + String(date);
+							var time = "";
+							var className = "";
+							var kind = "";
+							
+							if(content[i].alarmHit == 0) {
+								className = "ftw500";
+								alarmCnt++;
+							}
+							
+							if(day == content[i].regDt) {
+								day = "오늘";
+							} else {
+								day = content[i].regDt.substring(4,6) + "/" + content[i].regDt.substring(6,8); 
+							}
+							
+							time = content[i].regTm.substring(0,2) + ":" + content[i].regTm.substring(2,4)
+							
+							if(content[i].pjMtKey != 'undefined' && content[i].pjMtKey != null && content[i].pjMtKey != "") {
+								if(content[i].pjMtKey.length != 0 && content[i].pjMtKey.substring(0,2) == "PJ") {
+									kind = "프로젝트";
+								} else if(content[i].pjMtKey.length != 0 && content[i].pjMtKey.substring(0,2) == "MA") {
+									kind = "유지보수";
+								} 
+							}
+							
+							$(".alarmContent").append("<div class='"+content[i].alarmKey+"' onclick='fnMovePage(&#39;"+ content[i].pjMtKey +"&#39;, &#39;"+content[i].alarmKey+"&#39;)'><p class='"+className+"'>"+content[i].alarmKind+"</p><p style='font-size: 12px; color: #919191;'><label class='alarmTitle floatL' title='"+content[i].alarmTitle+"'>"+kind+" "+content[i].alarmTitle+"</label><label class='floatR'>"+ day + " " + time + "</label><label class='floatC'></label></div>");
+						}
+						
+						if(alarmCnt != 0) {
+							$(".alarmCnt").removeClass('dpNone');
+						}
+					}
+				} , error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+			});
 		});
+		
+		function fnMovePage(key, idx) {
+			
+			$.ajax({
+	        	url :"/alarm/update.do",
+	        	type:"POST",  
+	            data: {"idx": idx},
+	            cache: false,
+		        async: false,
+		        dataType: "json",
+	        	success:function(data){		  
+	        		var form = document.listForm;
+	    			if(key != 'undefined' && key != null && key != "") {
+	    				if(key.substring(0,2) == "PJ") {
+	    					if(document.getElementsByName('pjKey').length != 0) {
+	    						form.pjKey.value = key;
+	    					} else {
+	    						$(form).append("<input type='hidden' name='pjKey' value='"+ key +"' />");
+	    					}
+	    					form.action = "<c:url value='/project/detail/main.do'/>";
+	    					form.submit();  
+	    				} else if(key.substring(0,2) == "MA") {
+	    					if(document.getElementsByName('selectKey').length != 0) {
+	    						form.selectKey.value = key;
+	    					} else {
+	    						$(form).append("<input type='hidden' name='selectKey' value='"+ key +"' />");
+	    					}
+	    					form.action = "/maintenance/contract/detail/productInfo.do";
+	    					form.submit();   
+	    				}
+	    			} else {
+	    				$("."+idx+" p").removeClass();
+	    				
+	    				$.ajax({
+	    					url:"/alarm/viewAlarm.do",
+	    					type:"GET",
+	    					success:function(data) {
+    							var cnt = 0;
+    							var alarmCnt = 0;
+    							
+    							if(data.length > 5) {
+    								cnt = 5;
+    							} else {
+    								cnt = data.length;
+    							}
+    							
+    							for(i = 0; i < cnt; i++) {
+    								if(data[i].alarmHit == 0) {
+    									alarmCnt++;
+    								}
+    							}
+    							
+    							if(alarmCnt == 0) {
+    								$(".alarmCnt").addClass('dpNone');
+    							} 
+	    					} , error: function(request, status, error) {
+	    		        		if(request.status != '0') {
+	    		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	    		        		}
+	    		        	} 
+	    				});
+	    			}
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	    	}); 
+		
+		}
 	</script>
 </head>
 <body>
@@ -168,8 +362,17 @@
 					</div>
 				</li>			
 			</ul>
-			<div>
-				<div class="floatL"><img class="cursorP"  src="<c:url value='/images/header_alarm.png'/>" /></div>
+			<div id="alarmWrap">
+				<div class="floatL" id="alarmContainer">
+					<img class="cursorP"  src="<c:url value='/images/header_alarm.png'/>" />
+					<div class="alarmCnt dpNone"></div>
+				</div>
+				<div class="dpNone alarmContent">
+					<button class="closeBtn floatR" type="button" title="Close">
+						<span><img src="/images/popup_close.png" /></span>
+					</button>
+					<button class="floatC"></button>
+				</div>
 				<div class="floatL cursorP" onclick="location.href='/logout.do'">
 					<img class="floatL" src="<c:url value='/images/header_profile.png'/>"/>
 					<span class="colorWhite floatL" id="name"><%= session.getAttribute("name") %></span>

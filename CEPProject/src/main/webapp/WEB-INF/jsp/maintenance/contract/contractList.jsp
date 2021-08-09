@@ -219,7 +219,7 @@
 				document.listForm.selectKey.value=$('#check'+$(this).children().eq(1).text()).val();
 				/* location.href = "/maintenance/detail/prodInfo.do"; */
 				document.listForm.action = "/maintenance/contract/detail/productInfo.do";
-	           	document.listForm.submit(); 
+	           	document.listForm.submit();  
 				
 			});
 			

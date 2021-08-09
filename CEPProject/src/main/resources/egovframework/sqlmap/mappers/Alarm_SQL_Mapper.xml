@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmm.service.impl.AlarmMapper">
+	<!-- <select id="selectFile" resultType="fileVO">
+		SELECT
+			FILE_KEY AS fileKey
+			, FILE_ORG_NM AS fileOrgNm
+			, SERVER_FILE_PATH AS serverFilePath 
+			, SERVER_FILE_NM AS serverFileNm
+			, DOC_TYPE_KEY AS docTypeKey
+		FROM FM_FILE_MNG_TB
+		WHERE
+			FILE_KEY = #{fileKey}
+			AND DELETE_YN='N'
+	</select>
+	
+	<select id="selectFileList" parameterType="fileVO" resultType="egovMap">
+		SELECT 
+			FF.FILE_KEY
+			, FB.FILE_CT_KEY
+			, FF.FILE_ORG_NM
+			, FF.SERVER_FILE_PATH
+			, FF.SERVER_FILE_NM
+			, FF.DOC_TYPE_KEY
+		FROM FM_FILE_BIZ_INFO_TB  FB
+		JOIN FM_FILE_MNG_TB FF
+		ON FF.FILE_KEY = FB.FILE_KEY
+		WHERE FB.FILE_CT_KEY = #{fileCtKey}
+		AND FB.FILE_WORK_CLASS = (SELECT DOC_TYPE_KEY FROM FM_DOCTYPE_MNG_TB WHERE DOC_TYPE_NM=#{fileWorkClass})
+		AND FB.DELETE_YN='N'
+	</select>
+	
+	<select id="getMaxFileKey" resultType="java.lang.Integer">
+		SELECT IFNULL(MAX(FILE_KEY), 0)+1 AS FILE_SEQNO
+				FROM FM_FILE_MNG_TB;
+	</select> -->
+	
+	<select id="selectAlarmList" parameterType="alarmVO" resultType="egovMap">
+		SELECT 
+			ALARM_KEY
+			, ALARM_TITLE
+			, ALARM_KIND
+			, ALARM_HIT
+			, ALARM_TO
+			, PJ_MT_KEY
+			, REG_DT
+			, REG_TM
+		FROM CMM_ALARM_TB	
+		WHERE ALARM_TO = #{alarmTo}
+		ORDER BY ALARM_KEY DESC
+	</select>
+	
+	<insert id="insertAlarm" parameterType="hashMap">
+		INSERT INTO CMM_ALARM_TB (
+			ALARM_TITLE
+			, ALARM_KIND
+			, ALARM_HIT
+			, ALARM_TO
+			, PJ_MT_KEY
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{alarmTitle}
+			, #{alarmKind}
+			, 0
+			, #{alarmTo}
+			, #{pjMtKey}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+		<!-- <selectKey keyProperty="fileKey" resultType="String" order="AFTER">
+			SELECT LAST_INSERT_ID()
+    	</selectKey> -->
+	</insert>
+	
+	<update id="updateAlarm" parameterType="alarmVO">
+		UPDATE CMM_ALARM_TB
+		SET
+			MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			<if test="alarmTitle != null and alarmTitle != ''">
+			, ALARM_TITLE = #{alarmTitle}
+			</if>
+			<if test="alarmKind != null and alarmKind != ''">
+			, ALARM_KIND = #{alarmKind}
+			</if>
+			<if test="alarmTo != null and alarmTo != ''">
+			, ALARM_TO = #{alarmTo}
+			</if>
+			<if test="pjMtKey != null and pjMtKey != ''">
+			, PJ_MT_KEY = #{pjMtKey}
+			</if>
+			<if test="deleteYn != null and deleteYn != ''">
+			, DELETE_YN = #{deleteYn}
+			</if>
+			, MOD_EMP_KEY = #{modEmpKey}
+			, ALARM_HIT = AlARM_HIT + 1
+		WHERE ALARM_KEY = #{alarmKey}
+	</update>
+	
+	<!-- <insert id="insertFileBizInfo" parameterType="hashMap">
+		INSERT INTO FM_FILE_BIZ_INFO_TB (
+			FILE_KEY
+			, FILE_CT_KEY
+			, FILE_WORK_CLASS
+			, DELETE_YN
+		) VALUES (
+			#{fileKey}
+			, #{fileCtKey}
+			, (SELECT DOC_TYPE_KEY FROM FM_DOCTYPE_MNG_TB WHERE DOC_TYPE_NM=#{docTypeNm})
+			, 'N'
+		)
+	</insert>
+	
+	<delete id="deleteFile" parameterType="fileVO">
+		UPDATE FM_FILE_MNG_TB
+		SET 
+			DELETE_YN='Y'
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY=#{modEmpKey}
+		WHERE FILE_KEY=#{fileKey}
+	</delete>
+	
+	<delete id="deleteFileBizInfo" parameterType="fileVO">
+		UPDATE FM_FILE_BIZ_INFO_TB
+		SET DELETE_YN='Y'
+		WHERE FILE_KEY=#{fileKey}
+	</delete> -->
+</mapper>
