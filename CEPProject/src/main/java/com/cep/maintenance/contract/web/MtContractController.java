@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,9 +32,11 @@ import com.cep.maintenance.contract.vo.MtBuyAmountVO;
 import com.cep.maintenance.contract.vo.MtContractLinkVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
+import com.cmm.service.FileMngService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.FileVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -49,6 +52,19 @@ public class MtContractController {
 	
 	@Resource(name="forecastService")
 	private ForecastService forecastService;
+	
+	//첨부파일 관련.
+	@Resource(name="fileMngService")
+	private FileMngService fileMngService;
+	
+	@Value("#{comProps['maxFileCnt']}")
+	private String maxFileCnt;	// 허용 파일 개수
+	
+	@Value("#{comProps['maxFileSize']}")
+	private String maxFileSize;	// 허용 파일 사이즈
+	
+	@Value("#{comProps['fileExtn']}")
+	private String fileExtn;		// 허용 파일 확장자
 
 	/**
 	 * 
@@ -285,6 +301,10 @@ public class MtContractController {
 		List<?> empList = null; // 사용자 selectBox
 		List < ? > acDirectorList = null; // 고객사 담당자 리스트.
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		try {			
 			
 			logger.debug("mtContractVO.getMtIntegrateKey()====>"+mtContractVO.getMtIntegrateKey());
@@ -304,10 +324,18 @@ public class MtContractController {
 					mtContractCountInfo = service.selectMtContractCount(mtContractVO.getMtIntegrateKey());
 					
 					
+
+//					logger.debug("mmtContractVO.getWorkClass()====>"+mtContractVO.getWorkClass());
+					fileVO.setFileCtKey(mtContractVO.getMtIntegrateKey());
+					fileVO.setFileWorkClass("mtContract");
+					
+					fileResult = fileMngService.selectFileList(fileVO);
 				}
 			}		
 			
 			empList = service.selectEmployeeList();
+			
+			
 			
 			
 			model.put("empList", empList);
@@ -315,6 +343,12 @@ public class MtContractController {
 			model.put("acDirectorList", acDirectorList);
 			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("displayUtil", new CepDisplayUtil());
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
 		} catch (Exception e) {
 			
 			logger.error("addBasicInfo error", e);
@@ -617,6 +651,10 @@ public class MtContractController {
 		List<?> productList = null;
 		MtDefaultVO searchVO = null;
 		int mtPmTotalAmount = 0;
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		try {
 			logger.debug("mtContractVO.getSelectKey()====>"+mtContractVO.getSelectKey());
 			if("".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), "")) && 
@@ -641,6 +679,12 @@ public class MtContractController {
 				mtContractCountInfo = service.selectMtContractCount(mtContractVO.getMtIntegrateKey());
 				
 				mtPmTotalAmount = service.selectMtPmTotalAmount(mtContractVO.getMtIntegrateKey());
+				
+				//첨부파일
+				fileVO.setFileCtKey(mtContractVO.getMtIntegrateKey());
+				fileVO.setFileWorkClass("mtContract");
+				
+				fileResult = fileMngService.selectFileList(fileVO);
 			}
 			
 
@@ -654,8 +698,10 @@ public class MtContractController {
 			model.put("productList", productList);
 			model.put("mtPmTotalAmount", mtPmTotalAmount);
 			
-			
 			model.put("displayUtil", new CepDisplayUtil());
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
 		} catch (Exception e) {
 			logger.error("selectMtDetailProductInfo error", e);
 		}
@@ -771,6 +817,11 @@ public class MtContractController {
 		List <?> acDirectorList = null; // 고객사 담당자 리스트.
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		int mtSalesTotalAmount = 0;
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
 		try {
 			//기본정보 조회
 			basicContractInfo = service.selectContractBasicDetail(mtSalesAmountVO.getMtIntegrateKey());
@@ -786,6 +837,12 @@ public class MtContractController {
 				
 				//매출 총 금액
 				mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesAmountVO.getMtIntegrateKey());
+				
+				//첨부파일
+				fileVO.setFileCtKey(mtSalesAmountVO.getMtIntegrateKey());
+				fileVO.setFileWorkClass("mtContract");
+				
+				fileResult = fileMngService.selectFileList(fileVO);
 			}
 			
 
@@ -800,6 +857,9 @@ public class MtContractController {
 			model.put("mtSalesTotalAmount", mtSalesTotalAmount);	
 			
 			model.put("displayUtil", new CepDisplayUtil());
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
 			
 		} catch (Exception e) {
 			
@@ -998,6 +1058,10 @@ public class MtContractController {
 		String selectMtOrderAcKeyNm = null;
 		int backOrderListCnt = 0;
 		MtBackOrderVO vo = null;
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		try {
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))) {
@@ -1044,6 +1108,12 @@ public class MtContractController {
 					
 					mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
 					
+					//첨부파일
+					fileVO.setFileCtKey(mtBackOrderVO.getMtIntegrateKey());
+					fileVO.setFileWorkClass("mtContract");
+					
+					fileResult = fileMngService.selectFileList(fileVO);
+					
 				}
 			}
 			
@@ -1059,6 +1129,9 @@ public class MtContractController {
 			model.put("backOrderProductList", backOrderProductList);			
 			model.put("displayUtil", new CepDisplayUtil());
 //			model.put("empList", empList);
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
 		} catch (Exception e) {
 			
 			logger.error("backOrderDetail error", e);
@@ -1515,6 +1588,10 @@ public class MtContractController {
 		String mtOrderKey = null;
 
 		int mtPurchaseTotalAmount = 0;
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		try {
 			logger.debug("mtBuyAmountVO.getMtIntegrateKey()===>"+mtBuyAmountVO.getMtIntegrateKey());
 			//기본정보 조회
@@ -1537,7 +1614,13 @@ public class MtContractController {
 						//매입금액 총액 조회.
 						mtPurchaseTotalAmount = service.selectMtBuyTotalAmount(mtBuyAmountVO.getMtIntegrateKey(), mtBuyAmountVO.getMtOrderKey());
 					}
-				}				
+				}		
+				
+				//첨부파일
+				fileVO.setFileCtKey(mtBuyAmountVO.getMtIntegrateKey());
+				fileVO.setFileWorkClass("mtContract");
+				
+				fileResult = fileMngService.selectFileList(fileVO);		
 			}
 			
 			//직원정보 조회
@@ -1559,6 +1642,9 @@ public class MtContractController {
 			model.put("purchaseAmountList", purchaseAmountList);
 			model.put("backOrderSelectBox", backOrderSelectBox);
 			model.put("mtPurchaseTotalAmount", mtPurchaseTotalAmount);
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
 
 		} catch (Exception e) {
 			logger.error("purchaseAmountInfo error", e);

@@ -28,31 +28,36 @@ public class PopupController {
 	
 	@RequestMapping(value="/list.do")
 	public String selectPopupProject(@ModelAttribute("searchVO") ProjectVO searchVO, ModelMap model) throws Exception {
-		
-		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
-		searchVO.setPageSize(propertiesService.getInt("pageSize"));
-		
-		PaginationInfo paginationInfo = new PaginationInfo();
-		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
-		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
-		paginationInfo.setPageSize(searchVO.getPageSize());
-		
-		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
-		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
-		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		// 검색 정보 저장.
-		model.addAttribute("searchVO", searchVO);
-		
-		List<?> projectList = service.selectProjectList(searchVO);
-		model.addAttribute("resultList", projectList);
-		
-		int totCnt = service.selectProjectListTotCnt(searchVO);
-		paginationInfo.setTotalRecordCount(totCnt);
-		model.addAttribute("paginationInfo", paginationInfo);
-		
-		model.put("displayUtil", new CepDisplayUtil());
-		
-		return "project/popup/list";
-	}
+	      
+	      searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+	      searchVO.setPageSize(propertiesService.getInt("pageSize"));
+	      
+	      PaginationInfo paginationInfo = new PaginationInfo();
+	      paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+	      paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+	      paginationInfo.setPageSize(searchVO.getPageSize());
+	      
+	      searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+	      searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+	      searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+	      
+	      model.put("returnType", searchVO.getReturnType());
+	      model.put("returnKey", searchVO.getReturnKey());
+	      model.put("returnNm", searchVO.getReturnNm());
+	      model.put("returnFunctionNm", searchVO.getReturnFunctionNm());
+	      
+	      // 검색 정보 저장.
+	      model.addAttribute("searchVO", searchVO);
+	      
+	      List<?> projectList = service.selectProjectList(searchVO);
+	      model.addAttribute("resultList", projectList);
+	      
+	      int totCnt = service.selectProjectListTotCnt(searchVO);
+	      paginationInfo.setTotalRecordCount(totCnt);
+	      model.addAttribute("paginationInfo", paginationInfo);
+	      
+	      model.put("displayUtil", new CepDisplayUtil());
+	      
+	      return "project/popup/list";
+	   }
 }

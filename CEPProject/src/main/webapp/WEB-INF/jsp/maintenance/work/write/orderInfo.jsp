@@ -908,7 +908,7 @@
 			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
-			window.open('/mngCommon/product/popup/searchListPopup.do?pmKeyDomId=prodList-'+num+'-orderPmFkKey&pmNmDomId=prodList-'+num+'-orderPmFkNm','PRODUCT_LIST','width=1000px,height=713px,left=600');					
+			window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-orderPmFkKey&returnNm=prodList-'+num+'-orderPmFkNm','PRODUCT_LIST','width=1000px,height=713px,left=600');					
 		}
 
 

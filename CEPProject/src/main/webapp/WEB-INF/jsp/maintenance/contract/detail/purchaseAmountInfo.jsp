@@ -714,7 +714,20 @@
 		
 		
 		//기본정보 수정
+		//팝업으로 호출하는 방식으로 변경 2021-08-11
 		function modeBasicInfo(){
+			
+			var url = '/maintenance/contract/write/basicInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'					
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		/* function modeBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
 				$('#modBasicTable').show();
@@ -733,7 +746,7 @@
 			        $("#m_mtBasicForm")[0].reportValidity();	
 				}
 			}
-		}
+		} */
 		/*
 		* 기본정보 내용을 저장한다.
 		*/
@@ -959,6 +972,15 @@
 				return false;
 			}			
 		}
+		
+		// 파일다운로드 관련
+		function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
    </script>
 </head>
 <body>
@@ -1060,6 +1082,19 @@
 										<pre style="width: 390px">
 											<c:out value="${basicContractInfo.remark}" />
 										</pre>
+									</td>
+								</tr>
+								<tr>
+									<td>첨부파일</td>
+									<td >
+										<c:forEach var="result" items="${fileList }" varStatus="status">
+											<%-- <input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/> --%>
+											<%-- <a href="javascript:fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')"><c:out value="${result.fileOrgNm}"/></a> --%>
+											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;">
+												<B><I><u><c:out value="${result.fileOrgNm}"/></u></I></B>
+											</button>
+											<c:if test="${status.last eq false}"><br /></c:if>
+										</c:forEach>
 									</td>
 								</tr>
 							</table>
@@ -1410,5 +1445,9 @@
 			<div class="floatC"></div>
 		</div>
 	</div>
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
+	</form:form>
 </body>
 </html>

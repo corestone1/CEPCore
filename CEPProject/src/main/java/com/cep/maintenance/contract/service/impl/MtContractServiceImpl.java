@@ -226,7 +226,8 @@ public class MtContractServiceImpl implements MtContractService {
 			}
 			
 			//3.유지보수계약 forecast연계정보 등록
-			if(null != updateVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+//			if(null != updateVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+			if(null != updateVo.getMtForcastLinkVo()) {
 				if("".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkKey(), ""))) {
 					//forecast연계정보 관리키가 없으면 신규등록
 					updateVo.getMtForcastLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());
@@ -250,7 +251,8 @@ public class MtContractServiceImpl implements MtContractService {
 			}
 			
 			//3.유지보수계약 project연계정보 등록
-			if(null != updateVo.getMtProjectLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtProjectLinkVo().getMtLinkCtKey(), ""))) {
+//			if(null != updateVo.getMtProjectLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtProjectLinkVo().getMtLinkCtKey(), ""))) {
+			if(null != updateVo.getMtProjectLinkVo()) {
 				if("".equals(CepStringUtil.getDefaultValue(updateVo.getMtProjectLinkVo().getMtLinkKey(), ""))) {
 					//project연계정보 관리키가 없으면 신규등록
 					updateVo.getMtProjectLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());

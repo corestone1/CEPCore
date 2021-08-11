@@ -697,7 +697,7 @@
 			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
-			window.open('/mngCommon/product/popup/searchListPopup.do?pmKeyDomId=prodList-'+num+'-mtPmFkKey&pmNmDomId=prodList-'+num+'-pmNmCd','PRODUCT_LIST','width=1000px,height=713px,left=600');					
+			window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-mtPmFkKey&returnNm=prodList-'+num+'-pmNmCd','PRODUCT_LIST','width=1000px,height=713px,left=600');					
 		}
 /* 		function fn_viewSummaryUpAll(){
 			$(".dpTbRow").attr('class','dpNone');
