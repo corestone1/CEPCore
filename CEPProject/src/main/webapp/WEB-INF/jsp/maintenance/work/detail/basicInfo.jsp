@@ -332,8 +332,23 @@
 			
 			
 			
-			//수정버튼 클릭
+			/*
+			 수정버튼 클릭
+			 기존 detail 수정화면으로 변경에서 팝업화면으로 변경함.
+			*/
 			$('#modInfo').click(function() {
+				var url = '/maintenance/work/write/basicInfoView.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+						"mtWorkKey":'<c:out value="${basicWorkInfo.mtWorkKey}"/>'					
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+
+			});
+			/* $('#modInfo').click(function() {
 				console.log($('#editMode').val())
 				if($('#editMode').val()=="0"){
 					$('#modTable').show();
@@ -393,7 +408,7 @@
 		           	);
 				}
 
-			});
+			}); */
 			
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
 			$('#mtWorkAcDirectorKey').change(function(){
@@ -579,7 +594,7 @@
 								<tr>
 									<td>첨부파일</td>
 									<td >
-										<c:forEach var="result" items="${fileList }" varStatus="status">
+										<c:forEach var="result" items="${mtContractFileList }" varStatus="status">
 											<%-- <input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/> --%>
 											<%-- <a href="javascript:fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')"><c:out value="${result.fileOrgNm}"/></a> --%>
 											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;">
@@ -643,6 +658,20 @@
 								<tr style="height: 116px">
 									<td>비고</td>
 									<td><pre><c:out value="${basicWorkInfo.remark}"/></pre></td>
+								</tr>
+								
+								<tr>
+									<td>첨부파일</td>
+									<td >
+										<c:forEach var="result" items="${mtWorkFileList }" varStatus="status">
+											<%-- <input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/> --%>
+											<%-- <a href="javascript:fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')"><c:out value="${result.fileOrgNm}"/></a> --%>
+											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;">
+												<B><I><u><c:out value="${result.fileOrgNm}"/></u></I></B>
+											</button>
+											<c:if test="${status.last eq false}"><br /></c:if>
+										</c:forEach>
+									</td>
 								</tr>
 							</table>
 							<table class="dtl2" id="modTable" style="display:none">

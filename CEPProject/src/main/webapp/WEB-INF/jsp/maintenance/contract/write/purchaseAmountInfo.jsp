@@ -319,6 +319,13 @@
 						return false;
 					}				
 					
+				} else if(varUrl == "writeSalesPlanView"){					
+					if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}				
+					
 				} else if(varUrl == "backOrderInfoView"){
 					if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
@@ -761,6 +768,7 @@
 				<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
 				<li class="colorWhite cursorP on">매입정보</li>
 			</ul>

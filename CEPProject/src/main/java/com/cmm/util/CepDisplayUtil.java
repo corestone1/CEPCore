@@ -139,4 +139,21 @@ public class CepDisplayUtil {
 		}
 		return commaStr(String.valueOf(multiVal));
 	}
+	
+	/**
+	 * ##-##-##### 형식으로 변경해 주는 메서드
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param acKey
+	 * @return
+	 * @cdate 2021. 9. 1. 오후 6:58:59
+	 * @author aranghoo
+	 */
+	public static String makeActypeForm(String acKey) {
+		String acType = null;
+		String acFormat = "(\\d{3})(\\d{2})(\\d{5})";
+		acType = acKey.replaceAll(acFormat, "$1-$2-$3");
+		return acType;
+	}
 }

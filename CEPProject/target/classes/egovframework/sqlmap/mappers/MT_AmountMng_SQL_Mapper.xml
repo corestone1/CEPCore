@@ -124,6 +124,97 @@
 			AND DELETE_YN='N'
 	</select>
 	
+<!-- //////////////////////////////////////// 유지보수 매출관리 SQL/////////////////////////////////////////////////////////////// -->
+
+	<insert id="writeMtSalesPlanList" parameterType="java.util.Map">
+		INSERT INTO MT_SALES_DETAIL_TB (
+		    SALES_KEY 
+		    , SALES_CT_FK_KEY 
+		    , SALES_YEAR_MONTH
+		    , SALES_TURN 
+		    , SALES_COLLECT_RATE 
+		    , SALES_TURN_AMOUNT 
+		    , SALES_CHARGE_DT 
+		    , SALES_BILL_FC_DT 
+		    , SALES_COLLECT_FC_DT
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY)
+		VALUES
+		<foreach collection="mtSalesPlanVoList" item="item" separator=",">
+		    (
+		    #{item.salesKey} 
+		    , #{item.salesCtFkKey}
+		    , #{item.salesYearMonth}
+		    , #{item.salesTurn}
+		    , #{item.salesCollectRate}
+		    , #{item.salesTurnAmount}
+		    , #{item.salesCollectFcDt}
+		    , #{item.salesBillFcDt}
+		    , #{item.salesCollectFcDt}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey})
+		</foreach>    		
+	</insert>
+	
+	<update id="updateMtSalesPlanList" parameterType="java.util.HashMap">
+		<foreach collection="mtSalesPlanVoList" item="item" separator=";" close=";">
+			UPDATE MT_SALES_DETAIL_TB
+			SET SALES_TURN=#{item.salesTurn} 
+				, SALES_COLLECT_RATE = #{item.salesCollectRate}
+				, SALES_TURN_AMOUNT = #{item.salesTurnAmount}
+				, SALES_CHARGE_DT = #{item.salesCollectFcDt}
+				, SALES_BILL_FC_DT = #{item.salesBillFcDt}
+				, SALES_COLLECT_FC_DT = #{item.salesCollectFcDt}
+				, DELETE_YN = 'N'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE SALES_CT_FK_KEY = #{item.salesCtFkKey}
+				AND SALES_YEAR_MONTH = #{item.salesYearMonth}
+		</foreach>
+	</update>
+		
+	<select id="selectMtSalesPlanList" parameterType="com.cep.maintenance.amount.vo.MtSalesPlanVO" resultType="com.cep.maintenance.amount.vo.MtSalesPlanVO">
+		SELECT 
+			SALES_KEY AS salesKey
+			, SALES_CT_FK_KEY AS salesCtFkKey
+			, SALES_YEAR_MONTH AS salesYearMonth
+			, SALES_TURN AS salesTurn
+			, SALES_COLLECT_RATE AS salesCollectRate
+			, SALES_TURN_AMOUNT AS salesTurnAmount
+			, SALES_CHARGE_DT AS salesChargeDt
+			, SALES_BILL_FC_DT AS salesBillFcDt
+			, SALES_COLLECT_FC_DT AS salesCollectFcDt
+			, SALES_COLLECT_FINISH_DT AS salesCollectFinishDt
+			, SALES_STATUS_CD AS salesStatusCd
+		FROM MT_SALES_DETAIL_TB
+		WHERE 1=1
+		<if test="salesCtFkKey != null and salesCtFkKey != ''">
+			AND SALES_CT_FK_KEY= #{salesCtFkKey}
+		</if>
+		<if test="salesKey != null and salesKey != ''">
+			AND SALES_KEY = #{salesKey}
+		</if>
+			AND DELETE_YN='N'
+	</select>
+	
+	<update id="deleteMtSalesPlan" parameterType="com.cep.maintenance.amount.vo.MtSalesPlanVO">	
+		UPDATE MT_SALES_DETAIL_TB SET
+			DELETE_YN  = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE 1=1
+		<if test="salesCtFkKey != null and salesCtFkKey != ''">
+			AND SALES_CT_FK_KEY= #{salesCtFkKey}
+		</if>
+		<if test="salesKey != null and salesKey != ''">
+			AND SALES_KEY = #{salesKey}
+		</if>
+	</update>			
+	
 	
 	
 </mapper>

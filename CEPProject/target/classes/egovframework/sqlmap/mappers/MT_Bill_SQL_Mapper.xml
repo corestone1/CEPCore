@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngMaint.bill.service.impl.MngMaintBillMapper">	
+	<!-- 세금계산서요청 좌측 메일 조회 쿼리.  -->
+	<select id="selectBillBasicInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		SELECT
+			T1.MT_INTEGRATE_KEY AS MT_KEY /* 유지보수 관리키 */
+			, T1.MT_NM AS MT_NM /* 유지보수명 */
+			, T1.MT_AC_KEY /* 고객사코트 */
+			, T1.AC_NM   /* 고객사명 */ 
+			, T1.EMP_NM AS MT_SALE_EMP_NM/* 영업담당자 */
+			, T1.MT_START_DT /* 유지보수 계약 시작일자 */
+			, T1.MT_END_DT /* 유지보수계약 종료일자 */
+			, T1.MT_AMOUNT /* 유지보수계약 금액 */
+			, T1.TAX_YN /*유지보수계약 부가세여부 */
+			, T2.TOTAL_TURN /* 유지보수계약 수금총 회차 */
+			, T2.TOTAL_TURN_AMOUNT /* 유지보수계약 수금총 금액 */
+			, IFNULL(T3.PROCEED_TURN,T2.TOTAL_TURN) AS PROCEED_TURN /* 유지보수계약 세금계산서 신청해야하는 회차 */
+			, T4.COMPLETED_AMOUNT AS COMPLETED_AMOUNT /*기수금 금액 */
+			, (T2.TOTAL_TURN_AMOUNT - T4.COMPLETED_AMOUNT) AS RECEIVABLE_AMOUNT /* 미수금액 */ 
+		FROM (
+			SELECT 
+				MCT.MT_INTEGRATE_KEY
+				, MCT.MT_NM
+				, MCT.MT_AC_KEY
+				, CAT.AC_NM
+				, CEM.EMP_NM
+				, MCT.MT_START_DT
+				, MCT.MT_END_DT
+				, MCT.MT_AMOUNT
+				, MCT.TAX_YN
+			FROM MT_CONTRACT_TB	MCT, CMM_ACCOUNT_TB CAT, CMM_EMPLOYEE_TB CEM
+			WHERE MT_INTEGRATE_KEY = #{pjKey}
+				AND MCT.DELETE_YN ='N'
+				AND MCT.MT_AC_KEY = CAT.AC_KEY 
+				AND MCT.MT_SALE_EMP_KEY = CEM.EMP_KEY
+			) T1,
+			(
+			SELECT 
+				COUNT(1) AS TOTAL_TURN
+				, SUM(SALES_TURN_AMOUNT) AS TOTAL_TURN_AMOUNT
+			FROM MT_SALES_DETAIL_TB 
+			WHERE 1=1 
+				AND SALES_CT_FK_KEY= #{pjKey} 
+				AND DELETE_YN='N'
+			) T2,
+			(
+			SELECT 
+				MIN(SALES_TURN) AS PROCEED_TURN
+			FROM MT_SALES_DETAIL_TB 
+			WHERE 1=1 
+				AND SALES_CT_FK_KEY= #{pjKey} 
+				AND DELETE_YN='N' 
+				AND SALES_STATUS_CD IS NULL	
+			) T3,
+			(
+			SELECT IFNULL(SUM(SALES_TURN_AMOUNT),0) AS COMPLETED_AMOUNT
+			FROM MT_SALES_DETAIL_TB 
+			WHERE 1=1 
+				AND SALES_CT_FK_KEY= #{pjKey} 
+		    AND SALES_STATUS_CD ='E'
+				AND DELETE_YN='N'
+			) T4
+	</select>
+	
+	<!-- 세금계산서 요청 저장정보 조회  -->
+	<select id="selectBillDetailInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		
+		SELECT PSO.BILL_FK_MT_KEY          AS PJ_KEY                  /* 프로젝트 키 */
+		     , PSO.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 게산서 요청 관리키 */
+		     , PSO.BILL_CT_FK_KEY          AS BILL_CT_FK_KEY          /* 수금계획 관리키(MT_SALES_DETAIL_TB.SALES_KEY) */
+		     , PSO.BILL_TURN_NO            AS BILL_TURN_NO            /* 계산서 회차 */
+		     , PSO.BILL_AMOUNT             AS BILL_AMOUNT             /* 발행 금액 */
+		     , PSO.BILL_AC_KEY             AS BILL_AC_KEY             /* 매출처 키 */
+		     , CAT.AC_NM                   AS BILL_AC_NM              /* 매출처 명 */
+		     , PSO.BILL_TAX_YN             AS BILL_TAX_YN             /* 부가세 포함여부 */
+		     , PSO.BILL_AC_DIRECTOR_NAME   AS BILL_AC_DIRECTOR_NAME   /* 계산서 거래처 담당자 이름 */
+		     , PSO.BILL_AC_DIRECTOR_TEL    AS BILL_AC_DIRECTOR_TEL    /* 계산서 거래처 담당자 연락처 */
+		     , PSO.BILL_ISSUE_EMAIL        AS BILL_ISSUE_EMAIL        /* 계산서 거래처 담당자 이메일 */
+		     , PSO.BILL_ISSUE_TYPE         AS BILL_ISSUE_TYPE         /* 정발행 역발행 구분 */
+		     , PSO.BILL_ISSUE_STATUS       AS BILL_ISSUE_STATUS       /* 발행 상태 */
+			 , PSO.BILL_REQUEST_DT         AS BILL_REQUEST_DT         /* 발행 요청일 */
+			 , PSO.REMARK                  AS REMARK                  /* 요청사항 */ 
+		     , PSO.BILL_NO                 AS BILL_NO                 /* 계산서 번호 */
+		     , PSO.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일 */
+		FROM   MT_SD_BILLING_OP_TB PSO, CMM_ACCOUNT_TB CAT
+		WHERE 1=1
+		  AND PSO.BILL_FK_MT_KEY = #{pjKey}
+		  AND PSO.BILL_TURN_NO   = #{billTurnNo}
+		  AND PSO.DELETE_YN      = 'N'		
+		  AND PSO.BILL_AC_KEY    = CAT.AC_KEY	
+	</select>
+	
+	<!-- 세금계산서 요청 생성정보 조회  -->
+	<select id="selectBillDefaultInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		
+		SELECT PSD.SALES_KEY           AS BILL_CT_FK_KEY           /* 매출 관리키 */
+		     , PSD.SALES_CT_FK_KEY     AS PJ_KEY              /* 프로젝트 키 */
+		     , PSD.SALES_TURN          AS BILL_TURN_NO        /* 회차 */
+		     , PSD.SALES_COLLECT_RATE  AS SALES_COLLECT_RATE  /* 수금비율 */
+		     , PSD.SALES_TURN_AMOUNT   AS BILL_AMOUNT         /* 발행 예상 금액 */
+		     , PSD.SALES_BILL_FC_DT    AS BILL_REQUEST_DT     /* 계산서 예상 발행일 */
+		FROM   MT_SALES_DETAIL_TB  PSD
+		WHERE  PSD.SALES_CT_FK_KEY = #{pjKey} 
+		  AND  PSD.SALES_TURN      = #{billTurnNo}
+	
+	</select>	
+	
+	
+	<insert id="insertBillRequest" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+		INSERT INTO MT_SD_BILLING_OP_TB
+		(
+			  BILL_CALL_KEY
+			, BILL_FK_MT_KEY
+			, BILL_CT_FK_KEY
+			, BILL_TURN_NO
+			, BILL_AMOUNT
+			, BILL_ISSUE_EMAIL
+			, BILL_ISSUE_STATUS
+			, BILL_ISSUE_TYPE
+			, BILL_REQUEST_DT
+			, BILL_AC_KEY
+			, BILL_AC_DIRECTOR_NAME
+			, BILL_AC_DIRECTOR_TEL
+			, BILL_TAX_YN
+			, REMARK
+			, REG_DT
+			, REG_TM 
+			, REG_EMP_KEY
+		)
+		VALUES
+		(
+			  #{billCallKey}
+			, #{pjKey}
+			, #{billCtFkKey}
+			, #{billTurnNo}
+			, #{billAmount}
+			, #{billIssueEmail}
+			, #{billIssueStatus}
+			, #{billIssueType}
+			, #{billRequestDt}
+			, #{billAcKey}
+			, #{billAcDirectorName}
+			, #{billAcDirectorTel}
+			, #{billTaxYn}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+		)
+		
+	</insert>	
+	
+	<update id="updateSaleDetailStatusCd" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+	
+		UPDATE MT_SALES_DETAIL_TB
+		SET   SALES_STATUS_CD = #{billIssueStatus}
+		WHERE SALES_KEY       = #{billCtFkKey}
+	
+	</update>	
+	<update id="updateBillRequest" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+	
+		UPDATE MT_SD_BILLING_OP_TB
+		SET   BILL_AMOUNT           = #{billAmount}
+			, BILL_ISSUE_EMAIL      = #{billIssueEmail}
+			, BILL_ISSUE_STATUS     = #{billIssueStatus}
+			, BILL_ISSUE_TYPE       = #{billIssueType} 
+			, BILL_REQUEST_DT       = #{billRequestDt}
+			, BILL_AC_DIRECTOR_NAME = #{billAcDirectorName}
+			, BILL_AC_DIRECTOR_TEL  = #{billAcDirectorTel}
+			, BILL_TAX_YN           = #{billTaxYn}
+			, REMARK                = #{remark}
+			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY           = #{regEmpKey}
+		WHERE BILL_CALL_KEY         = #{billCallKey}
+	
+	</update>	
+	
+	<!-- 세금계산서 상태업데이트, 세금계산서 정보 업데이트.  -->
+	<update id="updatetBillInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+	
+		UPDATE MT_SD_BILLING_OP_TB
+		SET BILL_CT_FK_KEY = BILL_CT_FK_KEY
+		<if test="billNo != null and billNo != ''">
+			, BILL_NO           = #{billNo}      /* 계산서요청번호 */
+		</if>
+		<if test="billIssueDt != null and billIssueDt != ''">
+			, BILL_ISSUE_DT     = #{billIssueDt} /* 계산서 발행일*/
+		</if>
+		<!-- <if test="salesCollectFinishDt != null and salesCollectFinishDt != ''">
+			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/
+		</if> -->
+			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/
+		<if test="billIssueStatus != null and billIssueStatus != ''">
+			, BILL_ISSUE_STATUS = #{billIssueStatus} /* 계산서 상태*/
+		</if>
+			, MOD_DT            = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM            = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY       = #{modEmpKey}
+		WHERE BILL_CALL_KEY     = #{billCallKey}	
+			AND DELETE_YN       = 'N'
+	</update>	
+	
+	<!-- 세금계산서 요청 정보 삭제. -->
+	<update id="deleteBillRequest" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+	
+		UPDATE MT_SD_BILLING_OP_TB
+		SET   DELETE_YN     = 'Y'
+			, MOD_DT        = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM        = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY   = #{modEmpKey}
+		WHERE BILL_CALL_KEY = #{billCallKey}
+	
+	</update>
+	
+	
+	
+	
+	<select id="selectSdBillList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		
+		SELECT PSB.BILL_FK_MT_KEY          AS MT_KEY
+			 , PSB.BILL_TURN_NO            AS BILL_TURN_NO            /* 계산서 회차 */
+		     , PSB.BILL_NO                 AS BILL_NO                 /* 계산서 번호, 승인번호  */
+		     , PSB.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 계산서요청번호 */
+		     , PSB.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일*/
+		     , PSB.BILL_AMOUNT             AS BILL_AMOUNT             /* 공급가액 */
+		     , PSB.BILL_TAX_YN             AS BILL_TAX_YN             /* TAX포함 여부 */
+		     , PSB.BILL_ISSUE_STATUS       AS BILL_ISSUE_STATUS       /* 계산서 상태 */
+		     , PSB.REG_DT                  AS REG_DT                  /* 작성일자 */
+		     , PSB.REMARK                  AS REMARK                  /* 요청사항 OR 비고 */
+		     , PSB.BILL_ISSUE_TYPE         AS BILL_ISSUE_TYPE         /* 발행 타입 */
+		     , PSD.SALES_KEY               AS SALES_KEY               /* 수금완료 처리를 위한 수금테이블 키 */
+		     , PSB.SALES_COLLECT_FINISH_DT AS SALES_COLLECT_FINISH_DT /* 수금완료 일자 */
+		     , CASE WHEN PSB.BILL_TAX_YN = 'Y' THEN PSB.BILL_AMOUNT - FLOOR(PSB.BILL_AMOUNT / 1.1)
+		            ELSE FLOOR(PSB.BILL_AMOUNT * 0.1)
+		       END                         AS BILL_TAX                /* 부가세 */
+		     , CASE WHEN PSB.BILL_TAX_YN = 'Y' THEN FLOOR(PSB.BILL_AMOUNT / 1.1)
+		            ELSE PSB.BILL_AMOUNT
+		       END                         AS SUPPLY_VALUE            /* 공급가액 */
+		     , CASE WHEN PSB.BILL_TAX_YN = 'Y' THEN PSB.BILL_AMOUNT
+		            ELSE FLOOR(PSB.BILL_AMOUNT * 1.1)
+		       END                         AS BILL_TOTAL_AMOUNT       /* 합계 */
+		     , CET.EMP_NM                  AS EMP_NM                  /* 계산서 요청자 등록자 */
+		     , PSB.BILL_AC_KEY             AS BILL_AC_KEY             /* 매출처 사업자번호. */
+		     , CAT.AC_NM                   AS BILL_AC_NM              /* 매출처 상호 */
+		     , PSB.BILL_AC_DIRECTOR_NAME   AS BILL_AC_DIRECTOR_NM     /* 매출처 담당자명 */
+		     , PSB.BILL_AC_DIRECTOR_TEL    AS BILL_AC_DIRECTOR_TEL    /* 매출처 담당자전화 */
+         	 , PSB.BILL_ISSUE_EMAIL        AS BILL_ISSUE_EMAIL        /* 매출처 담당자이메일 */
+             , MCT.MT_NM                   AS MT_NM                   /* 유지보수 제목 */
+		     , MCT.MT_AC_KEY               AS MT_AC_KEY               /* 거래처 사업자번호. */
+             , CAT2.AC_NM                  AS MT_AC_NM                /* 거래처 상호 */
+		FROM       MT_SD_BILLING_OP_TB     PSB
+		JOIN       MT_CONTRACT_TB	       MCT  ON PSB.BILL_FK_MT_KEY = MCT.MT_INTEGRATE_KEY AND MCT.DELETE_YN = 'N'
+		JOIN       MT_SALES_DETAIL_TB      PSD  ON PSB.BILL_CT_FK_KEY = PSD.SALES_KEY AND PSD.DELETE_YN = 'N'
+		JOIN       CMM_ACCOUNT_TB          CAT  ON PSB.BILL_AC_KEY    = CAT.AC_KEY
+		JOIN       CMM_ACCOUNT_TB          CAT2 ON MCT.MT_AC_KEY      = CAT2.AC_KEY
+		JOIN       CMM_EMPLOYEE_TB         CET  ON PSB.REG_EMP_KEY    = CET.EMP_KEY
+		WHERE  1=1	
+		
+		<if test="pjKey != null and pjKey != ''">
+			AND PSB.BILL_FK_MT_KEY = #{pjKey}
+		</if>  
+		<if test="billCtFkKey != null and billCtFkKey != ''">
+			AND PSD.SALES_KEY =  #{billCtFkKey}
+		</if> 
+		<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			AND PSB.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDate}, '-', '') AND REPLACE(#{searchToDate}, '-', '')
+		</if>
+		
+		<if test="searchAcNm != null and searchAcNm != ''">
+			AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+		</if>     
+			AND PSB.DELETE_YN      = 'N'
+		ORDER BY PSB.BILL_TURN_NO
+				
+	</select>	
+</mapper>

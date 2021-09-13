@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtGuarantyBondVO;
 import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
+import com.cep.maintenance.contract.vo.MtBiddingVO;
 import com.cep.maintenance.contract.vo.MtContractLinkVO;
 import com.cep.maintenance.contract.vo.MtContractProductVO;
 import com.cep.maintenance.contract.vo.MtContractVO;
@@ -585,6 +587,132 @@ public interface MtContractMapper {
 	 */
 	public void deleteMtContractLink(MtContractLinkVO mtContractLinkVO) throws Exception;
 	
+	
+	/* ============================== 유지보수 입찰 보증증권 관리  ======================================*/
+	/**
+	 * 유지보수 보증증권 발행요청(등록)
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 2:57:40
+	 * @author aranghoo
+	 */
+	public void requestMtBiddingGb(MtBiddingVO mtBiddingVO) throws Exception;
+	
+	/**
+	 * 유지보수 보증증권 발급완료 처리.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 2:59:35
+	 * @author aranghoo
+	 */
+	public void endMtBiddingGb(MtBiddingVO mtBiddingVO) throws Exception;
+	
+	/**
+	 * 유지보수 보증증권 수정
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 3:00:21
+	 * @author aranghoo
+	 */
+	public void modifyMtBiddingGb(MtBiddingVO mtBiddingVO) throws Exception;
+	
+	/**
+	 * 유지보수 보증증권 삭제
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 3:01:00
+	 * @author aranghoo
+	 */
+	public void deleteMtBidding(MtBiddingVO mtBiddingVO) throws Exception;
+	
+	/**
+	 * 유지보수 보증증권 상세보기
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 3:03:13
+	 * @author aranghoo
+	 */
+	public MtBiddingVO selectMtBdGbInfo(String mtIntegrateKey) throws Exception;
+	
+	
+
+	/* ============================== 유지보수 계약 보증증권 관리  ======================================*/
+	/**
+	 * 유지보수 계약보증증권 발행요청(등록)
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 2:57:40
+	 * @author aranghoo
+	 */
+	public void requestMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception;
+	
+	/**
+	 * 유지보수 계약보증증권 발급완료 처리.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 2:59:35
+	 * @author aranghoo
+	 */
+	public void endMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception;
+	
+	/**
+	 * 유지보수 계약보증증권 수정
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 3:00:21
+	 * @author aranghoo
+	 */
+	public void modifyMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception;
+	
+	/**
+	 * 유지보수 계약보증증권 삭제
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBiddingVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 3:01:00
+	 * @author aranghoo
+	 */
+	public void deleteMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception;
+	
+	/**
+	 * 유지보수 계약 보증증권 상세보기
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 8. 18. 오후 3:03:13
+	 * @author aranghoo
+	 */
+	public MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey) throws Exception;
 	//////////////////////////////////////////////////////////////////////////////////////////
 	
 	/**

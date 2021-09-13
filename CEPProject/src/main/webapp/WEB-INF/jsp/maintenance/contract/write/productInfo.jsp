@@ -219,6 +219,18 @@
 						return false;
 					}					
 					
+				} else if(varUrl == "writeSalesPlanView"){					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
 				} else if(varUrl == "backOrderInfoView"){
 					if("${parmMtSbCtYn}" == "Y"){
 						
@@ -758,6 +770,7 @@
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP on">제품정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>
 					<c:if test="${parmMtSbCtYn eq 'Y' }">		
 					<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');">매입정보</li>

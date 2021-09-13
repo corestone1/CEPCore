@@ -105,7 +105,7 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: calc(100% - 37px);
+			width: calc(100% - 43px);
 			height: 114px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -426,6 +426,18 @@
 						return false;
 					}					
 					
+				} else if(varUrl == "writeSalesPlanView"){					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
 				} else if(varUrl == "backOrderInfoView"){
 					if("${basicContractInfo.mtSbCtYn}" == "Y"){
 						
@@ -591,6 +603,9 @@
 			    			button = [];
 			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 	            		} else {
+	            			
+	            			$("#fileCtKey").val(paramData.mtIntegrateKey);
+	            			
 	            			//업로프 파일을 선택한 경우 파일 업로드 프로세스 수행
 	            			fileFormData = new FormData($('#fileForm')[0]); 
 			       			$.ajax({ 
@@ -601,7 +616,7 @@
 			       				processData: false, // 필수 
 			       				contentType: false, // 필수 
 			       				cache: false, 
-			       				success: function (data) { 
+			       				success: function (data) {
 			       					if(data.successYN=='Y') {
 			       						if($('#mtIntegrateKey').val() !=''){
 					            			alert("유지보수계약 기본정보 수정을 성공하였습니다.");
@@ -609,18 +624,19 @@
 					            			alert("유지보수계약 기본정보 등록을 성공하였습니다.");
 					            			//유지보수 계약정보 관리키를 셋팅한다.
 					            			//$('#mtIntegrateKey').val(paramData.mtIntegrateKey);
-					            		}
-			    			    		
-			       						var url = '/maintenance/contract/write/basicInfoView.do';
-			    		    			var dialogId = 'program_layer';
-			    		    			//첨부파일 workClass정보 추가.
-			    		    			varParam['workClass'] = $('#workClass').val();			    		    			
-			    		    			var button = new Array;
-			    		    			button = [];
-			    		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+					            		}			    			    		
+			       						
 			       					} else {
 			       						alert("첨부파일 저장이 실패하였습니다.")
 			       					}
+			       					//현재는 파일저장이 실패해도 기본정보는 저장되도록 화면 이동시킴.
+			       					var url2 = '/maintenance/contract/write/basicInfoView.do';
+		    		    			var dialogId2 = 'program_layer';
+		    		    			//첨부파일 workClass정보 추가.
+		    		    			varParam['workClass'] = $('#workClass').val();			    		    			
+		    		    			var button2 = new Array;
+		    		    			button2 = [];
+		    		    			showModalPop(dialogId2, url2, varParam, button2, '', 'width:1144px;height:708px');
 			       				}, 
 			       				error: function(request, status, error) {
 			       					if(request.status != '0') {
@@ -841,18 +857,18 @@
 		}); */
 		
 		// 파일업로드 관련
-		function fn_downFile(fileKey, fileOrgNm) {
-			var form = document.viewForm;
+		function fn_downFilePopUp(fileKey, fileOrgNm) {
+			var form = document.viewPopUpForm;
 			form.fileKey.value = fileKey;
 			form.fileOrgNm.value = fileOrgNm; 
-			var data = $('#viewForm').serialize();
+			var data = $('#viewPopUpForm').serialize();
 			fileDownload("<c:url value='/file/download.do'/>", data);  
 		}
 		
 		function fn_deleteFile(fileKey, fileNm) {
 			var result = confirm("첨부파일 " + fileNm + " 을 삭제하시겠습니까?");
 			if(result) {
-				var form = document.viewForm;
+				var form = document.viewPopUpForm;
 				form.fileKey.value = fileKey;
 				var data = JSON.stringify({"fileKey":fileKey});
 				$.ajax({ 
@@ -895,7 +911,7 @@
 				<li class="colorWhite cursorP on">기본정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
-				
+				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>				
 				<li id="back_order" class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');" style="display:none">백계약정보</li>
 				<li id="back_buy" class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');" style="display:none">매입정보</li>
 			</ul>
@@ -1090,27 +1106,27 @@
 					<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
 					<table>					
 						<tr>		
-						<td class="tdTitle veralignT">첨부파일</td>		
-						<td>			
-							<div class="uploadContainer">
-								<input class="uploadName" id="upFileName" placeholder="파일선택" disabled="disabled" />
-								<label for="exFile" class="exFileLabel"></label>
-								<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
-							</div>
-							<div style="width: 235px; height: 25px; clear:both;">
-								<c:forEach var="result" items="${fileList }" varStatus="status">
-									<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
-									<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
-									<c:if test="${status.last eq false}"><br /></c:if>
-								</c:forEach>
-							</div>
+							<td class="tdTitle veralignT">첨부파일</td>		
+							<td>			
+								<div class="uploadContainer">
+									<input class="uploadName" id="upFileName" placeholder="파일선택" disabled="disabled" />
+									<label for="exFile" class="exFileLabel"></label>
+									<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+								</div>
+								<div style="width: 235px; height: 25px; clear:both;">
+									<c:forEach var="result" items="${fileList }" varStatus="status">
+										<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFilePopUp('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+										<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+										<c:if test="${status.last eq false}"><br /></c:if>
+									</c:forEach>
+								</div>
+								
 							
-						
-						<%-- <form:form id="viewForm" name="viewForm" method="POST">
-							<input type="hidden" name="fileKey" value=""/>
-							<input type="hidden" name="fileOrgNm" value=""/>
-						</form:form> --%>
-						</td>
+							<%-- <form:form id="viewForm" name="viewForm" method="POST">
+								<input type="hidden" name="fileKey" value=""/>
+								<input type="hidden" name="fileOrgNm" value=""/>
+							</form:form> --%>
+							</td>
 						</tr>
 					
 					<%-- tr>
@@ -1119,7 +1135,7 @@
 							</tr> --%>
 					</table>
 				</form>
-				<form:form id="viewForm" name="viewForm" method="POST">
+				<form:form id="viewPopUpForm" name="viewPopUpForm" method="POST">
 					<input type="hidden" name="fileKey" value=""/>
 					<input type="hidden" name="fileOrgNm" value=""/>
 				</form:form>
