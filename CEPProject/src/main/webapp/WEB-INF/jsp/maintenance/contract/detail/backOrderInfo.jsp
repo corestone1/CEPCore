@@ -202,7 +202,7 @@
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 190px;
+			width: 213px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
@@ -215,17 +215,17 @@
 			width: 100px;
 			text-align: right;
 		}
-		.mContents .dtl thead th:nth-child(6),
+		/* .mContents .dtl thead th:nth-child(6),
 		.mContents .dtl tbody td:nth-child(6) {
 			width: 80px;
-		}
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7){
+		} */
+		.mContents .dtl thead th:nth-child(6),
+		.mContents .dtl tbody td:nth-child(6){
 			width: 100px;
 		}
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8) {
-			width: 220px;
+		.mContents .dtl thead th:nth-child(7),
+		.mContents .dtl tbody td:nth-child(7) {
+			width: 300px;
 		}	
 		/* 발주정보, 제품정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
@@ -394,7 +394,7 @@
 				//영업담당자 셋팅
 				$('#m_mtSaleEmpKey').val("${basicContractInfo.mtSaleEmpKey}").attr("selected", "true");
 				//부가세 포함 셋팅
-				$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
+				//$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 				//검수방법 셋팅
 				//$('#m_mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
 				$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
@@ -1007,10 +1007,10 @@
 									<td>유지보수 금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
-								<tr>
+								<%-- <tr>
 									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
-								</tr>
+								</tr> --%>
 								<tr>
 									<td>결제조건</td>
 									<td><c:out value="${basicContractInfo.mtPayTerms}"/></td>
@@ -1146,14 +1146,14 @@
 										<input type="text"  id="m_mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 140px; text-align: right;"/>
 									</td>
 								</tr>
-								<tr>
+								<!-- <tr>
 									<td><label>*</label>부가세포함</td>
 									<td>
 										<input type="radio" class="tRadio" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="radio" class="tRadio" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<td><label>*</label>결제조건</td>
 									<td>
@@ -1275,7 +1275,7 @@
 									<th scope="row">매입처</th>
 									<th scope="row">매입처담당자</th>
 									<th scope="row">합계금액</th>
-									<th scope="row">부가세포함</th>
+									<!-- <th scope="row">부가세포함</th> -->
 									<th scope="row">발주일자</th>
 									<th scope="row">결재조건</th>
 									<th style="max-width: 0px; display: none;"></th>
@@ -1293,7 +1293,7 @@
 									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
 									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
 									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
-									<td><c:out value="${list.taxYn}"/></td>
+									<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
 									<td><c:out value="${list.mtOrderPayTerms}"/></td>
 									<td style="max-width: 0px; display: none;">
@@ -1310,7 +1310,7 @@
 									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
 									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
 									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
-									<td><c:out value="${list.taxYn}"/></td>
+									<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
 									<td><c:out value="${list.mtOrderPayTerms}"/></td>
 									<td style="max-width: 0px; display: none;">

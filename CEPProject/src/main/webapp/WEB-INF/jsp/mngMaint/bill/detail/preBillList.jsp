@@ -129,7 +129,7 @@
 		.mContents .dtl tbody tr:hover {
 			background-color: #ddf0ec
 		}
-		.mContents .dtl tbody tr td:nth-child(3) {
+		.mContents .dtl tbody tr td:nth-child(4) {
 			font-weight: 400;
 		}
 		.mContents .dtl thead th, .mContents .dtl tbody tr td {
@@ -144,8 +144,8 @@
 		}
 		.mContents .dtl thead th:nth-child(2),
 		.mContents .dtl tbody td:nth-child(2){
-			width: 140px;
-			max-width: 140px;
+			width: 200px;
+			max-width: 200px;
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
@@ -154,24 +154,22 @@
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
-			width: 100px;
+			width: 130px;
 		}
 		.mContents .dtl thead th:nth-child(5),
 		.mContents .dtl tbody td:nth-child(5) {
-			width: 82px;
+			width: 90px;
 		}
 		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6),
+		.mContents .dtl tbody td:nth-child(6) {
+			width: 105px;
+		}
 		.mContents .dtl thead th:nth-child(7),
 		.mContents .dtl tbody td:nth-child(7) {
-			width: 95px;
+			width: 63px;
 		}
 		.mContents .dtl thead th:nth-child(8),
 		.mContents .dtl tbody td:nth-child(8) {
-			width: 63px;
-		}
-		.mContents .dtl thead th:nth-child(9),
-		.mContents .dtl tbody td:nth-child(9) {
 			width: 60px;
 		}
 		/* .mContents .dtl thead th:nth-child(9),
@@ -320,8 +318,8 @@
 						<th scope="row">매출처</th>
 						<th scope="row">거래처 담당자</th>
 						<th scope="row">계산서 금액</th>
-						<th scope="row">수금 금액</th>
-						<th scope="row">부가세여부</th>
+						<!-- <th scope="row">수금 금액</th> -->
+						<th scope="row">발행구분</th>
 						<th scope="row">진행상태</th>
 						<th scope="row">수금완료</th>
 					</tr>
@@ -335,18 +333,18 @@
 						<td><span><a href="javascript:fnViewBillInsert('${result.salesKey}')" style="color: #0c35ff;"><c:out value="${result.billAcNm}"/></a></span></td>
 						<td><span>${result.billAcDirectorNm }</span></td>
 						<td class="textalignR"><span>${displayUtil.commaStr(result.billAmount) }</span></td>
-						<td class="textalignR"><span>${displayUtil.commaStr(result.billTotalAmount) }</span></td>
+						<%-- <td class="textalignR"><span>${displayUtil.commaStr(result.billTotalAmount) }</span></td> --%>
 						<td>
-							<span>${result.billTaxYn }</span>
+							<%-- <span>${result.billTaxYn }</span> --%>
 					<c:choose>
 						<c:when test="${result.billIssueType eq 'Y'}">
-							<span> / 정발행</span>
+							<span>정발행</span>
 						</c:when>
 						<c:when test="${result.billIssueType eq 'N'}">
-							<span> / 역발행</span>
+							<span>역발행</span>
 						</c:when>
 						<c:otherwise>
-							<span>/ ${result.billIssueType}</span>
+							<span>${result.billIssueType}</span>
 						</c:otherwise>
 					</c:choose>
 						</td>

@@ -9,7 +9,18 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 public interface MngMaintOrderService {
 	
-	public List<EgovMap> selectOrderList(MngMtOrderSearchVO mngOrderSearchVO) throws Exception;
+	/**
+	 * 발주목록 조회.(유지보수관리 ==> 발주목록)
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param searchVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 9. 15. 오후 5:09:31
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtOrdertList(MngMtOrderSearchVO searchVO) throws Exception;
 
 	public void deleteOrder(MngMtOrderSearchVO mngOrderSearchVO) throws Exception;
 	

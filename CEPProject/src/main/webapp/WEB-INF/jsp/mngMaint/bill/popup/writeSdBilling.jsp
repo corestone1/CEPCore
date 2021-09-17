@@ -560,33 +560,34 @@
 						</tr>
 						
 						<tr>
-							<td class="tdTitle">공급가액/세액</td>
+							<td class="tdTitle">계산서금액</td>
 							<td class="tdContents">
 								<c:out value="${displayUtil.commaStr(billingOpInfo.supplyValue)}"/> 원 
-								&nbsp;/&nbsp;
-								<c:out value="${displayUtil.commaStr(billingOpInfo.billTax)}"/> 원
+								<%-- &nbsp;/&nbsp;
+								<c:out value="${displayUtil.commaStr(billingOpInfo.billTax)}"/> 원 --%>
 							</td>
 						</tr>
 						
-						<tr>
+						<%-- <tr>
 							<td class="tdTitle">합계</td>
 							<td class="tdContents">
 								<c:out value="${displayUtil.commaStr(billingOpInfo.billTotalAmount)}"/> 원
 							</td>
-						</tr>							
+						</tr> --%>							
 						<tr>
 							<td class="tdTitle">								
-								<c:choose>									
+								<%-- <c:choose>									
 									<c:when test="${billingOpInfo.billIssueStatus eq 'E'}">
 										진행상태/완료일자
 									</c:when>
 									<c:otherwise>
 										진행상태
 									</c:otherwise>
-								</c:choose>
+								</c:choose> --%>
+								진행상태
 							</td>
 							<td class="tdContents">
-							<c:choose>
+							<%-- <c:choose>
 								<c:when test="${billingOpInfo.billIssueStatus eq 'R'}">
 									<span>요청</span>
 								</c:when>
@@ -602,7 +603,30 @@
 								<c:otherwise>
 									<span>${billingOpInfo.billIssueStatus}</span>
 								</c:otherwise>
+							</c:choose> --%>
+							<c:choose>
+								<c:when test="${billingOpInfo.billIssueStatus eq 'R'}">
+									<span>요청</span>
+								</c:when>
+								<c:when test="${billingOpInfo.billIssueStatus eq 'I'}">
+									<span>발급</span>
+								</c:when>
+								<c:when test="${billingOpInfo.billIssueStatus eq 'M'}">
+									<span>매핑</span>
+								</c:when>
+								<c:when test="${billingOpInfo.billIssueStatus eq 'E'}">
+									<span>수금완료 </span>
+								</c:when>
+								<c:otherwise>
+									<span>${billingOpInfo.billIssueStatus}</span>
+								</c:otherwise>
 							</c:choose>
+							</td>
+						</tr>								
+						<tr>
+							<td class="tdTitle">수금완료일자</td>
+							<td class="tdContents">
+								<span><c:out value="${displayUtil.displayDate(billingOpInfo.salesCollectFinishDt)}"/> </span>
 							</td>
 						</tr>					
 							

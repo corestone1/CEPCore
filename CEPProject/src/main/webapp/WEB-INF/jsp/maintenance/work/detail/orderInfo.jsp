@@ -189,7 +189,7 @@
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 190px;
+			width: 213px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
@@ -202,17 +202,17 @@
 			width: 100px;
 			text-align: right;
 		}
-		.mContents .dtl thead th:nth-child(6),
+		/* .mContents .dtl thead th:nth-child(6),
 		.mContents .dtl tbody td:nth-child(6) {
 			width: 80px;
-		}
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7){
+		} */
+		.mContents .dtl thead th:nth-child(6),
+		.mContents .dtl tbody td:nth-child(6){
 			width: 100px;
 		}
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8) {
-			width: 220px;
+		.mContents .dtl thead th:nth-child(7),
+		.mContents .dtl tbody td:nth-child(7) {
+			width: 300px;
 		}	
 		/* 발주정보, 제품정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
@@ -571,10 +571,10 @@
 									<td>유지보수 금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
-								<tr>
+								<%-- <tr>
 									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
-								</tr>
+								</tr> --%>
 								<tr>
 									<td>결제조건</td>
 									<td><c:out value="${basicContractInfo.mtPayTerms}"/></td>
@@ -648,7 +648,7 @@
 										<th scope="row">매입처</th>
 										<th scope="row">매입처담당자</th>
 										<th scope="row">합계금액</th>
-										<th scope="row">부가세포함</th>
+										<!-- <th scope="row">부가세포함</th> -->
 										<th scope="row">발주일자</th>
 										<th scope="row">결재조건</th>
 									</tr>
@@ -665,7 +665,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
-										<td><c:out value="${list.taxYn}"/></td>
+										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
 									</tr>
@@ -679,7 +679,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
-										<td><c:out value="${list.taxYn}"/></td>
+										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
 									</tr>									

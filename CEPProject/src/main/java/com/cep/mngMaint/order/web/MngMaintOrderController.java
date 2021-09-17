@@ -24,6 +24,7 @@ import com.cep.mngMaint.order.vo.MngMtOrderSearchVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 
 @Controller
 @RequestMapping("/mngMaint/order")
@@ -42,13 +43,36 @@ public class MngMaintOrderController {
 	public String selectOrder(@ModelAttribute("searchVO") MngMtOrderSearchVO searchVO, ModelMap model) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
-		
-		try
-		{
-			logger.debug("searchVO.getOrderCtClass() : {}", searchVO.getOrderCtClass());
-			logger.debug("{}", service.selectOrderList(searchVO));
+		String toDay = null;
+		Map<String, String> searchParam = null;
+		try {
 			
-			model.addAttribute("orderList", service.selectOrderList(searchVO));
+			logger.debug("searchVO.getOrderDtFrom()===>"+searchVO.getOrderDtFrom());
+			logger.debug("searchVO.getOrderDtTo()===>"+searchVO.getOrderDtTo());
+			logger.debug("searchVO.getMtOrderType()===>"+searchVO.getMtOrderType());
+			logger.debug("searchVO.getSearchOderAcKeyNm()===>"+searchVO.getSearchOderAcKeyNm());
+			logger.debug("searchVO.getSearchGubun()===>"+searchVO.getSearchGubun());
+			logger.debug("searchVO.getSearchWord()===>"+searchVO.getSearchWord());
+			
+			
+			toDay = CepDateUtil.getToday(null);		
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtFrom(), ""))){
+				searchVO.setOrderDtFrom(searchVO.getOrderDtFrom().replace("-", ""));
+			} else {
+				searchVO.setOrderDtFrom(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
+			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtTo(), ""))){
+				searchVO.setOrderDtTo(searchVO.getOrderDtTo().replace("-", ""));
+			} else {
+				searchVO.setOrderDtTo(toDay);
+			}
+			searchParam = new HashMap<>();
+//			searchParam.put("orderDtFrom", CepDateUtil.displayDate(searchVO.getOrderDtFrom()));
+			searchParam.put("orderDtFrom", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtFrom(), null, null));
+			searchParam.put("orderDtTo", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtTo(), null, null));
+			model.put("searchParam", searchParam);
+			model.put("orderList", service.selectMtOrdertList(searchVO));
 			model.put("displayUtil", new CepDisplayUtil());
 		}catch(Exception e){
 			logger.error("{}", e);

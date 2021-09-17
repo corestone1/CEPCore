@@ -206,7 +206,7 @@
 			
 			//부가세 포함 라이오버튼 셋팅
 			//$('#taxYn').val("${mtBackOrderVO.taxYn}").prop("checked", true);
-			$("input:radio[name='taxYn']:radio[value='${mtBackOrderVO.taxYn}']").prop('checked', true);
+			//$("input:radio[name='taxYn']:radio[value='${mtBackOrderVO.taxYn}']").prop('checked', true);
 			
 			// 등록된 거래처 selectBox 맵핑.
 			if(parseInt('${backOrderBoxList.size()}') >0 ){
@@ -1298,18 +1298,18 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label> 부가세 포함</td>
+							<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
 								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-							</td>
+							</td> -->
 							<td class="tdTitle"><label>*</label> 발주합계</td>
 							<td class="tdContents">
 								<input type="text"  id="orderTotalAmount" name="mtOrderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="text-align: right;"/>	
 							</td>
 							<td class="tdTitle"><label>*</label> 결제조건</td>
-							<td class="tdContents">
-								<input type="text" name="mtOrderPayTerms" style="width: 154px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
+							<td class="tdContents" colspan="3">
+								<input type="text" name="mtOrderPayTerms" style="width: 435px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
 							</td>
 						</tr>
 						<tr >

@@ -33,10 +33,13 @@ public class MngMtOrderSearchVO implements Serializable {
 	private String pjNm;
 	private String orderDtFrom;
 	private String orderDtTo;
-	private String orderEmpNm;
-	
+	private String orderEmpNm;	
 	private String regEmpKey;
 	
+	private String mtOrderType; //백계약 , 유지보수 작업 발주
+	private String searchOderAcKeyNm; //매입처 명
+	private String searchGubun;
+	private String searchWord; //검색어.
 	/**
 	 * @return the orderCtClass
 	 */
@@ -139,6 +142,54 @@ public class MngMtOrderSearchVO implements Serializable {
 	 */
 	public void setRegEmpKey(String regEmpKey) {
 		this.regEmpKey = regEmpKey;
+	}
+	/**
+	 * @return String - the mtOrderType
+	 */
+	public String getMtOrderType() {
+		return mtOrderType;
+	}
+	/**
+	 * @param mtOrderType the mtOrderType to set
+	 */
+	public void setMtOrderType(String mtOrderType) {
+		this.mtOrderType = mtOrderType;
+	}
+	/**
+	 * @return String - the searchOderAcKeyNm
+	 */
+	public String getSearchOderAcKeyNm() {
+		return searchOderAcKeyNm;
+	}
+	/**
+	 * @param searchOderAcKeyNm the searchOderAcKeyNm to set
+	 */
+	public void setSearchOderAcKeyNm(String searchOderAcKeyNm) {
+		this.searchOderAcKeyNm = searchOderAcKeyNm;
+	}
+	/**
+	 * @return String - the searchGubun
+	 */
+	public String getSearchGubun() {
+		return searchGubun;
+	}
+	/**
+	 * @param searchGubun the searchGubun to set
+	 */
+	public void setSearchGubun(String searchGubun) {
+		this.searchGubun = searchGubun;
+	}
+	/**
+	 * @return String - the searchWord
+	 */
+	public String getSearchWord() {
+		return searchWord;
+	}
+	/**
+	 * @param searchWord the searchWord to set
+	 */
+	public void setSearchWord(String searchWord) {
+		this.searchWord = searchWord;
 	}
 	
 	

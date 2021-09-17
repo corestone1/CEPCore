@@ -3,6 +3,7 @@ package com.cep.mngMaint.bill.service;
 
 import java.util.List;
 
+import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillVO;
 import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
@@ -123,4 +124,6 @@ public interface MngMaintBillService {
 	 * @author aranghoo
 	 */
 	public void updateSdPaymentStatus(MngMaintBillVO mngMaintBillVO) throws Exception;
+	
+	
 }

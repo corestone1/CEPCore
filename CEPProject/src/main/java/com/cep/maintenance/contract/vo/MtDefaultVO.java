@@ -49,6 +49,9 @@ public class MtDefaultVO implements Serializable{
 	private String nameId;//팝업에서 사용할 name 필드 id
 	private String searchGubun;//검색어 구분(고객사(CU) or 프로젝트명(PJ)) 
 	
+	private String mtOrderType;//발주구분(백계약:BO, 장애발주:PO)
+	private String searchOderAcKeyNm;//뱔주처명
+	
 	/**
 	 * @return the fromDate
 	 */
@@ -359,6 +362,18 @@ public class MtDefaultVO implements Serializable{
 	 */
 	public void setSearchWorkEmpNm(String searchWorkEmpNm) {
 		this.searchWorkEmpNm = searchWorkEmpNm;
+	}
+	public String getMtOrderType() {
+		return mtOrderType;
+	}
+	public void setMtOrderType(String mtOrderType) {
+		this.mtOrderType = mtOrderType;
+	}
+	public String getSearchOderAcKeyNm() {
+		return searchOderAcKeyNm;
+	}
+	public void setSearchOderAcKeyNm(String searchOderAcKeyNm) {
+		this.searchOderAcKeyNm = searchOderAcKeyNm;
 	}
 	
 }

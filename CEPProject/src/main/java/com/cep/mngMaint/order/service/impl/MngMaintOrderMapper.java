@@ -10,7 +10,7 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 @Mapper("mngMaintOrderMapper")
 public interface MngMaintOrderMapper {
 	
-	public List<EgovMap> selectOrderList(MngMtOrderSearchVO mngOrderSearchVO) throws Exception;
+	public List<EgovMap> selectMtOrdertList(MngMtOrderSearchVO mngOrderSearchVO) throws Exception;
 
 	public void deleteOrder(MngMtOrderSearchVO mngOrderSearchVO) throws Exception;
 }

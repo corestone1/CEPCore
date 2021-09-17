@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>유지보수 발주목록리스트</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -36,11 +36,11 @@
 		}
 		.contentsWrap .contents .top select {
 			height: 38px;
-			width: 130px;
+			width: 115px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -81,7 +81,8 @@
 			text-overflow:ellipsis; 
 			white-space:nowrap;
 			width: 84%;
-			margin: 0 auto;
+			margin-left: 15px;
+			vertical-align: middle;
 		}
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
@@ -93,59 +94,46 @@
 			padding: 10px 0;
 			border: 1px solid #edebef;
 			color: #535353;
+			
 		}
-		.middle table thead th:first-child,
-		.middle table tbody td:first-child,
-		.middle table thead th:nth-child(11),
-		.middle table tbody td:nth-child(11) {
+		.middle table  thead th:first-child,
+		.middle table tbody td:first-child {
 			width: 50px;
-			max-width: 50px;
+			max-width: 50px
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
-			width: 48px;
-			max-width: 48px;
+			width: 88px;
 		}
 		.middle table thead th:nth-child(3),
-		.middle table tbody td:nth-child(3) {
-			width: 145px;
-			max-width: 145px;
+		.middle table tbody td:nth-child(3),
+		.middle table thead th:nth-child(5),
+		.middle table tbody td:nth-child(5) {
+			width: 175px;
+			max-width: 175px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
 			width: 320px;
 			max-width: 320px;
 		}
-		.middle table thead th:nth-child(5),
-		.middle table tbody td:nth-child(5) {
-			width: 100px;
-			max-width: 100px;
-		}
 		.middle table thead th:nth-child(6),
+		.middle table tbody td:nth-child(6) {
+			width: 110px;
+		}
 		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 90px;
+		}
 		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(6),
-		.middle table tbody td:nth-child(7),
-		.middle table tbody td:nth-child(8),
+		.middle table tbody td:nth-child(8) {
+			width: 120px;
+		}
 		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9),
-		.middle table thead th:nth-child(10),
-		.middle table tbody td:nth-child(10) {
+		.middle table tbody td:nth-child(9) {
 			width: 100px;
-			max-width: 100px;
 		}
-		.middle table thead th:nth-child(12),
-		.middle table tbody td:nth-child(12) {
-			width: 140px;
-			max-width: 140px;
-		}
-		.middle table thead th:nth-child(13),
-		.middle table tbody td:nth-child(13),
-		.middle table thead th:nth-child(14),
-		.middle table tbody td:nth-child(14) {
-			width: 80px;
-			max-width: 80px;
-		}
+		
 		.middle table tbody tr td > img {
 			width: 25px;
 			vertical-align: middle;
@@ -172,7 +160,7 @@
 		.bottom > div {
 			margin-top: 22px;
 		}
-		input[type="text"] {
+		.contentsWrap .contents .top input[type="text"] {
 		    height: 36px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -180,51 +168,45 @@
 			font-size: 15px;
 			color: #000;
 		}
-		input[type="text"]::placeholder {
+/* 		.contentsWrap .contents .top input[type="text"]::placeholder {
 			color: #535353;
+		} */
+		.contentsWrap .contents .top input[class^="calendar"] {
+			width: 120px;
+			height: 38px;
+			background-image: url('/images/calendar_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
 		}
-		input[class="calendar"] {
-			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
-		    background-repeat: no-repeat;
-		    background-position: 95% 50%;
-		}
-		input[class="search"] {
+		.contentsWrap .contents .top input[class="search"] {
 			width: 260px;
 		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			var html = '';
+			
 			$('.middle table tbody tr').click(function() {
-				if($(this).attr('class') != "viewOpen") {
-					html = '<div style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
-					       + '<div style="margin: 5px 71px;">'
-					       + '<ul class="detailList">'
-					       + '<li>여신</li>'
-					       + '<li title="계산서 발행 후 90일">계산서 발행 후 90일</li>'
-					       + '<li>제품명</li>'
-					       + '<li title="VXRail">VXRail</li>'
-					       + '<li>비고</li>'
-					       + '<li title="ECS DR 장비운송 (의왕->안성) / HP Cooling Fan DL360p G8 / A15243621OUUAR">ECS DR 장비운송 (의왕->안성) / HP Cooling Fan DL360p G8 / A15243621OUUAR</li>'
-					       + '<li>제품번호</li>'
-					       + '<li title="29087564">29087564</li>' 
-					       + '</ul>'
-					       + '</div>'
-					       + '</div>';
-					$(this).after(html);
-					$(this).attr('class', 'viewOpen');
-				} else {
-					$(this).removeClass('viewOpen');
-					$(this).next().remove();
+				
+				$('#mtIntegrateKey').val($(this).children().eq(11).text());
+				$('#mtOrderKey').val($(this).children().eq(12).text());
+				$('#orderCtFkKey').val($(this).children().eq(13).text());
+				if('BO' == $(this).children().eq(10).text()){					
+					//백계약 상세
+					document.listForm.action = '/maintenance/contract/detail/backOrderInfo.do';
+				} else if('PO' == $(this).children().eq(10).text()){
+					//작업발주.
+					document.listForm.action = '/maintenance/work/detail/orderInfo.do';
 				}
+				//alert("mtOrderType==>"+$(this).children().eq(10).text());
+				document.listForm.submit(); 
+				//alert("===>"+mtOrderType+"/"+mtIntegrateKey+"/"+mtOrderKey+"/"+mtWorkKey);
 			});
 			
-			$('#fl tr').each(function(index, item) {
+			/* $('#fl tr').each(function(index, item) {
 				if(index != 0) {
 					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
-			});
+			}); */
 		});
 
 		function fn_addView(link){
@@ -241,11 +223,20 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
 			/* } */
 		}
+		
+		function fn_searchList(){
+		
+			document.listForm.action = "/mngMaint/order/list.do";
+           	document.listForm.submit(); 
+		}
 
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
+		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey"/>
+		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
+		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -256,16 +247,24 @@
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">구분</option>
-						</select>
-						<select>
-							<option value="">상태</option>
-						</select>
-						<input type="text" class="calendar" placeholder="from"/><label> ~ </label><input type="text" class="calendar" placeholder="to"/>
-						<input type="text" placeholder="발주번호" style="width: 80px;"/>
-						<input type="text" class="search" placeholder="프로젝트명"/>
-						<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<form:select path="mtOrderType">
+							<form:option value="" label="전체" />
+							<form:option value="BO" label="백계약발주" />
+							<form:option value="PO" label="작업발주" />
+						</form:select>
+						<!-- <select>
+							<option value="">전체</option>
+							<option value="BO">백계약발주</option>
+							<option value="PO">작업발주</option>
+						</select> -->
+						<form:input path="searchOderAcKeyNm" type="text" placeholder="매입처명"/>
+						<form:input path="orderDtFrom" type="text" placeholder="발주일자(from)" class="calendar fromDt" value="${searchParam.orderDtFrom}"/> ~ <form:input path="orderDtTo" type="text" placeholder="발주일자(to)" class="calendar toDt" value="${searchParam.orderDtTo}"/>
+						<form:select path="searchGubun">
+							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="CU" label="고객사" />
+						</form:select>
+						<form:input path="searchWord" type="text" placeholder="검색어"/>
+						<span><button><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></button></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -273,41 +272,57 @@
 					<table class="textalignC ftw200" id="fl">
 						<thead class="ftw400">
 							<tr>
-								<th scope="row">선택</th>
 								<th scope="row">No</th>
+								<th scope="row">발주구분</th>
 								<th scope="row">고객사</th>
 								<th scope="row">프로젝트명</th>
-								<th scope="row">발주일</th>
-								<th scope="row">입고일</th>
-								<th scope="row">계산서일자</th>
-								<th scope="row">발주번호</th>
-								<th scope="row">매입처</th>
-								<th scope="row">단가</th>
-								<th scope="row">수량</th>
-								<th scope="row">합계(VAT별도)</th>
-								<th scope="row">발주자</th>
+								<th scope="row">발주처</th>
+								<th scope="row">발주처담당</th>
+								<th scope="row">발주일자</th>
+								<th scope="row">발주금액</th>
 								<th scope="row">영업담당자</th>
+								<th scope="row">결재조건</th>
+								<th style="max-width: 0px; display: none;">mtOrderType</th>
+								<th style="max-width: 0px; display: none;">mtIntegrateKey</th>
+								<th style="max-width: 0px; display: none;">mtOrderKey</th>
+								<th style="max-width: 0px; display: none;">mtWorkKey</th>
 							</tr>
 						</thead>
 						<tbody>
+						<c:forEach var="list" items="${orderList}" varStatus="status">
 							<tr>
-								<td></td>
-								<td>1</td>
-								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
-								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체dddddddddddddddddddddddddddddd">VDI 중요단말기 환경 구축 및 노후장비 교체dddddddddddddddddddddddddddddd</span></td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>2018-12-12</td>
-								<td>78945612</td>
-								<td><span title="DellTech">DellTech</span></td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>5</td>
-								<td><span title="5,000,000">5,000,000</span></td>
-								<td>김규민</td>
-								<td>박영수</td>
+								<td><c:out value="${status.count}"/></td>
+								<td>
+							<c:choose>
+								<c:when test="${list.mtOrderType eq 'BO'}">
+									백계약발주
+								</c:when>
+								<c:when test="${list.mtOrderType eq 'PO'}">
+									작업발주
+								</c:when>
+								<c:otherwise>
+									<c:out value="${list.mtOrderType}"/>
+								</c:otherwise>
+							</c:choose>	
+								</td>
+								<td><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
+								<td align="left"><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
+								<td><span title="${list.mtOrderAcKeyNm}"><c:out value="${list.mtOrderAcKeyNm}"/></span></td>
+								<td><span title="${list.mtAcDirectorNm}"><c:out value="${list.mtAcDirectorNm}"/></span></td>
+								<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
+								<td align="right">
+									<span title="${displayUtil.commaStr(list.mtOrderAmount)}" style="margin-right:10px"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></span>
+								</td>
+								<td><span title="${list.saleEmpNm}"><c:out value="${list.saleEmpNm}"/></span></td>
+								<td><span title="${list.mtOrderPayTerms}"><c:out value="${list.mtOrderPayTerms}"/></span></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderType}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtIntegrateKey}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderKey}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtWorkKey}"/></td>
 							</tr>
-							<tr>
-								<td></td>
+						</c:forEach>
+							
+							<!-- <tr>
 								<td>2</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -323,7 +338,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>3</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -339,7 +353,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>4</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -355,7 +368,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>5</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -371,7 +383,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>6</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -403,7 +414,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>8</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -419,7 +429,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>9</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -435,7 +444,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>10</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -451,7 +459,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>11</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -467,7 +474,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>12</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -483,7 +489,6 @@
 								<td>박영수</td>
 							</tr>
 							<tr>
-								<td></td>
 								<td>13</td>
 								<td><span title="NH농협손해보험">NH농협손해보험</span></td>
 								<td><span title="VDI 중요단말기 환경 구축 및 노후장비 교체">VDI 중요단말기 환경 구축 및 노후장비 교체</span></td>
@@ -497,7 +502,7 @@
 								<td><span title="5,000,000">5,000,000</span></td>
 								<td>김규민</td>
 								<td>박영수</td>
-							</tr>
+							</tr> -->
 						</tbody>
 					</table>
 				</div>
@@ -510,6 +515,6 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

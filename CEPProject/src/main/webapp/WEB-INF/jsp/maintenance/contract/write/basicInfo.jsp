@@ -221,7 +221,7 @@
 				//영업담당자 셋팅
 				$('#mtSaleEmpKey').val("${basicContractInfo.mtSaleEmpKey}").attr("selected", "true");
 				//부가세 포함 셋팅
-				$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
+				//$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 				//검수방법 셋팅
 				//$('#mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
 				$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
@@ -1034,14 +1034,14 @@
 								<input type="text"  id="mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 198px; text-align: right;"/>
 							</td>
 						</tr>
-						<tr>
+						<!-- <tr>
 							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
 								<input type="radio" class="tRadio" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								<input type="radio" class="tRadio" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
-						</tr>
+						</tr> -->
 						<tr>
 							<td class="tdTitle"><label>*</label> 결재조건</td>
 							<td class="tdContents">

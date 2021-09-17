@@ -399,12 +399,12 @@
 											<label><c:out value="${basicInfo.mtSaleEmpNm}"/></label>
 										</td>
 									</tr>
-									<tr>
+									<%-- <tr>
 										<td>부가세여부</td>
 										<td>
 											<label><c:out value="${displayUtil.commaStr(basicInfo.taxYn)}"/></label>
 										</td>
-									</tr>
+									</tr> --%>
 									<tr>
 										<td>계약금액</td>
 										<td>

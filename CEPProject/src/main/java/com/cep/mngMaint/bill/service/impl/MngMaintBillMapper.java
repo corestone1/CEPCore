@@ -2,6 +2,7 @@ package com.cep.mngMaint.bill.service.impl;
 
 import java.util.List;
 
+import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillVO;
 import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
@@ -127,4 +128,16 @@ public interface MngMaintBillMapper {
 	 */
 	public List<EgovMap> selectSdBillList(MngMaintBillSearchVO searchVO) throws Exception;
 
+	/**
+	 * 유지보수 발주목록 리스트(유지보수관리 ==>발주목록)
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param searchVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 9. 15. 오후 4:27:28
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtOrdertList(MtDefaultVO searchVO) throws Exception;
 }

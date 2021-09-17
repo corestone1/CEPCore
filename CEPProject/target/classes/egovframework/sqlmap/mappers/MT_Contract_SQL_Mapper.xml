@@ -27,7 +27,6 @@
 		<result property="mtSupportEmpKey" column="MT_SUPPORT_EMP_KEY"/>
 		<result property="supportEmpNm" column="SUPPORT_EMP_NM"/>
 		<result property="mtAmount" column="MT_AMOUNT"/>
-		<result property="taxYn" column="TAX_YN"/>		
 		<result property="mtPayTerms" column="MT_PAY_TERMS"/>
 		<result property="remark" column="REMARK"/>
 		<result property="deleteYn" column="DELETE_YN"/>
@@ -59,7 +58,6 @@
 			, MT_MNG_EMP_KEY
 			, MT_SUPPORT_EMP_KEY
 			, MT_AMOUNT
-			, TAX_YN
 			, MT_PAY_TERMS
 			, REMARK
 			, REG_DT
@@ -97,7 +95,6 @@
 			, #{mtMngEmpKey}
 			, #{mtSupportEmpKey}
 			, #{mtAmount}
-			, #{taxYn}
 			, #{mtPayTerms}
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
@@ -123,7 +120,6 @@
 			, MT_MNG_EMP_KEY = #{mtMngEmpKey}
 			, MT_SUPPORT_EMP_KEY = #{mtSupportEmpKey}
 			, MT_AMOUNT = #{mtAmount}
-			, TAX_YN = #{taxYn}
 			, MT_PAY_TERMS = #{mtPayTerms}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
@@ -246,7 +242,6 @@
 			, MC.MT_SB_CT_YN
 			, MC.GB_YN
 			, MC.MT_AMOUNT
-			, MC.TAX_YN
 			, MC.MT_PAY_TERMS
 			, MC.REMARK
 			, MC.MT_SALE_EMP_KEY
@@ -640,7 +635,6 @@
 		    , MT_ORDER_AC_DIRECTOR_KEY 
 		    , MT_ORDER_PAY_TERMS 
 		    , MT_ORDER_AMOUNT 
-		    , TAX_YN 
 		    , MT_ORDER_DT 
 		    , REMARK 
 		    , REG_DT 
@@ -653,7 +647,6 @@
 		    , #{mtOrderAcDirectorKey}
 		    , #{mtOrderPayTerms}
 		    , #{mtOrderAmount}
-		    , #{taxYn}
 		    , #{mtOrderDt}
 		    , #{remark}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
@@ -713,7 +706,6 @@
 			, MB.MT_ORDER_AC_DIRECTOR_KEY AS mtOrderAcDirectorKey
 			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
-			, MB.TAX_YN AS taxYn
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
@@ -734,7 +726,6 @@
       		, AD.AC_DIRECTOR_NM AS mtOrderAcDirectorNm
 			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
-			, MB.TAX_YN AS taxYn
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
@@ -832,7 +823,6 @@
 			, MT_ORDER_AC_DIRECTOR_KEY = #{mtOrderAcDirectorKey}
 			, MT_ORDER_PAY_TERMS = #{mtOrderPayTerms}
 			, MT_ORDER_AMOUNT = #{mtOrderAmount}
-			, TAX_YN = #{taxYn}
 			, MT_ORDER_DT = #{mtOrderDt}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
@@ -857,6 +847,7 @@
 			WHERE MT_ORDER_PM_KEY = #{item.mtOrderPmKey}
 		</foreach>
 	</update>
+	
 	
 	<!-- ===========================유지보수 계약 매입========================================= -->
 
@@ -1371,7 +1362,6 @@
 			, MCT.MT_NM         AS mtNm
 			, MCT.MT_START_DT   AS mtStartDt
 			, MCT.MT_END_DT     AS mtEndDt
-			, MCT.TAX_YN        AS taxYn
 			, MCT.MT_AMOUNT     AS mtAmount
 			, CAT.AC_KEY        AS mtAcKey
 			, CAT.AC_NM         AS mtAcNm

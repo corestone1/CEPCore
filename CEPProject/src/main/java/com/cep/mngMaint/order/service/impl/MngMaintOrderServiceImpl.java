@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.mngCommon.account.service.impl.AccountMapper;
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngMaint.order.service.MngMaintOrderService;
@@ -23,9 +24,8 @@ public class MngMaintOrderServiceImpl implements MngMaintOrderService {
 	private AccountMapper acMapper;
 	
 	@Override
-	public List<EgovMap> selectOrderList(MngMtOrderSearchVO mngOrderSearchVO) throws Exception
-	{
-		return mapper.selectOrderList(mngOrderSearchVO);
+	public List<EgovMap> selectMtOrdertList(MngMtOrderSearchVO searchVO) throws Exception {
+		return mapper.selectMtOrdertList(searchVO);
 	}
 	
 	@Override

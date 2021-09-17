@@ -322,13 +322,13 @@
 			 
 			 for(var i = 0; i < billInfo.length; i++) {
 				 //부가세 정보
-				 if('billTaxYn' == billInfo[i]['name']){
+				/*  if('billTaxYn' == billInfo[i]['name']){
 					 
 					 if('on' == billInfo[i]['value'])
 						 billInfo[i]['value'] = 'Y';
 					 else
 						 billInfo[i]['value'] = 'N';
-				 }
+				 } */
 				 
 				 //발행예정일
 				 if('billRequestDt' == billInfo[i]['name']) {
@@ -421,13 +421,13 @@
 			 for(var i = 0; i < billInfo.length; i++)
 			 {
 				 //부가세 정보
-				 if('billTaxYn' == billInfo[i]['name']){
+				 /* if('billTaxYn' == billInfo[i]['name']){
 					 
 					 if('on' == billInfo[i]['value'])
 						 billInfo[i]['value'] = 'Y';
 					 else
 						 billInfo[i]['value'] = 'N';
-				 }
+				 } */
 				 
 				 //발행예정일
 				 if('billRequestDt' == billInfo[i]['name']){
@@ -579,9 +579,9 @@
 					<td class="backgroundpurple"><label>*</label>금액</td>
 					<td>
 						<input type="text"     id="ipt_billAmount" name="billAmount" value="<c:out value="${displayUtil.commaStr(billInfo.billAmount)}"/>" style="text-align: right;" required/>
-						<input type="checkbox" id="ipt_billTaxYn"  name="billTaxYn" class="tCheck"  <c:if test="${billInfo.billTaxYn == 'Y'}">checked</c:if>/>
+						<%-- <input type="checkbox" id="ipt_billTaxYn"  name="billTaxYn" class="tCheck"  <c:if test="${billInfo.billTaxYn == 'Y'}">checked</c:if>/>
 						<label for='ipt_billTaxYn' class='cursorP tclabel'></label>
-						<span class="cbspan">부가세 포함</span>
+						<span class="cbspan">부가세 포함</span> --%>
 					</td>
 				</tr>
 				<tr id="m_tr_account">

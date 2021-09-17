@@ -447,10 +447,10 @@
 									<td>유지보수 금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
-								<tr>
+								<%-- <tr>
 									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
-								</tr>
+								</tr> --%>
 								<tr>
 									<td>결제조건</td>
 									<td><c:out value="${basicContractInfo.mtPayTerms}"/></td>

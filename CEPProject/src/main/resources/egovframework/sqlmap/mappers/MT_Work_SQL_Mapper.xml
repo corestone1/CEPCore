@@ -318,7 +318,6 @@
 		    , ORDER_AC_DIRECTOR_KEY 
 		    , ORDER_PAY_TERMS 
 		    , ORDER_AMOUNT 
-		    , TAX_YN 
 		    , REG_DT 
 		    , REG_TM 
 		    , REG_EMP_KEY
@@ -331,7 +330,6 @@
 		    , #{orderAcDirectorKey}
 		    , #{orderPayTerms}
 		    , #{orderAmount}
-		    , #{taxYn}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey}
@@ -397,7 +395,6 @@
 			, MO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
 			, MO.ORDER_PAY_TERMS AS orderPayTerms
 			, MO.ORDER_AMOUNT AS orderAmount
-			, MO.TAX_YN AS taxYn
 			, MO.ORDER_DT AS orderDt
 		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA
 		WHERE MT_ORDER_KEY = #{mtOrderKey} 
@@ -417,7 +414,6 @@
       		, AD.AC_DIRECTOR_NM AS orderAcDirectorNm
 			, MO.ORDER_PAY_TERMS AS orderPayTerms
 			, MO.ORDER_AMOUNT AS orderAmount
-			, MO.TAX_YN AS taxYn
 			, MO.ORDER_DT AS orderDt
 		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
 		WHERE 1=1
@@ -550,7 +546,6 @@
 			, ORDER_AC_DIRECTOR_KEY = #{orderAcDirectorKey}
 			, ORDER_PAY_TERMS = #{orderPayTerms}
 			, ORDER_AMOUNT = #{orderAmount}
-			, TAX_YN = #{taxYn}
 			, ORDER_DT = #{orderDt}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
