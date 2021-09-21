@@ -27,7 +27,6 @@
 		<result property="mtSupportEmpKey" column="MT_SUPPORT_EMP_KEY"/>
 		<result property="supportEmpNm" column="SUPPORT_EMP_NM"/>
 		<result property="mtAmount" column="MT_AMOUNT"/>
-		<result property="taxYn" column="TAX_YN"/>		
 		<result property="mtPayTerms" column="MT_PAY_TERMS"/>
 		<result property="remark" column="REMARK"/>
 		<result property="deleteYn" column="DELETE_YN"/>
@@ -59,7 +58,6 @@
 			, MT_MNG_EMP_KEY
 			, MT_SUPPORT_EMP_KEY
 			, MT_AMOUNT
-			, TAX_YN
 			, MT_PAY_TERMS
 			, REMARK
 			, REG_DT
@@ -97,7 +95,6 @@
 			, #{mtMngEmpKey}
 			, #{mtSupportEmpKey}
 			, #{mtAmount}
-			, #{taxYn}
 			, #{mtPayTerms}
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
@@ -123,7 +120,6 @@
 			, MT_MNG_EMP_KEY = #{mtMngEmpKey}
 			, MT_SUPPORT_EMP_KEY = #{mtSupportEmpKey}
 			, MT_AMOUNT = #{mtAmount}
-			, TAX_YN = #{taxYn}
 			, MT_PAY_TERMS = #{mtPayTerms}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
@@ -246,7 +242,6 @@
 			, MC.MT_SB_CT_YN
 			, MC.GB_YN
 			, MC.MT_AMOUNT
-			, MC.TAX_YN
 			, MC.MT_PAY_TERMS
 			, MC.REMARK
 			, MC.MT_SALE_EMP_KEY
@@ -640,7 +635,6 @@
 		    , MT_ORDER_AC_DIRECTOR_KEY 
 		    , MT_ORDER_PAY_TERMS 
 		    , MT_ORDER_AMOUNT 
-		    , TAX_YN 
 		    , MT_ORDER_DT 
 		    , REMARK 
 		    , REG_DT 
@@ -653,7 +647,6 @@
 		    , #{mtOrderAcDirectorKey}
 		    , #{mtOrderPayTerms}
 		    , #{mtOrderAmount}
-		    , #{taxYn}
 		    , #{mtOrderDt}
 		    , #{remark}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
@@ -713,7 +706,6 @@
 			, MB.MT_ORDER_AC_DIRECTOR_KEY AS mtOrderAcDirectorKey
 			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
-			, MB.TAX_YN AS taxYn
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
@@ -734,7 +726,6 @@
       		, AD.AC_DIRECTOR_NM AS mtOrderAcDirectorNm
 			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
-			, MB.TAX_YN AS taxYn
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
@@ -832,7 +823,6 @@
 			, MT_ORDER_AC_DIRECTOR_KEY = #{mtOrderAcDirectorKey}
 			, MT_ORDER_PAY_TERMS = #{mtOrderPayTerms}
 			, MT_ORDER_AMOUNT = #{mtOrderAmount}
-			, TAX_YN = #{taxYn}
 			, MT_ORDER_DT = #{mtOrderDt}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
@@ -857,6 +847,7 @@
 			WHERE MT_ORDER_PM_KEY = #{item.mtOrderPmKey}
 		</foreach>
 	</update>
+	
 	
 	<!-- ===========================유지보수 계약 매입========================================= -->
 
@@ -1195,6 +1186,202 @@
 		WHERE MT_LINK_KEY = #{linkDeleteKey}
 			AND MT_INTEGRATE_KEY = #{mtIntegrateKey}
 	</update>			
+	
+	
+	
+	<!-- ===========================유지보수 입찰 보증증권 관리========================================= -->
+	
+	<!-- 유지보수 보증증권 발행요청(등록) -->
+	<insert id="requestMtBiddingGb" parameterType="com.cep.maintenance.contract.vo.MtBiddingVO">
+		INSERT INTO MT_BIDDING_TB (
+			BD_KEY
+			, MT_INTEGRATE_KEY
+			, BD_LIMIT_DT
+			, BD_GB_BD_AMOUNT
+			, BD_GB_RATE
+			, BD_GB_DAY
+			, BD_GB_FINISH_YN
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+		) VALUES (
+			#{bdKey}
+			, #{mtIntegrateKey}
+			, #{bdLimitDt}
+			, #{bdGbBdAmount}
+			, #{bdGbRate}
+			, #{bdGbDay}
+			, 'R'
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey} 
+		)	
+	</insert>
+	
+	<!-- 유지보수 보증증권 발급완료 -->
+	<update id="endMtBiddingGb" parameterType="com.cep.maintenance.contract.vo.MtBiddingVO">
+		UPDATE MT_BIDDING_TB SET
+			BD_GB_FINISH_DT = #{bdGbFinishDt}
+			, BD_GB_AMOUNT    = #{bdGbAmount}
+			, BD_GB_FINISH_YN = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BD_KEY = #{bdKey}	
+	</update>
+	
+	<!-- 유지보수 보증증권 수정 -->
+	<update id="modifyMtBiddingGb" parameterType="com.cep.maintenance.contract.vo.MtBiddingVO">		
+		UPDATE MT_BIDDING_TB SET
+			BD_GB_FINISH_DT = #{bdGbFinishDt}
+			, BD_LIMIT_DT = #{bdLimitDt}
+			<if test="bdGbAmount > 0">
+		     , BD_GB_AMOUNT    = #{bdGbAmount}
+		    </if> 
+		     , BD_GB_DAY       = #{bdGbDay}
+		     , BD_GB_RATE      = #{bdGbRate}
+		    <if test="bdGbBdAmount > 0">
+		     , BD_GB_BD_AMOUNT = #{bdGbBdAmount}
+		    </if> 
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BD_KEY = #{bdKey}	
+	</update>
+	
+	<!-- 유지보수 보증증권 삭제 -->
+	<update id="deleteMtBidding" parameterType="com.cep.maintenance.contract.vo.MtBiddingVO">
+		
+		UPDATE MT_BIDDING_TB SET
+			DELETE_YN  = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BD_KEY = #{bdKey}	
+	
+	</update>	
+	
+	<!-- 유지보수 보증증권 상세보기  -->
+	<select id="selectMtBdGbInfo" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtBiddingVO">	
+		SELECT MCT.MT_NM             AS MT_NM
+			, CAT.AC_KEY             AS MT_AC_KEY
+			, CAT.AC_NM              AS MT_AC_NM
+			, PBT.BD_KEY             AS BD_KEY
+			, PBT.BD_LIMIT_DT        AS BD_LIMIT_DT
+			, PBT.BD_GB_BD_AMOUNT    AS BD_GB_BD_AMOUNT
+			, PBT.BD_GB_RATE         AS BD_GB_RATE
+			, PBT.BD_GB_DAY          AS BD_GB_DAY
+			, PBT.BD_GB_FINISH_DT    AS BD_GB_FINISH_DT
+			, PBT.BD_GB_AMOUNT       AS BD_GB_AMOUNT
+			, PBT.BD_GB_FINISH_YN    AS BD_GB_FINISH_YN
+		FROM MT_CONTRACT_TB MCT
+			JOIN MT_BIDDING_TB  PBT ON MCT.MT_INTEGRATE_KEY = PBT.MT_INTEGRATE_KEY 
+			JOIN CMM_ACCOUNT_TB CAT ON MCT.MT_AC_KEY = CAT.AC_KEY
+		WHERE MCT.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+			AND MCT.DELETE_YN = 'N'
+			AND PBT.DELETE_YN = 'N'	
+	</select>
+	
+	
+	<!-- ===========================유지보수 계약 보증증권 관리========================================= -->
+	
+	<!-- 유지보수 보증증권 발행요청(등록) -->
+	<insert id="requestMtGuarantyBond" parameterType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">
+		INSERT INTO MT_GUARANTY_BOND_TB (
+			GB_KEY
+			, MT_INTEGRATE_KEY
+			, GB_KIND_CD
+			, GB_START_DT
+			, GB_END_DT
+			, GB_ISSUE_YN
+			, GB_RATE
+			, REMARK
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+		) VALUES (
+			#{gbKey}
+			, #{mtIntegrateKey}
+			, #{gbKindCd}
+			, #{gbStartDt}
+			, #{gbEndDt}
+			, 'R'
+			, #{gbRate}
+			, #{remark}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%H%i%s')
+			, #{regEmpKey} 
+		)	
+	</insert>
+	
+	<!-- 유지보수 보증증권 발급완료 -->
+	<update id="endMtGuarantyBond" parameterType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">
+		UPDATE MT_GUARANTY_BOND_TB SET
+			GB_PUBLISH_DT = #{gbPublishDt}
+			, GB_AMOUNT   = #{gbAmount}
+			, GB_ISSUE_YN = 'Y'
+		    , REMARK      = #{remark}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE GB_KEY = #{gbKey}	
+	</update>
+	
+	<!-- 유지보수 보증증권 수정 -->
+	<update id="modifyMtGuarantyBond" parameterType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">		
+		UPDATE MT_GUARANTY_BOND_TB SET
+			GB_START_DT     = #{gbStartDt}
+		    , GB_END_DT     = #{gbEndDt}
+		    , GB_RATE       = #{gbRate}
+		    , GB_PUBLISH_DT = #{gbPublishDt}
+		    , REMARK        = #{remark}
+		    <if test="gbAmount > 0">
+		    , GB_AMOUNT     = #{gbAmount}
+		    </if>
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE GB_KEY = #{gbKey}
+	</update>
+	
+	<!-- 유지보수 보증증권 삭제 -->
+	<update id="deleteMtGuarantyBond" parameterType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">
+		
+		UPDATE MT_GUARANTY_BOND_TB SET
+			DELETE_YN  = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{regEmpKey}
+		WHERE GB_KEY = #{gbKey}
+	
+	</update>	
+	
+	<!-- 유지보수 보증증권 상세보기  -->
+	<select id="selectMtGuarantyBondInfo" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">	
+		SELECT MGT.MT_INTEGRATE_KEY       AS mtIntegrateKey
+			, MCT.MT_NM         AS mtNm
+			, MCT.MT_START_DT   AS mtStartDt
+			, MCT.MT_END_DT     AS mtEndDt
+			, MCT.MT_AMOUNT     AS mtAmount
+			, CAT.AC_KEY        AS mtAcKey
+			, CAT.AC_NM         AS mtAcNm
+			, MGT.GB_KEY        AS gbKey
+			, MGT.GB_START_DT   AS gbStartDt
+			, MGT.GB_END_DT     AS gbEndDt
+			, MGT.GB_ISSUE_YN   AS gbIssueYn
+			, MGT.GB_AMOUNT     AS gbAmount
+			, MGT.GB_RATE       AS gbRate
+			, MGT.GB_PUBLISH_DT AS gbPublishDt
+			, MGT.REMARK        AS remark
+		FROM MT_CONTRACT_TB MCT
+			JOIN MT_GUARANTY_BOND_TB MGT ON MCT.MT_INTEGRATE_KEY = MGT.MT_INTEGRATE_KEY 
+			JOIN CMM_ACCOUNT_TB CAT ON MCT.MT_AC_KEY = CAT.AC_KEY
+		WHERE MGT.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+			AND MCT.DELETE_YN = 'N'
+			AND MGT.DELETE_YN = 'N'	
+	</select>
+	
+	
 	
 	<!-- ######################################################################  -->
 	<!-- 사원리스트회 -->

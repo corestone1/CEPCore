@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngMaint.order.service.impl.MngMaintOrderMapper">	
+		
+	<!-- 유지보수 발주목록 리스트(유지보수관리 ==>발주목록)  -->
+	<select id="selectMtOrdertList" parameterType="com.cep.mngMaint.order.vo.MngMtOrderSearchVO" resultType="egovMap">				
+		
+		SELECT 
+			MT_ORDER_TYPE
+			, MT_AC_KEY
+			, MT_AC_NM
+			, MT_NM
+			, MT_INTEGRATE_KEY
+			, MT_ORDER_KEY
+			, MT_WORK_KEY
+			, MT_ORDER_AC_KEY
+			, MT_ORDER_AC_KEY_NM
+			, MT_ORDER_AC_DIRECTOR_KEY
+			, MT_AC_DIRECTOR_NM
+			, MT_ORDER_PAY_TERMS
+			, MT_ORDER_AMOUNT
+			, MT_ORDER_DT
+			, REMARK
+			, SALE_EMP_NM
+		FROM (
+		<if test="mtOrderType == null or mtOrderType == ''">
+		/* 전체선택(백계약발주+유지보수작업발주) */
+		SELECT 
+				'BO' AS MT_ORDER_TYPE /* 백계약 */
+				, MC.MT_AC_KEY AS MT_AC_KEY
+				, CA1.AC_NM AS MT_AC_NM
+				, MC.MT_NM AS MT_NM
+				, MB.MT_INTEGRATE_KEY AS MT_INTEGRATE_KEY
+				, MB.MT_ORDER_KEY AS MT_ORDER_KEY
+				, '' AS MT_WORK_KEY
+				, MB.MT_ORDER_AC_KEY AS MT_ORDER_AC_KEY
+				, CA2.AC_NM AS MT_ORDER_AC_KEY_NM
+				, MB.MT_ORDER_AC_DIRECTOR_KEY AS MT_ORDER_AC_DIRECTOR_KEY
+				, AD.AC_DIRECTOR_NM AS MT_AC_DIRECTOR_NM
+				, MB.MT_ORDER_PAY_TERMS AS MT_ORDER_PAY_TERMS
+				, MB.MT_ORDER_AMOUNT AS MT_ORDER_AMOUNT
+				, MB.MT_ORDER_DT AS MT_ORDER_DT
+				, MB.REMARK AS REMARK
+        		, CE.EMP_NM AS SALE_EMP_NM
+			FROM MT_BACK_ORDER_TB MB, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA1, CMM_ACCOUNT_TB CA2, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
+			WHERE 1=1
+			<if test="orderDtFrom != null and orderDtFrom != ''">
+				AND MB.MT_ORDER_DT >= #{orderDtFrom} /* 날짜검색 FROM */
+			</if>
+			<if test="orderDtTo != null and orderDtTo != ''">
+			<![CDATA[
+				AND MB.MT_ORDER_DT <= #{orderDtTo}  /* 날짜검색 TO */
+			]]>			
+			</if>			
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>
+			<if test="searchOderAcKeyNm != null and searchOderAcKeyNm != ''">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchOderAcKeyNm}, '%') /* 매출처 검색어 입력 */
+			</if>
+				AND MB.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
+				AND MB.DELETE_YN='N'  
+				AND MC.DELETE_YN='N' 
+				AND MC.MT_AC_KEY = CA1.AC_KEY
+				AND MB.MT_ORDER_AC_KEY = CA2.AC_KEY
+				AND MB.MT_ORDER_AC_KEY = AD.AC_KEY
+				AND MB.MT_ORDER_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			UNION      
+			SELECT 
+				'PO' AS MT_ORDER_TYPE /* 유지보수작업 발주 */
+				, MC.MT_AC_KEY AS MT_AC_KEY
+				, CA1.AC_NM AS MT_AC_NM
+				, MC.MT_NM AS MT_NM
+				, MO.MT_INTEGRATE_KEY AS MT_INTEGRATE_KEY
+				, MO.MT_ORDER_KEY AS MT_ORDER_KEY
+				, MO.ORDER_CT_FK_KEY AS MT_WORK_KEY
+				, MO.ORDER_AC_KEY AS MT_ORDER_AC_KEY
+				, CA2.AC_NM AS MT_ORDER_AC_KEY_NM
+				, MO.ORDER_AC_DIRECTOR_KEY AS MT_ORDER_AC_DIRECTOR_KEY
+				, AD.AC_DIRECTOR_NM AS MT_AC_DIRECTOR_NM
+				, MO.ORDER_PAY_TERMS AS MT_ORDER_PAY_TERMS
+				, MO.ORDER_AMOUNT AS MT_ORDER_AMOUNT
+				, MO.ORDER_DT AS MT_ORDER_DT
+				, '' AS REMARK
+        		, CE.EMP_NM AS SALE_EMP_NM
+			FROM MT_ORDER_TB MO, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA1, CMM_ACCOUNT_TB CA2, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
+			WHERE 1=1		
+			<if test="orderDtFrom != null and orderDtFrom != ''">
+				AND MO.ORDER_DT >= #{orderDtFrom} /* 날짜검색 FROM */
+			</if>
+			<if test="orderDtTo != null and orderDtTo != ''">
+			<![CDATA[
+				AND MO.ORDER_DT <= #{orderDtTo} /* 날짜검색 TO */
+			]]>		
+			</if>		
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>
+			<if test="searchOderAcKeyNm != null and searchOderAcKeyNm != ''">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchOderAcKeyNm}, '%') /* 매출처 검색어 입력 */
+			</if>
+				AND MO.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
+				AND MO.DELETE_YN='N'   
+				AND MC.DELETE_YN='N' 
+				AND MC.MT_AC_KEY = CA1.AC_KEY
+				AND MO.ORDER_AC_KEY = CA2.AC_KEY
+				AND MO.ORDER_AC_KEY = AD.AC_KEY
+				AND MO.ORDER_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+		</if><!-- 전체선택(백계약발주+유지보수작업발주) IF 종료 -->
+		<if test="mtOrderType == 'BO'">
+		/* 백계약발주 조회 */
+		SELECT 
+				'BO' AS MT_ORDER_TYPE /* 백계약 */
+				, MC.MT_AC_KEY AS MT_AC_KEY
+				, CA1.AC_NM AS MT_AC_NM
+				, MC.MT_NM AS MT_NM
+				, MB.MT_INTEGRATE_KEY AS MT_INTEGRATE_KEY
+				, MB.MT_ORDER_KEY AS MT_ORDER_KEY
+				, '' AS MT_WORK_KEY
+				, MB.MT_ORDER_AC_KEY AS MT_ORDER_AC_KEY
+				, CA2.AC_NM AS MT_ORDER_AC_KEY_NM
+				, MB.MT_ORDER_AC_DIRECTOR_KEY AS MT_ORDER_AC_DIRECTOR_KEY
+				, AD.AC_DIRECTOR_NM AS MT_AC_DIRECTOR_NM
+				, MB.MT_ORDER_PAY_TERMS AS MT_ORDER_PAY_TERMS
+				, MB.MT_ORDER_AMOUNT AS MT_ORDER_AMOUNT
+				, MB.MT_ORDER_DT AS MT_ORDER_DT
+				, MB.REMARK AS REMARK
+        		, CE.EMP_NM AS SALE_EMP_NM
+			FROM MT_BACK_ORDER_TB MB, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA1, CMM_ACCOUNT_TB CA2, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
+			WHERE 1=1
+			<if test="orderDtFrom != null and orderDtFrom != ''">
+				AND MB.MT_ORDER_DT >= #{orderDtFrom} /* 날짜검색 FROM */
+			</if>
+			<if test="orderDtTo != null and orderDtTo != ''">
+			<![CDATA[
+				AND MB.MT_ORDER_DT <= #{orderDtTo}  /* 날짜검색 TO */
+			]]>			
+			</if>			
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>
+			<if test="searchOderAcKeyNm != null and searchOderAcKeyNm != ''">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchOderAcKeyNm}, '%') /* 매출처 검색어 입력 */
+			</if>
+				AND MB.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
+				AND MB.DELETE_YN='N'  
+				AND MC.DELETE_YN='N' 
+				AND MC.MT_AC_KEY = CA1.AC_KEY
+				AND MB.MT_ORDER_AC_KEY = CA2.AC_KEY
+				AND MB.MT_ORDER_AC_KEY = AD.AC_KEY
+				AND MB.MT_ORDER_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY		
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY	
+		</if><!-- 유지보수 백계약발주  IF 종료 -->
+		<if test="mtOrderType == 'PO'">
+		/* 유지보수 작업발주 */		 
+			SELECT 
+				'PO' AS MT_ORDER_TYPE /* 유지보수작업 발주 */
+				, MC.MT_AC_KEY AS MT_AC_KEY
+				, CA1.AC_NM AS MT_AC_NM
+				, MC.MT_NM AS MT_NM
+				, MO.MT_INTEGRATE_KEY AS MT_INTEGRATE_KEY
+				, MO.MT_ORDER_KEY AS MT_ORDER_KEY
+				, MO.ORDER_CT_FK_KEY AS MT_WORK_KEY
+				, MO.ORDER_AC_KEY AS MT_ORDER_AC_KEY
+				, CA2.AC_NM AS MT_ORDER_AC_KEY_NM
+				, MO.ORDER_AC_DIRECTOR_KEY AS MT_ORDER_AC_DIRECTOR_KEY
+				, AD.AC_DIRECTOR_NM AS MT_AC_DIRECTOR_NM
+				, MO.ORDER_PAY_TERMS AS MT_ORDER_PAY_TERMS
+				, MO.ORDER_AMOUNT AS MT_ORDER_AMOUNT
+				, MO.ORDER_DT AS MT_ORDER_DT
+				, '' AS REMARK
+        		, CE.EMP_NM AS SALE_EMP_NM
+			FROM MT_ORDER_TB MO, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA1, CMM_ACCOUNT_TB CA2, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
+			WHERE 1=1		
+			<if test="orderDtFrom != null and orderDtFrom != ''">
+				AND MO.ORDER_DT >= #{orderDtFrom} /* 날짜검색 FROM */
+			</if>
+			<if test="orderDtTo != null and orderDtTo != ''">
+			<![CDATA[
+				AND MO.ORDER_DT <= #{orderDtTo} /* 날짜검색 TO */
+			]]>		
+			</if>		
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>
+			<if test="searchOderAcKeyNm != null and searchOderAcKeyNm != ''">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchOderAcKeyNm}, '%') /* 매출처 검색어 입력 */
+			</if>
+				AND MO.MT_INTEGRATE_KEY = MC.MT_INTEGRATE_KEY
+				AND MO.DELETE_YN='N'   
+				AND MC.DELETE_YN='N' 
+				AND MC.MT_AC_KEY = CA1.AC_KEY
+				AND MO.ORDER_AC_KEY = CA2.AC_KEY
+				AND MO.ORDER_AC_KEY = AD.AC_KEY
+				AND MO.ORDER_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+		</if> <!-- 유지보수 작업발주 IF 종료 -->
+			
+		) ORDER_TB
+		ORDER BY MT_AC_KEY ,MT_NM, MT_ORDER_AC_KEY, MT_ORDER_DT DESC
+	</select>	
+</mapper>
