@@ -135,8 +135,6 @@
 				
 		$(document).ready(function() {
 			
-			
-			
 		});	
 		
 		
@@ -217,7 +215,14 @@
 	     	    dataType: 'json',
 	            async : false,
 	        	success:function(data){		  
-	        		alert("보증증권 정보가 수정 되었습니다.!");
+	        		alert("보증증권 정보가 수정 되었습니다.");
+	        		var dialogId = 'program_layer';
+	    			
+	    			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
+	    			
+	    			var button = new Array;
+	    			button = [];
+	    			showModalPop(dialogId, "/project/detail/viewStockPublishBD.do", varParam, button, '', 'width:648px;height:575px');
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {

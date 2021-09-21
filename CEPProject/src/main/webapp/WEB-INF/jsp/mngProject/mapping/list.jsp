@@ -244,11 +244,11 @@
 									<td>${displayUtil.displayDate(result.orderDt) }</td>
 									<td>
 										<c:choose>
-											<c:when test="${result.billMappingNum eq result.buyTurn }">
+											<c:when test="${result.orderAmount eq result.billMappedAmount }">
 												<label>Y</label>
 											</c:when>
 											<c:otherwise>
-												<label>N<c:out value="(${result.billMappingNum } / ${result.buyTurn })" /></label>
+												<label>N</label>
 											</c:otherwise>
 										</c:choose>
 									</td>

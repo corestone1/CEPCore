@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
+	<title>프로젝트 상세</title>
 	
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
@@ -108,7 +108,7 @@
 			width: 0 !important;
 		}
 		#detailForm .stitle ul {
-			width: 915px;
+			width: 997px;
 		}
 		#detailForm .stitle ul li {
 			width: 150px;
@@ -116,6 +116,13 @@
 		#detailForm .stitle ul li a {
 			color: #a3a3a4;
 			padding-bottom: 10px;
+		    display: block;
+		    width: 498.5px;
+		    border-bottom: 4px solid #c3c3c3;
+		}
+		#detailForm .stitle ul li a.on {
+		    color: #000;
+		    border-bottom: 4px solid #6a5bae;
 		}
 		#detailForm .stitle ul li a:hover {
 			color: #000;
@@ -126,14 +133,15 @@
 			border-bottom: 4px solid #6a5bae;
 		}
 		form .contents .dtl {
-			border-top: 4px solid #c3c3c3;;
 			overflow: hidden;
+			margin-top: -10px;
 		}
 		form .contents .dtl tbody {
 			overflow-y: auto;
 			overflow-x: hidden;
-			height: 547px;
+			height: auto;
 			float: left;
+			background-color: #fff;
 		}
 		form .contents .dtl tbody tr {
 			border: 1px solid #ebe9ee;
@@ -258,12 +266,12 @@
 			
 			var dialogId = 'program_layer';
 			
-			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'ctKey' : $('#ipt_CtKey').val()};
+			var varParam = {'pjKey' : $('#ipt_pjKey').val()};
 			
 			var button = new Array;
 			button = [];
 			
-			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1125px;height:673px');
 			
 		}
 		/* 
@@ -328,20 +336,11 @@
 							</ul>
 						</div>
 						<div class="floatC">
-							<c:choose>
-								<c:when test='${contractInfo.taxYn eq "Y"}'>
-									<c:set var="taxYnText" value="부가세 포함" />
-								</c:when>
-								<c:otherwise>
-									<c:set var="taxYnText" value="부가세 별도" />
-								</c:otherwise>
-							</c:choose>
-							
 							<!-- 계약정보 표기 시작 -->
 							<table class="dtl" style="width: 100%;" id="selectTable">
 								<tr style="width: 100%;">
 									<td>계약금액</td>
-									<td><c:out value="${displayUtil.commaStr(contractInfo.ctAmount)}" /> 원 (<c:out value="${taxYnText}" />)</td>
+									<td><c:out value="${displayUtil.commaStr(contractInfo.ctAmount)}" /> 원</td>
 								</tr>
 								<tr>
 									<td>결재조건</td>
@@ -364,7 +363,6 @@
 									<td>계약금액</td>
 									<td>
 										<input type="text" name="ctAmount" value='<c:out value="${displayUtil.commaStr(contractInfo.ctAmount)}" />' />
-										<c:out value="${taxYnText}" />
 									</td>
 								</tr>
 								<tr>

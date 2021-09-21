@@ -108,7 +108,7 @@
 			width: 0 !important;
 		}
 		#detailForm .stitle ul {
-			width: 915px;
+			width: 997px;
 		}
 		#detailForm .stitle ul li {
 			width: 150px;
@@ -116,6 +116,13 @@
 		#detailForm .stitle ul li a {
 			color: #a3a3a4;
 			padding-bottom: 10px;
+			display: block;
+			width: 498.5px;
+			border-bottom: 4px solid #c3c3c3;
+		}
+		#detailForm .stitle ul li a.on {
+			color: #000;
+			border-bottom: 4px solid #6a5bae;
 		}
 		#detailForm .stitle ul li a:hover {
 			color: #000;
@@ -158,7 +165,7 @@
 			border-collapse: collapse;
 			font-weight: 300;
 			overflow: hidden;
-			border-top: 4px solid #6a5baf;
+			margin-top: -10px;
 		}
 		.contents .dtl thead {
 			background-color: #e1dff5;
@@ -216,18 +223,11 @@
 			max-width: 75px;
 		}
 		.contents .dtl thead th:nth-child(5),
-		.contents .dtl tbody td:nth-child(5){
-			width: 75px;
-		}
+		.contents .dtl tbody td:nth-child(5),
 		.contents .dtl thead th:nth-child(6),
 		.contents .dtl tbody td:nth-child(6) {
 			width: 182px;
 		}
-		.contents .dtl thead th:nth-child(7),
-		.contents .dtl tbody td:nth-child(7) {
-			width: 182px;
-		}
-		
 		.contents .dtl tbody tr td > span {
 			display: inline-block;
 			overflow:hidden; 
@@ -541,7 +541,6 @@
 											<th scope="row">선택</th>
 											<th scope="row">회차</th>
 											<th scope="row">비율/금액</th>
-											<th scope="row">부가세포함</th>
 											<th scope="row">진행상태</th>
 											<th scope="row">계상서예상일(발행일)</th>
 											<th scope="row">수금예상일(수금일)</th>
@@ -560,7 +559,6 @@
 														<c:out value="${salesList.salesCollectRate}"/>% / <c:out value="${displayUtil.commaStr(salesList.salesTurnAmount)}"/> 원
 													</span>
 												</td>
-												<td class="textalignC"><c:out value="${salesList.taxYn}" /></td>
 												<td class="textalignC"><c:out value="${salesList.salesStatusCd}"/></td>
 												<td class="textalignC">
 													<c:out value="${displayUtil.displayDate(salesList.salesBillFcDt)}"/>

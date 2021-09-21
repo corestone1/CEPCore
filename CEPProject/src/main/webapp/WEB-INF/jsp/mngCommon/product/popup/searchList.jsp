@@ -140,14 +140,39 @@
 </style>
 <script type="text/javaScript">
 	$(document).ready(function(){
-	
 	});
+	
+	function Request(){
+	    var requestParam ="";
+		 
+		this.getParameter = function(param){
+	        var url = unescape(location.href); 
+	        var paramArr = (url.substring(url.indexOf("?")+1,url.length)).split("&"); 
+	        
+	        for(var i = 0 ; i < paramArr.length ; i++){
+	           var temp = paramArr[i].split("="); 
+	        
+	           if(temp[0].toUpperCase() == param.toUpperCase()){
+	             requestParam = paramArr[i].split("=")[1]; 
+	             break;
+	           }
+	        }
+	        return requestParam;
+	    }
+	}
 	
 	function fn_ProductSelect(id, nm)
 	{
-		var lstReturnType = '${returnType}';
+		
+		var request = new Request();
+		
+		var lstReturnType = request.getParameter("returnType");
+		var pmKeyDomId = request.getParameter("pmKeyDomId");
+		var pmNmDomId = request.getParameter("pmNmDomId");
+		
+		/*var lstReturnType = '${returnType}';
 		var pmKeyDomId    = '${returnKey}';
-		var pmNmDomId     = '${returnNm}';
+		var pmNmDomId     = '${returnNm}'; */
 		
 		console.log(pmKeyDomId + ' : ID : ' + id + '\n'  + pmNmDomId  + ' : NM : ' + nm);
 

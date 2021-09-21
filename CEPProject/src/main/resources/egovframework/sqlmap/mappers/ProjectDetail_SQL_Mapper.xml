@@ -222,7 +222,7 @@
 		     , PCT.CT_AMOUNT    AS CT_AMOUNT
 		     , PCT.CT_DT        AS CT_DT
 		     , PCT.CT_PAY_TERMS AS CT_PAY_TERMS
-		     , PCT.TAX_YN       AS TAX_YN
+		     <!-- , PCT.TAX_YN       AS TAX_YN -->
 		     , PCT.COLLECT_TURN AS COLLECT_TURN
 		     , PCT.REG_DT       AS REG_DT
 		     , PCT.REG_TM       AS REG_TM
@@ -247,7 +247,7 @@
 		     , CAD.AC_DIRECTOR_NM        AS ORDER_AC_DIRECTOR_NM   /* 발주 거래처 담당자 명 */
 		     , POT.ORDER_PAY_TERMS       AS ORDER_PAY_TERMS        /* 발주 결제 조건 */
 		     , POT.ORDER_AMOUNT          AS ORDER_AMOUNT           /* 발주 총금액 */
-		     , POT.TAX_YN                AS TAX_YN                 /* 부가세 포함여부 */
+		    <!--  , POT.TAX_YN                AS TAX_YN -->                 /* 부가세 포함여부 */
 		     , POT.BILL_MAPPING_NUM      AS BILL_MAPPING_NUM       /* 계산서 맵핑 횟수 */
 		     , CET.EMP_NM                AS ORDER_EMP_NM           /* 발주자명 */
 		     , (SELECT SUM(POP.ORDER_QUANTITY) FROM PJ_ORDER_PRODUCT_TB POP WHERE POP.PJ_ORDER_KEY = POT.PJ_ORDER_KEY)
@@ -366,7 +366,7 @@
 		     , PSD.SALES_TURN              AS SALES_TURN              /* 수금회차 */
 		     , PSD.SALES_COLLECT_RATE      AS SALES_COLLECT_RATE      /* 수금비율 */
      		 , PSD.SALES_TURN_AMOUNT       AS SALES_TURN_AMOUNT       /* 수금액 */
-		     , PCT.TAX_YN                  AS TAX_YN                  /* 부가세 포함여부 */
+		     <!-- , PCT.TAX_YN                  AS TAX_YN     -->              /* 부가세 포함여부 */
 		     , PSD.SALES_STATUS_CD         AS SALES_STATUS_CD         /* 수금 진행 상태 */
 		     , PSD.SALES_BILL_FC_DT        AS SALES_BILL_FC_DT        /* 계산서 예상일자 */
 		     , PBO.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일자 */
@@ -405,10 +405,10 @@
 		     , PGB.SALES_KEY      AS SALES_KEY
 		     , PGB.GB_KIND_CD     AS GB_KIND_CD
 		     , PCT.CT_AMOUNT      AS CT_AMOUNT         /* 계약금약 */
-		     , PCT.TAX_YN         AS TAX_YN            /* 부가세 포함 여부 */
-		     , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
+		     <!-- , PCT.TAX_YN         AS TAX_YN  -->           /* 부가세 포함 여부 */
+		     <!-- , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
 		            WHEN TAX_YN = 'N' THEN FLOOR(PCT.CT_AMOUNT * 1.1)
-		       END                AS TOTAL_AMOUNT      /* 부가세 포함 전체 금액 */ 
+		       END                AS TOTAL_AMOUNT  -->     /* 부가세 포함 전체 금액 */ 
 		     , PMT.PJ_NM          AS PJ_NM             /* 프로젝트 명 */
 		     , PMT.PJ_START_DT    AS PJ_START_DT       /* 계약 시작일 */
 		     , PMT.PJ_END_DT      AS PJ_END_DT         /* 계약 종료일 */
@@ -438,10 +438,10 @@
 		     , PGB.SALES_KEY      AS SALES_KEY
 		     , PGB.GB_KIND_CD     AS GB_KIND_CD
 		     , PCT.CT_AMOUNT      AS CT_AMOUNT         /* 계약금약 */
-		     , PCT.TAX_YN         AS TAX_YN            /* 부가세 포함 여부 */
-		     , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
+		    <!--  , PCT.TAX_YN         AS TAX_YN   -->          /* 부가세 포함 여부 */
+		    <!--  , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
 		            WHEN TAX_YN = 'N' THEN FLOOR(PCT.CT_AMOUNT * 1.1)
-		       END                AS TOTAL_AMOUNT      /* 부가세 포함 전체 금액 */ 
+		       END                AS TOTAL_AMOUNT   -->    /* 부가세 포함 전체 금액 */ 
 		     , PMT.PJ_NM          AS PJ_NM             /* 프로젝트 명 */
 		     , PMT.PJ_START_DT    AS PJ_START_DT       /* 계약 시작일 */
 		     , PMT.PJ_END_DT      AS PJ_END_DT         /* 계약 종료일 */

@@ -31,7 +31,6 @@ public class ProjectPurchaseVO extends ProjectVO implements Serializable {
 	private int buyAmount;
 	private int donePaymentAmount;
 	private int yetPaymentAmount;
-	private int buyTurn;
 	private String regEmpKey;
 	private String modEmpKey;
 	private String deleteYn;
@@ -71,12 +70,6 @@ public class ProjectPurchaseVO extends ProjectVO implements Serializable {
 	}
 	public void setYetPaymentAmount(int yetPaymentAmount) {
 		this.yetPaymentAmount = yetPaymentAmount;
-	}
-	public int getBuyTurn() {
-		return buyTurn;
-	}
-	public void setBuyTurn(int buyTurn) {
-		this.buyTurn = buyTurn;
 	}
 	public String getRegEmpKey() {
 		return regEmpKey;

@@ -180,7 +180,6 @@ public class MngProjectBillController {
 		logger.debug("=== mngProjectBillVO.getBillIssueType()     = {}", mngProjectBillVO.getBillIssueType());
 		logger.debug("=== mngProjectBillVO.getBillTurnNo()        = {}", mngProjectBillVO.getBillTurnNo());
 		logger.debug("=== mngProjectBillVO.getBillAmount()        = {}", mngProjectBillVO.getBillAmount());
-		logger.debug("=== mngProjectBillVO.getBillTaxYn()         = {}", mngProjectBillVO.getBillTaxYn());
 		logger.debug("=== mngProjectBillVO.getBillAcDirectorKey() = {}", mngProjectBillVO.getBillAcDirectorKey());
 		logger.debug("=== mngProjectBillVO.getBillAcDirectorTel() = {}", mngProjectBillVO.getBillAcDirectorTel());
 		logger.debug("=== mngProjectBillVO.getBillRequestDt()     = {}", mngProjectBillVO.getBillRequestDt());
@@ -193,14 +192,9 @@ public class MngProjectBillController {
 		
 		try {
 		
-			if(mngProjectBillVO.getBillTaxYn() == null)
-				mngProjectBillVO.setBillTaxYn("N");
-				
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
-			
-			logger.debug("=== mngProjectBillVO.getBillTaxYn()         = {}", mngProjectBillVO.getBillTaxYn());
 			
 			service.insertBillRequest(mngProjectBillVO);
 			
@@ -225,7 +219,6 @@ public class MngProjectBillController {
 		logger.debug("=== mngProjectBillVO.getBillIssueType()     = {}", mngProjectBillVO.getBillIssueType());
 		logger.debug("=== mngProjectBillVO.getBillTurnNo()        = {}", mngProjectBillVO.getBillTurnNo());
 		logger.debug("=== mngProjectBillVO.getBillAmount()        = {}", mngProjectBillVO.getBillAmount());
-		logger.debug("=== mngProjectBillVO.getBillTaxYn()         = {}", mngProjectBillVO.getBillTaxYn());
 		logger.debug("=== mngProjectBillVO.getBillAcDirectorKey() = {}", mngProjectBillVO.getBillAcDirectorKey());
 		logger.debug("=== mngProjectBillVO.getBillAcDirectorTel() = {}", mngProjectBillVO.getBillAcDirectorTel());
 		logger.debug("=== mngProjectBillVO.getBillRequestDt()     = {}", mngProjectBillVO.getBillRequestDt());
@@ -238,9 +231,6 @@ public class MngProjectBillController {
 		
 		try {
 		
-			if(mngProjectBillVO.getBillTaxYn() == null)
-				mngProjectBillVO.setBillTaxYn("N");
-				
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
@@ -273,9 +263,6 @@ public class MngProjectBillController {
 		
 		try {
 		
-			if(mngProjectBillVO.getBillTaxYn() == null)
-				mngProjectBillVO.setBillTaxYn("N");
-				
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
@@ -305,7 +292,6 @@ public class MngProjectBillController {
 		logger.debug("=== mngProjectBillVO.getBillIssueType()     = {}", mngProjectBillVO.getBillIssueType());
 		logger.debug("=== mngProjectBillVO.getBillTurnNo()        = {}", mngProjectBillVO.getBillTurnNo());
 		logger.debug("=== mngProjectBillVO.getBillAmount()        = {}", mngProjectBillVO.getBillAmount());
-		logger.debug("=== mngProjectBillVO.getBillTaxYn()         = {}", mngProjectBillVO.getBillTaxYn());
 		logger.debug("=== mngProjectBillVO.getBillAcDirectorKey() = {}", mngProjectBillVO.getBillAcDirectorKey());
 		logger.debug("=== mngProjectBillVO.getBillAcDirectorTel() = {}", mngProjectBillVO.getBillAcDirectorTel());
 		logger.debug("=== mngProjectBillVO.getBillRequestDt()     = {}", mngProjectBillVO.getBillRequestDt());
@@ -318,9 +304,6 @@ public class MngProjectBillController {
 		
 		try {
 		
-			if(mngProjectBillVO.getBillTaxYn() == null)
-				mngProjectBillVO.setBillTaxYn("N");
-				
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));

@@ -11,6 +11,7 @@ import org.apache.ibatis.type.Alias;
 
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.FileVO;
 @SuppressWarnings("serial")
 @Alias("mtContractVO")
 /**
@@ -68,6 +69,16 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 //	private Map<String, List<MtContractLinkVO>> contractLinkList; // 유지보수계약 연계 정보(Forcast(S), Project(P))
 	private MtContractLinkVO mtForcastLinkVo;
 	private MtContractLinkVO mtProjectLinkVo;
+	
+	// 파일 작업 구분
+	private String workClass;
+	
+	public String getWorkClass() {
+		return workClass;
+	}
+	public void setWorkClass(String workClass) {
+		this.workClass = workClass;
+	}
 	/**
 	 * @return the mtIntegrateKey
 	 */

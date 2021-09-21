@@ -262,6 +262,8 @@ public class ProjectController {
 	public String viewAddBiddingInfo(HttpServletRequest request, ProjectBiddingFileVO projectBiddingFileVO, ModelMap model) throws Exception {
 		
 		List<?> biddingFileList = null;
+		List<?> fileResult = null;
+		FileVO fileVO = new FileVO();
 		
 		String pjKey = projectBiddingFileVO.getPjKey();
 		model.addAttribute("pjKey", pjKey);
@@ -275,7 +277,16 @@ public class ProjectController {
 		}
 		model.addAttribute("biddingFileList", biddingFileList);
 		
+		fileVO.setFileCtKey(pjKey);
+		fileVO.setFileWorkClass(projectBiddingFileVO.getWorkClass());
+		
+		fileResult = fileMngService.selectFileList(fileVO);
+		
 		model.put("displayUtil", new CepDisplayUtil());
+		model.addAttribute("fileList", fileResult);
+		model.addAttribute("maxFileCnt", maxFileCnt);
+		model.addAttribute("fileExtn", fileExtn);		
+		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		return "project/write/biddingInfo";
 	}
@@ -386,17 +397,12 @@ public class ProjectController {
 		int listCount = 0;
 		List salesList = null;
 		List<Map<String, Object>> listMap = null;
-		int buyTurn = 0;
 		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
 		
 		orderVO.setOrderCtFkKey(orderVO.getPjKey());
 		
 		salesList = service.selectSalesList(orderVO.getPjKey());
 		listMap = salesList;
-		
-		if(listMap.size() != 0) {
-			buyTurn = Integer.parseInt(listMap.get(listMap.size() - 1).get("salesTurn").toString());
-		}
 		
 		orderSelectBox = service.selectOrderSelectBoxList(orderVO.getOrderCtFkKey());			
 		if(orderSelectBox != null){
@@ -421,7 +427,6 @@ public class ProjectController {
 		}
 		
 		model.put("pjKey", orderVO.getPjKey());
-		model.put("buyTurn", buyTurn);
 		model.put("orderSelectBoxList", orderSelectBox);
 		model.put("displayUtil", new CepDisplayUtil());
 		model.put("orderVO", returnVO);
@@ -689,42 +694,41 @@ public class ProjectController {
 	@RequestMapping(value = "/selectForecastMappingInfo.do", method=RequestMethod.POST)
 	public Map<String, Object>  selectForecastMappingInfo(HttpServletRequest request , HttpServletResponse response , @RequestBody String spKey) throws Exception {
 
-     List < ? > acDirectorList = null;
-     Map<String, Object> modelAndView = new HashMap<String, Object>();
-    
-     ForecastVO searchVO = null;
-     ForecastVO forecastVO = null;
-     try {
+		List < ? > acDirectorList = null;
+		Map<String, Object> modelAndView = new HashMap<String, Object>();
+		
+		ForecastVO searchVO = null;
+		ForecastVO forecastVO = null;
+		try {
+			if(!"".equals(CepStringUtil.getDefaultValue(spKey, ""))) {
+		 
+				searchVO = new ForecastVO();
+				searchVO.setSpKey(spKey);
+				forecastVO = forecastService.selectForecast(searchVO);
+		 
+				if(null != forecastVO && !"".equals(CepStringUtil.getDefaultValue(forecastVO.getAcKey(), ""))) {
+		 
+					modelAndView.put("forecastVO", forecastVO);
+					acDirectorList =service.selectAcDirectorList(forecastVO.getAcKey());                 
+		 
+					modelAndView.put("acDirectorList", acDirectorList);
+					modelAndView.put("successYN", "Y");
+				} else {
+					modelAndView.put("successYN", "N");
+					logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에 "+spKey+" 관리키에 대한 거래처 정보가 존재하지 않습니다.");
+				}
+			 
+			} else {
+				modelAndView.put("successYN", "N");
+				logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에  대한 관리키 parameter가 null입니다.");
+			}
+		    
+		} catch (Exception e) {
+			modelAndView.put("successYN", "N");
+			logger.error("selectFocastMappingInfo :: {}", e);
+		}
 
-    	 if(!"".equals(CepStringUtil.getDefaultValue(spKey, ""))) {
-    		 
-    		 searchVO = new ForecastVO();
-    		 searchVO.setSpKey(spKey);
-    		 forecastVO = forecastService.selectForecast(searchVO);
-    		 
-    		 if(null != forecastVO && !"".equals(CepStringUtil.getDefaultValue(forecastVO.getAcKey(), ""))) {
-    			 
-    			 modelAndView.put("forecastVO", forecastVO);
-    			 acDirectorList =service.selectAcDirectorList(forecastVO.getAcKey());                 
-                 
-                 modelAndView.put("acDirectorList", acDirectorList);
-                 modelAndView.put("successYN", "Y");
-    		 } else {
-    			 modelAndView.put("successYN", "N");
-    			 logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에 "+spKey+" 관리키에 대한 거래처 정보가 존재하지 않습니다.");
-    		 }
-    		 
-    	 } else {
-    		 modelAndView.put("successYN", "N");
-    		 logger.error("selectFocastMappingInfo :: {}", "FORCAST테이블(SP_MAIN_TB)에  대한 관리키 parameter가 null입니다.");
-    	 }
-        
-	} catch (Exception e) {
-		modelAndView.put("successYN", "N");
-		logger.error("selectFocastMappingInfo :: {}", e);
+		return modelAndView; 
 	}
-
-    
-     return modelAndView; 
-	}
+	
 }

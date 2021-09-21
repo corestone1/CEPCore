@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtGuarantyBondVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cmm.config.PrimaryKeyType;
@@ -25,6 +26,7 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
+import com.cep.maintenance.contract.vo.MtBiddingVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountListVO;
 import com.cep.maintenance.contract.vo.MtBuyAmountVO;
 import com.cep.maintenance.contract.vo.MtContractLinkVO;
@@ -226,7 +228,8 @@ public class MtContractServiceImpl implements MtContractService {
 			}
 			
 			//3.유지보수계약 forecast연계정보 등록
-			if(null != updateVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+//			if(null != updateVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
+			if(null != updateVo.getMtForcastLinkVo()) {
 				if("".equals(CepStringUtil.getDefaultValue(updateVo.getMtForcastLinkVo().getMtLinkKey(), ""))) {
 					//forecast연계정보 관리키가 없으면 신규등록
 					updateVo.getMtForcastLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());
@@ -250,7 +253,8 @@ public class MtContractServiceImpl implements MtContractService {
 			}
 			
 			//3.유지보수계약 project연계정보 등록
-			if(null != updateVo.getMtProjectLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtProjectLinkVo().getMtLinkCtKey(), ""))) {
+//			if(null != updateVo.getMtProjectLinkVo() && !"".equals(CepStringUtil.getDefaultValue(updateVo.getMtProjectLinkVo().getMtLinkCtKey(), ""))) {
+			if(null != updateVo.getMtProjectLinkVo()) {
 				if("".equals(CepStringUtil.getDefaultValue(updateVo.getMtProjectLinkVo().getMtLinkKey(), ""))) {
 					//project연계정보 관리키가 없으면 신규등록
 					updateVo.getMtProjectLinkVo().setMtIntegrateKey(updateVo.getMtIntegrateKey());
@@ -419,7 +423,7 @@ public class MtContractServiceImpl implements MtContractService {
 		Map<String, Object> insertParam = null;
 		try {
 			insertParam = new Hashtable<>();
-			insertParam.put("mtIntegrateKey", mtIntegrateKey);			
+			insertParam.put("mtIntegrateKey", mtIntegrateKey);	
 			insertParam.put("regEmpKey", regEmpKey);
 			insertParam.put("mtContractProductVoList", mtContractProductVoList);
 			
@@ -550,6 +554,9 @@ public class MtContractServiceImpl implements MtContractService {
 		}
 		return primaryKey;
 	}
+	
+	
+	
 
 
 	/* (non-Javadoc)
@@ -1415,6 +1422,145 @@ public class MtContractServiceImpl implements MtContractService {
 			throw new Exception(e);
 		}
 	}
+	
+	
+	/* ============================== 유지보수 입찰 보증증권 관리  ======================================*/
+
+	@Override
+	public void requestMtBiddingGb(MtBiddingVO mtBiddingVO) throws Exception {
+		try {
+			mtMapper.requestMtBiddingGb(mtBiddingVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public void endMtBiddingGb(MtBiddingVO mtBiddingVO) throws Exception {
+		try {
+			mtMapper.endMtBiddingGb(mtBiddingVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public void modifyMtBiddingGb(MtBiddingVO mtBiddingVO) throws Exception {
+		try {
+			mtMapper.modifyMtBiddingGb(mtBiddingVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public void deleteMtBidding(MtBiddingVO mtBiddingVO) throws Exception {
+		try {
+			mtMapper.deleteMtBidding(mtBiddingVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public MtBiddingVO selectMtBdGbInfo(String mtIntegrateKey) throws Exception {
+		MtBiddingVO mtBiddingVO = null;
+		try {
+			mtBiddingVO = mtMapper.selectMtBdGbInfo(mtIntegrateKey);
+			if(null == mtBiddingVO) {
+				//계약정보가 없는 경우 진행상태를 발행전으로 전달한다.
+				mtBiddingVO = new MtBiddingVO();
+				mtBiddingVO.setBdGbFinishYn("N");
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return mtBiddingVO;
+	}
+	
+	/* ============================== 유지보수 계약 보증증권 관리  ======================================*/
+	@Override
+	public String requestMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception {
+		String gbKey = null;
+		MtGuarantyBondVO guarantyBondVO = null;
+		try {
+			//보증증권 PK를 생성한다.
+			gbKey = makePrimaryKey(PrimaryKeyType.MAINTENACE_GUARANTEE);
+			if(!"".equals(CepStringUtil.getDefaultValue(gbKey, ""))) {
+				mtGuarantyBondVO.setGbKey(gbKey);
+				mtMapper.requestMtGuarantyBond(mtGuarantyBondVO);
+			} else {
+				
+				throw new Exception("유지보수 계약 보증중권 관리키 생성 실패 !!");
+			}
+			
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return gbKey;
+	}
+
+
+	@Override
+	public void endMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception {
+		try {
+			mtMapper.endMtGuarantyBond(mtGuarantyBondVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public void modifyMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception {
+		try {
+			mtMapper.modifyMtGuarantyBond(mtGuarantyBondVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public void deleteMtGuarantyBond(MtGuarantyBondVO mtGuarantyBondVO) throws Exception {
+		try {
+			mtMapper.deleteMtGuarantyBond(mtGuarantyBondVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+
+	@Override
+	public MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey) throws Exception {
+		MtGuarantyBondVO mtGuarantyBondVO = null;
+		try {
+			mtGuarantyBondVO = mtMapper.selectMtGuarantyBondInfo(mtIntegrateKey);
+			if(null == mtGuarantyBondVO) {
+				//계약정보가 없는 경우 진행상태를 발행전으로 전달한다.
+				mtGuarantyBondVO = new MtGuarantyBondVO();
+				mtGuarantyBondVO.setGbIssueYn("N");
+			}
+			logger.debug("mtGuarantyBondVO.getGbIssueYn()=====================>"+mtGuarantyBondVO.getGbIssueYn());
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return mtGuarantyBondVO;
+	}
+	
+	
 //	==========================================================================================================
 	/**
 	 * 
@@ -1672,6 +1818,11 @@ public class MtContractServiceImpl implements MtContractService {
 		}
 		return yearMap;
 	}
+
+
+
+
+
 
 	
 }

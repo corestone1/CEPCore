@@ -78,7 +78,13 @@ public class MngProjectMappingServiceImpl implements MngProjectMappingService {
 				
 			mapper.updatePurchaseBill(param);
 			mapper.insertPcBillingOpInfo(param);
-			mapper.insertPaymentInfo(param);
+			System.out.println(request.getParameter("paymentKey"));
+			if("".equals(CepStringUtil.getDefaultValue(request.getParameter("paymentKey"), ""))) { 
+				mapper.insertPaymentInfo(param);
+			} else {
+				param.put("paymentKey", request.getParameter("paymentKey"));
+				mapper.updatePaymentInfo(param);
+			}
 			
 			returnMap.put("successYN", "Y");
 		} catch(Exception e) {

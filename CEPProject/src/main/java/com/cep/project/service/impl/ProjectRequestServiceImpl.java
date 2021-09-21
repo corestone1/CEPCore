@@ -141,6 +141,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> insertPaymentInfo(HttpServletRequest request, ProjectPaymentVO paymentVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		ProjectPurchaseVO purchaseVO = null;
 		HashMap<String, String> session = null;
 		String paymentKey = "";
 		
@@ -150,6 +151,9 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 			
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			paymentVO.setRegEmpKey(session.get("empKey"));
+			
+			purchaseVO = mapper.selectPurchaseDetail(paymentVO.getBuyOrderFkKey());
+			paymentVO.setPaymentBuyFkKey(purchaseVO.getBuyKey());
 			
 			mapper.insertPaymentInfo(paymentVO);
 			returnMap.put("successYN", "Y");
@@ -217,7 +221,6 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					mapper.updatePurchaseInfo(purchaseVO);
 					
 					purchaseBillOpVO.setBillNo(paymentVO.getBillFkKey());
-					purchaseBillOpVO.setBillIssueStatus("E");
 					purchaseBillOpVO.setModEmpKey(session.get("empKey"));
 					
 					mngPjMapper.updatePcBillingOpInfo(purchaseBillOpVO);
@@ -251,6 +254,11 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	@Override
 	public List<?> selectPrePaymentList(String buyKey)  throws Exception {
 		return mapper.selectPrePaymentList(buyKey);
+	}
+
+	@Override
+	public List<?> selectPcBillInfo(String billNo) throws Exception {
+		return mapper.selectPcBillInfo(billNo);
 	}
 	
 }

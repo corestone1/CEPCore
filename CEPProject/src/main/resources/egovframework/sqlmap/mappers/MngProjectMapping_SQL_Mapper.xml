@@ -16,6 +16,7 @@
 		<result property="orderDtFrom" column="ORDER_DT_FROM" />
 		<result property="orderDtTo" column="ORDER_DT_TO" />
 		<result property="orderCtFkKey" column="ORDER_CT_FK_KEY" />
+		<result property="billMappedAmount" column="BILL_MAPPED_AMOUNT" />
 		<result property="buyKey" column="BUY_KEY" />
 		<result property="billIssueDt" column="BILL_ISSUE_DT" />
 		<result property="billMappingYn" column="BILL_MAPPING_YN" />
@@ -177,9 +178,9 @@
 		     , PO.ORDER_DT AS ORDER_DT
 		     , PO.ORDER_AC_KEY AS ORDER_AC_KEY
 		     , PO.ORDER_AMOUNT AS ORDER_AMOUNT
+		     , PO.BILL_MAPPED_AMOUNT AS BILL_MAPPED_AMOUNT
 		     , CE.EMP_NM AS ORDER_EMP_NM
 		     , PO.BILL_MAPPING_NUM AS BILL_MAPPING_NUM
-		     , PC.BUY_TURN AS BUY_TURN
 		     , PO.ORDER_AC_KEY
 		FROM PJ_ORDER_TB PO
 		JOIN PJ_MAIN_TB PM  
@@ -218,9 +219,9 @@
 		     , PO.ORDER_DT AS ORDER_DT
 		     , PO.ORDER_AC_KEY AS ORDER_AC_KEY
 		     , PO.ORDER_AMOUNT AS ORDER_AMOUNT
+		     , PO.BILL_MAPPED_AMOUNT AS BILL_MAPPED_AMOUNT
 		     , CE.EMP_NM AS ORDER_EMP_NM
 		     , PO.BILL_MAPPING_NUM AS BILL_MAPPING_NUM
-		     , PC.BUY_TURN AS BUY_TURN
 		     , PC.BUY_KEY AS BUY_KEY
 		     , PO.ORDER_CT_FK_KEY AS ORDER_CT_FK_KEY
 		FROM PJ_ORDER_TB PO
@@ -255,7 +256,6 @@
 		     , BILL_AC_KEY
 		     , BILL_AMOUNT 
 		     , BILL_NO 
-		     , TAX_YN
 		FROM PJ_PC_BILLING_TB PPB
 		JOIN CMM_ACCOUNT_TB CA
 		ON PPB.BILL_AC_KEY  = CA.AC_KEY
@@ -269,7 +269,7 @@
 	<update id="updateOrder" parameterType="orderBillVO">
 		UPDATE PJ_ORDER_TB
 		SET 
-			BILL_MAPPING_NUM = #{billMappingNum}
+			BILL_MAPPED_AMOUNT = BILL_MAPPED_AMOUNT + #{billMappedAmount}
 			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY=#{modEmpKey}
@@ -328,8 +328,8 @@
 	<update id="updatePcBillingOpInfo" parameterType="purchaseBillOpVO">
 		UPDATE PJ_PC_BILLING_OP_TB SET
 			MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
-			<if test="billNo != null and billNo != '' and billNo != 0">
-				, BILL_TURN_NO = #{billNo}
+			<if test="billTurnNo != null and billTurnNo != '' and billTurnNo != 0">
+				, BILL_TURN_NO = #{billTurnNo}
 			</if>
 			<if test="billAmount != null and billAmount != '' and billAmount != 0">
 				, BILL_AMOUNT = #{billAmount}
@@ -340,7 +340,7 @@
 			<if test="billAcKey != null and billAcKey != ''">
 				, BILL_AC_KEY = #{billAcKey}
 			</if>
-			MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE 1=1
 			<if test="billCallKey != null and billCallKey != ''">
@@ -356,11 +356,9 @@
 		    PAYMENT_KEY
 		    , BILL_FK_KEY
 		    , CALL_AMOUNT 
-		    , CALL_AMOUNT_TAX_YN
 		    , PAYMENT_AC_FK_KEY
 		    , PAYMENT_BUY_FK_KEY
 		    , PAYMENT_STATUS_CD
-		    , PAYMENT_TURN
 		    , REG_DT 
 		    , REG_TM 
 		    , REG_EMP_KEY
@@ -371,11 +369,9 @@
 		    (SELECT make_key('PY'))
 		    , #{item.billNo} 
 		    , #{item.billAmount}
-		    , #{item.taxYn}
 		    , #{item.billAcKey}
 		    , #{item.billCtFkKey} 
 		    , 'PYST1000'
-		    , (SELECT (SELECT COUNT(*) FROM PJ_PAYMENT_TB PY WHERE PY.PAYMENT_BUY_FK_KEY=#{item.billCtFkKey} AND PY.DELETE_YN='N') + 1) 
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s') 
 		    , #{regEmpKey}
@@ -383,4 +379,28 @@
 		    )
 		</foreach>    	
 	</insert>
+	
+	<update id="updatePaymentInfo" parameterType="java.util.HashMap">
+		<foreach collection="billList" item="item" separator=";" close=";">
+			UPDATE PJ_PAYMENT_TB SET
+			<if test="item.billNo != null and item.billNo != ''">
+				BILL_FK_KEY=#{item.billNo} ,
+			</if>
+			<if test="item.billAmount != null and item.billAmount != '' and item.billAmount!= 0">
+				CALL_AMOUNT=#{item.billAmount},
+			</if>
+			<if test="item.billAcKey != null and item.billAcKey != ''">
+				PAYMENT_AC_FK_KEY=#{item.billAcKey},
+			</if>
+			<if test="item.billCtFkKey != null and item.billCtFkKey != ''"> 
+				PAYMENT_BUY_FK_KEY=#{item.billCtFkKey},
+			</if> 
+				PAYMENT_STATUS_CD = 'PYST1000',	
+				MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d'),
+				MOD_TM=DATE_FORMAT(NOW(),'%H%i%s'),
+				MOD_EMP_KEY=#{modEmpKey}
+			WHERE PAYMENT_KEY = #{paymentKey}
+				AND DELETE_YN = 'N'
+		</foreach>	
+	</update>
 </mapper>

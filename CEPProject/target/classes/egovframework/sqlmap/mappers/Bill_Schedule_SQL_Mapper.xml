@@ -31,7 +31,7 @@
 		     , DAT.REG_EMP_KEY           AS REG_EMP_KEY
 		     , DAT.EMP_NM                AS EMP_NM
 		     , DAT.BILL_STATE            AS BILL_STATE
-		     , DAT.TAX_YN                AS TAX_YN
+		     <!-- , DAT.TAX_YN                AS TAX_YN -->
 		     , DAT.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT
 		     , DAT.SALES_AMOUNT          AS SALES_AMOUNT
 		     , DAT.SALES_TAX             AS SALES_TAX
@@ -42,16 +42,16 @@
 				     , PMT.PJ_NM                 AS PJ_NM             /* 프로젝트명 */
 				     , PMT.AC_KEY                AS AC_KEY 
 				     , CAT.AC_NM                 AS AC_NM             /* 거래처명 */
-				     , PCT.TAX_YN                AS TAX_YN
+				     <!-- , PCT.TAX_YN                AS TAX_YN -->
 				     , PSD.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT /* 금액 */
-				     , CASE WHEN PCT.TAX_YN = 'Y'
+				     , <!-- CASE WHEN PCT.TAX_YN = 'Y'
 				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
-				            ELSE PSD.SALES_TURN_AMOUNT
-				       END                       AS SALES_AMOUNT
-				     , CASE WHEN PCT.TAX_YN = 'Y'
+				            ELSE  -->PSD.SALES_TURN_AMOUNT
+				      <!--  END    -->                    AS SALES_AMOUNT
+				     ,<!-- CASE WHEN PCT.TAX_YN = 'Y'
 				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/11)
-				            ELSE FLOOR(PSD.SALES_TURN_AMOUNT/10)
-				       END                       AS SALES_TAX
+				            ELSE  -->FLOOR(PSD.SALES_TURN_AMOUNT/10)
+				       <!-- END   -->                     AS SALES_TAX
 				     , CASE WHEN PST.BILL_ISSUE_DT IS NOT NULL THEN PST.BILL_ISSUE_DT
 				            ELSE PSD.SALES_BILL_FC_DT 
 				       END                       AS BILL_DATE         /* 계산서 일정 */
@@ -90,10 +90,10 @@
 	
 		SELECT IFNULL(SUM(DAT.SALES_TURN_AMOUNT), 0)  AS TOTAL_AMOUNT
 		FROM (
-				SELECT CASE WHEN PCT.TAX_YN = 'Y'
+				SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
 			           THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
-			           ELSE PSD.SALES_TURN_AMOUNT     
-					   END       AS SALES_TURN_AMOUNT /* 금액 */
+			           ELSE  -->PSD.SALES_TURN_AMOUNT     
+					   <!-- END  -->      AS SALES_TURN_AMOUNT /* 금액 */
 				FROM       PJ_SALES_DETAIL_TB  PSD
 				JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
 				JOIN       CMM_ACCOUNT_TB      CAT ON CAT.AC_KEY = PMT.AC_KEY
@@ -117,10 +117,10 @@
 	
 		SELECT IFNULL(SUM(DAT.SALES_TAX), 0)  AS TOTAL_TAX
 		FROM (
-				SELECT CASE WHEN PCT.TAX_YN = 'Y'
+				SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
 			           THEN FLOOR(PSD.SALES_TURN_AMOUNT/11)
-			           ELSE FLOOR(PSD.SALES_TURN_AMOUNT/10)     
-					   END       AS SALES_TAX /* 세액 */
+			           ELSE  -->FLOOR(PSD.SALES_TURN_AMOUNT/10)     
+					   <!-- END   -->     AS SALES_TAX /* 세액 */
 				FROM       PJ_SALES_DETAIL_TB  PSD
 				JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
 				JOIN       CMM_ACCOUNT_TB      CAT ON CAT.AC_KEY = PMT.AC_KEY

@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
+	<title>프로젝트 상세</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -211,7 +211,7 @@
 			margin-bottom: 4px;
 		}
 		input[class="calendar"] {
-		    background-image: url(./images/calendar_icon.png);
+		    background-image: url(/images/calendar_icon.png);
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
@@ -221,7 +221,7 @@
 		    border: 1px solid #e9e9e9;
 		    padding: 0 10px;
 		    -webkit-appearance: none;
-		    background: url(./images/arrow_down.png) no-repeat 91% 50%;
+		    background: url(/images/arrow_down.png) no-repeat 91% 50%;
 		    background-color: #fff;
 		    color: #535353;
 		    font-size: 15px;
@@ -379,7 +379,6 @@
 				var index2  = $('form .contents > .fxd .title ul li').index(this);
 				var indexOn = $('form .contents > .fxd .title ul li').index($('form .contents > .fxd .title ul .on'));
 				
-				//alert(index2 + " : " + indexOn);
 				if(index2 >= indexOn){
 					$('form .contents > .fxd .title ul li:nth-child('+ (index2 + 1) + ')').css('background-color','#b9b9b9');
 				}
@@ -790,7 +789,7 @@
 					<div>
 						<!-- 기본정보 시작 -->
 						<div class="stitle cg">기본정보</div>
-						<div id="basicForm">
+						<div id="basicWrap">
 							<!-- 기본정보 표기 시작 -->
 							<table class="bsc" id="selectBasicTable">
 								<tr>
@@ -896,7 +895,7 @@
 							<div class="floatL">
 								<button type="button" value="수정" id="modBasicInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<a title="계산서 발행 요청" onclick="javasript:fnMoveBillDetail();"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<a title="매입금 지급 요청" href="/project/requestPurchase.do"><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a>
+								<%-- <a title="매입금 지급 요청" href="/project/request/purchase/main.do?mainKey=${pjKey}& "><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a> --%>
 								<a title="판매 품의서" href="/project/viewApproval.do"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
 							</div>
 						</div>
@@ -964,8 +963,8 @@
 	    
 	    if (uploadableFileNum != 0) {
 	        fn_check_file('Y');
-	        var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
-	        multi_selector.addElement(document.getElementById('fileUploader'));   
+	        /* var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
+	        multi_selector.addElement(document.getElementById('fileUploader')); */   
 	    } else{
 	    	fn_check_file('N');
 	    }

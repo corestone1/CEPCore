@@ -412,7 +412,7 @@
 		                object[formData[i]['name']] = formData[i]['value'];
 		             }
 		           	var data = JSON.stringify(object); 
-		           console.log(data);
+		           
 					$.ajax ({
 						url:"/project/update/biddingInfo.do",
 						type:'post',
@@ -423,7 +423,7 @@
 
 						success:function(data){	
 			            	alert('첨부파일 저장');
-			            	 
+			            	
 			            },
 			        	error: function(request, status, error) {
 			        		if(request.status != '0') {
@@ -892,13 +892,13 @@
 			uploadableFileNum = 0;
 		}               
 	    
-	   /*  if (uploadableFileNum != 0) {
+	   if (uploadableFileNum != 0) {
 	        fn_check_file('Y');
-	        var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
-	        multi_selector.addElement(document.getElementById('fileUploader'));   
+	       /*  var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
+	        multi_selector.addElement(document.getElementById('fileUploader')); */   
 	    } else{
 	    	fn_check_file('N');
-	    } */
+	    } 
 	             
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">

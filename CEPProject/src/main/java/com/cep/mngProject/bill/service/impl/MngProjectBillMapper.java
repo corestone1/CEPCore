@@ -24,9 +24,9 @@ public interface MngProjectBillMapper {
 	
 	public EgovMap selectBillDefaultInfo(MngProjectBillSearchVO searchVO) throws Exception;
 	
-	public int selectCollectTurn(MngProjectBillSearchVO searchVO) throws Exception;
+	public Integer selectCollectTurn(MngProjectBillSearchVO searchVO) throws Exception;
 	
-	public int selectBillTurnNoMax(MngProjectBillSearchVO searchVO) throws Exception;
+	public Integer selectBillTurnNoMax(MngProjectBillSearchVO searchVO) throws Exception;
 	
 	public void insertBillRequest(MngProjectBillVO mngProjectBillVO) throws Exception;
 	

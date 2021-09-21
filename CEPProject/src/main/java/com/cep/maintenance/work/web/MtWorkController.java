@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,9 +33,11 @@ import com.cep.maintenance.work.vo.MtWorkVO;
 import com.cep.mngCommon.code.service.CodeService;
 import com.cep.mngCommon.code.vo.CodeSearchVO;
 import com.cep.mngCommon.code.vo.CodeVO;
+import com.cmm.service.FileMngService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.FileVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -51,6 +54,19 @@ public class MtWorkController {
 	
 	@Resource(name="codeService")
 	private CodeService codeService;
+	
+	//첨부파일 관련.
+	@Resource(name="fileMngService")
+	private FileMngService fileMngService;
+	
+	@Value("#{comProps['maxFileCnt']}")
+	private String maxFileCnt;	// 허용 파일 개수
+	
+	@Value("#{comProps['maxFileSize']}")
+	private String maxFileSize;	// 허용 파일 사이즈
+	
+	@Value("#{comProps['fileExtn']}")
+	private String fileExtn;		// 허용 파일 확장자
 	/**
 	 * 
 	  * @Method Name : selectMtWorkList
@@ -146,6 +162,11 @@ public class MtWorkController {
 		List <?> acDirectorList = null;
 		String mtWorkKey = null;
 		String mtIntegrateKey = null;
+		
+		//첨부파일 관련
+		FileVO fileVO = null;
+		List<?> mtContractFileList = null;
+		List<?> mtWorkFileList = null;
 		try {
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtWorkVO.getMtIntegrateKey(), ""))){
@@ -172,12 +193,31 @@ public class MtWorkController {
 			//직원정보 조회
 			empList = mtcService.selectEmployeeList();
 			
+			//유지보수 작업 첨부파일 
+			fileVO = new FileVO();
+			//첨부파일
+			fileVO.setFileCtKey(mtWorkKey);
+			fileVO.setFileWorkClass("mtWork");
+			mtWorkFileList = fileMngService.selectFileList(fileVO);
+			
+			//유지보수 계약 첨부파일
+			fileVO.setFileCtKey(mtIntegrateKey);
+			fileVO.setFileWorkClass("mtContract");
+			
+			mtContractFileList = fileMngService.selectFileList(fileVO);
+			
 			model.put("basicContractInfo", basicContractInfo);
 			model.put("basicWorkInfo", basicWorkInfo);			
 			model.put("acDirectorList", acDirectorList);	
 			model.put("empList", empList);
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
+			
+			//유지보수 계약 첨부파일 관련
+			model.addAttribute("mtContractFileList", mtContractFileList);
+			
+			//유지보수 작업 첨부파일
+			model.addAttribute("mtWorkFileList", mtWorkFileList);
 		} catch (Exception e) {
 			model.put("successYN", "N");
 			logger.error("basicDetailInfo error", e);
@@ -351,6 +391,10 @@ public class MtWorkController {
 		MtWorkVO basicWorkInfo = null;
 		List<?> empList = null;
 		List < ? > acDirectorList = null; // 고객사 담당자 리스트.
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		try {
 						
 			logger.debug("mtWorkVO.getMtWorkKey()=====>"+mtWorkVO.getMtWorkKey());
@@ -364,6 +408,13 @@ public class MtWorkController {
 				if(null != basicWorkInfo) {
 					logger.debug("basicWorkInfo.getMtAcKey()== ===>"+basicWorkInfo.getMtAcKey());
 					acDirectorList = mtcService.selectAcDirectorList(basicWorkInfo.getMtAcKey());
+					
+					
+					//파일정보 조회.
+					fileVO.setFileCtKey(mtWorkVO.getMtWorkKey());
+					fileVO.setFileWorkClass("mtWork");
+					
+					fileResult = fileMngService.selectFileList(fileVO);
 				}
 			}
 
@@ -374,6 +425,12 @@ public class MtWorkController {
 			model.put("mtIntegrateKey", mtWorkVO.getMtIntegrateKey());
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
 		} catch (Exception e) {
 			model.put("successYN", "N");
 			logger.error("addBasicInfo error", e);
@@ -445,6 +502,10 @@ public class MtWorkController {
 		MtWorkVO basicWorkInfo = null;
 		List<MtWorkProductVO> mtWorkProductList = null;
 		
+		//첨부파일 관련
+		FileVO fileVO = null;
+		List<?> mtContractFileList = null;
+		
 		try {
 			logger.debug("mtIntegrateKey===>"+mtWorkVO.getMtIntegrateKey());
 			logger.debug("mtWorkKey===>"+mtWorkVO.getMtWorkKey());
@@ -456,7 +517,17 @@ public class MtWorkController {
 				if(null != basicWorkInfo) {
 					//유지보수작업 제품목록을 가져온다.
 					mtWorkProductList = mtwService.selectWorkProductList(mtWorkVO.getMtWorkKey());
+										
 				}
+				
+				fileVO = new FileVO();
+				//첨부파일
+				fileVO.setFileCtKey(mtWorkVO.getMtIntegrateKey());
+				fileVO.setFileWorkClass("mtContract");
+				
+				mtContractFileList = fileMngService.selectFileList(fileVO);
+				
+				
 				
 			}
 			
@@ -467,6 +538,10 @@ public class MtWorkController {
 			model.put("mtWorkKey", mtWorkVO.getMtWorkKey());		
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
+			
+			//유지보수 계약 첨부파일 관련
+			model.addAttribute("fileList", mtContractFileList);
+			
 		} catch (Exception e) {
 			model.put("successYN", "N");
 			logger.error("productDetailInfo error", e);
@@ -794,6 +869,10 @@ public class MtWorkController {
 		List<MtOrderProductVO> mtOrderProductList = null;
 		Map<String, Object> searchParam = null;
 		String selectMtOrderAcKeyNm = null;
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
 		try {
 			
 			logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtOrderVO.getMtIntegrateKey()+" / "+mtOrderVO.getOrderCtFkKey());
@@ -825,6 +904,12 @@ public class MtWorkController {
 					mtOrderProductList = mtwService.selectWorkOrderProductList(mtOrderVO.getSelectKey());
 				}
 				
+				//첨부파일
+				fileVO.setFileCtKey(mtOrderVO.getMtIntegrateKey());
+				fileVO.setFileWorkClass("mtContract");
+				
+				fileResult = fileMngService.selectFileList(fileVO);
+				
 			}
 			model.put("basicContractInfo", basicContractInfo);
 			model.put("basicWorkInfo", basicWorkInfo);			
@@ -835,6 +920,9 @@ public class MtWorkController {
 			
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
 			
 		} catch (Exception e) {
 			model.put("successYN", "N");

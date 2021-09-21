@@ -97,6 +97,11 @@ public class SampleDefaultVO implements Serializable {
 	
 	private String deleteYn;
 	
+	private String returnType; 	
+	private String returnKey;	//Search Popup Return값을 넘기는 객체의 ID(Forecast키)
+	private String returnNm;	//Search Popup Return값을 넘기는 객체의 ID(사업명)
+	private String returnFunctionNm; //호출될 function명
+	
 	// 메일 발송할 때 필요한 링크
 	private String link;
 	
@@ -257,6 +262,38 @@ public class SampleDefaultVO implements Serializable {
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public String getReturnType() {
+		return returnType;
+	}
+
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
+	}
+
+	public String getReturnKey() {
+		return returnKey;
+	}
+
+	public void setReturnKey(String returnKey) {
+		this.returnKey = returnKey;
+	}
+
+	public String getReturnNm() {
+		return returnNm;
+	}
+
+	public void setReturnNm(String returnNm) {
+		this.returnNm = returnNm;
+	}
+
+	public String getReturnFunctionNm() {
+		return returnFunctionNm;
+	}
+
+	public void setReturnFunctionNm(String returnFunctionNm) {
+		this.returnFunctionNm = returnFunctionNm;
 	}
 
 	@Override

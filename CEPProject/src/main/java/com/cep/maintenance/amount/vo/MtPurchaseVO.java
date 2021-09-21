@@ -24,6 +24,7 @@ import com.cep.project.vo.ProjectPurchaseVO;
  *
  *  Copyright (C) by CORESTONE All right reserved.
  */
+@SuppressWarnings("serial")
 @Alias("mtPurchaseVO")
 public class MtPurchaseVO extends ProjectPurchaseVO implements Serializable{
 

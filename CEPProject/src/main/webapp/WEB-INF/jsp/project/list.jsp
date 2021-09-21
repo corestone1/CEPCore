@@ -185,7 +185,7 @@
 		
 			$('#pl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="radio" class="tCheck" name="index" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" class="tRadio" name="index" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 					$(this).children().eq(0).children().eq(0).val($(this).children().eq(1).children().eq(0).val());
 				}
 				switch($(this).children().eq(8).children().eq(0).val()) {
@@ -228,7 +228,7 @@
 	        		if(response != null && response.successYN == 'Y') {
 	        			for(i = 0; i < response.resultList.length; i++) {
 							html += '<tr>'
-											+ '<td onclick="event.cancelBubble = true;"><input type="checkbox" class="tCheck" name="index" id="check' + (i+1) + '" value="' + response.resultList[i].pjKey + '"/><label for="check' + (i+1) + '" class="cursorP"/></td>'
+											+ '<td onclick="event.cancelBubble = true;"><input type="checkbox" class="tRadio" name="index" id="check' + (i+1) + '" value="' + response.resultList[i].pjKey + '"/><label for="check' + (i+1) + '" class="cursorP"/></td>'
 					        				+ '<td align="center" class="listtd">'+ response.resultList[i].pjKey +'</td>'
 				        					+ '<td align="left" class="listtd"><span>'+ response.resultList[i].acKey +'</span></td>'
 				            				+ '<td align="left" class="listtd"><span><a href="javascript:fn_detail('+ response.resultList[i].pjKey + ')">'+ response.resultList[i].pjNm +'</a></span></td>'
@@ -262,6 +262,18 @@
 			// 첨부파일 예제
 			/* form.action = "<c:url value='/egovSampleList2.do'/>"; */
 			form.submit(); 
+		}
+		
+		function fn_mod(){
+			var url = '/project/write/basicInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey":$('input[name=index]:checked').val(),
+				"workClass":"프로젝트"
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
 		
 		function fn_delete(){
@@ -315,7 +327,7 @@
 		    return year + "-" + month + "-" + day;
 		}
 		
-		function tmp() {
+		/* function tmp() {
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -324,21 +336,21 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-		}
+		} */
 		
-		function tmp1() {
+		/* function tmp1() {
 			var url = '/project/write/contractInfo.do';
 			var dialogId = 'program_layer';
-			var varParam = {
+			var varParam = { */
 				/* "pjKey":"PJ210091" */
-				"pjKey":"PJ210080"
+				/* "pjKey":"PJ210107"
 			}
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-		}
+		} */
 		
-		function tmp2() {
+		/* function tmp2() { */
 			//등록
 			/* var url = '/project/write/buildInfo.do';
 			var dialogId = 'program_layer';
@@ -350,7 +362,7 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); */
 			// 수정
-			var url = '/project/write/buildInfo.do';
+			/* var url = '/project/write/buildInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 				"pjKey":"PJ210064",
@@ -359,21 +371,21 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-		}
+		} */
 		
-		function tmp3() {
+		/* function tmp3() {
 			var url = '/project/write/workInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210073",
+				"pjKey":"PJ210073", */
 				/* "pjWorkSeq":5 */
-			}
+			/* }
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-		}
+		} */
 		
-		function tmp4() {
+		/* function tmp4() {
 			var url = '/project/write/guarantyInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -388,11 +400,11 @@
 			var url = '/project/write/finishInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey":"PJ210065"/* ,
+				"pjKey":"PJ210065" *//* ,
 				"turnNo":"2",
 				"ctKey":["CT210110", "CT210111"],
 				"salesKey":["SD210050", "SD210051"] */
-			}
+			/* }
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
@@ -413,9 +425,9 @@
 			form = document.listForm;
 			form.pjKey.value = "PJ210092";
 			form.action = "<c:url value='/project/viewApproval.do'/>";
-			form.submit(); 
+			form.submit();  */
 			/* location.href="http://localhost:8080/project/viewApproval.do?pjKey=PJ210065"; */
-		}
+		/* }
 		
 		function tmp8() {
 			var url = '/project/write/biddingInfo.do';
@@ -438,7 +450,7 @@
 			var button = new Array;
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-		}
+		} */
 	</script>
 </head>
 <body>
@@ -454,7 +466,7 @@
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">프로젝트 list</label></div>
 						<div class="addBtn floatL cursorP" onclick="fn_addView();"><img src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="addBtn floatL cursorP" onclick="tmp1();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">계약화면1</label></div>
+						<!-- <div class="addBtn floatL cursorP" onclick="tmp1();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">계약화면1</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp4();"style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">계약화면2</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">발주화면</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp2();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">수행화면</label></div>
@@ -463,7 +475,7 @@
 						<div class="addBtn floatL cursorP" onclick="tmp6();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">실주정보</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp7();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">판매품의서</label></div>
 						<div class="addBtn floatL cursorP" onclick="tmp8();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">입찰정보</label></div>
-						<div class="addBtn floatL cursorP" onclick="tmp9();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">기본정보</label></div>
+						<div class="addBtn floatL cursorP" onclick="tmp9();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">기본정보</label></div> -->
 					</div>
 					<div class="floatR">
 						<input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value=""/>
@@ -520,7 +532,7 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<button value="수정" type="button" onclick="fn_mod();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 						<button value="삭제" type="button" onclick="fn_delete();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>

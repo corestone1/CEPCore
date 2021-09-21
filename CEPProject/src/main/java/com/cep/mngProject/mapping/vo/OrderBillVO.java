@@ -25,6 +25,7 @@ public class OrderBillVO implements Serializable {
 	private String orderDtFrom;
 	private String orderDtTo;
 	private String orderCtFkKey;
+	private int billMappedAmount;
 	private String buyKey;
 	private String billIssueDt;
 	private String billMappingYn;
@@ -121,6 +122,12 @@ public class OrderBillVO implements Serializable {
 	}
 	public void setOrderCtFkKey(String orderCtFkKey) {
 		this.orderCtFkKey = orderCtFkKey;
+	}
+	public int getBillMappedAmount() {
+		return billMappedAmount;
+	}
+	public void setBillMappedAmount(int billMappedAmount) {
+		this.billMappedAmount = billMappedAmount;
 	}
 	public String getBuyKey() {
 		return buyKey;

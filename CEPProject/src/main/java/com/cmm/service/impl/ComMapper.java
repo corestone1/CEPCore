@@ -63,6 +63,18 @@ public interface ComMapper {
 	public List<?> selectDeptEmployeeList(String dept) throws Exception;
 	
 	/**
+	* 권한별 직원 조회
+	* @Method Name : selectAuthEmployeeList
+	* @Cdate       : 2020. 08. 02.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description :
+	* @return
+	* @throws Exception
+	*/
+	public List<?> selectAuthEmployeeList(String dept) throws Exception;
+	
+	/**
 	* 거래처 계좌 조회
 	* @Method Name : selectDepositList
 	* @Cdate       : 2021. 01. 30.

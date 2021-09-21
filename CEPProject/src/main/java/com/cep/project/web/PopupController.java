@@ -41,6 +41,11 @@ public class PopupController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
+		model.put("returnType", searchVO.getReturnType());
+		model.put("returnKey", searchVO.getReturnKey());
+		model.put("returnNm", searchVO.getReturnNm());
+		model.put("returnFunctionNm", searchVO.getReturnFunctionNm());
+		
 		// 검색 정보 저장.
 		model.addAttribute("searchVO", searchVO);
 		

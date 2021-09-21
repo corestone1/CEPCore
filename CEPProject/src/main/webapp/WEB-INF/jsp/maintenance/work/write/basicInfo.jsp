@@ -105,7 +105,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 109px;
+			height: 102px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -146,6 +146,55 @@
 			width : calc(100% - 30px);
 			text-align: center;
 		}
+
+	/* 파일업로드 관련 */
+		#fileForm {
+			position: absolute;
+			bottom: 56px;;
+			left: 41px;
+			z-index: 99;
+		}
+		#fileForm .exFileLabel {
+			background-image: url('/images/btn_file.png');
+			background-repeat: no-repeat;
+			width: 110px;
+			height: 26px;
+			cursor: pointer;
+			float: left;
+			margin-top: 1px;
+			margin-right: 7px;
+		}
+		#fileForm .uploadName {
+			font-size: 12px; 
+			font-weight: 200;
+			font-family: inherit; 
+			line-height: normal; 
+			vertical-align: middle; 
+			border: 1px solid #ebebeb; 
+			width: 184px;
+			height: 26px;
+		}
+		#fileForm .exFile {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
+		#fileForm .upload-name {
+		    background: transparent;
+		    border: none;
+		    font-size: 13px;
+		    width: 160px;
+		    height: 17px;
+		    text-overflow: ellipsis;
+		}
+		#fileForm .close {
+			vertical-align: middle;
+		} 
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -208,6 +257,15 @@
 					$('#nonNextBtn').hide();
 				}
 			'</c:if>'
+				
+			//파일 업로드
+			var fileTarget = $(".exFile");
+			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename)
+			});
+			
 		});//end $(document).ready()
 		
 		
@@ -234,6 +292,8 @@
 		function fn_basicInfo(){
 			var sendUrl;
 			var object = {};
+			var fileFormData;
+			
            	var formData = $("#mtBasicForm").serializeArray();
            	//console.log("formData===>"+formData);
            	for (var i = 0; i<formData.length; i++){
@@ -258,11 +318,69 @@
            		},
            		success:function(data){	
            			var paramData = JSON.parse(data);
-           		
+           			
            			//console.log("paramData===>"+paramData);
            			//console.log("data.mtWorkKey==>"+paramData.mtWorkKey);
            			if("Y" == paramData.successYN){
-           				if($('#mtWorkKey').val() !=''){
+           				var varParam = JSON.parse(data);
+           				
+           				if($("#upFileName").val() == null || $("#upFileName").val() == "" || $("#upFileName").val().length == 0) {
+               				//첨부파일이 없는 경우
+           					if($('#mtWorkKey').val() !=''){
+               					alert("유지보수작업 기본정보 수정을 성공하였습니다.");
+               				} else {
+               					alert("유지보수작업 기본정보 등록을 성공하였습니다.");
+               				}
+           					var url2 = '/maintenance/work/write/basicInfoView.do';
+			    			var dialogId2 = 'program_layer';
+			    			
+			    			var button2 = new Array;
+			    			button2 = [];
+			    			showModalPop(dialogId2, url2, varParam, button, '', 'width:1144px;height:708px');
+               			} else {
+               				//첨부파일이 존재하지 않는경우.
+               				//업로프 파일을 선택한 경우 파일 업로드 프로세스 수행
+               				
+               				$("#fileCtKey").val(paramData.mtWorkKey);
+               				
+	            			fileFormData = new FormData($('#fileForm')[0]); 
+			       			$.ajax({ 
+			       				type: "POST", 
+			       				enctype: 'multipart/form-data',  
+			       				url: '/file/upload.do', 
+			       				data: fileFormData, // 필수 
+			       				processData: false, // 필수 
+			       				contentType: false, // 필수 
+			       				cache: false, 
+			       				success: function (data) {
+			       					if(data.successYN=='Y') {
+			       						if($('#mtWorkKey').val() !=''){
+			               					alert("유지보수작업 기본정보 수정을 성공하였습니다.");
+			               				} else {
+			               					alert("유지보수작업 기본정보 등록을 성공하였습니다.");
+			               				}		    			    		
+			       						
+			       					} else {
+			       						alert("첨부파일 저장이 실패하였습니다.")
+			       					}
+			       					//현재는 파일저장이 실패해도 기본정보는 저장되도록 화면 이동시킴.
+			       					var url2 = '/maintenance/work/write/basicInfoView.do';
+		    		    			var dialogId2 = 'program_layer';
+		    		    			//첨부파일 workClass정보 추가.
+		    		    			varParam['workClass'] = $('#workClass').val();			    		    			
+		    		    			var button2 = new Array;
+		    		    			button2 = [];
+		    		    			showModalPop(dialogId2, url2, varParam, button2, '', 'width:1144px;height:708px');
+			       				}, 
+			       				error: function(request, status, error) {
+			       					if(request.status != '0') {
+			       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+			       					}
+			       				}
+			       			});
+               			}
+           				
+           				/* if($('#mtWorkKey').val() !=''){
            					alert("유지보수작업 기본정보 수정을 성공하였습니다.");
            				} else {
            					alert("유지보수작업 기본정보 등록을 성공하였습니다.");
@@ -270,16 +388,16 @@
            			
            				//if("N" == $('#mtWorkPmYn option:selected').val() && "N" == $('#mtWorkOrderYn option:selected').val()){
            				if("N" == document.mtBasicForm.mtWorkPmYn.value && "N" == document.mtBasicForm.mtWorkOrderYn.value){
-           					/* document.listForm.action = "/maintenance/work/workList.do";
-           					document.listForm.method="get";
-           		        	document.listForm.submit(); */ 
+           					//document.listForm.action = "/maintenance/work/workList.do";
+           					//document.listForm.method="get";
+           		        	//document.listForm.submit(); 
            				} else {
            					$('#mtWorkKey').val(paramData.mtWorkKey);
            					$('#sv_mtWorkPmYn').val(paramData.mtWorkPmYn);
            					$('#sv_mtWorkOrderYn').val(paramData.mtWorkOrderYn);
            					$('#showNextBtn').show();
            					$('#nonNextBtn').hide();
-           				}
+           				} */
            			} else {
            				if($('#mtWorkKey').val() !=''){
            					alert("유지보수기본정보 수정을 실패하였습니다.");
@@ -608,151 +726,236 @@
 			}	
 		} // end woorkPmYnClick()
 		
+
+		
+		// 파일업로드 관련
+		function fn_downFilePopUp(fileKey, fileOrgNm) {
+			var form = document.viewPopUpForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewPopUpForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
+		
+		function fn_deleteFile(fileKey, fileNm) {
+			var result = confirm("첨부파일 " + fileNm + " 을 삭제하시겠습니까?");
+			if(result) {
+				var form = document.viewPopUpForm;
+				form.fileKey.value = fileKey;
+				var data = JSON.stringify({"fileKey":fileKey});
+				$.ajax({ 
+	   				url: '/file/delete.do', 
+	   				dataType:'json',
+	   				type: "POST", 
+	   				data: data, // 필수 
+	   				contentType: "application/json; charset=UTF-8", 
+	   				success: function (response) { 
+		   				if(response.successYN=='Y') {
+							alert('첨부파일이 삭제되었습니다.');
+							$("#file"+fileKey).next().remove();
+							$("#file"+fileKey).remove();
+						} else {
+							alert('첨부파일 삭제가 실패되었습니다.');
+						}
+	   				},
+	   				error: function(request, status, error) {
+	   					if(request.status != '0') {
+	   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	   					}
+	   				}
+	   			});
+			}
+		}
+		
 	</script>
 </head>
 <body>
-	<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">	
-	<%-- <input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicWorkInfo.mtIntegrateKey}"/>"/> --%>
-	<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
-	<input type="hidden" id="sv_mtWorkPmYn" name="sv_mtWorkPmYn" value="<c:out value="${basicWorkInfo.mtWorkPmYn}"/>"/>
-	<input type="hidden" id="sv_mtWorkOrderYn" name="sv_mtWorkOrderYn" value="<c:out value="${basicWorkInfo.mtWorkOrderYn}"/>"/>
-		<div class="popContainer">
-			<div class="top">
-				<div>
-					<div class="floatL ftw500">유지보수작업 등록</div>
-				</div>
+	
+<div class="popContainer">
+	<div class="top">
+		<div>
+			<div class="floatL ftw500">유지보수작업 등록</div>
+		</div>
+	</div>
+	<div class="left">
+		<ul class="ftw400">
+			<li class="colorWhite cursorP on">기본정보</li>
+			<li id="work_product" class="colorWhite cursorP" onclick="fn_changeView('productInfoView');" style="display:none">제품정보</li>
+			<li id="work_order" class="colorWhite cursorP" onclick="fn_changeView('orderInfoView');" style="display:none">발주정보</li>
+		</ul>
+	</div>
+	<div class="contents">
+		<div>
+			<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">	
+				<%-- <input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicWorkInfo.mtIntegrateKey}"/>"/> --%>
+				<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
+				<input type="hidden" id="sv_mtWorkPmYn" name="sv_mtWorkPmYn" value="<c:out value="${basicWorkInfo.mtWorkPmYn}"/>"/>
+				<input type="hidden" id="sv_mtWorkOrderYn" name="sv_mtWorkOrderYn" value="<c:out value="${basicWorkInfo.mtWorkOrderYn}"/>"/>		
+				<input type="hidden" id="workClass" name="workClass" value="mtWork"/>		
+				<table>
+					<tr>
+						<td class="tdTitle"><label>*</label>프로젝트명</td>
+						<td class="tdContents" colspan="5">
+							<input type="text" id="mtNm" name="mtNm" value="<c:out value="${basicWorkInfo.mtNm}"/>" class="search" onclick="fn_searchListPop()" onkeypress="return false;" autocomplete="off" required/>
+							<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicWorkInfo.mtIntegrateKey}"/>"/>
+							<!-- <input type="text" id="mtIntegrateKey" name="mtIntegrateKey"/>
+							<input type="hidden" id="mtNm" name="mtNm" /> -->
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle">고객사</td>
+						<td class="tdContents" colspan="5">
+							<input type="text" id="mtAcNm" value="<c:out value="${basicWorkInfo.mtAcNm}"/>" class="pname"  readonly/>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle"><label>*</label>고객사담당자</td>
+						<td class="tdContents" colspan="5">
+							<select id="mtWorkAcDirectorKey" name="mtWorkAcDirectorKey" required>
+								<c:forEach var="item" items="${acDirectorList}" varStatus="status">										
+								<option value="<c:out value="${item.acDirectorKey}"/>"><c:out value="${item.acDirectorNm}"/></option>
+								</c:forEach>
+								<!-- <option value="">선택</option> -->
+								<%-- <c:forEach var="director" items="${acDirectorList}" varStatus="status">										
+								<option value="<c:out value="${director.directorKey}"/>"><c:out value="${director.directorNm}"/></option>
+								</c:forEach> --%>									
+							</select>
+							<select id="mtWorkAcDirectorCheck"  style="display:none">															
+								<c:forEach var="item" items="${acDirectorList}" varStatus="status">
+									<option value="<c:out value="${item.acDirectorKey}"/>"><c:out value="${item.acDirectorInfo}"/></option>
+								</c:forEach>							
+							</select>	
+							<input type="text" id="acDirectorInfo" value="<c:out value="${basicWorkInfo.acDirectorInfo}"/>" class="pname" readonly/>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle"><label>*</label>지원담당</td>
+						<td class="tdContents" >
+							<select id="mtWorkEmpKey" name="mtWorkEmpKey" required>
+								<c:forEach var="emp" items="${empList}" varStatus="status">										
+								<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+								</c:forEach>	
+							</select>
+						</td>
+						<td class="tdSubTitle"><label>*</label>작업유형</td>
+						<td class="tdContents" colspan="3">
+							<select id="mtWorkTypeCd" name="mtWorkTypeCd" required>
+								<option value="정기점검">정기점검</option>
+								<option value="장애처리">장애처리</option>
+								<option value="기술지원">기술지원</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle"><label>*</label>작업기간</td>
+						<td class="tdContents" colspan="5">
+							<input type="text" id="mtWorkStartDt" name="mtWorkStartDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkStartDt)}"/>" placeholder="from" class="calendar fromDt" autocomplete="off" required/>&nbsp;<input type="text" id="mtWorkStartTm" name="mtWorkStartTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkStartTm)}"/>" timeOnly style="width: 50px" autocomplete="off" required/>&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
+							<input type="text" id="mtWorkEndDt" name="mtWorkEndDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkEndDt)}"/>" placeholder="to" class="calendar toDt" autocomplete="off" required/>&nbsp;<input type="text" id="mtWorkEndTm" name="mtWorkEndTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkEndTm)}"/>" timeOnly style="width: 50px" autocomplete="off" required/>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdTitle"><label>*</label>조치결과</td>
+						<td class="tdContents">
+							<select id="mtWorkResultCd" name="mtWorkResultCd" required>
+								<option value="준비">준비</option>
+								<option value="진행">진행</option>
+								<option value="완료">완료</option>
+							</select>
+						</td>
+						<td class="tdSubTitle">제품등록유무</td>
+						<td class="tdContents">
+							<!-- <select id="mtWorkPmYn"  name="mtWorkPmYn">
+								<option value="N">N</option>
+								<option value="Y">Y</option>
+							</select> -->
+							<input type="radio" class="tRadio" name="mtWorkPmYn" value="Y" id="workPmYn1" onclick="workPmYnClick('Y');"/><label for="workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tRadio" name="mtWorkPmYn" value="N" id="workPmYn2" checked="checked" onclick="workPmYnClick('N');"/><label for="workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N
+						</td>
+						<td class="tdSubTitle">추가발주유무</td>
+						<td class="tdContents">
+							<!-- <select id="mtWorkOrderYn" name="mtWorkOrderYn">
+								<option value="N">N</option>
+								<option value="Y">Y</option>
+							</select> -->
+							<input type="radio" class="tRadio" name="mtWorkOrderYn" value="Y" id="workOrderYn1" onclick="workOrderYnClick('Y');"/><label for="workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" class="tRadio" name="mtWorkOrderYn" value="N" id="workOrderYn2" checked="checked" onclick="workOrderYnClick('N');"/><label for="workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N	
+						</td>
+					</tr>	
+					<tr>
+						<td class="tdTitle veralignT"><label>*</label>지원내용</td>
+						<td class="tdContents" colspan="5"><textarea id="mtWorkCont" name="mtWorkCont" required><c:out value="${basicWorkInfo.mtWorkCont}"/></textarea></td>
+					</tr>
+					<tr>
+						<td class="tdTitle veralignT">비고</td>
+						<td class="tdContents" colspan="5"><textarea id="remark" name="remark"><c:out value="${basicWorkInfo.remark}"/></textarea></td>
+					</tr>
+				</table>			
+			</form>
+			<form id="fileForm" method="post" enctype="multipart/form-data"> 
+				<input type="hidden" name="docTypeNm" value="mtWork" />
+				<input type="hidden" name="fileCtKey" id="fileCtKey" value="${basicWorkInfo.mtWorkKey}" />
+				<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${resultList[0].pjNm}"/>"/> 
+				<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+				<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+				<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+				<table>					
+					<tr>		
+						<td class="tdTitle veralignT">첨부파일</td>		
+						<td>			
+							<div class="uploadContainer">
+								<input class="uploadName" id="upFileName" placeholder="파일선택" disabled="disabled" />
+								<label for="exFile" class="exFileLabel"></label>
+								<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+							</div>
+							<div style="width: 235px; height: 25px; clear:both;">
+								<c:forEach var="result" items="${fileList }" varStatus="status">
+									<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFilePopUp('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+									<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+									<c:if test="${status.last eq false}"><br /></c:if>
+								</c:forEach>
+							</div>
+							
+						
+						<%-- <form:form id="viewForm" name="viewForm" method="POST">
+							<input type="hidden" name="fileKey" value=""/>
+							<input type="hidden" name="fileOrgNm" value=""/>
+						</form:form> --%>
+						</td>
+					</tr>
+				
+				<%-- tr>
+							<td class="tdTitle veralignT">첨부파일</td>
+							<td class="tdContents"><button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
+						</tr> --%>
+				</table>
+			</form>
+			<form:form id="viewPopUpForm" name="viewPopUpForm" method="POST">
+				<input type="hidden" name="fileKey" value=""/>
+				<input type="hidden" name="fileOrgNm" value=""/>
+			</form:form>
+		</div>
+		<div class="btnWrap floatL">
+			<div class="floatL btnCenter">
+				<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 			</div>
-			<div class="left">
-				<ul class="ftw400">
-					<li class="colorWhite cursorP on">기본정보</li>
-					<li id="work_product" class="colorWhite cursorP" onclick="fn_changeView('productInfoView');" style="display:none">제품정보</li>
-					<li id="work_order" class="colorWhite cursorP" onclick="fn_changeView('orderInfoView');" style="display:none">발주정보</li>
-				</ul>
+			<div id="nonNextBtn"class="floatR"  style="margin-right: 7px;display:none;" >
+				<img src="<c:url value='/images/btn_non_next.png'/>"/>
 			</div>
-			<div class="contents">
-				<div>
-					<table>
-						<tr>
-							<td class="tdTitle"><label>*</label>프로젝트명</td>
-							<td class="tdContents" colspan="5">
-								<input type="text" id="mtNm" name="mtNm" value="<c:out value="${basicWorkInfo.mtNm}"/>" class="search" onclick="fn_searchListPop()" onkeypress="return false;" autocomplete="off" required/>
-								<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicWorkInfo.mtIntegrateKey}"/>"/>
-								<!-- <input type="text" id="mtIntegrateKey" name="mtIntegrateKey"/>
-								<input type="hidden" id="mtNm" name="mtNm" /> -->
-							</td>
-						</tr>
-						<tr>
-							<td class="tdTitle">고객사</td>
-							<td class="tdContents" colspan="5">
-								<input type="text" id="mtAcNm" value="<c:out value="${basicWorkInfo.mtAcNm}"/>" class="pname"  readonly/>
-							</td>
-						</tr>
-						<tr>
-							<td class="tdTitle"><label>*</label>고객사담당자</td>
-							<td class="tdContents" colspan="5">
-								<select id="mtWorkAcDirectorKey" name="mtWorkAcDirectorKey" required>
-									<c:forEach var="item" items="${acDirectorList}" varStatus="status">										
-									<option value="<c:out value="${item.acDirectorKey}"/>"><c:out value="${item.acDirectorNm}"/></option>
-									</c:forEach>
-									<!-- <option value="">선택</option> -->
-									<%-- <c:forEach var="director" items="${acDirectorList}" varStatus="status">										
-									<option value="<c:out value="${director.directorKey}"/>"><c:out value="${director.directorNm}"/></option>
-									</c:forEach> --%>									
-								</select>
-								<select id="mtWorkAcDirectorCheck"  style="display:none">															
-									<c:forEach var="item" items="${acDirectorList}" varStatus="status">
-										<option value="<c:out value="${item.acDirectorKey}"/>"><c:out value="${item.acDirectorInfo}"/></option>
-									</c:forEach>							
-								</select>	
-								<input type="text" id="acDirectorInfo" value="<c:out value="${basicWorkInfo.acDirectorInfo}"/>" class="pname" readonly/>
-							</td>
-						</tr>
-						<tr>
-							<td class="tdTitle"><label>*</label>지원담당</td>
-							<td class="tdContents" >
-								<select id="mtWorkEmpKey" name="mtWorkEmpKey" required>
-									<c:forEach var="emp" items="${empList}" varStatus="status">										
-									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
-									</c:forEach>	
-								</select>
-							</td>
-							<td class="tdSubTitle"><label>*</label>작업유형</td>
-							<td class="tdContents" colspan="3">
-								<select id="mtWorkTypeCd" name="mtWorkTypeCd" required>
-									<option value="정기점검">정기점검</option>
-									<option value="장애처리">장애처리</option>
-									<option value="기술지원">기술지원</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="tdTitle"><label>*</label>작업기간</td>
-							<td class="tdContents" colspan="5">
-								<input type="text" id="mtWorkStartDt" name="mtWorkStartDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkStartDt)}"/>" placeholder="from" class="calendar fromDt" autocomplete="off" required/>&nbsp;<input type="text" id="mtWorkStartTm" name="mtWorkStartTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkStartTm)}"/>" timeOnly style="width: 50px" autocomplete="off" required/>&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
-								<input type="text" id="mtWorkEndDt" name="mtWorkEndDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkEndDt)}"/>" placeholder="to" class="calendar toDt" autocomplete="off" required/>&nbsp;<input type="text" id="mtWorkEndTm" name="mtWorkEndTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkEndTm)}"/>" timeOnly style="width: 50px" autocomplete="off" required/>
-							</td>
-						</tr>
-						<tr>
-							<td class="tdTitle"><label>*</label>조치결과</td>
-							<td class="tdContents">
-								<select id="mtWorkResultCd" name="mtWorkResultCd" required>
-									<option value="준비">준비</option>
-									<option value="진행">진행</option>
-									<option value="완료">완료</option>
-								</select>
-							</td>
-							<td class="tdSubTitle">제품등록유무</td>
-							<td class="tdContents">
-								<!-- <select id="mtWorkPmYn"  name="mtWorkPmYn">
-									<option value="N">N</option>
-									<option value="Y">Y</option>
-								</select> -->
-								<input type="radio" class="tRadio" name="mtWorkPmYn" value="Y" id="workPmYn1" onclick="workPmYnClick('Y');"/><label for="workPmYn1" class="cursorP"></label>&nbsp;&nbsp;Y
-								&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tRadio" name="mtWorkPmYn" value="N" id="workPmYn2" checked="checked" onclick="workPmYnClick('N');"/><label for="workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N
-							</td>
-							<td class="tdSubTitle">추가발주유무</td>
-							<td class="tdContents">
-								<!-- <select id="mtWorkOrderYn" name="mtWorkOrderYn">
-									<option value="N">N</option>
-									<option value="Y">Y</option>
-								</select> -->
-								<input type="radio" class="tRadio" name="mtWorkOrderYn" value="Y" id="workOrderYn1" onclick="workOrderYnClick('Y');"/><label for="workOrderYn1" class="cursorP"></label>&nbsp;&nbsp;Y
-								&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" class="tRadio" name="mtWorkOrderYn" value="N" id="workOrderYn2" checked="checked" onclick="workOrderYnClick('N');"/><label for="workOrderYn2" class="cursorP"></label>&nbsp;&nbsp;N	
-							</td>
-						</tr>	
-						<tr>
-							<td class="tdTitle veralignT"><label>*</label>지원내용</td>
-							<td class="tdContents" colspan="5"><textarea id="mtWorkCont" name="mtWorkCont" required><c:out value="${basicWorkInfo.mtWorkCont}"/></textarea></td>
-						</tr>
-						<tr>
-							<td class="tdTitle veralignT">비고</td>
-							<td class="tdContents" colspan="5"><textarea id="remark" name="remark"><c:out value="${basicWorkInfo.remark}"/></textarea></td>
-						</tr>
-					</table>
-				</div>
-				<div class="btnWrap floatL">
-					<div class="floatL btnCenter">
-						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					</div>
-					<div id="nonNextBtn"class="floatR"  style="margin-right: 7px;display:none;" >
-						<img src="<c:url value='/images/btn_non_next.png'/>"/>
-					</div>
-					<div id="showNextBtn"class="floatR"  style="margin-right: 7px;display:none;" >
-						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
-					</div>
-					<%-- <div id="saveBtn" class="floatR" onclick="fn_saveNextBtn('ss');">
-						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					</div>
-					<div id="saveNextBtn" class="floatR" onclick="fn_saveNextBtn('sn');" style="display:none">
-						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
-					</div> --%>
-					<div class="floatN floatC"></div>
-				</div>
+			<div id="showNextBtn"class="floatR"  style="margin-right: 7px;display:none;" >
+				<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
 			</div>
-		</div>	
-	</form>
+			<%-- <div id="saveBtn" class="floatR" onclick="fn_saveNextBtn('ss');">
+				<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+			</div>
+			<div id="saveNextBtn" class="floatR" onclick="fn_saveNextBtn('sn');" style="display:none">
+				<button type="button"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+			</div> --%>
+			<div class="floatN floatC"></div>
+		</div>
+	</div>
+</div>	
 	
 </body>
 </html>

@@ -267,6 +267,13 @@
 			max-width: 180px;
 		}
 		
+		.contents .dtl tbody tr td > button {
+			text-decoration: underline;
+		}
+		.contents .dtl tbody tr td > button:hover {
+			color: blue;
+		}
+		
 		.contents .dtl tbody tr td > span {
 			display: inline-block;
 			overflow:hidden; 
@@ -393,7 +400,7 @@
 			var button = new Array;
 			button = [];
 			
-			parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1125px;height:673px');
 		}
 		
 		
@@ -429,6 +436,9 @@
 			}
 		}
 		
+		function fnRequestPurchase(pjKey, pjOrderKey) {
+			window.parent.location.href='/project/request/purchase/main.do?mainKey='+pjKey+'&orderKey='+pjOrderKey+'';
+		}
 		
 	</script>
 </head>
@@ -456,6 +466,7 @@
 										<th scope="row">수량</th>
 										<th scope="row">합계</th>
 										<th scope="row">발주자</th>
+										<th scope="row">매입금 지급 요청</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -473,6 +484,7 @@
 											<td class="textalignR"><c:out value="${orderList.orderProductCnt}"/></td>
 											<td class="textalignC"><c:out value="${displayUtil.commaStr(orderList.orderAmount)}"/></td>
 											<td class="textalignC"><c:out value="${orderList.orderEmpNm}"/></td>
+											<td><button type="button" onclick="javascript:fnRequestPurchase('${projectInfo.pjKey}','${orderList.pjOrderKey}' )">바로가기</button></td>
 										</tr>
 										<input type="hidden" name="pjOrderKey" value="${orderList.pjOrderKey}" />
 									</c:forEach>

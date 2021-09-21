@@ -17,7 +17,6 @@ public class ProjectContractSalesVO extends ProjectSalesVO implements Serializab
 	private int ctAmount;
 	private String ctDt;
 	private String ctPayTerms;
-	private String taxYn;
 	private int collectTurn;
 	private String regEmpKey;
 	private String salesKey;
@@ -65,12 +64,6 @@ public class ProjectContractSalesVO extends ProjectSalesVO implements Serializab
 	}
 	public void setCtPayTerms(String ctPayTerms) {
 		this.ctPayTerms = ctPayTerms;
-	}
-	public String getTaxYn() {
-		return taxYn;
-	}
-	public void setTaxYn(String taxYn) {
-		this.taxYn = taxYn;
 	}
 	public int getCollectTurn() {
 		return collectTurn;

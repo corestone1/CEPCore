@@ -174,35 +174,35 @@
 		}	
 		.contents2 table thead th:first-child,
 		.contents2 table tbody td:first-child {
-			width: 45px;
+			width: 46px;
 		}	
 		.contents2 table thead th:nth-child(2),
 		.contents2 table tbody td:nth-child(2) {
-			width: 110px;
+			width: 103px;
 		}
 		.contents2 table thead th:nth-child(3),
 		.contents2 table tbody td:nth-child(3) {
-			width: 93px;
+			width: 70px;
 		}
 		.contents2 table thead th:nth-child(4),
 		.contents2 table tbody td:nth-child(4) {
-			width: 219px;
+			width: 158px;
 		}
 		.contents2 table thead th:nth-child(5),
 		.contents2 table tbody td:nth-child(5) {
-			width: 161px;
+			width: 140px;
 		}
 		.contents2 table thead th:nth-child(6),
 		.contents2 table tbody td:nth-child(6) {
-			width: 165px;
+			width: 145px;
 		}
 		.contents2 table thead th:nth-child(7),
 		.contents2 table tbody td:nth-child(7) {
-			width: 98px;
+			width: 157px;
 		}
-		.contents2 table thead th:nth-child(8),
+		.contents2 table thead th:nth-child(8), 
 		.contents2 table tbody td:nth-child(8) {
-			width: 172px;
+		    width: 239px;
 		}
 		.popContainer .bottomBtn {
 			margin-top: 10px;
@@ -219,7 +219,7 @@
 		}
 	</style>
 	<script>
-		
+	
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
 			var objArry = null;
@@ -270,18 +270,15 @@
 		
 		function fn_save() {
 			
-			if($("input:checkbox[name=isCheck]:checked").length == 0) {
+			if($("input:radio[name=isCheck]:checked").length == 0) {
 				alert("매핑할 계산서를 선택해주세요.");
 			} else {
-				$("#billMappingNum").val(Number($("#billMappingNum").val()) + $("input:checkbox[name=isCheck]:checked").length);
+				/* $("#billMappingNum").val(Number($("#billMappingNum").val()) + $("input:checkbox[name=isCheck]:checked").length); */
+				var totalBillMappedAmount = 0;
+				var originBillMappedAmount = $("#billMappedAmount").val();
 				
 				var object = {};
 				var listData = $("#billListForm").serializeObject();
-				var formData = $("#orderInfoForm").serializeArray();
-				
-				for (var i = 0; i<formData.length; i++){
-	                object[formData[i]['name']] = formData[i]['value'];
-	            }
 				
 				var index = [];
 				for(var list in listData) {
@@ -293,39 +290,59 @@
 					listData.splice(index[i], 1);
 				}
 				
-				object["billList"]=listData;
+				for(var i = 0; i < listData.length; i++) {
+					totalBillMappedAmount += Number(listData[i].billAmount);
+				}
 				
-				var sendData = JSON.stringify(object);
-				$.ajax({
-					url:"/mngProject/mapping/compMapping.do",
-					dataType:'json',
-					type:"POST",
-					data:sendData,
-					contentType:"application/json; charset=UTF8",
-					success:function(response) {
-						if(response != null && response.successYN == 'Y') {
-							alert('매핑되었습니다.');
-							
-							 var url = '/mngProject/mapping/mappingBill.do';
-							var dialogId = 'program_layer';
-							var varParam = {
-								"pjOrderKey":$("input[name='pjOrderKey']").val(),
-								"billDtFrom":$("input[name='billDtFrom']").val(),
-								"billDtTo":$("input[name='billDtTo']").val()
+				if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
+					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + originBillMappedAmount + ")");
+				} else {
+					$("#billMappedAmount").val(totalBillMappedAmount);
+					
+					var formData = $("#orderInfoForm").serializeArray();
+					for (var i = 0; i<formData.length; i++){
+		                object[formData[i]['name']] = formData[i]['value'];
+		            }
+					
+					object["billList"]=listData;
+					
+					var sendData = JSON.stringify(object);
+					
+					var sch = location.search
+					var params = new URLSearchParams(sch);
+					var sch_keyword = params.get('paymentKey');
+					
+					$.ajax({
+						url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
+						dataType:'json',
+						type:"POST",
+						data:sendData,
+						contentType:"application/json; charset=UTF8",
+						success:function(response) {
+							if(response != null && response.successYN == 'Y') {
+								alert('매핑되었습니다.');
+								
+								 var url = '/mngProject/mapping/mappingBill.do';
+								var dialogId = 'program_layer';
+								var varParam = {
+									"pjOrderKey":$("input[name='pjOrderKey']").val(),
+									"billDtFrom":$("input[name='billDtFrom']").val(),
+									"billDtTo":$("input[name='billDtTo']").val()
+								}
+								var button = new Array;
+								button = [];
+								showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');  
+							} else {
+								alert('매핑 실패');
 							}
-							var button = new Array;
-							button = [];
-							showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');  
-						} else {
-							alert('매핑 실패');
+						},
+						error: function(request, status, error) {
+							if(request.status != '0') {
+								alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+							}
 						}
-					},
-					error: function(request, status, error) {
-						if(request.status != '0') {
-							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-						}
-					}
-				});
+					});  
+				}
 			}
 		}
 	</script>
@@ -361,11 +378,11 @@
 								<td>${displayUtil.displayDate(orderVO.orderDt) }</td>
 								<td>
 									<c:choose>
-										<c:when test="${orderVO.billMappingNum eq orderVO.buyTurn }">
+										<c:when test="${orderVO.orderAmount eq orderVO.billMappedAmount }">
 											<label>Y</label>
 										</c:when>
 										<c:otherwise>
-											<label>N<c:out value="(${orderVO.billMappingNum } / ${orderVO.buyTurn })" /></label>
+											<label>N</label>
 										</c:otherwise>
 									</c:choose>
 								</td>
@@ -377,7 +394,10 @@
 								</td>
 								<td><span title="${orderVO.orderAcNm }">${orderVO.orderAcNm }</span></td>
 								<td><span title="${orderVO.orderAcKey }">${orderVO.orderAcKey }</span></td>
-								<td><span title="${displayUtil.commaStr(orderVO.orderAmount) }">${displayUtil.commaStr(orderVO.orderAmount) }</span></td>
+								<td>
+									<span title="${displayUtil.commaStr(orderVO.orderAmount) }">${displayUtil.commaStr(orderVO.orderAmount) }</span>
+									<input type="hidden" id="orderAmount" value="${orderVO.orderAmount }"/>
+								</td>
 								<td><span>${orderVO.orderEmpNm }</span></td>
 							</tr>
 						</tbody>
@@ -405,8 +425,8 @@
 									<th scope="row">매입처</th>
 									<th scope="row">사업자번호</th>
 									<th scope="row">합계금액</th>
-									<th scope="row">부가세여부</th>
 									<th scope="row">계산서번호</th>
+									<th scope="row">비고</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -416,7 +436,7 @@
 											<input type="hidden" value="<c:out value="${result.billNo }" />" />
 											<c:choose>
 												<c:when test="${result.billMappingYn eq 'N' }">
-													<input type="checkbox" class="tCheck" name="isCheck" id="popCheck${status.count }"/>
+													<input type="radio" class="tRadio" name="isCheck" id="popCheck${status.count }"/>
 													<label for="popCheck${status.count }" class="cursorP"></label>
 												</c:when>
 												<c:otherwise>
@@ -427,10 +447,10 @@
 										<td>${displayUtil.displayDate(result.billIssueDt) }</td>
 										<td><input type="text" name="billMappingYn" value="${result.billMappingYn }" readOnly style="width: 30px;"/></td>
 										<td>${result.acNm }</td>
-										<td><input type="text" name="billAcKey" value="${result.billAcKey }" readOnly style="width: 140px;"/></td>
-										<td><input type="text" name="billAmount" value="${displayUtil.commaStr(result.billAmount) }" readOnly style="width: 140px;"/></td>
-										<td><input type="text" name="taxYn" value="${result.taxYn }" readOnly style="width: 30px;"/></td>
-										<td><input type="text" name="billNo"  value="${result.billNo }" readOnly style="width: 140px;" /></td>
+										<td><input type="text" name="billAcKey" value="${result.billAcKey }" readOnly style="width: 120px;"/></td>
+										<td><input type="text" name="billAmount" value="${displayUtil.commaStr(result.billAmount) }" readOnly style="width: 120px;"/></td>
+										<td><input type="text" name="billNo"  value="${result.billNo }" readOnly style="width: 120px;" /></td>
+										<td><input type="text" name="remark"  value="${result.remark }" readOnly  /></td>
 									</tr>
 									<input type="hidden" value="${orderVO.buyKey }" name="billCtFkKey"/>
 									<input type="hidden" value="${orderVO.orderCtFkKey }" name="billFkPjKey"/>
@@ -443,7 +463,13 @@
 			<div class="bottomBtn">		
 				<div class="btnWrap">
 					<div class="floatR">
-						<button type="button" onclick="fn_save();"><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+						<c:choose>
+							<c:when test="${orderVO.orderAmount eq orderVO.billMappedAmount }">
+							</c:when>
+							<c:otherwise>
+								<button type="button" onclick="fn_save();"><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+							</c:otherwise>
+						</c:choose>
 					</div>			
 					<div class="floatC"></div>	
 				</div>
@@ -453,6 +479,7 @@
 	<form id="orderInfoForm">
 		<input id="pjOrderKey" name="pjOrderKey" type="hidden" value="${orderVO.pjOrderKey }"/>
 		<input type="hidden" name="billMappingNum" id="billMappingNum" value="${orderVO.billMappingNum}"/>
+		<input type="hidden" name="billMappedAmount" id="billMappedAmount" value="${orderVO.billMappedAmount }" />
 	</form>
 </body>
 </html>

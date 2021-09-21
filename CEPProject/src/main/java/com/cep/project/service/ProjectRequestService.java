@@ -152,4 +152,18 @@ public interface ProjectRequestService {
 	*/
 	public List<?> selectPrePaymentList(String buyKey) throws Exception;
 	
+	/**
+	* 
+	* @Method Name : selectPcBillInfo
+	* @Cdate       : 2021. 02. 03.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description : 매입 계산서 정보 조회
+	* @param billNo
+	* @return
+	* @throws Exception
+	*/
+	public List<?> selectPcBillInfo(String billNo) throws Exception;
+	
+	
 }

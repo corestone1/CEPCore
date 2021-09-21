@@ -8,6 +8,7 @@ import org.apache.ibatis.type.Alias;
 @Alias("projectGuarantyBondVO")
 public class ProjectGuarantyBondVO extends ProjectSalesVO implements Serializable {
 	
+	private String pjKey;
 	private String gbKey;
 	private String ctKey;
 	private String salesKey;
@@ -39,6 +40,12 @@ public class ProjectGuarantyBondVO extends ProjectSalesVO implements Serializabl
 	private int dfGuarantyAmount;
 	private int ppGuarantyAmount;
 	
+	public String getPjKey() {
+		return pjKey;
+	}
+	public void setPjKey(String pjKey) {
+		this.pjKey = pjKey;
+	}
 	public String getGbKey() {
 		return gbKey;
 	}

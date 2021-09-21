@@ -207,7 +207,7 @@
 			
 			//부가세 포함 라이오버튼 셋팅
 			//$('#taxYn').val("${mtBackOrderVO.taxYn}").prop("checked", true);
-			$("input:radio[name='taxYn']:radio[value='${mtWorkOrderVO.taxYn}']").prop('checked', true);
+			//$("input:radio[name='taxYn']:radio[value='${mtWorkOrderVO.taxYn}']").prop('checked', true);
 			
 			// 등록된 거래처 selectBox 맵핑.
 			if(parseInt('${workOrderSelectBox.size()}') >0 ){
@@ -908,7 +908,7 @@
 			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
-			window.open('/mngCommon/product/popup/searchListPopup.do?pmKeyDomId=prodList-'+num+'-orderPmFkKey&pmNmDomId=prodList-'+num+'-orderPmFkNm','PRODUCT_LIST','width=1000px,height=713px,left=600');					
+			window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-orderPmFkKey&returnNm=prodList-'+num+'-orderPmFkNm','PRODUCT_LIST','width=1000px,height=713px,left=600');					
 		}
 
 
@@ -1017,18 +1017,18 @@
 								</td>
 							</tr>
 							<tr>
-								<td class="tdTitle"><label>*</label> 부가세 포함</td>
+								<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
 								<td class="tdContents">
 									<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 									<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-								</td>
+								</td> -->
 								<td class="tdTitle"><label>*</label> 발주합계</td>
 								<td class="tdContents">
 									<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="text-align: right;"/>	
 								</td>
 								<td class="tdTitle"><label>*</label> 결제조건</td>
-								<td class="tdContents">
-									<input type="text" name="orderPayTerms" style="width: 154px" required value="<c:out value="${mtWorkOrderVO.orderPayTerms}"/>" />	
+								<td class="tdContents" colspan="3">
+									<input type="text" name="orderPayTerms" style="width: 435px" required value="<c:out value="${mtWorkOrderVO.orderPayTerms}"/>" />	
 								</td>
 							</tr>
 						</table>

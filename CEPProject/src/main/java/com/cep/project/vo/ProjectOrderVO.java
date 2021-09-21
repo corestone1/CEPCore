@@ -23,7 +23,6 @@ public class ProjectOrderVO extends ProjectPurchaseVO implements Serializable {
 	private int orderAmount;
 	private int mtOrderAmount;
 	private String orderReceiptDt;
-	private String taxYn;
 	private int buyTurn;
 	private List<ProjectOrderProductVO> orderProductVOList;
 	
@@ -92,12 +91,6 @@ public class ProjectOrderVO extends ProjectPurchaseVO implements Serializable {
 	}
 	public void setMtOrderAmount(int mtOrderAmount) {
 		this.mtOrderAmount = mtOrderAmount;
-	}
-	public String getTaxYn() {
-		return taxYn;
-	}
-	public void setTaxYn(String taxYn) {
-		this.taxYn = taxYn;
 	}
 	public String getOrderReceiptDt() {
 		return orderReceiptDt;

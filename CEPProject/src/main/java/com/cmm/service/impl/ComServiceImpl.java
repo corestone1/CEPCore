@@ -293,10 +293,13 @@ public class ComServiceImpl implements ComService {
 			
         } catch(UnsupportedEncodingException e) {
         	e.printStackTrace();
+        	result = 0;
         } catch(MessagingException e) {
         	e.printStackTrace();
+        	result = 0;
         } catch(Exception e) {
         	e.printStackTrace();
+        	result = 0;
         }
     	
         return result;

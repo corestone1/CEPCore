@@ -57,13 +57,13 @@
 		     , PSB.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 계산서요청번호 */
 		     , PST.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일*/
 		     , PSB.BILL_AMOUNT             AS BILL_AMOUNT             /* 공급가액 */
-		     , PSB.BILL_TAX_YN             AS BILL_TAX_YN             /* TAX포함 여부 */
+		     <!-- , PSB.BILL_TAX_YN             AS BILL_TAX_YN             /* TAX포함 여부 */
 		     , CASE WHEN PSB.BILL_TAX_YN = 'Y' THEN FLOOR(PSB.BILL_AMOUNT / 11)
 		            ELSE FLOOR(PSB.BILL_AMOUNT * 0.1)
 		       END                         AS BILL_TAX                /* 세액 */
 		     , CASE WHEN PSB.BILL_TAX_YN = 'Y' THEN PSB.BILL_AMOUNT
 		            ELSE FLOOR(PSB.BILL_AMOUNT * 1.1)
-		       END                         AS BILL_TOTAL_AMOUNT       /* 합계 */
+		       END                         AS BILL_TOTAL_AMOUNT   -->     /* 합계 */
 		     , CET.EMP_NM                  AS EMP_NM                  /* 담당자 */
 		     , PSB.BILL_ISSUE_STATUS       AS BILL_ISSUE_STATUS       /* 계산서 상태 */
 		     , PSB.REG_DT                  AS REG_DT                  /* 작성일자 */
@@ -187,7 +187,7 @@
 		     , PSO.BILL_TURN_NO            AS BILL_TURN_NO            /* 계산서 회차 */
 		     , PSO.BILL_AMOUNT             AS BILL_AMOUNT             /* 발행 금액 */
 		     , PSO.BILL_AC_KEY             AS BILL_AC_KEY             /* 매출처 키 */
-		     , PSO.BILL_TAX_YN             AS BILL_TAX_YN             /* 부가세 포함여부 */
+		     <!-- , PSO.BILL_TAX_YN             AS BILL_TAX_YN  -->            /* 부가세 포함여부 */
 		     , CAT.AC_NM                   AS BILL_AC_NM              /* 매출처 명 */
 		     , PSO.BILL_AC_DIRECTOR_KEY    AS BILL_AC_DIRECTOR_KEY    /* 담당자 키 */
 		     , PSO.BILL_AC_DIRECTOR_TEL    AS BILL_AC_DIRECTOR_TEL    /* 담당자 연락처 */
@@ -236,7 +236,6 @@
 			, BILL_AC_KEY
 			, BILL_AC_DIRECTOR_KEY
 			, BILL_AC_DIRECTOR_TEL
-			, BILL_TAX_YN
 			, REMARK
 			, REG_DT
 			, REG_TM 
@@ -255,7 +254,6 @@
 			, #{acKey}
 			, #{billAcDirectorKey}
 			, #{billAcDirectorTel}
-			, #{billTaxYn}
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%k%i%s')
@@ -274,7 +272,6 @@
 			, BILL_REQUEST_DT       = #{billRequestDt}
 			, BILL_AC_DIRECTOR_KEY  = #{billAcDirectorKey}
 			, BILL_AC_DIRECTOR_TEL  = #{billAcDirectorTel}
-			, BILL_TAX_YN           = #{billTaxYn}
 			, REMARK                = #{remark}
 			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')

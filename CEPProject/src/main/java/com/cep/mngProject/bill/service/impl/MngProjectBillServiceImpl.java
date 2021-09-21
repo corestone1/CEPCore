@@ -48,7 +48,7 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 	}
 	
 	@Override
-	public int selectCollectTurn(MngProjectBillSearchVO searchVO) throws Exception
+	public Integer selectCollectTurn(MngProjectBillSearchVO searchVO) throws Exception
 	{
 		return mapper.selectCollectTurn(searchVO);
 	}

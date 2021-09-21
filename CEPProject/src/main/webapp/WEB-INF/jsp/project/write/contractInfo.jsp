@@ -259,11 +259,6 @@
 			}else if(sum != $('#sum').val().replace(/,/g, '')) {
 				alert('회차별 금액 합계와 총 계약 금액이 일치하지 않습니다.');
 			} else {
-				if($('#taxYnCheck').is(":checked") == true) {
-					 $('input[name=taxYn').val('Y');
-				 } else {
-					 $('input[name=taxYn').val('N');
-				 }
 				
 				$("#collectTurn").val($("#beforeTurn").val());
 				
@@ -435,15 +430,11 @@
 					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }" /> 
 					<input type="hidden" id="collectTurn" name="collectTurn" value="${contractVO.collectTurn }" /> 
 					<input type="hidden" name="pjStatusCd" value="PJST2000" />
-					<input type="hidden" name="taxYn" value="" />
 					<table>
 						<tr class="ftw200">
 							<td class="firstRow">
 								<input type="text" id="sum" name="ctAmount" placeholder="총 계약금액"  amountOnly class="amount"  value="${displayUtil.commaStr(contractVO.ctAmount) }" required/>&nbsp;원
 								<%-- value="<c:out value="${total eq 0 ? null : totalAmount}"/>"/> &nbsp;원 --%>
-								<label>(부가세포함 </label>
-								<input type='checkbox' class='tCheck' id='taxYnCheck' <c:if test="${contractVO.taxYn eq 'Y'}">checked="checked"</c:if>/><label for='taxYnCheck' class='cursorP veralignM'></label>
-								<label>)</label>
 							</td>
 						</tr>
 						<tr class="ftw200">
@@ -497,7 +488,6 @@
 										<input type='hidden' name='salesTurn' value='${result.salesTurn }' />
 										<%-- <input type='hidden' name='salesTurnAmount' id="sAmount${status.count }" value='${result.salesTurnAmount }' /> --%>
 										<input type='hidden' name='isNew' value='N' />
-										<%-- <input type='hidden' name='taxYn' value='${result.taxYn }' /> --%>
 										&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type="text" id="salesChargeDt${result.salesTurn }" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(result.salesChargeDt)}"/>" required/>
 									</td>
 								</tr>

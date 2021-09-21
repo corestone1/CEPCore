@@ -31,7 +31,8 @@ public enum EmailInfo {
 	, MAIL_FROM("corestone1602@gmail.com")
 	, MAIL_SEND_NAME("corestone1602")
 	, MAIL_SEND_PW("hihlljocnbncuicm")
-	, MAIL_SUBJECT("업무 협조 요청");
+	, MAIL_SUBJECT("업무 협조 요청")
+	, PAGE_URL("http://localhost:8088/");
 	
 	private String value;
 	

@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
+	<title>프로젝트 상세</title>
 
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
@@ -134,7 +134,7 @@
 		form .contents .dtl tbody {
 			overflow-y: auto;
 			overflow-x: hidden;
-			height: 547px;
+			height: auto;
 			float: left;
 		}
 		form .contents .dtl tbody tr {
@@ -584,7 +584,7 @@
 									<td>
 										<c:out value="${biddingInfo.bdProposalYn}"/>
 										<c:if test='${biddingInfo.bdProposalYn.equals("Y")}'> 
-											/ 마감시한 : <c:out value="${ displayUtil.displayDate(biddingInfo.bdProposalDueDt)}"/>&nbsp<c:out value="${ displayUtil.displayTime(biddingInfo.bdProposalDueTm)}"/>
+											/ 마감기한 : <c:out value="${ displayUtil.displayDate(biddingInfo.bdProposalDueDt)}"/>&nbsp<c:out value="${ displayUtil.displayTime(biddingInfo.bdProposalDueTm)}"/>
 										</c:if>
 									</td>
 									
@@ -631,7 +631,6 @@
 									<td>입찰서류</td>	
 									<td>
 										<ul>
-											
 											<c:set var="BDFL1110_Cnt" value="0" />
 											<c:set var="BDFL1120_Cnt" value="0" />
 											<c:set var="BDFL1130_Cnt" value="0" />
@@ -639,7 +638,6 @@
 											<c:set var="BDFL1150_Cnt" value="0" />
 											<c:set var="BDFL1160_Cnt" value="0" />
 											<c:set var="BDFL1199_Cnt" value="0" />
-											
 											<c:forEach var="biddingFile" items="${biddingFileList}" varStatus="status">
 												
 												<c:choose>
@@ -693,107 +691,105 @@
 												</c:choose>
 												
 											</c:forEach>
-											
-											
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind1" name=""  value="" <c:out value="${BDFL1110_Chd}"/> />
-														<label for="bdKind1" class="cursorP" ></label>
-														<span class="cbspan">사업자등록증</span>
-													</div>
-													<div>
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1110_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-													</div>
-												</li>
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind2" name=""  value="" <c:out value="${BDFL1120_Chd}"/> />
-														<label for="bdKind2" class="cursorP" ></label>
-														<span class="cbspan">법인등기부등본</span>
-													</div>
-													<div>
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1120_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-													</div>
-												</li>
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind3" name=""  value="" <c:out value="${BDFL1130_Chd}"/> />
-														<label for="bdKind3" class="cursorP" ></label>
-														<span class="cbspan">법인인감증명서</span>
-													</div>
-													<div>
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1130_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-													</div>
-												</li>
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind4" name=""  value="" <c:out value="${BDFL1140_Chd}"/> />
-														<label for="bdKind4" class="cursorP" ></label>
-														<span class="cbspan">사용인감계</span>
-													</div>
-													<div>
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1140_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-													</div>
-												</li>
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind5" name=""  value="" <c:out value="${BDFL1150_Chd}"/> />
-														<label for="bdKind5" class="cursorP" ></label>
-														<span class="cbspan">위임장</span>
-													</div>
-													<div>
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1150_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-													</div>
-												</li>
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind6" name=""  value="" <c:out value="${BDFL1160_Chd}"/> />
-														<label for="bdKind6" class="cursorP" ></label>
-														<span class="cbspan">대리인 명함</span>
-													</div>
-													<div>
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1160_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-													</div>
-												</li>
-												<li>
-													<div class="floatL">
-														<input class="tCheck" type="checkbox" id ="bdKind7" name=""  value="" <c:out value="${BDFL1199_Chd}"/> />
-														<label for="bdKind7" class="cursorP" ></label>
-														<span class="cbspan">기타 서류</span>
-													</div>
-													<div>
-														<input type="text" value="${BDFL1199_Nm}" />
-														<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
-														<label id="numberUpDown">
-															<c:out value="${BDFL1199_Cnt}" />
-														</label>
-														<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>" /></a>
-													</div>
-												</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind1" name=""  value="" <c:out value="${BDFL1110_Chd}"/> />
+													<label for="bdKind1" class="cursorP" ></label>
+													<span class="cbspan">사업자등록증</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1110_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
+												</div>
+											</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind2" name=""  value="" <c:out value="${BDFL1120_Chd}"/> />
+													<label for="bdKind2" class="cursorP" ></label>
+													<span class="cbspan">법인등기부등본</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1120_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
+												</div>
+											</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind3" name=""  value="" <c:out value="${BDFL1130_Chd}"/> />
+													<label for="bdKind3" class="cursorP" ></label>
+													<span class="cbspan">법인인감증명서</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1130_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
+												</div>
+											</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind4" name=""  value="" <c:out value="${BDFL1140_Chd}"/> />
+													<label for="bdKind4" class="cursorP" ></label>
+													<span class="cbspan">사용인감계</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1140_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
+												</div>
+											</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind5" name=""  value="" <c:out value="${BDFL1150_Chd}"/> />
+													<label for="bdKind5" class="cursorP" ></label>
+													<span class="cbspan">위임장</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1150_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
+												</div>
+											</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind6" name=""  value="" <c:out value="${BDFL1160_Chd}"/> />
+													<label for="bdKind6" class="cursorP" ></label>
+													<span class="cbspan">대리인 명함</span>
+												</div>
+												<div>
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1160_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
+												</div>
+											</li>
+											<li>
+												<div class="floatL">
+													<input class="tCheck" type="checkbox" id ="bdKind7" name=""  value="" <c:out value="${BDFL1199_Chd}"/> />
+													<label for="bdKind7" class="cursorP" ></label>
+													<span class="cbspan">기타 서류</span>
+												</div>
+												<div>
+													<input type="text" value="${BDFL1199_Nm}" />
+													<a href="#"  class="decreaseQuantity"><img src="<c:url value='/images/ic_minus.png'/>"/></a>
+													<label id="numberUpDown">
+														<c:out value="${BDFL1199_Cnt}" />
+													</label>
+													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>" /></a>
+												</div>
+											</li>
 										</ul>
 									</td>
 								</tr>
@@ -917,11 +913,11 @@
 	    
 	    if (uploadableFileNum != 0) {
 	        fn_check_file('Y');
-	        var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
-	        multi_selector.addElement(document.getElementById('fileUploader'));   
+	        /* var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
+	        multi_selector.addElement(document.getElementById('fileUploader')); */   
 	    } else{
 	    	fn_check_file('N');
-	    }
+	    } 
 	             
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">

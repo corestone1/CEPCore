@@ -196,7 +196,6 @@
 					<th>계산서 거래처 담당자</th>
 					<th>계산서 금액</th>
 					<th>지급 금액</th>
-					<th>부가세 여부</th>
 					<th>지급완료</th>
 				</tr>
 				<c:forEach var="result" items="${prePaymentList }" varStatus="status">
@@ -207,7 +206,6 @@
 						<td><span>${result.billAcDirectorNm }</span></td>
 						<td><span>${displayUtil.commaStr(result.billAmount) }</span></td>
 						<td><span>${displayUtil.commaStr(result.billTotalAmount) }</span></td>
-						<td><span>${result.billTaxYn }</span></td>
 						<td>
 							<c:choose>
 								<c:when test="${empty result.salesCollectFinishDt }">

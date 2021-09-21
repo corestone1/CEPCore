@@ -136,7 +136,7 @@
 		form .contents .dtl tbody {
 			overflow-y: auto;
 			overflow-x: hidden;
-			height: 547px;
+			height: auto;
 			float: left;
 		}
 		form .contents .dtl tbody tr {
@@ -560,11 +560,11 @@
 	    
 	    if (uploadableFileNum != 0) {
 	        fn_check_file('Y');
-	        var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
-	        multi_selector.addElement(document.getElementById('fileUploader'));   
+	        /*var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
+	        multi_selector.addElement(document.getElementById('fileUploader'));   */
 	    } else{
 	    	fn_check_file('N');
-	    }
+	    } 
 	             
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">

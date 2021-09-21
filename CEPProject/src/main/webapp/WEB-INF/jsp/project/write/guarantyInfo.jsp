@@ -134,6 +134,29 @@
 		.popContainer table {
 			width: 100%;
 		}
+		#altBox {
+			position: absolute;
+		    bottom: 54px;
+		    width: 232px;
+		    font-size: 14px;
+		    font-weight: 100;
+		    padding: 4px;
+		    left: 311px;
+		    color: #fff;
+		    background-image: linear-gradient(96deg,#0c93ed,#6b87e7);
+		}
+		#altBox:after {
+			border-width: 9px 7px;
+		    left: 50%;
+		    margin-left: 0px;
+		    border-color: #588AE8 transparent transparent transparent;
+		    bottom: -18px;
+		    content: ' ';
+		    position: absolute;
+		    width: 0;
+		    height: 0;
+		    border-style: solid;
+		}
 	</style>
 	<script>
 		/* function check_click(num1, num2) {
@@ -184,18 +207,14 @@
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
 			var objArry = null;
-				try { 
-					if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) { 
-						var arr = this.serializeArray(); 
-						if(arr){ 
-							obj = {};
-							objArry = new Array();
-							jQuery.each(arr, function() {
-								
-							if(this.name=="ctGuarantyAmount" || this.name=="dfGuarantyAmount" || this.name=="ppGuarantyAmount") {
-								//숫자에서 컴마를 제거한다.
-								obj[this.name] = removeCommas(this.value); 
-							} else if(this.name=="salesBillFcDt" || this.name=="salesCollectFcDt" || this.name=="ctGuarantyStartDt" || this.name=="ctGuarantyEndDt"
+			try { 
+				if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) { 
+					var arr = this.serializeArray(); 
+					if(arr){ 
+						obj = {};
+						objArry = new Array();
+						$.each(arr, function() {
+							if(this.name=="salesBillFcDt" || this.name=="salesCollectFcDt" || this.name=="ctGuarantyStartDt" || this.name=="ctGuarantyEndDt"
 								|| this.name=="dfGuarantyStartDt" || this.name=="dfGuarantyEndDt" || this.name=="ppGuarantyStartDt" || this.name=="ppGuarantyEndDt"
 								|| this.name=="ctGbPublishDt" || this.name=="dfGbPublishDt" || this.name=="ppGbPublishDt" ) {
 								//날짜에서 -를 제거한다.
@@ -203,20 +222,20 @@
 							} else {
 								obj[this.name] = this.value; 
 							}
-
+	
 							/*
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('dfGuarantyAmount' == this.name){
-								
+							if('dfGuarantyYN' == this.name){
 								objArry.push(obj);
 								obj = {};
 							}
-						}); 	              
+						}); 	        
+
 					} 
 				} 
-			}catch(e) { 
+			} catch(e) { 
 				alert(e.message); 
 			}finally {} 
 			return objArry; 
@@ -281,36 +300,49 @@
 					
 				},
 			    success:function(response){	
-			    	if(response!= null && response.successYN == 'Y') {
+			    	var mailList = "";
+			    	if(response.mailList == "undefined" || response.mailList == null || response.mailList == "") {
+			    		mailList = "";
+			    	} else {
+			    		mailList = "\n메일 수신인: " + response.mailList.join("\n");
+			    	}
+			    	 
+			    	if(response!= null && response.successYN == 'Y' && response.mailSuccessYN == 'Y') {
 			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
-				    		alert("프로젝트 계약 정보가 등록되었습니다.");
+				    		alert("프로젝트 계약 정보가 저장되었습니다." + mailList);
 				    		countSave++;
 			    		} else {
-			    			alert("프로젝트 계약 정보가 수정되었습니다.");
+			    			alert("프로젝트 계약 정보가 수정되었습니다." + mailList);
 			    		}
-			    		
-			    		var url='/project/write/guarantyInfo.do';
-		    			var dialogId = 'program_layer';
-		    			var varParam = {
-							"pjKey":$("#pjKey").val()
-		    			}
-		    			var button = new Array;
-		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    	} else if(response!= null && response.successYN == 'Y' && response.mailSuccessYN == 'N') {
+			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
+			    			alert("메일 전송이 실패했습니다.(프로젝트 계약 정보 저장은 완료)");
+			    		} else {
+			    			alert("메일 전송이 실패했습니다.(프로젝트 계약 정보 수정은 완료)");
+			    		}
 			    	} else {
 			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
-			    			alert("프로젝트 계약 정보 등록이 실패하였습니다.");
+			    			alert("프로젝트 계약 정보 저장이 실패하였습니다.");
 			    		} else {
 			    			alert("프로젝트 계약 정보 수정이 실패하였습니다.");
 			    		}
 			    	}
+			    	
+			    	var url='/project/write/guarantyInfo.do';
+	    			var dialogId = 'program_layer';
+	    			var varParam = {
+						"pjKey":$("#pjKey").val()
+	    			}
+	    			var button = new Array;
+	    			button = [];
+	    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			    },
 				error: function(request, status, error) {
 					if(request.status != '0') {
 						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 					}
 				} 
-			});    
+			});     
 		}
 		
 		function fn_next(link) {
@@ -384,6 +416,14 @@
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
 			} 
+			$("#altMail").mouseover(function() {
+				var html = '<div id="altBox">'
+							+ '관리자에게 알림 메일이 전송됩니다.</div>'
+				$("#altMail").after(html);
+			});
+			$("#altMail").mouseout(function() {
+				$("#altBox").remove();
+			});
 		});
 		
 	</script>
@@ -450,12 +490,12 @@
 									 <tr class='ftw200'>
 										 <td>
 										 	 <input type="hidden" name="ppGbKey" id="ppGbKey${status.count }" value="" />
-											 <input type="checkbox" class="tCheck" name="ppGuarantyCheck" id="check${ temp + 3}-1'"<%-- onclick='check_click(${ temp + 3},1)'  --%>/>
+											 <input type="checkbox" class="tCheck" name="ppGuarantyCheck" id="check${ temp + 3}-1"<%-- onclick='check_click(${ temp + 3},1)'  --%>/>
 											 <label for='check${ temp + 3}-1' class='cursorP'></label>
 											 <input type='hidden' name='ppGuarantyYN' value='N' />
 										 </td>
-										 <td>선급금 보증 증권 정보</td>
-										<%--  <td id='step${ temp + 3}-1' style='visibility:hidden'>
+											 <td>선급금 보증 증권 정보</td>
+											<%--  <td id='step${ temp + 3}-1' style='visibility:hidden'>
 											 <input type='text' id='from${ temp + 3}' placeholder='from' class='calendar' name='ppGuarantyStartDt'/> ~ 
 											 <input type='text' id='to${ temp + 3}' placeholder='to' class='calendar' name='ppGuarantyEndDt'/>
 										 </td>
@@ -676,7 +716,7 @@
 						<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 					</div>
 					<div class="floatL btnSave">
-						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+						<button type="button" id="altMail" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatR">
 						<button type="button" onclick="javascript:fn_next('orderInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>

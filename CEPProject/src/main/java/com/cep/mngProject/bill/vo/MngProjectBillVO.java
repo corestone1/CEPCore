@@ -28,7 +28,6 @@ public class MngProjectBillVO implements Serializable {
 	private String billIssueStatus;
 	private String billMappingYn;
 	private String billRequestDt;
-	private String billTaxYn;
 	private String remark;
 	private String regDt;
 	private String regTm;
@@ -90,18 +89,6 @@ public class MngProjectBillVO implements Serializable {
 		this.billCallKey = billCallKey;
 	}
 	
-	/**
-	 * @return the billTaxYn
-	 */
-	public String getBillTaxYn() {
-		return billTaxYn;
-	}
-	/**
-	 * @param billTaxYn the billTaxYn to set
-	 */
-	public void setBillTaxYn(String billTaxYn) {
-		this.billTaxYn = billTaxYn;
-	}
 	/**
 	 * @return the acKey
 	 */

@@ -13,7 +13,6 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	private int ctAmount;
 	private String ctDt;
 	private String ctPayTerms;
-	private String taxYn;
 	private int collectTurn;
 	private List<ProjectContractVO> projectContractVOList;
 	
@@ -40,12 +39,6 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	}
 	public void setCtPayTerms(String ctPayTerms) {
 		this.ctPayTerms = ctPayTerms;
-	}
-	public String getTaxYn() {
-		return taxYn;
-	}
-	public void setTaxYn(String taxYn) {
-		this.taxYn = taxYn;
 	}
 	public int getCollectTurn() {
 		return collectTurn;

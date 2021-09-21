@@ -7,12 +7,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/popup.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/datepicker.min.css'/>"/>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
+	<script src="<c:url value='/js/popup.js'/>"></script>
 	<style>
 		body {
 			width: 100%;
@@ -20,13 +22,6 @@
 		}
 		.sfcnt {
 			height: 91px;
-		}
-		.btnWrap {
-			position: absolute;
-			bottom: 31px;
-		}
-		.btnWrap.rt {
-			right: 0px;
 		}
 		.stitle {
 	    	margin-bottom: 0;
@@ -62,7 +57,7 @@
 		table {
 			border-collapse: collapse;
 			font-size: 14px;
-			border-bottom: 2px solid #c4c4c4;
+			/* border-bottom: 2px solid #c4c4c4; */
 			table-layout: fixed;
 		} 
 		table tr td {
@@ -79,10 +74,14 @@
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
-			height: 408px;
+			/* height: 358px; */
+			height: auto;
 		}
 		.dtl tbody tr {
 			border: 1px solid #ebe9ee;
+		}
+		.dtl tbody tr:nth-child(5) {
+			border-bottom: 1px solid transparent;
 		}
 		.dtl td {
 			color: #000;
@@ -201,6 +200,24 @@
 			color: red;
 			vertical-align: middle;
 		}
+		.rqPmInfo {
+		    width: 115px;
+		    height: 30px;
+		    background-color: #D6EAEA;
+		    color: #2C8A91;
+		    font-weight: bold;
+		    border: 1px solid #C2DEE1;
+		    margin-left: 8px;
+		}
+		.paymentDetail {
+			float: right;
+			margin-top: 13px;
+			cursor: pointer;
+		}
+		.pmWrap {
+			background: #fff;
+			border-bottom: 2px solid #c4c4c4;
+		}
 	</style>
 	<script>
 		var payNoList = new Array();
@@ -236,6 +253,23 @@
 					 $(this).val('N');
 				 } 
 			});
+			
+			$(".paymentDetail").click(function() {
+				if($(this).hasClass("down")) {
+					$("."+$(this).attr("id")).removeClass("dpNone");
+			    	$(this).children().eq(0).remove();
+			    	$(this).append("<img src='/images/arrow_up.png' />");
+			    	$(this).removeClass("down");
+			    	$(this).addClass("up");
+				} else {
+					$("."+$(this).attr("id")).addClass("dpNone");
+			    	$(this).children().eq(0).remove();
+			    	$(this).append("<img src='/images/arrow_down.png' />");
+			    	$(this).removeClass("up");
+			    	$(this).addClass("down");
+				}
+		    	
+		    });
 			
 			 /* var turnNoList = new Array();
 			
@@ -339,32 +373,32 @@
 			
 		});
 		
-		function fn_chkVali(kind) {
-			if ($("#reqForm")[0].checkValidity()){
-	            if ($("#reqForm")[0].checkValidity()){
+		function fn_chkVali(kind, id) {
+			if ($("#"+id+"Form")[0].checkValidity()){
+	            if ($("#"+id+"Form")[0].checkValidity()){
 	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_save(kind);
+	               fn_save(kind, id);
 	            } else {
-	            	$("#reqForm")[0].reportValidity();   
+	            	$("#"+id+"Form")[0].reportValidity();   
 	            }            
 	         }  else {
 	             //Validate Form
-	              $("#reqForm")[0].reportValidity();   
+	              $("#"+id+"Form")[0].reportValidity();   
 	         }
 		}
 		
-		function fn_save(kind) {
+		function fn_save(kind, id) {
 			
 			if(kind == "req") {
-				$("#paymentStatusCd").val("PYST2000");
+				$("#paymentStatusCd"+id).val("PYST2000");
 			} else if(kind == "mod") {
-				$("#paymentStatusCd").val("");
+				$("#paymentStatusCd"+id).val("");
 			} else if(kind == "check") {
-				$("#paymentStatusCd").val("PYST3000");
+				$("#paymentStatusCd"+id).val("PYST3000");
 			}
 			
 			var object = {};
-			var formData = $("#reqForm").serializeArray();
+			var formData = $("#"+id+"Form").serializeArray();
 			
 			for (var i = 0; i<formData.length; i++){
 			    if("paymentCallDt" == formData[i]['name']) {
@@ -396,13 +430,12 @@
 			}
 			
 			if(Number(removeCommas($("#callAmount").val())) > Number(removeCommas($("#buyAmount", parent.document).val()))) {
-				alert("회차 금액이 전체 매입금보다 큽니다.");	
+				alert("요청 금액이 전체 매입금보다 큽니다.");	
 				$("#callAmount").focus();
-			} else if(sum + Number(removeCommas($("#callAmount").val())) > Number(removeCommas($("#buyAmount", parent.document).val()))) {
+			} /* else if(sum + Number(removeCommas($("#callAmount").val())) > Number(removeCommas($("#buyAmount", parent.document).val()))) {
 				alert("회차별 금액 합계가 전체 매입금보다 큽니다.");	
 				$("#callAmount").focus();
-			} else {
-				console.log(sendData);
+			}  */else {
 				$.ajax({
 					url:"/project/request/update/paymentInfo.do",
 				    dataType: 'json', 
@@ -419,15 +452,15 @@
 				    }, 
 				    success:function(response){	
 				    	if(response!= null && response.successYN == 'Y') {
-				    		if($("#paymentStatusCd").val() == "PYST2000" && kind == "req") {
-				    			alert($("#paymentTurn").val() + '회차 지급이 요청되었습니다.');
+				    		if($("#paymentStatusCd"+id).val() == "PYST2000" && kind == "req") {
+				    			alert('지급이 요청되었습니다.');
 				    		} else {
 				    			alert('지급 정보가 수정되었습니다.');
 				    		}
 				    		location.reload();
 				    	} else {
-				    		if($("#paymentStatusCd").val() == "PYST2000") {
-				    			alert($("#paymentTurn").val() + '회차 지급이 요청이 실패하였습니다.');
+				    		if($("#paymentStatusCd"+id).val() == "PYST2000") {
+				    			alert('지급 요청이 실패하였습니다.');
 				    		} else {
 				    			alert('지급 정보 수정이 실패하였습니다.');
 				    		}
@@ -438,7 +471,7 @@
 							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 						}
 					} 
-				});    
+				});     
 			}
 		}
 		
@@ -455,6 +488,33 @@
 				$("#"+obj+" img").css("filter", "none");
 			}
 		}
+		
+		function fn_requestPmInfo() {
+			var url = '/project/request/purchase/writePaymentInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pjKey" : $('#pjKey').val(),
+				"orderKey":$('#orderKey').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px');  
+		}
+		
+		function fn_mappingBill(paymentKey) {
+			window.parent.location.href = "/mngProject/mapping/list.do?paymentKey="+paymentKey;
+		}
+		
+		function fn_addView(billKey) {
+			var url = '/project/request/purchase/viewBillInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"billNo":billKey
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px'); 
+		}
 	</script>
 </head>
 <body>
@@ -466,92 +526,122 @@
 		</ul>
 	</div>
 	<div class="floatC">
-		<form id="reqForm" name="reqForm" method="post">
-			<input type="hidden" id="paymentBuyFkKey" name="paymentBuyFkKey" value="<c:out value="${purchaseVO.buyKey}"/>" />
-			<input type="hidden" name="paymentAcFkKey" value="<c:out value="${orderVO.orderAcKey}"/>" />
-			<input type="hidden" name="paymentKey" id="paymentKey" value="<c:out value="${paymentList[0].paymentKey}"/>" />
-			<input type="hidden" name="paymentStatusCd" id="paymentStatusCd" value="<c:out value="${paymentList[0].paymentStatusCd}"/>" />
-			<input type="hidden" id="donePaymentAmount" name="donePaymentAmount" value="" />
-			<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="" />
-			<input type="hidden" name="pjKey" value="${mainKey }" />
-			<input type="hidden" name="pjNm" value="${resultList[0].pjNm }" />
-			<input type="hidden" name="pjSaleEmpKey" value="${resultList[0].pjSaleEmpKey }" />
-			<input type="hidden" name="link" id="link" value="" />
-			<table class="dtl" id="info0">
-				<c:choose>
-					<c:when test="${!empty paymentList }">
-						<tr>
-							<td>회차</td>
-							<td>
-								<select name="paymentTurn" id="paymentTurn" style="width:80px;">
-									<c:forEach var="result" items="${paymentList }" varStatus="status">
-										<option value="${result.paymentTurn }"><c:out value="${result.paymentTurn}" />회차</option>
-									</c:forEach>
-								</select> 
-							</td>
-						</tr>
-						<tr>
-							<td><label>*</label>금액</td>
-							<td>
-								<input type="text" name="callAmount" id="callAmount" value="<c:out value="${displayUtil.commaStr(paymentList[0].callAmount)}"/>" amountOnly required/>
-								<c:forEach var="result" items="${paymentList }" varStatus="status">
-									<input type="hidden" id="turnAmount${status.count }" value="${result.callAmount }" />
-								</c:forEach>
-								<input type='checkbox' class='tCheck' id='callAmountTaxYn' name="callAmountTaxYn" value='<c:choose><c:when test="${paymentList[0].callAmountTaxYn== 'Y'}">Y</c:when><c:otherwise>N</c:otherwise></c:choose>' <c:if test="${paymentList[0].callAmountTaxYn== 'Y'}">checked</c:if>/>
-								<label for='callAmountTaxYn' class='cursorP tclabel'></label>
-								<span class="cbspan">부가세 포함</span>
-							</td>
-						</tr>
-						<tr>
-							<td><label>*</label>요청지급일</td>	
-							<td>
-								<input type="text"  class="calendar" name="paymentCallDt" id="paymentCallDt" value="<c:out value="${displayUtil.displayDate(paymentList[0].paymentCallDt)}"/>" required/>
-							</td>
-						</tr>
-						<tr>
-							<td>계산서정보</td>
-							<td>
-								<button type="button"><img src="<c:url value='/images/btn_view.png'/>" /></button>
-								<input type="hidden" name="billFkKey" value="${result.billFkKey }" />
-							</td>
-						</tr>
-						<tr>
-							<td>지급계좌</td>
-							<td>
-								<select name="paymentAccSeqFkKey" id="paymentAccSeqFkKey">
-									<c:forEach var="result" items="${depositList }" varStatus="status">
-										<option <c:if test="${paymentList[0].paymentAccSeqFkKey == result.acAdSeq }">selected</c:if> value="${result.acAdSeq }"><c:out value="${result.acBkno}" /> / <c:out value="${result.acBankNm}" /> / <c:out value="${result.acAcholder}" /></option>
-									</c:forEach>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>요청사항</td>
-							<td><textarea name="remark" id="remark"><c:out value="${paymentList[0].remark}"/></textarea></td>
-						</tr>
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td style="width: 956px;">요청할 회차 정보가 없습니다.</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
-			</table>
-		</form>
+		<input type="hidden" id="pjKey" name="pjKey" value="${mainKey }" />
+		<input type="hidden" id="orderKey" name="orderKey" value="${orderKey}" />
+
+
+			
+		<c:choose>
+			<c:when test="${!empty paymentList }">
+				<%-- <tr>
+					<td>회차</td>
+					<td>
+						<select name="paymentTurn" id="paymentTurn" style="width:80px;">
+							<c:forEach var="result" items="${paymentList }" varStatus="status">
+								<option value="${result.paymentTurn }"><c:out value="${result.paymentTurn}" />회차</option>
+							</c:forEach>
+						</select> 
+					</td>
+				</tr> --%>
+				<c:forEach var="result" items="${paymentList }" varStatus="status">
+					<form id="${result.paymentKey }Form" name="reqForm" method="post">
+						<input type="hidden" id="paymentBuyFkKey" name="paymentBuyFkKey" value="<c:out value="${purchaseVO.buyKey}"/>" />
+						<input type="hidden" name="paymentAcFkKey" value="<c:out value="${orderVO.orderAcKey}"/>" />
+						<input type="hidden" name="paymentKey" id="paymentKey" value="<c:out value="${result.paymentKey}"/>" />
+						<input type="hidden" name="paymentStatusCd" id="paymentStatusCd${result.paymentKey }" value="<c:out value="${result.paymentStatusCd}"/>" />
+						<input type="hidden" id="donePaymentAmount" name="donePaymentAmount" value="" />
+						<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="" />
+						<input type="hidden" name="pjNm" value="${resultList[0].pjNm }" />
+						<input type="hidden" name="pjSaleEmpKey" value="${resultList[0].pjSaleEmpKey }" />
+						<input type="hidden" name="link" id="link" value="" />
+						<div class="pmWrap">
+							<table class="dtl" id="info0">
+								<tr>
+									<td><label>*</label>금액</td>
+									<td>
+										<input type="text" name="callAmount" id="callAmount" value="<c:out value="${displayUtil.commaStr(result.callAmount)}"/>" amountOnly required/>
+										<%-- <c:forEach var="result" items="${paymentList }" varStatus="status"> --%>
+										<input type="hidden" id="turnAmount${status.count }" value="${result.callAmount }" />
+										<%-- </c:forEach> --%>
+										<span class="paymentDetail down" id="${result.paymentKey }"><img src="/images/arrow_down.png" /></span>
+									</td>
+								</tr>
+								<tr class="dpNone ${result.paymentKey }">
+									<td><label>*</label>요청지급일</td>	
+									<td>
+										<input type="text"  class="calendar" name="paymentCallDt" value="<c:out value="${displayUtil.displayDate(result.paymentCallDt)}"/>" required/>
+									</td>
+								</tr>
+								<tr class="dpNone ${result.paymentKey }">
+									<td>계산서정보</td>
+									<td>
+										<c:choose>
+											<c:when test="${result.billFkKey eq null }">
+												<button type="button" onclick="fn_mappingBill('${result.paymentKey}');"><img src="<c:url value='/images/btn_mapping_bill.png'/>" /></button>
+											</c:when>
+											<c:otherwise>
+												<button type="button" onclick="fn_addView('${result.billFkKey}');"><img src="<c:url value='/images/btn_view.png'/>" /></button>
+											</c:otherwise>
+										</c:choose>
+										<input type="hidden" name="billFkKey" value="${result.billFkKey }" />
+									</td>
+								</tr>
+								<tr class="dpNone ${result.paymentKey }">
+									<td>지급계좌</td>
+									<td>
+										<select name="paymentAccSeqFkKey" id="paymentAccSeqFkKey">
+											<c:forEach var="dresult" items="${depositList }" varStatus="status">
+												<option <c:if test="${result.paymentAccSeqFkKey == dresult.acAdSeq }">selected</c:if> value="${dresult.acAdSeq }"><c:out value="${dresult.acBkno}" /> / <c:out value="${dresult.acBankNm}" /> / <c:out value="${dresult.acAcholder}" /></option>
+											</c:forEach>
+										</select>
+									</td>
+								</tr>
+								<tr class="dpNone ${result.paymentKey }">
+									<td>요청사항</td>
+									<td><textarea name="remark" id="remark"><c:out value="${result.remark}"/></textarea></td>
+								</tr>
+								<tr class="dpNone ${result.paymentKey }">
+									<td></td>
+									<td>
+										<div class="btnWrap">
+											<div class="floatR">
+												<c:choose>
+													<c:when test="${!empty paymentList and result.billFkKey ne null}">
+														<button type="button" id="req" value="매입금 지급 요청" onclick="fn_chkVali('req', '${result.paymentKey}');" style="<c:if test="${result.paymentStatusCd == 'PYST2000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST2000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST2000' }">cursorP</c:if>" src="<c:url value='/images/btn_req_purchase.png'/>" style="<c:if test="${result.paymentStatusCd == 'PYST2000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+														<button type="button" id="mod" value="수정" onclick="fn_chkVali('mod', '${result.paymentKey}');" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_mod.png'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+														<button type="button" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check', '${result.paymentKey}');"style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+													</c:when>
+													<c:otherwise>
+														
+													</c:otherwise>
+												</c:choose>
+											</div>
+											<div class="floatC"></div> 
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</form>
+				</c:forEach>
+				<div><button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();" style="margin-left:0; margin-top: 20px;">지급 정보 추가</button></div>
+			</c:when>
+			<c:otherwise>
+				<table class="dtl" id="info0">
+					<tr>
+						<td style="width: 956px;">
+							<c:if test="${empty prePaymentList}">
+								요청할 지급 정보가 없습니다. 
+								<button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();">지급 정보 등록</button>
+							</c:if>
+							<c:if test="${!empty prePaymentList}">
+								기 지급 정보를 확인해 주세요.
+							</c:if>
+						</td>
+					</tr>
+				</table>
+			</c:otherwise>
+		</c:choose>
 	</div>
-	<div class="btnWrap rt">
-		<div class="floatR">
-			<c:choose>
-				<c:when test="${!empty paymentList }">
-					<button type="button" id="req" value="매입금 지급 요청" onclick="fn_chkVali('req');" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST2000' }">cursorP</c:if>" src="<c:url value='/images/btn_req_purchase.png'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST2000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
-					<button type="button" id="mod" value="수정" onclick="fn_chkVali('mod');" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_mod.png'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
-					<button type="button" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check');"style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${paymentList[0].paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${paymentList[0].paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
-				</c:when>
-				<c:otherwise>
-					
-				</c:otherwise>
-			</c:choose>
-		</div>
-	</div> 
 </body>
 </html>

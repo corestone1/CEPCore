@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cep.maintenance.amount.vo.MtPurchaseVO;
+import com.cep.maintenance.amount.vo.MtSalesPlanVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 
 /**
@@ -111,4 +112,59 @@ public interface MtAmountService {
 	  * @throws Exception
 	 */
 	int selectMtDonePaymentAmount(ProjectPurchaseVO purchaseVO) throws Exception;
+	
+	
+	void requestMtSalesPlanList(MtSalesPlanVO mtSalesPlanVO) throws Exception;
+	/**
+	 * 유지보수 매출 수금계획 데이타 입력
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param insertParam
+	 * @throws Exception
+	 * @cdate 2021. 8. 24. 오후 8:21:50
+	 * @author aranghoo
+	 */
+	void writeMtSalesPlanList(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	 * 유지보수 매출 수금계획 테이타 수정
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param updateParam
+	 * @throws Exception
+	 * @cdate 2021. 8. 24. 오후 8:22:43
+	 * @author aranghoo
+	 */
+	void updateMtSalesPlanList(Map<String, Object> updateParam)throws Exception;
+	
+	/**
+	 * 유지보수 매출 수금계획 데이타를 조회한다.
+	 * salesCtFkKey : 유지보수 키를 이용하여 해당 유지보수에 대한 데이타 전체조회.
+	 * salesKey : salesKey에 해당하는 한건만 조회.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param salesPlanVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 8. 24. 오후 8:31:54
+	 * @author aranghoo
+	 */
+	List<MtSalesPlanVO> selectMtSalesPlanList(MtSalesPlanVO salesPlanVO) throws Exception;  
+	
+	/**
+	 * 유지보수 매출 수금계획데이타를 삭제한다.
+	 * salesCtFkKey : 유지보수 키를 이용하여 해당 유지보수에 대한 데이타 전체삭제.
+	 * salesKey : salesKey에 해당하는 한건만 삭제.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param salesPlanVO
+	 * @throws Exception
+	 * @cdate 2021. 8. 24. 오후 8:38:07
+	 * @author aranghoo
+	 */
+	void deleteMtSalesPlan(MtSalesPlanVO salesPlanVO) throws Exception;  
 }

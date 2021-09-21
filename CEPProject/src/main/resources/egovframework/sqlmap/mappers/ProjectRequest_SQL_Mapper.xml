@@ -123,7 +123,6 @@
 			, BUY_AMOUNT AS buyAmount
 			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
 			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
-			, BUY_TURN AS buyTurn
 		FROM PJ_PURCHASE_TB
 		WHERE BUY_ORDER_FK_KEY = #{orderKey}
 			AND DELETE_YN='N'
@@ -158,20 +157,15 @@
 	</select>
 	
 	<update id="updatePurchaseInfo" parameterType="projectPurchaseVO">
-		UPDATE PJ_PURCHASE_TB 
+		UPDATE PJ_PURCHASE_TB
 		SET
 			<if test="buyAmount != null and buyAmount != '' and buyAmount != 0"> 
 				BUY_AMOUNT = #{buyAmount},
 			</if>
-			<if test="donePaymentAmount != null and donePaymentAmount != '' and donePaymentAmount != 0">
+			<if test="donePaymentAmount != null and donePaymentAmount != '' ">
 				DONE_PAYMENT_AMOUNT =#{donePaymentAmount},
 			</if>
-			<if test="yetPaymentAmount != null and yetPaymentAmount != '' and yetPaymentAmount != 0"> 
-				YET_PAYMENT_AMOUNT=#{yetPaymentAmount},
-			</if>
-			<if test="buyTurn != null and buyTurn != '' and buyTurn != 0">
-				BUY_TURN =#{buyTurn},
-			</if>
+			YET_PAYMENT_AMOUNT=#{yetPaymentAmount},
 			MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY=#{modEmpKey}
@@ -230,14 +224,12 @@
 	</select>
 	
 	<insert id="insertPaymentInfo" parameterType="projectPaymentVO">
-		INSERT INTO CMM_PAYMENT_TB (
+		INSERT INTO PJ_PAYMENT_TB (
 			PAYMENT_KEY
 			, PAYMENT_BUY_FK_KEY
 			, PAYMENT_STATUS_CD
-			, PAYMENT_TURN
 			, PAYMENT_CALL_DT
 			, CALL_AMOUNT
-			, CALL_AMOUNT_TAX_YN
 			, PAYMENT_AC_FK_KEY
 			, PAYMENT_ACC_SEQ_FK_KEY
 			, REMARK
@@ -248,11 +240,9 @@
 		) VALUES (
 			#{paymentKey}
 			, #{paymentBuyFkKey}
-			, #{paymentStatusCd}
-			, #{paymentTurn}
+			, 'PYST1000'
 			, #{paymentCallDt}
 			, #{callAmount}
-			, #{callAmountTaxYn}
 			, #{paymentAcFkKey}
 			, #{paymentAccSeqFkKey}
 			, #{remark}
@@ -298,9 +288,10 @@
 		SELECT 
 			BL.BILL_NO
 			, BL.BILL_ISSUE_DT 
-			<!-- , CONCAT((SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BO.BILL_AC_DIRECTOR_KEY ), ' / ' , (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BO.BILL_AC_DIRECTOR_KEY)) AS BILL_AC_DIRECTOR_KEY --> 
+			<!-- , CONCAT((SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BO.BILL_AC_DIRECTOR_KEY ), ' / ' , (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = BO.BILL_AC_DIRECTOR_KEY)) AS BILL_AC_DIRECTOR_KEY  --> 
 			, BL.BILL_AMOUNT 
 			, BO.BILL_TURN_NO
+			, BO.BILL_ISSUE_STATUS
 			, PM.CALL_AMOUNT 
 			, PM.PAYMENT_KEY
 			, PM.CALL_AMOUNT_TAX_YN
@@ -313,10 +304,32 @@
 			AND PM.PAYMENT_BUY_FK_KEY = BL.BILL_CT_FK_KEY
 			AND PM.BILL_FK_KEY = BL.BILL_NO
 			AND BL.BILL_NO = BO.BILL_NO
-			AND BO.BILL_ISSUE_STATUS = 'M'
+			<!--  AND BO.BILL_ISSUE_STATUS = 'M' -->
+			AND PAYMENT_STATUS_CD IN('PYST3000', 'PYST4000')
+			AND BL.DELETE_YN='N' 
+		<!-- SELECT 
+			BL.BILL_NO
+			, BL.BILL_ISSUE_DT 
+			, BL.BILL_AMOUNT 
+			, BO.BILL_TURN_NO
+			, BO.BILL_CALL_KEY
+			, BO.BILL_ISSUE_STATUS
+			, PM.CALL_AMOUNT 
+			, PM.PAYMENT_KEY
+			, PM.CALL_AMOUNT_TAX_YN
+			, PM.PAYMENT_STATUS_CD
+			, PM.PAYMENT_DT
+			, PM.PAYMENT_BUY_FK_KEY
+			, PM.CALL_AMOUNT_TAX_YN
+		FROM PJ_PAYMENT_TB PM
+	    JOIN PJ_PC_BILLING_TB BL 
+	    ON PM.PAYMENT_BUY_FK_KEY = BL.BILL_CT_FK_KEY
+	    LEFT OUTER JOIN PJ_PC_BILLING_OP_TB BO
+	    ON BL.BILL_NO = BO.BILL_NO
+    	WHERE PM.PAYMENT_BUY_FK_KEY = #{buyKey}
 			AND PAYMENT_STATUS_CD IN('PYST3000', 'PYST4000')
 			AND BL.DELETE_YN='N'
-		ORDER BY PM.PAYMENT_TURN
+		ORDER BY PM.PAYMENT_TURN -->
 	</select>
 	
 	<update id="deletePaymentAllInfo" parameterType="projectPaymentVO">
@@ -328,4 +341,16 @@
 			, MOD_EMP_KEY=#{modEmpKey}
 		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
 	</update>
+	
+	<select id="selectPcBillInfo" parameterType="String" resultType="egovMap">
+		SELECT 
+			BILL_NO
+			, BILL_ISSUE_DT 
+			, BILL_AMOUNT 
+			, BILL_ISSUE_DT
+			, REMARK 
+		FROM PJ_PC_BILLING_TB 
+		WHERE BILL_NO = #{billNo}
+			AND DELETE_YN='N' 
+	</select>
 </mapper>

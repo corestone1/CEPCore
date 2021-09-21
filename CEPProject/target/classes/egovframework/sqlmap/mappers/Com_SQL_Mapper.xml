@@ -54,6 +54,13 @@
 		WHERE DEPT_KEY=#{deptKey}
 	</select>
 	
+	<!-- 권한별 사원리스트 조회(메일, 알림용) -->
+	<select id="selectAuthEmployeeList" parameterType="String" resultType="java.util.HashMap">
+		SELECT EMP_KEY AS empKey
+		FROM CMM_EMPLOYEE_TB
+		WHERE EMP_AUTH_CD = #{empAuthCd}
+	</select>
+	
 	<!-- 거래처 계좌 리스트 조회 -->
 	<select id="selectDepositList" resultType="egovMap">			
 		SELECT 

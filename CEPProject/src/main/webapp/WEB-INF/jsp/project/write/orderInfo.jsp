@@ -85,7 +85,7 @@
 		}
 		.popContainer input {
 			width: 130px;
-			//height: 38px;
+			/* height: 38px; */
 			height: 30px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -94,7 +94,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer input[class="search"] {
-			//height: 38px;
+			/* height: 38px; */
 			height: 32px;
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
@@ -180,6 +180,8 @@
 		.popContainer .contents .btnWrap {
 			margin : 10px 48px 15px 3px;			
 			width : calc(100% - 84px);
+			position: relative;
+			bottom: 0;
 		}
 		.calculate {
 			text-align: right !important;
@@ -216,6 +218,10 @@
 			max-width: 300px;
 			word-wrap: break-word;
 			z-index: 9999;
+		}
+		#m_div_accountList {
+		    left: 146px;
+    		margin-top: -4px;
 		}
 		.btnSave {
 			width: auto;
@@ -531,7 +537,7 @@
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
 		}
 		
 		
@@ -691,12 +697,14 @@
 		}
 		
 		$(document).ready(function() {
+			
+			$("#orderAcNm").on("keyup", function(event){
+				fn_searchAccoutList(this, $(this).val());					
+			}); 
+			
 			//매입처 담당자 셋팅
 			$('#orderAcDirectorKey').val("${orderVO.orderAcDirectorKey}").attr("selected", "true");
 			
-			//부가세 포함 라이오버튼 셋팅
-			//$('#taxYn').val("${orderVO.taxYn}").prop("checked", true);
-			$("input:radio[name='taxYn']:radio[value='${orderVO.taxYn}']").prop('checked', true);
 			
 			// 등록된 거래처 selectBox 맵핑.
 			if(parseInt('${orderSelectBoxList.size()}') >0 ){
@@ -719,6 +727,104 @@
 			} 
 		
 		});
+		
+		function fn_searchAccoutList(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		}
+		
+		function fnViewAccountList(pObject, pjAccountList) {
+			
+			var html = '<div id="m_div_accountList">'
+			         + '<ul class="accountList">'
+			       ;
+			       
+	        for(var i=0; i < pjAccountList.length; i++)
+	    	{
+	    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+	    	        ;
+	    	} 
+			       
+			       
+			html +=  '</ul>'
+			     + '</div>'
+			     ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$('#orderAcKey').after(html);
+			
+			$("[id^='m_li_account']").click(function(event)
+			{
+				//alert(this.title);
+				
+				$('#orderAcKey').val(this.title); 
+				$('#orderAcNm').val(this.innerText);
+				fn_selectAc();
+				
+				$('#m_div_accountList').remove();
+			});
+			
+		}
+		
+		var acDirectorList;
+		
+		function fn_selectAc() {
+			 $.ajax({
+	        	url:"/cmm/selectAcDirectorList.do",
+	            dataType: 'json',
+	            type:"post",  
+	            data: $('#orderAcKey').val(),
+	     	   	contentType: "application/json; charset=UTF-8",
+	     	  	beforeSend: function(xhr) {
+	        		xhr.setRequestHeader("AJAX", true);
+	        		//xhr.setRequestHeader(header, token);
+	        	},
+	            success:function(data){		            	
+					if ( data.result.length > 0 ) {
+						acDirectorList = data.result;
+						/* $('#acDirectorInfo').val(data.result[0].acDirectorInfo); *//* 첫번째 값을 셋팅해준다. */
+						$ ('#orderAcDirectorKey' ).find ( 'option' ).remove ();  
+						for ( var idx = 0 ; idx < data.result.length ; idx++ ) {
+							if(data.result[idx].acDirectorKey == "${resultList[0].acDirectorKey}") {
+								$('#orderAcDirectorKey').append("<option value='"+data.result[idx].acDirectorKey+"' selected>" + data.result[idx].acDirectorNm + '</option>');
+								// $('#acDirectorInfo').val(data.result[idx].acDirectorInfo);
+							} else {
+								$('#orderAcDirectorKey').append("<option value='"+data.result[idx].acDirectorKey+"'>" + data.result[idx].acDirectorNm + '</option>');
+								// $('#acDirectorInfo').val(data.result[0].acDirectorInfo);
+							}
+						}
+	                } else{
+	                	acDirectorList = null;
+						$ ( '#orderAcDirectorKey' ).find('option').remove();
+	                 	$ ( '#orderAcDirectorKey' ).append ( "<option value=''>담당자</option>" );
+	                }
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	        });
+		}
 		
 		function fn_next(link) {
 			if(countSave > 0) {
@@ -810,15 +916,14 @@
 						<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${pjKey}"/>"/>
 						<input type="hidden" name="orderCtClass" value="P"/>
 						<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
-						<input type="hidden" id="buyTurn" name="buyTurn"  value="<c:out value="${buyTurn}"/>"/> 
 						<input type="hidden" name="statusCd" value="PJST3000" />
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${orderVO.selectKey}"/>"/> 
 					<table>
 						<tr>
 							<td class="tdTitle"><label>*</label>매입처</td>
-							<td class="tdContents">
-								<input type="text" id="orderAcKey" name="orderAcKey" class="search" required value="<c:out value="${orderVO.orderAcKey}"/>"/>
-								<input type="hidden" id="orderAcNm" name="orderAcNm" class="search" value="<c:out value="${orderVO.orderAcNm}"/>" />
+							<td class="tdContents" id="m_tr_account">
+								<input type="text" id="orderAcNm" name="orderAcNm" class="search" required autocomplete="off" value="<c:out value="${orderVO.orderAcNm}"/>"/>
+								<input type="hidden" id="orderAcKey" name="orderAcKey" class="search" value="<c:out value="${orderVO.orderAcKey}"/>" />
 							</td>
 							<td class="tdTitle"><label>*</label>매입처담당자</td>
 							<td class="tdContents">
@@ -845,11 +950,6 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>부가세 포함</td>
-							<td class="tdContents">
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tCheck" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-							</td>
 							<td class="tdTitle"><label>*</label>발주합계</td>
 							<td class="tdContents">
 								<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:choose><c:when test="${orderVO.orderAmount == 0 }"></c:when><c:otherwise>${displayUtil.commaStr(orderVO.orderAmount)}</c:otherwise></c:choose>" style="text-align: right;"/>	
@@ -959,7 +1059,7 @@
 											</td>
 											<td class="tdTitle">유지보수 요율</td>
 											<td class="tdContents">
-												<input type="text" id="prodList-0-mtRate" name="mtRate" value="<c:out value="${ list.mtRate}"/>" />
+												<input type="text" id="prodList-0-mtRate" name="mtRate"  style="width:75px;" value="<c:out value="${ list.mtRate}"/>"/>&nbsp;&nbsp;%
 											</td>
 										</tr>
 										<tr class="dpTbRow">

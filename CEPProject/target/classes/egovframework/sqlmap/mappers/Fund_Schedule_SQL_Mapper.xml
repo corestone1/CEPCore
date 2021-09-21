@@ -23,10 +23,10 @@
 				     , PMT.PJ_NM               AS PJ_NM               /* 프로젝트명 */
 				     , CAT.AC_NM               AS AC_NM               /* 거래처명 */
 				     , PSD.SALES_TURN_AMOUNT   AS SALES_TURN_AMOUNT   /* 수금액 */
-				     , CASE WHEN PCT.TAX_YN = 'Y'
+				     , <!-- CASE WHEN PCT.TAX_YN = 'Y'
 				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
-				            ELSE PSD.SALES_TURN_AMOUNT
-				       END                     AS SALES_AMOUNT        /* 수금액(부가세별도) */
+				            ELSE  -->PSD.SALES_TURN_AMOUNT
+				       <!-- END   -->                   AS SALES_AMOUNT        /* 수금액(부가세별도) */
 				     , CET.EMP_NM              AS EMP_NM              /* 영업담당자 */
 				     , PSD.SALES_COLLECT_FC_DT AS SALES_COLLECT_FC_DT /* 수금예상일정 */
 				     /*
@@ -59,10 +59,10 @@
 	
 		SELECT IFNULL(SUM(DAT.SALES_AMOUNT), 0)     AS SALES_AMOUNT
 		FROM (
-				SELECT CASE WHEN PCT.TAX_YN = 'Y'
+				SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
 				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
-				            ELSE PSD.SALES_TURN_AMOUNT
-				       END                     AS SALES_AMOUNT        /* 수금액(부가세별도) */ 
+				            ELSE  -->PSD.SALES_TURN_AMOUNT
+				       <!-- END    -->                  AS SALES_AMOUNT        /* 수금액(부가세별도) */ 
 				FROM   PJ_SALES_DETAIL_TB    PSD
 				JOIN   PJ_MAIN_TB            PMT  ON PSD.SALES_CT_FK_KEY = PMT.PJ_KEY AND PMT.DELETE_YN = 'N'
 				JOIN   PJ_CONTRACT_TB        PCT  ON PMT.PJ_KEY          = PCT.PJ_KEY AND PCT.DELETE_YN = 'N'
@@ -99,10 +99,10 @@
 					 , CAT.AC_NM               AS AC_NM               /* 거래처명 */
 					 , PPT.CALL_AMOUNT         AS CALL_AMOUNT_ORG     /* 지급액 */
 					 , CET.EMP_NM              AS EMP_NM              /* 영업담당자 */
-					 , CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
+					 , <!-- CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
 					        THEN FLOOR(PPT.CALL_AMOUNT/1.1)
-							ELSE PPT.CALL_AMOUNT
-					   END                     AS CALL_AMOUNT	     /* 지급액(부가세별도) */
+							ELSE --> PPT.CALL_AMOUNT
+					   <!-- END    -->                  AS CALL_AMOUNT	     /* 지급액(부가세별도) */
 					 , PPT.PAYMENT_DT          AS PAYMENT_DT         /* 지급일정 */    
 				FROM   PJ_PAYMENT_TB    PPT
 				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
@@ -128,10 +128,10 @@
 	            
 		SELECT IFNULL(SUM(DAT.CALL_AMOUNT), 0)   AS CALL_AMOUNT
 		FROM (
-				SELECT CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
+				SELECT <!-- CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
 					         THEN FLOOR(PPT.CALL_AMOUNT/1.1)
-								ELSE PPT.CALL_AMOUNT
-						 END                     AS CALL_AMOUNT	     /* 지급액(부가세별도) */
+								ELSE --> PPT.CALL_AMOUNT
+						 <!-- END    -->                  AS CALL_AMOUNT	     /* 지급액(부가세별도) */
 				FROM   PJ_PAYMENT_TB    PPT
 				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
 				JOIN   PJ_MAIN_TB       PMT ON PMT.PJ_KEY            = PUR.BUY_FK_PJ_KEY         AND PMT.DELETE_YN = 'N'
@@ -153,19 +153,19 @@
 		     , DAT.ORDER_QUANTITY      AS ORDER_QUANTITY
 		     , DAT.ORDER_UPRICE        AS ORDER_UPRICE
 		     , DAT.ORDER_TOTAL_AMOUNT  AS ORDER_TOTAL_AMOUNT
-		     , DAT.TAX_YN              AS TAX_YN
-		     , CASE WHEN DAT.TAX_YN = 'Y'
+		     <!-- , DAT.TAX_YN              AS TAX_YN -->
+		     , <!-- CASE WHEN DAT.TAX_YN = 'Y'
 				            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 1.1)
-				            ELSE DAT.ORDER_TOTAL_AMOUNT
-				       END               AS ORDER_AMOUNT
-		     , CASE WHEN DAT.TAX_YN = 'Y'
+				            ELSE --> DAT.ORDER_TOTAL_AMOUNT
+				       <!-- END -->               AS ORDER_AMOUNT
+		     , <!-- CASE WHEN DAT.TAX_YN = 'Y'
 		            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 11)
-		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT / 0.1)
-		       END                     AS TOTAL_TAX
-		     , CASE WHEN DAT.TAX_YN = 'Y'
+		            ELSE --> FLOOR(DAT.ORDER_TOTAL_AMOUNT / 0.1)
+		       <!-- END    -->                  AS TOTAL_TAX
+		     , <!-- CASE WHEN DAT.TAX_YN = 'Y'
 		            THEN DAT.ORDER_TOTAL_AMOUNT
-		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT * 1.1)
-		       END                     AS TOTAL_AMOUNT
+		            ELSE  -->FLOOR(DAT.ORDER_TOTAL_AMOUNT * 1.1)
+		       <!-- END     -->                 AS TOTAL_AMOUNT
 		     
 		FROM (
 				SELECT PMT.PM_NM_CD           AS PM_NM
@@ -173,7 +173,7 @@
 				     , POP.ORDER_UPRICE       AS ORDER_UPRICE
 				     , IFNULL(POP.ORDER_TOTAL_AMOUNT, POP.ORDER_UPRICE * POP.ORDER_QUANTITY)
 					                           AS ORDER_TOTAL_AMOUNT
-				     , POT.TAX_YN             AS TAX_YN
+				    <!--  , POT.TAX_YN             AS TAX_YN -->
 				FROM   PJ_ORDER_TB         POT
 				JOIN   PJ_ORDER_PRODUCT_TB POP ON POT.PJ_ORDER_KEY    = POP.PJ_ORDER_KEY AND POP.DELETE_YN = 'N' 
 				JOIN   PM_PRODUCT_MNG_TB   PMT ON POP.ORDER_PM_FK_KEY = PMT.PM_KEY
@@ -190,19 +190,19 @@
 		     , DAT.ORDER_QUANTITY      AS ORDER_QUANTITY
 		     , DAT.ORDER_UPRICE        AS ORDER_UPRICE
 		     , DAT.ORDER_TOTAL_AMOUNT  AS ORDER_TOTAL_AMOUNT
-		     , DAT.TAX_YN              AS TAX_YN
-		     , CASE WHEN DAT.TAX_YN = 'Y'
+		    <!--  , DAT.TAX_YN              AS TAX_YN -->
+		     , <!--CASE WHEN DAT.TAX_YN = 'Y'
 				            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 1.1)
-				            ELSE DAT.ORDER_TOTAL_AMOUNT
-				       END               AS ORDER_AMOUNT
-		     , CASE WHEN DAT.TAX_YN = 'Y'
+				            ELSE  -->DAT.ORDER_TOTAL_AMOUNT
+				       <!-- END    -->            AS ORDER_AMOUNT
+		     , <!-- CASE WHEN DAT.TAX_YN = 'Y'
 		            THEN FLOOR(DAT.ORDER_TOTAL_AMOUNT / 11)
-		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT / 0.1)
-		       END                     AS TOTAL_TAX
-		     , CASE WHEN DAT.TAX_YN = 'Y'
+		            ELSE  -->FLOOR(DAT.ORDER_TOTAL_AMOUNT / 0.1)
+		       <!-- END -->                     AS TOTAL_TAX
+		     , <!-- CASE WHEN DAT.TAX_YN = 'Y'
 		            THEN DAT.ORDER_TOTAL_AMOUNT
-		            ELSE FLOOR(DAT.ORDER_TOTAL_AMOUNT * 1.1)
-		       END                     AS TOTAL_AMOUNT
+		            ELSE  -->FLOOR(DAT.ORDER_TOTAL_AMOUNT * 1.1)
+		       <!-- END   -->                   AS TOTAL_AMOUNT
 		     
 		FROM (
 				SELECT PMT.PM_NM_CD           AS PM_NM
@@ -210,7 +210,7 @@
 				     , POP.ORDER_UPRICE       AS ORDER_UPRICE
 				     , IFNULL(POP.ORDER_TOTAL_AMOUNT, POP.ORDER_UPRICE * POP.ORDER_QUANTITY)
 					                           AS ORDER_TOTAL_AMOUNT
-				     , POT.TAX_YN             AS TAX_YN
+				     <!-- , POT.TAX_YN             AS TAX_YN -->
 				FROM   PJ_PURCHASE_TB      PPT 
 				JOIN   PJ_ORDER_TB         POT ON POT.PJ_ORDER_KEY    = PPT.BUY_ORDER_FK_KEY AND POT.DELETE_YN = 'N'
 				JOIN   PJ_ORDER_PRODUCT_TB POP ON POT.PJ_ORDER_KEY    = POP.PJ_ORDER_KEY     AND POP.DELETE_YN = 'N'

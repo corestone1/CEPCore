@@ -90,6 +90,79 @@
 			text-overflow:ellipsis; 
 			white-space:nowrap;
 		}
+		#compForm .dtl {
+		    font-size: 15px;
+		    border-collapse: collapse;
+		    overflow: hidden;
+		    border-bottom: 2px solid #6a5bae;
+		}
+		#compForm .dtl thead {
+			background-color: #e1dff5;
+		    float: left;
+		    width: 999px;
+		}
+		#compForm .dtl thead tr {
+			display: table;
+			width: 999px;
+		}
+		#compForm .dtl thead th, 
+		#compForm .dtl tbody tr td {
+		    padding: 10px 0;
+		    border: 1px solid #edebef;
+		}
+		#compForm .dtl thead th:first-child, 
+		#compForm .dtl tbody td:first-child {
+		    width: 51px;
+		    max-width: 51px;
+		}
+		#compForm .dtl thead th:nth-child(7), 
+		#compForm .dtl tbody td:nth-child(7) {
+		    width: 127px;
+		    max-width: 127px;
+		}
+		#compForm .dtl thead th:nth-child(6), 
+		#compForm .dtl tbody td:nth-child(6) {
+		    width: 100px;
+		    max-width: 100px;
+		}
+		#compForm .dtl thead th:nth-child(5), 
+		#compForm .dtl tbody td:nth-child(5) {
+		    width: 142px;
+		    max-width: 142px;
+		}
+		#compForm .dtl thead th:nth-child(4), 
+		#compForm .dtl tbody td:nth-child(4) {
+		    width: 142px;
+		    max-width: 142px;
+		}
+		#compForm .dtl thead th:nth-child(3), 
+		#compForm .dtl tbody td:nth-child(3) {
+		    width: 122px;
+		    max-width: 122px;
+		}
+		#compForm .dtl thead th:nth-child(2), 
+		#compForm .dtl tbody td:nth-child(2) {
+		    width: 166px;
+		    max-width: 166px;
+		}
+		#compForm .dtl tbody {
+		    height: 545px;
+		    overflow-y: auto;
+		    overflow-x: hidden;
+		    float: left;
+		}
+		#compForm .dtl tbody tr {
+		    display: table;
+		    width: 999px;
+		    cursor: pointer;
+		}
+		#compForm .dtl tr td span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 90%;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -101,7 +174,7 @@
 			$('a[id^=A_TOPMenu_]').click(function(event){ location.href = this.title; });
 
 		});
-		function fn_comp(key, amount) {
+		function fn_comp(key, amount, billNo) {
 			var pSum = parent.document.getElementById("buyAmount").value;
 			var pDone = parent.document.getElementById("originDonePaymentAmount").value;
 			var pYet = parent.document.getElementById("originYetPaymentAmount").value;
@@ -113,9 +186,10 @@
 			object['donePaymentAmount'] = Number(pDone) + Number(amount);
 			object['yetPaymentAmount'] = Number(pYet) - Number(amount);
 			object['buyKey'] = $('#buyKey').val();
+			object['billFkKey'] = billNo;
 
 			var sendData = JSON.stringify(object);
-			 
+			console.log(sendData);
 			$.ajax({
 				url:"/project/request/update/paymentInfo.do",
 				dataType: 'json', 
@@ -139,7 +213,7 @@
 						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 					}
 				} 
-			});   
+			});     
 		}
 	</script>
 </head>
@@ -155,36 +229,56 @@
 		<form id="compForm" name="compForm" method="post">
 			<input type="hidden" id="buyKey" value="${ prePaymentList[0].paymentBuyFkKey }" />
 			<table class="dtl" id="info2">
-				<tr>
-					<th>No</th>
-					<th>계산서 번호</th>
-					<th>계산서 발행일자</th>
-					<th>계산서 금액</th>
-					<th>지급 금액</th>
-					<th>부가세 여부</th>
-					<th>지급완료</th>
-				</tr>
-				<c:forEach var="result" items="${prePaymentList }" varStatus="status">
+				<thead>
 					<tr>
-						<td>${status.count }</td>
-						<td><span>${result.billNo }</span></td>
-						<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
-						<td><span>${displayUtil.commaStr(result.billAmount) }</span></td>
-						<td><span>${displayUtil.commaStr(result.callAmount) }</span></td>
-						<td><span>${result.callAmountTaxYn }</span></td>
-						<td>
-							<c:choose>
-								<c:when test="${empty result.paymentDt }">
-									<c:set var="key" value="${result.paymentKey }" />
-									<button type="button" class="btnComp" onclick="fn_comp('${result.paymentKey }',  '${result.callAmount }')"><img src="<c:url value='/images/btn_end_pay.png'/>" /></button>
-								</c:when>
-								<c:otherwise>
-									<span>${displayUtil.displayDate(result.paymentDt) }</span>
-								</c:otherwise>
-							</c:choose>
-						</td>
+						<th>No</th>
+						<th>계산서 번호</th>
+						<th>계산서 발행일자</th>
+						<th>계산서 금액</th>
+						<th>지급 금액</th>
+						<th>지급완료</th>
+						<th>계산서 요청 상태</th>
 					</tr>
-				</c:forEach>
+				</thead>
+				<tbody>
+					<c:forEach var="result" items="${prePaymentList }" varStatus="status">
+						<tr>
+							<td>${status.count }</td>
+							<td><span>${result.billNo }</span></td>
+							<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
+							<td><span>${displayUtil.commaStr(result.billAmount) }</span></td>
+							<td><span>${displayUtil.commaStr(result.callAmount) }</span></td>
+							<td>
+								<c:choose>
+									<c:when test="${empty result.paymentDt }">
+										<c:choose>
+											<c:when test="${result.billIssueStatus eq null }">
+												<span>계산서 요청을 해주세요.</span>
+											</c:when>
+											<c:otherwise>
+												<c:if test="${result.billIssueStatus eq 'R' }">계산서 등록을 해주세요.</c:if>
+												<c:if test="${result.billIssueStatus eq 'I' }">계산서 매핑을 해주세요.</c:if>
+												<c:if test="${result.billIssueStatus eq 'M' }">
+													<c:set var="key" value="${result.paymentKey }" />
+													<button type="button" class="btnComp" onclick="fn_comp('${result.paymentKey }',  '${result.callAmount }', '${result.billNo }')"><img src="<c:url value='/images/btn_end_pay.png'/>" /></button>
+												</c:if>
+											</c:otherwise>
+										</c:choose>
+									</c:when>
+									<c:otherwise>
+										<span>${displayUtil.displayDate(result.paymentDt) }</span>
+									</c:otherwise>
+								</c:choose>
+							</td>
+							<td>
+								<c:if test="${result.billIssueStatus eq 'R'}"><span>요청</span></c:if>
+								<c:if test="${result.billIssueStatus eq 'I'}"><span>발급</span></c:if>
+								<c:if test="${result.billIssueStatus eq 'M'}"><span>매핑</span></c:if>
+								<c:if test="${result.billIssueStatus eq null}"><span>요청 사항 없음</span></c:if>
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
 			</table>
 		</form>
 	</div>

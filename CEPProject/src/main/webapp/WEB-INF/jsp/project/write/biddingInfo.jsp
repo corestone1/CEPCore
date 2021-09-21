@@ -75,6 +75,12 @@
 		.popContainer .contents input:disabled {
 		  	background-color: #ccc;
 		  	background-image: none !important;
+		    width: 110px !important;
+		    height: 40px !important;
+		    font-size: 14px !important;
+		    border: 1px solid #e9e9e9 !important;
+		    padding: 0 10px !important;
+		    padding-right: 18px !important;
 		}
 		.popContainer .contents input:disabled + label {
 		  	background-color: #ccc;
@@ -131,7 +137,7 @@
 			font-size: 14px;						
 			padding-right: 10px;
 		    padding-top: 5px;
-		    height: 45px;
+		    height: 30px;
 		}
 		.popContainer .contents tr > td .ttile {
 			font-size: 18px;
@@ -177,6 +183,74 @@
 			padding-bottom: 6px;
 			font-family: "Noto Sans KR", sans-serif !important;
 			font-weight: 200;
+		}
+		#fileForm {
+			position: absolute;
+			left: 43px;
+			z-index: 99;
+			top: 463px;
+			width: 359px;
+		}
+		#fileForm .exFileLabel {
+			background-image: url('/images/btn_file.png');
+			background-repeat: no-repeat;
+			width: 110px;
+			height: 26px;
+			cursor: pointer;
+			float: left;
+			margin-top: 1px;
+			margin-right: 7px;
+		}
+		#fileForm .uploadName {
+			font-size: 12px !important; 
+			font-weight: 200;
+			font-family: inherit !important; 
+			line-height: normal; 
+			vertical-align: middle; 
+			border: 1px solid #ebebeb !important;  
+			width: 184px !Important;
+			height: 26px !important;
+		}
+		#fileForm .exFile {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
+		#fileForm .upload-name {
+		    background: transparent;
+		    border: none;
+		    font-size: 13px;
+		    width: 160px;
+		    height: 17px;
+		    text-overflow: ellipsis;
+		}
+		#fileForm .close {
+			vertical-align: middle;
+		}
+		#fileWrap {
+			height: 62px;
+			overflow-y: auto;
+		}
+		#fileWrap::-webkit-scrollbar-button {
+		    width: 0;
+		    height: 0;
+		}
+		#fileWrap::-webkit-scrollbar-thumb {
+		    border-radius: 3px;
+		    background-color: #7F7F7F;
+		    height: 3px;
+		}
+		#fileWrap::-webkit-scrollbar-track {
+		    background-color: transparent;
+		}
+		#fileWrap::-webkit-scrollbar {
+		    width: 6px;
+		    height: 31px;
 		}
 	</style>
 	<script>
@@ -265,6 +339,7 @@
 			object["biddingFileVOList"]=listData;
 			
 			var sendData = JSON.stringify(object);
+			//console.log(sendData);
 			$.ajax({
 				url: "/project/insert/biddingInfo.do",
 			    dataType: 'json', 
@@ -278,7 +353,46 @@
 				},
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
-			    		if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
+			    		if($(".uploadName").val() != null && $('.uploadName').length != 0) {
+			    			if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+				    			$("#fileCtKey").val(response.pjKey);
+				    			$("#filePjNm").val($("#pjNm").val());
+				    		}
+			    			
+			    			var formData = new FormData($("#fileForm")[0]);
+
+			    			$.ajax({
+			    				type:"POST",
+			    				enctype:'multipart/form-data',
+			    				url:'/file/upload.do',
+			    				data:formData,
+			    				processData:false,
+			    				contentType:false,
+			    				cache:false,
+			    				success:function(data) {
+			    					if(data.successYN == 'Y') {
+			    						if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			    							alert("프로젝트 입찰 정보가 저장되었습니다.");
+			    							countSave++;
+			    						} else {
+			    							alert("프로젝트 입찰 정보가 수정되었습니다.")
+			    						}
+			    					} else {
+			    						alert("첨부파일 저장이 실패하였습니다.");
+			    					}
+			    					var url='/project/write/biddingInfo.do';
+					    			var dialogId = 'program_layer';
+					    			var varParam = {
+										"pjKey":$("#pjKey").val(),
+										"workClass":$("#workClass").val()
+					    			}
+						   			var button = new Array;
+					    			button = [];
+					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    				}
+			    			}); 
+			    		}
+			    		/* if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
 				    		alert("프로젝트 입찰 정보가 등록되었습니다.");
 				    		countSave++;
 			    		} else {
@@ -292,7 +406,7 @@
 		    			}
 			   			var button = new Array;
 		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); */
 			    	} else {
 			    		if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
 			    			alert("프로젝트 계약 정보 등록이 실패하였습니다.");
@@ -488,6 +602,13 @@
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
 			}
+			
+			var fileTarget = $(".exFile");
+			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename);
+			});
 		});
 	</script>
 </head>
@@ -511,10 +632,11 @@
 					<input type="hidden" id="pjKey" value="${pjKey }" name="pjKey" />
 					<input type="hidden" id="bdKey" value="${biddingVO.bdKey }" name="bdKey" />
 					<input type="hidden" id="bdGbYn" value="${biddingVO.bdGbYn }" name="bdGbYn" />
-					<input type="hidden" id="bdGbFinishYn" value="${biddingVO.bdGbFinishYn }" name="bdGbFinishYn" />
+					<%-- <input type="hidden" id="bdGbFinishYn" value="${biddingVO.bdGbFinishYn }" name="bdGbFinishYn" /> --%>
 					<input type="hidden" id="bdProposalYn" value="${biddingVO.bdProposalYn }" name="bdProposalYn" />
 					<input type="hidden" id="bdProposalPresentYn" value="${biddingVO.bdProposalPresentYn }" name="bdProposalPresentYn" />
 					<input type="hidden" id="pjStatusCd" value="PJST1000" name="pjStatusCd" />
+					<input type="hidden" id="workClass" name="workClass" value="입찰_첨부파일"/>
 					<div>
 						<div id="infoTable">
 							<table>
@@ -542,7 +664,7 @@
 									<td colspan="7">
 										<input type='text' id='bdProposalDueDt' placeholder='접수 마감일' class='calendar proposal' name='bdProposalDueDt' value="${displayUtil.displayDate(biddingVO.bdProposalDueDt) }" disabled/>
 										<input type='time' id='bdProposalDueTm' placeholder='접수 마감 시간' class="proposal" name='bdProposalDueTm' value="${displayUtil.displayTime(biddingVO.bdProposalDueTm) }" disabled/>
-										<button type="button" class="veralignM" style="margin-left: 5px;"><img src="/images/btn_file_upload.png"/></button>
+										<!-- <button type="button" class="veralignM" style="margin-left: 5px;"><img src="/images/btn_file_upload.png"/></button> -->
 									</td>
 								</tr>
 								<tr class='ftw200 first'>
@@ -854,7 +976,7 @@
 										<div class="indeWrap" id="etcIndeWrap">
 											<input type="hidden" name="bdFileKindCd" value="BDFL1199" />
 											<input type="hidden" name="bdSeq" value="" />
-											<input type="text" style="width: 97px; margin-right: 7px;" name="bdFileDocNm" id="etcFileDocNm" disabled/>
+											<input type="text" style="margin-right: 7px;" name="bdFileDocNm" id="etcFileDocNm" disabled/>
 											<a class="decreaseQuantity" onclick="fn_checkDecCount('bdFileCheck7')"><img src="<c:url value='/images/ic_minus.png'/>" /></a>
 											<label class="numberUpDown"><input type="text" class="bdFileCheck7" name="bdDocCnt" value="0" readOnly /></label>
 											<a class="increaseQuantity" onclick="fn_checkIncCount('bdFileCheck7')"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
@@ -867,8 +989,7 @@
 									<td colspan="7">
 										<c:forEach var="entry" items="${pList }" varStatus="status">
 											<label><c:out value="${entry[0] }" /> <c:out value="${entry[1] }" /></label>
-											<button type="button" style="color: #e5e5e5;" onclick="fn_delEtcDoc(this, ${entry[2] });"><img src="/images/popup_close.png" style="width: 7px; height: 7px; margin-bottom: 1.5px;"/></button>
-											<br>
+											<button type="button" style="color: #e5e5e5; margin-right: 5px;" onclick="fn_delEtcDoc(this, ${entry[2] });"><img src="/images/popup_close.png" style="width: 7px; height: 7px; margin-bottom: 1.5px;"/></button>
 										</c:forEach>
 									</td>
 								</tr>
@@ -876,6 +997,32 @@
 						</div>
 					</div>
 				</form>
+				<form id="fileForm" method="post" enctype="multipart/form-data"> 
+			    	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
+					<input type="hidden" name="docTypeNm" value="입찰_첨부파일" />
+					<input type="hidden" name="fileCtKey" id="fileCtKey" value="${pjKey}" />
+					<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${biddingVO.pjNm}"/>"/> 
+					<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+					<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+					<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+					<div class="floatL uploadContainer">
+						<input class="uploadName" placeholder="파일선택" disabled="disabled" />
+						<label for="exFile" class="exFileLabel"></label>
+						<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+					</div>
+					<div style="width: 307px; clear:both;" id="fileWrap">
+						<c:forEach var="result" items="${fileList }" varStatus="status">
+							<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+							<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+							<c:if test="${status.last eq false}"><br /></c:if>
+						</c:forEach>
+					</div>
+					<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
+				</form>
+				<form:form id="viewForm" name="viewForm" method="POST">
+					<input type="hidden" name="fileKey" value=""/>
+					<input type="hidden" name="fileOrgNm" value=""/>
+				</form:form>
 			</div>
 			<div class="btnWrap floatR">
 				<div class="floatL btnPrev">

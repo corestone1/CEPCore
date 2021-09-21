@@ -206,7 +206,7 @@
 			
 			//부가세 포함 라이오버튼 셋팅
 			//$('#taxYn').val("${mtBackOrderVO.taxYn}").prop("checked", true);
-			$("input:radio[name='taxYn']:radio[value='${mtBackOrderVO.taxYn}']").prop('checked', true);
+			//$("input:radio[name='taxYn']:radio[value='${mtBackOrderVO.taxYn}']").prop('checked', true);
 			
 			// 등록된 거래처 selectBox 맵핑.
 			if(parseInt('${backOrderBoxList.size()}') >0 ){
@@ -310,6 +310,18 @@
 				} else if(varUrl == "salesInfoView"){					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
 						if(confirm("유지보수계약 매출정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
+				} else if(varUrl == "writeSalesPlanView"){					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
 							url = '/maintenance/contract/write/'+varUrl+'.do';
 						} else {
 							return false;
@@ -811,8 +823,8 @@
 		
 		//이전화면으로 이동
 		function fn_prevBtn(){
-			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출정보 등록화면으로 이동하시겠습니까?")) {
-				var url = '/maintenance/contract/write/salesInfoView.do';
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 수금계획정보 등록화면으로 이동하시겠습니까?")) {
+				var url = '/maintenance/contract/write/writeSalesPlanView.do';
 				var dialogId = 'program_layer';
 				var varParam = {
 						"mtIntegrateKey":$('#mtIntegrateKey').val(),
@@ -1193,7 +1205,8 @@
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>					
+					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>		
+					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>			
 					<li class="colorWhite cursorP on">백계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');">매입정보</li>
 			</ul>
@@ -1285,18 +1298,18 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label> 부가세 포함</td>
+							<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
 								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-							</td>
+							</td> -->
 							<td class="tdTitle"><label>*</label> 발주합계</td>
 							<td class="tdContents">
 								<input type="text"  id="orderTotalAmount" name="mtOrderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="text-align: right;"/>	
 							</td>
 							<td class="tdTitle"><label>*</label> 결제조건</td>
-							<td class="tdContents">
-								<input type="text" name="mtOrderPayTerms" style="width: 154px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
+							<td class="tdContents" colspan="3">
+								<input type="text" name="mtOrderPayTerms" style="width: 435px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
 							</td>
 						</tr>
 						<tr >

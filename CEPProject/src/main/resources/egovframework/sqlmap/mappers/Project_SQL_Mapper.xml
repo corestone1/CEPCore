@@ -60,8 +60,8 @@
 		  		<if test="searchFlag.equals('NM')" >
 		  			AND PJ_NM LIKE CONCAT('%', #{searchValue}, '%')
 		  		</if>
-	  		
 		  </if>
+		  ORDER BY PJ_KEY DESC
 	</select>
 
 	<select id="selectProjectListTotCnt" parameterType="searchVO" resultType="int">
@@ -230,25 +230,28 @@
 	
 	<select id="selectBiddingDetail" parameterType="projectBiddingVO" resultType="projectBiddingVO">
 		SELECT 
-			BD_KEY AS bdKey
-			, PJ_KEY AS pjKey
-			, BD_GB_YN AS bdGbYn
-			, BD_GB_START_DT AS bdGbStartDt
-			, BD_GB_END_DT AS bdGbEndDt
-			, BD_GB_FINISH_DT AS bdGbFinishDt
-			, BD_GB_FINISH_YN AS bdGbFinishYn
-			, BD_GB_AMOUNT AS bdGbAmount
-			, BD_LIMIT_DT AS bdLimitDt
-			, BD_LIMIT_TM AS bdLimitTm
-			, BD_PROPOSAL_YN AS bdProposalYn
-			, BD_PROPOSAL_DUE_DT AS bdProposalDueDt
-			, BD_PROPOSAL_DUE_TM AS bdProposalDueTm
-			, BD_PROPOSAL_PRESENT_YN AS bdProposalPresentYn
-			, BD_PROPOSAL_PRESENT_DT AS bdProposalPresentDt
-			, BD_PROPOSAL_PRESENT_TM AS bdProposalPresentTm
-		FROM PJ_BIDDING_TB 
-		WHERE PJ_KEY = #{pjKey}
-		AND DELETE_YN = 'N'
+			PB.BD_KEY AS bdKey
+			, PB.PJ_KEY AS pjKey
+			, PM.PJ_NM AS pjNm
+			, PB.BD_GB_YN AS bdGbYn
+			, PB.BD_GB_START_DT AS bdGbStartDt
+			, PB.BD_GB_END_DT AS bdGbEndDt
+			, PB.BD_GB_FINISH_DT AS bdGbFinishDt
+			, PB.BD_GB_FINISH_YN AS bdGbFinishYn
+			, PB.BD_GB_AMOUNT AS bdGbAmount
+			, PB.BD_LIMIT_DT AS bdLimitDt
+			, PB.BD_LIMIT_TM AS bdLimitTm
+			, PB.BD_PROPOSAL_YN AS bdProposalYn
+			, PB.BD_PROPOSAL_DUE_DT AS bdProposalDueDt
+			, PB.BD_PROPOSAL_DUE_TM AS bdProposalDueTm
+			, PB.BD_PROPOSAL_PRESENT_YN AS bdProposalPresentYn
+			, PB.BD_PROPOSAL_PRESENT_DT AS bdProposalPresentDt
+			, PB.BD_PROPOSAL_PRESENT_TM AS bdProposalPresentTm
+		FROM PJ_BIDDING_TB  PB
+		JOIN PJ_MAIN_TB  PM
+		ON PB.PJ_KEY = PM.PJ_KEY
+		WHERE PB.PJ_KEY = #{pjKey}
+		AND PB.DELETE_YN = 'N'
 	</select>
 	
 	<select id="selectBiddingFileList" parameterType="projectBiddingVO" resultType="egovMap">
@@ -268,7 +271,7 @@
 			BD_KEY
 			, PJ_KEY
 			, BD_GB_YN
-			<if test="bdGbStartDt != null and bdGbStartDt != ''">
+			<!-- <if test="bdGbStartDt != null and bdGbStartDt != ''">
 			, BD_GB_START_DT
 			</if>
 			<if test="bdGbEndDt != null and bdGbEndDt != ''">
@@ -282,7 +285,7 @@
 			</if>
 			<if test="bdGbFinishYn != null and bdGbFinishYn != ''">
 			, BD_GB_FINISH_YN
-			</if>
+			</if> -->
 			, BD_LIMIT_DT
 			<if test="bdLimitTm != null and bdLimitTm != ''">
 			, BD_LIMIT_TM
@@ -309,7 +312,7 @@
 			#{bdKey}
 			, #{pjKey}
 			, #{bdGbYn}
-			<if test="bdGbStartDt != null and bdGbStartDt != ''">
+			<!-- <if test="bdGbStartDt != null and bdGbStartDt != ''">
 			, #{bdGbStartDt}
 			</if>
 			<if test="bdGbEndDt != null and bdGbEndDt != ''">
@@ -321,7 +324,7 @@
 			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
 			, #{bdGbAmount}
 			</if>
-			, #{bdGbFinishYn}
+			, #{bdGbFinishYn} -->
 			, #{bdLimitDt}
 			<if test="bdLimitTm != null and bdLimitTm != ''">
 			, #{bdLimitTm}
@@ -429,7 +432,6 @@
 			CT_KEY
 			, PJ_KEY
 			, CT_AMOUNT
-			, TAX_YN
 			, COLLECT_TURN
 			, CT_DT
 			, CT_PAY_TERMS
@@ -441,7 +443,6 @@
 			#{ctKey}
 			, #{pjKey}
 			, #{ctAmount}
-			, #{taxYn}
 			, #{collectTurn}
 			, #{ctDt}
 			, #{ctPayTerms}
@@ -568,7 +569,6 @@
 				CT_AMOUNT = #{ctAmount}
 				, CT_PAY_TERMS = #{ctPayTerms}
 				, CT_DT = #{ctDt}
-				, TAX_YN=#{taxYn}
 				, COLLECT_TURN = #{collectTurn}
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
@@ -618,7 +618,6 @@
 			, CT_AMOUNT AS ctAmount
 			, CT_DT AS ctDt
 			, CT_PAY_TERMS AS ctPayTerms
-			, TAX_YN AS taxYn
 			, COLLECT_TURN AS collectTurn
 		FROM PJ_CONTRACT_TB 
 		WHERE PJ_KEY=#{pjKey}
@@ -701,7 +700,6 @@
 			, ORDER_AC_DIRECTOR_KEY
 			, ORDER_PAY_TERMS
 			, ORDER_AMOUNT
-			, TAX_YN
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -714,7 +712,6 @@
 			, #{orderAcDirectorKey}
 			, #{orderPayTerms}
 			, #{orderAmount}
-			, #{taxYn}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{regEmpKey}
@@ -731,7 +728,6 @@
 			, ORDER_AC_DIRECTOR_KEY = #{orderAcDirectorKey}
 			, ORDER_PAY_TERMS = #{orderPayTerms}
 			, ORDER_AMOUNT = #{orderAmount}
-			, TAX_YN = #{taxYn}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
@@ -829,7 +825,6 @@
 			, (SELECT CA.AC_NM FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PJ.AC_KEY = CA.AC_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS acNm
 			, ORDER_PAY_TERMS AS orderPayTerms
 			, ORDER_AMOUNT AS orderAmount
-			, TAX_YN AS taxYn
 		FROM PJ_ORDER_TB PO
 		WHERE PJ_ORDER_KEY = #{orderKey}
 			AND DELETE_YN='N'
@@ -843,7 +838,6 @@
 			, BUY_AMOUNT AS buyAmount
 			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
 			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
-			, BUY_TURN buyTurn
 		FROM PJ_PURCHASE_TB
 		WHERE DELETE_YN='N'
 		<if test="buyKey != null and buyKey != ''">
@@ -901,7 +895,6 @@
 			, BUY_AMOUNT
 			, DONE_PAYMENT_AMOUNT
 			, YET_PAYMENT_AMOUNT
-			, BUY_TURN
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -913,7 +906,6 @@
 			, #{buyAmount}
 			, #{donePaymentAmount}
 			, #{yetPaymentAmount}
-			, #{buyTurn}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{regEmpKey}
@@ -934,9 +926,6 @@
 			</if>
 			<if test="yetPaymentAmount != null and yetPaymentAmount != '' and yetPaymentAmount != 0">
 			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
-			</if>
-			<if test="buyTurn != null and buyTurn != '' and buyTurn != 0">
-			, BUY_TURN = #{buyTurn}
 			</if>
 		WHERE BUY_KEY = #{buyKey}
 	</update>

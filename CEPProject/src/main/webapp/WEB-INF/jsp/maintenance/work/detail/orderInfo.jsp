@@ -189,7 +189,7 @@
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 190px;
+			width: 213px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
@@ -202,17 +202,17 @@
 			width: 100px;
 			text-align: right;
 		}
-		.mContents .dtl thead th:nth-child(6),
+		/* .mContents .dtl thead th:nth-child(6),
 		.mContents .dtl tbody td:nth-child(6) {
 			width: 80px;
-		}
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7){
+		} */
+		.mContents .dtl thead th:nth-child(6),
+		.mContents .dtl tbody td:nth-child(6){
 			width: 100px;
 		}
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8) {
-			width: 220px;
+		.mContents .dtl thead th:nth-child(7),
+		.mContents .dtl tbody td:nth-child(7) {
+			width: 300px;
 		}	
 		/* 발주정보, 제품정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
@@ -510,6 +510,15 @@
 			}
 		}
 		
+		// 파일다운로드 관련
+		function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
+		
 		
 	</script>
 </head>
@@ -535,6 +544,10 @@
 									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
 								</tr>
 								<tr>
+									<td>PROJECT명</td>
+									<td><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></td>
+								</tr>
+								<tr>
 									<td>유지보수명</td>
 									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
@@ -558,10 +571,10 @@
 									<td>유지보수 금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
-								<tr>
+								<%-- <tr>
 									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
-								</tr>
+								</tr> --%>
 								<tr>
 									<td>결제조건</td>
 									<td><c:out value="${basicContractInfo.mtPayTerms}"/></td>
@@ -598,6 +611,19 @@
 									<td>비고</td>
 									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
 								</tr>
+								<tr>
+									<td>첨부파일</td>
+									<td >
+										<c:forEach var="result" items="${fileList }" varStatus="status">
+											<%-- <input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/> --%>
+											<%-- <a href="javascript:fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')"><c:out value="${result.fileOrgNm}"/></a> --%>
+											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;">
+												<B><I><u><c:out value="${result.fileOrgNm}"/></u></I></B>
+											</button>
+											<c:if test="${status.last eq false}"><br /></c:if>
+										</c:forEach>
+									</td>
+								</tr>
 							</table>
 						</div>
 					</div>
@@ -622,7 +648,7 @@
 										<th scope="row">매입처</th>
 										<th scope="row">매입처담당자</th>
 										<th scope="row">합계금액</th>
-										<th scope="row">부가세포함</th>
+										<!-- <th scope="row">부가세포함</th> -->
 										<th scope="row">발주일자</th>
 										<th scope="row">결재조건</th>
 									</tr>
@@ -639,7 +665,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
-										<td><c:out value="${list.taxYn}"/></td>
+										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
 									</tr>
@@ -653,7 +679,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
-										<td><c:out value="${list.taxYn}"/></td>
+										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
 									</tr>									
@@ -785,5 +811,9 @@
 			</div>
 		</div>	
 	</form>
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
+	</form:form>
 </body>
 </html>

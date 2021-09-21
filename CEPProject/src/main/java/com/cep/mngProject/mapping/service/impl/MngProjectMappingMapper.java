@@ -105,9 +105,20 @@ public interface MngProjectMappingMapper {
 	  * @Author      : sylim
 	  * @Modification: 
 	  * @Method Description : 지급 정보 등록
-	  * @param orderBillVO
+	  * @param 
 	  * @return
 	  */
 	public int insertPaymentInfo(Map<String, Object> param) throws Exception;
+	
+	/**
+	  * @Method Name : updatePaymentInfo
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 지급 정보 수정
+	  * @param 
+	  * @return
+	  */
+	public int updatePaymentInfo(Map<String, Object> param) throws Exception;
 	
 }

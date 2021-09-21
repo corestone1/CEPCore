@@ -399,12 +399,6 @@
 										</td>
 									</tr>
 									<tr>
-										<td>매입장비</td>
-										<td>
-											<label><c:out value="${pmNm}"/></label>
-										</td>
-									</tr>
-									<tr>
 										<td>매입금</td>
 										<td>
 											<label><c:out value="${displayUtil.commaStr(purchaseVO.buyAmount)}"/>원</label>

@@ -77,7 +77,7 @@
 		}
 		.popContainer .contents input {
 			width: calc(100% - 37px);
-			height: 38px;
+			height: 35px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -86,7 +86,7 @@
 		}
 		.popContainer .contents input[class="search"] {
 			width: 200px;
-			height: 38px;
+			height: 35px;
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
@@ -99,13 +99,13 @@
 		}
 		.popContainer .contents input[class^="calendar"] {
 			width: 198px;
-			height: 38px;
+			height: 35px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: calc(100% - 37px);
+			width: calc(100% - 43px);
 			height: 114px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -138,7 +138,7 @@
     		color: #525252;
 		} 
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 15px 48px;
+			margin : 48px 48px 15px 48px;
 		}
 		.btnCenter {
 			width : calc(100% - 90px);
@@ -159,7 +159,55 @@
 
 		.search_in input{width:100%} */
 
-
+	/* 파일업로드 관련 */
+		#fileForm {
+			position: absolute;
+			bottom: -244px;;
+			left: 46px;
+			z-index: 99;
+		}
+		#fileForm .exFileLabel {
+			background-image: url('/images/btn_file.png');
+			background-repeat: no-repeat;
+			width: 110px;
+			height: 26px;
+			cursor: pointer;
+			float: left;
+			margin-top: 1px;
+			margin-right: 7px;
+		}
+		#fileForm .uploadName {
+			font-size: 12px; 
+			font-weight: 200;
+			font-family: inherit; 
+			line-height: normal; 
+			vertical-align: middle; 
+			border: 1px solid #ebebeb; 
+			width: 184px;
+			height: 26px;
+		}
+		#fileForm .exFile {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
+		#fileForm .upload-name {
+		    background: transparent;
+		    border: none;
+		    font-size: 13px;
+		    width: 160px;
+		    height: 17px;
+		    text-overflow: ellipsis;
+		}
+		#fileForm .close {
+			vertical-align: middle;
+		} 
+		
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -173,7 +221,7 @@
 				//영업담당자 셋팅
 				$('#mtSaleEmpKey').val("${basicContractInfo.mtSaleEmpKey}").attr("selected", "true");
 				//부가세 포함 셋팅
-				$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
+				//$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 				//검수방법 셋팅
 				//$('#mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
 				$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
@@ -201,15 +249,22 @@
 				$('#pj_delete_project').show();
 			'</c:if>'
 			
-				//거래처 검색
-				$("#mtAcNm").on("keydown", function(event){
+			//거래처 검색
+			$("#mtAcNm").on("keydown", function(event){
+				
+				if(event.keyCode == 13) {		
 					
-					if(event.keyCode == 13) {		
-						
-						fnSearchAccoutList(this, $(this).val());
-					}						
-				});
+					fnSearchAccoutList(this, $(this).val());
+				}						
+			});
 			
+			//파일 업로드
+			var fileTarget = $(".exFile");
+			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename)
+			});
 		});//end $(document).ready()
 		
 		$(function(){			
@@ -371,6 +426,18 @@
 						return false;
 					}					
 					
+				} else if(varUrl == "writeSalesPlanView"){					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
 				} else if(varUrl == "backOrderInfoView"){
 					if("${basicContractInfo.mtSbCtYn}" == "Y"){
 						
@@ -432,6 +499,7 @@
 		
 		
 		function fn_saveBtn(){
+			//alert("upFileName====>"+$('#upFileName').val());
 			//필수값 체크를 완료하면 저장 프로세스 시작.
 			if ($("#mtBasicForm")[0].checkValidity()){
 				if($('#mtIntegrateKey').val() !=''){
@@ -453,10 +521,13 @@
 		*내용을 저장한다.
 		*/
 		function saveBasicInfo(){
+			
+			
 			$('#mtAmount').val(removeCommas($('#mtAmount').val()))
            	var object = {};
 			var splinkObject = {};
 			var pjlinkObject = {};
+			var fileFormData;
            	var formData = $("#mtBasicForm").serializeArray();
            	for (var i = 0; i<formData.length; i++){
                 
@@ -480,20 +551,20 @@
            	}
            	
            	//project정보 등록
-           	/* if($('#pj_mtLinkCtKey').val() !='' || $('#pj_linkDeleteKey').val() !='') {
+           	if($('#pj_mtLinkCtKey').val() !='' || $('#pj_linkDeleteKey').val() !='') {
            		pjlinkObject['mtLinkKey'] = $('#pj_mtLinkKey').val();
            		pjlinkObject['mtLinkCtKey'] = $('#pj_mtLinkCtKey').val();
            		pjlinkObject['linkDeleteKey'] = $('#pj_linkDeleteKey').val();
            		
            		object["mtProjectLinkVo"]=pjlinkObject;     
-           	} */
-           	if($('#id').val() !='' || $('#pj_linkDeleteKey').val() !='') {
+           	}
+           /* 	if($('#id').val() !='' || $('#pj_linkDeleteKey').val() !='') {
            		pjlinkObject['mtLinkKey'] = $('#pj_mtLinkKey').val();
            		pjlinkObject['mtLinkCtKey'] = $('#id').val();
            		pjlinkObject['linkDeleteKey'] = $('#pj_linkDeleteKey').val();
            		
            		object["mtProjectLinkVo"]=pjlinkObject;     
-           	}
+           	} */
            	var sendData = JSON.stringify(object);
            	
            	 $.ajax({
@@ -512,20 +583,70 @@
 	            	var paramData = JSON.parse(data);
 	            	
 	            	if("Y" == paramData.successYN){
-	            		if($('#mtIntegrateKey').val() !=''){
-	            			alert("유지보수계약 기본정보 수정을 성공하였습니다.");
-	            		} else {
-	            			alert("유지보수계약 기본정보 등록을 성공하였습니다.");
-	            			//유지보수 계약정보 관리키를 셋팅한다.
-	            			//$('#mtIntegrateKey').val(paramData.mtIntegrateKey);
-	            		}
 	            		
-		            	var url = '/maintenance/contract/write/basicInfoView.do';
-		    			var dialogId = 'program_layer';
-		    			var varParam = JSON.parse(data)
-		    			var button = new Array;
-		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+	            		var varParam = JSON.parse(data);
+	            		
+	            		if($("#upFileName").val() == null || $("#upFileName").val() == "" || $("#upFileName").val().length == 0) {
+	            			//업로드 파일을 선택하지 않은 경우
+	            			if($('#mtIntegrateKey').val() !=''){
+		            			alert("유지보수계약 기본정보 수정을 성공하였습니다.");
+		            		} else {
+		            			alert("유지보수계약 기본정보 등록을 성공하였습니다.");
+		            			//유지보수 계약정보 관리키를 셋팅한다.
+		            			//$('#mtIntegrateKey').val(paramData.mtIntegrateKey);
+		            		}
+		            		
+			            	var url = '/maintenance/contract/write/basicInfoView.do';
+			    			var dialogId = 'program_layer';
+			    			
+			    			var button = new Array;
+			    			button = [];
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+	            		} else {
+	            			
+	            			$("#fileCtKey").val(paramData.mtIntegrateKey);
+	            			
+	            			//업로프 파일을 선택한 경우 파일 업로드 프로세스 수행
+	            			fileFormData = new FormData($('#fileForm')[0]); 
+			       			$.ajax({ 
+			       				type: "POST", 
+			       				enctype: 'multipart/form-data',  
+			       				url: '/file/upload.do', 
+			       				data: fileFormData, // 필수 
+			       				processData: false, // 필수 
+			       				contentType: false, // 필수 
+			       				cache: false, 
+			       				success: function (data) {
+			       					if(data.successYN=='Y') {
+			       						if($('#mtIntegrateKey').val() !=''){
+					            			alert("유지보수계약 기본정보 수정을 성공하였습니다.");
+					            		} else {
+					            			alert("유지보수계약 기본정보 등록을 성공하였습니다.");
+					            			//유지보수 계약정보 관리키를 셋팅한다.
+					            			//$('#mtIntegrateKey').val(paramData.mtIntegrateKey);
+					            		}			    			    		
+			       						
+			       					} else {
+			       						alert("첨부파일 저장이 실패하였습니다.")
+			       					}
+			       					//현재는 파일저장이 실패해도 기본정보는 저장되도록 화면 이동시킴.
+			       					var url2 = '/maintenance/contract/write/basicInfoView.do';
+		    		    			var dialogId2 = 'program_layer';
+		    		    			//첨부파일 workClass정보 추가.
+		    		    			varParam['workClass'] = $('#workClass').val();			    		    			
+		    		    			var button2 = new Array;
+		    		    			button2 = [];
+		    		    			showModalPop(dialogId2, url2, varParam, button2, '', 'width:1144px;height:708px');
+			       				}, 
+			       				error: function(request, status, error) {
+			       					if(request.status != '0') {
+			       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+			       					}
+			       				}
+			       			});
+	            		}            		
+	            		
+	            		
 	            	} else {
 	            		if($('#mtIntegrateKey').val() !=''){
 	            			alert("유지보수계약 기본정보 수정을 실패하였습니다.");
@@ -687,6 +808,7 @@
 		}
 		
 		function pop_projectCall(returnKey,returnNm) {
+			//alert("====>"+returnKey+"/"+returnNm);
 			$('#pj_mtLinkCtKey').val(returnKey);
 			$('#pj_mtLinkCtKeyNm').val(returnNm);
 			if($('#pj_mtLinkCtKey').val() !='') {
@@ -734,42 +856,77 @@
 			}
 		}); */
 		
+		// 파일업로드 관련
+		function fn_downFilePopUp(fileKey, fileOrgNm) {
+			var form = document.viewPopUpForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewPopUpForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
+		
+		function fn_deleteFile(fileKey, fileNm) {
+			var result = confirm("첨부파일 " + fileNm + " 을 삭제하시겠습니까?");
+			if(result) {
+				var form = document.viewPopUpForm;
+				form.fileKey.value = fileKey;
+				var data = JSON.stringify({"fileKey":fileKey});
+				$.ajax({ 
+	   				url: '/file/delete.do', 
+	   				dataType:'json',
+	   				type: "POST", 
+	   				data: data, // 필수 
+	   				contentType: "application/json; charset=UTF-8", 
+	   				success: function (response) { 
+		   				if(response.successYN=='Y') {
+							alert('첨부파일이 삭제되었습니다.');
+							$("#file"+fileKey).next().remove();
+							$("#file"+fileKey).remove();
+						} else {
+							alert('첨부파일 삭제가 실패되었습니다.');
+						}
+	   				},
+	   				error: function(request, status, error) {
+	   					if(request.status != '0') {
+	   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	   					}
+	   				}
+	   			});
+			}
+		}
+		
 	</script>
 </head>
 <body>
-	<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">
-	<%-- <form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post"> --%>		 
-		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
-		<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
-		<input type="hidden" id="sp_linkDeleteKey" name="linkDeleteKey"/>	
-		<input type="hidden" id="pj_linkDeleteKey" name="linkDeleteKey"/>
-		<div class="popContainer">
-			<div class="top">
-				<div>
-					<div class="floatL ftw500">유지보수 등록</div>
-				</div>
+<div class="popContainer">
+	
+		
+		<div class="top">
+			<div>
+				<div class="floatL ftw500">유지보수 등록</div>
 			</div>
-			<div class="left">
-				<ul class="ftw400">
-					<li class="colorWhite cursorP on">기본정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
-					
-					<li id="back_order" class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');" style="display:none">백계약정보</li>
-					<li id="back_buy" class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');" style="display:none">매입정보</li>
-				</ul>
-			</div>
-			<div class="contents">
+		</div>
+		<div class="left">
+			<ul class="ftw400">
+				<li class="colorWhite cursorP on">기본정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>				
+				<li id="back_order" class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');" style="display:none">백계약정보</li>
+				<li id="back_buy" class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');" style="display:none">매입정보</li>
+			</ul>
+		</div>
+		<div class="contents">
+	
 				<div>
+				<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">
+				<%-- <form:form commandName="mtBasicForm" id="mtBasicForm" name="mtBasicForm" method="post"> --%>		 
+					<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> <!-- 유지보수 계약 관리키  -->
+					<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${basicContractInfo.mtSbCtYn}"/>"/><!-- 백계약여부 --> 
+					<input type="hidden" id="sp_linkDeleteKey" name="linkDeleteKey"/>	
+					<input type="hidden" id="pj_linkDeleteKey" name="linkDeleteKey"/>					
+					<input type="hidden" id="workClass" name="workClass" value="mtContract"/>
 					<table>
-						<%-- <tr>
-							<td class="btnFc" colspan="2">
-								<button type="button" onclick="javascript:fn_forecastPop()"><img src="<c:url value='/images/forecast.png'/>" /></button>
-								<input type="text" name="pmNm" id="pmNm" class="pname" value="<c:out value="${basicContractInfo.acDirectorInfo}"/>" readonly/>
-								<input type="hidden" name="pmKey" id="pmKey"  value="<c:out value="${basicContractInfo.mtAcKey}"/>" />
-							</td>
-							
-						</tr> --%>
 						<tr>
 							<td class="tdTitle">FORECAST명</td>
 							<td class="tdContents">
@@ -789,10 +946,10 @@
 								<button type="button" onclick="javascript:fn_projectPop()" style="vertical-align: middle;">
 									<img src="<c:url value='/images/btn_project_connect.png'/>" />
 								</button>
-								<%-- <input type="text" id="pj_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
-								<input type="hidden" id="pj_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" /> --%>
-								<input type="text" id="no" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
-								<input type="hidden" id="id"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" />
+								<input type="text" id="pj_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
+								<input type="hidden" id="pj_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" />
+								<%-- <input type="text" id="no" class="pname" value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>								
+								<input type="hidden" id="id"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKey}"/>" /> --%>
 								<input type="hidden" id="pj_mtLinkKey"  value="<c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkKey}"/>" />
 								<img id="pj_delete_project" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteProject();" style="width: 11px;display:none"/>
 							</td>
@@ -877,14 +1034,14 @@
 								<input type="text"  id="mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 198px; text-align: right;"/>
 							</td>
 						</tr>
-						<tr>
+						<!-- <tr>
 							<td class="tdTitle"><label>*</label> 부가세 포함</td>
 							<td class="tdContents">
 								<input type="radio" class="tRadio" name="taxYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								<input type="radio" class="tRadio" name="taxYn" value="N" id="hasVAT2" checked="checked"/><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N
 							</td>
-						</tr>
+						</tr> -->
 						<tr>
 							<td class="tdTitle"><label>*</label> 결재조건</td>
 							<td class="tdContents">
@@ -936,40 +1093,107 @@
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
 							<td class="tdContents" ><textarea name="remark"><c:out value="${basicContractInfo.remark}"/></textarea></td>
-						</tr>
-						<tr>
-							<td class="tdTitle veralignT">첨부파일</td>
-							<td class="tdContents"><button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
-						</tr>
+						</tr>				
+								
 					</table>
-				</div>
-				<div class="btnWrap floatL">
-					<%-- <div class="floatL">
-						<button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button>
-					</div> --%>
-					<div class="floatL btnCenter">
-						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					</div>
-					<c:choose>
-						<c:when test="${basicContractInfo !=null}">
-					<div class="floatR"  style="margin-right: 22px;">
-						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
-					</div>
-						</c:when>
-						<c:otherwise>
-					<div class="floatR"  style="margin-right: 22px;">
-						<img src="<c:url value='/images/btn_non_next.png'/>"/>
-					</div>						
-						</c:otherwise>
-					</c:choose>
-					<%-- <div class="floatR" style="margin-right: 22px;">
-						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
-					</div> --%>
-					<div class="floatN floatC"></div>
-				</div>
+				</form>
+				<form id="fileForm" method="post" enctype="multipart/form-data"> 
+					<input type="hidden" name="docTypeNm" value="mtContract" />
+					<input type="hidden" name="fileCtKey" id="fileCtKey" value="${basicContractInfo.mtIntegrateKey}" />
+					<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${resultList[0].pjNm}"/>"/> 
+					<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+					<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+					<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+					<table>					
+						<tr>		
+							<td class="tdTitle veralignT">첨부파일</td>		
+							<td>			
+								<div class="uploadContainer">
+									<input class="uploadName" id="upFileName" placeholder="파일선택" disabled="disabled" />
+									<label for="exFile" class="exFileLabel"></label>
+									<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+								</div>
+								<div style="width: 235px; height: 25px; clear:both;">
+									<c:forEach var="result" items="${fileList }" varStatus="status">
+										<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFilePopUp('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+										<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+										<c:if test="${status.last eq false}"><br /></c:if>
+									</c:forEach>
+								</div>
+								
+							
+							<%-- <form:form id="viewForm" name="viewForm" method="POST">
+								<input type="hidden" name="fileKey" value=""/>
+								<input type="hidden" name="fileOrgNm" value=""/>
+							</form:form> --%>
+							</td>
+						</tr>
+					
+					<%-- tr>
+								<td class="tdTitle veralignT">첨부파일</td>
+								<td class="tdContents"><button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button></td>
+							</tr> --%>
+					</table>
+				</form>
+				<form:form id="viewPopUpForm" name="viewPopUpForm" method="POST">
+					<input type="hidden" name="fileKey" value=""/>
+					<input type="hidden" name="fileOrgNm" value=""/>
+				</form:form>
 			</div>
-		</div>	
+			
+			<div class="btnWrap floatL">
+				<%-- <div class="floatL">
+					<button type="button"><img src="<c:url value='/images/btn_file.png'/>" /></button>
+				</div> --%>
+				<div class="floatL btnCenter">
+					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+				</div>
+				<c:choose>
+					<c:when test="${basicContractInfo !=null}">
+				<div class="floatR"  style="margin-right: 22px;">
+					<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
+				</div>
+					</c:when>
+					<c:otherwise>
+				<div class="floatR"  style="margin-right: 22px;">
+					<img src="<c:url value='/images/btn_non_next.png'/>"/>
+				</div>						
+					</c:otherwise>
+				</c:choose>
+				<%-- <div class="floatR" style="margin-right: 22px;">
+					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+				</div> --%>
+				<div class="floatN floatC"></div>
+			</div>
+		</div>
+	
+	<%-- <form id="fileForm" method="post" enctype="multipart/form-data"> 
+    	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
+		<input type="hidden" name="docTypeNm" value="프로젝트" />
+		<input type="hidden" name="fileCtKey" id="fileCtKey" value="${projectVO.pjKey}" />
+		<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${resultList[0].pjNm}"/>"/> 
+		<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+		<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+		<div class="btnWrap">
+			<input class="uploadName" value="파일선택" disabled="disabled" />
+			<label for="exFile" class="exFileLabel"></label>
+			<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+		</div>
+		<div style="width: 235px; height: 25px; clear:both;background-color: gold;">
+			<c:forEach var="result" items="${fileList }" varStatus="status">
+				<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+				<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+				<c:if test="${status.last eq false}"><br /></c:if>
+			</c:forEach>
+		</div>
+		<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
 	</form>
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
+	</form:form> --%>
 	<%-- </form:form> --%> 
+</div>
 </body>
 </html>

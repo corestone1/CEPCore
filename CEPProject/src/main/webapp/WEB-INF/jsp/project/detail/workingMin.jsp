@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
+	<title>프로젝트 상세</title>
 	
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
@@ -171,7 +171,7 @@
 		}
 		.contents .dtl tbody {
 			width: 997px;
-			height: 532px;
+			height: auto;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;

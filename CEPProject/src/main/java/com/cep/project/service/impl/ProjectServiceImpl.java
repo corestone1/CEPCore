@@ -1,6 +1,7 @@
 package com.cep.project.service.impl;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -27,6 +29,8 @@ import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
+import com.cmm.config.DeptInfo;
+import com.cmm.config.EmailInfo;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
@@ -513,6 +517,7 @@ public class ProjectServiceImpl implements ProjectService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		List<ProjectGuarantyBondVO> updateList = new ArrayList<ProjectGuarantyBondVO>();
+		int isCtUpt = 1, isDfUpt = 1, isPpUpt = 1;
 		int result = 0;
 		MailVO mailVO = new MailVO();
 		
@@ -522,6 +527,7 @@ public class ProjectServiceImpl implements ProjectService {
 			/*mapper.updateSalesInfo(guarantyBondVO);*/
 			
 			for(int i = 0; i < guarantyBondVO.getGuarantyList().size(); i++) {
+				
 				guarantyBondVO.setCtKey(guarantyBondVO.getGuarantyList().get(i).getCtKey());
 				guarantyBondVO.setSalesKey(guarantyBondVO.getGuarantyList().get(i).getSalesKey());
 				
@@ -537,9 +543,12 @@ public class ProjectServiceImpl implements ProjectService {
 					
 					if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getCtGbKey(), ""))) {
 						// 업데이트
+						isCtUpt = isCtUpt + 1;
 						guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getCtGbKey());
 						mapper.updateGuarantyInfo(guarantyBondVO);
 					} else {
+						isCtUpt = 0;
+						
 						String gbKey = comService.makePrimaryKey(PrimaryKeyType.GUARANTY_BOND);
 						guarantyBondVO.setGbKey(gbKey);
 						
@@ -547,6 +556,7 @@ public class ProjectServiceImpl implements ProjectService {
 					}
 				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getCtGbKey(), "")) && 
 						guarantyBondVO.getGuarantyList().get(i).getCtGuarantyYN().equals("N")) {
+					isCtUpt = isCtUpt + 1;
 					// 삭제
 					guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getCtGbKey());
 					mapper.deleteGuarantyInfo(guarantyBondVO);
@@ -562,10 +572,13 @@ public class ProjectServiceImpl implements ProjectService {
 					guarantyBondVO.setGbAmount(guarantyBondVO.getGuarantyList().get(i).getDfGuarantyAmount());
 					
 					if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getDfGbKey(), ""))) {
+						isDfUpt = isDfUpt + 1;
 						// 업데이트
 						guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getDfGbKey());
 						mapper.updateGuarantyInfo(guarantyBondVO);
 					} else {
+						isDfUpt = 0;
+						
 						String gbKey = comService.makePrimaryKey(PrimaryKeyType.GUARANTY_BOND);
 						guarantyBondVO.setGbKey(gbKey);
 						
@@ -573,6 +586,7 @@ public class ProjectServiceImpl implements ProjectService {
 					}
 				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getDfGbKey(), "")) && 
 						guarantyBondVO.getGuarantyList().get(i).getDfGuarantyYN().equals("N")) {
+					isDfUpt = isDfUpt + 1;
 					// 삭제
 					guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getDfGbKey());
 					mapper.deleteGuarantyInfo(guarantyBondVO);
@@ -588,10 +602,13 @@ public class ProjectServiceImpl implements ProjectService {
 					guarantyBondVO.setGbAmount(guarantyBondVO.getGuarantyList().get(i).getPpGuarantyAmount());
 					
 					if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getPpGbKey(), ""))) {
+						isPpUpt = isPpUpt + 1;
 						// 업데이트
 						guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getPpGbKey());
 						mapper.updateGuarantyInfo(guarantyBondVO);
 					} else {
+						isPpUpt = 0;
+						
 						String gbKey = comService.makePrimaryKey(PrimaryKeyType.GUARANTY_BOND);
 						guarantyBondVO.setGbKey(gbKey);
 						
@@ -599,6 +616,7 @@ public class ProjectServiceImpl implements ProjectService {
 					}
 				} else if(!"".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGuarantyList().get(i).getPpGbKey(), "")) && 
 						guarantyBondVO.getGuarantyList().get(i).getPpGuarantyYN().equals("N")) {
+					isPpUpt = isPpUpt + 1;
 					// 삭제
 					guarantyBondVO.setGbKey(guarantyBondVO.getGuarantyList().get(i).getPpGbKey());
 					mapper.deleteGuarantyInfo(guarantyBondVO);
@@ -607,23 +625,45 @@ public class ProjectServiceImpl implements ProjectService {
 				updateSalesInfo(guarantyBondVO.getModEmpKey(), updateList);
 			}
 			
-			String subject = "보증 증권 정보";
-			String content = String.join(
-					                System.getProperty("line.separator"),
-					                ""+CepStringUtil.getDefaultValue(mailVO.getEmpKey(),"")+"님, 회원님의 CEP 계정 비밀번호를 안내합니다.<br>",
-					                "비밀번호는 전체관리자에 의해 관리됩니다.<br> 비밀번호 변경을 원할 시에는 관리자에게 문의하세요.<br><br>");
+			if(isCtUpt == 0 || isDfUpt == 0 || isPpUpt == 0) {
+				
+				String dept = DeptInfo.DEPT_OPER_L2.getValue();
+				List<String> toList = new ArrayList<String>();
+				
+				for(Object obj : comService.selectDeptEmployeeList(dept)) {
+					String email = obj.toString().substring(obj.toString().indexOf("=") + 1, obj.toString().length() - 1);
+					toList.add(email);
+				}
+				
+				String tmail = StringUtils.join(toList, ";");
+				mailVO.setEmpKey(tmail);
+				mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
+				String subject = "보증 증권 정보";
+				String content = String.join(
+						                System.getProperty("line.separator"),
+						                "프로젝트 "+guarantyBondVO.getPjKey()+"건에 보증 증권 정보가 있습니다.<br><br>");
+				
+				mailVO.setSubject(subject);
+				mailVO.setContent(content);
+				mailVO.setIsNewPw(false);
+				
+				result = comService.sendMail(request, mailVO);
+				if(result != 0) {
+					returnMap.put("mailSuccessYN", "Y");
+				} else {
+					returnMap.put("mailSuccessYN", "N");
+				}
+				
+				returnMap.put("mailList", toList);
+			} else {
+				returnMap.put("mailSuccessYN", "Y");
+			}
 			
-			mailVO.setSubject(subject);
-			mailVO.setContent(content);
-			mailVO.setIsNewPw(false);
-			
-			result = comService.sendMail(request, mailVO);
-			
-	    	returnMap.put("successYN", "Y");
-	    	returnMap.put("pjKey", request.getParameter("pjKey"));
+			returnMap.put("successYN", "Y");
+	    	returnMap.put("pjKey", guarantyBondVO.getPjKey());
 	    	
 	    	mapper.updateStatusCd(guarantyBondVO.getSalesCtFkKey(), guarantyBondVO.getStatusCd());
-		    	
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -678,7 +718,6 @@ public class ProjectServiceImpl implements ProjectService {
 				purchaseVO.setBuyAmount(orderVO.getOrderAmount());
 				purchaseVO.setDonePaymentAmount(0);
 				purchaseVO.setYetPaymentAmount(orderVO.getOrderAmount());
-				purchaseVO.setBuyTurn(orderVO.getBuyTurn());
 				insertPurchaseInfo(request, purchaseVO);
 				
 			} else {

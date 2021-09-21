@@ -245,13 +245,13 @@
 			 for(var i = 0; i < billInfo.length; i++)
 			 {
 				 //부가세 정보
-				 if('billTaxYn' == billInfo[i]['name']){
+				 /* if('billTaxYn' == billInfo[i]['name']){
 					 
 					 if('on' == billInfo[i]['value'])
 						 billInfo[i]['value'] = 'Y';
 					 else
 						 billInfo[i]['value'] = 'N';
-				 }
+				 } */
 				 
 				 //발행예정일
 				 if('billRequestDt' == billInfo[i]['name']){
@@ -299,13 +299,13 @@
 			 for(var i = 0; i < billInfo.length; i++)
 			 {
 				 //부가세 정보
-				 if('billTaxYn' == billInfo[i]['name']){
+				 /* if('billTaxYn' == billInfo[i]['name']){
 					 
 					 if('on' == billInfo[i]['value'])
 						 billInfo[i]['value'] = 'Y';
 					 else
 						 billInfo[i]['value'] = 'N';
-				 }
+				 } */
 				 
 				 //발행예정일
 				 if('billRequestDt' == billInfo[i]['name']){
@@ -379,13 +379,13 @@
 			 for(var i = 0; i < billInfo.length; i++)
 			 {
 				 //부가세 정보
-				 if('billTaxYn' == billInfo[i]['name']){
+				 /* if('billTaxYn' == billInfo[i]['name']){
 					 
 					 if('on' == billInfo[i]['value'])
 						 billInfo[i]['value'] = 'Y';
 					 else
 						 billInfo[i]['value'] = 'N';
-				 }
+				 } */
 				 
 				 //발행예정일
 				 if('billRequestDt' == billInfo[i]['name']){

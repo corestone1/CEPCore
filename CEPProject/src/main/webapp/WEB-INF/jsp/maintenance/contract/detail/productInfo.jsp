@@ -133,7 +133,7 @@
 			background-color: #d3d3d3;
 		}
 		.mContents > .fxd .title ul li {
-			width: 25%;
+			width: 16.65%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -372,7 +372,7 @@
 				//영업담당자 셋팅
 				$('#m_mtSaleEmpKey').val("${basicContractInfo.mtSaleEmpKey}").attr("selected", "true");
 				//부가세 포함 셋팅
-				$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
+				//$("input:radio[name='taxYn']:radio[value='${basicContractInfo.taxYn}']").prop('checked', true);
 				//검수방법 셋팅
 				//$('#m_mtImCd').val("${basicContractInfo.mtImCd}").attr("selected", "true");
 				$("input:radio[name='mtImCd']:radio[value='${basicContractInfo.mtImCd}']").prop('checked', true);
@@ -406,6 +406,18 @@
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
 						if(confirm("유지보수계약 매출정보 상세화면으로 이동하시겠습니까?")){
 							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesInfo.do";
+				           	document.m_mtMoveForm.submit();
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+					}
+					
+					
+				} else if(this.title == "salesPlanInfo"){
+					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 수금계획 상세화면으로 이동하시겠습니까?")){
+							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesPlanInfo.do";
 				           	document.m_mtMoveForm.submit();
 						}
 					} else {
@@ -652,7 +664,21 @@
 		}); */
 		
 		//기본정보 수정
+		//팝업으로 호출하는 방식으로 변경 2021-08-11
 		function modeBasicInfo(){
+			
+			var url = '/maintenance/contract/write/basicInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'					
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		//기존 detail화면에서 수정하던 방식 function
+		/* function modeBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
 				$('#modBasicTable').show();
@@ -671,7 +697,7 @@
 			        $("#m_mtBasicForm")[0].reportValidity();	
 				}
 			}
-		}
+		} */
 		/*
 		* 기본정보 내용을 저장한다.
 		*/
@@ -877,6 +903,36 @@
 				return false;
 			}			
 		}
+		
+		// 파일다운로드 관련
+		function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
+		
+		//보증증권
+		function fnShowStock() {
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'mtIntegrateKey' : $('#m1_mtIntegrateKey').val(), 'bdKey' : $('#bdKey').val()};
+			
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:575px');
+		}
+		//계산서 발생요청
+		function fnMoveBillDetail() {
+			
+			if(confirm("유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMoveForm.action = "/mngMaint/bill/detail/main.do";
+	           	document.m_mtMoveForm.submit();
+			}
+			
+		}
 	</script>
 </head>
 <body>
@@ -898,6 +954,7 @@
 						<input type="hidden" id="m2_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
 						<input type="hidden" id="m_linkDeleteKey" name="linkDeleteKey"/>
+						<input type="hidden" id="bdKey" name="bdKey" value="${mtGuarantyBondInfo.gbKey}" />
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
@@ -932,10 +989,10 @@
 									<td>유지보수 금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
-								<tr>
+								<%-- <tr>
 									<td>부가세포함</td>
 									<td><c:out value="${basicContractInfo.taxYn}"/></td>
-								</tr>
+								</tr> --%>
 								<tr>
 									<td>결제조건</td>
 									<td><c:out value="${basicContractInfo.mtPayTerms}"/></td>
@@ -954,7 +1011,33 @@
 								</tr>
 								<tr>
 									<td>보증증권 유무</td>
-									<td><c:out value="${basicContractInfo.gbYn}"/></td>
+									<td>
+										<c:out value="${basicContractInfo.gbYn}"/>
+										<c:if test='${basicContractInfo.gbYn eq "Y"}'>
+											&nbsp;&nbsp;
+											( 진행상태&nbsp;:&nbsp;
+											<c:choose>
+												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "N"}'>
+													발행전 ) &nbsp;&nbsp;
+													<span style="cursor: hand;">
+														<img src="/images/btn_stock_publish.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													</span>
+												</c:when>
+												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "R"}'>
+													발행요청 ) &nbsp;&nbsp;
+													<span style="cursor: hand;">
+														<img src="/images/btn_stock_end.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													</span>
+												</c:when>
+												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "Y"}'>
+													발행완료 ) &nbsp;&nbsp;
+													<span style="cursor: hand;">
+														<img src="/images/btn_stock_mod.png"     onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													</span>
+												</c:when>
+											</c:choose>											
+										</c:if>
+									</td>
 								</tr>
 								<tr>
 									<td>지원담당자</td>
@@ -971,6 +1054,19 @@
 								<tr>
 									<td>비고</td>
 									<td ><pre style="width: 390px"><c:out value="${basicContractInfo.remark}"/></pre></td>
+								</tr>
+								<tr>
+									<td>첨부파일</td>
+									<td >
+										<c:forEach var="result" items="${fileList }" varStatus="status">
+											<%-- <input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/> --%>
+											<%-- <a href="javascript:fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')"><c:out value="${result.fileOrgNm}"/></a> --%>
+											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;">
+												<B><I><u><c:out value="${result.fileOrgNm}"/></u></I></B>
+											</button>
+											<c:if test="${status.last eq false}"><br /></c:if>
+										</c:forEach>
+									</td>
 								</tr>
 							</table>
 							<table class="bsc" id="modBasicTable" style="display:none">
@@ -1032,14 +1128,14 @@
 										<input type="text"  id="m_mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 140px; text-align: right;"/>
 									</td>
 								</tr>
-								<tr>
+								<!-- <tr>
 									<td><label>*</label>부가세포함</td>
 									<td>
 										<input type="radio" class="tRadio" name="taxYn" value="Y" id="m_hasVAT1" checked="checked"/><label for="m_hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="radio" class="tRadio" name="taxYn" value="N" id="m_hasVAT2" /><label for="m_hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 									</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<td><label>*</label>결제조건</td>
 									<td>
@@ -1130,8 +1226,9 @@
 							</table>
 						</div>
 						<div class="floatL" style="margin-top: 22px">
-							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
-							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" title="기본정보수정" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+							<button type="button" title="기본정보삭제" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="삭제" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1141,14 +1238,17 @@
 					<ul>
 						<li id="LI_TOPBar_PD" class="on" title="productInfo" ><label style="cursor: pointer;">제품정보</label></li>
 						<li id="LI_TOPBar_SL" title="salesAmountInfo" ><label style="cursor: pointer;">매출정보</label></li>
+						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
 						<c:choose>
 							<c:when test="${parmMtSbCtYn == 'Y'}">
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
+								<li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li>
 							</c:when>
 							<c:otherwise>
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label>매입정보</label></li>
+								<li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li>
 							</c:otherwise>
 						</c:choose>
 						
@@ -1366,5 +1466,9 @@
 			<div class="floatC"></div>
 		</div>
 	</div>	
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
+	</form:form>
 </body>
 </html>

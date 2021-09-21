@@ -406,6 +406,18 @@
 						return false;
 					}					
 					
+				} else if(varUrl == "writeSalesPlanView"){					
+					if("${mtContractCountInfo.mtProductCnt}" > 0){
+						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						return false;
+					}					
+					
 				} else if(varUrl == "backOrderInfoView"){
 					if("${parmMtSbCtYn}" == "Y"){
 						
@@ -656,8 +668,8 @@
 		function fn_nextBtn(){
 			if("${parmMtSbCtYn}" == "Y"){
 				if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
-					if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 백계약정보 등록화면으로 이동하시겠습니까?")) {
-						var url = '/maintenance/contract/write/backOrderInfoView.do';
+					if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 수금계획정보 등록화면으로 이동하시겠습니까?")) {
+						var url = '/maintenance/contract/write/writeSalesPlanView.do';
 						var dialogId = 'program_layer';
 						var varParam = {
 								"mtIntegrateKey":$('#mtIntegrateKey').val(),
@@ -840,7 +852,8 @@
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
-					<li class="colorWhite cursorP on">매출정보</li>	
+					<li class="colorWhite cursorP on">매출정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>
 					<c:if test="${parmMtSbCtYn eq 'Y' }">		
 					<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');">매입정보</li>
@@ -1090,7 +1103,10 @@
 					<div class="floatL btnCenter">
 						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
-					<c:choose>
+					<div class="floatR" >
+						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
+					</div>
+					<%-- <c:choose>
 						<c:when test="${parmMtSbCtYn eq 'Y' and mtContractCountInfo.mtSalesAmountCnt>0}">
 					<div class="floatR" >
 						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
@@ -1101,7 +1117,7 @@
 						<img src="<c:url value='/images/btn_non_next.png'/>"/>
 					</div>						
 						</c:otherwise>
-					</c:choose>
+					</c:choose> --%>
 					<%-- <c:if test="${parmMtSbCtYn eq 'Y' and mtContractCountInfo.mtSalesAmountCnt>0}">	
 					<div class="floatR" >
 						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>" /></button>

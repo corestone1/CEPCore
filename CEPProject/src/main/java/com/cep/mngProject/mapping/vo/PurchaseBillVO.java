@@ -19,6 +19,7 @@ public class PurchaseBillVO extends ProjectPaymentVO implements Serializable {
 	private String billAcNm;
 	private String billAcKey;
 	private int billAmount;
+	private int billTurnNo;
 	private String billNo;
 	private String billDtFrom;
 	private String billDtTo;
@@ -78,6 +79,12 @@ public class PurchaseBillVO extends ProjectPaymentVO implements Serializable {
 	}
 	public void setBillAmount(int billAmount) {
 		this.billAmount = billAmount;
+	}
+	public int getBillTurnNo() {
+		return billTurnNo;
+	}
+	public void setBillTurnNo(int billTurnNo) {
+		this.billTurnNo = billTurnNo;
 	}
 	public String getBillNo() {
 		return billNo;
