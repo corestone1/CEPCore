@@ -25,6 +25,7 @@ import com.cep.mngProject.order.vo.MngProjectOrderVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -46,11 +47,28 @@ public class MngProjectOrderController {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
+		String toDay = null;
+		
 		try
 		{
 			logger.debug("searchVO.getOrderCtClass() : {}", searchVO.getOrderCtClass());
 			logger.debug("{}", service.selectOrderList(searchVO));
 			
+			toDay = CepDateUtil.getToday(null);		
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtFrom(), ""))){
+				searchVO.setOrderDtFrom(searchVO.getOrderDtFrom().replace("-", ""));
+			} else {
+				searchVO.setOrderDtFrom(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
+			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtTo(), ""))){
+				searchVO.setOrderDtTo(searchVO.getOrderDtTo().replace("-", ""));
+			} else {
+				searchVO.setOrderDtTo(toDay);
+			}
+			
+			model.put("orderDtFrom", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtFrom(), null, null));
+			model.put("orderDtTo", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtTo(), null, null));
 			model.addAttribute("orderList", service.selectOrderList(searchVO));
 			model.put("displayUtil", new CepDisplayUtil());
 		}catch(Exception e){

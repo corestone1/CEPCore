@@ -58,6 +58,7 @@
 				  JOIN CMM_EMPLOYEE_TB CET1 ON POT.REG_EMP_KEY      = CET1.EMP_KEY /* 발주자 정보 */
 				  JOIN CMM_EMPLOYEE_TB CET2 ON PMT.PJ_SALE_EMP_KEY  = CET2.EMP_KEY /* 담당영업정보 */
 				WHERE  POT.DELETE_YN      = 'N'
+					AND PMT.PJ_STATUS_CD >= 'PJST3000'
 				<if test="orderKey != null and orderKey != ''">
 				  	AND  POT.PJ_ORDER_KEY LIKE CONCAT('%', CONCAT(#{orderKeySearch}, '%')) /* 발주번호 조건검색  */
 				</if>

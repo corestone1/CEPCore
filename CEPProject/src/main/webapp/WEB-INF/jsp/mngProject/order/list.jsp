@@ -349,10 +349,20 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
 		
+		function fn_viewDetail(pjKey) {
+			form = document.listForm;
+			form.pjKey.value = pjKey;
+			form.workClass.value = "입찰_첨부파일";
+			form.action = "<c:url value='/project/detail/main.do?isOrderDetail=true'/>";
+			
+			form.submit(); 
+		} 
 	</script>
 </head>
 <body>
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
+		<input type="hidden" id="workClass" name="workClass" />
+		<input type="hidden" id="pjKey" name="pjKey" />
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -360,7 +370,7 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">발주 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<!-- 
@@ -370,7 +380,7 @@
 							<form:option value="M">유지보수</form:option>
 						</form:select>
 						 -->
-						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="from"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="to"/>
+						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="발주시작일(from)" value="${orderDtFrom }"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="발주종료일(to)" value="${orderDtTo }"/>
 						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;"/>
 						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;"/>
 						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명"/>
@@ -402,7 +412,7 @@
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
 									<td><c:out value="${result.acNm}"/></td>
-									<td><input type="hidden" value="${result.pjKey }" /><a href="javascript:fn_detailPop('${result.pjKey}')"><c:out value="${result.pjNm}"/></a></td>
+									<td><input type="hidden" value="${result.pjKey }" /><a href="javascript:fn_viewDetail('${result.pjKey}')"><c:out value="${result.pjNm}"/></a></td>
 									<td><c:out value="${displayUtil.displayDate(result.orderDt)}"/></td>
 									<td><c:out value="${result.orderKey}"/></td>
 									<td><c:out value="${result.orderAcNm}"/></td>

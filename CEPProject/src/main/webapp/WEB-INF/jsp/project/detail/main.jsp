@@ -357,7 +357,15 @@
 		}
 	</style>
 	<script>
+		function getParameterByName(name) { 
+			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]"); 
+			var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+			results = regex.exec(location.search); 
+			return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " ")); 
+		}
+
 		$(document).ready(function() {
+			
 			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
 			var length = $('form .contents > .fxd .title ul li').length;
 			$('form .contents > .fxd .title ul li:nth-child(' + index + ')').toggleClass("liArrow");
@@ -536,11 +544,14 @@
 			$('#slt_pjSaleEmpKey').val('${projectVO.pjSaleEmpKey}');
 			$('#slt_pjSupportEmpKey').val('${projectVO.pjSupportEmpKey}');
 			
+			var isOrderDetail = getParameterByName('isOrderDetail');
 			
 			//현재 프로젝트 상태로 이동
 			var lstPjStatusCd = '${projectVO.pjStatusCd}';
 			//alert(lstPjStatusCd);
-			if(lstPjStatusCd == 'PJST1000') {  
+			if(isOrderDetail == "true") {
+				fnMoveMenu('LI_TOPBar_OD');
+			} else if(lstPjStatusCd == 'PJST1000') {  
 				//입찰 - /project/detail/biddingMin.do
 				fnMoveMenu('LI_TOPBar_BD');
 			} else if(lstPjStatusCd == 'PJST2000') {

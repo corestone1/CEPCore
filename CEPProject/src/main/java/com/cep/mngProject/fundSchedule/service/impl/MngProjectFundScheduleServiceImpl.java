@@ -35,9 +35,8 @@ public class MngProjectFundScheduleServiceImpl implements MngProjectFundSchedule
 		} else {
 			mngProjectFundScheduleVO.setSearchFromDt(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
 		}
-		System.out.println(mngProjectFundScheduleVO.getSearchFromDt()+",,,,before");
+		
 		mngProjectFundScheduleVO.setSearchFromDt(CepDateUtil.convertDisplayFormat(mngProjectFundScheduleVO.getSearchFromDt(), null, null));
-		System.out.println(mngProjectFundScheduleVO.getSearchFromDt()+",,,,after");
 		
 		if(!"".equals(CepStringUtil.getDefaultValue(mngProjectFundScheduleVO.getSearchToDt(), ""))){
 			mngProjectFundScheduleVO.setSearchToDt(mngProjectFundScheduleVO.getSearchToDt().replace("-", ""));
