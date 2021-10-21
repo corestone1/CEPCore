@@ -103,9 +103,6 @@ public class ProjectController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
-		// 검색 정보 저장.
-		model.addAttribute("searchVO", searchVO);
-		
 		toDay = CepDateUtil.getToday(null);		
 		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchFromDt(), ""))){
 			searchVO.setSearchFromDt(searchVO.getSearchFromDt().replace("-", ""));
@@ -126,6 +123,9 @@ public class ProjectController {
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 
+		// 검색 정보 저장.
+		model.addAttribute("searchVO", searchVO);
+				
 		model.put("searchFromDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchFromDt(), null, null));
 		model.put("searchToDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchToDt(), null, null));
 		

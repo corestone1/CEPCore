@@ -381,9 +381,9 @@
 						</form:select>
 						 -->
 						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="발주시작일(from)" value="${orderDtFrom }"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="발주종료일(to)" value="${orderDtTo }"/>
-						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;"/>
-						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;"/>
-						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명"/>
+						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span><img onclick="javascript:fn_searchList();" src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -419,7 +419,7 @@
 									<td><c:out value="${result.orderCount}"/></td>
 									<td><c:out value="${displayUtil.commaStr(result.orderAmount)}"/></td>
 									<td><c:out value="${result.orderEmpNm}"/></td>
-									<td><c:out value="${result.salseEmpNm}"/></td>
+									<td><c:out value="${result.salesEmpNm}"/></td>
 								</tr>
 								<input type="hidden" name="orderKey" value="${result.orderKey}"/>
 							</c:forEach>						

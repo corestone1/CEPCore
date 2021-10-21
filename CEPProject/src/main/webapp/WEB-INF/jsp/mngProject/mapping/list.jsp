@@ -40,7 +40,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -211,13 +211,13 @@
 						<div class="title floatL"><label class="ftw500">발주 - 계산서 매핑</label></div>
 					</div>
 					<div class="floatR">
-						<form:input path="orderDtFrom" type="text" class="calendar" placeholder="from" />
+						<form:input path="orderDtFrom" type="text" class="calendar" placeholder="from" value="${orderDtFrom }"/>
 						<label> ~ </label>
-						<form:input path="orderDtTo" type="text" class="calendar" placeholder="to"/>
-						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" />
-						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호"/>
-						<form:input path="orderAcNm" type="text" class="search" placeholder="거래처상호" title="거래처상호"/>
-						<form:input path="pjNm" type="text" class="search" placeholder="프로젝트명" title="프로젝트명"/>
+						<form:input path="orderDtTo" type="text" class="calendar" placeholder="to" value="${orderDtTo }"/>
+						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" onKeyPress="if(event.keyCode==13){fn_search();}"/>
+						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호" onKeyPress="if(event.keyCode==13){fn_search();}"/>
+						<form:input path="orderAcNm" type="text" class="search" placeholder="거래처상호" title="거래처상호" onKeyPress="if(event.keyCode==13){fn_search();}"/>
+						<form:input path="pjNm" type="text" class="search" placeholder="프로젝트명" title="프로젝트명" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<span onclick="fn_search();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
