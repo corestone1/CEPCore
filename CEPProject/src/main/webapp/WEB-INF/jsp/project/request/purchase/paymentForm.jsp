@@ -690,7 +690,7 @@
 						<td style="width: 956px;">
 							<c:if test="${empty prePaymentList}">
 								요청할 지급 정보가 없습니다. 
-								<button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();">지급 정보 등록</button>
+								<!-- <button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();">지급 정보 등록</button> -->
 							</c:if>
 							<c:if test="${!empty prePaymentList}">
 								기 지급 정보를 확인해 주세요.
