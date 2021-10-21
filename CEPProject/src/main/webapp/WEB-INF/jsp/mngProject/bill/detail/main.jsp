@@ -46,7 +46,7 @@
 			width: 37%;
 		}
 		.listForm .contents > div:nth-child(2) {
-			margin-top: 51px;
+			margin-top: 27px;
 		}
 		.listForm .contents > .fxd {
 			width: 60%;
@@ -345,6 +345,16 @@
 			color: red;
 			vertical-align: middle;
 		}
+		.backWrap a {
+			color: #000;
+		    font-weight: 300;
+		    font-size: 15px;
+		    text-decoration: underline;
+		    cursor: pointer;
+		}
+		.backWrap a:hover {
+			color: #007AAE;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -354,6 +364,14 @@
 			
 			$("iframe").attr("src", newUrl);
 		});
+		
+		function fn_detail() {
+			form = document.moveForm;
+			form.workClass.value = "입찰_첨부파일";
+			form.action = "<c:url value='/project/detail/main.do'/>";
+			
+			form.submit(); 
+		}
 	</script>
 </head>
 <body>
@@ -419,11 +437,19 @@
 					</div>
 				</div>
 				<div class="floatR dpBlock fxd">
+					<div class="floatR backWrap">
+						<a onclick="fn_detail();">프로젝트 정보로 돌아가기</a>
+					</div>
+					<div class="floatC"></div>
 					<iframe src="" width="100%" height="740"></iframe>
 				</div>
 				<div class="floatC"></div>
 			</div>
 		</div>	
 	</div>
+	<form id="moveForm" name="moveForm">
+		<input type="hidden" id="pjKey" name="pjKey" value="${basicInfo.pjKey }"/>
+		<input type="hidden" id="workClass" name="workClass" value=""/>
+	</form>
 </body>
 </html>

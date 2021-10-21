@@ -249,7 +249,7 @@
 		        contentType: "application/json; charset=UTF-8", 
 		        dataType: 'json',
 		    	success:function(data){		  
-		           	if($('#isUpdate').val().replace(" ", "") == ("N") || ('#isUpdate').val().replace(" ", "").length == 0) {
+		           	if($('#isUpdate').val().replace(" ", "") == ("N") || $('#isUpdate').val().replace(" ", "").length == 0) {
 		    			alert("Forecast 매출/입 정보가 저장되었습니다.");	
 		    		} else {
 		    			alert("Forecast 매출/입 정보가 수정되었습니다.");	
