@@ -651,6 +651,8 @@
 			var deleteUprice = 0;
 			var deleteQuantity = 0;
 			var totalAmount = removeCommas($('#orderTotalAmount').val())*1;
+			var yetPaymentAmount =($('#yetPaymentAmount').val())*1; 
+			var oldMtOrderAmount =($('#oldMtOrderAmount').val())*1; 
 			deleteUprice = removeCommas($('#prodList-'+num+'-mtOrderPmUprice').val())*1;
 			deleteQuantity = removeCommas($('#prodList-'+num+'-mtOrderPmQuantity').val())*1;
 			
@@ -658,6 +660,20 @@
 			//전체금액에서 삭제금액을 뺀다.
 			$('#orderTotalAmount').val(addCommas(totalAmount-(deleteUprice*deleteQuantity)));
 			
+			//console.log("1==========>"+(totalAmount-(deleteUprice*deleteQuantity)) );
+			//console.log("2==========>"+oldMtOrderAmount);
+			//console.log("3==========>"+yetPaymentAmount);
+			//console.log("4==========>"+( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount));
+			//console.log("5==========>"+(yetPaymentAmount + ( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount) ));
+			//yetPaymentAmount금액을 계산한다. (yetPaymentAmount+변경된 금액)
+			$('#yetPaymentAmount').val( yetPaymentAmount+ ( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount) );
+			//이전금액셋팅.
+			$('#oldMtOrderAmount').val(totalAmount-(deleteUprice*deleteQuantity));
+			
+			//발주금액이 지급요청금액보다 작으면 경고문구
+			if(removeCommas($('#orderTotalAmount').val())*1 <$('#callTotalAmount').val()*1) {
+				alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
+			}
 		}
 		
 		
@@ -750,6 +766,10 @@
 				
 				var orderAmount = quantity*pmUprice;
 				
+				//미지급금액 계산 추가 2021-10-15
+				var yetPaymentAmount =($('#yetPaymentAmount').val())*1; 
+				var oldMtOrderAmount =($('#oldMtOrderAmount').val())*1; 
+				
 				//console.log("quantity * pmUprice =orderAmount ====>"+quantity+" * "+pmUprice+" = "+(quantity*pmUprice));
 				
 				//제품별 계산(단가*수량 = 합계)
@@ -758,6 +778,15 @@
 				//발주합계 금액 계산
 				$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
 				
+				//yetPaymentAmount금액을 계산한다. (yetPaymentAmount+변경된 금액)
+				$('#yetPaymentAmount').val( yetPaymentAmount+ ( (orderTotalAmount+(orderAmount-beforeAmount))-oldMtOrderAmount) );
+				//이전금액셋팅.
+				$('#oldMtOrderAmount').val(orderTotalAmount+(orderAmount-beforeAmount));
+				
+				//발주금액이 지급요청금액보다 작으면 경고문구
+				if(removeCommas($('#orderTotalAmount').val())*1 <$('#callTotalAmount').val()*1) {
+					alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
+				}
 				//console.log("num=>"+num);
 				//console.log("amount11====>"+ amount+"/"+totalAmount+"/"+beforeAmount);			
 			});
@@ -867,40 +896,46 @@
 		function fn_saveBtn(){
 			var actionTitle;
 			var checkDate;
-			//필수값 체크를 완료하면 저장 프로세스 시작.
-			if ($("#mtBasicForm")[0].checkValidity()){
-				
-				if ($("#mtListForm")[0].checkValidity()){
+			if(removeCommas($('#orderTotalAmount').val())*1 > $('#callTotalAmount').val()*1) {
+				//필수값 체크를 완료하면 저장 프로세스 시작.
+				if ($("#mtBasicForm")[0].checkValidity()){
 					
-					checkDate = $("#mtListForm").checkPmDate();
-					
-					if('' != checkDate) {
-						alert(checkDate);
+					if ($("#mtListForm")[0].checkValidity()){
+						
+						checkDate = $("#mtListForm").checkPmDate();
+						
+						if('' != checkDate) {
+							alert(checkDate);
+						} else {
+							if($('#popSelectKey').val() !=''){
+								//수정
+								actionTitle = "수정";	
+							} else {
+								//등록
+								actionTitle = "저장";
+							}
+							if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
+								//필수값 모두 통과하여 저장 프로세스 호출.
+								//saveBackOrder();
+							} else {
+								return false;
+							}
+						}
+						
+						
 					} else {
-						if($('#popSelectKey').val() !=''){
-							//수정
-							actionTitle = "수정";	
-						} else {
-							//등록
-							actionTitle = "저장";
-						}
-						if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
-							//필수값 모두 통과하여 저장 프로세스 호출.
-							saveBackOrder();
-						} else {
-							return false;
-						}
-					}
+						 $("#mtListForm")[0].reportValidity();	
+					}				
 					
-					
-				} else {
-					 $("#mtListForm")[0].reportValidity();	
-				}				
-				
-			}  else {
-				 //Validate Form
-		        $("#mtBasicForm")[0].reportValidity();	
+				}  else {
+					 //Validate Form
+			        $("#mtBasicForm")[0].reportValidity();	
+				}
+			} else {
+				//발주금액이 지급요청금액보다 작으면 경고문구
+				alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
 			}
+			
 		}
 		// 저장
 		function saveBackOrder(){
@@ -1006,76 +1041,79 @@
 			var acKeyNm = $('#mtOrderAcKeyNm').val();
 			//console.log("selectKey=========>"+$('#popSelectKey').val());
 			//console.log("mtOrderAcKeyNm=========>"+$('#mtOrderAcKeyNm').val() );
-			if($('#popSelectKey').val() !='') {
-				/* if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
-					var url = '/maintenance/contract/delete/backOrderAll.do';
-					var dialogId = 'program_layer';
-					var varParam = {
-							"mtIntegrateKey":$('#mtIntegrateKey').val(),
-							"selectKey":$('#selectKey').val()
-					}
-					var button = new Array;
-					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-				} */
-				var sendData = {
-						"mtIntegrateKey":$('#mtIntegrateKey').val(),
-						"selectKey":$('#popSelectKey').val()
-				}				
-				
-				if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
-					$.ajax({
-			        	url:"/maintenance/contract/delete/backOrder.do",
-			            dataType: 'text', 
-			            type:"post",  
-						data: JSON.stringify(sendData),
-						
-			            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
-			            
-			     	   	contentType: "application/json; charset=UTF-8", 
-			     	  	beforeSend: function(xhr) {
-			     	  		
-			        		xhr.setRequestHeader("AJAX", true);	        		
-			        	},
-			            success:function(data){	
-			            	//console.log("data==>"+data);
-			            	var paramData = JSON.parse(data);
-			            	
-			            	
-			            	if("Y" == paramData.successYN){
-			            		alert("유지보수계약 백계약정보  삭제를 성공하였습니다.");
-		            			//유지보수계약 백계약 등록화면으로 이동
-			            		var url='/maintenance/contract/write/backOrderInfoView.do';
-			            		            			
-				    			var dialogId = 'program_layer';
-				    			var varParam = paramData
-				    			var button = new Array;
-				    			button = [];
-				    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-				            	
-			            	} else {
-			            		alert("유지보수작업 백계약정보 삭제를 실패하였습니다.");
-			            		
-			            	}
-			            	
-			            	
-			            },
-			        	error: function(request, status, error) {
-			        		if(request.status != '0') {
-			        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-			        		}
-			        	} 
-			        }
-		           	 
-		           	);
-				}
-				
-				
+			if($('#callTotalAmount').val()*1 > 0) {
+				//지급요청금액이 존재하면 삭제할 수 없다.
+				alert("지급요청금액 ("+addCommas($('#callTotalAmount').val())+")이 존재하여 삭제할 수 없습니다.");
 			} else {
-				alert("삭제할 거래처 정보를 선택하세요.");
-			}
-			
-			
+				if($('#popSelectKey').val() !='') {
+					/* if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
+						var url = '/maintenance/contract/delete/backOrderAll.do';
+						var dialogId = 'program_layer';
+						var varParam = {
+								"mtIntegrateKey":$('#mtIntegrateKey').val(),
+								"selectKey":$('#selectKey').val()
+						}
+						var button = new Array;
+						button = [];
+						showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+					} */
+					var sendData = {
+							"mtIntegrateKey":$('#mtIntegrateKey').val(),
+							"selectKey":$('#popSelectKey').val()
+					}				
+					
+					if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
+						$.ajax({
+				        	url:"/maintenance/contract/delete/backOrder.do",
+				            dataType: 'text', 
+				            type:"post",  
+							data: JSON.stringify(sendData),
+							
+				            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
+				            
+				     	   	contentType: "application/json; charset=UTF-8", 
+				     	  	beforeSend: function(xhr) {
+				     	  		
+				        		xhr.setRequestHeader("AJAX", true);	        		
+				        	},
+				            success:function(data){	
+				            	//console.log("data==>"+data);
+				            	var paramData = JSON.parse(data);
+				            	
+				            	
+				            	if("Y" == paramData.successYN){
+				            		alert("유지보수계약 백계약정보  삭제를 성공하였습니다.");
+			            			//유지보수계약 백계약 등록화면으로 이동
+				            		var url='/maintenance/contract/write/backOrderInfoView.do';
+				            		            			
+					    			var dialogId = 'program_layer';
+					    			var varParam = paramData
+					    			var button = new Array;
+					    			button = [];
+					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+					            	
+				            	} else {
+				            		alert("유지보수작업 백계약정보 삭제를 실패하였습니다.");
+				            		
+				            	}
+				            	
+				            	
+				            },
+				        	error: function(request, status, error) {
+				        		if(request.status != '0') {
+				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				        		}
+				        	} 
+				        }
+			           	 
+			           	);
+					}
+					
+					
+				} else {
+					alert("삭제할 거래처 정보를 선택하세요.");
+				}
+			}						
 		}	
 
 
@@ -1262,6 +1300,9 @@
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${mtBackOrderVO.selectKey}"/>"/>
 						<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtBackOrderVO.mtOrderKey}"/>"/>
 						
+						<input type="hidden" id="oldMtOrderAmount" name="oldMtOrderAmount" value="<c:out value="${mtBackOrderVO.mtOrderAmount}"/>"/>
+						<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${mtBackOrderVO.yetPaymentAmount}"/>"/>
+						<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${mtBackOrderVO.callTotalAmount}"/>"/>
 					<table>
 						<tr id="tr_account">
 							<td class="tdTitle"><label>*</label> 매입처</td>

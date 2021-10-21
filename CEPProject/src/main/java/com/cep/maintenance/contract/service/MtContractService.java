@@ -244,7 +244,7 @@ public interface MtContractService {
 	  * @param mtSalesAmountListVO
 	  * @throws Exception
 	 */
-	void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO) throws Exception;
+	void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO, boolean isNewData) throws Exception;
 	/**
 	 * 
 	  * @Method Name : selectMtContractSalesAmountList

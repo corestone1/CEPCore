@@ -185,6 +185,19 @@ public interface MtContractMapper {
 	 */
 	public int selectMtPmTotalAmount(String mtIntegrateKey) throws Exception;
 	/* ============================== 유지보수계약 매출  ======================================*/
+	
+	/**
+	 * 매출데이타 자동생성시   계산서 발행요청이 있는 데이타를 조회하여 맵핑하는 조회쿼리
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 10. 15. 오후 9:17:11
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtReqBillList(String mtIntegrateKey) throws Exception;
 
 	/**
 	 * 

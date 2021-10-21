@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cep.maintenance.contract.service.MtContractService;
-import com.cep.maintenance.contract.vo.MtDefaultVO;
+import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cep.mngMaint.bill.service.MngMaintBillService;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillVO;
-import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
+import com.cep.mngMaint.bill.vo.MtPaymentVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepStringUtil;
@@ -63,6 +63,11 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 	@Transactional
 	public String insertBillRequest(MngMaintBillVO mngMaintBillVO) throws Exception {
 		String billCallKey = null;
+		EgovMap billStatusInfo = null;
+		String targetYear = null;
+		String targetMonth = null;
+		MtSalesAmountVO mtSalesAmountVO = null;
+		String billIssueStatus = null;
 		try {
 			
 			billCallKey = contService.makePrimaryKey(PrimaryKeyType.MAINTENACE_BILLING_OP);
@@ -73,6 +78,48 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 				mapper.insertBillRequest(mngMaintBillVO);
 				//MT_SALES_DETAIL_TB.SALES_STATUS_CD 업데이트.
 				mapper.updateSaleDetailStatusCd(mngMaintBillVO);
+				
+				//세금계산서 요청에 대한 상태정보를 가져온다.
+				billStatusInfo = mapper.selectBillStatusInfo(mngMaintBillVO);
+				if(null != billStatusInfo && billStatusInfo.size()>0) {
+					targetYear = ((String)billStatusInfo.get("salesYearMonth")).substring(0, 4);
+					targetMonth = ((String)billStatusInfo.get("salesYearMonth")).substring(4, 6);
+					billIssueStatus = mngMaintBillVO.getBillIssueStatus();
+					mtSalesAmountVO = new MtSalesAmountVO();
+					mtSalesAmountVO.setMtIntegrateKey((String)billStatusInfo.get("mtIntegrateKey"));
+					mtSalesAmountVO.setMtSalesYear(targetYear);
+					mtSalesAmountVO.setModEmpKey(mngMaintBillVO.getRegEmpKey());
+					
+					logger.debug("insertBillRequest===>"+targetYear+"/"+targetMonth+"/"+billIssueStatus);
+					if("01".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesJanCallYn(billIssueStatus);
+					} else if("02".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesFebCallYn(billIssueStatus);
+					} else if("03".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesMarCallYn(billIssueStatus);
+					} else if("04".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesAprCallYn(billIssueStatus);
+					} else if("05".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesMayCallYn(billIssueStatus);
+					} else if("06".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesJunCallYn(billIssueStatus);
+					} else if("07".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesJulCallYn(billIssueStatus);
+					} else if("08".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesAugCallYn(billIssueStatus);
+					} else if("09".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesSepCallYn(billIssueStatus);
+					} else if("10".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesOctCallYn(billIssueStatus);
+					} else if("11".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesNovCallYn(billIssueStatus);
+					} else if("12".equals(targetMonth)) {
+						mtSalesAmountVO.setMtSalesDecCallYn(billIssueStatus);
+					}
+					
+					//MT_SALES_AMOUNT_TB의 월별 상태코드를 업데이트 한다.
+					mapper.updateMtSaleAmountStatus(mtSalesAmountVO);
+				}
 			}
 			
 		} catch (Exception e) {
@@ -93,15 +140,70 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 	@Transactional
 	public void deleteBillRequest(MngMaintBillVO mngMaintBillVO) throws Exception {
 		MngMaintBillVO maintBillVO = new MngMaintBillVO();
+		
+
+		EgovMap billStatusInfo = null;
+		String targetYear = null;
+		String targetMonth = null;
+		MtSalesAmountVO mtSalesAmountVO = null;
+		String billIssueStatus = null;
 		try {
 			maintBillVO.setBillCallKey(mngMaintBillVO.getBillCallKey());
 			maintBillVO.setBillCtFkKey(mngMaintBillVO.getBillCtFkKey());
 			maintBillVO.setBillIssueStatus(null);
+			
+			//세금계산서 요청에 대한 상태정보를 가져온다.
+			billStatusInfo = mapper.selectBillStatusInfo(mngMaintBillVO);
+			
 			//세금계산서 요청 삭제.
 			mapper.deleteBillRequest(maintBillVO);
 			
+			
+			
 			//MT_SALES_DETAIL_TB.SALES_STATUS_CD 업데이트.
 			mapper.updateSaleDetailStatusCd(maintBillVO);
+			
+			
+			if(null != billStatusInfo && billStatusInfo.size()>0) {
+				targetYear = ((String)billStatusInfo.get("salesYearMonth")).substring(0, 4);
+				targetMonth = ((String)billStatusInfo.get("salesYearMonth")).substring(4, 6);
+				billIssueStatus = "N";
+				mtSalesAmountVO = new MtSalesAmountVO();
+				mtSalesAmountVO.setMtIntegrateKey((String)billStatusInfo.get("mtIntegrateKey"));
+				mtSalesAmountVO.setMtSalesYear(targetYear);
+				mtSalesAmountVO.setModEmpKey(mngMaintBillVO.getRegEmpKey());
+				
+				logger.debug("deleteBillRequest===>"+targetYear+"/"+targetMonth+"/"+billIssueStatus);
+				
+				if("01".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesJanCallYn(billIssueStatus);
+				} else if("02".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesFebCallYn(billIssueStatus);
+				} else if("03".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesMarCallYn(billIssueStatus);
+				} else if("04".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesAprCallYn(billIssueStatus);
+				} else if("05".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesMayCallYn(billIssueStatus);
+				} else if("06".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesJunCallYn(billIssueStatus);
+				} else if("07".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesJulCallYn(billIssueStatus);
+				} else if("08".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesAugCallYn(billIssueStatus);
+				} else if("09".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesSepCallYn(billIssueStatus);
+				} else if("10".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesOctCallYn(billIssueStatus);
+				} else if("11".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesNovCallYn(billIssueStatus);
+				} else if("12".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesDecCallYn(billIssueStatus);
+				}
+				
+				//MT_SALES_AMOUNT_TB의 월별 상태코드를 업데이트 한다.
+				mapper.updateMtSaleAmountStatus(mtSalesAmountVO);
+			} // end if(null != billStatusInfo && billStatusInfo.size()>0) {
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -111,6 +213,13 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 	public void updateBillIssueStatus(MngMaintBillVO mngMaintBillVO) throws Exception {
 		
 		MngMaintBillVO maintBillVO = new MngMaintBillVO();
+		
+
+		EgovMap billStatusInfo = null;
+		String targetYear = null;
+		String targetMonth = null;
+		MtSalesAmountVO mtSalesAmountVO = null;
+		String billIssueStatus = null;
 		try {
 			maintBillVO.setBillIssueStatus(mngMaintBillVO.getBillIssueStatus());
 			maintBillVO.setModEmpKey(mngMaintBillVO.getModEmpKey());
@@ -123,6 +232,51 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 			
 			//MT_SALES_DETAIL_TB.SALES_STATUS_CD 업데이트.
 			mapper.updateSaleDetailStatusCd(maintBillVO);
+			
+			//세금계산서 요청에 대한 상태정보를 가져온다.
+			billStatusInfo = mapper.selectBillStatusInfo(mngMaintBillVO);
+			if(null != billStatusInfo && billStatusInfo.size()>0) {
+				targetYear = ((String)billStatusInfo.get("salesYearMonth")).substring(0, 4);
+				targetMonth = ((String)billStatusInfo.get("salesYearMonth")).substring(4, 6);
+				billIssueStatus = mngMaintBillVO.getBillIssueStatus();
+				mtSalesAmountVO = new MtSalesAmountVO();
+				mtSalesAmountVO.setMtIntegrateKey((String)billStatusInfo.get("mtIntegrateKey"));
+				mtSalesAmountVO.setMtSalesYear(targetYear);
+				mtSalesAmountVO.setModEmpKey(mngMaintBillVO.getRegEmpKey());
+				
+				logger.debug("updateBillIssueStatus===>"+targetYear+"/"+targetMonth+"/"+billIssueStatus);
+				
+				
+				if("01".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesJanCallYn(billIssueStatus);
+				} else if("02".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesFebCallYn(billIssueStatus);
+				} else if("03".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesMarCallYn(billIssueStatus);
+				} else if("04".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesAprCallYn(billIssueStatus);
+				} else if("05".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesMayCallYn(billIssueStatus);
+				} else if("06".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesJunCallYn(billIssueStatus);
+				} else if("07".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesJulCallYn(billIssueStatus);
+				} else if("08".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesAugCallYn(billIssueStatus);
+				} else if("09".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesSepCallYn(billIssueStatus);
+				} else if("10".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesOctCallYn(billIssueStatus);
+				} else if("11".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesNovCallYn(billIssueStatus);
+				} else if("12".equals(targetMonth)) {
+					mtSalesAmountVO.setMtSalesDecCallYn(billIssueStatus);
+				}
+				
+				//MT_SALES_AMOUNT_TB의 월별 상태코드를 업데이트 한다.
+				mapper.updateMtSaleAmountStatus(mtSalesAmountVO);
+			}
+			
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -132,9 +286,13 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 	@Override
 	public List<EgovMap> selectBillList(MngMaintBillSearchVO searchVO) throws Exception {
 		
-		return mapper.selectSdBillList(searchVO);
+		return mapper.selectBillList(searchVO);
 	}
 
+	@Override
+	public List<EgovMap> selectSdBillList(MngMaintBillSearchVO searchVO ) throws Exception {
+		return mapper.selectSdBillList(searchVO);
+	}
 	@Override
 	@Transactional
 	public void insertSdBillingXml(MngMaintBillVO mngMaintBillVO) throws Exception {
@@ -205,12 +363,183 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 			/*
 			 * 1. 유지보수 매출세금계산서 정보를 업데이트 한다.		
 			 * MT_SALES_DETAIL_TB.SALES_STATUS_CD 업데이트.	
+			 * 완료인 경우 완료일자를 넣어준다.
 			 */
 			mapper.updateSaleDetailStatusCd(maintBillVO);
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
 	}
+	
+	
+//	//////////////////////////////// 매입관련  //////////////////////////////////////////////
+	
+	@Override
+	public EgovMap selectPaymentBasicInfo(MngMaintBillSearchVO searchVO) throws Exception {
+		EgovMap paymentBasicInfo = null;
+		try {
+			paymentBasicInfo = mapper.selectPaymentBasicInfo(searchVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return paymentBasicInfo;
+	}
+
+	@Override
+	public List<EgovMap> selectPaymentRequestList(MngMaintBillSearchVO searchVO) throws Exception {
+		List<EgovMap> paymentRequestList = null;
+		try {
+			paymentRequestList = mapper.selectPaymentRequestList(searchVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return paymentRequestList;
+	}
+
+	@Override
+	public EgovMap selectPaymentRequestInfo(MngMaintBillSearchVO searchVO) throws Exception {
+		EgovMap paymentRequestInfo = null;
+		try {
+			paymentRequestInfo = mapper.selectPaymentRequestInfo(searchVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return paymentRequestInfo;
+	}
+
+	@Override
+	public List<EgovMap> selectMappingBillList(MngMaintBillSearchVO searchVO) throws Exception {
+		List<EgovMap> billMappingList = null;
+		try {
+			billMappingList = mapper.selectMappingBillList(searchVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return billMappingList;
+	}
+
+	@Override
+	public String writePaymentRequestInfo(MtPaymentVO mtPaymentVO) throws Exception {
+		String paymentKey = null;
+		try {
+			paymentKey = contService.makePrimaryKey(PrimaryKeyType.MAINTENACE_PAYMENT);
+			if(!"".equals(CepStringUtil.getDefaultValue(paymentKey, ""))) {
+				mtPaymentVO.setPaymentKey(paymentKey);
+				writePaymentRequestInfo2(mtPaymentVO);
+			} else {
+				throw new Exception("Can't make payment key !! please check DB!!");
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return paymentKey;
+	}
+
+	@Transactional
+	private void writePaymentRequestInfo2(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+			//매입요청정보 등록
+			mapper.writePaymentRequestInfo(mtPaymentVO);
+			
+			//세금계산서 맵핑정보 업데이트.
+			mapper.updatePaymentRequestBill(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	public void updatePaymentRequestInfo(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+			mapper.updatePaymentRequestInfo(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	@Transactional
+	public void deletePaymentRequest(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+//			요청(매핑)취소 (상태가 요청(PYST2000)일때만 가능함)
+//			1.1 MT_PAYMENT_TB 삭제처리.
+			mapper.deletePaymentRequest(mtPaymentVO);
+			
+//			1.2 CMM_PC_BILLING_TB 매핑취소처리.(deletePaymentRequestBill)
+			mapper.deletePaymentRequestBill(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	public void updatePaymentRequestConfirm(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+			mapper.updatePaymentRequestConfirm(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	public void cancelPaymentRequestConfirm(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+			mapper.cancelPaymentRequestConfirm(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	@Transactional
+	public void updatePaymentRequestFinish(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+			//1. 지급테이블(MT_PAYMENT_TB) 완료처리 : updatePaymentRequestFinish
+			mapper.updatePaymentRequestFinish(mtPaymentVO);
+			
+			//2. 발주 미지급, 지급금액 변경 : updateOrderPaymentAmount
+			mapper.updateOrderPaymentAmount(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	@Transactional
+	public void cancelPaymentRequestFinish(MtPaymentVO mtPaymentVO) throws Exception {
+		try {
+			//1. 지급테이블(MT_PAYMENT_TB) 취소처리 : cancelPaymentRequestFinish
+			mapper.cancelPaymentRequestFinish(mtPaymentVO);
+			
+			//2. 발주 미지급, 지급금액 변경 : cancelOrderPaymentAmount
+			mapper.cancelOrderPaymentAmount(mtPaymentVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	@Override
+	public EgovMap selectMtBackOrderAmountInfo(String mtOrderKey) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMtBackOrderAmountInfo(mtOrderKey);
+	}
+
+	@Override
+	public EgovMap selectMtOrderAmountInfo(String mtOrderKey) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMtOrderAmountInfo(mtOrderKey);
+	}
+
 
 
 }

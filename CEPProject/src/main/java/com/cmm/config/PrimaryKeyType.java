@@ -35,7 +35,7 @@ public enum PrimaryKeyType {
 	, MAINTENACE_BACK_ORDER("MB") //유지보수 백계약
 	, MAINTENACE_ORDER("MO") //유지보수 발주
 	, MAINTENACE_WORK("MW") // 유지보수 작업
-	, MAINTENACE_PURCHASE("MP")
+	, MAINTENACE_PAYMENT("MP") //지급, 매입
 	, MAINTENACE_GUARANTEE("MG") //유지보수 보증보험
 	, MAINTENACE_SALES_PLAN("MS") //유지보수 매출수금계획.(MT_SALES_DETAIL_TB)
 	, MAINTENACE_BILLING_OP("MB") //유지보수 세금계산서 요청.(MT_SD_BILLING_OP_TB)

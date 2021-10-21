@@ -70,6 +70,8 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	private MtContractLinkVO mtForcastLinkVo;
 	private MtContractLinkVO mtProjectLinkVo;
 	
+	//
+	private int callTotalAmount; //계산서 발행요청 금액.
 	// 파일 작업 구분
 	private String workClass;
 	
@@ -549,6 +551,13 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 		this.mtProjectLinkVo = mtProjectLinkVo;
 	}
 
+	
+	public int getCallTotalAmount() {
+		return callTotalAmount;
+	}
+	public void setCallTotalAmount(int callTotalAmount) {
+		this.callTotalAmount = callTotalAmount;
+	}
 	
 //	private String convertDate(String date){
 //		String convertDate = null;

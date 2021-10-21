@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>유지보수 계산서 일정</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -33,17 +33,6 @@
 			line-height: 34px;
 			margin: 5px;
 			font-weight: 300;
-		}
-		.contentsWrap .contents .top select {
-			height: 38px;
-			width: 130px;
-			border: 1px solid #e9e9e9;
-			padding: 0 10px;
-			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
-			background-color: #fff;
-			color: #535353;
-			font-size: 15px;
 		}
 		.middle table {
 			width: 1662px;
@@ -92,38 +81,51 @@
 			border: 1px solid #edebef;
 			color: #535353;
 		}
-		.middle table thead th:first-child,
-		.middle table tbody td:first-child,
-		.middle table thead th:nth-child(6),
-		.middle table tbody td:nth-child(6),
-		.middle table thead th:nth-child(7),
-		.middle table tbody td:nth-child(7),
-		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(8) {
-			width: 100px;
-			max-width: 100px;
+		.middle table  thead th:first-child,
+		.middle table tbody td:first-child {
+			width: 50px;
+			max-width: 50px
 		}
 		.middle table thead th:nth-child(2),
-		.middle table tbody td:nth-child(2),
-		.middle table thead th:nth-child(5),
-		.middle table tbody td:nth-child(5) {
-			width: 200px;
-			max-width: 200px;
+		.middle table tbody td:nth-child(2) {
+			width: 60px;
+			max-width: 60px
 		}
 		.middle table thead th:nth-child(3),
-		.middle table tbody td:nth-child(3) {
-			width: 150px;
-			max-width: 150px;
+		.middle table tbody td:nth-child(3),
+		.middle table thead th:nth-child(5),
+		.middle table tbody td:nth-child(5) {
+			width: 180px;
+			max-width: 180px
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 50px;
-			max-width: 50px;
+			width: 310px;
+			max-width: 310px
+		}		
+		.middle table thead th:nth-child(6),
+		.middle table tbody td:nth-child(6) {
+			width: 235px;
+			max-width: 235px
+		}		
+		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 115px;
+			max-width: 115px;
 		}
+		.middle table thead th:nth-child(8),
+		.middle table tbody td:nth-child(8),
 		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9) {
-			width: 80px;
-			max-width: 80px;
+		.middle table tbody td:nth-child(9),
+		.middle table thead th:nth-child(10),
+		.middle table tbody td:nth-child(10) {
+			width: 105px;
+			max-width: 105px;
+		}		
+		.middle table thead th:nth-child(11),
+		.middle table tbody td:nth-child(11) {
+			width: 100px;
+			max-width: 100px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -179,36 +181,128 @@
 		}
 		input[class="calendar"] {
 			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
 		input[class="search"] {
 			width: 150px;
 		}
+		
+		.contentsWrap .contents input[class^="calendar"] {
+			width: 120px;
+			height: 38px;
+			background-image: url('/images/calendar_icon.png');
+			background-repeat: no-repeat;
+			background-position: 95% 50%;
+		}
+		.contentsWrap .contents .top select {
+			height: 40px;
+			width: 126px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			-webkit-appearance: none;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
+			background-color: #fff;
+			color: #535353;
+			font-size: 15px;
+		}
 	</style>
 	<script>
+		$(document).ready(function() {
+			/* 
+				해당 줄을 클릭했을때 해당 화면으로 이동. 
+				billType : 매입(PC), 매출(SD) 구분
+			*/
+			$('.middle table tbody tr').click(function() {
+				console.log("==========");
+				console.log("mtIntegrateKey=========="+$(this).children().eq(12).text());
+				console.log("mtOrderType=========="+$(this).children().eq(13).text());
+				console.log("mtWorkKey=========="+$(this).children().eq(14).text());
+				console.log("mtOrderKey=========="+$(this).children().eq(15).text());
+				console.log("billType=========="+$(this).children().eq(16).text());
+				
+				$('#mtIntegrateKey').val($(this).children().eq(12).text());
+				$('#pjKey').val($(this).children().eq(12).text());
+				$('#mtOrderType').val($(this).children().eq(13).text());
+				$('#mtWorkKey').val($(this).children().eq(14).text());
+				$('#mtOrderKey').val($(this).children().eq(15).text());
+				
+				if('SD' == $(this).children().eq(16).text()){
+					//제품등록 ==> 매출 ==> 수금요청화면으로 이동
+					if(confirm('"'+$(this).children().eq(3).text()+'" 유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?')){
+						document.listForm.action = "/mngMaint/bill/detail/main.do";
+			           	document.listForm.submit();
+					} else {
+						return false;
+					}
+				} else if('PC' == $(this).children().eq(16).text()){
+					//발주 ==> 매입  ==> 지급요청화면으로 이동
+					
+					
+					if(confirm('"'+$(this).children().eq(4).text()+' 매입금 지급요청 화면으로 이동하시겠습니까?')){
+						document.listForm.action = "/mngMaint/payment/detail/main.do";
+			           	document.listForm.submit();
+					} else {
+						return false;
+					}
+				}
+				//$('#mtIntegrateKey').val($(this).children().eq(11).text());
+				//$('#mtOrderKey').val($(this).children().eq(12).text());
+				//$('#orderCtFkKey').val($(this).children().eq(13).text());
+				/* if('BO' == $(this).children().eq(10).text()){					
+					//백계약 상세
+					document.listForm.action = '/maintenance/contract/detail/backOrderInfo.do';
+				} else if('PO' == $(this).children().eq(10).text()){
+					//작업발주.
+					document.listForm.action = '/maintenance/work/detail/orderInfo.do';
+				} */
+				//alert("mtOrderType==>"+$(this).children().eq(10).text());
+				//document.listForm.submit(); 
+				//alert("===>"+mtOrderType+"/"+mtIntegrateKey+"/"+mtOrderKey+"/"+mtWorkKey);
+			});
+			
+			/* $('#fl tr').each(function(index, item) {
+				if(index != 0) {
+					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+				}
+			}); */
+		});	
 	</script>
 </head>
 <body>
-	<form id="listForm" name="listForm" method="post">
+	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
+		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey"/>
+		<input type="hidden" id="pjKey" name="pjKey"/><!--mtIntegrateKey == pjKey  -->
+		<input type="hidden" id="mtOrderType" name="mtOrderType"/>
+		<input type="hidden" id="mtWorkKey" name="mtWorkKey"/>
+		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
+		<input type="hidden" id="iframGubun" name="iframGubun" value="list"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
-						<div class="title floatL"><label class="ftw500">계산서 일정</label></div>
+						<div class="title floatL"><label class="ftw500">유지보수 계산서 일정</label></div>
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
-						<select>
-							<option value="">분기</option>
-						</select>
-						<input type="text" class="calendar" placeholder="from"/><label> ~ </label><input type="text" class="calendar" placeholder="to"/>
-						<input type="text" class="search" placeholder="거래처명" />
-						<input type="text" class="search" style="width: 250px;" placeholder="프로젝트명" />
-						<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+						<form:select path="billType">
+							<form:option value="SD" label="매출" />
+							<form:option value="PC" label="매입" />
+						</form:select>
+						<form:select path="dateSearchType">
+							<form:option value="BR" label="요청일" />
+							<form:option value="BI" label="계산서발행일" />
+						</form:select>
+						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>
+						<form:select path="searchGubun">
+							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="CU" label="거래처" />
+						</form:select>
+						<form:input path="searchWord" type="text" placeholder="검색어"/>
+						<span><button><img src="<c:url value='/images/icon_search.png'/>" onclick="fn_searchList();"/></button></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
@@ -216,179 +310,95 @@
 					<table class="textalignC ftw200" id="fl">
 						<thead class="ftw400">
 							<tr>
-								<th scope="row">거래일자</th>
-								<th scope="row">프로젝트</th>
-								<th scope="row">거래처명</th>
+								<th scope="row">No</th>
 								<th scope="row">구분</th>
-								<th scope="row">적요</th>
+								<th scope="row">고객사</th>
+								<th scope="row">유지보수명</th>
+								<th scope="row">거래처</th>
+								<th scope="row">계산서번호</th>
 								<th scope="row">금액</th>
-								<th scope="row">부가세</th>
-								<th scope="row">계산서일정</th>
-								<th scope="row">담당자</th>
+								<th scope="row">요청일</th>
+								<th scope="row">발행일</th>
+								<th scope="row">완료일</th>
+								<th scope="row">요청상태</th>
+								<th scope="row">요청자</th>
+								<th style="max-width: 0px; display: none;">mtIntegrateKey</th>
+								<th style="max-width: 0px; display: none;">mtOrderType</th>
+								<th style="max-width: 0px; display: none;">mtWorkKey</th>
+								<th style="max-width: 0px; display: none;">mtOrderKey</th>
+								<th style="max-width: 0px; display: none;">billType</th>
 							</tr>
 						</thead>
 						<tbody>
+						<c:set var = "totalAmount" value="0" />
+						<c:forEach var="list" items="${mtBillRequestList}" varStatus="status">
+							<c:set var = "totalAmount" value="${totalAmount + list.billAmount}" />
 							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
+								<td><c:out value="${status.count}"/></td>
+								<td>
+							<c:choose>
+								<c:when test="${list.billType eq 'SD'}">
+									매출
+								</c:when>
+								<c:when test="${list.billType eq 'PC'}">
+									매입
+								</c:when>
+								<c:otherwise>
+									<c:out value="${list.billType}"/>
+								</c:otherwise>
+							</c:choose>	
+								</td>
+								<td><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
+								<td><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
+								<td><span title="${list.billAcNm}"><c:out value="${list.billAcNm}"/></span></td>
+								<td><span title="${list.billNo}"><c:out value="${list.billNo}"/></span></td>								
+								<td><span title="${displayUtil.commaStr(list.billAmount)}"><c:out value="${displayUtil.commaStr(list.billAmount)}"/></span></td>
+								<td><c:out value="${displayUtil.displayDate(list.billRequestDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(list.billIssueDt)}"/></td>
+								<td><c:out value="${displayUtil.displayDate(list.billFinishDt)}"/></td>
+								<td>
+							<c:choose>
+								<c:when test="${list.billStatusCd eq 'R' && list.billType eq 'SD'}">
+									<span>요청</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'I' && list.billType eq 'SD'}">
+									<span>발급</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'M' && list.billType eq 'SD'}">
+									<span>매핑</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'E' && list.billType eq 'SD'}">
+									<span>수금완료</span>
+								</c:when>
+								<c:otherwise>
+									<span>${list.billStatusNm}</span>
+								</c:otherwise>
+							</c:choose>
+								</td>
+								<td><span title="${list.reqEmpNm}"><c:out value="${list.reqEmpNm}"/></span></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtIntegrateKey}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderType}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtWorkKey}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderKey}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.billType}"/></td>
 							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td>2018-12-12</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="코오롱베니트(주)">코오롱베니트(주)</span></td>
-								<td>구매</td>
-								<td><span title="통일부 2020 북한방송수신체계 증설" class="textalignL">통일부 2020 북한방송수신체계 증설</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td><span title="5,000,000" class="textalignR">5,000,000</span></td>
-								<td>2018-12-12</td>
-								<td>홍길동</td>
-							</tr>
+						</c:forEach>
 						</tbody>
 					</table>
 				</div>
 				<div class="bottom">
 					<table>
 						<tbody class="ftw400">
-							<tr>
-								<td colspan="5">합계</td>
-								<td><span>10,000,000,000</span></td>
-								<td><span>100,000,000</span></td>
-								<td></td>
-								<td></td>
+							<tr>								
+								<td style="width:220px;">합계 :</td>
+								
+								<td style="text-align: left;"><span><c:out value="${displayUtil.commaStr(totalAmount)}"/> 원</span></td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>

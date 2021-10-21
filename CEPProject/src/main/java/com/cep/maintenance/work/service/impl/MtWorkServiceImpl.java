@@ -277,7 +277,7 @@ public class MtWorkServiceImpl implements MtWorkService {
 		
 		String mtOrderKey = null;
 //		MtBuyAmountListVO mtBuyAmountListVO = null;
-		MtPurchaseVO purchaseVO = null;
+//		MtPurchaseVO purchaseVO = null;
 		ProjectPurchaseVO projectPurchaseVO = null;
 		List<ProjectPurchaseVO> checkPurchaseVOList = null;
 		ProjectPurchaseVO checkPurchaseVO = null;
@@ -292,31 +292,31 @@ public class MtWorkServiceImpl implements MtWorkService {
 				
 				
 				//신규생성시에는 무조건 발주 매입정보를 생성한다.
-				purchaseVO = new MtPurchaseVO();
-				purchaseVO.setBuyFkPjKey(mtOrderVO.getOrderCtFkKey()); //유지보수 작업관리키
-				purchaseVO.setBuyOrderFkKey(mtOrderKey); //발주관리키
-				if("N".equalsIgnoreCase(mtOrderVO.getTaxYn())) {
-					//부가세 제외 금액인 경우 해당 금액을 그대로 넣어준다.
-					purchaseVO.setBuyAmount(mtOrderVO.getOrderAmount()); //발주금액
-					purchaseVO.setYetPaymentAmount(mtOrderVO.getOrderAmount()); //미지금금액
-				} else {
-					/*
-					 * 부가세 포함인 경우 해당 금액에서 부가세를 제외하는 로직을 구현한다.
-					 * 부가세 = Math.round((orderAmount/1.1)*0.1)
-					 * 부가세 제외 금액 = orderAmount-부가세
-					 */
-					orderAmountWithTax = mtOrderVO.getOrderAmount();
-					vatValue = Math.round((orderAmountWithTax/1.1)*0.1);
-					orderAmountWithOutTax = (int)Math.round(orderAmountWithTax-vatValue);
-
-					purchaseVO.setBuyAmount(orderAmountWithOutTax); //발주금액
-					purchaseVO.setYetPaymentAmount(orderAmountWithOutTax); //미지금금액
-				}
-				
-				purchaseVO.setBuyTurn(1);
-				purchaseVO.setRegEmpKey(mtOrderVO.getRegEmpKey());
-				purchaseVO.setFkPjKeyType(MtPurchaseVO.MT_WORK_FK_TYPE);//유지보수 작업 발주.				
-				amountService.writeMtPurchaseInfo(purchaseVO);
+//				purchaseVO = new MtPurchaseVO();
+//				purchaseVO.setBuyFkPjKey(mtOrderVO.getOrderCtFkKey()); //유지보수 작업관리키
+//				purchaseVO.setBuyOrderFkKey(mtOrderKey); //발주관리키
+//				if("N".equalsIgnoreCase(mtOrderVO.getTaxYn())) {
+//					//부가세 제외 금액인 경우 해당 금액을 그대로 넣어준다.
+//					purchaseVO.setBuyAmount(mtOrderVO.getOrderAmount()); //발주금액
+//					purchaseVO.setYetPaymentAmount(mtOrderVO.getOrderAmount()); //미지금금액
+//				} else {
+//					/*
+//					 * 부가세 포함인 경우 해당 금액에서 부가세를 제외하는 로직을 구현한다.
+//					 * 부가세 = Math.round((orderAmount/1.1)*0.1)
+//					 * 부가세 제외 금액 = orderAmount-부가세
+//					 */
+//					orderAmountWithTax = mtOrderVO.getOrderAmount();
+//					vatValue = Math.round((orderAmountWithTax/1.1)*0.1);
+//					orderAmountWithOutTax = (int)Math.round(orderAmountWithTax-vatValue);
+//
+//					purchaseVO.setBuyAmount(orderAmountWithOutTax); //발주금액
+//					purchaseVO.setYetPaymentAmount(orderAmountWithOutTax); //미지금금액
+//				}
+//				
+//				purchaseVO.setBuyTurn(1);
+//				purchaseVO.setRegEmpKey(mtOrderVO.getRegEmpKey());
+//				purchaseVO.setFkPjKeyType(MtPurchaseVO.MT_WORK_FK_TYPE);//유지보수 작업 발주.				
+//				amountService.writeMtPurchaseInfo(purchaseVO);
 			} else {
 				/*해당 내용 업데이트*/
 				

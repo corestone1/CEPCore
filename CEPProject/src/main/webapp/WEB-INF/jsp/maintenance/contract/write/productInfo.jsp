@@ -193,6 +193,12 @@
 		*/
 		function fn_changeView(varUrl) {
 			var url;
+			/* var reqProductTotalAmount=0;
+			//등록된 제품의 전체 total값을 구한다..
+			$(".productTotalAmount").each(function(){
+				reqProductTotalAmount = reqProductTotalAmount+removeData($(this).val(),",")*1;				
+			}); */
+			
 			if($('#mtIntegrateKey').val() !="") {
 				if(varUrl == "basicInfoView"){
 					if(confirm("유지보수계약 기본정보 화면으로 이동하시겠습니까?")){
@@ -207,70 +213,94 @@
 						return false;
 					}
 					
-				} else if(varUrl == "salesInfoView"){					
-					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 매출정보 화면으로 이동하시겠습니까?")){
-							url = '/maintenance/contract/write/'+varUrl+'.do';
-						} else {
-							return false;
-						}
-					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
-						return false;
-					}					
+				} else if(varUrl == "salesInfoView"){	
 					
-				} else if(varUrl == "writeSalesPlanView"){					
-					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
-							url = '/maintenance/contract/write/'+varUrl+'.do';
+					if($('#beforeProductAmount').val() != $('#mtAmount').val()) {
+						alert("기본정보의 제품금액("+addCommas($('#mtAmount').val())+")과 저장된 제품금액("+addCommas($('#beforeProductAmount').val())+")이 달라 해당 메뉴로 이동할 수 없습니다.!!");
+						return false;
+					} else {
+						if("${mtContractCountInfo.mtProductCnt}" > 0){
+							if(confirm("유지보수계약 매출정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
 						} else {
+							alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+							return false;
+						}						
+					}
+					
+				} else if(varUrl == "writeSalesPlanView"){				
+					if($('#beforeProductAmount').val() != $('#mtAmount').val()) {
+						alert("기본정보의 제품금액("+addCommas($('#mtAmount').val())+")과 저장된 제품금액("+addCommas($('#beforeProductAmount').val())+")이 달라 해당 메뉴로 이동할 수 없습니다.!!");
+						return false;
+					} else {
+						if("${mtContractCountInfo.mtProductCnt}" > 0){
+							if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
 							return false;
 						}
-					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
-						return false;
-					}					
+					}	
+										
 					
 				} else if(varUrl == "backOrderInfoView"){
-					if("${parmMtSbCtYn}" == "Y"){
-						
-						if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
-							if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
-								url = '/maintenance/contract/write/'+varUrl+'.do';
-							} else {
-								return false;
-							}
-						} else {
-							alert(" 유지보수계약 매출정보가 등록되지 않았습니다.\n 유지보수계약 매출정보를 먼저 등록하세요.");
-							return false;
-						}						
-					} else {
-						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 등록하세요.");
+					if($('#beforeProductAmount').val() != $('#mtAmount').val()) {
+						alert("기본정보의 제품금액("+addCommas($('#mtAmount').val())+")과 저장된 제품금액("+addCommas($('#beforeProductAmount').val())+")이 달라 해당 메뉴로 이동할 수 없습니다.!!");
 						return false;
-					}					
-					
-				} else if(varUrl == "purchaseAmountView"){					
-					if("${parmMtSbCtYn}" == "Y"){
-						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
-							if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
-								url = '/maintenance/contract/write/'+varUrl+'.do';
-							} else {
-								return false;
-							}
-						} else {
-							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
-							return false;
-						}						
 					} else {
-						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
-						return false;
+						if("${parmMtSbCtYn}" == "Y"){
+							
+							if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
+								if(confirm("유지보수계약 백계약정보 화면으로 이동하시겠습니까?")){
+									url = '/maintenance/contract/write/'+varUrl+'.do';
+								} else {
+									return false;
+								}
+							} else {
+								alert(" 유지보수계약 매출정보가 등록되지 않았습니다.\n 유지보수계약 매출정보를 먼저 등록하세요.");
+								return false;
+							}						
+						} else {
+							alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 등록하세요.");
+							return false;
+						}	
 					}
+									
+					
+				} else if(varUrl == "purchaseAmountView"){			
+					if($('#beforeProductAmount').val() != $('#mtAmount').val()) {
+						alert("기본정보의 제품금액("+addCommas($('#mtAmount').val())+")과 저장된 제품금액("+addCommas($('#beforeProductAmount').val())+")이 달라 해당 메뉴로 이동할 수 없습니다.!!");
+						return false;
+					} else {
+						if("${parmMtSbCtYn}" == "Y"){
+							if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+								if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
+									url = '/maintenance/contract/write/'+varUrl+'.do';
+								} else {
+									return false;
+								}
+							} else {
+								alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+								return false;
+							}						
+						} else {
+							alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+							return false;
+						}
+					}		
+					
 				}
 			} else {
 				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
 				return false;
 			}
-			
+			//console.log("url===>"+url);
 			if(url != "") {
 				
 				var dialogId = 'program_layer';
@@ -577,32 +607,74 @@
 		}
 		//다음화면으로 이동
 		function fn_nextBtn(){
-			if("${mtContractCountInfo.mtProductCnt}" > 0){
-				if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출정보 등록화면으로 이동하시겠습니까?")) {
-					var url = '/maintenance/contract/write/salesInfoView.do';
-					var dialogId = 'program_layer';
-					var varParam = {
-							"mtIntegrateKey":$('#mtIntegrateKey').val(),
-							"parmMtSbCtYn":$('#parmMtSbCtYn').val()
-					}
-					var button = new Array;
-					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-				} else {
-					return false;
-				}
+			/* var reqProductTotalAmount=0;
+			//등록된 제품의 전체 total값을 구한다..
+			$(".productTotalAmount").each(function(){
+				reqProductTotalAmount = reqProductTotalAmount+removeData($(this).val(),",")*1;				
+			}); */
+			
+			if($('#beforeProductAmount').val() != $('#mtAmount').val()) {
+				//alert("기본정보의 제품금액("+addCommas($('#mtAmount').val())+")과 저장된 제품금액("+addCommas(reqProductTotalAmount)+")이 달라 해당 메뉴로 이동할 수 없습니다.!!");
+				alert("기본정보의 제품금액("+addCommas($('#mtAmount').val())+")과 저장된 제품금액("+addCommas($('#beforeProductAmount').val())+")이 달라 해당 메뉴로 이동할 수 없습니다.!!");
 			} else {
-				alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
-				return false;
-			}	
+				if("${mtContractCountInfo.mtProductCnt}" > 0){
+					if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출정보 등록화면으로 이동하시겠습니까?")) {
+						var url = '/maintenance/contract/write/salesInfoView.do';
+						var dialogId = 'program_layer';
+						var varParam = {
+								"mtIntegrateKey":$('#mtIntegrateKey').val(),
+								"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+						}
+						var button = new Array;
+						button = [];
+						showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+					} else {
+						return false;
+					}
+				} else {
+					alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+					return false;
+				}	
+			}
+			
 			
 		}
 
 		function fn_saveBtn(){
-			//필수값 체크를 완료하면 저장 프로세스 시작.
-			
+			var reqProductTotalAmount=0;
 			var actionTitle;
 			var checkDate;
+			//등록된 제품의 전체 total값을 구한다.
+			$(".productTotalAmount").each(function(){
+				reqProductTotalAmount = reqProductTotalAmount+removeData($(this).val(),",")*1;
+				
+			});
+			//console.log(reqProductTotalAmount+'/'+$('#beforeProductAmount').val());
+			
+			//등록하려는 제품의 총금액이 계산서 발행 요청금액보다 작은 경우 경고 문구 후 진행할 수 없음
+			if($('#callTotalAmount').val()*1>reqProductTotalAmount) {
+				alert("계산서 발행 요청금액("+addCommas($('#callTotalAmount').val())+") 보다 등록하려는 제품총금액("+addCommas(reqProductTotalAmount)+")이 작아 등록할 수 없습니다.");
+				return false;
+			}
+			/*
+				기본정보 제품금액과 등록된 제품금액 총액이 같고
+				이전 제품금액과 달라지면 매출정보를 업데이트하도록 updateYn를 Y로 변경하고 같은경우 updateYn=N으로 변경한다.
+			*/
+			if(reqProductTotalAmount != $('#beforeProductAmount').val() && reqProductTotalAmount==$('#mtAmount').val()) {
+				$('#updateYn').val("Y");
+				
+				console.log(reqProductTotalAmount+'/'+$('#callTotalAmount').val());
+				if($('#callTotalAmount').val()*1>0) {
+					//계산서 발행요청이 있는 경우 기존 계산서 발행요청금액이 있음을 알려주고 계속진행여부확인.
+					
+				}
+			} else {
+				$('#updateYn').val("N");
+			}
+			
+			//console.log("1111111111");
+			
+			//필수값 체크를 완료하면 저장 프로세스 시작.
 			if ($("#mtListForm")[0].checkValidity()){
 				checkDate = $("#mtListForm").checkPmDate();
 				
@@ -614,15 +686,21 @@
 					} else {
 						actionTitle = "저장";
 					}
-					
-					if(confirm("유지보수계약 제품정보를 "+actionTitle+"하시겠습니까?")) {
-						saveProductList(actionTitle);
+					//유지보수 제품금액이 변경 되고 매출정보가 업데이트 되는 경우 경고문구를 다르게 한다.
+					if("Y" == $('#updateYn').val() && $('#callTotalAmount').val()*1>0) {
+						if(confirm("유지보수계약에 대한 계산서 발행요청 금액("+addCommas($('#callTotalAmount').val())+")이 존재합니다.\n 유지보수계약 제품정보를 "+actionTitle+"하시겠습니까?")) {
+							saveProductList(actionTitle);
+						} else {
+							return false;
+						}
 					} else {
-						return false;
-					}
-				}
-				
-				
+						if(confirm("유지보수계약 제품정보를 "+actionTitle+"하시겠습니까?")) {
+							saveProductList(actionTitle);
+						} else {
+							return false;
+						}
+					}					
+				}		
 			}  else {
 				 //Validate Form
 		        $("#mtListForm")[0].reportValidity();	
@@ -709,7 +787,8 @@
 			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
-			window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-mtPmFkKey&returnNm=prodList-'+num+'-pmNmCd','PRODUCT_LIST','width=1000px,height=713px,left=600');					
+			//window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-mtPmFkKey&returnNm=prodList-'+num+'-pmNmCd','PRODUCT_LIST','width=1000px,height=713px,left=600');
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600');
 		}
 /* 		function fn_viewSummaryUpAll(){
 			$(".dpTbRow").attr('class','dpNone');
@@ -795,6 +874,10 @@
 			<input type="hidden" id="mtContEndDate" name="mtContEndDate" value="<c:out value="${mtContEndDate}"/>" />
 			<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
 			<input type="hidden" id="updateYn" name="updateYn" value="N"/>
+			<input type="hidden" id="mtAmount" name="mtAmount" value="<c:out value="${basicContractInfo.mtAmount}"/>"/>
+			<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${basicContractInfo.callTotalAmount}"/>"/>			
+			
+			<input type="hidden" id="beforeProductAmount" name="beforeProductAmount" value="<c:out value="${mtContractCountInfo.productTotalAmount}"/>"/>
 		</form>
 		<form action="/" id="mtListForm" name="mtListForm" method="post">
 			<div class="contents">
@@ -808,11 +891,11 @@
 								</td>
 								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="cursor: pointer;"/></td>
 								<td class="subBtn" colspan="5"  style="border-top: none;text-align: center;vertical-align: middle;">
-									<c:if test="${listCount>0}">
+									<%-- <c:if test="${listCount>0}">
 									유지보수 매출금액 업데이트여부 :
 									<input type="radio" class="tRadio" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 									<input type="radio" class="tRadio" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-									</c:if>
+									</c:if> --%>
 									<c:choose>
 										<c:when test="${basicContractInfo.mtProjectLinkVo == null ||  basicContractInfo.mtProjectLinkVo.mtLinkCtKey == null}">
 										<img id="project_product" class="floatR" src="<c:url value='/images/project_gray.png'/>"/>
@@ -911,7 +994,7 @@
 									</td>	
 									<td class="tdTitle"><label>*</label>&nbsp;합계</td>
 									<td class="tdContents" colspan="3">
-										<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" style="text-align: right;" value="<c:out value="${displayUtil.makeMultiNumber(list.mtPmQuantity, list.mtPmUprice)}"/>" readonly="readonly"/>
+										<input class="productTotalAmount"  type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" style="text-align: right;" value="<c:out value="${displayUtil.makeMultiNumber(list.mtPmQuantity, list.mtPmUprice)}"/>" readonly="readonly"/>
 									</td>
 								</tr>
 								<tr class="dpTbRow">

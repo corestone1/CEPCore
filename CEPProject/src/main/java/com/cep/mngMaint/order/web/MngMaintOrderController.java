@@ -65,7 +65,7 @@ public class MngMaintOrderController {
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtTo(), ""))){
 				searchVO.setOrderDtTo(searchVO.getOrderDtTo().replace("-", ""));
 			} else {
-				searchVO.setOrderDtTo(toDay);
+				searchVO.setOrderDtTo(toDay); 
 			}
 			searchParam = new HashMap<>();
 //			searchParam.put("orderDtFrom", CepDateUtil.displayDate(searchVO.getOrderDtFrom()));

@@ -381,8 +381,9 @@ public class MtContractServiceImpl implements MtContractService {
 					mtSalesAmountListVO.setRegEmpKey(productVO.getRegEmpKey());
 					mtSalesAmountListVO.setModEmpKey(productVO.getRegEmpKey());
 //					makeSalesAmoutList(productVO.getMtContractProductVoList());
-					mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtContractProductVoList()));
-					deleteNwriteMtContractSalesAmountList(mtSalesAmountListVO);
+//					mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtContractProductVoList(), productVO.getMtIntegrateKey()));
+					mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtIntegrateKey()));
+					deleteNwriteMtContractSalesAmountList(mtSalesAmountListVO, false);
 				}
 				
 			} else {
@@ -395,9 +396,9 @@ public class MtContractServiceImpl implements MtContractService {
 				mtSalesAmountListVO.setMtIntegrateKey(productVO.getMtIntegrateKey());
 				mtSalesAmountListVO.setRegEmpKey(productVO.getRegEmpKey());
 				mtSalesAmountListVO.setModEmpKey(productVO.getRegEmpKey());
-//				makeSalesAmoutList(productVO.getMtContractProductVoList());
-				mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtContractProductVoList()));
-				deleteNwriteMtContractSalesAmountList(mtSalesAmountListVO);
+//				mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtContractProductVoList(), productVO.getMtIntegrateKey()));
+				mtSalesAmountListVO.setMtSalesAmountVOList(makeSalesAmoutList(productVO.getMtIntegrateKey()));
+				deleteNwriteMtContractSalesAmountList(mtSalesAmountListVO, true);
 				
 			}
 			
@@ -664,16 +665,18 @@ public class MtContractServiceImpl implements MtContractService {
 	
 	@Override
 	@Transactional
-	public void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO) throws Exception {
+	public void deleteNwriteMtContractSalesAmountList(MtSaleAmountListVO mtSalesAmountListVO, boolean isNewData) throws Exception {
 		Map<String, Object> insertParam = null;
 		Map<String, Object> deleteParam = null;
 		try {
 			logger.debug("deleteNwriteMtContractSalesAmountList==>"+mtSalesAmountListVO.getMtIntegrateKey());
-			//1. 기존 등록되어있는 매입금액을 모두 삭제한다.
-			deleteParam = new HashMap<>();
-			deleteParam.put("mtIntegrateKey", mtSalesAmountListVO.getMtIntegrateKey());
-			deleteParam.put("modEmpKey", mtSalesAmountListVO.getModEmpKey());
-			mtMapper.deleteMtContractSalesAmountAll(deleteParam);
+			if(!isNewData) {
+				//1. 기존 등록되어있는 매입금액을 모두 삭제한다.
+				deleteParam = new HashMap<>();
+				deleteParam.put("mtIntegrateKey", mtSalesAmountListVO.getMtIntegrateKey());
+				deleteParam.put("modEmpKey", mtSalesAmountListVO.getModEmpKey());
+				mtMapper.deleteMtContractSalesAmountAll(deleteParam);
+			}			
 			
 			//2.새로운 매입금액정보를 등록한다.
 			insertParam = new Hashtable<>();
@@ -1563,7 +1566,12 @@ public class MtContractServiceImpl implements MtContractService {
 	
 //	==========================================================================================================
 	/**
-	 * 
+	 * 1.제품의 전체 금액을 구한다.
+	 * 2.세금계산서 발행 요청월을 구한다.
+	 * 3.제품의 전체금액에서 세금계산서 발행요청 금액을 뺀다.
+	 * 4.세금계산서 발행금액을 뺀 금액에서 발행요청 개월 수를 뺀 개월로 평균금액을 구한다.
+	 * 5.세금계산서 밸행 요청을 한 해당 회차(해당월)를 제외하고 평균금액을 입력한다.
+	 * 6.세금계산서 발행요청월은 현재 값을 유지한다.
 	  * @Method Name : makeSalesAmoutList
 	  * @Cdate       : 2021. 1. 22.
 	  * @Author      : aranghoo
@@ -1572,69 +1580,139 @@ public class MtContractServiceImpl implements MtContractService {
 	  * @param voList
 	  * @return
 	 */
-	private List<MtSalesAmountVO> makeSalesAmoutList(List<MtContractProductVO> voList) {
+	private List<MtSalesAmountVO> makeSalesAmoutList(String mtIntegrateKey) {
 		Map<String, MtSalesAmountVO> yearMap = null;
 		List<MtSalesAmountVO> mtSalesAmountVOList = null;
-		int listCnt = 0;
-		MtContractProductVO vo = null;
-		int totalAmount = 0;
-		try {
-			if(null != voList && voList.size()>0) {
-				System.out.println(voList.size());
 				
-				listCnt = voList.size();
-				for (int i = 0; i < listCnt; i++) {
-					if(null == yearMap) {
-						yearMap = new HashMap<>();
+		MtContractVO contractBasicInfo = null;
+		
+		List<EgovMap> mtBillReqList = null;
+		EgovMap mtBillReqInfo = null;
+		String checkYear = null;
+		String salesYear = null;
+		String salesMonth = null;
+		int mtBillReqListCnt = 0;
+
+		int reqBillAmount = 0;
+		int totlaReqBillAmount = 0;
+		
+		Map<String, Map<String,EgovMap>> checkReqBillMap = new HashMap<>();
+		Map<String,EgovMap> reqCheckMonth = null;
+		try {			
+			
+			//유지보수 전체기간 및 전체 금액을 구하기 위해 기본정보를 조회한다.
+			contractBasicInfo = mtMapper.selectMtBasicDetail(mtIntegrateKey);
+			
+			//세금계산서 요청 정보를 구한다.
+			mtBillReqList = mtMapper.selectMtReqBillList(mtIntegrateKey);
+			//세금계산서 발행요청 금액에 대한 Map을 셋팅한다.
+			if(null !=mtBillReqList && mtBillReqList.size()>0) {
+//				checkReqBillMap = new HashMap<>();
+				mtBillReqListCnt = mtBillReqList.size();//세금계산서 발행요청된 개월수
+				for (int i = 0; i < mtBillReqListCnt; i++) {
+					mtBillReqInfo = mtBillReqList.get(i);
+					salesYear = ((String)mtBillReqInfo.get("salesYearMonth")).substring(0, 4);
+					salesMonth = ((String)mtBillReqInfo.get("salesYearMonth")).substring(4, 6);
+					reqBillAmount = (Integer)mtBillReqInfo.get("salesTurnAmount");
+					totlaReqBillAmount = totlaReqBillAmount+reqBillAmount;
+					if(i==0) {
+						//처음에는 체크해야할 연도가 셋팅되지 않았으므로 처음 년도를 체크년도를 지정한다.
+						checkYear = salesYear;
+						//MtSalesAmountVO 를 초기화 한다.
+//						salesVo = new MtSalesAmountVO();
+						reqCheckMonth = new HashMap<>();
 					}
-					vo = voList.get(i);
-					totalAmount = Integer.parseInt(vo.getMtPmQuantity())*Integer.parseInt(vo.getMtPmUprice());
-//					logger.debug("vo.getFromDate()====>"+vo.getFromDate());
-//					logger.debug("vo.getMtPmStartDt()====>"+vo.getMtPmStartDt());
-//					logger.debug("vo.getToDate()====>"+vo.getToDate());
-//					logger.debug("vo.getMtPmEndDt()====>"+vo.getMtPmEndDt());
-//					logger.debug("totalAmount====>"+totalAmount);
-//					logger.debug("yearMap====>"+yearMap);
-					yearMap = calcuSalesAmount(vo.getMtPmStartDt(), vo.getMtPmEndDt(), totalAmount, yearMap);
+					
+					if(!checkYear.equals(salesYear)) {
+						//년도가 달라지면 checkReqBillMap에서 해당 년도의 reqCheckMonth map를 꺼낸다. 없으면 map를 초기화 한디.
+						reqCheckMonth = checkReqBillMap.get(salesYear);							
+						
+						//해당 년도의 reqCheckMonth이 없으므로 초기화 한다.
+						if(null == reqCheckMonth) {
+							
+							reqCheckMonth = new HashMap<>();
+						}
+						//체크 년도를 달라진 년도로 변경한다.
+						checkYear = salesYear;
+					}
+					//해당 월의 세금계산서 발행요청금액을 넣어준다.
+					reqCheckMonth.put(salesMonth, mtBillReqInfo);
+					//해당년도에 해당월의 맵을 넣어준다.
+					checkReqBillMap.put(checkYear, reqCheckMonth); //작업
 				}
-				
-				if(null !=yearMap && yearMap.size()>0) {
-					mtSalesAmountVOList = new ArrayList<>(yearMap.values());
-				}
-			}	
+			}
+			
+			logger.debug("contractBasicInfo.getMtStartDt()======>"+contractBasicInfo.getMtStartDt());
+			logger.debug("contractBasicInfo.getMtEndDt()======>"+contractBasicInfo.getMtEndDt());
+			logger.debug("contractBasicInfo.getMtAmount()======>"+contractBasicInfo.getMtAmount());
+			logger.debug("mtBillReqListCnt======>"+mtBillReqListCnt);
+			logger.debug("totlaReqBillAmount======>"+totlaReqBillAmount);
+			logger.debug("checkReqBillMap.size()======>"+checkReqBillMap.size());
+			//MT_SALES_AMOUNT_TB에 등록할 데이타를 생성한다.
+			yearMap = calcuSalesAmount(contractBasicInfo.getMtStartDt()//유지보수 시작일자.
+					, contractBasicInfo.getMtEndDt() //유지보수 종료일자.
+					, (int)contractBasicInfo.getMtAmount() //유지보수 금액
+					, mtBillReqListCnt //세금계산서 발행요청한 개수.
+					, totlaReqBillAmount // 세금계산서 발행요청한 전체금액.
+					, checkReqBillMap); //세금계산서 요청한 년도별 월 금액.
+			
+			logger.debug("yearMap======>"+yearMap);
+			if(null !=yearMap && yearMap.size()>0) {
+				logger.debug("yearMap.size()======>"+yearMap.size());
+				mtSalesAmountVOList = new ArrayList<>(yearMap.values());				
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return mtSalesAmountVOList;
-	}
+	}	
 	
-	
-	private Map<String, MtSalesAmountVO> calcuSalesAmount(String fromDate, String toDate, int totalAmount, Map<String, MtSalesAmountVO> yearMap) throws Exception {
+	private static Map<String, MtSalesAmountVO> calcuSalesAmount(String fromDate, String toDate, int totalAmount, int reqMonthCnt, int reqBillTotolAmount, Map<String, Map<String,EgovMap>> checkReqBillMap) throws Exception {
 		List<String> monthList = null;
 		MtSalesAmountVO salesVo = null;
 		MtSalesAmountVO calcuSalesVo = null;
 		int monthCnt = 0;
-		int avrAmount = 0;
+//		int avrAmount = 0;
 		String targetYear = null;
 		String targetMonth = null;
 		String checkYear = null;
+		
+		/*
+		 * 평균금액을 셋팅해야하는 월의 갯수 ==> 월별 평균값을 구하기 위해서 필요
+		 * 계약기간의 월에서 세금계산서 요청(reqMonthCnt)이 된 월을 뺀 개수
+		 * 세금계산서 요청이 된 월은 기존 금액으로 셋팅한다.
+		 */
+		int setMonthCnt = 0; 
+		
+		int averageAmount=0;
+		
+		Map<String, MtSalesAmountVO> yearMap = null;
+		
+		EgovMap mtBillReqInfo = null;
 		try {
 			monthList = CepDateUtil.makeMonthListFormToEndDate(fromDate, toDate);
 			
 			if(null != monthList && monthList.size()>0) {
+				//셋팅해야하는 월의 개수.
+				setMonthCnt = monthList.size()-reqMonthCnt;
+				/*
+				 * 전체금액에서 세금계산서 발행요청금액을 제외하고 셋팅해야하는 개월수로 나눈금액
+				 */
+				averageAmount = (totalAmount-reqBillTotolAmount)/setMonthCnt;
+				
+				yearMap = new HashMap<>();
 				//년도에 맞는 vo를 생성한다.
 				for (int i = Integer.parseInt(fromDate.substring(0, 4)); i <= Integer.parseInt(toDate.substring(0, 4)); i++) {
 //					System.out.println("=============>"+i);
-					if(!yearMap.containsKey(String.valueOf(i))) {
-						//해당 년도가 존재하지 않으면 해당 
-						salesVo = new MtSalesAmountVO();
-						salesVo.setMtSalesYear(String.valueOf(i));
-						yearMap.put(String.valueOf(i), salesVo);
-					}
+					//년도별 객체를 생성한다.
+					salesVo = new MtSalesAmountVO();
+					salesVo.setMtSalesYear(String.valueOf(i));
+					yearMap.put(String.valueOf(i), salesVo);
 				}	
 				monthCnt = monthList.size(); // 개월수..
-				avrAmount = totalAmount/monthCnt; //월별 평균금액
+//				avrAmount = totalAmount/monthCnt; //월별 평균금액
 				//해당 월별로 금액배분.
 				for (int i = 0; i < monthCnt; i++) {
 					targetYear = monthList.get(i).substring(0, 4);
@@ -1646,7 +1724,7 @@ public class MtContractServiceImpl implements MtContractService {
 					
 					if(!checkYear.equals(targetYear)) {
 						//checkYear년도에 변경된 사항을 Map에 저장한다.
-						yearMap.put(checkYear, calcuSalesVo);
+//						yearMap.put(checkYear, calcuSalesVo);
 						
 						//새로운 target년도를 꺼내서 저장할 수 있도록 한다.
 						calcuSalesVo = yearMap.get(targetYear);
@@ -1655,29 +1733,163 @@ public class MtContractServiceImpl implements MtContractService {
 					
 					//해당 월에 해당하는 값에 값을 더해준다.
 					if("01".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesJanAmount(calcuSalesVo.getMtSalesJanAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+							calcuSalesVo.setMtSalesJanAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesJanCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesJanAmount(averageAmount);
+							calcuSalesVo.setMtSalesJanCallYn("N");
+						}
 					} else if("02".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesFebAmount(calcuSalesVo.getMtSalesFebAmount()+avrAmount);
+						
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesFebAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesFebAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesFebCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesFebAmount(averageAmount);
+							calcuSalesVo.setMtSalesFebCallYn("N");
+						}
 					} else if("03".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesMarAmount(calcuSalesVo.getMtSalesMarAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+//							System.out.println(targetYear+"/"+targetMonth+"="+checkReqBillMap.get(targetYear).containsKey(targetMonth));
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesMarAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesMarAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesMarCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesMarAmount(averageAmount);
+							calcuSalesVo.setMtSalesMarCallYn("N");
+						}
 					} else if("04".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesAprAmount(calcuSalesVo.getMtSalesAprAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesAprAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesAprAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesAprCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesAprAmount(averageAmount);
+							calcuSalesVo.setMtSalesAprCallYn("N");
+						}
 					} else if("05".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesMayAmount(calcuSalesVo.getMtSalesMayAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesMayAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesMayAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesMayCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesMayAmount(averageAmount);
+							calcuSalesVo.setMtSalesMayCallYn("N");
+						}
 					} else if("06".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesJunAmount(calcuSalesVo.getMtSalesJunAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesJunAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesJunAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesJunCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesJunAmount(averageAmount);
+							calcuSalesVo.setMtSalesJunCallYn("N");
+						}
 					} else if("07".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesJulAmount(calcuSalesVo.getMtSalesJulAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesJulAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesJulAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesJulCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesJulAmount(averageAmount);
+							calcuSalesVo.setMtSalesJulCallYn("N");
+						}
 					} else if("08".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesAugAmount(calcuSalesVo.getMtSalesAugAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesAugAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesAugAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesAugCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesAugAmount(averageAmount);
+							calcuSalesVo.setMtSalesAugCallYn("N");
+						}
 					} else if("09".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesSepAmount(calcuSalesVo.getMtSalesSepAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesSepAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesSepAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesSepCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesSepAmount(averageAmount);
+							calcuSalesVo.setMtSalesSepCallYn("N");
+						}
 					} else if("10".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesOctAmount(calcuSalesVo.getMtSalesOctAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesOctAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesOctAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesOctCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesOctAmount(averageAmount);
+							calcuSalesVo.setMtSalesOctCallYn("N");
+						}
 					} else if("11".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesNovAmount(calcuSalesVo.getMtSalesNovAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesNovAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesNovAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesNovCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesNovAmount(averageAmount);
+							calcuSalesVo.setMtSalesNovCallYn("N");
+						}
 					} else if("12".equals(targetMonth)) {
-						calcuSalesVo.setMtSalesDecAmount(calcuSalesVo.getMtSalesDecAmount()+avrAmount);
+						if(checkReqBillMap.containsKey(targetYear) && checkReqBillMap.get(targetYear).containsKey(targetMonth)){
+							//세금계산서 요청된 금액이면 해당 요청된 금액을 셋팅한다.
+//							calcuSalesVo.setMtSalesDecAmount(Integer.parseInt(checkReqBillMap.get(targetYear).get(targetMonth)));
+
+							mtBillReqInfo = checkReqBillMap.get(targetYear).get(targetMonth);
+							calcuSalesVo.setMtSalesDecAmount((Integer)mtBillReqInfo.get("salesTurnAmount"));
+							calcuSalesVo.setMtSalesDecCallYn((String)mtBillReqInfo.get("salesStatusCd"));
+						} else {
+							//요청된 월이 아닌 경우 해당 월을 셋팅한다.
+							calcuSalesVo.setMtSalesDecAmount(averageAmount);
+							calcuSalesVo.setMtSalesDecCallYn("N");
+						}
 					}
 				}
 				
@@ -1688,7 +1900,275 @@ public class MtContractServiceImpl implements MtContractService {
 			throw new Exception(e);
 		}
 		return yearMap;
-	}
+	}	 
+	
+//	private Map<String, MtSalesAmountVO> calcuSalesAmount(String fromDate, String toDate, int totalAmount, Map<String, MtSalesAmountVO> yearMap) throws Exception {
+//		List<String> monthList = null;
+//		MtSalesAmountVO salesVo = null;
+//		MtSalesAmountVO calcuSalesVo = null;
+//		int monthCnt = 0;
+//		int avrAmount = 0;
+//		String targetYear = null;
+//		String targetMonth = null;
+//		String checkYear = null;
+//		try {
+//			monthList = CepDateUtil.makeMonthListFormToEndDate(fromDate, toDate);
+//			
+//			if(null != monthList && monthList.size()>0) {
+//				//년도에 맞는 vo를 생성한다.
+//				for (int i = Integer.parseInt(fromDate.substring(0, 4)); i <= Integer.parseInt(toDate.substring(0, 4)); i++) {
+////					System.out.println("=============>"+i);
+//					if(!yearMap.containsKey(String.valueOf(i))) {
+//						//해당 년도가 존재하지 않으면 해당 
+//						salesVo = new MtSalesAmountVO();
+//						salesVo.setMtSalesYear(String.valueOf(i));
+//						yearMap.put(String.valueOf(i), salesVo);
+//					}
+//				}	
+//				monthCnt = monthList.size(); // 개월수..
+//				avrAmount = totalAmount/monthCnt; //월별 평균금액
+//				//해당 월별로 금액배분.
+//				for (int i = 0; i < monthCnt; i++) {
+//					targetYear = monthList.get(i).substring(0, 4);
+//					targetMonth = monthList.get(i).substring(4, 6);
+//					if(null == checkYear) {
+//						checkYear = targetYear;
+//						calcuSalesVo = yearMap.get(targetYear);
+//					}
+//					
+//					if(!checkYear.equals(targetYear)) {
+//						//checkYear년도에 변경된 사항을 Map에 저장한다.
+//						yearMap.put(checkYear, calcuSalesVo);
+//						
+//						//새로운 target년도를 꺼내서 저장할 수 있도록 한다.
+//						calcuSalesVo = yearMap.get(targetYear);
+//						checkYear = targetYear;
+//					}
+//					
+//					//해당 월에 해당하는 값에 값을 더해준다.
+//					if("01".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesJanAmount(calcuSalesVo.getMtSalesJanAmount()+avrAmount);
+//					} else if("02".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesFebAmount(calcuSalesVo.getMtSalesFebAmount()+avrAmount);
+//					} else if("03".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesMarAmount(calcuSalesVo.getMtSalesMarAmount()+avrAmount);
+//					} else if("04".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesAprAmount(calcuSalesVo.getMtSalesAprAmount()+avrAmount);
+//					} else if("05".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesMayAmount(calcuSalesVo.getMtSalesMayAmount()+avrAmount);
+//					} else if("06".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesJunAmount(calcuSalesVo.getMtSalesJunAmount()+avrAmount);
+//					} else if("07".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesJulAmount(calcuSalesVo.getMtSalesJulAmount()+avrAmount);
+//					} else if("08".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesAugAmount(calcuSalesVo.getMtSalesAugAmount()+avrAmount);
+//					} else if("09".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesSepAmount(calcuSalesVo.getMtSalesSepAmount()+avrAmount);
+//					} else if("10".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesOctAmount(calcuSalesVo.getMtSalesOctAmount()+avrAmount);
+//					} else if("11".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesNovAmount(calcuSalesVo.getMtSalesNovAmount()+avrAmount);
+//					} else if("12".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesDecAmount(calcuSalesVo.getMtSalesDecAmount()+avrAmount);
+//					}
+//				}
+//				
+//				//마지막으로 변경된 년도의 객체를 저장한다.
+//				yearMap.put(checkYear, calcuSalesVo);
+//			}
+//		} catch (Exception e) {
+//			throw new Exception(e);
+//		}
+//		return yearMap;
+//	}	
+//	private List<MtSalesAmountVO> makeSalesAmoutList(List<MtContractProductVO> voList, String mtIntegrateKey1) {
+//		Map<String, MtSalesAmountVO> yearMap = null;
+//		List<MtSalesAmountVO> mtSalesAmountVOList = null;
+//		int listCnt = 0;
+//		MtContractProductVO vo = null;
+//		int totalAmount = 0;
+//		
+//		List<EgovMap> mtBillReqList = null;
+//		EgovMap mtBillReqInfo = null;
+//		String checkYear = null;
+//		String salesYear = null;
+//		String salesMonth = null;
+//		int mtBillReqListCnt = 0;
+//		MtSalesAmountVO salesVo = null;
+//		int reqBillAmount = 0;
+//		try {
+//			if(null != voList && voList.size()>0) {
+//				System.out.println(voList.size());
+//				
+//				listCnt = voList.size();
+//				//제품별로 금액을 계약기간 월에 나누어 생성한다.
+//				for (int i = 0; i < listCnt; i++) {
+//					if(null == yearMap) {
+//						yearMap = new HashMap<>();
+//					}
+//					vo = voList.get(i);
+//					//제품별 금액.
+//					totalAmount = Integer.parseInt(vo.getMtPmQuantity())*Integer.parseInt(vo.getMtPmUprice());
+////					logger.debug("vo.getFromDate()====>"+vo.getFromDate());
+////					logger.debug("vo.getMtPmStartDt()====>"+vo.getMtPmStartDt());
+////					logger.debug("vo.getToDate()====>"+vo.getToDate());
+////					logger.debug("vo.getMtPmEndDt()====>"+vo.getMtPmEndDt());
+////					logger.debug("totalAmount====>"+totalAmount);
+////					logger.debug("yearMap====>"+yearMap);
+//					yearMap = calcuSalesAmount(vo.getMtPmStartDt(), vo.getMtPmEndDt(), totalAmount, yearMap);
+//				}
+//				
+//				/*
+//				 * 세금계산서 발행 요청한 금액은 해당 월의 요청금액으로 넣어준다.
+//				 * 세금계산서 발행 요청금액은 변경할 수 없으며..
+//				 * 변경을 원하는 경우 세금계산서 발행 요청을 취소해야함.
+//				 */
+//				if(null !=yearMap && yearMap.size()>0) {
+//					/*
+//					 * 세금계산서 발행요청 리스트를 가져온다.
+//					 * 발행요청 년월정보 =salesYearMonth
+//					 * 발행요청 금액 =salesTurnAmount
+//					 */
+//					mtBillReqList = mtMapper.selectMtReqBillList(mtIntegrateKey);
+//					if(null !=mtBillReqList && mtBillReqList.size()>0) {
+//						mtBillReqListCnt = mtBillReqList.size();
+//						
+//						for (int i = 0; i < mtBillReqListCnt; i++) {
+//							mtBillReqInfo = mtBillReqList.get(i);
+//							salesYear = ((String)mtBillReqInfo.get("salesYearMonth")).substring(0, 4);
+//							salesMonth = ((String)mtBillReqInfo.get("salesYearMonth")).substring(4, 6);
+//							reqBillAmount = Integer.parseInt((String)mtBillReqInfo.get("salesTurnAmount"));
+//							if(i==0) {
+//								checkYear = salesYear;
+//								salesVo = yearMap.get(salesYear);
+//							}
+//							
+//							if(!checkYear.equals(salesYear)) {
+//								salesVo = yearMap.get(salesYear);
+//								checkYear = salesYear;
+//							}
+//							
+//							//해당월의 값을 계산서 발행 요청 금액으로 셋팅한다.
+//							if("01".equals(salesMonth)) {
+//								salesVo.setMtSalesJanAmount(reqBillAmount);
+//							} else if("02".equals(salesMonth)) {
+//								salesVo.setMtSalesFebAmount(reqBillAmount);
+//							} else if("03".equals(salesMonth)) {
+//								salesVo.setMtSalesMarAmount(reqBillAmount);
+//							} else if("04".equals(salesMonth)) {
+//								salesVo.setMtSalesAprAmount(reqBillAmount);
+//							} else if("05".equals(salesMonth)) {
+//								salesVo.setMtSalesMayAmount(reqBillAmount);
+//							} else if("06".equals(salesMonth)) {
+//								salesVo.setMtSalesJunAmount(reqBillAmount);
+//							} else if("07".equals(salesMonth)) {
+//								salesVo.setMtSalesJulAmount(reqBillAmount);
+//							} else if("08".equals(salesMonth)) {
+//								salesVo.setMtSalesAugAmount(reqBillAmount);
+//							} else if("09".equals(salesMonth)) {
+//								salesVo.setMtSalesSepAmount(reqBillAmount);
+//							} else if("10".equals(salesMonth)) {
+//								salesVo.setMtSalesOctAmount(reqBillAmount);
+//							} else if("11".equals(salesMonth)) {
+//								salesVo.setMtSalesNovAmount(reqBillAmount);
+//							} else if("12".equals(salesMonth)) {
+//								salesVo.setMtSalesDecAmount(reqBillAmount);
+//							}
+//							//변경된 정보를 다시 yearMap 셋팅한다.
+//							yearMap.put(salesYear, salesVo);
+//						}
+//					}
+//					
+//					mtSalesAmountVOList = new ArrayList<>(yearMap.values());
+//				}
+//			}	
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return mtSalesAmountVOList;
+//	}
+	
+	
+//	private Map<String, MtSalesAmountVO> calcuSalesAmount(String fromDate, String toDate, int totalAmount, Map<String, MtSalesAmountVO> yearMap) throws Exception {
+//		List<String> monthList = null;
+//		MtSalesAmountVO salesVo = null;
+//		MtSalesAmountVO calcuSalesVo = null;
+//		int monthCnt = 0;
+//		int avrAmount = 0;
+//		String targetYear = null;
+//		String targetMonth = null;
+//		String checkYear = null;
+//		try {
+//			monthList = CepDateUtil.makeMonthListFormToEndDate(fromDate, toDate);
+//			
+//			if(null != monthList && monthList.size()>0) {
+//				//년도에 맞는 vo를 생성한다.
+//				for (int i = Integer.parseInt(fromDate.substring(0, 4)); i <= Integer.parseInt(toDate.substring(0, 4)); i++) {
+////					System.out.println("=============>"+i);
+//					if(!yearMap.containsKey(String.valueOf(i))) {
+//						//해당 년도가 존재하지 않으면 해당 
+//						salesVo = new MtSalesAmountVO();
+//						salesVo.setMtSalesYear(String.valueOf(i));
+//						yearMap.put(String.valueOf(i), salesVo);
+//					}
+//				}	
+//				monthCnt = monthList.size(); // 개월수..
+//				avrAmount = totalAmount/monthCnt; //월별 평균금액
+//				//해당 월별로 금액배분.
+//				for (int i = 0; i < monthCnt; i++) {
+//					targetYear = monthList.get(i).substring(0, 4);
+//					targetMonth = monthList.get(i).substring(4, 6);
+//					if(null == checkYear) {
+//						checkYear = targetYear;
+//						calcuSalesVo = yearMap.get(targetYear);
+//					}
+//					
+//					if(!checkYear.equals(targetYear)) {
+//						//checkYear년도에 변경된 사항을 Map에 저장한다.
+//						yearMap.put(checkYear, calcuSalesVo);
+//						
+//						//새로운 target년도를 꺼내서 저장할 수 있도록 한다.
+//						calcuSalesVo = yearMap.get(targetYear);
+//						checkYear = targetYear;
+//					}
+//					
+//					//해당 월에 해당하는 값에 값을 더해준다.
+//					if("01".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesJanAmount(calcuSalesVo.getMtSalesJanAmount()+avrAmount);
+//					} else if("02".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesFebAmount(calcuSalesVo.getMtSalesFebAmount()+avrAmount);
+//					} else if("03".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesMarAmount(calcuSalesVo.getMtSalesMarAmount()+avrAmount);
+//					} else if("04".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesAprAmount(calcuSalesVo.getMtSalesAprAmount()+avrAmount);
+//					} else if("05".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesMayAmount(calcuSalesVo.getMtSalesMayAmount()+avrAmount);
+//					} else if("06".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesJunAmount(calcuSalesVo.getMtSalesJunAmount()+avrAmount);
+//					} else if("07".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesJulAmount(calcuSalesVo.getMtSalesJulAmount()+avrAmount);
+//					} else if("08".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesAugAmount(calcuSalesVo.getMtSalesAugAmount()+avrAmount);
+//					} else if("09".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesSepAmount(calcuSalesVo.getMtSalesSepAmount()+avrAmount);
+//					} else if("10".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesOctAmount(calcuSalesVo.getMtSalesOctAmount()+avrAmount);
+//					} else if("11".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesNovAmount(calcuSalesVo.getMtSalesNovAmount()+avrAmount);
+//					} else if("12".equals(targetMonth)) {
+//						calcuSalesVo.setMtSalesDecAmount(calcuSalesVo.getMtSalesDecAmount()+avrAmount);
+//					}
+//				}
+//				
+//				//마지막으로 변경된 년도의 객체를 저장한다.
+//				yearMap.put(checkYear, calcuSalesVo);
+//			}
+//		} catch (Exception e) {
+//			throw new Exception(e);
+//		}
+//		return yearMap;
+//	}
 	
 	
 	/**

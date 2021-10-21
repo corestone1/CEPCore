@@ -189,16 +189,18 @@
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 213px;
+			width: 200px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
 			width: 100px;
 		}
-		.mContents .dtl thead th:nth-child(5) {
+		.mContents .dtl thead th:nth-child(5),
+		.mContents .dtl thead th:nth-child(6) {
 			width: 100px;
 		}
-		.mContents .dtl tbody td:nth-child(5) {
+		.mContents .dtl tbody td:nth-child(5),
+		.mContents .dtl tbody td:nth-child(6) {
 			width: 100px;
 			text-align: right;
 		}
@@ -206,13 +208,13 @@
 		.mContents .dtl tbody td:nth-child(6) {
 			width: 80px;
 		} */
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6){
+		.mContents .dtl thead th:nth-child(7),
+		.mContents .dtl tbody td:nth-child(7){
 			width: 100px;
 		}
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7) {
-			width: 300px;
+		.mContents .dtl thead th:nth-child(8),
+		.mContents .dtl tbody td:nth-child(8) {
+			width: 265px;
 		}	
 		/* 발주정보, 제품정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
@@ -287,6 +289,17 @@
 			white-space: nowrap;
 			font-weight: 200;
 			color: #21a17e;
+		}
+		/* 버튼이미지  */
+		.blueBtnStyle {
+			width: 115px;
+		    height: 27px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
 		}
 	</style>
 	<script>
@@ -519,16 +532,34 @@
 			fileDownload("<c:url value='/file/download.do'/>", data);  
 		}
 		
+
 		
+
+		//발주 매입금 지금요청 버튼 클릭
+		function fnMovePaymentDetail() {			
+			if(confirm($('#selectMtOrderAcKeyNm').val()+" 매입금지급요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMovePayment.action = "/mngMaint/payment/detail/main.do";
+	           	document.m_mtMovePayment.submit();
+			}
+			
+		}
 	</script>
 </head>
 <body>
+
+	<form id="m_mtMovePayment" name="m_mtMovePayment" method="post">
+		<input type="hidden" id="m0_mtOrderType" name="mtOrderType" value="PO"/><!-- 백계약:BO, 작업발주:PO -->
+		<input type="hidden" id="m0_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+		<input type="hidden" id="m0_mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>	
+		<input type="hidden" id="m0_mtOrderKey" name="mtOrderKey" value="<c:out value="${selectKey}"/>"/>	
+		<input type="hidden" id="m0_iframGubun" name="iframGubun" value="list"/>	
+	</form>
 	<form id="m_listForm" name="m_listForm" method="post">
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>	
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>		
 		<input type="hidden" id="selectMtOrderAcKeyNm"  value="<c:out value="${selectMtOrderAcKeyNm}"/>"/>
-						<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${selectKey}"/>"/>
+		<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${selectKey}"/>"/>
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="mContentsWrap">
@@ -648,6 +679,7 @@
 										<th scope="row">매입처</th>
 										<th scope="row">매입처담당자</th>
 										<th scope="row">합계금액</th>
+										<th scope="row">미지급금</th>
 										<!-- <th scope="row">부가세포함</th> -->
 										<th scope="row">발주일자</th>
 										<th scope="row">결재조건</th>
@@ -665,6 +697,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
+										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetPaymentAmount)}"/></td>
 										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
@@ -679,6 +712,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
+										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetPaymentAmount)}"/></td>
 										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
@@ -800,6 +834,7 @@
 						</div>
 						<div class="bottom">
 							<div class="floatR">
+								<button type="button" title="매입금 지급요청" class="blueBtnStyle" onclick="fnMovePaymentDetail();">매입금 지급요청</button>
 								<button type="button" value="수정" onclick="fn_addView('');"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제" onclick="fn_mdeleteWorkOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>

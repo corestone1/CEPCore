@@ -36,6 +36,7 @@
 		<result property="modDt" column="MOD_DT"/>
 		<result property="modTm" column="MOD_TM"/>
 		<result property="modEmpKey" column="MOD_EMP_KEY"/>
+		<result property="callTotalAmount" column="CALL_TOTAL_AMOUNT"/>
 	</resultMap>
 	
 	<!-- 유지보수 기본정보 등록 -->
@@ -220,8 +221,9 @@
 				AND MC.MT_MNG_EMP_KEY= CE2.EMP_KEY
 				AND MC.MT_SUPPORT_EMP_KEY = CE3.EMP_KEY 
 			  	AND MC.DELETE_YN='N'
-			  	ORDER BY MT_CT_DT DESC 
 		) M			
+		
+			  	ORDER BY MT_CT_DT DESC 
 	</select>
 	
 	<!-- 기본정보 상세보기 -->
@@ -250,6 +252,7 @@
 			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_MNG_EMP_KEY) AS MNG_EMP_NM
 			, MC.MT_SUPPORT_EMP_KEY
 			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SUPPORT_EMP_KEY) AS SUPPORT_EMP_NM
+			, (SELECT IFNULL(SUM(BILL_AMOUNT),0) FROM MT_SD_BILLING_OP_TB WHERE BILL_FK_MT_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS CALL_TOTAL_AMOUNT
 		FROM MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
 		WHERE MC.MT_INTEGRATE_KEY=#{mtIntegrateKey}			
 		  	AND MC.MT_AC_KEY = CA.AC_KEY		
@@ -272,12 +275,43 @@
 	</update>
 	
 	<!-- 유지보수계약 단계별 등록 갯수 조회 -->
-	<select id="selectMtContractCount" parameterType="String" resultType="egovMap">			
+<!-- 	<select id="selectMtContractCount" parameterType="String" resultType="egovMap">			
 		SELECT 
 		  (SELECT COUNT(1) FROM MT_PRODUCT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_PRODUCT_CNT
 		  , (SELECT COUNT(1) FROM MT_SALES_AMOUNT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_SALES_AMOUNT_CNT
 		  , (SELECT COUNT(1) FROM MT_BACK_ORDER_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_BACK_ORDER_CNT
 		  , (SELECT COUNT(1) FROM MT_BUY_AMOUNT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_BUY_AMOUNT_CNT	
+	</select> -->
+	<select id="selectMtContractCount" parameterType="String" resultType="egovMap">			
+		SELECT 
+			MP.PRODUCT_TOTAL_AMOUNT
+			, MP.MT_PRODUCT_CNT  
+			, SA.MT_SALES_AMOUNT_CNT
+			, BO.MT_BACK_ORDER_CNT
+			, BA.MT_BUY_AMOUNT_CNT
+		FROM   
+			(
+				SELECT 
+					SUM(MT_PM_QUANTITY*MT_PM_UPRICE) AS PRODUCT_TOTAL_AMOUNT
+					, COUNT(1) AS MT_PRODUCT_CNT  
+				FROM MT_PRODUCT_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) MP
+			, (
+				SELECT COUNT(1) AS MT_SALES_AMOUNT_CNT 
+				FROM MT_SALES_AMOUNT_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) SA 
+			, (
+				SELECT COUNT(1) AS MT_BACK_ORDER_CNT 
+				FROM MT_BACK_ORDER_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) BO
+			, (
+				SELECT COUNT(1) AS MT_BUY_AMOUNT_CNT 
+				FROM MT_BUY_AMOUNT_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) BA
 	</select>
 	<!-- ===========================유지보수 계약 제품========================================= -->
 	
@@ -455,6 +489,19 @@
 		AND DELETE_YN = 'N'
 	</select>	
 	
+	<!-- 매출데이타 자동생성시   계산서 발행요청이 있는 데이타를 조회하여 맵핑하는 조회쿼리.  -->
+	<select id="selectMtReqBillList" parameterType="String" resultType="egovMap">			
+		SELECT
+			SALES_YEAR_MONTH
+			, SALES_TURN_AMOUNT
+			, SALES_STATUS_CD
+		FROM MT_SALES_DETAIL_TB 
+		WHERE SALES_CT_FK_KEY=#{mtIntegrateKey}
+			AND DELETE_YN='N' 
+			AND SALES_STATUS_CD IS NOT NULL 
+			ORDER BY SALES_YEAR_MONTH 
+	</select>	
+	
 	
 	<!-- 유지보수계약 매출금액 등록 -->
 	<insert id="writeMtContractSalesAmountList" parameterType="java.util.Map">
@@ -474,6 +521,18 @@
 		    , MT_SALES_OCT_AMOUNT  
 		    , MT_SALES_NOV_AMOUNT 
 		    , MT_SALES_DEC_AMOUNT 
+		    , MT_SALES_JAN_CALL_YN
+		    , MT_SALES_FEB_CALL_YN 
+		    , MT_SALES_MAR_CALL_YN
+		    , MT_SALES_APR_CALL_YN 
+		    , MT_SALES_MAY_CALL_YN 
+		    , MT_SALES_JUN_CALL_YN 
+		    , MT_SALES_JUL_CALL_YN 
+		    , MT_SALES_AUG_CALL_YN 
+		    , MT_SALES_SEP_CALL_YN  
+		    , MT_SALES_OCT_CALL_YN  
+		    , MT_SALES_NOV_CALL_YN 
+		    , MT_SALES_DEC_CALL_YN
 		    , REG_DT 
 		    , REG_TM 
 		    , REG_EMP_KEY)
@@ -494,7 +553,19 @@
 		    , #{item.mtSalesSepAmount}
 		    , #{item.mtSalesOctAmount}
 		    , #{item.mtSalesNovAmount}
-		    , #{item.mtSalesDecAmount}
+		    , #{item.mtSalesDecAmount}		    
+		    , #{item.mtSalesJanCallYn}
+		    , #{item.mtSalesFebCallYn}
+		    , #{item.mtSalesMarCallYn}
+		    , #{item.mtSalesAprCallYn}
+		    , #{item.mtSalesMayCallYn}
+		    , #{item.mtSalesJunCallYn}
+		    , #{item.mtSalesJulCallYn}
+		    , #{item.mtSalesAugCallYn}
+		    , #{item.mtSalesSepCallYn}
+		    , #{item.mtSalesOctCallYn}
+		    , #{item.mtSalesNovCallYn}
+		    , #{item.mtSalesDecCallYn}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey})
@@ -543,52 +614,52 @@
 			UPDATE MT_SALES_AMOUNT_TB
 			SET MT_SALES_YEAR = #{item.mtSalesYear}
 				, MT_SALES_JAN_AMOUNT = #{item.mtSalesJanAmount}
-			<if test="item.mtSalesJanCallYn != null and item.mtSalesJanCallYn != ''">	
-				, MT_SALES_JAN_CALL_YN = #{item.mtSalesJanCallYn}
+			<if test="item.mtSalesJanCallYnOrg != null and item.mtSalesJanCallYnOrg != ''">	
+				, MT_SALES_JAN_CALL_YN = #{item.mtSalesJanCallYnOrg}
 			</if>	
 				, MT_SALES_FEB_AMOUNT = #{item.mtSalesFebAmount}
-			<if test="item.mtSalesFebCallYn != null and item.mtSalesFebCallYn != ''">	
-				, MT_SALES_FEB_CALL_YN = #{item.mtSalesFebCallYn}
+			<if test="item.mtSalesFebCallYnOrg != null and item.mtSalesFebCallYnOrg != ''">	
+				, MT_SALES_FEB_CALL_YN = #{item.mtSalesFebCallYnOrg}
 			</if>	
 				, MT_SALES_MAR_AMOUNT = #{item.mtSalesMarAmount}
-			<if test="item.mtSalesMarCallYn != null and item.mtSalesMarCallYn != ''">	
-				, MT_SALES_MAR_CALL_YN = #{item.mtSalesMarCallYn}
+			<if test="item.mtSalesMarCallYnOrg != null and item.mtSalesMarCallYnOrg != ''">	
+				, MT_SALES_MAR_CALL_YN = #{item.mtSalesMarCallYnOrg}
 			</if>	
 				, MT_SALES_APR_AMOUNT = #{item.mtSalesAprAmount}
-			<if test="item.mtSalesAprCallYn != null and item.mtSalesAprCallYn != ''">	
-				, MT_SALES_APR_CALL_YN = #{item.mtSalesAprCallYn}
+			<if test="item.mtSalesAprCallYnOrg != null and item.mtSalesAprCallYnOrg != ''">	
+				, MT_SALES_APR_CALL_YN = #{item.mtSalesAprCallYnOrg}
 			</if>	
 				, MT_SALES_MAY_AMOUNT = #{item.mtSalesMayAmount}
-			<if test="item.mtSalesMayCallYn != null and item.mtSalesMayCallYn != ''">	
-				, MT_SALES_MAY_CALL_YN = #{item.mtSalesMayCallYn}
+			<if test="item.mtSalesMayCallYnOrg != null and item.mtSalesMayCallYnOrg != ''">	
+				, MT_SALES_MAY_CALL_YN = #{item.mtSalesMayCallYnOrg}
 			</if>	
 				, MT_SALES_JUN_AMOUNT = #{item.mtSalesJunAmount}
-			<if test="item.mtSalesJanCallYn != null and item.mtSalesJunCallYn != ''">	
-				, MT_SALES_JUN_CALL_YN = #{item.mtSalesJunCallYn}
+			<if test="item.mtSalesJunCallYnOrg != null and item.mtSalesJunCallYnOrg != ''">	
+				, MT_SALES_JUN_CALL_YN = #{item.mtSalesJunCallYnOrg}
 			</if>	
 				, MT_SALES_JUL_AMOUNT = #{item.mtSalesJulAmount}
-			<if test="item.mtSalesJulCallYn != null and item.mtSalesJulCallYn != ''">	
-				, MT_SALES_JUL_CALL_YN = #{item.mtSalesJulCallYn}
+			<if test="item.mtSalesJulCallYnOrg != null and item.mtSalesJulCallYnOrg != ''">	
+				, MT_SALES_JUL_CALL_YN = #{item.mtSalesJulCallYnOrg}
 			</if>	
 				, MT_SALES_AUG_AMOUNT = #{item.mtSalesAugAmount}
-			<if test="item.mtSalesAugCallYn != null and item.mtSalesAugCallYn != ''">	
-				, MT_SALES_AUG_CALL_YN = #{item.mtSalesAugCallYn}
+			<if test="item.mtSalesAugCallYnOrg != null and item.mtSalesAugCallYnOrg != ''">	
+				, MT_SALES_AUG_CALL_YN = #{item.mtSalesAugCallYnOrg}
 			</if>	
 				, MT_SALES_SEP_AMOUNT = #{item.mtSalesSepAmount}
-			<if test="item.mtSalesSepCallYn != null and item.mtSalesSepCallYn != ''">	
-				, MT_SALES_SEP_CALL_YN = #{item.mtSalesSepCallYn}
+			<if test="item.mtSalesSepCallYnOrg != null and item.mtSalesSepCallYnOrg != ''">	
+				, MT_SALES_SEP_CALL_YN = #{item.mtSalesSepCallYnOrg}
 			</if>	
 				, MT_SALES_OCT_AMOUNT = #{item.mtSalesOctAmount}
-			<if test="item.mtSalesOctCallYn != null and item.mtSalesOctCallYn != ''">	
-				, MT_SALES_OCT_CALL_YN = #{item.mtSalesOctCallYn}
+			<if test="item.mtSalesOctCallYnOrg != null and item.mtSalesOctCallYnOrg != ''">	
+				, MT_SALES_OCT_CALL_YN = #{item.mtSalesOctCallYnOrg}
 			</if>	
 				, MT_SALES_NOV_AMOUNT = #{item.mtSalesNovAmount}
-			<if test="item.mtSalesNovCallYn != null and item.mtSalesNovCallYn != ''">	
-				, MT_SALES_NOV_CALL_YN = #{item.mtSalesNovCallYn}
+			<if test="item.mtSalesNovCallYnOrg != null and item.mtSalesNovCallYnOrg != ''">	
+				, MT_SALES_NOV_CALL_YN = #{item.mtSalesNovCallYnOrg}
 			</if>	
 				, MT_SALES_DEC_AMOUNT = #{item.mtSalesDecAmount}
-			<if test="item.mtSalesDecCallYn != null and item.mtSalesDecCallYn != ''">	
-				, MT_SALES_DEC_CALL_YN = #{item.mtSalesDecCallYn}
+			<if test="item.mtSalesDecCallYnOrg != null and item.mtSalesDecCallYnOrg != ''">	
+				, MT_SALES_DEC_CALL_YN = #{item.mtSalesDecCallYnOrg}
 			</if>	
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
@@ -635,6 +706,8 @@
 		    , MT_ORDER_AC_DIRECTOR_KEY 
 		    , MT_ORDER_PAY_TERMS 
 		    , MT_ORDER_AMOUNT 
+		    , YET_PAYMENT_AMOUNT
+		    , DONE_PAYMENT_AMOUNT
 		    , MT_ORDER_DT 
 		    , REMARK 
 		    , REG_DT 
@@ -647,6 +720,8 @@
 		    , #{mtOrderAcDirectorKey}
 		    , #{mtOrderPayTerms}
 		    , #{mtOrderAmount}
+		    , #{mtOrderAmount}
+		    , 0
 		    , #{mtOrderDt}
 		    , #{remark}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
@@ -708,6 +783,15 @@
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
+			, MB.YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, MB.DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, (
+				SELECT 
+					IFNULL(SUM(CALL_AMOUNT),0) 
+				FROM MT_PAYMENT_TB 
+				WHERE PAYMENT_BUY_FK_KEY=#{mtOrderKey}
+					AND DELETE_YN = 'N'
+				) AS callTotalAmount /* 지급요청금액*/
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
 		WHERE MT_ORDER_KEY = #{mtOrderKey} 
 			AND MB.DELETE_YN='N'  
@@ -728,6 +812,8 @@
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
+			, MB.YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, MB.DONE_PAYMENT_AMOUNT AS donePaymentAmount
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
 		WHERE MB.MT_INTEGRATE_KEY = #{mtIntegrateKey} 
 			AND MB.DELETE_YN='N'  
@@ -823,6 +909,7 @@
 			, MT_ORDER_AC_DIRECTOR_KEY = #{mtOrderAcDirectorKey}
 			, MT_ORDER_PAY_TERMS = #{mtOrderPayTerms}
 			, MT_ORDER_AMOUNT = #{mtOrderAmount}
+			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
 			, MT_ORDER_DT = #{mtOrderDt}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')

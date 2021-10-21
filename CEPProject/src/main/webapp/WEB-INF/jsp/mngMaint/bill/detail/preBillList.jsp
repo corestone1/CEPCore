@@ -238,7 +238,7 @@
  					var billInfo = {'pjKey' : pstPjKey, 'billCallKey' : pstBillCallKey, 'salesKey' : pstSalesKey, 'billIssueStatus' : 'E'};
  					
  					$.ajax({
- 				        	url :"/mngMaint/bill/detail/updateSdPaymentStatus.do",
+ 				        	url :"/mngMaint/bill/detail/updateSdCollectStatus.do",
  				        	type:"POST",  
  				            data: billInfo,
  				     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -316,7 +316,7 @@
 						<th scope="row">계산서 번호</th>
 						<th scope="row">발행일자</th>
 						<th scope="row">매출처</th>
-						<th scope="row">거래처 담당자</th>
+						<th scope="row">매출처 담당자</th>
 						<th scope="row">계산서 금액</th>
 						<!-- <th scope="row">수금 금액</th> -->
 						<th scope="row">발행구분</th>

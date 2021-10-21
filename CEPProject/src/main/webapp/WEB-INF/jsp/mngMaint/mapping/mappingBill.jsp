@@ -20,7 +20,7 @@
 		.popContainer .contents1 input[class="calendar"] {
 			width: 150px;
 			height: 31px;
-			 background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 			font-size: 15px;

@@ -338,7 +338,7 @@
  					}
  					
  					$.ajax({
- 				        	url :"/mngMaint/bill/detail/updateSdPaymentStatus.do",
+ 				        	url :"/mngMaint/bill/detail/updateSdCollectStatus.do",
  				        	type:"POST",  
  				            data: billInfo,
  				     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",

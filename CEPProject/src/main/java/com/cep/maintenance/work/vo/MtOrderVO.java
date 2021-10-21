@@ -87,6 +87,12 @@ public class MtOrderVO extends MtDefaultVO {
     
     // 발주품목리스트.
     private List<MtOrderProductVO> mtOrderProductVoList;
+    
+    private int yetPaymentAmount; //미지급금액
+    
+    private int donePaymentAmount; //지급완료금액
+    
+    private int callTotalAmount; //지급요청 총금액
 
 	/**
 	 * @return the mtOrderKey
@@ -368,4 +374,28 @@ public class MtOrderVO extends MtDefaultVO {
 		this.mtOrderProductVoList = mtOrderProductVoList;
 	}
 
+	public int getYetPaymentAmount() {
+		return yetPaymentAmount;
+	}
+
+	public void setYetPaymentAmount(int yetPaymentAmount) {
+		this.yetPaymentAmount = yetPaymentAmount;
+	}
+
+	public int getDonePaymentAmount() {
+		return donePaymentAmount;
+	}
+
+	public void setDonePaymentAmount(int donePaymentAmount) {
+		this.donePaymentAmount = donePaymentAmount;
+	}
+
+
+	public int getCallTotalAmount() {
+		return callTotalAmount;
+	}
+
+	public void setCallTotalAmount(int callTotalAmount) {
+		this.callTotalAmount = callTotalAmount;
+	}
 }

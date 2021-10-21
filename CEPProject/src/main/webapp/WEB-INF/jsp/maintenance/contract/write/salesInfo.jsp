@@ -1037,55 +1037,67 @@
 							<tr class="dpTbRow">
 								<td class="tdTitle">1월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesJanAmount" name="mtSalesJanAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesJanAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesJanAmount" name="mtSalesJanAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesJanAmount)}"/>" amountOnly <c:if test="${list.mtSalesJanCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesJanCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesJanCallYn" name="mtSalesJanCallYn" value="<c:out value="${list.mtSalesJanCallYn}"/>"  />
 								</td>
 								<td class="tdTitle">2월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesFebAmount" name="mtSalesFebAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesFebAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesFebAmount" name="mtSalesFebAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesFebAmount)}"/>" amountOnly <c:if test="${list.mtSalesFebCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesFebCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesFebCallYn" name="mtSalesFebCallYn" value="<c:out value="${list.mtSalesFebCallYn}"/>"  />
 								</td>
 								<td class="tdTitle">3월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesMarAmount" name="mtSalesMarAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesMarAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesMarAmount" name="mtSalesMarAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesMarAmount)}"/>" amountOnly <c:if test="${list.mtSalesMarCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesMarCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesMarCallYn" name="mtSalesMarCallYn" value="<c:out value="${list.mtSalesMarCallYn}"/>"  />
 								</td>	
 								<td class="tdTitle">4월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesAprAmount" name="mtSalesAprAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesAprAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesAprAmount" name="mtSalesAprAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesAprAmount)}"/>" amountOnly <c:if test="${list.mtSalesAprCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesAprCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesAprCallYn" name="mtSalesAprCallYn" value="<c:out value="${list.mtSalesAprCallYn}"/>"  />
 								</td>
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle">5월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesMayAmount" name="mtSalesMayAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesMayAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesMayAmount" name="mtSalesMayAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesMayAmount)}"/>" amountOnly <c:if test="${list.mtSalesMayCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesMayCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesMayCallYn" name="mtSalesMayCallYn" value="<c:out value="${list.mtSalesMayCallYn}"/>"  />
 								</td>
 								<td class="tdTitle">6월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesJunAmount" name="mtSalesJunAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesJunAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesJunAmount" name="mtSalesJunAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesJunAmount)}"/>" amountOnly <c:if test="${list.mtSalesJunCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesJunCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesJunCallYn" name="mtSalesJunCallYn" value="<c:out value="${list.mtSalesJunCallYn }"/>"  />
 								</td>
 								<td class="tdTitle">7월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesJulAmount" name="mtSalesJulAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesJulAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesJulAmount" name="mtSalesJulAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesJulAmount)}"/>" amountOnly <c:if test="${list.mtSalesJulCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesJulCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesJulCallYn" name="mtSalesJulCallYn" value="<c:out value="${list.mtSalesJulCallYn }"/>"  />
 								</td>
 								<td class="tdTitle">8월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesAugAmount" name="mtSalesAugAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesAugAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesAugAmount" name="mtSalesAugAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesAugAmount)}"/>" amountOnly <c:if test="${list.mtSalesAugCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesAugCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesAugCallYn" name="mtSalesAugCallYn" value="<c:out value="${list.mtSalesAugCallYn }"/>"  />
 								</td>
 							</tr>
 							<tr class="dpTbRow">
 								<td class="tdTitle">9월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesSepAmount" name="mtSalesSepAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesSepAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesSepAmount" name="mtSalesSepAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesSepAmount)}"/>" amountOnly <c:if test="${list.mtSalesSepCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesSepCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesSepCallYn" name="mtSalesSepCallYn" value="<c:out value="${list.mtSalesSepCallYn }"/>"  />
 								</td>
 								<td class="tdTitle">10월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesOctAmount" name="mtSalesOctAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesOctAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesOctAmount" name="mtSalesOctAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesOctAmount)}"/>" amountOnly <c:if test="${list.mtSalesOctCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesOctCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesOctCallYn" name="mtSalesOctCallYn" value="<c:out value="${list.mtSalesOctCallYn }"/>"  />
 								</td>
 								<td class="tdTitle">11월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesNovAmount" name="mtSalesNovAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesNovAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesNovAmount" name="mtSalesNovAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesNovAmount)}"/>" amountOnly <c:if test="${list.mtSalesNovCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesNovCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesNovCallYn" name="mtSalesNovCallYn" value="<c:out value="${list.mtSalesNovCallYn }"/>"  />
 								</td>
 								<td class="tdTitle">12월</td>
 								<td class="tdContents">
-									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesDecAmount" name="mtSalesDecAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesDecAmount)}"/>" amountOnly class="calculate" />	
+									<input type="text" id="salesList-<c:out value="${status.index}"/>-mtSalesDecAmount" name="mtSalesDecAmount" value="<c:out value="${displayUtil.commaStr(list.mtSalesDecAmount)}"/>" amountOnly <c:if test="${list.mtSalesDecCallYn == 'N' }">class="calculate"</c:if>  <c:if test="${list.mtSalesDecCallYn != 'N' }">class="pname" style="width: 133px;text-align: right;" readOnly</c:if> />	
+									<input type="hidden" id="salesList-<c:out value="${status.index}"/>-mtSalesDecCallYn" name="mtSalesDecCallYn" value="<c:out value="${list.mtSalesDecCallYn }"/>"  />
 								</td>
 							</tr>
 						</table>

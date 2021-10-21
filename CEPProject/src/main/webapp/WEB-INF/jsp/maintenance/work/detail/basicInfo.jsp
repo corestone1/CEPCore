@@ -134,7 +134,7 @@
 			display: none !important;
 		}
 		.liArrow {
-			background-image: url('http://172.10.122.10:8888/images/step_arrow.png');
+			background-image: url('/images/step_arrow.png');
 			background-repeat: no-repeat;
 		}
 /* 		form .contents > .fxd .title ul li:first-child {

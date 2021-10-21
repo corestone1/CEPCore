@@ -211,6 +211,7 @@
 		</if> <!-- 유지보수 작업발주 IF 종료 -->
 			
 		) ORDER_TB
-		ORDER BY MT_AC_KEY ,MT_NM, MT_ORDER_AC_KEY, MT_ORDER_DT DESC
+		ORDER BY MT_ORDER_DT DESC
+		<!-- ORDER BY MT_ORDER_DT, MT_AC_KEY ,MT_NM, MT_ORDER_AC_KEY DESC -->
 	</select>	
 </mapper>

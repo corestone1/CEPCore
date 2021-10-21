@@ -336,7 +336,7 @@
 			    			
 			    			var button2 = new Array;
 			    			button2 = [];
-			    			showModalPop(dialogId2, url2, varParam, button, '', 'width:1144px;height:708px');
+			    			showModalPop(dialogId2, url2, varParam, button2, '', 'width:1144px;height:708px');
                			} else {
                				//첨부파일이 존재하지 않는경우.
                				//업로프 파일을 선택한 경우 파일 업로드 프로세스 수행

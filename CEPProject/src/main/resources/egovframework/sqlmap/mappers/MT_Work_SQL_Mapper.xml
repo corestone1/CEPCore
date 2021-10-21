@@ -318,6 +318,8 @@
 		    , ORDER_AC_DIRECTOR_KEY 
 		    , ORDER_PAY_TERMS 
 		    , ORDER_AMOUNT 
+		    , YET_PAYMENT_AMOUNT
+		    , DONE_PAYMENT_AMOUNT
 		    , REG_DT 
 		    , REG_TM 
 		    , REG_EMP_KEY
@@ -330,6 +332,8 @@
 		    , #{orderAcDirectorKey}
 		    , #{orderPayTerms}
 		    , #{orderAmount}
+		    , #{orderAmount}
+		    , 0
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey}
@@ -396,6 +400,15 @@
 			, MO.ORDER_PAY_TERMS AS orderPayTerms
 			, MO.ORDER_AMOUNT AS orderAmount
 			, MO.ORDER_DT AS orderDt
+			, MO.YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, MO.DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, (
+				SELECT 
+					IFNULL(SUM(CALL_AMOUNT),0) 
+				FROM MT_PAYMENT_TB 
+				WHERE PAYMENT_BUY_FK_KEY=#{mtOrderKey}
+					AND DELETE_YN = 'N'
+				) AS callTotalAmount /* 지급요청금액*/
 		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA
 		WHERE MT_ORDER_KEY = #{mtOrderKey} 
 			AND MO.DELETE_YN='N'  
@@ -415,6 +428,8 @@
 			, MO.ORDER_PAY_TERMS AS orderPayTerms
 			, MO.ORDER_AMOUNT AS orderAmount
 			, MO.ORDER_DT AS orderDt
+			, MO.YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, MO.DONE_PAYMENT_AMOUNT AS donePaymentAmount
 		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
 		WHERE 1=1
 			<if test="mtIntegrateKey != null and mtIntegrateKey != ''">
@@ -546,6 +561,7 @@
 			, ORDER_AC_DIRECTOR_KEY = #{orderAcDirectorKey}
 			, ORDER_PAY_TERMS = #{orderPayTerms}
 			, ORDER_AMOUNT = #{orderAmount}
+			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
 			, ORDER_DT = #{orderDt}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 

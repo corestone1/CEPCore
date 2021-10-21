@@ -528,7 +528,8 @@
 		</div>
 		<div class="floatC">
 		
-			<input type="hidden" id="ipt_pjKey"            name="pjKey"           value="${billInfo.pjKey}" />
+			<input type="hidden" id="ipt_pjKey"  name="pjKey" value="${pjKey}" />
+			<input type="hidden" id="ipt_acKey"  name="acKey" value="${acKey}" />
 			<input type="hidden" id="ipt_billCallKey"      name="billCallKey"     value="${billInfo.billCallKey}" />
 			<%-- <input type="hidden" id="ipt_billAcKey"        name="billAcKey"           value="${billAcKey}" /> --%>
 			<input type="hidden" id="ipt_billIssueStatus" name="billIssueStatus" value="${billInfo.billIssueStatus}" />
@@ -537,9 +538,9 @@
 			
 			<table class="dtl">
 				<tr>
-					<td class="backgroundpurple">회차</td>
+					<td class="backgroundpurple"><label>*</label>회차</td>
 					<td>
-						<select id="slt_billTurnNo" name="billTurnNo" style="width:120px;">
+						<select id="slt_billTurnNo" name="billTurnNo" style="width:120px;" required>
 							<c:forEach var="i" begin="1" end="${collectTurn}" step="1">
 								<option value="${i}" <c:if test='${billInfo.billTurnNo == i}'>selected</c:if>>
 									<c:out value="${i}" />회차
@@ -599,7 +600,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="backgroundpurple"><label>*</label>고객담당자</td>	
+					<td class="backgroundpurple">매출처담당자</td>	
 					<td>
 						<%-- <select id="ipt_billAcDirectorKey" name="billAcDirectorName" style="width:120px;">
 							<c:forEach var="directorList" items="${directorList}" varStatus="status">
@@ -608,17 +609,17 @@
 								</option>
 							</c:forEach>
 						</select> --%>
-						<input type="text" id="ipt_billAcDirectorName" name="billAcDirectorName" value="<c:out value="${billInfo.billAcDirectorName}"/>" required/>
+						<input type="text" id="ipt_billAcDirectorName" name="billAcDirectorName" value="<c:out value="${billInfo.billAcDirectorName}"/>" />
 					</td>
 				</tr>
 				<tr>
-					<td class="backgroundpurple"><label>*</label>고객연락처</td>	
+					<td class="backgroundpurple">매출처담연락처</td>	
 					<td>
-						<input type="text" id="ipt_billAcDirectorTel" name="billAcDirectorTel" value="<c:out value="${billInfo.billAcDirectorTel}"/>" required/>
+						<input type="text" id="ipt_billAcDirectorTel" name="billAcDirectorTel" value="<c:out value="${billInfo.billAcDirectorTel}"/>" />
 					</td>
 				</tr>
 				<tr>
-					<td class="backgroundpurple"><label>*</label>고객이메일</td>	
+					<td class="backgroundpurple"><label>*</label>발행이메일</td>	
 					<td>
 						<input type="text" id="ipt_billIssueEmail" name="billIssueEmail" value="<c:out value="${billInfo.billIssueEmail}"/>" required/>
 					</td>

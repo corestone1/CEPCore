@@ -53,7 +53,7 @@ public class MtAmountServiceImple implements MtAmountService {
 		String mtBuyKey = null; //매입관리키
 		
 		try {
-			mtBuyKey = service.makePrimaryKey(PrimaryKeyType.MAINTENACE_PURCHASE);
+			mtBuyKey = service.makePrimaryKey(PrimaryKeyType.MAINTENACE_PAYMENT);
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtBuyKey, ""))){
 				purchaseVO.setBuyKey(mtBuyKey);
