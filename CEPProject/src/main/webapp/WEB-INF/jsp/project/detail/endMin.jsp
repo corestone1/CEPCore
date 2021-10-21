@@ -379,7 +379,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			/* } */
 		}
 		

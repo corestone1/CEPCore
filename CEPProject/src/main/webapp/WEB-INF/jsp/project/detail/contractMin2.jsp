@@ -79,7 +79,6 @@
 		}
 		form .contents > div > div > div > table tr td:first-child {
 			width: 140px;
-			font-weight: 400;
 		} 
 		form .contents > div > div > div > table tr td:last-child {
 			width: 400px;
@@ -190,7 +189,7 @@
 			cursor: pointer;
 		}
 		.contents .dtl tbody tr:hover {
-			background-color: #ddf0ec
+			background-color: #ddf0ec !important;
 		}
 		.contents .dtl tbody tr td:nth-child(3) {
 			font-weight: 400;
@@ -218,14 +217,9 @@
 			width: *;
 		}
 		.contents .dtl thead th:nth-child(4),
-		.contents .dtl tbody td:nth-child(4) {
-			width: 75px;
-			max-width: 75px;
-		}
+		.contents .dtl tbody td:nth-child(4),
 		.contents .dtl thead th:nth-child(5),
-		.contents .dtl tbody td:nth-child(5),
-		.contents .dtl thead th:nth-child(6),
-		.contents .dtl tbody td:nth-child(6) {
+		.contents .dtl tbody td:nth-child(5) {
 			width: 182px;
 		}
 		.contents .dtl tbody tr td > span {
@@ -280,7 +274,7 @@
 		.contents .dtl2 tbody tr:hover {
 			background-color: #ddf0ec
 		}
-		.contents .dtl2 tbody tr td:nth-child(3) {
+		.contents .dtl2 tbody tr td:nth-child(2) {
 			font-weight: 400;
 		}
 		.contents .dtl2 thead th, 
@@ -299,11 +293,11 @@
 		}
 		.contents .dtl2 thead th:nth-child(2),
 		.contents .dtl2 tbody td:nth-child(2){
-			width: 122px;
+			width: 183px;
 		}
 		.contents .dtl2 thead th:nth-child(3),
 		.contents .dtl2 tbody td:nth-child(3) {
-			width: *;
+			width: 150px;
 		}
 		.contents .dtl2 thead th:nth-child(4),
 		.contents .dtl2 tbody td:nth-child(4) {
@@ -316,10 +310,6 @@
 		}
 		.contents .dtl2 thead th:nth-child(6),
 		.contents .dtl2 tbody td:nth-child(6) {
-			width: 122px;
-		}
-		.contents .dtl2 thead th:nth-child(7),
-		.contents .dtl2 tbody td:nth-child(7) {
 			width: 122px;
 		}
 				
@@ -346,6 +336,14 @@
 			if("${salesList[0].salesKey}" != null && "${salesList[0].salesKey}" != "")
 				fnSearchGuarantyBondList("${salesList[0].salesKey}");
 			
+			$(".contents .dtl tbody tr:first-child").css("background-color", "#ddf0ec");
+			
+			$(".contents .dtl tbody tr").click(function() {
+				$(".contents .dtl tbody tr").each(function() {
+					$(this).css("background-color", "#fff");
+				});
+				$(this).css("background-color", "#ddf0ec");
+			})
 		});
 		
 		function fn_addView(link){
@@ -359,7 +357,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			/* } */
 		}
 		
@@ -402,7 +400,6 @@
 			html = '<table id="tbl_guarantyBondList" class="dtl2 tbl2Width">'
 			     + '<thead class="ftw400">'
 			     +     '<tr>'
-			     +        '<th scope="row">선택</th>'
 			     +        '<th scope="row">No</th>'
 			     +        '<th scope="row">보증 증권명</th>'
 			     +        '<th scope="row">발행 상태</th>'
@@ -422,13 +419,13 @@
 			{
 		    	
 		    	//보증증권 발행 상태 및 버튼
-		    	if(pltGBList[i].gbIssueYn == 'Y')
+		    	if(pltGBList[i].gbIssueStatus == 'Y')
 		    	{
 		    		lstStatus  = '발행완료';
-		    		lstBtnImg  = "/images/btn_stock_mod.png";
+		    		lstBtnImg  = "/images/btn_stock_view.png";
 		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    	}
-		    	else if(pltGBList[i].gbIssueYn == 'R')
+		    	else if(pltGBList[i].gbIssueStatus == 'R')
 		    	{
 		    		lstStatus = '발행요청중';
 		    		lstBtnImg  = "/images/btn_stock_end.png";
@@ -444,10 +441,6 @@
 		    	lstBtn     = '<img onclick="' + lstOnclick + '" src="' + lstBtnImg + '" style="cursor:hand;"/>';
 		    	
 				html += '<tr>'
-				     +     '<td class="textalignC" onclick="event.cancelBubble = true;">'
-				     +         '<input type="radio" class="tCheck" name="m_gubun2" id="check2' + i + '"/>'
-				     +         '<label for="check2' + i + '" class="cursorP"></label>'
-				     +     '</td>'
 				     +     '<td class="textalignC">' + (i+1) + '</td>'
 				     +     '<td class="textalignC">' + pltGBList[i].gbKindCd + ' 이행 보증증권</td>'
 				     +     '<td class="textalignC">' + lstStatus + '</td>'
@@ -476,7 +469,7 @@
 			var button = new Array;
 			button = [];
 			
-			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			parent.showModalPop(dialogId, "/project/write/guarantyInfo.do?iframe=true", varParam, button, '', 'width:1144px;height:708px;ifram:true;iframid:ifr_ProjectInfo;reload:false');
 		}
 		
 		
@@ -507,14 +500,34 @@
 		
 		function fnViewModal(pstUrl, pstGbKey){
 			
-			alert(pstUrl);
-			var dialogId = 'program_layer';
+			/* var dialogId = 'program_layer';
 			
 			var varParam = {'gbKey' : pstGbKey};
 			
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, pstUrl, varParam, button, '', 'width:648px;height:575px'); 
+			showModalPop(dialogId, pstUrl, varParam, button, '', 'width:648px;height:575px');  */
+			
+			var nWidth = "654";
+			var nHeight = "549";
+			  
+			var curX = window.screenLeft;
+			var curY = window.screenTop;
+			var curWidth = document.body.clientWidth;
+			var curHeight = document.body.clientHeight;
+			  
+			var nLeft = curX + (curWidth / 2) - (nWidth / 2);
+			var nTop = curY + (curHeight / 2) - (nHeight / 2 -71);
+
+			var strOption = "";
+			strOption += "left=" + nLeft + "px,";
+			strOption += "top=" + nTop + "px,";
+			strOption += "width=" + nWidth + "px,";
+			strOption += "height=" + nHeight + "px,";
+			strOption += "toolbar=no,menubar=no,location=no,";
+			strOption += "resizable=yes,status=yes";
+			
+			window.open(pstUrl + "?gbKey="+ pstGbKey,'GUARANTY_INFO', strOption);
 		}
 	</script>
 </head>
@@ -541,7 +554,6 @@
 											<th scope="row">선택</th>
 											<th scope="row">회차</th>
 											<th scope="row">비율/금액</th>
-											<th scope="row">진행상태</th>
 											<th scope="row">계상서예상일(발행일)</th>
 											<th scope="row">수금예상일(수금일)</th>
 										</tr>
@@ -559,7 +571,6 @@
 														<c:out value="${salesList.salesCollectRate}"/>% / <c:out value="${displayUtil.commaStr(salesList.salesTurnAmount)}"/> 원
 													</span>
 												</td>
-												<td class="textalignC"><c:out value="${salesList.salesStatusCd}"/></td>
 												<td class="textalignC">
 													<c:out value="${displayUtil.displayDate(salesList.salesBillFcDt)}"/>
 													<c:if test="${not empty salesList.billIssueDt}">
@@ -581,11 +592,10 @@
 						</div>
 						
 						<div class="stitle cg colorBlack">보증증권 정보</div>
-							<div id="div_guarantyBondList" class="floatC" style="border-bottom: 2px solid #c4c4c4;">
+							<div id="div_guarantyBondList" class="floatC">
 								<table id="tbl_guarantyBondList" class="dtl2 tbl2Width">
 									<thead class="ftw400">
 										<tr>
-											<th scope="row">선택</th>
 											<th scope="row">No</th>
 											<th scope="row">보증 증권명</th>
 											<th scope="row">발행 상태</th>
@@ -598,10 +608,6 @@
 									
 										<c:forEach var="guarantyBondList" items="${guarantyBondList}" varStatus="status">
 											<tr>
-												<td class="textalignC" onclick="event.cancelBubble = true;">
-													<input type="radio" class="tCheck" name="m_gubun" id="check1" />
-													<label for="check1" class="cursorP"/>
-												</td>
 												<td class="textalignC"><c:out value="${guarantyBondList.gbKindCd}"/> 이행 보증증권</td>
 												<td class="textalignC">
 													<c:choose>

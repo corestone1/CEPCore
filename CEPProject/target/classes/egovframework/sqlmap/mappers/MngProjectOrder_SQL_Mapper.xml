@@ -7,6 +7,7 @@
 	
 		SELECT DAT.ORDER_KEY               AS ORDER_KEY
 		     , DAT.AC_NM                   AS AC_NM
+		     , DAT.PJ_KEY					AS PJ_KEY
 		     , DAT.PJ_NM                   AS PJ_NM
 		     , DAT.ORDER_AC_NM             AS ORDER_AC_NM
 		     , DAT.ORDER_DT                AS ORDER_DT
@@ -17,7 +18,6 @@
 		     , DAT.ORDER_CT_FK_KEY         AS ORDER_CT_FK_KEY
 		     , DAT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
 		     , DAT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
-		     , DAT.TAX_YN                  AS TAX_YN
 		     , DAT.REG_DT                  AS REG_DT
 		     , DAT.REG_TM                  AS REG_TM
 		     , DAT.REG_EMP_KEY             AS REG_EMP_KEY
@@ -29,6 +29,7 @@
 			(
 				SELECT POT.PJ_ORDER_KEY            AS ORDER_KEY                  /* 발주번호 */
 				     , CAT1.AC_NM                  AS AC_NM                      /* 고객사 명 */
+				     , PMT.PJ_KEY					AS PJ_KEY
 					 , PMT.PJ_NM                   AS PJ_NM                      /* 프로젝트명 */
 					 , CAT2.AC_NM                  AS ORDER_AC_NM                /* 매입처명 */
 					 , POT.ORDER_DT                AS ORDER_DT                   /* 발주일 */
@@ -43,7 +44,6 @@
 					 , POT.ORDER_AC_KEY            AS ORDER_AC_KEY
 					 , POT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
 					 , POT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
-					 , POT.TAX_YN                  AS TAX_YN
 					 , POT.REG_DT                  AS REG_DT
 					 , POT.REG_TM                  AS REG_TM
 					 , POT.REG_EMP_KEY             AS REG_EMP_KEY
@@ -59,7 +59,7 @@
 				  JOIN CMM_EMPLOYEE_TB CET2 ON PMT.PJ_SALE_EMP_KEY  = CET2.EMP_KEY /* 담당영업정보 */
 				WHERE  POT.DELETE_YN      = 'N'
 				<if test="orderKey != null and orderKey != ''">
-				  	AND  POT.PJ_ORDER_KEY      = #{orderKeySearch} /* 발주번호 조건검색  */
+				  	AND  POT.PJ_ORDER_KEY LIKE CONCAT('%', CONCAT(#{orderKeySearch}, '%')) /* 발주번호 조건검색  */
 				</if>
 				<if test="pjNm != null and pjNm != ''">
 				  	AND  PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
@@ -198,7 +198,6 @@
 				 , POT.ORDER_AC_KEY            AS ORDER_AC_KEY
 				 , POT.ORDER_AC_DIRECTOR_KEY   AS ORDER_AC_DIRECTOR_KEY
 				 , POT.ORDER_PAY_TERMS         AS ORDER_PAY_TERMS
-				 , POT.TAX_YN                  AS TAX_YN
 				 , POT.REG_DT                  AS REG_DT
 				 , POT.REG_TM                  AS REG_TM
 				 , POT.REG_EMP_KEY             AS REG_EMP_KEY

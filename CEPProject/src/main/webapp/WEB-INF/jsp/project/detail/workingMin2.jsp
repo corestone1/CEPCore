@@ -108,7 +108,7 @@
 			width: 0 !important;
 		}
 		#detailForm .stitle ul {
-			width: 915px;
+			width: 997px;
 		}
 		#detailForm .stitle ul li {
 			width: 150px;
@@ -116,6 +116,9 @@
 		#detailForm .stitle ul li a {
 			color: #a3a3a4;
 			padding-bottom: 10px;
+			display: block;
+		    width: 498.5px;
+		    border-bottom: 4px solid #c3c3c3;
 		}
 		#detailForm .stitle ul li a:hover {
 			color: #000;
@@ -125,40 +128,9 @@
 			color: #000;
 			border-bottom: 4px solid #6a5bae;
 		}
-		/*
-		form .contents .dtl {
-			border-top: 4px solid #c3c3c3;;
-			overflow: hidden;
-		}
-		form .contents .dtl tbody {
-			overflow-y: auto;
-			overflow-x: hidden;
-			height: 547px;
-			float: left;
-		}
-		form .contents .dtl tbody tr {
-			border: 1px solid #ebe9ee;
-		}
-		form .contents .dtl td {
-			color: #000;
-		}
-		form .contents .dtl tr td:first-child {
-			background-color: #e1dff5;
-			border-right: 1px solid #ebe9ee;
-		}
-		form .contents .dtl tr td:last-child {
-			width: 770px;
-		}
-		*/
-		
-		
 		.contents .dtl {
-			width: 997px;
-			font-size: 14px;
-			border-collapse: collapse;
-			font-weight: 300;
 			overflow: hidden;
-			border-top: 4px solid #6a5baf;
+			margin-top: -10px;
 		}
 		.contents .dtl thead {
 			background-color: #e1dff5;
@@ -171,7 +143,7 @@
 		}
 		.contents .dtl tbody {
 			width: 997px;
-			height: 532px;
+			height: 504px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -258,7 +230,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			/* } */
 		}
 		

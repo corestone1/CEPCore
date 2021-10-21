@@ -108,7 +108,7 @@
 			width: 0 !important;
 		}
 		#detailForm .stitle ul {
-			width: 915px;
+			width: 997px;
 		}
 		#detailForm .stitle ul li {
 			width: 150px;
@@ -116,6 +116,9 @@
 		#detailForm .stitle ul li a {
 			color: #a3a3a4;
 			padding-bottom: 10px;
+			display: block;
+		    width: 498.5px;
+		    border-bottom: 4px solid #c3c3c3;
 		}
 		#detailForm .stitle ul li a:hover {
 			color: #000;
@@ -125,40 +128,9 @@
 			color: #000;
 			border-bottom: 4px solid #6a5bae;
 		}
-		/*
-		form .contents .dtl {
-			border-top: 4px solid #c3c3c3;;
-			overflow: hidden;
-		}
-		form .contents .dtl tbody {
-			overflow-y: auto;
-			overflow-x: hidden;
-			height: 547px;
-			float: left;
-		}
-		form .contents .dtl tbody tr {
-			border: 1px solid #ebe9ee;
-		}
-		form .contents .dtl td {
-			color: #000;
-		}
-		form .contents .dtl tr td:first-child {
-			background-color: #e1dff5;
-			border-right: 1px solid #ebe9ee;
-		}
-		form .contents .dtl tr td:last-child {
-			width: 770px;
-		}
-		*/
-		
-		
 		.contents .dtl {
-			width: 997px;
-			font-size: 14px;
-			border-collapse: collapse;
-			font-weight: 300;
 			overflow: hidden;
-			border-top: 4px solid #6a5baf;
+			margin-top: -10px;
 		}
 		.contents .dtl thead {
 			background-color: #e1dff5;
@@ -171,7 +143,7 @@
 		}
 		.contents .dtl tbody {
 			width: 997px;
-			height: auto;
+			height: 504px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -205,28 +177,27 @@
 		}
 		.contents .dtl thead th:nth-child(2),
 		.contents .dtl tbody td:nth-child(2){
-			width: 55px;
+			width: 36px;
 		}
 		.contents .dtl thead th:nth-child(3),
 		.contents .dtl tbody td:nth-child(3) {
-			width: 170px;
+			width: 163px;
 		}
 		.contents .dtl thead th:nth-child(4),
 		.contents .dtl tbody td:nth-child(4) {
-			width: 76x;
+			width: 36px;
 		}
 		.contents .dtl thead th:nth-child(5),
 		.contents .dtl tbody td:nth-child(5){
-			width: 179px;
+			width: 175px;
 		}
 		.contents .dtl thead th:nth-child(6),
 		.contents .dtl tbody td:nth-child(6) {
-			width: 181px;
+			width: 178px;
 		}
-		
 		.contents .dtl thead th:nth-child(7),
 		.contents .dtl tbody td:nth-child(7) {
-			width: 133px;
+			width: 104px;
 		}
 		.contents .dtl thead th:nth-child(8),
 		.contents .dtl tbody td:nth-child(8) {
@@ -267,7 +238,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			/* } */
 		}
 		
@@ -280,19 +251,22 @@
 		function fnViewModify() {
 			
 			//설치구축 key 구하기
-			
-			var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
-			
-			//alert(litIdx + "\n" + $('input[name="inbSeq"]').eq(litIdx).val());
-			
-			var dialogId = 'program_layer';
-			
-			var varParam = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
-			
-			var button = new Array;
-			button = [];
-			
-			parent.showModalPop(dialogId, "/project/write/buildInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			if($('input[name="m_gubun"]:checked').val() == undefined) {
+				alert('수정할 데이터를 선택해 주세요.');
+			} else {
+				var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+				
+				//alert(litIdx + "\n" + $('input[name="inbSeq"]').eq(litIdx).val());
+				
+				var dialogId = 'program_layer';
+				
+				var varParam = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
+				
+				var button = new Array;
+				button = [];
+				
+				parent.showModalPop(dialogId, "/project/write/buildInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			}
 		}
 		
 		function fnViewDelete() {

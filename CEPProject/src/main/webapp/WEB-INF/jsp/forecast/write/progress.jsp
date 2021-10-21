@@ -151,7 +151,7 @@
 	        contentType: "application/json; charset=UTF-8", 
 	        dataType: 'json', 
 	    	success:function(data){		  
-	           	if($('#isUpdate').val().replace(" ", "") == ("N")) {
+	           	if($('#isUpdate').val().replace(" ", "") == ("N") || $('#isUpdate').val().replace(" ", "").length == 0) {
 	    			alert("제품 및 진행사항 정보가 저장되었습니다.");	
 	    		} else {
 	    			alert("제품 및 진행사항 정보가 수정되었습니다.");	

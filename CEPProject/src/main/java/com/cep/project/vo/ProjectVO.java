@@ -35,6 +35,7 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	
 	private String searchFlag;
 	private String searchValue;
+	private String searchAcNm;
 	
 	public String getPjKey() {
 		return pjKey;
@@ -183,6 +184,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setSearchValue(String searchValue) {
 		this.searchValue = searchValue;
+	}
+	public String getSearchAcNm() {
+		return searchAcNm;
+	}
+	public void setSearchAcNm(String searchAcNm) {
+		this.searchAcNm = searchAcNm;
 	}
 	
 	@Override

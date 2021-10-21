@@ -265,7 +265,9 @@
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
+							
 							if('freeMtEndDt' == this.name){
+								obj["yetPaymentAmount"] = Number($("#yetPaymentAmount").val());
 								objArry.push(obj);
 								obj = {};
 							}
@@ -312,7 +314,7 @@
 	    	}
 	    	
 	    	var name = type + 'List-' + (lastNum+1) + '-';
-	    	
+
 	    	//복제하는 필드의 값제거.
 	    	for(var i = 0; i < nameArr.length; i++) {
 	    		clone.find('input[name="lastNum"]').val(lastNum+1);
@@ -324,6 +326,7 @@
 	    	//id값 변경
 	    	for(var i = 0; i < idArr.length; i++) {
 	    		var splitName = idArr[i].split('-')[2];
+	    		clone.find('input[id="'+ type + 'List-' + lastNum + '-totalAmount"]').attr('class', 'newAmount');
 				clone.find('input[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);		
 				clone.find('img[id="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('id', name + splitName);
 	    	} 
@@ -367,7 +370,9 @@
 			var selectNum = JSON.stringify($(obj.id).selector);
 			var prodLength = $('#'+type+'Length').val()*1;
 			
+			
 			if(prodLength>1){
+				
 				/*
 				* 전체금액에서 삭제된 테이블 금액을 뺀다.
 				* 삭제테이블의 제품정보를 수집한다.
@@ -375,21 +380,28 @@
 				listNum = selectNum.split('-')[1];
 				productName = $('#prodList-'+listNum+'-pmNmCd').val();
 				deleteKey =  $('#prodList-'+listNum+'-orderSeq').val();
+
+				var deleteUprice = removeCommas($('#prodList-'+ listNum +'-orderUprice').val())*1;
+				var deleteQuantity = removeCommas($('#prodList-'+ listNum +'-orderQuantity').val())*1;
+				var totalProductAmount = deleteUprice*deleteQuantity;
 				
 				if(confirm(productName+" 제품정보를 삭제하시겠습니까?")) {
-					
-					//삭제key list를 만든다.
-					if(deleteKey !=''){
-						$('#deleteListKeys').val($('#deleteListKeys').val()+deleteKey+":");
-					}					
-					
-					//삭제된 금액을 뺀다.
-					deleteAmount(listNum);
-					
-					//선택한  테이블을 삭제한다.
-					table.remove();
-					
-					$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+					if(totalProductAmount > (removeCommas($("#yetPaymentAmount").val()) * 1)) {
+						alert("해당 발주의 미 지급 금액보다 삭제하고자 하는 발주 제품 금액이 더 큽니다.");
+					} else {
+						//삭제key list를 만든다.
+						if(deleteKey !=''){
+							$('#deleteListKeys').val($('#deleteListKeys').val()+deleteKey+":");
+						}					
+						
+						//삭제된 금액을 뺀다.
+						deleteAmount(listNum);
+						
+						//선택한  테이블을 삭제한다.
+						table.remove();
+						
+						$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+					}
 				}
 			} else {
 				alert("제품정보는 한개 이상 존재해야 합니다.");
@@ -405,6 +417,9 @@
 			
 			//전체금액에서 삭제금액을 뺀다.
 			$('#orderTotalAmount').val(addCommas(totalAmount-(deleteUprice*deleteQuantity)));
+			
+			// 미 지급금액에서 삭제 금액을 뺀다.
+			$("#yetPaymentAmount").val(Number($("#yetPaymentAmount").val().replaceAll(",","")) - (deleteUprice*deleteQuantity));
 			
 		}
 		
@@ -559,6 +574,13 @@
 			//계속 저장버튼 기능 정의 
 			$('#btnOption').val('ss');
 			
+			var total = 0;
+			$(".newAmount").each(function() {
+				total += Number($(this).val().replaceAll(",",""));
+			});
+			
+			$("#yetPaymentAmount").val(Number($("#yetPaymentAmount").val()) + total);
+			
 			var object = {};
 			var listObject = new Array();
 			var obj = new Object();
@@ -578,7 +600,6 @@
             }
            		
             object["orderProductVOList"]=listData;
-			
            	var sendData = JSON.stringify(object);
             $.ajax({
 	        	url:"/project/insert/orderInfo.do",
@@ -626,7 +647,7 @@
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        		}
 	        	} 
-	        });   
+	        });     
 		}
 		
 		//해당 거래처의 발주 내용을 삭제한다.
@@ -836,7 +857,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			}
 			else {
 				if($('#popSelectKey').val() != "" || $('#popSelectKey').val().length != 0) {
@@ -847,7 +868,7 @@
 					}
 					var button = new Array;
 					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 				} else {
 					alert('저장을 해주세요.');
 				}
@@ -918,6 +939,7 @@
 						<input type="hidden" id="deleteListKeys" name="deleteListKeys" />
 						<input type="hidden" name="statusCd" value="PJST3000" />
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${orderVO.selectKey}"/>"/> 
+						<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${purchaseVO.yetPaymentAmount }"/>" />
 					<table>
 						<tr>
 							<td class="tdTitle"><label>*</label>매입처</td>
@@ -1017,7 +1039,7 @@
 											<td class="tdTitle">무상유지보수</td>
 											<td class="tdContents" colspan="5">
 												<input type="text" id="prodList-0-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" /> ~ 
-												<input type="text" id="prodList-0-freeMtEndDt" name="freeMtEndDt"" placeholder="to" class="calendar toDt" />
+												<input type="text" id="prodList-0-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" />
 											</td>		
 										</tr>
 									</table>
@@ -1055,7 +1077,7 @@
 											</td>
 											<td class="tdTitle"><label>*</label>입고일자</td>
 											<td class="tdContents">
-												<input type="text" id="prodList-0-orderReceiptDt" name="orderReceiptDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.orderReceiptDt)}"/>" required/>
+												<input type="text" id="prodList-<c:out value="${status.index}"/>-orderReceiptDt" name="orderReceiptDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.orderReceiptDt)}"/>" required/>
 											</td>
 											<td class="tdTitle">유지보수 요율</td>
 											<td class="tdContents">
@@ -1065,8 +1087,8 @@
 										<tr class="dpTbRow">
 											<td class="tdTitle">무상유지보수</td>
 											<td class="tdContents" colspan="5">
-												<input type="text" id="prodList-0-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" /> ~ 
-												<input type="text" id="prodList-0-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.freeMtEndDt)}"/>" />
+												<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" /> ~ 
+												<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.freeMtEndDt)}"/>" />
 											</td>		
 										</tr>
 									</table>

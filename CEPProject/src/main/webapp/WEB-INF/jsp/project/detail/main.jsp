@@ -366,6 +366,8 @@
 				if(i < index) {
 					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
 					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
+				} else {
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').removeClass('liAfterNone');
 				}
 			}
 			
@@ -376,25 +378,16 @@
 			});
 			
 			 $('form .contents > .fxd .title ul li').mouseover(function(){ 
+			
 				var index2  = $('form .contents > .fxd .title ul li').index(this);
 				var indexOn = $('form .contents > .fxd .title ul li').index($('form .contents > .fxd .title ul .on'));
 				
-				if(index2 >= indexOn){
-					$('form .contents > .fxd .title ul li:nth-child('+ (index2 + 1) + ')').css('background-color','#b9b9b9');
-				}
-					
-					
-				/* 
-				for(var i = (index - 1); i <= index2; i++) {
-					
-					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
-						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#b9b9b9');
-					} 
-					
-					if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
-						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').addClass('liAfter');
+				for(var i = indexOn + 1; i <= index2; i++) {
+					$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#b9b9b9');
+					if(i != index2) {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').addClass('liAfterNone');
 					}
-				} */
+				}
 			});
 			
 			$('form .contents > .fxd .title ul li').mouseout(function(){ 
@@ -402,16 +395,19 @@
 				var index2  = $('form .contents > .fxd .title ul li').index(this);
 				var indexOn = $('form .contents > .fxd .title ul li').index($('form .contents > .fxd .title ul .on'));
 				
-				//for(var i = (index - 1); i <= index2; i++) {
-					for(var i = (index2 + 0); i <= length; i++) {
-						if(index2 > indexOn){
-							if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
-								$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#d3d3d3');
-							}
-							if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
-							 	$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').removeClass('liAfter'); 
-							}
+				for(var i = (indexOn + 1); i <= index2; i++) {
+					/* if(index2 > indexOn){
+						if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on') {
+							$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#d3d3d3');
 						}
+						if($('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').attr('class') != 'on' && (i + 1) <= index2) {
+						 	$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').removeClass('liAfter'); 
+						}
+					} */
+					$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').css('background-color','#d3d3d3');
+					if(i != index2) {
+						$('form .contents > .fxd .title ul li:nth-child('+ (i + 1) + ')').removeClass('liAfterNone');
+					}
 				} 
 			});
 			
@@ -427,9 +423,7 @@
 			
 			
 			$('#delMinInfo').click(function() {
-			
 				$('#ifr_ProjectInfo').get(0).contentWindow.fnViewDelete();
-			
 			});
 			
 			
@@ -450,8 +444,6 @@
 					//var object = {};
 					var formData = $("#listForm").serializeArray();
 					
-					console.log(formData);
-					
 					/* 
 					var formData = $("#viewForm").serializeArray();
 		           	for (var i = 0; i<formData.length; i++){
@@ -467,7 +459,7 @@
 						dataType:'json',
 						contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
 						success:function(data){	
-			            	alert('저장 되었습니다.');
+			            	alert('프로젝트 기본 정보가 저장되었습니다.');
 			            	location.href = "/project/detail/main.do?pjKey=" + $('#iph_pjKey').val();
 			            },
 			        	error: function(request, status, error) {
@@ -566,51 +558,95 @@
 			} else if(lstPjStatusCd == 'PJST6000') {
 				//실주
 				
-			}
+			} 
 			
 		});
 		
-		function fnMoveMenu(pstId){
 		
-			var lobj = $('#' + pstId);
+		function fnMoveMenu(pstId) {
+			var lstPjStatusCd = '${projectVO.pjStatusCd}';
+			var statusCd = 'BD';
+			var pstNm = '';
 			
-			//alert(pstId);
-			
-			$('li[id^=LI_TOPBar]').removeClass("on");
-			$('li[id^=LI_TOPBar]').removeClass("liArrow");
-			
-			
-			lobj.addClass("on");
-			lobj.addClass("liArrow");
-			
-			$('form .contents > .fxd .title ul li:nth-child(' +  ($('form .contents > .fxd .title ul li.on').index()+2) + ')').addClass("liArrow");
-			
-			//alert(lobj.attr('title'));
-			
-			
-			//요기다가 설정
-			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
-			var length = $('form .contents > .fxd .title ul li').length;
-			
-			//alert("index : " + index + "\n length : " + length);
-			
-			for(var i = 0; i < length; i++) {
-			//	debugger;
-				if(i < index) {
-					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
-					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
-				}
-				else
-				{
-					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#d3d3d3");
-				}
+			if(lstPjStatusCd == 'PJST1000') {
+				statusCd += '';
+			} else if(lstPjStatusCd == 'PJST2000') {
+				statusCd += 'CT';
+			} else if(lstPjStatusCd == 'PJST3000') {
+				statusCd += 'CTOD';
+			} else if(lstPjStatusCd == 'PJST4000') {
+				statusCd += 'CTODWK';
+			} else if(lstPjStatusCd == 'PJST5000') {
+				statusCd += 'CTODWKED';
 			}
 			
-			var lstUrl = lobj.attr('title') + "?pjKey=" + $('#iph_pjKey').val();
+			if(pstId.includes("BD")) {
+				pstNm = "입찰";
+			} else if(pstId.includes("CT")) {
+				pstNm = "계약";
+			} else if(pstId.includes("OD")) {
+				pstNm = "발주";
+			} else if(pstId.includes("WK")) {
+				pstNm = "수행";
+			} else if(pstId.includes("ED")) {
+				pstNm = "완료";
+			}
 			
-			//alert(lstUrl);
-			
-			$('#ifr_ProjectInfo').attr('src', lstUrl);
+			if(!(statusCd).includes(pstId.substr(pstId.length-2,2))) {
+				if(confirm(pstNm + " 정보가 없습니다. 프로젝트 정보 등록 화면으로 이동하시겠습니까?")) {
+					var url = '/project/write/basicInfo.do';
+					var dialogId = 'program_layer';
+					var varParam = {
+						"pjKey": $('#iph_pjKey').val()
+					}
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+				} else {
+					
+				}
+			} else {
+				var lobj = $('#' + pstId);
+				
+				//alert(pstId);
+				
+				$('li[id^=LI_TOPBar]').removeClass("on");
+				$('li[id^=LI_TOPBar]').removeClass("liArrow");
+				
+				
+				lobj.addClass("on");
+				lobj.addClass("liArrow");
+				
+				$('form .contents > .fxd .title ul li:nth-child(' +  ($('form .contents > .fxd .title ul li.on').index()+2) + ')').addClass("liArrow");
+				
+				//alert(lobj.attr('title'));
+				
+				
+				//요기다가 설정
+				var index = $('form .contents > .fxd .title ul li.on').index() + 2;
+				var length = $('form .contents > .fxd .title ul li').length;
+				
+				//alert("index : " + index + "\n length : " + length);
+				
+				for(var i = 0; i < length; i++) {
+				//	debugger;
+					if(i < index) {
+						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
+						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
+					}
+					else
+					{
+						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#d3d3d3");
+						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').removeClass('liAfterNone');
+					}
+				}
+				
+				var lstUrl = lobj.attr('title') + "?pjKey=" + $('#iph_pjKey').val() + "&workClass=입찰_첨부파일";
+				
+				//alert(lstUrl);
+				
+				$('#ifr_ProjectInfo').attr('src', lstUrl);
+			}
 		
 		}
 		
@@ -729,7 +765,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			/* } */
 		}
 		
@@ -771,6 +807,13 @@
 			button = [];
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
+		
+		function fnViewApproval() {
+			form = document.listForm;
+			form.action = "<c:url value='/project/viewApproval.do'/>";
+			form.submit();
+		}
+
 	</script>
 </head>
 <body>
@@ -797,7 +840,7 @@
 									<td><c:out value="${projectVO.pjNm}"/></td>
 								</tr>
 								<tr>
-									<td>프로젝트 NO</td>
+									<td>프로젝트 번호</td>
 									<td><c:out value="${projectVO.pjKey}"/></td>
 								</tr>
 								<tr>
@@ -894,9 +937,10 @@
 						<div class="btnWrap lt">
 							<div class="floatL">
 								<button type="button" value="수정" id="modBasicInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<a title="계산서 발행 요청" onclick="javasript:fnMoveBillDetail();"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
-								<%-- <a title="매입금 지급 요청" href="/project/request/purchase/main.do?mainKey=${pjKey}& "><img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" /></a> --%>
-								<a title="판매 품의서" href="/project/viewApproval.do"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
+								<c:if test="${projectVO.pjStatusCd > 'PJST1000' }">
+									<a title="계산서 발행 요청" onclick="javasript:fnMoveBillDetail();"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></a>
+								</c:if>
+								<a title="판매 품의서" onclick="javasript:fnViewApproval();"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
 							</div>
 						</div>
 						<!-- 기본정보 버튼 끝 -->
@@ -921,7 +965,7 @@
 					
 					<!-- 입찰정보 시작 -->
 					<div id="detailForm">
-						<iframe id="ifr_ProjectInfo" height="625px;" width="1027px;" style="border:0;"src="/project/detail/biddingMin.do?pjKey=${pjKey}"></iframe>
+						<iframe id="ifr_ProjectInfo" name="ifr_ProjectInfo" height="625px;" width="1027px;" style="border:0;"src="/project/detail/biddingMin.do?pjKey=${pjKey}&workClass=입찰_첨부파일"></iframe>
 						<!-- 입찰정보 버튼 시작 -->
 						<div class="btnWrap rt">
 							<div class="floatR">

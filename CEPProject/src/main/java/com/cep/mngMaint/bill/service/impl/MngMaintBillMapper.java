@@ -5,8 +5,6 @@ import java.util.List;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillVO;
-import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
-import com.cep.mngProject.bill.vo.MngProjectBillVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import egovframework.rte.psl.dataaccess.util.EgovMap;

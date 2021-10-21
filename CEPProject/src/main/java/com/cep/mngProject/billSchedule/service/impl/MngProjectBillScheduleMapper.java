@@ -10,10 +10,10 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 @Mapper("mngProjectBillCalendarMapper")
 public interface MngProjectBillScheduleMapper {
 
-	public List<EgovMap> selectBillScheduleSdList(MngProjectBillScheduleVO billScheduleVO) throws Exception;
+	public List<EgovMap> selectBillScheduleList(MngProjectBillScheduleVO billScheduleVO) throws Exception;
 	
-	public int selectBillScheduleSdTotalAmount(MngProjectBillScheduleVO billScheduleVO) throws Exception;
+	public int selectBillScheduleTotalAmount(MngProjectBillScheduleVO billScheduleVO) throws Exception;
 	
-	public int selectBillScheduleSdTotalTax(MngProjectBillScheduleVO billScheduleVO) throws Exception;
+	public int selectBillScheduleTotalTax(MngProjectBillScheduleVO billScheduleVO) throws Exception;
 	
 }

@@ -1,6 +1,7 @@
 
 package com.cep.mngProject.fundSchedule.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.cep.mngProject.fundSchedule.service.MngProjectFundScheduleService;
 import com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO;
+import com.cmm.util.CepDateUtil;
+import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -23,12 +26,26 @@ public class MngProjectFundScheduleServiceImpl implements MngProjectFundSchedule
 	@Override
 	public EgovMap selectFundScheduleList(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception {
 	
-		if(mngProjectFundScheduleVO.getSearchFromDt() == null || mngProjectFundScheduleVO.getSearchFromDt().equals(""))
-		{
-			// 최초 조회 시(조회 일자와 분기가 없을때) 현재 달 3월 12일 - 03-01 ~ 03-31
-			mngProjectFundScheduleVO.setSearchFromDt("20210301");
-			mngProjectFundScheduleVO.setSearchToDt("20210331");
+		String toDay = null;
+		toDay = CepDateUtil.getToday(null);	
+		
+		// 최초 조회 시(조회 일자와 분기가 없을때) 현재 달 3월 12일 - 03-01 ~ 03-31
+		if(!"".equals(CepStringUtil.getDefaultValue(mngProjectFundScheduleVO.getSearchFromDt(), ""))){
+			mngProjectFundScheduleVO.setSearchFromDt(mngProjectFundScheduleVO.getSearchFromDt().replace("-", ""));
+		} else {
+			mngProjectFundScheduleVO.setSearchFromDt(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
 		}
+		System.out.println(mngProjectFundScheduleVO.getSearchFromDt()+",,,,before");
+		mngProjectFundScheduleVO.setSearchFromDt(CepDateUtil.convertDisplayFormat(mngProjectFundScheduleVO.getSearchFromDt(), null, null));
+		System.out.println(mngProjectFundScheduleVO.getSearchFromDt()+",,,,after");
+		
+		if(!"".equals(CepStringUtil.getDefaultValue(mngProjectFundScheduleVO.getSearchToDt(), ""))){
+			mngProjectFundScheduleVO.setSearchToDt(mngProjectFundScheduleVO.getSearchToDt().replace("-", ""));
+		} else {
+			mngProjectFundScheduleVO.setSearchToDt(toDay);
+		}
+		
+		mngProjectFundScheduleVO.setSearchToDt(CepDateUtil.convertDisplayFormat(mngProjectFundScheduleVO.getSearchToDt(), null, null));
 		
 		
 		
@@ -38,10 +55,8 @@ public class MngProjectFundScheduleServiceImpl implements MngProjectFundSchedule
 		EgovMap legovMap = new EgovMap();
 		
 		legovMap.put("salesList", mapper.selectFundScheduleSdList(mngProjectFundScheduleVO));
-		legovMap.put("salesTotalAmount", mapper.selectFundScheduleSdTotalAmount(mngProjectFundScheduleVO));
 		
 		legovMap.put("paymentList", mapper.selectFundSchedulePcList(mngProjectFundScheduleVO));
-		legovMap.put("paymentAmmount", mapper.selectFundSchedulePcTotalAmount(mngProjectFundScheduleVO));
 		
 		return legovMap;
 	}

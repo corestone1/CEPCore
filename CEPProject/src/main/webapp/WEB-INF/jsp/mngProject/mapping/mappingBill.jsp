@@ -20,7 +20,7 @@
 		.popContainer .contents1 input[class="calendar"] {
 			width: 150px;
 			height: 31px;
-			 background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 			font-size: 15px;
@@ -33,7 +33,7 @@
 			padding-top: 17px;	  					
 			padding-bottom: 8px;
 			margin-left: 38px;
-			padding-right: 29px;
+			padding-right: 48px;
 		}
 		.popContainer .contents {
 			width: 100%;
@@ -46,7 +46,7 @@
 		    position: absolute;
 		}
 		.popContainer .contents1 {
-			width: 100%;
+			width: 96%;
 		}		
 		.popContainer .subTitle { 
 			border-collapse: collapse;
@@ -55,6 +55,30 @@
 			padding-bottom: 8px;
 			font-size: 18px;
 			margin-left: 33px;
+		}
+		.popContainer .subTitle a {
+			font-size: 14px;
+			font-weight: 300;
+		}
+		.popContainer .subTitle a:hover {
+			text-decoration: underline;
+		}
+		.popContainer .subTitle a label {
+			display: inline-block;
+		    width: 17px;
+		    height: 17px;
+		    border-radius: 50%;
+		    vertical-align: middle;
+		    text-align: center;
+		    margin-left: 4px;
+		    box-shadow: 2px 4px 4px -2px grey;
+		    margin-bottom: 2px;
+		}
+		.popContainer .subTitle a label img {
+			transform: rotate(270deg);
+		    width: 7px;
+		    vertical-align: top;
+		    margin-top: 6px;
 		}
 		.popContainer .contents1 table {
 			width: calc(100% - 201px);
@@ -206,7 +230,7 @@
 		}
 		.popContainer .bottomBtn {
 			margin-top: 10px;
-			margin-right: 28px;
+			margin-right: 48px;
 		}	
 		input:read-only {
 			border: none;
@@ -216,6 +240,9 @@
 			font-weight: 200;
 			background: transparent;
 			height: 15px;
+		}
+		input[class="calendar"] {
+			height: 31px;
 		}
 	</style>
 	<script>
@@ -265,7 +292,7 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');  
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
 		}
 		
 		function fn_save() {
@@ -297,51 +324,54 @@
 				if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
 					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + originBillMappedAmount + ")");
 				} else {
-					$("#billMappedAmount").val(totalBillMappedAmount);
-					
-					var formData = $("#orderInfoForm").serializeArray();
-					for (var i = 0; i<formData.length; i++){
-		                object[formData[i]['name']] = formData[i]['value'];
-		            }
-					
-					object["billList"]=listData;
-					
-					var sendData = JSON.stringify(object);
-					
-					var sch = location.search
-					var params = new URLSearchParams(sch);
-					var sch_keyword = params.get('paymentKey');
-					
-					$.ajax({
-						url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
-						dataType:'json',
-						type:"POST",
-						data:sendData,
-						contentType:"application/json; charset=UTF8",
-						success:function(response) {
-							if(response != null && response.successYN == 'Y') {
-								alert('매핑되었습니다.');
-								
-								 var url = '/mngProject/mapping/mappingBill.do';
-								var dialogId = 'program_layer';
-								var varParam = {
-									"pjOrderKey":$("input[name='pjOrderKey']").val(),
-									"billDtFrom":$("input[name='billDtFrom']").val(),
-									"billDtTo":$("input[name='billDtTo']").val()
+					if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
+						$("#billMappedAmount").val(totalBillMappedAmount);
+						
+						var formData = $("#orderInfoForm").serializeArray();
+						for (var i = 0; i<formData.length; i++){
+			                object[formData[i]['name']] = formData[i]['value'];
+			            }
+						
+						object["billList"]=listData;
+						
+						var sendData = JSON.stringify(object);
+						
+						var sch = location.search
+						var params = new URLSearchParams(sch);
+						var sch_keyword = params.get('paymentKey');
+						
+						$.ajax({
+							url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
+							dataType:'json',
+							type:"POST",
+							data:sendData,
+							contentType:"application/json; charset=UTF8",
+							success:function(response) {
+								if(response != null && response.successYN == 'Y') {
+									
+									alert($("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
+									
+									 var url = '/mngProject/mapping/mappingBill.do';
+									var dialogId = 'program_layer';
+									var varParam = {
+										"pjOrderKey":$("input[name='pjOrderKey']").val(),
+										"billDtFrom":$("input[name='billDtFrom']").val(),
+										"billDtTo":$("input[name='billDtTo']").val()
+									}
+									var button = new Array;
+									button = [];
+									showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+								} else {
+									alert('계산서 매핑이 실패하였습니다.');
 								}
-								var button = new Array;
-								button = [];
-								showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');  
-							} else {
-								alert('매핑 실패');
+							},
+							error: function(request, status, error) {
+								if(request.status != '0') {
+									alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+								}
 							}
-						},
-						error: function(request, status, error) {
-							if(request.status != '0') {
-								alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-							}
-						}
-					});  
+						});  
+					}
 				}
 			}
 		}
@@ -357,7 +387,9 @@
 		<div class="contents">
 			<div class="contents1">
 				<div>
-					<div class="subTitle">발주 정보</div>
+					<div class="subTitle floatL">발주 정보</div>
+					<div class="subTitle floatR"><a href="/project/request/purchase/main.do?mainKey=${orderVO.orderCtFkKey}&orderKey=${orderVO.pjOrderKey }">지급 정보 보러가기<label><img src="/images/arrow_down.png" /></label></a></div>
+					<div class="floatC"></div>
 				</div>
 				<div>
 					<table class="textalignC ftw200" >

@@ -17,7 +17,8 @@
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
-	
+	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	
 	<style>
 		.sfcnt {
@@ -284,7 +285,18 @@
 		form .contents .dtl#modTable .upload-name:hover {
 			text-decoration: underline;
 		}
-		
+		#fileWrap input:first-child {
+			margin-top: 0;
+		}
+		#fileWrap input {
+			width: 100%;
+			margin-top: 10px;
+		    border: none;
+		}
+		#fileWrap input:hover {
+			color: #007AAE;
+			text-decoration: underline;
+		}
 		
 	</style>
 	<script>
@@ -392,7 +404,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
 			/* } */
 		}
 		
@@ -418,13 +430,37 @@
 		
 		function fnShowStock() {
 			
-			var dialogId = 'program_layer';
+			/* var dialogId = 'program_layer';
 			
 			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
 			
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, "/project/detail/viewStockPublishBD.do", varParam, button, '', 'width:648px;height:575px');
+			showModalPop(dialogId, "/project/detail/viewStockPublishBD.do", varParam, button, '', 'width:648px;height:575px'); */
+			
+			var pstUrl = "/project/detail/viewStockPublishBD.do";
+			var varParam = 'pjKey='+$('#ipt_pjKey').val()+'&bdKey='+$('#ipt_bdKey').val();
+			
+			var nWidth = "654";
+			var nHeight = "549";
+			  
+			var curX = window.screenLeft;
+			var curY = window.screenTop;
+			var curWidth = document.body.clientWidth;
+			var curHeight = document.body.clientHeight;
+			  
+			var nLeft = curX + (curWidth / 2) - (nWidth / 2);
+			var nTop = curY + (curHeight / 2) - (nHeight / 2 -71);
+
+			var strOption = "";
+			strOption += "left=" + nLeft + "px,";
+			strOption += "top=" + nTop + "px,";
+			strOption += "width=" + nWidth + "px,";
+			strOption += "height=" + nHeight + "px,";
+			strOption += "toolbar=no,menubar=no,location=no,";
+			strOption += "resizable=yes,status=yes";
+			
+			window.open(pstUrl + "?"+ varParam,'BD_GUARANTY_INFO', strOption);
 		}
 		
 		
@@ -442,7 +478,7 @@
 	        	success:function(data){		  
 	        		//alert(data.accountList[0].acNm);
 	        		//선택 목록 생성
-	        		alert("삭제 되었습니다.!");
+	        		alert("삭제 되었습니다.");
 	        		location.reload();
 	            },
 	        	error: function(request, status, error) {
@@ -455,10 +491,9 @@
 		
 		function fnViewModify() {
 		
-				
 			var dialogId = 'program_layer';
 			
-			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), "workClass":"입찰_첨부파일"};
 			
 			var button = new Array;
 			button = [];
@@ -511,7 +546,7 @@
 </head>
 <body>
 	<form:form id="listForm" name="listForm" method="post">
-		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${biddingInfo.pjKey}" />
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${pjKey}" />
 		<input type="hidden" id="ipt_bdKey" name="bdKey" value="${biddingInfo.bdKey}" />
 		<div class="contentsWrap">
 			<div class="contents">
@@ -603,7 +638,12 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<a style="color:#000;"><c:out value="${fileList.fileOrgNm}"/></a>
+										<div style="clear:both;" id="fileWrap">
+											<c:forEach var="result" items="${fileList }" varStatus="status">
+												<input class="upload-name cursorP veralignT" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+												<c:if test="${status.last eq false}"><br /></c:if>
+											</c:forEach>
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -877,9 +917,11 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<input type="file" class="floatL" id="fileUploader" />
-										<label for="fileUploader" class="fileName"></label>
-										<input class="upload-name" value="<c:out value="${fileList.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${fileList.fileKey}"/>, <c:out value="${fileList.fileOrgNm}"/>')" readonly/>
+										<c:forEach var="result" items="${fileList }" varStatus="status">
+											<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+											<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+											<c:if test="${status.last eq false}"><br /></c:if>
+										</c:forEach>
 									</td>
 								</tr>
 							</table>
@@ -924,8 +966,8 @@
 		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
 		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
 		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
-		<input type="hidden" name="fileKey" value="${fileList.fileKey}"/>
-		<input type="hidden" name="fileOrgNm" value="${fileList.fileOrgNm}"/>
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
 		<input type="hidden" name="fileType" value="cdc"/>
 	</form:form>
 </body>

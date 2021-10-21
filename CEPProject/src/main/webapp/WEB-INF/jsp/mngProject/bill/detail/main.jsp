@@ -350,7 +350,7 @@
 		$(document).ready(function() {
 			
 			
-			var newUrl = "/mngProject/bill/detail/billForm.do?pjKey=${basicInfo.pjKey}&acKey=${basicInfo.acKey}";
+			var newUrl = "/mngProject/bill/detail/preBillList.do?pjKey=${basicInfo.pjKey}&acKey=${basicInfo.acKey}";
 			
 			$("iframe").attr("src", newUrl);
 		});
@@ -366,7 +366,7 @@
 					<div class="title"><label class="ftw500">계산서 발행요청</label></div>
 					<div>
 						<div class="stitle cg">기본정보</div>
-						<div id="basicForm">
+						<div id="basicInfoForm">
 							<form>
 								<table class="bsc" id="selectBasicTable">
 									<tr>
@@ -384,7 +384,7 @@
 									<tr>
 										<td>계약금액</td>
 										<td>
-											<label><c:out value="${basicInfo.ctAmount}"/></label>
+											<label><c:out value="${displayUtil.commaStr(basicInfo.ctAmount)}"/></label>
 										</td>
 									</tr>
 									<tr>

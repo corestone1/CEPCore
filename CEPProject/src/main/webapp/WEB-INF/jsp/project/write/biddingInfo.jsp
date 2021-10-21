@@ -188,7 +188,7 @@
 			position: absolute;
 			left: 43px;
 			z-index: 99;
-			top: 463px;
+			top: 431px;
 			width: 359px;
 		}
 		#fileForm .exFileLabel {
@@ -339,7 +339,6 @@
 			object["biddingFileVOList"]=listData;
 			
 			var sendData = JSON.stringify(object);
-			//console.log(sendData);
 			$.ajax({
 				url: "/project/insert/biddingInfo.do",
 			    dataType: 'json', 
@@ -353,7 +352,7 @@
 				},
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
-			    		if($(".uploadName").val() != null && $('.uploadName').length != 0) {
+			    		if($(".uploadName").val() != null && $('.uploadName').val().length != 0) {
 			    			if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
 				    			$("#fileCtKey").val(response.pjKey);
 				    			$("#filePjNm").val($("#pjNm").val());
@@ -371,7 +370,7 @@
 			    				cache:false,
 			    				success:function(data) {
 			    					if(data.successYN == 'Y') {
-			    						if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			    						if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
 			    							alert("프로젝트 입찰 정보가 저장되었습니다.");
 			    							countSave++;
 			    						} else {
@@ -390,7 +389,24 @@
 					    			button = [];
 					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			    				}
-			    			}); 
+			    			});  
+			    		} else {
+			    			if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
+    							alert("프로젝트 입찰 정보가 저장되었습니다.");
+    							countSave++;
+    						} else {
+    							alert("프로젝트 입찰 정보가 수정되었습니다.")
+    						}
+			    			
+			    			var url='/project/write/biddingInfo.do';
+			    			var dialogId = 'program_layer';
+			    			var varParam = {
+								"pjKey":$("#pjKey").val(),
+								"workClass":$("#workClass").val()
+			    			}
+				   			var button = new Array;
+			    			button = [];
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			    		}
 			    		/* if($("#bdKey").val() == null || $("#bdKey").val() == "" || $("#bdKey").val().length == 0) {
 				    		alert("프로젝트 입찰 정보가 등록되었습니다.");
@@ -435,7 +451,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
 			}
 			else {
 				if($('#bdKey').val() != "" || $('#bdKey').val().length != 0) {
@@ -449,7 +465,7 @@
 					}
 					var button = new Array;
 					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
 				} else {
 					alert('저장을 해주세요.');
 				}
@@ -464,7 +480,7 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px'); 
 		}
 		
 		function fn_checkDecCount(id) {
@@ -523,6 +539,37 @@
 			html += "<input type='hidden' name='bdDocCnt' value='0' />";
 			
 			$("#etcIndeWrap").append(html);
+		}
+		
+		function fn_deleteFile(fileKey, fileNm) {
+			var result = confirm("첨부파일 " + fileNm + " 을 삭제하시겠습니까?");
+			if(result) {
+				var form = document.fileViewForm;
+				form.fileKey.value = fileKey;
+				var data = JSON.stringify({"fileKey":fileKey});
+				$.ajax({ 
+	   				url: '/file/delete.do', 
+	   				dataType:'json',
+	   				type: "POST", 
+	   				data: data, // 필수 
+	   				contentType: "application/json; charset=UTF-8", 
+	   				success: function (response) { 
+		   				if(response.successYN=='Y') {
+							alert('첨부파일이 삭제되었습니다.');
+							$("#file"+fileKey).next().next().remove();
+							$("#file"+fileKey).next().remove();
+							$("#file"+fileKey).remove();
+						} else {
+							alert('첨부파일 삭제가 실패되었습니다.');
+						}
+	   				},
+	   				error: function(request, status, error) {
+	   					if(request.status != '0') {
+	   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	   					}
+	   				}
+	   			});
+			}
 		}
 		
 		$(document).ready(function() {
@@ -1019,7 +1066,7 @@
 					</div>
 					<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
 				</form>
-				<form:form id="viewForm" name="viewForm" method="POST">
+				<form:form id="fileViewForm" name="fileViewForm" method="POST">
 					<input type="hidden" name="fileKey" value=""/>
 					<input type="hidden" name="fileOrgNm" value=""/>
 				</form:form>

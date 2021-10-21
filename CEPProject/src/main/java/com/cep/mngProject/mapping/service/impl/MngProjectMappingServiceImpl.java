@@ -74,11 +74,11 @@ public class MngProjectMappingServiceImpl implements MngProjectMappingService {
 			param = new HashMap<>();
 			param.put("regEmpKey", session.get("empKey"));
 			param.put("modEmpKey", session.get("empKey"));
+			param.put("billCtClassCd", PrimaryKeyType.PROJECT.getValue());
 			param.put("billList", orderBillVO.getBillList());
 				
 			mapper.updatePurchaseBill(param);
 			mapper.insertPcBillingOpInfo(param);
-			System.out.println(request.getParameter("paymentKey"));
 			if("".equals(CepStringUtil.getDefaultValue(request.getParameter("paymentKey"), ""))) { 
 				mapper.insertPaymentInfo(param);
 			} else {

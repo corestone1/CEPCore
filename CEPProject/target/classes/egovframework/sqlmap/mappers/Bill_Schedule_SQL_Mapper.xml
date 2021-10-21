@@ -19,23 +19,25 @@
 	
 
 
-	<select id="selectBillScheduleSdList" parameterType="com.cep.mngProject.billSchedule.vo.MngProjectBillScheduleVO" resultType="egovMap">				
+	<select id="selectBillScheduleList" parameterType="com.cep.mngProject.billSchedule.vo.MngProjectBillScheduleVO" resultType="egovMap">				
 		
-		SELECT DAT.PJ_KEY                AS PJ_KEY
-		     , DAT.SALES_KEY             AS SALES_KEY
-		     , DAT.REG_DT                AS REG_DT
-		     , DAT.PJ_NM                 AS PJ_NM
-		     , DAT.AC_KEY                AS AC_KEY
-		     , DAT.AC_NM                 AS AC_NM
-		     , DAT.BILL_DATE             AS BILL_DATE
-		     , DAT.REG_EMP_KEY           AS REG_EMP_KEY
-		     , DAT.EMP_NM                AS EMP_NM
-		     , DAT.BILL_STATE            AS BILL_STATE
-		     <!-- , DAT.TAX_YN                AS TAX_YN -->
-		     , DAT.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT
-		     , DAT.SALES_AMOUNT          AS SALES_AMOUNT
-		     , DAT.SALES_TAX             AS SALES_TAX
-		FROM (
+		<if test="billType == 'SD'">
+			SELECT DAT.PJ_KEY                AS PJ_KEY
+			     , DAT.SALES_KEY             AS SALES_KEY
+			     , DAT.REG_DT                AS REG_DT
+			     , DAT.PJ_NM                 AS PJ_NM
+			     , DAT.AC_KEY                AS AC_KEY
+			     , DAT.AC_NM                 AS AC_NM
+			     , DAT.BILL_DATE             AS BILL_DATE
+			     , DAT.REG_EMP_KEY           AS REG_EMP_KEY
+			     , DAT.EMP_NM                AS EMP_NM
+			     , DAT.BILL_STATE            AS BILL_STATE
+			     <!-- , DAT.TAX_YN                AS TAX_YN -->
+			     , DAT.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT
+			     , DAT.SALES_AMOUNT          AS SALES_AMOUNT
+			     , DAT.SALES_TAX             AS SALES_TAX
+			     , DAT.KIND						AS KIND
+			FROM (
 				SELECT PSD.SALES_CT_FK_KEY       AS PJ_KEY 
 				     , PSD.SALES_KEY             AS SALES_KEY
 				     , PSD.REG_DT                AS REG_DT            /* 거래 일자*/
@@ -62,6 +64,7 @@
 				     , CASE WHEN PST.BILL_ISSUE_DT IS NOT NULL THEN 1
 				            ELSE 0 
 				       END                       AS BILL_STATE /* 1 : 발행완료, 0 : 발행예정 */
+				     , "SD"						AS KIND	
 				FROM       PJ_SALES_DETAIL_TB  PSD
 				JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
 				JOIN       PJ_CONTRACT_TB      PCT ON PCT.PJ_KEY = PMT.PJ_KEY  AND PCT.DELETE_YN = 'N'
@@ -70,73 +73,183 @@
 				LEFT JOIN  PJ_SD_BILLING_OP_TB PSB ON PSB.BILL_FK_PJ_KEY = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN AND PSB.DELETE_YN = 'N'
 				LEFT JOIN  PJ_SD_BILLING_TB    PST ON PSB.BILL_NO = PST.BILL_NO AND PSB.DELETE_YN = 'N' AND PST.DELETE_YN = 'N'
 				WHERE PSD.DELETE_YN = 'N'
-				/*  AND PSD.SALES_CT_FK_KEY = 'PJ210065' */
-				  AND PSD.SALES_BILL_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				  <!-- AND PSD.SALES_BILL_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '') -->
 				  
 				<if test="searchAcNm != null and searchAcNm != ''">
 				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
 				</if>
-				  
 				<if test="searchPjNm != null and searchPjNm != ''">
 				  	AND PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
 				</if>
-				  
+				<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+					AND PST.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				</if>
+				 ) DAT
+			ORDER BY DAT.BILL_DATE ASC	 
+		</if>
+		<if test="billType == 'PC'">		
+			SELECT DAT.PJ_KEY                AS PJ_KEY
+			     , DAT.SALES_KEY             AS SALES_KEY
+			     , DAT.REG_DT                AS REG_DT
+			     , DAT.PJ_NM                 AS PJ_NM
+			     , DAT.AC_KEY                AS AC_KEY
+			     , DAT.AC_NM                 AS AC_NM
+			     , DAT.BILL_DATE             AS BILL_DATE
+			     , DAT.REG_EMP_KEY           AS REG_EMP_KEY
+			     , DAT.EMP_NM                AS EMP_NM
+			     , DAT.BILL_STATE            AS BILL_STATE
+			     <!-- , DAT.TAX_YN                AS TAX_YN -->
+			     , DAT.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT
+			     , DAT.SALES_AMOUNT          AS SALES_AMOUNT
+			     , DAT.SALES_TAX             AS SALES_TAX
+			     , DAT.KIND						AS KIND
+			FROM (  
+			 	SELECT
+			 		CBT.BILL_FK_PJ_KEY					AS PJ_KEY
+			 		, CBT.BILL_CT_FK_KEY				AS SALES_KEY
+			 		, PPC.REG_DT						AS REG_DT
+			 		, PM.PJ_NM							AS PJ_NM
+			 		, CBT.BILL_AC_KEY					AS AC_KEY
+			 		, CAT.AC_NM						AS AC_NM
+			 		, CBT.BILL_ISSUE_DT				AS BILL_DATE
+			 		, CBT.REG_EMP_KEY					AS REG_EMP_KEY
+			 		, CET.EMP_NM						AS EMP_NM
+			 		, CBT.BILL_ISSUE_DT				AS BILL_STATE
+			 		, CBT.BILL_TOTAL_AMOUNT		AS SALES_TURN_AMOUNT
+			 		, CBT.BILL_AMOUNT				AS SALES_AMOUNT
+			 		, CBT.BILL_TAX_AMOUNT			AS SALES_TAX
+			 		, "PC"							AS KIND
+			 	FROM		CMM_PC_BILLING_TB	CBT
+			 	JOIN	PJ_PURCHASE_TB 	PPC ON CBT.BILL_CT_FK_KEY = PPC.BUY_KEY
+			 	JOIN	CMM_ACCOUNT_TB	CAT	ON CBT.BILL_AC_KEY = CAT.AC_KEY
+			 	JOIN	CMM_EMPLOYEE_TB	CET	ON CBT.REG_EMP_KEY = CET.EMP_KEY
+			 	JOIN	PJ_MAIN_TB			PM	ON	CBT.BILL_FK_PJ_KEY = PM.PJ_KEY
+			 	WHERE CBT.DELETE_YN = 'N'
+			 	<if test="searchAcNm != null and searchAcNm != ''">
+				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+				</if>
+				<if test="searchPjNm != null and searchPjNm != ''">
+				  	AND PM.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
+				</if>
+				<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+					AND CBT.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				</if>
+			 		
 				) DAT
-		ORDER BY DAT.BILL_DATE ASC			
+			ORDER BY DAT.BILL_DATE ASC			
+		</if>
 		
 	</select>
 	
-	<select id="selectBillScheduleSdTotalAmount" parameterType="com.cep.mngProject.billSchedule.vo.MngProjectBillScheduleVO" resultType="Integer">
-	
-		SELECT IFNULL(SUM(DAT.SALES_TURN_AMOUNT), 0)  AS TOTAL_AMOUNT
-		FROM (
-				SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
-			           THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
-			           ELSE  -->PSD.SALES_TURN_AMOUNT     
-					   <!-- END  -->      AS SALES_TURN_AMOUNT /* 금액 */
-				FROM       PJ_SALES_DETAIL_TB  PSD
-				JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
-				JOIN       CMM_ACCOUNT_TB      CAT ON CAT.AC_KEY = PMT.AC_KEY
-				JOIN       PJ_CONTRACT_TB      PCT ON PCT.PJ_KEY = PMT.PJ_KEY  AND PCT.DELETE_YN = 'N'
-				WHERE PSD.DELETE_YN = 'N'
-				  AND PSD.SALES_BILL_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
-				  
-				<if test="searchAcNm != null and searchAcNm != ''">
-				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
-				</if>
-				  
-				<if test="searchPjNm != null and searchPjNm != ''">
-				  	AND PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
-				</if>
-				  
-		) DAT
-	
+	<select id="selectBillScheduleTotalAmount" parameterType="com.cep.mngProject.billSchedule.vo.MngProjectBillScheduleVO" resultType="Integer">
+		
+		<if test="billType == 'SD'">
+			SELECT IFNULL(SUM(DAT.SALES_TURN_AMOUNT), 0)  AS TOTAL_AMOUNT
+			FROM (
+					SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
+				           THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
+				           ELSE  -->PSD.SALES_TURN_AMOUNT     
+						   <!-- END  -->      AS SALES_TURN_AMOUNT /* 금액 */
+					FROM       PJ_SALES_DETAIL_TB  PSD
+					JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
+					JOIN       CMM_ACCOUNT_TB      CAT ON CAT.AC_KEY = PMT.AC_KEY
+					JOIN       PJ_CONTRACT_TB      PCT ON PCT.PJ_KEY = PMT.PJ_KEY  AND PCT.DELETE_YN = 'N'
+					LEFT JOIN  PJ_SD_BILLING_OP_TB PSB ON PSB.BILL_FK_PJ_KEY = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN AND PSB.DELETE_YN = 'N'
+					LEFT JOIN  PJ_SD_BILLING_TB    PST ON PSB.BILL_NO = PST.BILL_NO AND PSB.DELETE_YN = 'N' AND PST.DELETE_YN = 'N'
+					WHERE PSD.DELETE_YN = 'N'
+					<if test="searchAcNm != null and searchAcNm != ''">
+					  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+					</if>
+					<if test="searchPjNm != null and searchPjNm != ''">
+					  	AND PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
+					</if>
+					<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+						AND PST.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+					</if>
+					  
+			) DAT
+		</if>
+		<if test="billType == 'PC'">		
+			SELECT IFNULL(SUM(DAT.SALES_TURN_AMOUNT), 0)  AS TOTAL_AMOUNT
+			FROM (
+					SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
+				           THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
+				           ELSE  -->CBT.BILL_AMOUNT     
+						   <!-- END  -->      AS SALES_TURN_AMOUNT /* 금액 */
+					FROM       CMM_PC_BILLING_TB	CBT
+					JOIN	PJ_PURCHASE_TB 	PPC ON CBT.BILL_CT_FK_KEY = PPC.BUY_KEY
+				 	JOIN	CMM_ACCOUNT_TB	CAT	ON CBT.BILL_AC_KEY = CAT.AC_KEY
+				 	JOIN	CMM_EMPLOYEE_TB	CET	ON CBT.REG_EMP_KEY = CET.EMP_KEY
+				 	JOIN	PJ_MAIN_TB			PM	ON	CBT.BILL_FK_PJ_KEY = PM.PJ_KEY
+				 	WHERE CBT.DELETE_YN = 'N'
+					<if test="searchAcNm != null and searchAcNm != ''">
+					  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+					</if>
+					<if test="searchPjNm != null and searchPjNm != ''">
+					  	AND PM.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
+					</if>
+					<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+						AND CBT.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+					</if>
+					  
+			) DAT
+		</if>
 	</select>
 	
-	<select id="selectBillScheduleSdTotalTax" parameterType="com.cep.mngProject.billSchedule.vo.MngProjectBillScheduleVO" resultType="Integer">
+	<select id="selectBillScheduleTotalTax" parameterType="com.cep.mngProject.billSchedule.vo.MngProjectBillScheduleVO" resultType="Integer">
 	
-		SELECT IFNULL(SUM(DAT.SALES_TAX), 0)  AS TOTAL_TAX
-		FROM (
-				SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
-			           THEN FLOOR(PSD.SALES_TURN_AMOUNT/11)
-			           ELSE  -->FLOOR(PSD.SALES_TURN_AMOUNT/10)     
-					   <!-- END   -->     AS SALES_TAX /* 세액 */
-				FROM       PJ_SALES_DETAIL_TB  PSD
-				JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
-				JOIN       CMM_ACCOUNT_TB      CAT ON CAT.AC_KEY = PMT.AC_KEY
-				JOIN       PJ_CONTRACT_TB      PCT ON PCT.PJ_KEY = PMT.PJ_KEY  AND PCT.DELETE_YN = 'N'
-				WHERE PSD.DELETE_YN = 'N'
-				  AND PSD.SALES_BILL_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
-				  
-				<if test="searchAcNm != null and searchAcNm != ''">
-				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
-				</if>
-				  
-				<if test="searchPjNm != null and searchPjNm != ''">
-				  	AND PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
-				</if>
-				  
-		) DAT
+		<if test="billType == 'SD'">
+			SELECT IFNULL(SUM(DAT.SALES_TAX), 0)  AS TOTAL_TAX
+			FROM (
+					SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
+				           THEN FLOOR(PSD.SALES_TURN_AMOUNT/11)
+				           ELSE  -->FLOOR(PSD.SALES_TURN_AMOUNT/10)     
+						   <!-- END   -->     AS SALES_TAX /* 세액 */
+					FROM       PJ_SALES_DETAIL_TB  PSD
+					JOIN       PJ_MAIN_TB          PMT ON PMT.PJ_KEY = PSD.SALES_CT_FK_KEY  AND PMT.DELETE_YN = 'N'
+					JOIN       CMM_ACCOUNT_TB      CAT ON CAT.AC_KEY = PMT.AC_KEY
+					JOIN       PJ_CONTRACT_TB      PCT ON PCT.PJ_KEY = PMT.PJ_KEY  AND PCT.DELETE_YN = 'N'
+					LEFT JOIN  PJ_SD_BILLING_OP_TB PSB ON PSB.BILL_FK_PJ_KEY = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN AND PSB.DELETE_YN = 'N'
+					LEFT JOIN  PJ_SD_BILLING_TB    PST ON PSB.BILL_NO = PST.BILL_NO AND PSB.DELETE_YN = 'N' AND PST.DELETE_YN = 'N'
+					WHERE PSD.DELETE_YN = 'N'
+					  
+					<if test="searchAcNm != null and searchAcNm != ''">
+					  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+					</if>
+					<if test="searchPjNm != null and searchPjNm != ''">
+					  	AND PMT.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
+					</if>
+					<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+						AND PST.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+					</if>
+					  
+			) DAT
+		</if>
+		<if test="billType == 'PC'">		
+			SELECT IFNULL(SUM(DAT.SALES_TAX), 0)  AS TOTAL_TAX
+			FROM (
+					SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
+				           THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
+				           ELSE  -->CBT.BILL_TAX_AMOUNT     
+						   <!-- END  -->      AS SALES_TAX /* 세액 */
+					FROM       CMM_PC_BILLING_TB	CBT
+					JOIN	PJ_PURCHASE_TB 	PPC ON CBT.BILL_CT_FK_KEY = PPC.BUY_KEY
+				 	JOIN	CMM_ACCOUNT_TB	CAT	ON CBT.BILL_AC_KEY = CAT.AC_KEY
+				 	JOIN	CMM_EMPLOYEE_TB	CET	ON CBT.REG_EMP_KEY = CET.EMP_KEY
+				 	JOIN	PJ_MAIN_TB			PM	ON	CBT.BILL_FK_PJ_KEY = PM.PJ_KEY
+				 	WHERE CBT.DELETE_YN = 'N'
+					<if test="searchAcNm != null and searchAcNm != ''">
+					  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+					</if>
+					<if test="searchPjNm != null and searchPjNm != ''">
+					  	AND PM.PJ_NM LIKE CONCAT('%', CONCAT(#{searchPjNm}, '%'))
+					</if>
+					<if test="searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != ''">
+						AND CBT.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+					</if>
+					  
+			) DAT
+		</if>
 	
 	</select>
 </mapper>

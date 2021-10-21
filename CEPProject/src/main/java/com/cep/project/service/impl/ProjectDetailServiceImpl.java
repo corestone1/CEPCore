@@ -3,10 +3,15 @@
  */
 package com.cep.project.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +26,11 @@ import com.cep.project.vo.ProjectOrderProductVO;
 import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
+import com.cmm.config.DeptInfo;
+import com.cmm.config.EmailInfo;
+import com.cmm.service.ComService;
 import com.cmm.vo.GuarantyBondVO;
+import com.cmm.vo.MailVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -46,6 +55,9 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 
 	@Resource(name="projectDetailMapper")
 	private ProjectDetailMapper mapper;
+	
+	@Resource(name="comService")
+	private ComService comService;
 	
 	@Override
 	public EgovMap selectProjectDetail(ProjectVO projectVO) throws Exception {
@@ -130,13 +142,94 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 	}
 	
 	@Override
-	public void requestGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception {
-		mapper.requestGuarantyBond(guarantyBondVO);
+	public Map<String, Object> requestGuarantyBond(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception {
+		int result = 0;
+		MailVO mailVO = new MailVO();
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			String dept = DeptInfo.DEPT_OPER_L2.getValue();
+			List<String> toList = new ArrayList<String>();
+			
+			for(Object obj : comService.selectDeptEmployeeList(dept)) {
+				String email = obj.toString().substring(obj.toString().indexOf("=") + 1, obj.toString().length() - 1);
+				toList.add(email);
+			}
+			
+			String tmail = StringUtils.join(toList, ";");
+			mailVO.setEmpKey(tmail);
+			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
+			String subject = "보증 증권 정보";
+			String content = String.join(
+					                System.getProperty("line.separator"),
+					                "프로젝트 "+guarantyBondVO.getPjKey()+"건에 보증 증권 정보가 있습니다.<br><br>");
+			
+			mailVO.setSubject(subject);
+			mailVO.setContent(content);
+			mailVO.setIsNewPw(false);
+			
+			result = comService.sendMail(request, mailVO);
+			if(result != 0) {
+				returnMap.put("mailSuccessYN", "Y");
+				returnMap.put("successYN", "Y");
+				mapper.requestGuarantyBond(guarantyBondVO);
+			} else {
+				returnMap.put("mailSuccessYN", "N");
+			}
+			
+			returnMap.put("mailList", toList);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("mailSuccessYN", "N");
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
 	}
 	
 	@Override
-	public void endGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception {
-		mapper.endGuarantyBond(guarantyBondVO);
+	public Map<String, Object> endGuarantyBond(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception {
+		
+		int result = 0;
+		MailVO mailVO = new MailVO();
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		ProjectVO projectVO = new ProjectVO();
+		String salesEmpKey = "";
+		
+		try {
+			projectVO.setPjKey(guarantyBondVO.getPjKey());
+			salesEmpKey = mapper.selectProjectDetail(projectVO).get("regEmpKey").toString();
+			
+			mailVO.setEmpKey(salesEmpKey);
+			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
+			String subject = "보증 증권 정보";
+			String content = String.join(
+					                System.getProperty("line.separator"),
+					                "프로젝트 "+guarantyBondVO.getPjKey()+"건에 보증 증권 정보가 있습니다.<br><br>");
+			
+			mailVO.setSubject(subject);
+			mailVO.setContent(content);
+			mailVO.setIsNewPw(false);
+			
+			result = comService.sendMail(request, mailVO);
+			if(result != 0) {
+				returnMap.put("mailSuccessYN", "Y");
+				returnMap.put("successYN", "Y");
+				mapper.endGuarantyBond(guarantyBondVO);
+			} else {
+				returnMap.put("mailSuccessYN", "N");
+			}
+			
+			returnMap.put("mailList", salesEmpKey);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("mailSuccessYN", "N");
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
 	}
 	
 	@Override
@@ -157,9 +250,19 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 	}
 	
 	@Override
-	public void endBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception
+	public Map<String, Object> endBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception
 	{
-		mapper.endBiddingGb(projectBiddingVO);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			mapper.endBiddingGb(projectBiddingVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
 	}
 	
 	@Override
@@ -193,6 +296,19 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 		
 		//PJ_CONTRACT_TB - CT_KEY
 		mapper.deleteContract(projectContractVO);
+	}
+	
+	@Override
+	@Transactional
+	public int isMappedOrder(ProjectOrderVO projectOrderVO) throws Exception {
+		int result = 0;
+		try {
+			result = mapper.isMappedOrder(projectOrderVO);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	@Override

@@ -4,12 +4,16 @@
 package com.cep.project.service;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
@@ -85,9 +89,9 @@ public interface ProjectDetailService {
 	
 	public EgovMap selectGuarantyBondInfo(GuarantyBondVO guarantyBondVO) throws Exception; 
 	
-	public void requestGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception;
+	public Map<String, Object> requestGuarantyBond(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception;
 	
-	public void endGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception;
+	public Map<String, Object> endGuarantyBond(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception;
 	
 	public void modifyGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception;
 	
@@ -95,13 +99,15 @@ public interface ProjectDetailService {
 	
 	public void requestBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
-	public void endBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception;
+	public Map<String, Object> endBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
 	public void modifyBiddingGb(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
 	public void deleteBidding(ProjectBiddingVO projectBiddingVO) throws Exception;
 	
 	public void deleteContract(ProjectContractVO projectContractVO) throws Exception;
+	
+	public int isMappedOrder(ProjectOrderVO projectOrderVO) throws Exception;
 	
 	public void deleteOrder(ProjectOrderVO projectOrderVO) throws Exception;
 	

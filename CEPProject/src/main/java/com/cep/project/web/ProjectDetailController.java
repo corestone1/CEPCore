@@ -1,6 +1,7 @@
 package com.cep.project.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,11 +25,14 @@ import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectBuildVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectContractVO;
+import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.service.ComService;
+import com.cmm.service.FileMngService;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
@@ -45,6 +50,9 @@ public class ProjectDetailController {
 	
 	@Resource(name="comService")
 	private ComService comService;
+	
+	@Resource(name="fileMngService")
+	private FileMngService fileMngService;
 	
 	@Resource(name="propertiesService")
 	protected EgovPropertyService propertiesService;
@@ -137,20 +145,29 @@ public class ProjectDetailController {
 	public String viewDetailBidding(@ModelAttribute("projectVO") ProjectVO projectVO, ModelMap model) throws Exception {
 		
 		logger.debug("== pkKey : {}", projectVO.getPjKey());
+		List<?> fileResult = null;
+		FileVO fileVO = new FileVO();
 		
 		try {
 			
 			//입찰정보 조회
 			EgovMap egmBidding = service.selectBiddingInfo(projectVO);
 			
-			projectVO.setBdKey((String)egmBidding.get("bdKey"));
-		
-			logger.debug("{}\n== bdKey : {}", egmBidding, egmBidding.get("bdKey"));
-			
-			model.addAttribute("biddingInfo", egmBidding);
+			if(!(egmBidding == null || egmBidding.isEmpty())) {
+				projectVO.setBdKey((String)egmBidding.get("bdKey"));
+				
+				logger.debug("{}\n== bdKey : {}", egmBidding, egmBidding.get("bdKey"));
+				
+				model.addAttribute("biddingInfo", egmBidding);
+			}
 			
 			//입찰 서류 정보 목록 조회
 			model.addAttribute("biddingFileList", service.selectBiddingFileInfo(projectVO));
+			
+			fileVO.setFileCtKey(projectVO.getPjKey());
+			fileVO.setFileWorkClass(projectVO.getWorkClass());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
 			
 			//입찰 보증증권 정보 조회
 			/*
@@ -159,7 +176,10 @@ public class ProjectDetailController {
 				model.addAttribute("biddingGbInfo", service.selectBiddingGbInfo(projectVO));
 			}
 			*/
+			
+			model.addAttribute("pjKey", projectVO.getPjKey());
 			model.addAttribute("displayUtil", new CepDisplayUtil());
+			model.addAttribute("fileList", fileResult);
 			
 		} catch(Exception e) {
 //			model.put("successYN", "N");
@@ -223,12 +243,13 @@ public class ProjectDetailController {
 		return returnMap;
 	}
 	
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/orderDelete.do")
 	@ResponseBody
 	public Map<String, Object> deleteOrder(@ModelAttribute("projectOrderVO") ProjectOrderVO projectOrderVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
 	
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		int result = 0;
 		
 		logger.debug(" ======================= deleteOrder =============================");
 		logger.debug(" projectOrderVO.getPjKey()      : {}", projectOrderVO.getPjKey());
@@ -238,17 +259,25 @@ public class ProjectDetailController {
 			HashMap<String, String> sessionMap = null;
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			projectOrderVO.setRegEmpKey(sessionMap.get("empKey"));
-				
-			service.deleteOrder(projectOrderVO);
-		
-			
+			result = service.isMappedOrder(projectOrderVO);
+			if(result != 0) {
+				returnMap.put("isMapped", "TRUE");
+			} else {
+				service.deleteOrder(projectOrderVO);
+				returnMap.put("isMapped", "FALSE");
+			}
+
+			returnMap.put("successYN", "Y");
 		} catch(Exception e) {
+			returnMap.put("successYN", "N");
 			logger.error("{}", e);
 			throw e ;
 		}
 		
 		return returnMap;
 	}
+	
+	
 	
 	@RequestMapping(value="/installBaseDelete.do")
 	@ResponseBody
@@ -490,7 +519,7 @@ public class ProjectDetailController {
 	}
 	
 	
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/requestBiddingGb.do")
 	@ResponseBody
 	public  Map<String, Object> requestBiddingGb(@ModelAttribute("projectBiddingVO")ProjectBiddingVO projectBiddingVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
@@ -514,13 +543,17 @@ public class ProjectDetailController {
 			
 			service.requestBiddingGb(projectBiddingVO);
 			
+			returnMap.put("successYN", "Y");
+			
 		}catch(Exception e){
 			logger.error("{}", e);
+			returnMap.put("successYN", "N");
 		}
 		
 		return returnMap;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/endBiddingGb.do")
 	@ResponseBody
 	public  Map<String, Object> endBiddingGb(@ModelAttribute("projectBiddingVO")ProjectBiddingVO projectBiddingVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
@@ -545,15 +578,17 @@ public class ProjectDetailController {
 			
 			projectBiddingVO.setRegEmpKey(sessionMap.get("empKey"));
 			
-			service.endBiddingGb(projectBiddingVO);
+			returnMap = service.endBiddingGb(projectBiddingVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
+			returnMap.put("successYN", "N");
 		}
 		
 		return returnMap;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/modifyBiddingGb.do")
 	@ResponseBody
 	public  Map<String, Object> modifyBiddingGb(@ModelAttribute("projectBiddingVO")ProjectBiddingVO projectBiddingVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
@@ -580,8 +615,11 @@ public class ProjectDetailController {
 			
 			service.modifyBiddingGb(projectBiddingVO);
 			
+			returnMap.put("successYN", "Y");
+			
 		}catch(Exception e){
 			logger.error("{}", e);
+			returnMap.put("successYN", "N");
 		}
 		
 		return returnMap;
@@ -652,10 +690,10 @@ public class ProjectDetailController {
 		return "/project/guaranty/stockPublishSK";
 	}
 	
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/requestGuarantyBond.do")
 	@ResponseBody
-	public  Map<String, Object> requestGuarantyBond(@ModelAttribute("guarantyBondVO")GuarantyBondVO guarantyBondVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	public  Map<String, Object> requestGuarantyBond(@ModelAttribute("guarantyBondVO")ProjectGuarantyBondVO guarantyBondVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
 	
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
@@ -663,7 +701,6 @@ public class ProjectDetailController {
 		logger.debug("== guarantyBondVO.getGbKey()     : {}", guarantyBondVO.getGbKey());
 		logger.debug("== guarantyBondVO.getGbStartDt() : {}", guarantyBondVO.getGbStartDt());
 		logger.debug("== guarantyBondVO.getGbEndDt()   : {}", guarantyBondVO.getGbEndDt());
-		logger.debug("== guarantyBondVO.getGbRate()    : {}", guarantyBondVO.getGbRate());
 		
 		HashMap<String, String> sessionMap = null;
 		
@@ -673,7 +710,7 @@ public class ProjectDetailController {
 			
 			guarantyBondVO.setRegEmpKey(sessionMap.get("empKey"));
 			
-			service.requestGuarantyBond(guarantyBondVO);
+			returnMap = service.requestGuarantyBond(request, guarantyBondVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -682,9 +719,10 @@ public class ProjectDetailController {
 		return returnMap;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/endGuarantyBond.do")
 	@ResponseBody
-	public  Map<String, Object> endGuarantyBond(@ModelAttribute("guarantyBondVO")GuarantyBondVO guarantyBondVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
+	public  Map<String, Object> endGuarantyBond(@ModelAttribute("guarantyBondVO")ProjectGuarantyBondVO guarantyBondVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
 	
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
@@ -695,16 +733,12 @@ public class ProjectDetailController {
 		
 		HashMap<String, String> sessionMap = null;
 		
-		try{
-			
-
-			
-			
+		try {
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			guarantyBondVO.setRegEmpKey(sessionMap.get("empKey"));
 			
-			service.endGuarantyBond(guarantyBondVO);
+			returnMap = service.endGuarantyBond(request, guarantyBondVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -713,6 +747,7 @@ public class ProjectDetailController {
 		return returnMap;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/modifyGuarantyBond.do")
 	@ResponseBody
 	public  Map<String, Object> modifyGuarantyBond(@ModelAttribute("guarantyBondVO")GuarantyBondVO guarantyBondVO , HttpServletRequest request, HttpServletResponse respone) throws Exception {
@@ -727,14 +762,17 @@ public class ProjectDetailController {
 		HashMap<String, String> sessionMap = null;
 		
 		try{
-						sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			guarantyBondVO.setRegEmpKey(sessionMap.get("empKey"));
 			
 			service.modifyGuarantyBond(guarantyBondVO);
 			
+			returnMap.put("successYN", "Y");
+			
 		}catch(Exception e){
 			logger.error("{}", e);
+			returnMap.put("successYN", "N");
 		}
 		
 		return returnMap;

@@ -353,7 +353,7 @@
 			var hrefName = url[0].lastIndexOf('/');
 			var strHref = url[0].substring(0, hrefName+1);
 			
-			var newUrlHref = strHref + "paymentForm.do?";
+			var newUrlHref = strHref + "prePaymentList.do?";
 			var newUrl = newUrlHref + url[1];
 			
 			$("iframe").attr("src", newUrl);

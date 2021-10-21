@@ -16,9 +16,15 @@
 	<script src="<c:url value='/js/common.js'/>"></script>
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<style>
+		html {
+			height: 663px;
+			overflow-y: auto;
+		}
 		body {
 			width: 100%;
 			background-color: #f6f7fc;
+			height: 663px;
+			overflow-y: auto;
 		}
 		.sfcnt {
 			height: 91px;
@@ -218,6 +224,30 @@
 			background: #fff;
 			border-bottom: 2px solid #c4c4c4;
 		}
+		/* .help[data-tooltip-text]:hover {
+			position: relative;
+		}
+		.help[data-tooltip-text]:hover:after {
+			background-color: #000000;
+			background-color: rgba(0, 0, 0, 0.8);
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			color: #FFFFFF;
+			font-size: 13px;
+			font-weight: 200;
+			content: attr(data-tooltip-text);
+		  	margin-bottom: 10px;
+			top: 130%;
+			left: 0;    
+			padding: 7px 12px;
+			position: absolute;
+			width: auto;
+			min-width: 150px;
+			max-width: 300px;
+			word-wrap: break-word;
+			z-index: 9999;
+		} */
 	</style>
 	<script>
 		var payNoList = new Array();
@@ -371,6 +401,13 @@
 			
 			$("#link").val(parent.document.location.href);
 			
+			var total = 0;			
+			$("input[name='callAmount']").each(function() {
+			    total += Number($(this).val().replaceAll(",",""));
+			});
+			if(total >= Number(parent.$("#originYetPaymentAmount").val())) {
+				$("#rqPmInfo").css("display", "none");
+			}
 		});
 		
 		function fn_chkVali(kind, id) {
@@ -501,27 +538,48 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px');  
 		}
 		
-		function fn_mappingBill(paymentKey) {
-			window.parent.location.href = "/mngProject/mapping/list.do?paymentKey="+paymentKey;
+		function fn_mappingBill(paymentKey, pjNm) {
+			window.parent.location.href = "/mngProject/mapping/list.do?paymentKey="+paymentKey+"&pjNm="+pjNm;
 		}
 		
-		function fn_addView(billKey) {
-			var url = '/project/request/purchase/viewBillInfo.do';
+		function fn_addView(obj, billKey) {
+			var nWidth = "500";
+			var nHeight = "366";
+			  
+			var curX = window.screenLeft;
+			var curY = window.screenTop;
+			var curWidth = document.body.clientWidth;
+			var curHeight = document.body.clientHeight;
+			  
+			var nLeft = curX + (curWidth / 2) - (nWidth / 2) + 900;
+			var nTop = curY + (curHeight / 2) - (nHeight / 2 -91);
+
+			var strOption = "";
+			strOption += "left=" + nLeft + "px,";
+			strOption += "top=" + nTop + "px,";
+			strOption += "width=" + nWidth + "px,";
+			strOption += "height=" + nHeight + "px,";
+			strOption += "toolbar=no,menubar=no,location=no,";
+			strOption += "resizable=yes,status=yes";
+			
+			window.open("/project/request/purchase/viewBillInfo.do?billNo="+ billKey,'BILL_INFO', strOption);
+			
+			/* var url = '/project/request/purchase/viewBillInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 				"billNo":billKey
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px'); 
+			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px');  */
 		}
 	</script>
 </head>
 <body>
 	<div class="stitle">
 		<ul id="infoList">
-			<li><a class="on" id="A_TOPMenu_FORM" title="/project/request/purchase/paymentForm.do">지급정보</a></li>
-			<li><a id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">기지급정보</a></li>
+			<li><a id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">기 지급 목록</a></li>
+			<li><a class="on" id="A_TOPMenu_FORM" title="/project/request/purchase/paymentForm.do">미 지급 목록</a></li>
 			<li></li>
 		</ul>
 	</div>
@@ -577,10 +635,10 @@
 									<td>
 										<c:choose>
 											<c:when test="${result.billFkKey eq null }">
-												<button type="button" onclick="fn_mappingBill('${result.paymentKey}');"><img src="<c:url value='/images/btn_mapping_bill.png'/>" /></button>
+												<button type="button" onclick="fn_mappingBill('${result.paymentKey}' , '${orderVO.pjNm }');"><img src="<c:url value='/images/btn_mapping_bill.png'/>" /></button>
 											</c:when>
 											<c:otherwise>
-												<button type="button" onclick="fn_addView('${result.billFkKey}');"><img src="<c:url value='/images/btn_view.png'/>" /></button>
+												<button type="button" onclick="fn_addView(this, '${result.billFkKey}');"><img src="<c:url value='/images/btn_view.png'/>" /></button>
 											</c:otherwise>
 										</c:choose>
 										<input type="hidden" name="billFkKey" value="${result.billFkKey }" />
@@ -609,7 +667,7 @@
 													<c:when test="${!empty paymentList and result.billFkKey ne null}">
 														<button type="button" id="req" value="매입금 지급 요청" onclick="fn_chkVali('req', '${result.paymentKey}');" style="<c:if test="${result.paymentStatusCd == 'PYST2000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST2000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST2000' }">cursorP</c:if>" src="<c:url value='/images/btn_req_purchase.png'/>" style="<c:if test="${result.paymentStatusCd == 'PYST2000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
 														<button type="button" id="mod" value="수정" onclick="fn_chkVali('mod', '${result.paymentKey}');" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_mod.png'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
-														<button type="button" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check', '${result.paymentKey}');"style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+														<button type="button" class="help" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check', '${result.paymentKey}');"style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
 													</c:when>
 													<c:otherwise>
 														
@@ -624,7 +682,7 @@
 						</div>
 					</form>
 				</c:forEach>
-				<div><button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();" style="margin-left:0; margin-top: 20px;">지급 정보 추가</button></div>
+				<div><button type="button" class="rqPmInfo" id="rqPmInfo" onclick="fn_requestPmInfo();" style="margin-left:0; margin-top: 20px;">지급 정보 추가</button></div>
 			</c:when>
 			<c:otherwise>
 				<table class="dtl" id="info0">

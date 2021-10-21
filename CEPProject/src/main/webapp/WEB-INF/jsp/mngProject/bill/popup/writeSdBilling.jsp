@@ -29,14 +29,9 @@
 			width: 100%;
 		}
 		.popContainer .contents > div:first-child {
-			width: 433px;
+			width: calc(100% - 80px);
 			min-height: 408px;
-			margin: 10px 40px 15px 40px;
-		}
-		
-		.popContainer .contents > div:last-child {
-			width: 683px;
-			margin-right: 50px;
+			margin: 10px 40px 3px 40px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate; 
@@ -54,11 +49,11 @@
 			font-size: 15px;
 		}
 		.popContainer .contents input {
-			width: 385px;
-			height: 38px;
+			width: auto;
+			height: 31px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
-			background-color: #fff;
+			background-color: transparent;
 			font-size: 14px;
 			margin-bottom: 3px;
 		}
@@ -104,14 +99,13 @@
 			background-color: #f6f7fc; 
 			border-color: #f6f7fc;
 		}
-		
-		
 		.popContainer .contents textarea {
 			width: 433px;
-			height: 48px;
+			height: 73px;
+			vertical-align: bottom;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
-			background-color: #fff;
+			background-color: transparent;
 			font-size: 14px;
 			margin-bottom: 0px;
 			resize: none;
@@ -120,12 +114,18 @@
 			font-size: 14px;
 			width : 401px
 		} 
-		
 		.popContainer td.tdTitle {
 			font-size: 14px;
 			width : 160px;
+			height: 42px;
+			font-weight: 500;
 		}
-		
+		.popContainer tr:last-child td {
+			height: 86px;
+		}
+		.popContainer td.tdContents label {
+			font-weight: 300;
+		}
 		.accountList li {
 			text-align: left;
 			margin-left: 10px;
@@ -133,25 +133,117 @@
 			font-size: 14px;
 			color: #21a17e;
 		}
-		
+		.btnWrap {
+			position: relative !important;
+			bottom: 0 !important;
+			text-align: center;
+		}
+		.uploadName {
+			font-size: 12px !important;
+			line-height: normal;
+			vertical-align: middle;
+			border: 1px solid #ebebeb;
+			width: 184px !important;
+			height: 26px !important;
+		}
+		.exFileLabel {
+			background-image: url('/images/btn_file.png');
+			background-repeat: no-repeat;
+			width: 110px;
+			height: 26px;
+			cursor: pointer;
+			float: left;
+			margin-top: 1px;
+			margin-right: 7px;
+		}
+		#xmlFile {
+			width: 1px;
+			position: absolute;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
 	</style>
 	
 	
 	<script>
 				
 		$(document).ready(function() {
+			var fileTarget = $("#xmlFile");
 			
-			
-			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename)
+			});
 		});	
 		
 		
-		function fnBillingSava() {
+		function fnBillingSave() {
+			
+			if($(".uploadName").val() == null || $(".uploadName").val() == "" || $(".uploadName").val().length == 0
+					|| $("#m_ipt_billNo").val() == null || $("#m_ipt_billNo").val() == "" || $("#m_ipt_billNo").val().length == 0) {
+				alert("첨부파일을 등록해 주세요.");
+			} else {
+				
+				var formData = $("#m_frm_billing").serializeArray();
+				
+				for(var i = 0; i < formData.length; i++)
+				{
+					//보증기간, 발행일
+					if('billIssueDt'   == formData[i]['name']){
+						formData[i]['value'] = removeData(formData[i]['value'], '-');
+					}//금액
+					else if('billAmount'  == formData[i]['name'] 
+					|| 'billTax'     == formData[i]['name']
+					|| 'billTotal'   == formData[i]['name']){
+						formData[i]['value'] = removeCommas(formData[i]['value']);
+					}
+					/* else if(('remark') == formData[i]['name']){
+						formData[i]['value'] = encodeURI(formData[i]['value']);
+					} */
+					else{
+						formData[i]['value'] = formData[i]['value'];
+					}
+					
+				}
+				
+				$.ajax({
+		        	url :"/mngProject/bill/saveXmlBilling.do",
+		        	type:"POST",  
+		            data: formData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		alert("계산서가 등록 되었습니다.");
+		        		
+	        			var url = '/mngProject/bill/popup/viewWriteSdBilling.do';
+			   			var dialogId = 'program_layer';
+			   			var varParam = {"billCtFkKey" : $("#billCtFkKey").val()};
+			   			
+			   			var button = new Array;
+			   			button = [];
+			   			 
+			   			parent.showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:545px');
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	}); 
+			}
+		}
+		
+		function fnBillingCancel() {
+			$("#remark").val("");
 			
 			var formData = $("#m_frm_billing").serializeArray();
 			
-			for(var i = 0; i < formData.length; i++)
-			{
+			for(var i = 0; i < formData.length; i++) {
 				//보증기간, 발행일
 				if('billIssueDt'   == formData[i]['name']){
 					formData[i]['value'] = removeData(formData[i]['value'], '-');
@@ -161,43 +253,47 @@
 				|| 'billTotal'   == formData[i]['name']){
 					formData[i]['value'] = removeCommas(formData[i]['value']);
 				}
-				else if(('remark') == formData[i]['name']){
+				/* else if(('remark') == formData[i]['name']){
 					formData[i]['value'] = encodeURI(formData[i]['value']);
-				}
+				} */
 				else{
 					formData[i]['value'] = formData[i]['value'];
 				}
 				
-				console.log(i+" : " + formData[i]['name'] + " : " + formData[i]['value']);
 			}
 			
 			$.ajax({
-	        	url :"/mngProject/bill/saveXmlBilling.do",
+	        	url :"/mngProject/bill/cancelXmlBilling.do",
 	        	type:"POST",  
 	            data: formData,
 	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 	     	    dataType: 'json',
 	            async : false,
 	        	success:function(data){		  
-	        		alert("계산서가 등록 되었습니다.!");
+	        		alert("계산서가 등록 취소 되었습니다.");
+	        		
+        			var url = '/mngProject/bill/popup/viewWriteSdBilling.do';
+		   			var dialogId = 'program_layer';
+		   			var varParam = {"billCtFkKey" : $("#billCtFkKey").val()};
+		   			
+		   			var button = new Array;
+		   			button = [];
+		   			 
+		   			parent.showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:545px');
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        		}
 	        	} 
-	    	});
+	    	}); 
 		}
 		
 		
 		function fnChooseXml(){
 			
-			alert($('#m_ipt_xmlFile').val());
-			
 			var formData = new FormData();
 			formData.append("xmlFile", $("#xmlFile")[0].files[0]);
-   			
-			console.log(formData);
 			
 			$.ajax({ 
    				type: "POST", 
@@ -208,8 +304,38 @@
    				contentType: false, // 필수 
    				cache: false, 
    				success: function (response) { 
-   					console.log(response);
-   					fnXmlDataSeting(response);
+   					fnIsExistBillNo(response);
+   				}, 
+   				error: function(request, status, error) {
+   					if(request.status != '0') {
+   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+   					}
+   				}
+   			});
+		}
+		
+		
+		function fnIsExistBillNo(pobjData) {
+			
+			var param = {'billNo' : pobjData.IssueID };
+			
+			$.ajax({ 
+				url :"/mngProject/bill/isExistBill.do",
+	        	type:"POST",  
+	            data: param,
+	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+	     	    dataType: 'json',
+	            async : false,	
+   				success: function (response) { 
+   					if(response.xmlBillList[0] == null || response.xmlBillList[0] == undefined) {
+   						fnXmlDataSeting(pobjData);
+   					} else {
+   						alert("이미 매핑된 계산서 입니다. 다시 첨부해 주세요.");
+   						$(".uploadName").val('');
+   						$("#m_ipt_billNo").val('');
+   						$("#m_ipt_billIssueDt").val('');
+   						$("#m_ipt_remark").val('');
+   					}
    				}, 
    				error: function(request, status, error) {
    					if(request.status != '0') {
@@ -221,20 +347,29 @@
 		
 		
 		function fnXmlDataSeting(pobjData) {
-			
-			$('#m_ipt_billNo').val(pobjData.IssueID);                           // 계산서 승인번호
-			$('#m_ipt_billAcKey').val(pobjData.InvoiceePartyID);                // 고객 사업자번호
-			$('#m_ipt_billAcNm').val(pobjData.InvoiceePartyNameText);           // 고객 회사명
-			$('#m_ipt_billIssueDt').val(addDateMinus(pobjData.IssueDateTime));  // 세금계산서 발행일
-			$('#m_ipt_billAcDirector').val(pobjData.PersonNameText);            // 고객 담당자명
-			$('#m_ipt_billAcEmail').val(pobjData.URICommunication);             // 고객 담당자 이메일
-			
-			$('#m_ipt_billAmount').val(addCommas(pobjData.ChargeTotalAmount));  //공급가액
-			$('#m_ipt_billTax').val(addCommas(pobjData.TaxTotalAmount));        //세액
-			$('#m_ipt_billTotal').val(addCommas(pobjData.GrandTotalAmount));    //합계
-			
-			$('#m_ipt_remark').val(addCommas(pobjData.DescriptionText));        //비고
-		
+			if(removeCommas($("#m_ipt_billAmount").val()) != pobjData.ChargeTotalAmount ||
+					$("#m_ipt_billAcKey").val() != pobjData.InvoiceePartyID ||
+					$("#m_ipt_billAcEmail").val() != pobjData.URICommunication) {
+				alert("요청된 계산서 정보와 첨부한 계산서 정보가 맞지 않습니다. 다시 첨부해주세요.");
+				$(".uploadName").val('');
+				$("#m_ipt_billNo").val('');
+				$("#m_ipt_billIssueDt").val('');
+				$("#m_ipt_remark").val('');
+			} else { 
+				
+				$('#m_ipt_billNo').val(pobjData.IssueID);                           // 계산서 승인번호
+				$('#m_ipt_billAcKey').val(pobjData.InvoiceePartyID);                // 매출처 사업자번호
+				$('#m_ipt_billAcNm').val(pobjData.InvoiceePartyNameText);           // 매출처 회사명
+				$('#m_ipt_billIssueDt').val(addDateMinus(pobjData.IssueDateTime));  // 세금계산서 발행일
+				$('#m_ipt_billAcDirector').val(pobjData.PersonNameText);            // 고객 담당자명
+				$('#m_ipt_billAcEmail').val(pobjData.URICommunication);             // 고객 담당자 이메일
+				
+				$('#m_ipt_billAmount').val(addCommas(pobjData.ChargeTotalAmount));  //공급가액
+				$('#m_ipt_billTax').val(addCommas(pobjData.TaxTotalAmount));        //세액
+				$('#m_ipt_billTotal').val(addCommas(pobjData.GrandTotalAmount));    //합계
+				
+				$('#m_ipt_remark').val(pobjData.DescriptionText);        //비고
+		 	} 
 			
 		}
 		
@@ -252,7 +387,6 @@
 			$('#m_ipt_pjKey').val(pstKey);
 			
 			
-			
 			//프로젝트
 			var jsonData = {'pjKey' : pstKey};
 			
@@ -264,7 +398,6 @@
 	     	    dataType    : 'json',
 	            async       : false,
 	        	success     :function(data){
-	        		console.log(data.projectVO.acNm);
 	        		
 	        		$('#m_ipt_acNm').val(data.projectVO.acNm);
 	        		$('#m_ipt_acKey').val(data.projectVO.acKey);
@@ -284,6 +417,9 @@
 <body>
 	<form id="m_frm_billing" name="billingForm" method="post">
 		<input type="hidden" id="m_ipt_bdKey" name="bdKey" value="${gbInfo.bdKey}" />		
+		<input type="hidden" id="pjKey" name="pjKey" value="${billingOpInfo.pjKey }" />
+		<input type="hidden" id="billCtFkKey" name="billCtFkKey" value="${billingOpInfo.salesKey }" />
+		<input type="hidden" id="billCallKey" name="billCallKey" value="${billingOpInfo.billCallKey }" />
 		<div class="popContainer">
 			<div class="top">
 				<div>
@@ -296,91 +432,78 @@
 						<tr id="m_tr_account" >             
 							<td class="tdTitle">XML 파일</td>
 							<td id="" class="tdContents">
-							<form id="xmlFileForm" name="xmlFileForm" method="post" enctype="multipart/form-data">
-								<input type="file" name="xmlFile" id="xmlFile" onchange="javascript:fnChooseXml();"/>
-							</form> 
+								<form id="xmlFileForm" name="xmlFileForm" method="post" enctype="multipart/form-data">
+									<input class="uploadName" placeholder="파일선택" disabled="disabled" />
+									<label for="xmlFile" class="exFileLabel"></label>
+									<input type="file" name="xmlFile" id="xmlFile" onchange="javascript:fnChooseXml();"/>
+								</form> 
 							</td>
 						</tr>
-						
 						<tr>
-							<td class="tdTitle">프로젝트</td>
+							<td class="tdTitle">승인번호</td>
 							<td class="tdContents">
-								<input type="text"   id="m_ipt_pjNm"  value="${ProjectInfo.pjNm}" onclick="javascript:fnOpenPjPopup();" class="search" style="width: 315px; background-color: #d3d3d3;" readOnly/>
-								<input type="hidden" id="m_ipt_pjKey" name="pjKey"  value="${ProjectInfo.pjKey}"/>
-								<input type="hidden" id="m_ipt_billCallKey" name="billCallKey" value="${billingOpInfo.billCallKey}"/>
+								<input type="text" id="m_ipt_billNo" name="billNo"  value="${billingOpInfo.billNo}" readonly/>
 							</td>
-					
 						<tr id="m_tr_account" >
-							<td class="tdTitle">고객사</td>
+							<td class="tdTitle">매출처 / 사업자번호</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"   id="m_ipt_acNm"  value="${ProjectInfo.acNm}" class=""  style="width: 315px; background-color: #d3d3d3;" disabled/>
-								<input type="hidden" id="m_ipt_acKey" name="acKey" value="${ProjectInfo.acKey}"/>
+								<input type="text" id="m_ipt_billAcNm" name="billAcNm"  value="${billingOpInfo.billAcNm}" readonly/> / 
+								<input type="text" id="m_ipt_billAcKey" name="billAcKey"  value="${billingOpInfo.billAcKey}" readonly/>
 							</td>
 						</tr>
-						
 						<tr id="m_tr_account" >
-							<td class="tdTitle">계산서 고객사 / 사업자번호</td>
-							<td id="m_td_account" class="tdContents">
-								<input type="text"   id="m_ipt_billAcNm"    class="tdName" value="${gbInfo.bdGbRate}"/>
-								&nbsp;/&nbsp;
-								<input type="text"   id="m_ipt_billAcKey"   class="tdRate" value="${gbInfo.bdGbRate}"/> 
-							</td>
-						</tr>
-						
-						
-						
-						<tr id="m_tr_account" >
-							<td class="tdTitle">계산서 번호</td>
-							<td class="tdContents">
-								<input type="text" id="m_ipt_billNo" name="billNo" class="" /> 
-							</td>
-						</tr>
-					
-						<tr>
 							<td class="tdTitle">발행일</td>
-							<td class="tdContents">
-								<input type="text" id="m_ipt_billIssueDt" name="billIssueDt" class="calendar fromDt" />
-							</td>
-						</tr>
-						
-						<tr id="m_tr_account" >
-							<td class="tdTitle">고객담당자(성명/Email)</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"   id="m_ipt_billAcDirector" name="bdGbRate" class="tdRate" value="${gbInfo.bdGbRate}"/> 님
-								&nbsp;/&nbsp;
-								<input type="text"   id="m_ipt_billAcEmail"    name="bdGbRate" class="tdName" value="${gbInfo.bdGbRate}"/> 
+								<input type="text" id="m_ipt_billIssueDt" name="billIssueDt"  value="${displayUtil.displayDate(billingOpInfo.billIssueDt)}" readonly/>
 							</td>
 						</tr>
-						
 						<tr id="m_tr_account" >
-							<td class="tdTitle">공급가액/세액</td>
+							<td class="tdTitle">매출처 담당자</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"   id="m_ipt_billAmount" name="billAmount" class="tdRate" value="${gbInfo.bdGbRate}"/> 원 
-								&nbsp;/&nbsp;
-								<input type="text"   id="m_ipt_billTax"    name="billTax" class="tdRate" value="${gbInfo.bdGbDay}"/> 원
+								<input type="text" id="m_ipt_billAcDirector" name="billAcDirectorName"  value="${billingOpInfo.billAcDirectorName}" readonly/>
 							</td>
 						</tr>
-						
+						<tr id="m_tr_account" >
+							<td class="tdTitle">발행 이메일</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text" id="m_ipt_billAcEmail" name="billIssueEmail"  value="${billingOpInfo.billIssueEmail}" readonly/>
+							</td>
+						</tr>
+						<tr id="m_tr_account" >
+							<td class="tdTitle">공급가액 / 세액</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text" id="m_ipt_billAmount" name="billAmount"  value="${displayUtil.commaStr(billingOpInfo.billAmount)}" readonly/> / 
+								<input type="text" id="m_ipt_billTax" value="${displayUtil.commaStr(billingOpInfo.billAmount * 0.1)}" readonly/>
+							</td>
+						</tr>
 						<tr id="m_tr_account" >
 							<td class="tdTitle">합계</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"   id="m_ipt_billTotal"  name="billTotla" class="tdRate"/> 원
+								<input type="text" id="m_ipt_billTotal" value="${displayUtil.commaStr(billingOpInfo.billAmount + billingOpInfo.billAmount * 0.1)}" readonly/>
 							</td>
 						</tr>
-						
-						<input type="hidden" id="m_ipt_remark" name="remark" />
-						
+						<tr id="m_tr_afccount" >
+							<td class="tdTitle">비고</td>
+							<td id="m_td_account" class="tdContents">
+								<textarea id="m_ipt_remark" name="remark" readonly><c:out value="${billingOpInfo.remark}"></c:out></textarea>
+							</td>
+						</tr>
 					</table>
 				</div>
-				<div class="btnWrap floatR">
-					<div id="m_btn_save" class="floatR" style="">
-				
-						<button type="button" onclick="javascript:fnBillingSava();">
-							<img src="<c:url value='/images/btn_save.png'/>" />
-						</button>
-						
-					</div>
-					<div class="floatN floatC"></div>
+				<div class="btnWrap">
+					<div id="m_btn_save">
+					<c:choose>
+						<c:when test="${billingOpInfo.billNo eq null}">
+							<button type="button" onclick="javascript:fnBillingSave();">
+								<img src="<c:url value='/images/btn_save.png'/>" />
+							</button>
+						</c:when>
+						<c:otherwise>
+							<button type="button" onclick="javascript:fnBillingCancel();">
+								<img src="<c:url value='/images/btn_cancel_mapping.png'/>" />
+							</button>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 		</div>	

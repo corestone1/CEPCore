@@ -184,7 +184,7 @@
 			cursor: pointer;
 		}
 		.contents .dtl tbody tr:hover {
-			background-color: #ddf0ec
+			background-color: #ddf0ec !important;
 		}
 		.contents .dtl thead th
 		, .contents .dtl tbody tr td {
@@ -294,6 +294,15 @@
 			//Order Product 목록 호출
 			if("${orderList[0].pjOrderKey}" != null && "${orderList[0].pjOrderKey}" != "")
 				fnSearchProductList("${orderList[0].pjOrderKey}");
+			
+			$(".contents .dtl tbody tr").click(function() {
+				$(".contents .dtl tbody tr").each(function() {
+					$(this).css("background-color", "#fff");
+				});
+				$(this).css("background-color", "#ddf0ec");
+			});
+			
+			$(".contents .dtl tbody tr:first-child").css("background-color", "#ddf0ec");
 		});
 		
 		
@@ -376,7 +385,7 @@
 				      +     '<td class="textalignL"><span title="' + pjProductList[i].pmNm + '">' + pjProductList[i].pmNm + '</span></td>'
 				      +     '<td class="textalignC">' + pjProductList[i].orderQuantity + '</td>'
 				      +     '<td class="textalignR">' + addCommas(pjProductList[i].orderUprice) + '</td>'
-				      +     '<td class="textalignR">' + addCommas(pjProductList[i].orderTotalAmount) + '</td>'
+				      +     '<td class="textalignR">' + addCommas(pjProductList[i].orderQuantity * pjProductList[i].orderUprice) + '</td>'
 				      +  '</tr>'
 				      ;
 				
@@ -392,15 +401,19 @@
 		
 		function fnViewModify() {
 			
+			if($('input[name="m_gubun"]:checked').val() == undefined) {
+				alert('수정할 데이터를 선택해 주세요.');
+			} else {
 			
-			var dialogId = 'program_layer';
-			
-			var varParam = {'pjKey' : $('#ipt_pjKey').val()};
-			
-			var button = new Array;
-			button = [];
-			
-			parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1125px;height:673px');
+				var dialogId = 'program_layer';
+				
+				var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'selectKey' : $('input[name=m_gubun]:checked').val()};
+				
+				var button = new Array;
+				button = [];
+				
+				parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			}
 		}
 		
 		
@@ -424,8 +437,16 @@
 		        	success:function(data){		  
 		        		//alert(data.accountList[0].acNm);
 		        		//선택 목록 생성
-		        		alert("삭제 되었습니다.!");
-		        		location.reload();
+		        		if(data.successYN == 'Y') {
+		        			if(data.isMapped == 'TRUE') {
+			        			alert("이미 계산서와 매핑된 발주는 삭제할 수 없습니다.");	
+			        		} else {
+			        			alert("삭제되었습니다.");
+			        			location.reload();
+			        		}
+		        		} else {
+		        			alert("삭제를 실패하였습니다.");
+		        		}
 		            },
 		        	error: function(request, status, error) {
 		        		if(request.status != '0') {
@@ -473,8 +494,8 @@
 									<c:forEach var="orderList" items="${orderList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">
-												<input type="radio" class="tCheck" name="m_gubun" id="check1" value="${status.count}"/>
-												<label for="check1" class="cursorP"/>
+												<input type="radio" class="tCheck" name="m_gubun" id="check${status.count}" value="${orderList.pjOrderKey}"/>
+												<label for="check${status.count}" class="cursorP"/>
 											</td>
 											<td class="textalignC"><c:out value="${status.count}"/></td>
 											<td class="textalignC"><c:out value="${orderList.pjOrderKey}"/></td>

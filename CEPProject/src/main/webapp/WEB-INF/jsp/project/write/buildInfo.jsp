@@ -134,6 +134,10 @@
 			color: red;
 			vertical-align: middle;
       	}	
+      	.btnWrap {
+      		position: relative !important;
+      		bottom: 0 !important;
+      	}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -147,7 +151,7 @@
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/searchListPopup.do?parentNm='+obj.id+'&parentId='+obj.nextElementSibling.id+'','product_list','width=1000px,height=400,left=600');
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600');
 		}
 		
 		function fn_chkVali() {
@@ -238,7 +242,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
 			}
 			else {
 				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
@@ -249,7 +253,7 @@
 					}
 					var button = new Array;
 					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
 				} else {
 					alert('저장을 해주세요.');
 				}
@@ -287,6 +291,7 @@
 					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
 					<input type="hidden" id="resultList" value="<c:out value="${resultList}"/>" />
 					<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${resultList[0].inbSeq}"/>" />
+					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="<c:out value="${resultList[0].pjStatusCd}"/>" />
 					<table>
 						<tr>
 							<td class="tdTitle">설치 장소</td>

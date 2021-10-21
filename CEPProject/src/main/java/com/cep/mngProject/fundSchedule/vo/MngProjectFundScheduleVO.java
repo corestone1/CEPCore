@@ -15,6 +15,7 @@ public class MngProjectFundScheduleVO implements Serializable {
 	private String searchFromDt; //조회 시작일
 	private String searchToDt;   //조회 종료일
 	private String searchAcNm;   //거래처명
+	private String fundStatus;
 	
 	
 	
@@ -102,6 +103,14 @@ public class MngProjectFundScheduleVO implements Serializable {
 	 */
 	public void setSearchAcNm(String searchAcNm) {
 		this.searchAcNm = searchAcNm;
+	}
+	
+	public String getFundStatus() {
+		return fundStatus;
+	}
+	
+	public void setFundStatus(String fundStatus) {
+		this.fundStatus = fundStatus;
 	}
 	
 	

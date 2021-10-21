@@ -14,11 +14,7 @@ public interface MngProjectFundScheduleMapper {
 	
 	public List<EgovMap> selectFundScheduleSdList(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception;
 	
-	public int selectFundScheduleSdTotalAmount(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception;
-	
 	public List<EgovMap> selectFundSchedulePcList(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception;
-	
-	public int selectFundSchedulePcTotalAmount(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception;
 	
 	public List<EgovMap> selectOrderProductSdList(MngProjectFundScheduleVO mngProjectFundScheduleVO) throws Exception;
 	
