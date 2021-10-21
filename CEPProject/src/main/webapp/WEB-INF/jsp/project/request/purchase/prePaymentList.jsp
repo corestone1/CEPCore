@@ -145,6 +145,11 @@
 		    width: 166px;
 		    max-width: 166px;
 		}
+		#compForm .dtl thead th:nth-child(8), 
+		#compForm .dtl tbody td:nth-child(8) {
+		    width: 105px;
+		    max-width: 105px;
+		}
 		#compForm .dtl tbody {
 		    height: 545px;
 		    overflow-y: auto;
@@ -155,6 +160,9 @@
 		    display: table;
 		    width: 999px;
 		    cursor: pointer;
+		}
+		#compForm .dtl tbody tr:hover td {
+			background-color: #ddf0ec;
 		}
 		#compForm .dtl tr td span {
 			display: inline-block;
@@ -189,39 +197,41 @@
 			object['billFkKey'] = billNo;
 
 			var sendData = JSON.stringify(object);
-			console.log(sendData);
-			$.ajax({
-				url:"/project/request/update/paymentInfo.do",
-				dataType: 'json', 
-			    type:"POST",  
-			    data: sendData,
-			    async:false, 
-			 	contentType: "application/json; charset=UTF-8", 
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader("AJAX", true);
-					//xhr.setRequestHeader(header, token);
-					
-				},
-			    success:function(response){	
-			    	if(response!= null && response.successYN == 'Y') {
-			    		alert('지급 완료 처리되었습니다.');
-			    		parent.document.location.reload()
-			    	}
-			    },
-				error: function(request, status, error) {
-					if(request.status != '0') {
-						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-					}
-				} 
-			});     
+			/* console.log(sendData); */
+			if(confirm("지급 완료 처리하시겠습니까?")) {
+				$.ajax({
+					url:"/project/request/update/paymentInfo.do",
+					dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				    async:false, 
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		alert('지급 완료 처리되었습니다.');
+				    		parent.document.location.reload()
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});     
+			}
 		}
 	</script>
 </head>
 <body>
 	<div class="stitle">
 		<ul id="infoList">
-			<li><a id="A_TOPMenu_FORM" title="/project/request/purchase/paymentForm.do">지급정보</a></li>
-			<li><a class="on" id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">기지급정보</a></li>
+			<li><a class="on" id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">기 지급 목록</a></li>
+			<li><a id="A_TOPMenu_FORM" title="/project/request/purchase/paymentForm.do">미 지급 목록</a></li>
 			<li></li>
 		</ul>
 	</div>
@@ -236,18 +246,21 @@
 						<th>계산서 발행일자</th>
 						<th>계산서 금액</th>
 						<th>지급 금액</th>
+						<th>사업자번호</th>
+						<th>상호</th>
 						<th>지급완료</th>
-						<th>계산서 요청 상태</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="result" items="${prePaymentList }" varStatus="status">
 						<tr>
 							<td>${status.count }</td>
-							<td><span>${result.billNo }</span></td>
-							<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
-							<td><span>${displayUtil.commaStr(result.billAmount) }</span></td>
-							<td><span>${displayUtil.commaStr(result.callAmount) }</span></td>
+							<td><span title="${result.billNo }">${result.billNo }</span></td>
+							<td><span title="${displayUtil.displayDate(result.billIssueDt) }">${displayUtil.displayDate(result.billIssueDt) }</span></td>
+							<td><span title="${displayUtil.commaStr(result.billAmount) }">${displayUtil.commaStr(result.billAmount) }</span></td>
+							<td><span title="${displayUtil.commaStr(result.callAmount) }">${displayUtil.commaStr(result.callAmount) }</span></td>
+							<td><span title="${result.billAcKey }">${result.billAcKey }</span></td>
+							<td><span title="${result.acNm }">${result.acNm }</span></td>
 							<td>
 								<c:choose>
 									<c:when test="${empty result.paymentDt }">
@@ -269,12 +282,6 @@
 										<span>${displayUtil.displayDate(result.paymentDt) }</span>
 									</c:otherwise>
 								</c:choose>
-							</td>
-							<td>
-								<c:if test="${result.billIssueStatus eq 'R'}"><span>요청</span></c:if>
-								<c:if test="${result.billIssueStatus eq 'I'}"><span>발급</span></c:if>
-								<c:if test="${result.billIssueStatus eq 'M'}"><span>매핑</span></c:if>
-								<c:if test="${result.billIssueStatus eq null}"><span>요청 사항 없음</span></c:if>
 							</td>
 						</tr>
 					</c:forEach>

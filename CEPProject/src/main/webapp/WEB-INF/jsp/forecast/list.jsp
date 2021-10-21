@@ -235,7 +235,7 @@
 			$('#btn_delete').click(function() {
 				
 				if($('input[name="gubun"]').is(':checked')) {
-					if(confirm("선택한 내용을 삭제하시겠습니까?")) {
+					if(confirm($('input[name="gubun"]:checked').parent().next().next().children().eq(0).attr("title") + "(을)를 삭제하시겠습니까?")) {
 						
 						var litIdx = parseInt($('input[name="gubun"]:checked').val());
 						
@@ -296,15 +296,12 @@
 		function fn_addView(link){
 			
 			
-			alert('fn_addView : ' + link);
-			
 			if(link == "forecastList") {
 				location.href="<c:url value='/forecast/list.do'/>";
 			} else {
 				var url = '/forecast/write/'+link+'.do';
 				var dialogId = 'program_layer';
 				
-				alert("fn_addView : spKey [" + $('#m_ipt_spKey').val() + "]")
 				var varParam = {'spKey' : $('#m_ipt_spKey').val()};
 				
 				var button = new Array;
@@ -346,8 +343,8 @@
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">Forecast list</label></div>
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('basic')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_searchListPop()"><img src="<c:url value='/images/btn_add.png'/>" /></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_moveSalesMeeting()"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_searchListPop()"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="addBtn floatL cursorP" onclick="javascript:fn_moveSalesMeeting()"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<form:select path="pjFlag">

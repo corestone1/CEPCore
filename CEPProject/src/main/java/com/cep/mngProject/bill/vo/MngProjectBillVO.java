@@ -1,4 +1,3 @@
-
 package com.cep.mngProject.bill.vo;
 
 import java.io.Serializable;
@@ -6,10 +5,12 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cep.mngCommon.bill.vo.MngCommonBillVO;
+
 @Alias("mngProjectBillVO")
 public class MngProjectBillVO implements Serializable {
-	
-	private static final long serialVersionUID = 6249212047489119229L;
+
+private static final long serialVersionUID = 6249212047489119229L;
 	
 	private String billNo;
 	private String billCtFkKey;
@@ -17,11 +18,15 @@ public class MngProjectBillVO implements Serializable {
 	private String pjKey;
 	private String billCallKey;
 	private String acKey;
+	private String billAcKey;
 	
-	private String billAcDirectorKey;
+	private String billAcDirectorName;
 	private String billAcDirectorTel;
 	private int    billTurnNo;
 	private int    billAmount;
+	private int	 billTaxAmount;
+	private int	 billTotalAmount;
+	
 	private String billIssueDt;
 	private String billIssueEmail;
 	private String billIssueType; 
@@ -37,8 +42,9 @@ public class MngProjectBillVO implements Serializable {
 	private String modEmpKey;
 	
 	private String salesKey;
+	private String salesStatusCd;
 	
-	private List<MngProjectBillVO> mngBillInsertVOList;
+	private List<MngCommonBillVO> mngBillInsertVOList;
 	
 	/**
 	 * @return the billNo
@@ -101,17 +107,24 @@ public class MngProjectBillVO implements Serializable {
 	public void setAcKey(String acKey) {
 		this.acKey = acKey;
 	}
+	
+	public String getBillAcKey() {
+		return billAcKey;
+	}
+	public void setBillAcKey(String billAcKey) {
+		this.billAcKey = billAcKey;
+	}
 	/**
 	 * @return the billAcDirectorKey
 	 */
-	public String getBillAcDirectorKey() {
-		return billAcDirectorKey;
+	public String getBillAcDirectorName() {
+		return billAcDirectorName;
 	}
 	/**
 	 * @param billAcDirectorKey the billAcDirectorKey to set
 	 */
-	public void setBillAcDirectorKey(String billAcDirectorKey) {
-		this.billAcDirectorKey = billAcDirectorKey;
+	public void setBillAcDirectorName(String billAcDirectorName) {
+		this.billAcDirectorName = billAcDirectorName;
 	}
 	/**
 	 * @return the billAcDirectorTel
@@ -161,6 +174,19 @@ public class MngProjectBillVO implements Serializable {
 	 */
 	public void setBillAmount(int billAmount) {
 		this.billAmount = billAmount;
+	}
+	
+	public int getBillTaxAmount() {
+		return billTaxAmount;
+	}
+	public void setBillTaxAmount(int billTaxAmount) {
+		this.billTaxAmount = billTaxAmount;
+	}
+	public int getBillTotalAmount() {
+		return billTotalAmount;
+	}
+	public void setBillTotalAmount(int billTotalAmount) {
+		this.billTotalAmount = billTotalAmount;
 	}
 	/**
 	 * @return the billIssueDt
@@ -324,18 +350,25 @@ public class MngProjectBillVO implements Serializable {
 	public void setSalesKey(String salesKey) {
 		this.salesKey = salesKey;
 	}
+	
+	public String getSalesStatusCd() {
+		return salesStatusCd;
+	}
+	
+	public void setSalesStatusCd(String salesStatusCd) {
+		this.salesStatusCd = salesStatusCd;
+	}
 	/**
 	 * @return the mngBillInsertVOList
 	 */
-	public List<MngProjectBillVO> getMngBillInsertVOList() {
+	public List<MngCommonBillVO> getMngBillInsertVOList() {
 		return mngBillInsertVOList;
 	}
 	/**
 	 * @param mngBillInsertVOList the mngBillInsertVOList to set
 	 */
-	public void setMngBillInsertVOList(List<MngProjectBillVO> mngBillInsertVOList) {
+	public void setMngBillInsertVOList(List<MngCommonBillVO> mngBillInsertVOList) {
 		this.mngBillInsertVOList = mngBillInsertVOList;
 	}
-		
-
+	
 }

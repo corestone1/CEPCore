@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(프로젝트 상세보기)</title>
+	<title>판매품의서</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -213,7 +213,7 @@
 								<thead>
 									<tr>
 										<th>보증보험</th>
-										<th>완료여부</th>
+										<th>진행상태</th>
 										<th>증권발행일자</th>
 										<th>보험료</th>
 									</tr>
@@ -222,7 +222,19 @@
 								<c:forEach var="result" items="${guarantyList}" varStatus="status">
 									<tr>
 										<td>${result.gbKindCd}</td>
-										<td>${result.gbIssueYn}</td>
+										<td>
+											<c:choose>
+												<c:when test="${result.gbIssueStatus eq  'I'}">
+													발행 준비
+												</c:when>
+												<c:when test="${biddingVO.bdGbFinishYn eq  'R'}">
+													발행 요청
+												</c:when>
+												<c:otherwise>
+													발행 완료
+												</c:otherwise>
+											</c:choose>
+										</td>
 										<td>${displayUtil.displayDate(result.gbPublishDt)}</td>
 										<td class="textalignR">${displayUtil.commaStr(result.gbAmount) }</td>
 										<c:set var= "gSum" value="${gSum + result.gbAmount}"/>
@@ -231,7 +243,19 @@
 								<c:if test="${biddingVO.bdGbYn eq 'Y' }"> 
 									<tr>
 										<td>입찰</td>
-										<td>${biddingVO.bdGbFinishYn}</td>
+										<td>
+											<c:choose>
+												<c:when test="${biddingVO.bdGbFinishYn eq  'N'}">
+													발행 전
+												</c:when>
+												<c:when test="${biddingVO.bdGbFinishYn eq  'R'}">
+													발행 요청
+												</c:when>
+												<c:otherwise>
+													발행 완료
+												</c:otherwise>
+											</c:choose>
+										</td>
 										<td>${displayUtil.displayDate(biddingVO.bdGbFinishDt)}</td>
 										<td class="textalignR">${displayUtil.commaStr(biddingVO.bdGbAmount) }</td>
 										<c:set var= "gSum" value="${gSum + biddingVO.bdGbAmount}"/>

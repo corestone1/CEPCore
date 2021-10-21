@@ -1,7 +1,8 @@
-
 package com.cep.mngProject.bill.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -10,25 +11,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cep.mngCommon.bill.vo.MngCommonBillVO;
 import com.cep.mngProject.bill.service.MngProjectBillService;
 import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
 import com.cep.mngProject.bill.vo.MngProjectBillVO;
-import com.cep.mngProject.order.service.impl.MngProjectOrderServiceImpl;
-import com.cep.mngProject.order.vo.MngOrderInsertVO;
-import com.cmm.util.CepDateUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 @Service("mngProjectBillService")
 public class MngProjectBillServiceImpl implements MngProjectBillService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(MngProjectOrderServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(MngProjectBillServiceImpl.class);
 	
 	@Resource(name="mngProjectBillMapper")
 	private MngProjectBillMapper mapper;
 	
 	@Override
-	public List<EgovMap> selectBillList(MngProjectBillSearchVO searchVO ) throws Exception {
+	public List<EgovMap> selectSdBillList(MngProjectBillSearchVO searchVO ) throws Exception {
 		
 //		return mapper.selectBillList(searchVO);
 		
@@ -36,35 +35,23 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 	}
 	
 	@Override
-	public void deleteBill(MngProjectBillSearchVO searchVO ) throws Exception
-	{
-		mapper.deleteBill(searchVO);
-	}
-	
-	@Override
-	public EgovMap selectBillBasicInfo(MngProjectBillSearchVO searchVO) throws Exception
-	{
+	public EgovMap selectBillBasicInfo(MngProjectBillSearchVO searchVO) throws Exception {
 		return mapper.selectBillBasicInfo(searchVO);
 	}
 	
 	@Override
-	public Integer selectCollectTurn(MngProjectBillSearchVO searchVO) throws Exception
-	{
+	public Integer selectCollectTurn(MngProjectBillSearchVO searchVO) throws Exception {
 		return mapper.selectCollectTurn(searchVO);
 	}
 	
 	@Override
-	public EgovMap selectBillDetailInfo(MngProjectBillSearchVO searchVO) throws Exception
-	{
+	public EgovMap selectBillDetailInfo(MngProjectBillSearchVO searchVO) throws Exception {
 		
-		//계산서 순번 구하기
 		int litBillTurnNo = 1;
 		
-		if(searchVO.getBillTurnNo() == 0){
-			litBillTurnNo = mapper.selectBillTurnNoMax(searchVO);	
-		}
-		else
-		{
+		if(searchVO.getBillTurnNo() == 0) {
+			litBillTurnNo = mapper.selectBillTurnNoMax(searchVO);
+		} else {
 			litBillTurnNo = searchVO.getBillTurnNo();
 		}
 		
@@ -89,105 +76,93 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 	}
 	
 	@Override
-	public void insertBillRequest(MngProjectBillVO mngProjectBillVO) throws Exception
-	{
+	public Map<String, Object> selectXmlBillList(MngProjectBillVO mngProjectBillVO) throws Exception {
 		
-		//billCallKey가 있으면 Update 없으면 Insert
-		if(mngProjectBillVO.getBillCallKey() == null || mngProjectBillVO.getBillCallKey().equals("")) {
-			//신규
-			mngProjectBillVO.setBillIssueStatus("R");
-			mapper.insertBillRequest(mngProjectBillVO);
-		} else {
-			//수정
-			mapper.updateBillRequest(mngProjectBillVO);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<EgovMap> resultList = null;
+		
+		try {
+			resultList = mapper.selectXmlBillList(mngProjectBillVO);
+			returnMap.put("xmlBillList", resultList);
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		
+		return returnMap;
 	}
-
+	
 	@Override
-	public void updateBillComplate(MngProjectBillVO mngProjectBillVO) throws Exception
+	public Map<String, Object> insertBillRequest(MngProjectBillVO mngProjectBillVO) throws Exception
 	{
-		mngProjectBillVO.setBillIssueStatus("I");
-		mapper.updateBillComplate(mngProjectBillVO);
-	}
-	
-	
-	@Override
-	@Transactional
-	public void writeBillInsert(MngProjectBillVO mngProjectBillVO) throws Exception
-	{
-		//PJ_SD_BILLING_TB INSERT
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try {
+			//billCallKey가 있으면 Update 없으면 Insert
+			if(mngProjectBillVO.getBillCallKey() == null || mngProjectBillVO.getBillCallKey().equals("")) {
+				//신규
+				mngProjectBillVO.setBillIssueStatus("R");
+				mapper.insertBillRequest(mngProjectBillVO);
+			} else {
+				//수정
+				mapper.updateBillRequest(mngProjectBillVO);
+			}
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("successYN", "N");
+		}
 		
-		//계산서 번호등 임시 데이터 생성
-		mngProjectBillVO.setBillNo(CepDateUtil.getToday("yyyyMMddHHmmssSSS"));
-		mngProjectBillVO.setBillIssueDt(CepDateUtil.getToday("yyyyMMdd"));
-		mngProjectBillVO.setBillMappingYn("Y");
-		
-		mapper.insertBilling(mngProjectBillVO);
-		
-		//PJ_SD_BILLING_OP_TB UPDATE
-		mapper.updateBillMapping(mngProjectBillVO);
-		
+		return returnMap;
 	}
 	
 	@Override
-	@Transactional
-	public void updatePaymentsComplate(MngProjectBillVO mngProjectBillVO) throws Exception
-	{
-		//계산서 상태 변경
-		mngProjectBillVO.setBillIssueStatus("E");
-		mapper.updateBillComplate(mngProjectBillVO);
-		
-		//PJ_SALES_DETAIL_TB UPDATE(수금)
-		mapper.updateSalesDetailPayments(mngProjectBillVO);
-	}
-	
-	@Override
-	public EgovMap selectSdBillingOp(MngProjectBillVO mngProjectBillVO) throws Exception {
-		
-		return  mapper.selectSdBillingOp(mngProjectBillVO);
-	}
-	
-	
-	@Override
-	@Transactional
 	public void insertSdBillingXml(MngProjectBillVO mngProjectBillVO) throws Exception {
 		
 		//PJ_SD_BILLING_TB Insert
 		mapper.insertSdBillingXml(mngProjectBillVO);
 		
-		
+		mngProjectBillVO.setBillIssueStatus("M");
 		//PJ_SD_BILLING_OP_TB Update
 		mapper.updateBillMapping(mngProjectBillVO);
 	}
 	
+	@Override
+	public void deleteSdBillingXml(MngProjectBillVO mngProjectBillVO) throws Exception {
+		
+		//PJ_SD_BILLING_TB Insert
+		mapper.deleteSdBillingXml(mngProjectBillVO);
+		
+		mngProjectBillVO.setBillIssueStatus("R");
+		//PJ_SD_BILLING_OP_TB Update
+		mapper.updateBillMapping(mngProjectBillVO);
+	}
 	
 	@Override
 	@Transactional
-	public void insertBillingExcelBatch(MngProjectBillVO mngProjectBillVO) throws Exception {
+	public Map<String, Object> updatePaymentsComplate(MngProjectBillVO mngProjectBillVO) throws Exception
+	{
 		
-		List<MngProjectBillVO> lltBillVO = mngProjectBillVO.getMngBillInsertVOList();
-		int litListSize = lltBillVO.size();
+		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
-		MngProjectBillVO billVO;
-		
-		for(int i = 0; i < litListSize; i++)
-		{
-			billVO = lltBillVO.get(i);
+		try {
+			//계산서 상태 변경
+			mapper.updateBillComplate(mngProjectBillVO);
 			
-			billVO.setRegEmpKey(mngProjectBillVO.getRegEmpKey());
-			
-			logger.debug("billVO.getBillNo()          : {}", billVO.getBillNo());
-			logger.debug("billVO.getAcKey()           : {}", billVO.getAcKey());
-			logger.debug("billVO.getBillAmount()      : {}", billVO.getBillAmount());
-			logger.debug("billVO.getBillIssueDt()     : {}", billVO.getBillIssueDt());
-			logger.debug("billVO.getBillIssueStatus() : {}", billVO.getBillIssueStatus());
-			
-			
-			//PJ_PC_BILLING_TB Insert
-			mapper.insertPcBillInfo(billVO);
+			//PJ_SALES_DETAIL_TB UPDATE(수금)
+			mapper.updateSalesDetailPayments(mngProjectBillVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("successYN", "N");
 		}
+		
+		return returnMap;
 	}
+	
+	@Override
+	public void updateBillComplate(MngProjectBillVO mngProjectBillVO) throws Exception
+	{
+		mapper.updateBillComplate(mngProjectBillVO);
+	}
+	
+	
 }
-
-

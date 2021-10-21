@@ -1,6 +1,5 @@
 package com.cep.project.web;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.cep.forecast.service.ForecastService;
 import com.cep.forecast.vo.ForecastVO;
 import com.cep.main.service.MainService;
+import com.cep.mngProject.bill.service.MngProjectBillService;
+import com.cep.mngProject.bill.vo.MngProjectBillSearchVO;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectBiddingFileVO;
 import com.cep.project.vo.ProjectBiddingVO;
@@ -39,12 +40,13 @@ import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
+import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
-import com.cmm.vo.OrderVO;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
@@ -69,6 +71,9 @@ public class ProjectController {
 	@Resource(name="forecastService")
 	private ForecastService forecastService;
 	
+	@Resource(name="mngProjectBillService")
+	private MngProjectBillService mngProjectBillService;
+	
 	@Resource(name="fileMngService")
 	private FileMngService fileMngService;
 	
@@ -84,6 +89,8 @@ public class ProjectController {
 	@RequestMapping(value="/list.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String selectProject(@ModelAttribute("searchVO") ProjectVO searchVO, ModelMap model) throws Exception {
 		
+		String toDay = null;
+		
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 		
@@ -96,8 +103,18 @@ public class ProjectController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
-		// 검색 정보 저장.
-		model.addAttribute("searchVO", searchVO);
+		toDay = CepDateUtil.getToday(null);		
+		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchFromDt(), ""))){
+			searchVO.setSearchFromDt(searchVO.getSearchFromDt().replace("-", ""));
+		} else {
+			searchVO.setSearchFromDt(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
+		}
+		
+		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchToDt(), ""))){
+			searchVO.setSearchToDt(searchVO.getSearchToDt().replace("-", ""));
+		} else {
+			searchVO.setSearchToDt(toDay);
+		}
 		
 		List<?> projectList = service.selectProjectList(searchVO);
 		model.addAttribute("resultList", projectList);
@@ -105,6 +122,12 @@ public class ProjectController {
 		int totCnt = service.selectProjectListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
+
+		// 검색 정보 저장.
+		model.addAttribute("searchVO", searchVO);
+				
+		model.put("searchFromDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchFromDt(), null, null));
+		model.put("searchToDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchToDt(), null, null));
 		
 		model.put("displayUtil", new CepDisplayUtil());
 		
@@ -338,6 +361,11 @@ public class ProjectController {
 		
 		List<?> salesList = service.selectSalesList(projectContractSalesVO.getPjKey());
 		model.addAttribute("salesList", salesList);
+		
+		MngProjectBillSearchVO mngProjectBillSearchVO = new MngProjectBillSearchVO();
+		mngProjectBillSearchVO.setPjKey(projectContractSalesVO.getPjKey());
+		List<EgovMap> sdBillList = mngProjectBillService.selectSdBillList(mngProjectBillSearchVO);
+		model.addAttribute("sdBillList", sdBillList);
 		
 		model.put("displayUtil", new CepDisplayUtil());
 		

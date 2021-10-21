@@ -302,8 +302,32 @@
 		function fnOpenPjPopup(){
 			
 			//프로젝트 목록 조회
-			window.open('/project/popup/list.do','PROJECT_LIST','width=1000px,height=713px,left=600');
+			// window.open('/project/popup/list.do','PROJECT_LIST','width=1000px,height=713px,left=600');
+			window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall','PROJECT_LIST','width=1000px,height=713px,left=600');
+		}
+		
+		function pop_projectCall(returnKey,returnNm) {
+			//alert("====>"+returnKey+"/"+returnNm);
+			$('#ipt_orderCtFkKey').val(returnKey);
+			$('#ipt_pjNm').val(returnNm);
+			if($('#ipt_orderCtFkKey').val() !='') {
+				$('#pj_delete_project').show();
+			}
 			
+		}
+		
+		function fn_deleteProject() {
+			if(confirm("PROJECT 연계정보를 삭제하시겠습니까?")) {
+				
+				if($('#ipt_orderCtFkKey').val() !='') {
+					$('#pj_linkDeleteKey').val($('#ipt_orderCtFkKey').val());
+					$('#ipt_orderCtFkKey').val('');
+					$('#ipt_pjNm').val('');
+				}
+				$('#pj_delete_project').hide();
+			} else {
+				return false;
+			}			
 		}
 		
 		function fnSetPjInfo(pstKey, pstNm){
@@ -681,6 +705,7 @@
 		<form action="/" id="uploadForm" method="post"> 
 		 -->
 			<input type="hidden" id="prodLength" name="prodLength" value="1" />
+			<input type="hidden" id="pj_linkDeleteKey" name="linkDeleteKey"/>		
 			<div class="contents">
 				<!-- <div id="prodWrap"> -->
 				<div>
@@ -708,8 +733,9 @@
 										<option value="M">유지보수</option>
 									</select>
 									 -->		
-									<input type="text"   id="ipt_pjNm" onclick="javascript:fnOpenPjPopup();" value="${orderInfo.pjNm}" class="search" style="width: 315px; background-color: #d3d3d3;" readOnly/>
+									<input type="text"   id="ipt_pjNm" onclick="javascript:fnOpenPjPopup();" value="${orderInfo.pjNm}" class="search" style="width: 315px;" readOnly/>
 									<input type="hidden" id="ipt_orderCtFkKey" name="orderCtFkKey" value="${orderInfo.orderCtFkKey}"/>
+									<img id="pj_delete_project" src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteProject();" style="vertical-align: middle; display:none"/>
 								</td>
 								<td class="tdTitle">고객사</td>
 								<td class="tdContents">

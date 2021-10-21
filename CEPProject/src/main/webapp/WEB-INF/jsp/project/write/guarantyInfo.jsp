@@ -47,7 +47,7 @@
 			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			width: calc(100% - 60px);
+			width: calc(100% - 80px) !important;
 			margin: 10px 40px 15px 40px;
 		}
 		.popContainer .contents > div:first-child {
@@ -133,29 +133,6 @@
 		} */
 		.popContainer table {
 			width: 100%;
-		}
-		#altBox {
-			position: absolute;
-		    bottom: 54px;
-		    width: 232px;
-		    font-size: 14px;
-		    font-weight: 100;
-		    padding: 4px;
-		    left: 311px;
-		    color: #fff;
-		    background-image: linear-gradient(96deg,#0c93ed,#6b87e7);
-		}
-		#altBox:after {
-			border-width: 9px 7px;
-		    left: 50%;
-		    margin-left: 0px;
-		    border-color: #588AE8 transparent transparent transparent;
-		    bottom: -18px;
-		    content: ' ';
-		    position: absolute;
-		    width: 0;
-		    height: 0;
-		    border-style: solid;
 		}
 	</style>
 	<script>
@@ -300,25 +277,12 @@
 					
 				},
 			    success:function(response){	
-			    	var mailList = "";
-			    	if(response.mailList == "undefined" || response.mailList == null || response.mailList == "") {
-			    		mailList = "";
-			    	} else {
-			    		mailList = "\n메일 수신인: " + response.mailList.join("\n");
-			    	}
-			    	 
-			    	if(response!= null && response.successYN == 'Y' && response.mailSuccessYN == 'Y') {
+			    	if(response.successYN == 'Y') {
 			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
-				    		alert("프로젝트 계약 정보가 저장되었습니다." + mailList);
+				    		alert("프로젝트 계약 정보가 저장되었습니다.");
 				    		countSave++;
 			    		} else {
-			    			alert("프로젝트 계약 정보가 수정되었습니다." + mailList);
-			    		}
-			    	} else if(response!= null && response.successYN == 'Y' && response.mailSuccessYN == 'N') {
-			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
-			    			alert("메일 전송이 실패했습니다.(프로젝트 계약 정보 저장은 완료)");
-			    		} else {
-			    			alert("메일 전송이 실패했습니다.(프로젝트 계약 정보 수정은 완료)");
+			    			alert("프로젝트 계약 정보가 수정되었습니다.");
 			    		}
 			    	} else {
 			    		if($("input[name='ctGbKey']").val().length == 0 && $("input[name='dfGbKey']").val().length == 0 && $("input[name='ppGbKey']").val().length == 0) {
@@ -354,7 +318,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			}
 			else {
 				if($("input[name='ctGbKey']").val().length != 0 || $("input[name='dfGbKey']").val().length != 0 || $("input[name='ppGbKey']").val().length != 0) {
@@ -365,7 +329,7 @@
 					}
 					var button = new Array;
 					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 				} else {
 					alert('저장을 해주세요.');
 				}
@@ -416,14 +380,8 @@
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
 			} 
-			$("#altMail").mouseover(function() {
-				var html = '<div id="altBox">'
-							+ '관리자에게 알림 메일이 전송됩니다.</div>'
-				$("#altMail").after(html);
-			});
-			$("#altMail").mouseout(function() {
-				$("#altBox").remove();
-			});
+			
+			
 		});
 		
 	</script>
@@ -438,7 +396,7 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-				<li class="colorWhite cursorP">금액</li>
+				<li class="colorWhite cursorP" onclick="fn_prevView();">금액</li>
 				<li class="colorWhite cursorP on">예상일정</li>
 			</ul>
 		</div>

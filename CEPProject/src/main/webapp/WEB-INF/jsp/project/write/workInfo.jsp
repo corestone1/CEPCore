@@ -231,7 +231,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			}
 			else {
 				if($('#resultList').val() != "" || $('#resultList').val().length != 0) {
@@ -242,7 +242,7 @@
 					}
 					var button = new Array;
 					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 				} else {
 					alert('저장을 해주세요.');
 				}
@@ -279,6 +279,7 @@
 					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
 					<input type="hidden" id="resultList" value="<c:out value="${resultList}"/>" />
 					<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${resultList[0].pjWorkSeq}"/>" />
+					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="<c:out value="${resultList[0].pjStatusCd}"/>" />
 					<table>
 						<tr>
 							<td class="tdTitle">구분</td>

@@ -1,7 +1,6 @@
 package com.cep.project.service.impl;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -11,11 +10,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cep.mngProject.bill.service.impl.MngProjectBillMapper;
+import com.cep.mngProject.bill.vo.MngProjectBillVO;
 import com.cep.project.service.ProjectService;
 import com.cep.project.vo.ProjectBiddingFileVO;
 import com.cep.project.vo.ProjectBiddingVO;
@@ -29,15 +29,12 @@ import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
-import com.cmm.config.DeptInfo;
-import com.cmm.config.EmailInfo;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
 import com.cmm.service.impl.ComMapper;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
-import com.cmm.vo.MailVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -50,6 +47,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Resource(name="comMapper")
 	private ComMapper comMapper;
+	
+	@Resource(name="mngProjectBillMapper")
+	private MngProjectBillMapper projectBillMapper;
 	
 	@Resource(name="fileMngService")
 	private FileMngService fileMngService;
@@ -304,6 +304,7 @@ public class ProjectServiceImpl implements ProjectService {
 							
 							updateSalesInfo(projectContractSalesVO.getModEmpKey(), updateList);
 							updateContractInfo(projectContractSalesVO);
+							updateBillOpInfo(projectContractSalesVO.getModEmpKey(), updateList, projectContractSalesVO.getPjKey());
 						} else {
 							// 신규등록
 							insertList.add(contractSalesVO);
@@ -331,13 +332,14 @@ public class ProjectServiceImpl implements ProjectService {
 				writeContractInfo(projectContractSalesVO);
 			}
 			
-			mapper.updateStatusCd(projectContractSalesVO.getPjKey(), projectContractSalesVO.getStatusCd());
         	returnMap.put("pjKey", projectContractSalesVO.getPjKey());
         	
         	for(int i = 0; i < listCnt; i++) {
         		/*ctKeyList.add(projectContractSalesVO.getProjectContractSalesVOList().get(i).getCtKey());*/
         		salesKeyList.add(projectContractSalesVO.getProjectContractSalesVOList().get(i).getSalesKey());
         	}
+        	
+        	mapper.updateStatusCd(projectContractSalesVO.getPjKey(), projectContractSalesVO.getStatusCd());
         	
         	/*returnMap.put("ctKey", ctKeyList);*/
         	returnMap.put("salesKey", salesKeyList);
@@ -483,6 +485,33 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
+	/**
+	 * 
+	  * @Method Name : updateBillOpInfo
+	  * @Cdate       : 2021. 10. 19.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 프로젝트 계산서 요청 정보를 수정한다.
+	  * @param projectContractSalesVO
+	  * @throws Exception
+	 */
+	private void updateBillOpInfo(String modEmpKey, List<ProjectContractSalesVO> projectContractSalesVOList, String pjKey) throws Exception {
+		MngProjectBillVO mngProjectBillVO = new MngProjectBillVO();
+		try {
+			for(int i = 0; i < projectContractSalesVOList.size(); i++) {
+				mngProjectBillVO.setBillAmount(projectContractSalesVOList.get(i).getSalesTurnAmount());
+				mngProjectBillVO.setModEmpKey(modEmpKey);
+				mngProjectBillVO.setPjKey(pjKey);
+				mngProjectBillVO.setBillTurnNo(projectContractSalesVOList.get(i).getSalesTurn());
+				
+				projectBillMapper.updateBillRequest(mngProjectBillVO);
+			}
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
 	@Override
 	public ProjectContractVO selectContractDetail(String pjKey) throws Exception {
 		return mapper.selectContractDetail(pjKey);
@@ -519,7 +548,6 @@ public class ProjectServiceImpl implements ProjectService {
 		List<ProjectGuarantyBondVO> updateList = new ArrayList<ProjectGuarantyBondVO>();
 		int isCtUpt = 1, isDfUpt = 1, isPpUpt = 1;
 		int result = 0;
-		MailVO mailVO = new MailVO();
 		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
@@ -625,7 +653,7 @@ public class ProjectServiceImpl implements ProjectService {
 				updateSalesInfo(guarantyBondVO.getModEmpKey(), updateList);
 			}
 			
-			if(isCtUpt == 0 || isDfUpt == 0 || isPpUpt == 0) {
+/*			if(isCtUpt == 0 || isDfUpt == 0 || isPpUpt == 0) {
 				
 				String dept = DeptInfo.DEPT_OPER_L2.getValue();
 				List<String> toList = new ArrayList<String>();
@@ -658,7 +686,7 @@ public class ProjectServiceImpl implements ProjectService {
 			} else {
 				returnMap.put("mailSuccessYN", "Y");
 			}
-			
+*/			
 			returnMap.put("successYN", "Y");
 	    	returnMap.put("pjKey", guarantyBondVO.getPjKey());
 	    	
@@ -666,6 +694,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 		} catch(Exception e) {
 			e.printStackTrace();
+			returnMap.put("successYN", "N");
 		}
 		return returnMap;	
 	}
@@ -702,6 +731,7 @@ public class ProjectServiceImpl implements ProjectService {
 		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
 		
 		String orderKey = null;
+		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			orderVO.setRegEmpKey(session.get("empKey"));
@@ -733,7 +763,6 @@ public class ProjectServiceImpl implements ProjectService {
 						} else {
 							// 신규등록
 							insertList.add(productVO);
-							
 						}
 					}
 				}
@@ -761,6 +790,8 @@ public class ProjectServiceImpl implements ProjectService {
 				purchaseVO.setBuyFkPjKey(orderVO.getOrderCtFkKey());
 				purchaseVO.setBuyAmount(orderVO.getOrderAmount());
 				purchaseVO.setBuyKey(orderVO.getBuyKey());
+				purchaseVO.setYetPaymentAmount(orderVO.getOrderProductVOList().get(0).getYetPaymentAmount());
+				
 				updatePurchaseInfo(request, purchaseVO);
 			}
 			
@@ -1018,6 +1049,8 @@ public class ProjectServiceImpl implements ProjectService {
 				mapper.insertBuildInfo(buildVO);
 			}
 			
+			mapper.updateStatusCd(buildVO.getPjKey(), buildVO.getStatusCd());
+			
 	    	returnMap.put("successYN", "Y");
 	    	returnMap.put("inbSeq", buildVO.getInbSeq());
 	    	returnMap.put("pjKey", buildVO.getPjKey());
@@ -1050,6 +1083,8 @@ public class ProjectServiceImpl implements ProjectService {
 			} else {
 				mapper.insertWorkInfo(workVO);
 			}
+			
+			mapper.updateStatusCd(workVO.getPjKey(), workVO.getStatusCd());
 			
 	    	returnMap.put("successYN", "Y");
 	    	returnMap.put("workSeq", workVO.getPjWorkSeq());

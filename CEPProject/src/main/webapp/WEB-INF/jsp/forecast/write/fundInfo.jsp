@@ -60,7 +60,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -249,7 +249,7 @@
 		        contentType: "application/json; charset=UTF-8", 
 		        dataType: 'json',
 		    	success:function(data){		  
-		           	if($('#isUpdate').val().replace(" ", "") == ("N")) {
+		           	if($('#isUpdate').val().replace(" ", "") == ("N") || $('#isUpdate').val().replace(" ", "").length == 0) {
 		    			alert("Forecast 매출/입 정보가 저장되었습니다.");	
 		    		} else {
 		    			alert("Forecast 매출/입 정보가 수정되었습니다.");	

@@ -4,46 +4,50 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
 	<style>
+		body {
+			margin: 0;
+		}
 		.ui-dialog {
 			top: -473px !important;
 		}
 		.popContainer .top {
 			width: 100%;
-			height: 103px;
-			border-bottom: 4px solid #4b3a93;
+			height: 66px;
 			position: absolute;
 			top: 0;
 		}
 		.popContainer .top > div {
 			font-size: 24px;
-			padding-left: 34px;
-			padding-top: 43px;
+			padding-left: 20px;
+			padding-top: 20px;
 		}
 		.popContainer .contents {
 			position: absolute;
 			width: 100%;
-			height: 440px;
-			top: 107px;
+			height: 361px;
+			top: 70px;
 			z-index: 3;
-			background-color: #f6f7fc;
 			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			width: calc(100% - 80px);
-			margin: 10px 40px 15px 40px;
+			width: 100%;
+			margin: 0;
 		}
 		.popContainer .contents > div:first-child {
 			min-height: 519px;
 		}
 		.popContainer .contents > div > table {
-			border-collapse: separate;
+			border-collapse: collapse;
 	  		border-spacing: 0 3px;
 	  		width: 100%;
 	  		border-bottom: none;
 		}
 		.popContainer .contents > div > table tr td {
 			padding: 10px 20px;
+			border: 1px solid #ebe9ee;
 		}
 		.popContainer .contents select {
 			width: 326px;
@@ -64,6 +68,7 @@
 			background-color: transparent;
 			font-size: 14px;
 			margin-bottom: 3px;
+			width: 100%;
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
@@ -80,7 +85,8 @@
 			font-size: 14px;
 			color: #525252;
 			padding-right: 20px;
-			width: 17%;
+			width: 30%;
+		    background-color: #e1dff5;
 		}
 		.popContainer .contents td.tdContents {
 			width: 87%;
@@ -91,10 +97,25 @@
 		 }
 	</style>
 	<script>
-		$(document).ready(function() {
-			
-		});
-	
+		
+		/* var id = "program_layer";
+		var resizable = "no";
+		var button = new Array;
+		button = [];
+		var title = '';
+		$('#'+id).dialog({
+			resizable: resizable,
+			modal: true,
+			title: title,
+			open: function() {
+				$('.ui-widget-overlay').addClass('custom-overlay');
+			},
+			close: function(event) {
+				$('.ui-widget-overlay').removeClass('custom-overlay');
+				$('#'+id).remove();
+			},
+			buttons: button
+		}); */
 			
 	</script>
 </head>

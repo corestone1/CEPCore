@@ -43,40 +43,29 @@
 				JOIN   CMM_ACCOUNT_TB        CAT  ON PMT.AC_KEY          = CAT.AC_KEY
 				JOIN   CMM_EMPLOYEE_TB       CET  ON PMT.PJ_SALE_EMP_KEY = CET.EMP_KEY
 				WHERE PSD.DELETE_YN = 'N'
-				  AND PSD.SALES_COLLECT_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
 				
 				<if test="searchAcNm != null and searchAcNm != ''">
 				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
 				</if>
+				<if test='fundStatus == "NE" and searchFromDt != null and searchFromDt != "" and searchToDt != null and searchToDt != ""'>
+					AND PSD.SALES_COLLECT_FINISH_DT IS NULL
+					AND PSD.SALES_COLLECT_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				</if>
+				<if test='fundStatus == "E" and searchFromDt != null and searchFromDt != "" and searchToDt != null and searchToDt != ""'>
+					AND PSD.SALES_COLLECT_FINISH_DT IS NOT NULL
+					AND PSD.SALES_COLLECT_FINISH_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				</if>
 				
 		) DAT
-		ORDER BY SALES_COLLECT_DT ASC		  
+		WHERE 1=1
+		<if test=" (fundStatus == null or fundStatus == '') and searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != '' ">
+			AND DAT.SALES_COLLECT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+		</if>
+		
+		ORDER BY DAT.SALES_COLLECT_DT ASC		  
 				  
 		
 	</select>
-	
-	<select id="selectFundScheduleSdTotalAmount" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="Integer">
-	
-		SELECT IFNULL(SUM(DAT.SALES_AMOUNT), 0)     AS SALES_AMOUNT
-		FROM (
-				SELECT <!-- CASE WHEN PCT.TAX_YN = 'Y'
-				            THEN FLOOR(PSD.SALES_TURN_AMOUNT/1.1)
-				            ELSE  -->PSD.SALES_TURN_AMOUNT
-				       <!-- END    -->                  AS SALES_AMOUNT        /* 수금액(부가세별도) */ 
-				FROM   PJ_SALES_DETAIL_TB    PSD
-				JOIN   PJ_MAIN_TB            PMT  ON PSD.SALES_CT_FK_KEY = PMT.PJ_KEY AND PMT.DELETE_YN = 'N'
-				JOIN   PJ_CONTRACT_TB        PCT  ON PMT.PJ_KEY          = PCT.PJ_KEY AND PCT.DELETE_YN = 'N'
-				JOIN   CMM_ACCOUNT_TB        CAT  ON PMT.AC_KEY          = CAT.AC_KEY
-				WHERE PSD.DELETE_YN = 'N'
-				  AND PSD.SALES_COLLECT_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
-				
-				<if test="searchAcNm != null and searchAcNm != ''">
-				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
-				</if>
-		) DAT
-		
-	</select>
-	
 	
 	<select id="selectFundSchedulePcList" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="egovMap">				
 		
@@ -103,7 +92,10 @@
 					        THEN FLOOR(PPT.CALL_AMOUNT/1.1)
 							ELSE --> PPT.CALL_AMOUNT
 					   <!-- END    -->                  AS CALL_AMOUNT	     /* 지급액(부가세별도) */
-					 , PPT.PAYMENT_DT          AS PAYMENT_DT         /* 지급일정 */    
+					 , CASE WHEN PPT.PAYMENT_DT IS NOT NULL
+				            THEN PPT.PAYMENT_DT
+				            ELSE PPT.PAYMENT_CALL_DT
+				       END                     AS PAYMENT_DT
 				FROM   PJ_PAYMENT_TB    PPT
 				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
 				JOIN   PJ_MAIN_TB       PMT ON PMT.PJ_KEY            = PUR.BUY_FK_PJ_KEY         AND PMT.DELETE_YN = 'N'
@@ -112,39 +104,27 @@
 				JOIN   CMM_ACCOUNT_TB   CAT ON PMT.AC_KEY            = CAT.AC_KEY
 				JOIN   CMM_EMPLOYEE_TB  CET ON PMT.PJ_SALE_EMP_KEY   = CET.EMP_KEY		
 				WHERE  PPT.DELETE_YN = 'N'
-				  AND PPT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
 				
 				<if test="searchAcNm != null and searchAcNm != ''">
 				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
+				</if>
+				<if test='fundStatus == "NE" and searchFromDt != null and searchFromDt != "" and searchToDt != null and searchToDt != "" '>
+					AND PPT.PAYMENT_DT IS NULL
+					AND PPT.PAYMENT_CALL_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+				</if>
+				<if test='fundStatus == "E" and searchFromDt != null and searchFromDt != "" and searchToDt != null and searchToDt != "" '>
+					AND PPT.PAYMENT_DT IS NOT NULL
+					AND PPT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
 				</if>
 				 
 		) DAT
+		WHERE 1=1
+		<if test=" (fundStatus == null or fundStatus == '') and searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != '' ">
+			AND DAT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+		</if>
 		ORDER BY DAT.PAYMENT_DT ASC		  
 				
 	</select>
-	
-	
-	<select id="selectFundSchedulePcTotalAmount" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="Integer">
-	            
-		SELECT IFNULL(SUM(DAT.CALL_AMOUNT), 0)   AS CALL_AMOUNT
-		FROM (
-				SELECT <!-- CASE WHEN PPT.CALL_AMOUNT_TAX_YN = 'Y'
-					         THEN FLOOR(PPT.CALL_AMOUNT/1.1)
-								ELSE --> PPT.CALL_AMOUNT
-						 <!-- END    -->                  AS CALL_AMOUNT	     /* 지급액(부가세별도) */
-				FROM   PJ_PAYMENT_TB    PPT
-				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
-				JOIN   PJ_MAIN_TB       PMT ON PMT.PJ_KEY            = PUR.BUY_FK_PJ_KEY         AND PMT.DELETE_YN = 'N'
-				JOIN   CMM_ACCOUNT_TB   CAT ON PMT.AC_KEY            = CAT.AC_KEY
-				WHERE  PPT.DELETE_YN = 'N'
-				   AND PPT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
-				
-				<if test="searchAcNm != null and searchAcNm != ''">
-				  	AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
-				</if>
-		) DAT
-	</select>
-	
 	
 	 
 	 <select id="selectOrderProductSdList" parameterType="com.cep.mngProject.fundSchedule.vo.MngProjectFundScheduleVO" resultType="egovMap">

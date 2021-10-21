@@ -355,7 +355,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			}
 			else {
 				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
@@ -376,7 +376,7 @@
 					}
 					var button = new Array;
 					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 				} else {
 					alert('저장을 해주세요.');
 				}
@@ -406,7 +406,7 @@
 		<div class="left">
 			<ul class="ftw400">
 				<li class="colorWhite cursorP on">금액</li>
-				<li class="colorWhite cursorP">예상일정</li>
+				<li class="colorWhite cursorP" onclick="javascript:fn_next('guarantyInfo')">예상일정</li>
 			</ul>
 		</div>
 		<c:set var = "total" value = "0" />
@@ -429,7 +429,7 @@
 					<input type="hidden" id="ctKey" name="ctKey" value="${contractVO.ctKey }" />
 					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }" /> 
 					<input type="hidden" id="collectTurn" name="collectTurn" value="${contractVO.collectTurn }" /> 
-					<input type="hidden" name="pjStatusCd" value="PJST2000" />
+					<input type="hidden" name="statusCd" value="PJST2000" />
 					<table>
 						<tr class="ftw200">
 							<td class="firstRow">
@@ -448,7 +448,7 @@
 						</tr>
 						<tr class="ftw200">
 							<td>
-								<input type="text" id="ctDt" class="calendar" name="ctDt" placeholder="계약 일자" value="<c:out value="${displayUtil.displayDate(contractVO.ctDt)}"/>" required/>
+								<input type="text" id="ctDt" class="calendar" name="ctDt" placeholder="계약 일자" title="계약 일자" value="<c:out value="${displayUtil.displayDate(contractVO.ctDt)}"/>" required/>
 							</td>
 						</tr>
 						<tr class="ftw200">
@@ -473,25 +473,31 @@
 				</form>
 				<form id="salesListForm" name="salesListForm">
 					<table id="addRow">
-							<c:forEach var="result" items="${salesList }" varStatus="status">
-								<tr class='ftw200'>
-									<td>
-										${result.salesTurn }회차 :&nbsp;
-										<input type='text' name='salesCollectRate' id='rate${result.salesTurn }' placeholder='${result.salesTurn }회차 비율' numberOnly class='rateInfo' value="${result.salesCollectRate }" required/>
-										&nbsp;%&nbsp;&nbsp;&nbsp;
-										<input type='text' name='salesTurnAmount' id='amount${result.salesTurn }' placeholder='${result.salesTurn }회차 금액' amountOnly class='amount' value="${displayUtil.commaStr(result.salesTurnAmount) }" required/>&nbsp;원
-										<%-- <input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.collectTurn }'/>  --%>
-										<input type='hidden' name='salesKey' value="${result.salesKey }" id='salesKey${result.salesTurn }' />
-										<!-- <input type='hidden' name='salesCtClass' value='P' /> -->
-										<%-- <input type='hidden' class='salesChargeDt' name='salesChargeDt' value='${result.salesChargeDt }' /> --%>
-										<%-- <input type='hidden' name='collectTurn' value='${result.collectTurn }' /> --%>
-										<input type='hidden' name='salesTurn' value='${result.salesTurn }' />
-										<%-- <input type='hidden' name='salesTurnAmount' id="sAmount${status.count }" value='${result.salesTurnAmount }' /> --%>
-										<input type='hidden' name='isNew' value='N' />
-										&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type="text" id="salesChargeDt${result.salesTurn }" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(result.salesChargeDt)}"/>" required/>
-									</td>
-								</tr>
-							</c:forEach>
+						<c:set var="isFinished" value="N" />
+						<c:forEach var="result" items="${sdBillList }" varStatus="status">
+							<c:if test="${result.billIssueStatus ==  'M' or result.billIssueStatus == 'E'}">
+								<c:set var="isFinished" value="Y" />
+							</c:if>
+						</c:forEach>
+						<c:forEach var="result" items="${salesList }" varStatus="status">
+							<tr class='ftw200'>
+								<td>
+									${result.salesTurn }회차 :&nbsp;
+									<input type='text' name='salesCollectRate' id='rate${result.salesTurn }' placeholder='${result.salesTurn }회차 비율' numberOnly class='rateInfo' value="${result.salesCollectRate }" required <c:if test="${isFinished eq 'Y' }">disabled</c:if>/>
+									&nbsp;%&nbsp;&nbsp;&nbsp;
+									<input type='text' name='salesTurnAmount' id='amount${result.salesTurn }' placeholder='${result.salesTurn }회차 금액' amountOnly class='amount' value="${displayUtil.commaStr(result.salesTurnAmount) }" required <c:if test="${isFinished eq 'Y' }">disabled</c:if>/>&nbsp;원
+									<%-- <input type='hidden' name='ctKey' value="${result.ctKey }" id='ctKey${result.collectTurn }'/>  --%>
+									<input type='hidden' name='salesKey' value="${result.salesKey }" id='salesKey${result.salesTurn }' />
+									<!-- <input type='hidden' name='salesCtClass' value='P' /> -->
+									<%-- <input type='hidden' class='salesChargeDt' name='salesChargeDt' value='${result.salesChargeDt }' /> --%>
+									<%-- <input type='hidden' name='collectTurn' value='${result.collectTurn }' /> --%>
+									<input type='hidden' name='salesTurn' value='${result.salesTurn }' />
+									<%-- <input type='hidden' name='salesTurnAmount' id="sAmount${status.count }" value='${result.salesTurnAmount }' /> --%>
+									<input type='hidden' name='isNew' value='N' />
+									&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type="text" id="salesChargeDt${result.salesTurn }" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(result.salesChargeDt)}"/>" required/>
+								</td>
+							</tr>
+						</c:forEach>
 					</table>
 				</form>
 			</div>

@@ -1,53 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cep.mngProject.bill.service.impl.MngProjectBillMapper">
-
-	
-	<select id="selectBillList" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="egovMap">				
-		
-		SELECT PBT.BILL_NO                  AS BILL_NO
-		     , PBT.BILL_FK_PJ_KEY           AS BILL_FK_PJ_KEY
-		     , PBT.BILL_CT_FK_KEY           AS BILL_CT_FK_KEY        /* CMM_PURCHASE_TB = BY210001, CMM_SALES_DETAIL_TB=SD210050*/
-			 , PBT.BILL_AC_KEY              AS AC_KEY                /* 사업자번호 */
-		     , CAT.AC_NM                    AS AC_NM                 /* 상호  CMM_ACCOUNT_TB - AC_NM */
-		     , CAT.AC_CEO_NM                AS AC_CEO_NM             /* 대표자명 */
-			 , CBT.BILL_AC_DIRECTOR_KEY     AS BILL_AC_DIRECTOR_KEY 
-			 , CBT.BILL_TURN_NO             AS BILL_TURN_NO
-			 , PBT.BILL_AMOUNT              AS BILL_AMOUNT           /* 공급가액 */
-			 , FLOOR(PBT.BILL_AMOUNT * 0.1) AS BILL_TAX              /* 세액 - 부가세 포함여부에 따라 계산 필요 , 등록시 포함 필요 */
-			 , FLOOR(PBT.BILL_AMOUNT * 1.1) AS BILL_TOTAL_AMOUNT     /* 합계 */
-			 , PBT.BILL_ISSUE_DT            AS BILL_ISSUE_DT         /* 계산서 발행일자 */
-			 , PBT.BILL_ISSUE_EMAIL         AS BILL_ISSUE_EMAIL
-			 , PBT.BILL_MAPPING_YN          AS BILL_MAPPING_YN
-			 , PBT.REMARK                   AS REMARK                /* 비고 */
-			 , PBT.REG_DT                   AS REG_DT
-			 , PBT.REG_TM                   AS REG_TM
-			 , PBT.REG_EMP_KEY              AS REG_EMP_KEY
-			 , PBT.MOD_DT                   AS MOD_DT
-			 , PBT.MOD_TM                   AS MOD_TM
-			 , PBT.MOD_EMP_KEY              AS MOD_EMP_KEY
-		FROM PJ_PC_BILLING_TB    PBT
-		JOIN PJ_PC_BILLING_OP_TB PBO ON PBT.BILL_NO     = PBO.BILL_NO  
-		JOIN CMM_ACCOUNT_TB      CAT ON PBT.BILL_AC_KEY = CAT.AC_KEY
-		WHERE DELETE_YN = 'N'
-		<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
-			AND CBT.BILL_ISSUE_DT BETWEEN REPLACE(#{searchFromDate}, '-', '') AND REPLACE(#{searchToDate}, '-', '')
-		</if>
-		
-		<if test="searchAcNm != null and searchAcNm != ''">
-			AND CAT.AC_NM LIKE CONCAT('%', CONCAT(#{searchAcNm}, '%'))
-		</if>
-		
-		<if test="searchClassCd != null and searchClassCd != ''">
-			AND CBT.BILL_CLASS = #{searchClassCd}
-		</if>
-		
-		<if test="pjKey != null and pjKey != ''">
-			AND CBT.BILL_FK_PJ_KEY = #{pjKey}
-		</if>       
-				
-	</select>
-	
 	
 	<select id="selectSdBillList" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="egovMap">				
 		
@@ -57,6 +10,7 @@
 		     , PSB.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 계산서요청번호 */
 		     , PST.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일*/
 		     , PSB.BILL_AMOUNT             AS BILL_AMOUNT             /* 공급가액 */
+		     , PSB.BILL_CT_FK_KEY				AS BILL_CT_FK_KEY			/* 매입 관리키*/
 		     <!-- , PSB.BILL_TAX_YN             AS BILL_TAX_YN             /* TAX포함 여부 */
 		     , CASE WHEN PSB.BILL_TAX_YN = 'Y' THEN FLOOR(PSB.BILL_AMOUNT / 11)
 		            ELSE FLOOR(PSB.BILL_AMOUNT * 0.1)
@@ -67,18 +21,24 @@
 		     , CET.EMP_NM                  AS EMP_NM                  /* 담당자 */
 		     , PSB.BILL_ISSUE_STATUS       AS BILL_ISSUE_STATUS       /* 계산서 상태 */
 		     , PSB.REG_DT                  AS REG_DT                  /* 작성일자 */
-		     , CAT.AC_NM                   AS AC_NM                   /* 거래처 상호 */
+		     , CAT.AC_NM                   AS BILL_AC_NM                   /* 매출처 상호 */
+		     , PSB.BILL_AC_KEY				AS BILL_AC_KEY				/* 매출처 사업자 번호 */
 		     , PSB.REMARK                  AS REMARK                  /* 요청사항 OR 비고 */
 		     , PSB.BILL_ISSUE_TYPE         AS BILL_ISSUE_TYPE         /* 발행 타입 */
 		     , PSD.SALES_KEY               AS SALES_KEY               /* 수금완료 처리를 위한 수금테이블 키 */
 		     , PSD.SALES_COLLECT_FINISH_DT AS SALES_COLLECT_FINISH_DT /* 수금완료 일자 */
-		     , CAD.AC_DIRECTOR_NM          AS BILL_AC_DIRECTOR_NM     /* 거래처 담당자명 */
+		     , PSB.BILL_AC_DIRECTOR_NAME          AS BILL_AC_DIRECTOR_NAME     /* 매출처 담당자명 */
+		     , PSB.BILL_ISSUE_EMAIL          AS BILL_ISSUE_EMAIL     /* 발행 이메일 */
+		     , PM.PJ_NM						AS PJ_NM
+		     , CAT2.AC_NM					AS PJ_AC_NM
 		FROM       PJ_SD_BILLING_OP_TB     PSB
 		JOIN       PJ_SALES_DETAIL_TB      PSD  ON PSB.BILL_FK_PJ_KEY       = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN
 		LEFT JOIN  PJ_SD_BILLING_TB        PST  ON PSB.BILL_NO              = PST.BILL_NO
+		JOIN		PJ_MAIN_TB					PM	ON PSB.BILL_FK_PJ_KEY	= PM.PJ_KEY
 		JOIN       CMM_ACCOUNT_TB          CAT  ON PSB.BILL_AC_KEY          = CAT.AC_KEY
-		JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY
+		JOIN		CMM_ACCOUNT_TB			CAT2 ON PM.AC_KEY = CAT2.AC_KEY
 		JOIN       CMM_EMPLOYEE_TB         CET  ON PSB.REG_EMP_KEY          = CET.EMP_KEY
+		
 		WHERE  PSB.DELETE_YN      = 'N'
 		
 		<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
@@ -92,19 +52,14 @@
 		<if test="pjKey != null and pjKey != ''">
 			AND PSB.BILL_FK_PJ_KEY = #{pjKey}
 		</if>       
+		
+		<if test="billCtFkKey != null and billCtFkKey != ''">
+			AND PSD.SALES_KEY =  #{billCtFkKey}
+		</if> 
+		
+		ORDER BY PSB.BILL_TURN_NO
 				
 	</select>
-	
-	<update id="deleteBill" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO">
-	
-		UPDATE CMM_BILLING_TB
-		SET    DELETE_YN = 'Y'
-		WHERE  BILL_NO = #{billNo}
-	
-	</update>
-	
-	
-	
 	
 	<select id="selectBillBasicInfo" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="egovMap">				
 		
@@ -148,7 +103,6 @@
 				
 	</select>
 	
-	
 	<select id="selectCollectTurn" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="int">
 	
 		SELECT IFNULL(COLLECT_TURN, 0)   AS COLLECT_TURN
@@ -183,13 +137,14 @@
 	<select id="selectBillDetailInfo" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="egovMap">				
 		
 		SELECT PSO.BILL_FK_PJ_KEY          AS PJ_KEY                  /* 프로젝트 키 */
+			 , PSO.BILL_CT_FK_KEY 			AS BILL_CT_FK_KEY
 		     , PSO.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 게산서 요청 관리키 */
 		     , PSO.BILL_TURN_NO            AS BILL_TURN_NO            /* 계산서 회차 */
 		     , PSO.BILL_AMOUNT             AS BILL_AMOUNT             /* 발행 금액 */
 		     , PSO.BILL_AC_KEY             AS BILL_AC_KEY             /* 매출처 키 */
 		     <!-- , PSO.BILL_TAX_YN             AS BILL_TAX_YN  -->            /* 부가세 포함여부 */
 		     , CAT.AC_NM                   AS BILL_AC_NM              /* 매출처 명 */
-		     , PSO.BILL_AC_DIRECTOR_KEY    AS BILL_AC_DIRECTOR_KEY    /* 담당자 키 */
+		     , PSO.BILL_AC_DIRECTOR_NAME    AS BILL_AC_DIRECTOR_NAME    /* 담당자 이름 */
 		     , PSO.BILL_AC_DIRECTOR_TEL    AS BILL_AC_DIRECTOR_TEL    /* 담당자 연락처 */
 		     , PSO.BILL_ISSUE_EMAIL        AS BILL_ISSUE_EMAIL        /* 발행 이메일 */
 		     , PSO.BILL_ISSUE_TYPE         AS BILL_ISSUE_TYPE         /* 정발행 역발행 구분 */
@@ -221,12 +176,12 @@
 	
 	</select>
 	
-	
 	<insert id="insertBillRequest" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
 		INSERT INTO PJ_SD_BILLING_OP_TB
 		(
 			  BILL_CALL_KEY
 			, BILL_FK_PJ_KEY
+			, BILL_CT_FK_KEY
 			, BILL_TURN_NO
 			, BILL_AMOUNT
 			, BILL_ISSUE_EMAIL
@@ -234,7 +189,7 @@
 			, BILL_ISSUE_TYPE
 			, BILL_REQUEST_DT
 			, BILL_AC_KEY
-			, BILL_AC_DIRECTOR_KEY
+			, BILL_AC_DIRECTOR_NAME
 			, BILL_AC_DIRECTOR_TEL
 			, REMARK
 			, REG_DT
@@ -245,6 +200,7 @@
 		(
 			  make_key('BD')
 			, #{pjKey}
+			, #{salesKey}
 			, #{billTurnNo}
 			, #{billAmount}
 			, #{billIssueEmail}
@@ -252,7 +208,7 @@
 			, #{billIssueType}
 			, #{billRequestDt}
 			, #{acKey}
-			, #{billAcDirectorKey}
+			, #{billAcDirectorName}
 			, #{billAcDirectorTel}
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
@@ -265,78 +221,60 @@
 	<update id="updateBillRequest" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
 	
 		UPDATE PJ_SD_BILLING_OP_TB
-		SET   BILL_AMOUNT           = #{billAmount}
-			, BILL_ISSUE_EMAIL      = #{billIssueEmail}
-			, BILL_ISSUE_STATUS     = #{billIssueStatus}
-			, BILL_ISSUE_TYPE       = #{billIssueType} 
-			, BILL_REQUEST_DT       = #{billRequestDt}
-			, BILL_AC_DIRECTOR_KEY  = #{billAcDirectorKey}
-			, BILL_AC_DIRECTOR_TEL  = #{billAcDirectorTel}
-			, REMARK                = #{remark}
-			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
+		SET   
+			<if test="billAmount != null and billAmount != ''">
+			BILL_AMOUNT           = #{billAmount},
+			</if>
+			<if test="billIssueEmail != null and billIssueEmail != ''">
+			BILL_ISSUE_EMAIL      = #{billIssueEmail},
+			</if>
+			<if test="billIssueStatus != null and billIssueStatus != '' ">
+			BILL_ISSUE_STATUS     = #{billIssueStatus},
+			</if>
+			<if test="billIssueType != null and billIssueType != ''">
+			BILL_ISSUE_TYPE       = #{billIssueType},
+			</if>
+			<if test="billRequestDt != null and billRequestDt != ''">
+			BILL_REQUEST_DT       = #{billRequestDt},
+			</if>
+			<if test="billAcKey != null and billAcKey != ''">
+			BILL_AC_KEY				= #{billAcKey},
+			</if>
+			<if test="billAcDirectorName != null and billAcDirectorName != ''">
+			BILL_AC_DIRECTOR_NAME  = #{billAcDirectorName},
+			</if>
+			<if test="billAcDirectorTel != null and billAcDirectorTel != ''">
+			BILL_AC_DIRECTOR_TEL  = #{billAcDirectorTel},
+			</if>
+			<if test="remark != null and remark != ''">
+			REMARK                = #{remark},
+			</if>
+			MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
-			, MOD_EMP_KEY           = #{regEmpKey}
-		WHERE BILL_CALL_KEY         = #{billCallKey}
-	
-	</update>
-	
-	<update id="updateBillComplate" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
-	
-		UPDATE PJ_SD_BILLING_OP_TB
-		SET   BILL_ISSUE_STATUS     = #{billIssueStatus}
-			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
-			, MOD_EMP_KEY           = #{regEmpKey}
-		WHERE BILL_CALL_KEY         = #{billCallKey}
-	
-	</update>
-	
-	<insert id="insertBilling" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
-	
-		INSERT INTO PJ_SD_BILLING_TB
-		(
-			  BILL_NO
-			, BILL_FK_PJ_KEY
-			, BILL_AMOUNT
-			, BILL_ISSUE_DT
-			, BILL_MAPPING_YN
-			, REMARK
-			, REG_DT
-			, REG_TM
-			, REG_EMP_KEY
-		)
-		VALUES
-		(
-			  #{billNo}
-			, #{pjKey}
-			, #{billAmount}
-			, #{billIssueDt}
-			, #{billMappingYn}
-			, #{remark}
-			, DATE_FORMAT(NOW(),'%Y%m%d')
-			, DATE_FORMAT(NOW(),'%k%i%s')
-			, #{regEmpKey}
-		)
-	
-	</insert>
-	
-	<update id="updateBillMapping" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
-	
-		UPDATE PJ_SD_BILLING_OP_TB
-		SET   BILL_ISSUE_STATUS     = 'M'
-		    , BILL_NO               = #{billNo}
-			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
-			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
-			, MOD_EMP_KEY           = #{regEmpKey}
-		WHERE BILL_CALL_KEY         = #{billCallKey}
+			, MOD_EMP_KEY           = #{modEmpKey}
+		WHERE 1=1
+		<if test="billCallKey != null and billCallKey != ''">
+		AND BILL_CALL_KEY         = #{billCallKey}
+		</if>
+		<if test="billCallKey == null or billCallKey != ''">
+		AND BILL_FK_PJ_KEY         = #{pjKey}
+		AND BILL_TURN_NO		= #{billTurnNo}
+		</if>
+		
 	
 	</update>
 	
 	<update id="updateSalesDetailPayments" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
 	
 		UPDATE PJ_SALES_DETAIL_TB
-		SET   SALES_COLLECT_FINISH_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-		    , SALES_STATUS_CD         = 'E'
+		SET   
+			<if test='billIssueStatus == "E"'>
+				SALES_COLLECT_FINISH_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			</if>
+			<if test='billIssueStatus == "I"'>
+				SALES_COLLECT_FINISH_DT = null
+			</if>
+		    , SALES_STATUS_CD         = #{billIssueStatus}
 		    , MOD_DT                  = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM                  = DATE_FORMAT(NOW(),'%k%i%s')
 			, MOD_EMP_KEY             = #{regEmpKey}
@@ -344,23 +282,20 @@
 	
 	</update>
 	
-	<!-- XML 계산서 등록 시 '요청' 상태의 계산서 요청 정보 조회 -->
-	<select id="selectSdBillingOp" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO" resultType="egovMap">
+	<select id="selectXmlBillList" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO" resultType="egovMap">
 	
-		SELECT BILL_CALL_KEY       AS BILL_CALL_KEY
-		     , BILL_FK_PJ_KEY      AS BILL_FK_PJ_KEY
-			 , BILL_CT_FK_KEY      AS BILL_CT_FK_KEY
-			 , BILL_TURN_NO        AS BILL_TURN_NO
-			 , BILL_AMOUNT         AS BILL_AMOUNT
-			 , BILL_ISSUE_EMAIL    AS BILL_ISSUE_EMAIL
-			 , BILL_ISSUE_STATUS   AS BILL_ISSUE_STATUS
-			 , BILL_AC_KEY         AS BILL_AC_KEY
-			 , BILL_TAX_YN         AS BILL_TAX_YN
-		FROM   PJ_SD_BILLING_OP_TB
-		WHERE  BILL_CALL_KEY  = #{billCallKey}
+		SELECT 
+			BILL_NO
+			, BILL_FK_PJ_KEY
+			, BILL_CT_FK_KEY
+			, BILL_AMOUNT
+			, BILL_ISSUE_DT
+			, BILL_MAPPING_YN
+			, REMARK
+		FROM PJ_SD_BILLING_TB
+		WHERE BILL_NO = #{billNo}
 	
 	</select>
-	
 	
 	<insert id="insertSdBillingXml" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
 	
@@ -393,34 +328,49 @@
 	
 	</insert>
 	
-	<insert id="insertPcBillInfo" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
-		
-		INSERT INTO PJ_PC_BILLING_TB
-		(
-			  BILL_NO
-			, BILL_AMOUNT
-			, BILL_ISSUE_DT
-			, BILL_MAPPING_YN
-			, REG_DT
-			, REG_TM
-			, REG_EMP_KEY
-			, BILL_AC_KEY
-			, TAX_YN
-		)
-		VALUES
-		(
-			  #{billNo}
-			, #{billAmount}
-			, #{billIssueDt}
-			, 'N'
-			, DATE_FORMAT(NOW(),'%Y%m%d')
-			, DATE_FORMAT(NOW(),'%k%i%s')
-			, #{regEmpKey}
-			, #{acKey}
-			, 'N'
-		)
+	<update id="deleteSdBillingXml" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
 	
-	</insert>
+		UPDATE PJ_SD_BILLING_TB
+		SET
+			BILL_NO = CONCAT(BILL_NO, DATE_FORMAT(NOW(), '%Y%m%d%k%i%s'))
+			, DELETE_YN = 'Y'
+			, BILL_MAPPING_YN = 'N'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{regEmpKey}
+		WHERE
+			BILL_NO = #{billNo}
 	
+	</update>
+	
+	<update id="updateBillMapping" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
+	
+		UPDATE PJ_SD_BILLING_OP_TB
+		SET   BILL_ISSUE_STATUS     = #{billIssueStatus}
+			<if test='billIssueStatus == "R"'>
+				 , BILL_NO               = null
+			</if>
+			<if test='billIssueStatus == "M"'>
+				 , BILL_NO               = #{billNo}
+			</if>
+			, BILL_AC_DIRECTOR_NAME = #{billAcDirectorName}
+		    , REMARK			= #{remark}
+			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY           = #{regEmpKey}
+		WHERE BILL_CALL_KEY         = #{billCallKey}
+	
+	</update>
+	
+	<update id="updateBillComplate" parameterType="com.cep.mngProject.bill.vo.MngProjectBillVO">
+	
+		UPDATE PJ_SD_BILLING_OP_TB
+		SET   BILL_ISSUE_STATUS     = #{billIssueStatus}
+			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY           = #{regEmpKey}
+		WHERE BILL_CALL_KEY         = #{billCallKey}
+	
+	</update>
 	
 </mapper>

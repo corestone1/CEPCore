@@ -63,9 +63,9 @@ public interface ProjectDetailMapper {
 	
 	public EgovMap selectGuarantyBondInfo(GuarantyBondVO guarantyBondVO) throws Exception;
 	
-	public void requestGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception;
+	public int requestGuarantyBond(ProjectGuarantyBondVO guarantyBondVO) throws Exception;
 	
-	public void endGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception;
+	public void endGuarantyBond(ProjectGuarantyBondVO guarantyBondVO) throws Exception;
 	
 	public void modifyGuarantyBond(GuarantyBondVO guarantyBondVO) throws Exception;
 	
@@ -84,6 +84,8 @@ public interface ProjectDetailMapper {
 	public void deleteSalesDetail(ProjectContractSalesVO projectContractSalesVO) throws Exception;
 		
 	public void deleteGuarantyBond(ProjectGuarantyBondVO projectGuarantyBondVO) throws Exception;
+	
+	public int isMappedOrder(ProjectOrderVO projectOrderVO) throws Exception;
 	
 	public void deleteOrder(ProjectOrderVO projectOrderVO) throws Exception;
 	

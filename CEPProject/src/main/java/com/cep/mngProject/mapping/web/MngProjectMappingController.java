@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cep.mngProject.mapping.service.MngProjectMappingService;
 import com.cep.mngProject.mapping.vo.OrderBillVO;
 import com.cep.mngProject.order.service.MngProjectOrderService;
+import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 
 @Controller
 @RequestMapping("/mngProject/mapping")
@@ -35,7 +37,26 @@ public class MngProjectMappingController {
 	
 	@RequestMapping(value="/list.do")
 	public String selectMapping(@ModelAttribute("searchVO") OrderBillVO searchVO, ModelMap model) throws Exception {
+		
+		String toDay = null;
+		toDay = CepDateUtil.getToday(null);	
+		
 		try {
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtFrom(), ""))){
+				searchVO.setOrderDtFrom(searchVO.getOrderDtFrom().replace("-", ""));
+			} else {
+				searchVO.setOrderDtFrom(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
+			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtTo(), ""))){
+				searchVO.setOrderDtTo(searchVO.getOrderDtTo().replace("-", ""));
+			} else {
+				searchVO.setOrderDtTo(toDay);
+			}
+			
+			model.put("orderDtFrom", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtFrom(), null, null));
+			model.put("orderDtTo", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtTo(), null, null));
 			model.addAttribute("orderList", service.selectOrderBillList(searchVO));
 			model.put("displayUtil", new CepDisplayUtil());
 		}catch(Exception e){

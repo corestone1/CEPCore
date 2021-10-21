@@ -15,7 +15,7 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	private String gbKindCd;
 	private String gbStartDt;
 	private String gbEndDt;
-	private String gbIssueYn;
+	private String gbIssueStatus;
 	private String gbPublishDt;
 	private int gbAmount;
 	private String ctGbKey;
@@ -81,11 +81,11 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	public void setGbEndDt(String gbEndDt) {
 		this.gbEndDt = gbEndDt;
 	}
-	public String getGbIssueYn() {
-		return gbIssueYn;
+	public String getGbIssueStatus() {
+		return gbIssueStatus;
 	}
-	public void setGbIssueYn(String gbIssueYn) {
-		this.gbIssueYn = gbIssueYn;
+	public void setGbIssueStatus(String gbIssueStatus) {
+		this.gbIssueStatus = gbIssueStatus;
 	}
 	public String getGbPublishDt() {
 		return gbPublishDt;

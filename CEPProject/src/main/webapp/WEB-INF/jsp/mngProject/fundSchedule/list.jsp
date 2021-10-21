@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>수금/지급 현황</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -40,7 +40,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -97,8 +97,8 @@
 		.middle table tbody td:first-child,
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6) {
-			width: 76px;
-			max-width: 76px;
+			width: 97px;
+			max-width: 97px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
@@ -175,7 +175,7 @@
 		}
 		input[class="calendar"] {
 			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
@@ -193,29 +193,6 @@
 	       	document.listForm.submit(); 
 		}
 		
-		function fn_viewSalesDetail(pstPjKey){
-			
-			var url = '/mngProject/fundSchedule/viewProductDetail.do';
-			var dialogId = 'program_layer';
-			var varParam = { 'fundGb' : 'S', 'pjKey' : pstPjKey };
-			var button = new Array;
-			button = [];
-			
-			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
-			
-		}
-		
-		function fn_viewPaymentDetail(pstPjKey, pstBuyKey){
-			
-			var url = '/mngProject/fundSchedule/viewProductDetail.do';
-			var dialogId = 'program_layer';
-			var varParam = { 'fundGb' : 'P', 'pjKey' : pstPjKey, 'buyKey' : pstBuyKey };
-			var button = new Array;
-			button = [];
-			
-			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
-			
-		}
 	</script>
 </head>
 <body>
@@ -230,8 +207,13 @@
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
+						<form:select path="fundStatus">
+							<form:option value="">전체</form:option>
+							<form:option value="NE">미완료</form:option>
+							<form:option value="E">완료</form:option>
+						</form:select>
 						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from"/><label> ~ </label><form:input type="text" path="searchToDt" class="calendar" placeholder="to"/>
-						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" />
+						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -243,22 +225,24 @@
 								<tr>
 									<th scope="row">거래일자</th>
 									<th scope="row">프로젝트</th>
-									<th scope="row">거래처명</th>
+									<th scope="row">고객사</th>
 									<th scope="row">수금액(VAT별도)</th>
 									<th scope="row">담당자</th>
 									<th scope="row">수금일정</th>
 								</tr>
 							</thead>
 							<tbody>
+								<c:set var="sdTotal" value="0" />								
 								<c:forEach var="result" items="${salesList}" varStatus="status">
 									<tr>
 										<td><c:out value="${displayUtil.displayDate(result.ctDt)}" /></td>
-										<td><span class="textalignL" onclick="javascript:fn_viewSalesDetail('${result.pjKey}');"><c:out value="${result.pjNm}" /></span></td>
+										<td><span class="textalignL"><c:out value="${result.pjNm}" /></span></td>
 										<td><span><c:out value="${result.acNm}" /></span></td>
 										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesAmount)}" /></span></td>
 										<td><c:out value="${result.empNm}" /></td>
 										<td><c:out value="${displayUtil.displayDate(result.salesCollectDt)}" /></td>
 									</tr>
+									<c:set var = "sdTotal" value="${sdTotal + result.salesAmount }" />
 								</c:forEach>
 								<!-- 
 								<tr>
@@ -277,7 +261,7 @@
 							<table>
 								<tbody class="ftw400">
 									<tr>
-										<td colspan="5">합계<label class="colSum"><c:out value="${displayUtil.commaStr(salesTotalAmount) }"/>원 (부가세별도)</label></td>
+										<td colspan="5">합계<label class="colSum"><c:out value="${displayUtil.commaStr(sdTotal) }"/> 원 (부가세별도)</label></td>
 									</tr>
 								</tbody>
 							</table>
@@ -289,22 +273,24 @@
 								<tr>
 									<th scope="row">거래일자</th>
 									<th scope="row">프로젝트</th>
-									<th scope="row">거래처명</th>
+									<th scope="row">매입처</th>
 									<th scope="row">지급액(VAT별도)</th>
 									<th scope="row">담당자</th>
 									<th scope="row">지급일정</th>
 								</tr>
 							</thead>
 							<tbody>
+								<c:set var="pcTotal" value="0" />		
 								<c:forEach var="result" items="${paymentList}" varStatus="status">
 									<tr>
 										<td><c:out value="${displayUtil.displayDate(result.ctDt)}" /></td>
-										<td><span class="textalignL" onclick="javascript:fn_viewPaymentDetail('${result.pjKey}', '${result.buyKey}');"><c:out value="${result.pjNm}" /></span></td>
+										<td><span class="textalignL"><c:out value="${result.pjNm}" /></span></td>
 										<td><span><c:out value="${result.acNm}" /></span></td>
 										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.callAmount)}" /></span></td>
 										<td><c:out value="${result.empNm}" /></td>
 										<td><c:out value="${displayUtil.displayDate(result.paymentDt)}" /></td>
 									</tr>
+									<c:set var = "pcTotal" value="${pcTotal + result.callAmount }" />
 								</c:forEach>
 								<!-- 
 								<tr>
@@ -323,7 +309,7 @@
 							<table>
 								<tbody class="ftw400">
 									<tr>
-										<td colspan="5">합계<label class="paySum"><c:out value="${displayUtil.commaStr(paymentAmmount) }"/>원 (부가세별도)</label></td>
+										<td colspan="5">합계<label class="paySum"><c:out value="${displayUtil.commaStr(pcTotal) }"/>원 (부가세별도)</label></td>
 									</tr>
 								</tbody>
 							</table>

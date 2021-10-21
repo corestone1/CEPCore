@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>계산서 일정</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -40,7 +40,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -155,15 +155,19 @@
 			color: #26a07d;
 			background-color: #ecf6f4;
 			text-align: right;
-			width: 121px;
+			width: 119px;
 		}
 		.bottom table tr td:nth-child(2) {
-			width: 141px;
-			max-width: 141px;
+			width: 353px;
+			max-width: 353px;
 		}
 		.bottom table tr td:nth-child(3) {
-			width: 134px;
-			max-width: 134px;
+			width: 213px;
+			max-width: 213px;
+		}
+		.bottom table tr td:nth-child(4) {
+			width: 39px;
+			max-width: 39px;
 		}
 		input[type="text"] {
 		    height: 36px;
@@ -178,7 +182,7 @@
 		}
 		input[class="calendar"] {
 			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
@@ -218,9 +222,11 @@
 							<option value="3">3분기</option>
 							<option value="4">4분기</option>
 						</form:select>
-						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from"/><label> ~ </label><form:input type="text" path="searchToDt" class="calendar" placeholder="to"/>
-						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" />
-						<form:input type="text" path="searchPjNm" class="search" style="width: 250px;" placeholder="프로젝트명" />
+						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from" value="${searchParam.searchFromDt}"/>
+						<label> ~ </label>
+						<form:input type="text" path="searchToDt" class="calendar" placeholder="to" value="${searchParam.searchToDt}"/>
+						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input type="text" path="searchPjNm" class="search" style="width: 250px;" placeholder="프로젝트명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -240,19 +246,31 @@
 							</tr>
 						</thead>
 						<tbody>
+							<c:set var="totalAmount" value="0" />
+							<c:set var="totalTax" value="0" />
 							<c:forEach var="result" items="${billList}" varStatus="status">
 								<tr>
 									<td><c:out value="${displayUtil.displayDate(result.regDt)}" /></td>
 									<td><span class="textalignL"><c:out value="${result.pjNm}" /></span></td>
 									<td><span><c:out value="${result.acNm}" /></span></td>
-									<td>구매</td>
+									<td>
+										<c:choose>
+											<c:when test="${result.kind eq 'SD' }">
+												매출
+											</c:when>
+											<c:otherwise>
+												매입
+											</c:otherwise>
+										</c:choose>
+									</td>
 									<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesAmount)}" /></span></td>
 									<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesTax)}" /></span></td>
 									<td><c:out value="${displayUtil.displayDate(result.billDate)}" /></td>
 									<td><c:out value="${result.empNm}" /></td>
 								</tr>
+								<c:set var="totalAmount" value="${totalAmount + result.salesAmount }" />
+								<c:set var="totalTax" value="${totalTax + result.salesTax }" />
 							</c:forEach>
-
 							<!--
 							<tr>
 								<td>2018-12-12</td>
@@ -272,7 +290,8 @@
 					<table>
 						<tbody class="ftw400">
 							<tr>
-								<td colspan="5">합계</td>
+								<td></td><td></td><td></td>
+								<td>합계</td>
 								<td><span><c:out value="${displayUtil.commaStr(totalAmount) }"/></span></td>
 								<td><span><c:out value="${displayUtil.commaStr(totalTax) }"/></span></td>
 								<td></td>

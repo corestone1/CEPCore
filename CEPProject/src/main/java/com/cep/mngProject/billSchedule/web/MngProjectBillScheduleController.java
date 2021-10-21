@@ -41,8 +41,7 @@ public class MngProjectBillScheduleController {
 			EgovMap egovMap = service.selectBillScheduleList(searchVO);
 			//List 조회
 			model.addAttribute("billList", egovMap.get("billList"));
-			model.addAttribute("totalAmount", egovMap.get("totalAmount"));
-			model.addAttribute("totalTax", egovMap.get("totalTax"));
+			model.addAttribute("searchParam", egovMap.get("searchParam"));
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			
 		} catch(Exception e) {

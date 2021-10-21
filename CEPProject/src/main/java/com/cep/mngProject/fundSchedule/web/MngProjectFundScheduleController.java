@@ -33,10 +33,8 @@ public class MngProjectFundScheduleController {
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			
 			model.addAttribute("salesList", legovMap.get("salesList"));
-			model.addAttribute("salesTotalAmount", legovMap.get("salesTotalAmount"));
 			
 			model.addAttribute("paymentList", legovMap.get("paymentList"));
-			model.addAttribute("paymentAmmount", legovMap.get("paymentAmmount"));
 			
 		}catch(Exception e){
 			logger.error("{}", e);

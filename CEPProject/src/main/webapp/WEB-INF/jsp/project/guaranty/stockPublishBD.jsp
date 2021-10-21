@@ -3,35 +3,51 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/popup.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/datepicker.min.css'/>"/>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+	<script src="<c:url value='/js/popup.js'/>"></script>
+	<script src="<c:url value='/js/common.js'/>"></script>
+	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
 		.popContainer .top {
-			width: 100%;
-			height: 103px;
+			width: calc(100% - 1px);
+			height: 71px;
 			border-bottom: 4px solid #4b3a93;
 			position: absolute;
 			top: 0;
+			left: 0;
 		}
 		.popContainer .top > div {
 			font-size: 24px;
-			padding-left: 34px;
-			padding-top: 43px;
+			padding-left: 21px;
+			padding-top: 21px;
 		}
 		.popContainer .contents {
 			position: absolute;
-			width: 648px;
+			width: 653px;
 			height: 472px;
-			top: 107px;
+			top: 75px;
+		    left: 0;
 			z-index: 3;
 			background-color: #f6f7fc;
-			/* overflow-y: auto; */
+			overflow: hidden;
 		}
 		.popContainer .contents > div {
 			width: 100%;
 		}
 		.popContainer .contents > div:first-child {
-			width: 433px;
+			width: calc(100% - 80px);
 			min-height: 408px;
-			margin: 10px 40px 15px 40px;
+			margin: 10px 40px 0px 40px;
 		}
 		
 		.popContainer .contents > div:last-child {
@@ -128,6 +144,31 @@
 			color: #21a17e;
 		}
 		
+		#altBox {
+			position: absolute;
+		    bottom: 54px;
+		    width: 232px;
+		    font-size: 14px;
+		    font-weight: 100;
+		    padding: 4px;
+		    color: #fff;
+		    background-image: linear-gradient(96deg,#0c93ed,#6b87e7);
+	        text-align: center;
+		}
+		
+		#altBox:after {
+			border-width: 9px 7px;
+		    left: 50%;
+		    margin-left: 0px;
+		    border-color: #588AE8 transparent transparent transparent;
+		    bottom: -18px;
+		    content: ' ';
+		    position: absolute;
+		    width: 0;
+		    height: 0;
+		    border-style: solid;
+		}
+		
 	</style>
 	
 	
@@ -166,8 +207,13 @@
 	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 	     	    dataType: 'json',
 	            async : false,
-	        	success:function(data){		  
-	        		alert("발행 요청되었습니다.!");
+	        	success:function(data){	
+	        		if(data.successYN == "Y") {
+	        			alert("발행 요청되었습니다.");
+	        			location.reload();
+	        		} else {
+	        			alert("발행 요청이 실패하였습니다.");
+	        		}
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -214,15 +260,13 @@
 	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 	     	    dataType: 'json',
 	            async : false,
-	        	success:function(data){		  
-	        		alert("보증증권 정보가 수정 되었습니다.");
-	        		var dialogId = 'program_layer';
-	    			
-	    			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'bdKey' : $('#ipt_bdKey').val()};
-	    			
-	    			var button = new Array;
-	    			button = [];
-	    			showModalPop(dialogId, "/project/detail/viewStockPublishBD.do", varParam, button, '', 'width:648px;height:575px');
+	        	success:function(data){		
+	        		if(data.successYN == "Y") {
+	        			alert("보증증권 정보가 수정 되었습니다.");
+	        			location.reload();
+	        		} else {
+	        			alert("보증증권 정보가 수정이 실패하였습니다.");
+	        		}
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -236,41 +280,59 @@
 		
 		function fnGbEnd() {
 			
-			var formData = $("#m_frm_gb").serializeArray();
-			
-			for(var i = 0; i < formData.length; i++)
-			{
-				//보증기간, 발행일
-				if('bdGbFinishDt'   == formData[i]['name']
-				|| 'bdGbFinishDt'   == formData[i]['name']){
-					formData[i]['value'] = removeData(formData[i]['value'], '-');
-				}
-				 
-				//금액
-				if('bdGbBdAmount' == formData[i]['name']
-				|| 'bdGbAmount'   == formData[i]['name']){
-					formData[i]['value'] = removeCommas(formData[i]['value']);
+			if($("#m_ipt_bdGbFinishDt").val() == null || $("#m_ipt_bdGbFinishDt").val().length == 0) {
+				alert("발행일을 입력해주세요.");
+				$("#m_ipt_bdGbFinishDt").focus();
+			} else if($("#m_ipt_bdGbAmount").val() == null || $("#m_ipt_bdGbAmount").val() == 0 || $("#m_ipt_bdGbAmount").val().length == 0) {
+				alert("증권금액을 입력해주세요.");
+				$("#m_ipt_bdGbAmount").focus();
+			} else {
+				
+				var formData = $("#m_frm_gb").serializeArray();
+				
+				for(var i = 0; i < formData.length; i++)
+				{
+					//보증기간, 발행일
+					if('bdGbFinishDt'   == formData[i]['name']
+					|| 'bdGbFinishDt'   == formData[i]['name']){
+						formData[i]['value'] = removeData(formData[i]['value'], '-');
+					}
+					 
+					//금액
+					if('bdGbBdAmount' == formData[i]['name']
+					|| 'bdGbAmount'   == formData[i]['name']){
+						formData[i]['value'] = removeCommas(formData[i]['value']);
+					}
+					
+					console.log(i+" : " + formData[i]['name'] + " : " + formData[i]['value']);
 				}
 				
-				console.log(i+" : " + formData[i]['name'] + " : " + formData[i]['value']);
+				$.ajax({
+		        	url :"/project/detail/endBiddingGb.do",
+		        	type:"POST",  
+		            data: formData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		if(data.successYN == "Y") {
+		        			alert("발행이 완료 처리되었습니다.");
+		        			location.reload();
+		        		} else {
+		        			alert("발행 완료가 실패하였습니다.");
+		        		}
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	});
 			}
-			
-			$.ajax({
-	        	url :"/project/detail/endBiddingGb.do",
-	        	type:"POST",  
-	            data: formData,
-	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-	     	    dataType: 'json',
-	            async : false,
-	        	success:function(data){		  
-	        		alert("발행이  완료 처리되었습니다.!");
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	    	});
+		}
+		
+		window.onunload = function() {
+			opener.window.location.reload();
 		}
 		
 	</script>
@@ -309,9 +371,9 @@
 						</tr>
 						
 						<tr id="m_tr_account" >
-							<td class="tdTitle">임찰금액(VAT포함)</td>
+							<td class="tdTitle">입찰금액</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text" id="ipt_bdGbBdAmount" name="bdGbBdAmount" value="${displayUtil.commaStr(gbInfo.bdGbBdAmount)}"/> 
+								<input type="text" id="ipt_bdGbBdAmount" name="bdGbBdAmount" value="${displayUtil.commaStr(gbInfo.bdGbBdAmount)}" amountonly/> 
 							</td>
 						</tr>
 						
@@ -343,7 +405,7 @@
 							<tr id="m_tr_account" <c:if test='${gbInfo.bdGbFinishYn eq "N"}'>style="display: none;" </c:if>>
 								<td class="tdTitle">증권금액</td>
 								<td id="m_td_account" class="tdContents">
-									<input type="text" id="m_ipt_bdGbAmount" name="bdGbAmount" value="${displayUtil.commaStr(gbInfo.bdGbAmount)}"/>
+									<input type="text" id="m_ipt_bdGbAmount" name="bdGbAmount" value="${displayUtil.commaStr(gbInfo.bdGbAmount)}" amountonly/>
 								</td>
 							</tr>
 						</c:when>

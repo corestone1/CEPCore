@@ -154,7 +154,7 @@
 			border-right: 1px solid #ebe9ee;
 		}
 		form .contents .dtl tr td:last-child {
-			width: 770px;
+			width: 774px;
 		}
 		
 		input[type="text"] {
@@ -271,7 +271,7 @@
 			var button = new Array;
 			button = [];
 			
-			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1125px;height:673px');
+			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1144px;height:708px');
 			
 		}
 		/* 

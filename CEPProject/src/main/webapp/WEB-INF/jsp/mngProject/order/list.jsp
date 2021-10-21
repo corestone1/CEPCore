@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>CEP 샘플 화면(forecast list)</title>
+	<title>발주 목록</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -203,7 +203,7 @@
 		}
 		input[class="calendar"] {
 			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
@@ -241,24 +241,22 @@
 			*/
 			$('#fl tr').each(function(index, item) {
 				if(index != 0) {
-					$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'"  class="tCheck" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" name="gubun" value="'+ index +'"  class="tRadio" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				}
 			});
 			
 			
 			
-			$('#btnMelete').click(function() {
-				
-				alert('btnMelete');
+			$('#btnModify').click(function() {
 				
 				if($('input[name="gubun"]').is(':checked')) {
-					var litIdx = parseInt($('input[name="gubun"]:checked').val());
-					var jsonData = {'SP_KEY' : $('input[name="spKey"]').eq(litIdx).val()};
-						
-			        //수정 팝업 호출
+					/* var litIdx = parseInt($('input[name="gubun"]:checked').val());
+					var jsonData = {'SP_KEY' : $('input[name="spKey"]').eq(litIdx).val()}; */
+					
+					fn_detailPop($('input[name="gubun"]:checked').parent().next().next().next().children().eq(0).val());
 					
 				} else {
-					alert("수정할 대상을 선택하세요 !!");
+					alert("수정할 대상을 선택하세요.");
 					
 					return false;
 				}				
@@ -300,7 +298,7 @@
 					}
 					
 				} else {
-					alert("삭제할 대상을 선택하세요 !!");
+					alert("삭제할 대상을 선택하세요.");
 					
 					return false;
 				}				
@@ -318,7 +316,7 @@
 				}
 				var button = new Array;
 				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:608px'); 
 			/* } */
 		}
 		
@@ -328,24 +326,43 @@
            	document.listForm.submit(); 
 		}
 
-		function fn_detailPop(pstOrderKey) {
+		function fn_detailPop(pjKey) {
 			
 			//alert(pstOrderKey);
 			
-			var url = '/mngProject/order/addInfo.do?orderKey=' + pstOrderKey;
+			/* var url = '/mngProject/order/addInfo.do?orderKey=' + pstOrderKey;
 			//var url = '/mngProject/order/addInfo.do';
 			var dialogId = 'program_layer';
 			//var varParam = { 'orderKey' : pstOrderKey };
 			var varParam = { };
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px'); 
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  */
+			
+			var url = '/project/write/orderInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"pjKey": pjKey
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 		}
 		
+		function fn_viewDetail(pjKey) {
+			form = document.listForm;
+			form.pjKey.value = pjKey;
+			form.workClass.value = "입찰_첨부파일";
+			form.action = "<c:url value='/project/detail/main.do?isOrderDetail=true'/>";
+			
+			form.submit(); 
+		} 
 	</script>
 </head>
 <body>
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
+		<input type="hidden" id="workClass" name="workClass" />
+		<input type="hidden" id="pjKey" name="pjKey" />
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
 		<div class="contentsWrap">
@@ -353,7 +370,7 @@
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">발주 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<!-- 
@@ -363,10 +380,10 @@
 							<form:option value="M">유지보수</form:option>
 						</form:select>
 						 -->
-						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="from"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="to"/>
-						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;"/>
-						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;"/>
-						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명"/>
+						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="발주시작일(from)" value="${orderDtFrom }"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="발주종료일(to)" value="${orderDtTo }"/>
+						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span><img onclick="javascript:fn_searchList();" src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -395,14 +412,14 @@
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
 									<td><c:out value="${result.acNm}"/></td>
-									<td><a href="javascript:fn_detailPop('${result.orderKey}')" ><c:out value="${result.pjNm}"/></a></td>
+									<td><input type="hidden" value="${result.pjKey }" /><a href="javascript:fn_viewDetail('${result.pjKey}')"><c:out value="${result.pjNm}"/></a></td>
 									<td><c:out value="${displayUtil.displayDate(result.orderDt)}"/></td>
 									<td><c:out value="${result.orderKey}"/></td>
 									<td><c:out value="${result.orderAcNm}"/></td>
 									<td><c:out value="${result.orderCount}"/></td>
 									<td><c:out value="${displayUtil.commaStr(result.orderAmount)}"/></td>
 									<td><c:out value="${result.orderEmpNm}"/></td>
-									<td><c:out value="${result.salseEmpNm}"/></td>
+									<td><c:out value="${result.salesEmpNm}"/></td>
 								</tr>
 								<input type="hidden" name="orderKey" value="${result.orderKey}"/>
 							</c:forEach>						

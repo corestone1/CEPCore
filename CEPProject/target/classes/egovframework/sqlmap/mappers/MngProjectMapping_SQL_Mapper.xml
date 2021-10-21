@@ -256,7 +256,7 @@
 		     , BILL_AC_KEY
 		     , BILL_AMOUNT 
 		     , BILL_NO 
-		FROM PJ_PC_BILLING_TB PPB
+		FROM CMM_PC_BILLING_TB PPB
 		JOIN CMM_ACCOUNT_TB CA
 		ON PPB.BILL_AC_KEY  = CA.AC_KEY
 		WHERE PPB.DELETE_YN='N'
@@ -279,7 +279,7 @@
 	
 	<update id="updatePurchaseBill" parameterType="java.util.HashMap">
 		<foreach collection="billList" item="item" separator=";" close=";">
-			UPDATE PJ_PC_BILLING_TB 
+			UPDATE CMM_PC_BILLING_TB 
 			SET
 				BILL_MAPPING_YN='Y'
 				, BILL_CT_FK_KEY = #{item.billCtFkKey}
@@ -287,13 +287,14 @@
 				, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY=#{modEmpKey}
+				, BILL_CT_CLASS_CD = #{billCtClassCd}
 			WHERE BILL_NO=#{item.billNo}
 			AND DELETE_YN='N'
 		</foreach>
 	</update>
 	
 	<insert id="insertPcBillingOpInfo" parameterType="java.util.HashMap">
-		INSERT INTO PJ_PC_BILLING_OP_TB (
+		INSERT INTO CMM_PC_BILLING_OP_TB (
 			BILL_CALL_KEY
 			, BILL_NO
 			, BILL_FK_PJ_KEY
@@ -313,7 +314,7 @@
 			, #{item.billNo}
 			, #{item.billFkPjKey}
 			, #{item.billCtFkKey}
-			, (SELECT (SELECT COUNT(*) FROM PJ_PC_BILLING_OP_TB BO WHERE BO.BILL_CT_FK_KEY=#{item.billCtFkKey} AND BO.DELETE_YN='N') + 1) 
+			, (SELECT (SELECT COUNT(*) FROM CMM_PC_BILLING_OP_TB BO WHERE BO.BILL_CT_FK_KEY=#{item.billCtFkKey} AND BO.DELETE_YN='N') + 1) 
 			, #{item.billAmount}
 			, 'M'
 			, #{item.billAcKey}
@@ -326,7 +327,7 @@
 	</insert>
 	
 	<update id="updatePcBillingOpInfo" parameterType="purchaseBillOpVO">
-		UPDATE PJ_PC_BILLING_OP_TB SET
+		UPDATE CMM_PC_BILLING_OP_TB SET
 			MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
 			<if test="billTurnNo != null and billTurnNo != '' and billTurnNo != 0">
 				, BILL_TURN_NO = #{billTurnNo}

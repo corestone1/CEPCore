@@ -35,13 +35,13 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('./images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
 		}
 		.contentsWrap .contents .top input[type="text"] {
-			width: 260px;
+			width: 200px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -173,7 +173,7 @@
 			margin-top: 22px;
 		}
 		input[class^="calendar"] {
-			width: 150px;
+			width: 150px !Important;
 		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
@@ -211,7 +211,7 @@
 		}
 		
 		function fn_search() {
-			var html = '';
+			/* var html = '';
 	        var page = '';
 	        $.ajax({
 	        	url: "/project/searchList.do",
@@ -249,13 +249,15 @@
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        		}
 	        	}
-	        });
+	        }); */
+			document.listForm.action = "/project/list.do";
+           	document.listForm.submit(); 
 		}
 		
 		function fn_detail(pjKey) {
 			form = document.listForm;
 			form.pjKey.value = pjKey;
-			form.workClass.value = "입찰";
+			form.workClass.value = "입찰_첨부파일";
 			/* form.action = "<c:url value='/project/detail/bidding.do'/>"; */
 			form.action = "<c:url value='/project/detail/main.do'/>";
 			
@@ -478,11 +480,18 @@
 						<div class="addBtn floatL cursorP" onclick="tmp9();" style="width: 79px; border-radius: 0; height: 35px;"><label style="font-size: 16px; margin: 0 5px; color: #fff; line-height: 31px;">기본정보</label></div> -->
 					</div>
 					<div class="floatR">
-						<input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value=""/>
-						<%-- <c:out value="${searchVO.searchFromDt}"/> --%>
+						<form:input path="searchFromDt" type="text" placeholder="프로젝트시작일(from)" class="calendar fromDt" value="${searchFromDt}"/> 
 						<label> ~ </label>
-						<input type="text" class="calendar toDt" placeholder="to" id="searchToDt" name="searchToDt" value="<c:out value="${searchVO.searchToDt}"/>"/>
-						<input type="text" name="searchKeyword" id="searchKeyword" class="search" onKeyPress="if(event.keyCode==13){fn_search();}"placeholder="프로젝트명"  value="<c:out value="${searchVO.searchKeyword}"/>" />
+						<form:input path="searchToDt" type="text" placeholder="프로젝트종료일(to)" class="calendar toDt" value="${searchToDt}"/>
+						<%-- <input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value="${searchFromDt }"/>
+						<input type="text" class="calendar toDt" placeholder="to" id="searchToDt" name="searchToDt" value="${searchToDt }"/> --%>
+						<form:select path="searchFlag">
+							<form:option value="">구분</form:option>
+							<form:option value="AC">고객사명</form:option>
+							<form:option value="NM">프로젝트명</form:option>
+						</form:select>
+						<%-- <form:input path="searchKeyword" type="text" class="search" onKeyPress="if(event.keyCode==13){fn_search();}"placeholder="검색어"  value="${searchVO.searchKeyword}" /> --%>
+						<form:input path="searchKeyword" type="text" class="search" placeholder="검색어" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<a href="javascript:fn_search();" class="veralignT"><img src="<c:url value='/images/icon_search.png'/> " /></a>
 					</div>
 					<div class="floatC"></div>
@@ -511,7 +520,7 @@
 		            					<c:out value="${result.pjKey}"/>
 		            					<input type="hidden" value="<c:out value="${result.pjKey}"/>" />
 		            				</td>
-		            				<td align="left" class="listtd"><span><c:out value="${result.acKey}"/></span></td>
+		            				<td align="left" class="listtd"><span><c:out value="${result.acNm}"/></span></td>
 		            				<td align="left" class="listtd"><span><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
 		            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjStartDt)}"/></td>
 		            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjEndDt)}"/></td>

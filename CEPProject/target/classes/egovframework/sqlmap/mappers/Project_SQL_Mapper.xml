@@ -36,29 +36,29 @@
 			FROM PJ_MAIN_TB
 			WHERE 1=1
 			<if test="searchFromDt != null and searchFromDt != ''">
-					AND DATE_FORMAT(PJ_START_DT, '%Y-%m-%d') >= #{searchFromDt}
+					AND PJ_START_DT >= #{searchFromDt}
 			</if>
 			<if test="searchToDt != null and searchToDt != ''">
 				<![CDATA[
-					AND DATE_FORMAT(PJ_END_DT, '%Y-%m-%d') <= #{searchToDt}
+					AND PJ_END_DT <= #{searchToDt}
 				]]>
 			</if> 
-			<if test="searchKeyword != null and searchKeyword != ''">
+			<!-- <if test="searchKeyword != null and searchKeyword != ''">
 					AND PJ_NM LIKE CONCAT('%' , #{searchKeyword}, '%')
-			</if> 
+			</if>  -->
 			
 			<if test="searchFlag != null and searchFlag != ''" >
 			
 				<if test="searchFlag.equals('PK')" >
-	  				AND PJ_KEY LIKE CONCAT('%', #{searchValue}, '%')
+	  				AND PJ_KEY LIKE CONCAT('%', #{searchKeyword}, '%')
 	  			</if>
 			  	
 				<if test="searchFlag.equals('AC')" >
-		  			AND (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) LIKE CONCAT('%', #{searchValue}, '%')
+		  			AND (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) LIKE CONCAT('%', #{searchKeyword}, '%')
 		  		</if>
 		  		
 		  		<if test="searchFlag.equals('NM')" >
-		  			AND PJ_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  			AND PJ_NM LIKE CONCAT('%', #{searchKeyword}, '%')
 		  		</if>
 		  </if>
 		  ORDER BY PJ_KEY DESC
@@ -101,18 +101,25 @@
 			, PJ.SP_KEY
 			, PJ.PJ_LOSE_CAUSE
 			, PJ.PJ_SJ_YN
-		FROM PJ_MAIN_TB PJ, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD, CMM_EMPLOYEE_TB CE
-		WHERE PJ_KEY=#{pjKey}
-			AND PJ.AC_KEY = CA.AC_KEY		
-		  	AND PJ.AC_KEY = AD.AC_KEY			
-		  	AND PJ.AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
-		  	AND PJ.PJ_SALE_EMP_KEY = CE.EMP_KEY
+			, PJ.PJ_STATUS_CD
+			, PC.CT_DT
+		FROM PJ_MAIN_TB PJ
+		LEFT OUTER JOIN CMM_ACCOUNT_TB CA 
+		ON PJ.AC_KEY = CA.AC_KEY		
+		LEFT OUTER JOIN CMM_ACCOUNT_DIRECTOR_TB AD 
+		ON PJ.AC_KEY = AD.AC_KEY	AND PJ.AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+		LEFT OUTER JOIN CMM_EMPLOYEE_TB CE
+		ON PJ.PJ_SALE_EMP_KEY = CE.EMP_KEY
+		LEFT OUTER JOIN PJ_CONTRACT_TB PC
+		ON PJ.PJ_KEY = PC.PJ_KEY
+		WHERE PJ.PJ_KEY=#{pjKey}
 		  	AND PJ.DELETE_YN='N'
 	</select>
 	
 	<update id="updateStatusCd" parameterType="String">
 		UPDATE PJ_MAIN_TB
-		SET PJ_STATUS_CD = #{1}
+		SET 
+			PJ_STATUS_CD = IF(PJ_STATUS_CD >= #{1}, PJ_STATUS_CD, #{1})
 		WHERE PJ_KEY = #{0}
 	</update>
 	
@@ -287,6 +294,9 @@
 			, BD_GB_FINISH_YN
 			</if> -->
 			, BD_LIMIT_DT
+			<if test='bdGbYn == "Y"'>
+			, BD_GB_FINISH_YN
+			</if>
 			<if test="bdLimitTm != null and bdLimitTm != ''">
 			, BD_LIMIT_TM
 			</if>
@@ -326,6 +336,9 @@
 			</if>
 			, #{bdGbFinishYn} -->
 			, #{bdLimitDt}
+			<if test='bdGbYn == "Y"'>
+			, 'N'
+			</if>
 			<if test="bdLimitTm != null and bdLimitTm != ''">
 			, #{bdLimitTm}
 			</if>
@@ -356,8 +369,8 @@
 			, BD_LIMIT_DT = #{bdLimitDt}
 			, BD_PROPOSAL_PRESENT_YN = #{bdProposalPresentYn}
 			, BD_PROPOSAL_YN = #{bdProposalYn}
-			<if test="bdGbFinishYn != null and bdGbFinishYn != '' ">
-				, BD_GB_FINISH_YN = #{bdGbFinishYn}
+			<if test='bdGbYn == "Y"'>
+				, BD_GB_FINISH_YN = 'N'
 			</if>
 			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
 				, BD_GB_AMOUNT=#{bdGbAmount}
@@ -546,21 +559,21 @@
 			, BL.BILL_NO
 			, PC.BUY_KEY
 			, (SELECT CC.AC_NM FROM CMM_ACCOUNT_TB CC WHERE PP.MF_AC_KEY = CC.AC_KEY) AS MF_AC_NM
-		FROM 
-			PJ_ORDER_TB OD, 
-			PJ_ORDER_PRODUCT_TB OP,
-			CMM_ACCOUNT_TB AC,
-			PJ_PURCHASE_TB PC,
-			PJ_PC_BILLING_TB BL,
-			PM_PRODUCT_MNG_TB PP
-		WHERE OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
-			AND OD.ORDER_AC_KEY = AC.AC_KEY
-			AND OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
-			AND PC.BUY_KEY = BL.BILL_CT_FK_KEY
-			AND OP.ORDER_PM_FK_KEY = PP.PM_KEY
-			AND OD.ORDER_CT_FK_KEY=#{pjKey}
+		FROM PJ_ORDER_TB OD
+		JOIN PJ_ORDER_PRODUCT_TB OP
+		ON OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
+		JOIN CMM_ACCOUNT_TB AC
+		ON OD.ORDER_AC_KEY = AC.AC_KEY
+		JOIN PJ_PURCHASE_TB PC
+		ON OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
+		LEFT OUTER JOIN CMM_PC_BILLING_TB BL
+		ON PC.BUY_KEY = BL.BILL_CT_FK_KEY
+		JOIN PM_PRODUCT_MNG_TB PP
+		ON OP.ORDER_PM_FK_KEY = PP.PM_KEY
+		WHERE OD.ORDER_CT_FK_KEY=#{pjKey}
 			AND OD.DELETE_YN='N'
 			AND PC.DELETE_YN='N'
+			AND BL.BILL_CT_CLASS_CD = 'PJ'
 	</select>
 	
 	<update id="updateContractInfo" parameterType="projectContractSalesVO">
@@ -628,12 +641,13 @@
 		SELECT 
 			GB.GB_KEY
 			, GB.GB_KIND_CD
-			, GB.GB_ISSUE_YN
+			, GB.GB_ISSUE_STATUS
 			, GB.GB_PUBLISH_DT
 			, GB.GB_AMOUNT
 			, GB.SALES_KEY
 			, GB.GB_START_DT
 			, GB.GB_END_DT
+			, SD.SALES_TURN
 		FROM PJ_GUARANTY_BOND_TB GB
 		JOIN PJ_SALES_DETAIL_TB  SD
 		ON GB.SALES_KEY = SD.SALES_KEY
@@ -650,7 +664,7 @@
 			, GB_KIND_CD
 			, GB_START_DT
 			, GB_END_DT
-			, GB_ISSUE_YN
+			, GB_ISSUE_STATUS
 			, GB_PUBLISH_DT
 			, GB_AMOUNT
 			, DELETE_YN
@@ -661,7 +675,7 @@
 			, #{gbKindCd} 
 			, #{gbStartDt}
 			, #{gbEndDt}
-			, #{gbIssueYn}
+			, 'I'
 			, #{gbPublishDt}
 			, #{gbAmount}
 			, 'N'
@@ -670,11 +684,20 @@
 	
 	<update id="updateGuarantyInfo" parameterType="guarantyBondVO">
 		UPDATE PJ_GUARANTY_BOND_TB SET
-			GB_START_DT = #{gbStartDt}
-			, GB_END_DT = #{gbEndDt}
-			, GB_ISSUE_YN = #{gbIssueYn}
-			, GB_AMOUNT = #{gbAmount}
-			, GB_PUBLISH_DT = #{gbPublishDt}
+			<if test="gbStartDt != null and gbStartDt != '' ">
+				GB_START_DT=#{gbStartDt},
+			</if>
+			<if test="gbEndDt != null and gbEndDt != '' ">
+				GB_END_DT=#{gbEndDt},
+			</if>
+		<!-- 	, GB_ISSUE_STATUS = #{gbIssueStatus} -->
+			<if test="gbAmount != null and gbAmount != '' and gbAmount != 0">
+				GB_AMOUNT=#{gbAmount},
+			</if>
+			<if test="gbPublishDt != null and gbPublishDt != '' ">
+				GB_PUBLISH_DT=#{gbPublishDt},
+			</if>
+			DELETE_YN = 'N'
 		WHERE GB_KEY=#{gbKey}
 	</update>
 	
@@ -1089,6 +1112,7 @@
 			, INB.INB_CLASS
 			, INB.INB_PM_KEY
 			, PM.PM_NM_CD AS inbPmNm
+			, PJ.PJ_STATUS_CD AS PJ_STATUS_CD
 			, INB.INB_PM_SERIAL_NO
 			, INB.INB_DELIVERY_DT
 			, INB.INB_PM_VER
@@ -1098,11 +1122,12 @@
 			, INB.INB_MNG_IP
 			, INB.INB_PM_TYPE
 			, INB.REMARK
-		FROM PJ_INSTALL_AND_BUILD_TB INB, PM_PRODUCT_MNG_TB PM
-		WHERE PJ_KEY=#{pjKey}
+		FROM PJ_INSTALL_AND_BUILD_TB INB, PM_PRODUCT_MNG_TB PM, PJ_MAIN_TB PJ
+		WHERE INB.PJ_KEY=#{pjKey}
 			AND INB.INB_SEQ = #{inbSeq}
 			AND INB.INB_PM_KEY = PM.PM_KEY
-			AND DELETE_YN = 'N'
+			AND INB.PJ_KEY = PJ.PJ_KEY
+			AND INB.DELETE_YN = 'N'
 	</select>
 	
 	<insert id="insertWorkInfo" parameterType="projectWorkVO"  useGeneratedKeys="true" keyProperty="pjWorkSeq">
@@ -1157,19 +1182,22 @@
 	
 	<select id="selectWorkDetail" parameterType="projectWorkVO" resultType="egovMap">
 		SELECT
-			PJ_KEY
-			, PJ_WORK_SEQ
-			, PJ_WORK_CLASS_CD
-			, PJ_WORK_DT
-			, PJ_WORK_TM
-			, PJ_WORK_TAKE_TM
-			, PJ_WORK_NM
-			, PJ_WORK_CONT
-			, PJ_WORK_RESULT
-			, REMARK
-		FROM PJ_WORK_TB
-		WHERE PJ_KEY=#{pjKey}
-			AND PJ_WORK_SEQ=#{pjWorkSeq}
-			AND DELETE_YN = 'N'
+			PW.PJ_KEY
+			, PW.PJ_WORK_SEQ
+			, PW.PJ_WORK_CLASS_CD
+			, PW.PJ_WORK_DT
+			, PW.PJ_WORK_TM
+			, PW.PJ_WORK_TAKE_TM
+			, PW.PJ_WORK_NM
+			, PW.PJ_WORK_CONT
+			, PW.PJ_WORK_RESULT
+			, PM.PJ_STATUS_CD
+			, PW.REMARK
+		FROM PJ_WORK_TB PW
+		JOIN PJ_MAIN_TB PM
+		ON PW.PJ_KEY = PM.PJ_KEY
+		WHERE PW.PJ_KEY=#{pjKey}
+			AND PW.PJ_WORK_SEQ=#{pjWorkSeq}
+			AND PW.DELETE_YN = 'N'
 	</select>
 </mapper>

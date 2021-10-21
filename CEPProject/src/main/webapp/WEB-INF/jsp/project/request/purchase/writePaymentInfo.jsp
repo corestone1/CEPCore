@@ -6,7 +6,8 @@
 <head>
 	<style>
 		.ui-dialog {
-			top: -73px !important;
+			top: 81px !important;
+    		position: absolute !important;
 		}
 		.popContainer .top {
 			width: 100%;
