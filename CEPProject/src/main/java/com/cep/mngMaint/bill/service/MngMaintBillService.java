@@ -116,7 +116,9 @@ public interface MngMaintBillService {
 	
 	
 	/**
-	 * 유지보수 매출 세금계산서 완료처리
+	 * 유지보수 매출 세금계산서 매핑(발급) 처리
+	 * 1. MT_SD_BILLING_OP_TB 세금계산서 요청 정보 업데이트(계산서 번호, 발행일자, 요청상태)
+	 * 2. 유지보수 매출(수금) 정보 상태를 업데이트(매핑) 한다.
 	 * <pre>
 	 * </pre>
 	 * 
@@ -126,6 +128,20 @@ public interface MngMaintBillService {
 	 * @author aranghoo
 	 */
 	public void insertSdBillingXml(MngMaintBillVO mngMaintBillVO) throws Exception;
+	
+	/**
+	 * 유지보수 매출 세금계산서 매핑(발급) 취소 처리
+	 * 1. MT_SD_BILLING_OP_TB 세금계산서 요청 정보 업데이트(계산서 번호, 발행일자, 요청상태)
+	 * 2. 유지보수 매출(수금) 정보 상태를 업데이트(요청) 한다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @throws Exception
+	 * @cdate 2021. 10. 27. 오전 10:19:23
+	 * @author aranghoo
+	 */
+	public void cancelSdBillMapping(MngMaintBillVO mngMaintBillVO) throws Exception;
 	
 	/**
 	 * 수금완료처리.
@@ -138,7 +154,7 @@ public interface MngMaintBillService {
 	 * @cdate 2021. 9. 3. 오전 11:34:56
 	 * @author aranghoo
 	 */
-	public void updateSdPaymentStatus(MngMaintBillVO mngMaintBillVO) throws Exception;
+	public void updateSdCollectStatus(MngMaintBillVO mngMaintBillVO) throws Exception;
 	
 //	//////////////////////////////// 매입관련  //////////////////////////////////////////////
 	

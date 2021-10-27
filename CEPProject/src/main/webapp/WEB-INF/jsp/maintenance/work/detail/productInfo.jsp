@@ -642,7 +642,7 @@
 						<div class="bottom">
 							<div class="floatR">
 								<button type="button" value="수정" onclick="fn_addView();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<%-- <button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

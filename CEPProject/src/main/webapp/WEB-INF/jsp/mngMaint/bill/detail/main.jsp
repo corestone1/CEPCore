@@ -346,6 +346,17 @@
 			color: red;
 			vertical-align: middle;
 		}
+		/* 버튼이미지  */
+		.blueBtnStyle {
+			width: 115px;
+		    height: 26px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {			
@@ -366,9 +377,20 @@
 			}
 			
 		}
+		
+		function changeIframeUrl() {
+			document.m_mtMoveCollect.action = "/mngMaint/bill/detail/main.do";
+           	document.m_mtMoveCollect.submit();
+		}
+		
 	</script>
 </head>
 <body>
+	<form id="m_mtMoveCollect" name="m_mtMoveCollect" method="post">
+		<input type="hidden" id="m_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/><!-- 백계약:BO, 작업발주:PO -->
+		<input type="hidden" id="m_billTurnNo" name="billTurnNo" value="<c:out value="${billTurnNo}"/>"/>
+		<input type="hidden" id="m_iframGubun" name="iframGubun" />	
+	</form>
 	<div id="listForm" class="listForm">
 		<div class="sfcnt"></div>
 		<div class="nav"></div>
@@ -406,7 +428,7 @@
 										</td>
 									</tr> --%>
 									<tr>
-										<td>계약금액</td>
+										<td>계약총금액</td>
 										<td>
 											<label><c:out value="${displayUtil.commaStr(basicInfo.mtAmount)}"/>원</label>
 										</td>
@@ -448,11 +470,13 @@
 						</div>
 					</div>
 					<div class="floatL" style="margin-top: 21px">
-							<button type="button" title="기본정보수정" value="수정" onclick="goDetailInfo('<c:out value="${basicInfo.mtKey}"/>')"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
-						</div>
+						<button type="button" title="유지보수상세이동" class="blueBtnStyle" onclick="goDetailInfo('<c:out value="${basicInfo.mtKey}"/>')">유지보수상세이동</button>
+						<%-- <button type="button" title="기본정보수정" value="수정" onclick="goDetailInfo('<c:out value="${basicInfo.mtKey}"/>')"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button> --%>
+					</div>
 				</div>
 				<div class="floatR dpBlock fxd">
-					<iframe src="/mngMaint/bill/detail/preBillList.do?pjKey=${basicInfo.mtKey}&acKey=${basicInfo.mtAcKey}&billTurnNo=${basicInfo.proceedTurn}&totalTurn=${basicInfo.totalTurn}" width="100%" height="710"></iframe>
+					<%-- <iframe src="/mngMaint/bill/detail/preBillList.do?pjKey=${basicInfo.mtKey}&acKey=${basicInfo.mtAcKey}&billTurnNo=${basicInfo.proceedTurn}&totalTurn=${basicInfo.totalTurn}" width="100%" height="710"></iframe> --%>
+					<iframe id="ifram_collect" src="${iframUrl}" width="100%" height="710"></iframe>
 				</div>
 				<div class="floatC"></div>
 			</div>

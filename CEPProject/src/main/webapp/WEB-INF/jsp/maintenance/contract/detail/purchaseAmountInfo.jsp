@@ -138,7 +138,7 @@
 		}
 		
 		.mContents>.fxd .title ul li {
-			width: 16.65%;
+			width: 20%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -1005,6 +1005,15 @@
 			button = [];
 			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:575px');
 		}
+		//계산서 발생요청
+		function fnMoveBillDetail() {
+			
+			if(confirm("유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMoveForm.action = "/mngMaint/bill/detail/main.do";
+	           	document.m_mtMoveForm.submit();
+			}
+			
+		}
    </script>
 </head>
 <body>
@@ -1302,6 +1311,7 @@
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>							
 							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1314,7 +1324,7 @@
 						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
 						<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 						<li id="LI_TOPBar_PA" class="on" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-						<li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li>
+						<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
 						<li></li>
 					</ul>
 				</div>
@@ -1339,7 +1349,7 @@
 						</select> --%>
 						
 						<c:if test="${null !=backOrderSelectBox && backOrderSelectBox.size()>1}">
-						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:150px;height: 30px;">
+						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:200px;height: 30px;">
 							<option value="">전체</option>														
 						<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">
 							<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>

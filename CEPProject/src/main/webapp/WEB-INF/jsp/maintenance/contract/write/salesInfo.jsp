@@ -890,7 +890,7 @@
 					<table class="textalignC ftw200" >
 						<tr>
 							<td>유지보수기간 : <input type="text" id="mtStartDt" class="pname" readonly/> ~ <input type="text" id="mtEndDt" class="pname" readonly/></td>
-							<td>계약금액 : <input type="text" id="mtAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
+							<td>총계약금액 : <input type="text" id="mtAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
 						</tr>
 						<%-- <thead class="ftw400">
 							<tr>

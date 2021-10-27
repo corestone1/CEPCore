@@ -808,11 +808,12 @@
 			
 		}
 		
-		function addProjectProduct(mtPmKey,pmNmCd,mtPmQuantity,enPmDetail) {
+		function addProjectProduct(mtPmKey,pmNmCd,mtPmQuantity,mtPmUprice, mtRate,enPmDetail) {
 
 			var checkNum;
+			var setMtPmUprice = mtPmUprice * (mtRate/100);
 			var lastNum = $("input[name='lastNum']").get($("input[name='lastNum']").length-1).getAttribute('value')*1;
-			console.log("lastNum=======>"+lastNum);
+			//console.log("lastNum=======>"+lastNum);
 			
 			if($("#prodList-"+lastNum+"-mtPmFkKey").val()=='') {
 				
@@ -821,10 +822,15 @@
 				fn_addInfoTable();
 				checkNum = lastNum+1;
 			}
+			console.log("mtPmUprice=======>"+mtPmUprice);
+			console.log("mtRate=======>"+mtRate);
+			console.log("setMtPmUprice=======>"+setMtPmUprice);
 			
 			$("#prodList-"+checkNum+"-pmNmCd").val(pmNmCd);
 			$("#prodList-"+checkNum+"-mtPmFkKey").val(mtPmKey);
-			$("#prodList-"+checkNum+"-mtPmQuantity").val(mtPmQuantity);
+			$("#prodList-"+checkNum+"-mtPmQuantity").val(addCommas(mtPmQuantity));
+			$("#prodList-"+checkNum+"-mtPmUprice").val(addCommas(setMtPmUprice));
+			$("#prodList-"+checkNum+"-totalAmount").val(addCommas(mtPmQuantity*setMtPmUprice));
 			if(enPmDetail.length >0) {
 				var parsedWordArray = CryptoJS.enc.Base64.parse(enPmDetail);
 				var mtPmDetail = parsedWordArray.toString(CryptoJS.enc.Utf8);

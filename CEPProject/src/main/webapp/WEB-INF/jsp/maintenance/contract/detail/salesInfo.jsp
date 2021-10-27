@@ -132,7 +132,7 @@
 			background-color: #d3d3d3;
 		}
 		.mContents > .fxd .title ul li {
-			width: 16.65%;
+			width: 20%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -833,6 +833,15 @@
 			button = [];
 			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:575px');
 		}
+		//계산서 발생요청
+		function fnMoveBillDetail() {
+			
+			if(confirm("유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMoveForm.action = "/mngMaint/bill/detail/main.do";
+	           	document.m_mtMoveForm.submit();
+			}
+			
+		}
 	</script>
 </head>
 <body>
@@ -1122,6 +1131,7 @@
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1136,12 +1146,12 @@
 							<c:when test="${parmMtSbCtYn == 'Y'}">
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-								<li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li>
+								<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
 							</c:when>
 							<c:otherwise>
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label>매입정보</label></li>
-								<li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li>
+								<!-- <li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li> -->
 							</c:otherwise>
 						</c:choose>
 						<li></li>

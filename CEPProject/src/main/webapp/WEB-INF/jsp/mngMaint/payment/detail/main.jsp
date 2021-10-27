@@ -462,7 +462,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td>결재조건</td>
+										<td>결제조건</td>
 										<td>
 											<label><c:out value="${basicInfo.orderPayTerms}"/></label>
 											<%-- <label>(<c:out value="${basicInfo.collectPlan}"/>)</label> --%>

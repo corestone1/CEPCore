@@ -96,29 +96,39 @@
 	}
 	.popContainer .middle table thead th:first-child, 
 	.popContainer .middle table tbody td:first-child {
-		width: 42px;
+		width: 30px;
+		max-width: 30px;
 	}
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2) {
-		width: 120px;
+		width: 110px;
+		max-width: 110px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 50px;
+		width: 30px;
+		max-width: 30px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
-		width: 80px;
+		width: 70px;
+		max-width: 70px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(5), 
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 90px;
+		width: 80px;
+		max-width: 80px;
 	}
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
+		width: 45px;
+		max-width: 45px;
+	}
+	.popContainer .middle table thead th:nth-child(7),
+	.popContainer .middle table tbody td:nth-child(7) {
 		width: 130px;
 		max-width: 130px;
 	}
@@ -180,7 +190,7 @@
 				       + '<div style="margin: 5px 71px;">'
 				       + '<ul class="detailList">'
 				       + '<li>제품상세</li>'
-				       + '<li><pre>'+$(this).children().eq(5).text().trim()+'</pre></li>'
+				       + '<li><pre>'+$(this).children().eq(6).text().trim()+'</pre></li>'
 					   + '</ul>'
 				       + '</div>'
 				       + '</div>';
@@ -209,11 +219,12 @@
 	상세정보에 ", ' 등 특수기호 때문에 parameter를 이용하여 넘길 수 없기때문에
 	해당 정보를 base64인코딩으로 변환한 후 받은쪽에서 base64디코딩하여 정보를 표시한다.
 	*/
-	function fn_productSelect(mtPmKey,pmNmCd,mtPmQuantity, obj){
+	function fn_productSelect(mtPmKey,pmNmCd,mtPmQuantity,mtPmUprice, mtRate,obj){
 		var num = $('#whereNum').val();
 		
+		
 		//선택한 라인의 상세 정보를 가져온다.
-		var mtPmDetail =$(obj).parent().parent().children().eq(5).text();
+		var mtPmDetail =$(obj).parent().parent().children().eq(6).text();
 		//utf8로 파싱한다.
 		var wordArray = CryptoJS.enc.Utf8.parse(mtPmDetail);
 		//Base64로 인코딩
@@ -225,7 +236,13 @@
 		var decoded = parsedWordArray.toString(CryptoJS.enc.Utf8);
 		
 		console.log("decoded======>"+decoded); */
-		opener.addProjectProduct(mtPmKey,pmNmCd,mtPmQuantity,encoded);
+		opener.addProjectProduct(
+				mtPmKey
+				,pmNmCd
+				,mtPmQuantity
+				,mtPmUprice
+				,mtRate
+				,encoded);
 		//console.log("=====2==>"+bas);
 		
 		close();
@@ -278,6 +295,7 @@
 							<th scope="row">수량</th>
 							<th scope="row">단가</th>
 							<th scope="row">금액</th>
+							<th scope="row">유지보수요율</th>
 							<th scope="row">상세</th>
 						</tr>
 					</thead>
@@ -285,14 +303,15 @@
 						<c:forEach var="item" items="${mtProductList}" varStatus="status">
 	            			<tr>
 	            				<td>
-									<a href="#" onclick='javascript:fn_productSelect("${item.mtPmKey}", "${item.pmNmCd}", "${displayUtil.commaStr(item.mtPmQuantity)}", this );' class="btn btn_gray">선택</a>
+									<a href="#" onclick='javascript:fn_productSelect("${item.mtPmKey}", "${item.pmNmCd}", "${item.mtPmQuantity}", "${item.mtPmUprice}", "${item.mtRate}", this );' class="btn btn_gray">선택</a>
 	            				</td>
 	            				<td class="textalignL">
 	            					<span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${item.pmNmCd}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  />
 	            				</td>
-	            				<td class="textalignR"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${displayUtil.commaStr(item.mtPmQuantity)}"/></span></td>
-	            				<td class="textalignR"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${displayUtil.commaStr(item.mtPmUprice)}"/></span></td>
-	            				<td class="textalignR"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${displayUtil.makeMultiNumber(item.mtPmQuantity,item.mtPmUprice)}"/></span></td>
+	            				<td class="textalignR"><span title="<c:out value="${displayUtil.commaStr(item.mtPmQuantity)}"/>"><c:out value="${displayUtil.commaStr(item.mtPmQuantity)}"/></span></td>
+	            				<td class="textalignR"><span title="<c:out value="${displayUtil.commaStr(item.mtPmUprice)}"/>"><c:out value="${displayUtil.commaStr(item.mtPmUprice)}"/></span></td>
+	            				<td class="textalignR"><span title="<c:out value="${displayUtil.makeMultiNumber(item.mtPmQuantity,item.mtPmUprice)}"/>"><c:out value="${displayUtil.makeMultiNumber(item.mtPmQuantity,item.mtPmUprice)}"/></span></td>
+	            				<td class="textalignR"><span title="<c:out value="${list.mtRate}"/>"><c:out value="${item.mtRate}"/>%</span></td> 
 	            				<td class="textalignL"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${item.mtPmDetail}"/></span></td> 
 	            			</tr>
 	        			</c:forEach>

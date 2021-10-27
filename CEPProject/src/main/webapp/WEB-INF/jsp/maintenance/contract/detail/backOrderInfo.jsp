@@ -158,7 +158,7 @@
 		}
 		/* 제품정보>매출정보>백계약정보>매입정보 버튼 크기및 모양    */
 		.mContents > .fxd .title ul li {
-			width: 16.65%;
+			width: 20%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -977,6 +977,15 @@
 			}
 			
 		}
+		//계산서 발생요청
+		function fnMoveBillDetail() {
+			
+			if(confirm("유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMoveForm.action = "/mngMaint/bill/detail/main.do";
+	           	document.m_mtMoveForm.submit();
+			}
+			
+		}
 	</script>
 </head>
 <body>
@@ -1276,6 +1285,7 @@
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1288,7 +1298,7 @@
 						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
 						<li id="LI_TOPBar_BC" class="on" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 						<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-						<li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li>
+						<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
 						<li></li>
 					</ul>
 				</div>
@@ -1308,7 +1318,7 @@
 										<th scope="row">미지급금</th>
 									<!-- <th scope="row">부가세포함</th> -->
 									<th scope="row">발주일자</th>
-									<th scope="row">결재조건</th>
+									<th scope="row">결제조건</th>
 									<th style="max-width: 0px; display: none;"></th>
 								</tr>
 							</thead>
@@ -1520,7 +1530,7 @@
 							<button type="button" title="매입금 지급요청" class="blueBtnStyle" onclick="fnMovePaymentDetail();">매입금 지급요청</button>
 							<%-- <button type="button" title="매입금 지급요청" value="삭제" onclick="fnMovePaymentDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button> --%>
 							<button type="button" value="수정" onclick="fn_addView('')"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-							<button type="button" value="삭제" onclick="fn_mdeleteBackOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+							<%-- <button type="button" value="삭제" onclick="fn_mdeleteBackOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>
 					</div>

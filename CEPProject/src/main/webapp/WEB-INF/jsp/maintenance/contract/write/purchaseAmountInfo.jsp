@@ -69,7 +69,7 @@
 			width: 135px;
 		}
 		.popContainer .contents select,  .popContainer .contents1 select{
-			width: 153px;
+			width: 205px;
 			height: 30px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -224,24 +224,30 @@
 		}	 */
 		.contents1 table thead th:first-child,
 		.contents1 table tbody td:first-child {
-			width: 207px;
+			width: 225px;
+			max-width: 225px;
 			border: 1px solid #edebef;
 		}	
 		.contents1 table thead th:nth-child(2),
 		.contents1 table tbody td:nth-child(2) {
-			width: 204px;
+			width: 220px;
+			max-width: 220px;
 		}
 		.contents1 table thead th:nth-child(3),
 		.contents1 table tbody td:nth-child(3),
-		.contents1 table thead th:nth-child(4),
-		.contents1 table tbody td:nth-child(4),
 		.contents1 table thead th:nth-child(5),
 		.contents1 table tbody td:nth-child(5) {
-			width: 150px;
+			width: 110px;
+			max-width: 110px;
 		}
 		
+		.contents1 table thead th:nth-child(4),
+		.contents1 table tbody td:nth-child(4) {
+			width: 190px;
+			max-width: 190px;
+		}
 		.popContainer input[class="pname"] {
-			width: 85px;
+			width: 95px;
 			border : none;
 			outline: none;
 			padding : 0px;
@@ -812,17 +818,17 @@
 								<th scope="row">계약 유지보수기간</th>
 								<th scope="row">백계약 유지보수기간</th>
 								<th scope="row">백계약 금액</th>
-								<th scope="row">결재조건</th>
-								<th scope="row">매입 금액</th>
+								<th scope="row">결제조건</th>
+								<th scope="row">매입 예상금액</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td><input type="text" id="mtStartDt" class="pname" readonly/> ~ <input type="text" id="mtEndDt" class="pname" readonly/></td>
-								<td><input type="text" id="mtOrderStartDt" class="pname" readonly/> ~ <input type="text" id="mtOrderEndDt" class="pname" readonly/></td>
-								<td ><input type="text" id="mtOrderAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
-								<td ><input type="text" id="mtOrderPayTerms" style="width:120px;text-align: right" class="pname" readonly/></td>
-								<td ><input type="text" id="mtBuyTotalAmount" style="width:120px;text-align: right" class="pname" readonly/></td>
+								<td><input type="text" id="mtStartDt" class="pname" style="width:83px;" readonly/> ~ <input type="text" id="mtEndDt" class="pname" style="width:83px;" readonly/></td>
+								<td><input type="text" id="mtOrderStartDt" class="pname" style="width:83px;" readonly/> ~ <input type="text" id="mtOrderEndDt" class="pname" style="width:83px;" readonly/></td>
+								<td ><input type="text" id="mtOrderAmount" class="pname" style="width:95px;text-align: right" readonly/></td>
+								<td ><input type="text" id="mtOrderPayTerms" style="width:180px;text-align: center" class="pname" readonly/></td>
+								<td ><input type="text" id="mtBuyTotalAmount" style="width:95px;text-align: right" class="pname" readonly/></td>
 							</tr>
 						</tbody>
 					</table>
@@ -837,7 +843,7 @@
 						<table class="subject">
 							<tr>		
 								<td class="subTitle" style="border-top: none;">
-									<label class="ftw400">연도별 매입</label>
+									<label class="ftw400">연도별 매입 예상금액</label>
 								</td>
 								<%-- <td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('purchase');"/></td> --%>
 							</tr>

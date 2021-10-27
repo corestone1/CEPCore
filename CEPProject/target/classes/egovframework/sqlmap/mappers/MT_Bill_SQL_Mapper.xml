@@ -146,11 +146,12 @@
 		
 	</insert>	
 	
+	<!-- 유지보수 매출(수금) 정보 상태 업데이트 -->
 	<update id="updateSaleDetailStatusCd" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
 	
 		UPDATE MT_SALES_DETAIL_TB
-		SET SALES_STATUS_CD = #{billIssueStatus}
-		, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/
+			SET SALES_STATUS_CD = #{billIssueStatus}
+			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/		
 		WHERE SALES_KEY       = #{billCtFkKey}
 	
 	</update>	
@@ -248,10 +249,16 @@
 		<!-- <if test="salesCollectFinishDt != null and salesCollectFinishDt != ''">
 			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/
 		</if> -->
-			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/
+			
 		<if test="billIssueStatus != null and billIssueStatus != ''">
 			, BILL_ISSUE_STATUS = #{billIssueStatus} /* 계산서 상태*/
 		</if>
+		<if test='billMappingYn != null and billMappingYn == "N"'>
+		<!-- 매핑 취소인경우   -->
+			, BILL_NO           = NULL
+			, BILL_ISSUE_DT     = NULL			
+		</if>
+			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/
 			, MOD_DT            = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM            = DATE_FORMAT(NOW(),'%k%i%s')
 			, MOD_EMP_KEY       = #{modEmpKey}

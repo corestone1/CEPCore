@@ -137,15 +137,58 @@ public class MngMaintBillController {
 	 */
 	@RequestMapping(value="/mngMaint/bill/detail/main.do")
 	public String billDetailView(@ModelAttribute("searchVO") MngMaintBillSearchVO searchVO, ModelMap model) throws Exception {
-		
+		StringBuffer iframUrl = new StringBuffer();
+		EgovMap billBasicInfo = null;
+		String billTurnNo = null;
 		try{
 			logger.debug("searchVO.getPjKey()  : {}", searchVO.getPjKey());
 			logger.debug("searchVO.getBillNo() : {}", searchVO.getBillNo());
+			logger.debug("searchVO.getBillTurnNo() : {}", searchVO.getBillTurnNo());
+			billBasicInfo =service.selectBillBasicInfo(searchVO);
+			//기본정보 조회
+			model.addAttribute("basicInfo", billBasicInfo);
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			
-			//기본정보 조회
-			model.addAttribute("basicInfo", service.selectBillBasicInfo(searchVO));
-			
+			//해당 구분값이 없는 경우 list로 보여준다.
+			if("list".equals(CepStringUtil.getDefaultValue(searchVO.getIframGubun(), "list").toLowerCase())) {
+				iframUrl.append("/mngMaint/bill/detail/preBillList.do");
+				iframUrl.append("?pjKey=");
+				iframUrl.append(searchVO.getPjKey());
+				iframUrl.append("&acKey=");
+				iframUrl.append(billBasicInfo.get("mtAcKey"));
+				iframUrl.append("&billTurnNo=");
+				iframUrl.append(billBasicInfo.get("proceedTurn"));
+				iframUrl.append("&totalTurn=");
+				iframUrl.append(billBasicInfo.get("totalTurn"));
+				billTurnNo = String.valueOf(billBasicInfo.get("proceedTurn"));
+			} else if(!"list".equals(CepStringUtil.getDefaultValue(searchVO.getIframGubun(), "list").toLowerCase())
+					&& 0 != searchVO.getBillTurnNo()) {
+				iframUrl.append("/mngMaint/bill/detail/billForm.do");
+				iframUrl.append("?pjKey=");
+				iframUrl.append(searchVO.getPjKey());
+				iframUrl.append("&acKey=");
+				iframUrl.append(billBasicInfo.get("mtAcKey"));
+				iframUrl.append("&billTurnNo=");
+				iframUrl.append(searchVO.getBillTurnNo());
+				iframUrl.append("&totalTurn=");
+				iframUrl.append(billBasicInfo.get("totalTurn"));
+				billTurnNo = String.valueOf(searchVO.getBillTurnNo());
+			} else {
+				iframUrl.append("/mngMaint/bill/detail/preBillList.do");
+				iframUrl.append("?pjKey=");
+				iframUrl.append(searchVO.getPjKey());
+				iframUrl.append("&acKey=");
+				iframUrl.append(billBasicInfo.get("mtAcKey"));
+				iframUrl.append("&billTurnNo=");
+				iframUrl.append(billBasicInfo.get("proceedTurn"));
+				iframUrl.append("&totalTurn=");
+				iframUrl.append(billBasicInfo.get("totalTurn"));
+				billTurnNo = String.valueOf(billBasicInfo.get("proceedTurn"));
+			}
+			//ifram의 url주소
+			model.addAttribute("iframUrl", iframUrl.toString());
+			model.addAttribute("pjKey", searchVO.getPjKey());
+			model.addAttribute("billTurnNo", billTurnNo);
 		}catch(Exception e){
 			logger.error("{}", e);
 			throw e;
@@ -394,7 +437,7 @@ public class MngMaintBillController {
 		try{
 			logger.debug("searchVO.getPjKey()      : {}", searchVO.getPjKey());
 			logger.debug("searchVO.getAcKey()      : {}", searchVO.getAcKey());
-			logger.debug("searchVO.getAcKey()      : {}", searchVO.getBillTurnNo());
+			logger.debug("searchVO.getBillTurnNo()      : {}", searchVO.getBillTurnNo());
 			logger.debug("searchVO.getTotalTurn()  : {}", searchVO.getTotalTurn());
 			
 			
@@ -463,7 +506,7 @@ public class MngMaintBillController {
 	}
 	
 	/**
-	 * 세금계산서 발행처리 완료
+	 * 세금계산서 매핑(발행)처리 완료
 	 * <pre>
 	 * </pre>
 	 * 
@@ -524,6 +567,55 @@ public class MngMaintBillController {
 	 * @cdate 2021. 9. 3. 오후 3:28:50
 	 * @author aranghoo
 	 */
+	@RequestMapping(value="/mngMaint/bill/detail/cancelSdBillMapping.do")
+	@ResponseBody
+	public Map<String, Object> cancelSdBillMapping(@ModelAttribute("mngMaintBillVO") MngMaintBillVO mngMaintBillVO, HttpServletRequest request, HttpServletResponse respons) throws Exception {
+		
+		logger.debug("=============== updatePaymentsComplate ======================");
+		logger.debug("=== mngMaintBillVO.getPjKey()             = {}", mngMaintBillVO.getPjKey());
+		logger.debug("=== mngMaintBillVO.getBillCallKey()       = {}", mngMaintBillVO.getBillCallKey());
+		logger.debug("=== mngMaintBillVO.getBillCtFkKey()       = {}", mngMaintBillVO.getBillCtFkKey());
+		logger.debug("=== mngMaintBillVO.getBillIssueStatus()   = {}", mngMaintBillVO.getBillIssueStatus());
+		logger.debug("=== mngMaintBillVO.getBillMappingYn()     = {}", mngMaintBillVO.getBillMappingYn());
+		
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		HashMap<String, String> sessionMap = null;
+		
+		try {
+									
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			mngMaintBillVO.setModEmpKey(sessionMap.get("empKey"));
+			
+			service.cancelSdBillMapping(mngMaintBillVO);
+			
+			returnMap.put("successYN", "Y");
+		}catch(Exception e){
+			returnMap.put("successYN", "N");
+			logger.error("{}", e);
+			throw e;
+		}		
+		
+		return returnMap;
+	}
+	
+	
+	
+	/**
+	 * 수금완료처리와 수금취소 처리.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @param request
+	 * @param respons
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 9. 3. 오후 3:28:50
+	 * @author aranghoo
+	 */
 	@RequestMapping(value="/mngMaint/bill/detail/updateSdCollectStatus.do")
 	@ResponseBody
 	public Map<String, Object> updateSdCollectStatus(@ModelAttribute("mngMaintBillVO") MngMaintBillVO mngMaintBillVO, HttpServletRequest request, HttpServletResponse respons) throws Exception {
@@ -545,7 +637,7 @@ public class MngMaintBillController {
 			
 			mngMaintBillVO.setModEmpKey(sessionMap.get("empKey"));
 			
-			service.updateSdPaymentStatus(mngMaintBillVO);
+			service.updateSdCollectStatus(mngMaintBillVO);
 			
 			returnMap.put("successYN", "Y");
 		}catch(Exception e){

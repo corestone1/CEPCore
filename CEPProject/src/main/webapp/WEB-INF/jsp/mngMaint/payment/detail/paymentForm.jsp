@@ -651,7 +651,7 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px'); 
+			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:373px;reload:false'); 
 		}
 		//지급정보 목록이동
 		function fnMovePaymentList() {			

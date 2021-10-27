@@ -59,7 +59,7 @@
 	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents select {
-			width: 153px;
+			width: 174px;
 			/* height: 40px; */
 			height: 35px;
 			border: 1px solid #e9e9e9;
@@ -84,8 +84,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer input[class="search"] {
-			/* height: 38px; */
-			height: 32px;
+			height: 38px;		
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
@@ -191,13 +190,24 @@
 			width : calc(100% - 46px);
 			text-align: center;
 		}
-      	.accountList li {
+		#m_div_accountList {
+			left: 142px;
+    		margin-top: -4px;
+		}
+		input[type="text"] {
+		    width: 138px;
+		    height: 36px;
+		    border: 1px solid #e9e9e9;    
+		    background-color: #fff;
+		    font-size: 14px;
+		}
+      	/* .accountList li {
 			text-align: left;
 			margin-left: 10px;
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
-		}
+		} */
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -277,7 +287,7 @@
 		
 		//거래처 검색
 		var fnSearchAccoutList = function(pObject, pstAccountNm) {
-			$('#div_accountList').remove();
+			$('#m_div_accountList').remove();
 		
 			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
 			
@@ -302,12 +312,15 @@
 		};
 		//거래처 검색
 		var fnViewAccountList = function(pObject, pjAccountList){
-			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			var html = '<div id="m_div_accountList">'
+		         + '<ul class="m_accountList">'
+		       ;//+ '<div style="margin: 5px;">';
+/* 			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
 			         + '<ul class="accountList">'
-			       ;//+ '<div style="margin: 5px;">';
+			       ;//+ '<div style="margin: 5px;">'; */
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {
-			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
 			    	        ;
 			    	}
 			       
@@ -319,12 +332,12 @@
 			$('#tr_account').after(html);
 			
 			
-			$("[id^='li_account']").click(function(event) {
+			$("[id^='m_li_account']").click(function(event) {
 				
 				$('#orderAcKeyNm').val(this.innerText); 
 				$('#orderAcKey').val(this.title);
 				$('#orderAcKey').change();
-				$('#div_accountList').remove();
+				$('#m_div_accountList').remove();
 			});
 		};
 	
@@ -978,7 +991,7 @@
 				<div>
 					<table class="subject1">
 						<tr>		
-							<td class="subTitle" style="border-top: none;" colspan="5" >
+							<td class="subTitle" style="border-top: none;" >
 								<label class="ftw500">발주등록</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<!-- </td>
 							<td class="subTitle" colspan="5"  style="border-top: none;"> -->
@@ -1013,29 +1026,13 @@
 						<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${mtWorkOrderVO.yetPaymentAmount}"/>"/>						
 						<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${mtWorkOrderVO.callTotalAmount}"/>"/>
 						<table>
-							<%-- <tr>		
-								<td class="subTitle" style="border-top: none;">
-									<label class="ftw500">발주등록</label>
-								</td>
-								<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" /></td>
-							</tr> --%>
-							<!-- <tr>
-								<td class="tdTitle">프로젝트명</td>
-								<td class="tdContents" colspan="3">
-									<input type="text" class="search" onclick="fn_searchListPop()" onkeypress="return false;" autocomplete="off" required style="width: 431px;"/>
-									<input type="hidden" name="orderCtFkKey"/>
-									<input type="hidden" name="orderCtClass" value="M">
-								</td>
-								<td class="tdTitle">고객사</td>
-								<td class="tdContents"><input type="text"  /></td>
-							</tr> -->
 							<tr id="tr_account">
 								<td class="tdTitle"><label>*</label> 매입처</td>
 								<td class="tdContents">
-									<input type="text" id="orderAcKeyNm" name="orderAcKeyNm"  autocomplete="off" value="<c:out value="${mtWorkOrderVO.orderAcKeyNm}"/>" required/>
+									<input type="text" id="orderAcKeyNm" name="orderAcKeyNm"  class="search"  style="width: 163px" autocomplete="off" value="<c:out value="${mtWorkOrderVO.orderAcKeyNm}"/>" required/>
 									<input type="hidden" id="orderAcKey" name="orderAcKey"  value="<c:out value="${mtWorkOrderVO.orderAcKey}"/>"/>	
 								</td>
-								<td class="tdTitle"><label>*</label> 매입처담당자 </td>
+								<td class="tdTitle"><label>*</label> 매입담당자 </td>
 								<td class="tdContents">
 								<c:choose>
 									<c:when test="${acDirectorList eq '' ||  acDirectorList.size() eq ''||  acDirectorList.size() eq '0'}">
@@ -1056,7 +1053,7 @@
 								<td class="tdTitle"><label>*</label> 발주일자</td>
 								<td class="tdContents">
 									<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
-									<input type="text" name="orderDt" value="<c:out value="${displayUtil.displayDate(mtWorkOrderVO.orderDt)}"/>" class="calendar fromDt" style="width: 153px" required/>
+									<input type="text" name="orderDt" value="<c:out value="${displayUtil.displayDate(mtWorkOrderVO.orderDt)}"/>" class="calendar fromDt" style="width: 132px" required/>
 								</td>
 							</tr>
 							<tr>
@@ -1067,11 +1064,11 @@
 								</td> -->
 								<td class="tdTitle"><label>*</label> 발주합계</td>
 								<td class="tdContents">
-									<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="text-align: right;"/>	
+									<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="width: 163px;text-align: right;"/>	
 								</td>
 								<td class="tdTitle"><label>*</label> 결제조건</td>
 								<td class="tdContents" colspan="3">
-									<input type="text" name="orderPayTerms" style="width: 435px" required value="<c:out value="${mtWorkOrderVO.orderPayTerms}"/>" />	
+									<input type="text" name="orderPayTerms" style="width: 410px" required value="<c:out value="${mtWorkOrderVO.orderPayTerms}"/>" />	
 								</td>
 							</tr>
 						</table>

@@ -194,6 +194,32 @@
 			vertical-align: middle;
 		} 
 		
+		/* 파랑버튼이미지  */
+		.blueBtnStyle {
+			width: 115px;
+		    height: 26px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;		    
+    		font-size: 13px !important;
+		}
+		/* 보라버튼이미지  */
+		.purpleBtnStyle {
+			width: 115px;
+		    height: 26px;
+		    background-color: #a392f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #a392f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;		    
+    		font-size: 13px !important;
+		}
+		.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+		}
 	</style>
 	
 	
@@ -319,7 +345,54 @@
 	    	});
 		}
 		
+		/* 매핑취소. */
+		function fnMappingCancel() {
+			var varParam = {};
+			if(confirm("${billingOpInfo.billTurnNo}회차에 대한 매핑취소처리를  하시겠습니까?")) {
+				/* 매핑취소시  billIssueStatus 상태값을  M 에서 R으로 변경한다. */
+				var billInfo = {
+						'pjKey' : '${billingOpInfo.mtKey}'
+						, 'billCallKey' : '${billingOpInfo.billCallKey}'
+						, 'billCtFkKey' : '${billingOpInfo.salesKey}'
+ 						, 'billIssueStatus' : 'R'
+ 	 					, 'billMappingYn' : 'N'
+				}
+				
+				$.ajax({
+		        	url :"/mngMaint/bill/detail/cancelSdBillMapping.do",
+		        	type:"POST",  
+		            data: billInfo,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){	  
+		        		//console.log("step1.====>"+data.successYN);
+		        		if(data.successYN=='Y') {
+		        			alert("${billingOpInfo.billTurnNo}회차에 대한 세금계산서매핑 취소처리를 성공했습니다.");
+		        			
+		        			var url2 = '/mngMaint/bill/popup/viewWriteSdBilling.do';
+				    			var dialogId2 = 'program_layer';
+				    			//첨부파일 workClass정보 추가.
+	    		    			varParam['workClass'] = $('#workClass').val();		
+	    		    			varParam['billCtFkKey'] = $('#m_ipt_salesKey').val();	
+				    			var button = new Array;
+				    			button = [];
+				    			showModalPop(dialogId2, url2, varParam, button, '', 'width:726px;height:545px');
+		        		} else {
+		        			alert("${billingOpInfo.billTurnNo}회차에 대한 세금계산서매핑 취소처리를 실패했습니다.");
+		        		}	        		        		
+		        		
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+			    });
+			}			
+		}
 		
+		//수금완료
 		function fnComplete(){
 			var varParam = {};
 	 		//console.log("mtKey=====>${billingOpInfo.mtKey}");
@@ -391,7 +464,7 @@
 				}
 				
 				$.ajax({
-		        	url :"/mngMaint/bill/detail/updateSdPaymentStatus.do",
+		        	url :"/mngMaint/bill/detail/updateSdCollectStatus.do",
 		        	type:"POST",  
 		            data: billInfo,
 		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -680,25 +753,29 @@
 				</form:form>
 			</div>
 			<div class="btnWrap floatR">
-				<div id="m_btn_save" class="floatR" style="margin-bottom: -14px; margin-right: 52px;">						
-					<c:if test='${billingOpInfo.billIssueStatus eq "R"}'>
-						<button type="button" onclick="javascript:fnBillingSava();">
-							<img src="<c:url value='/images/btn_save.png'/>" />
-						</button>
-					</c:if>
+				<div id="m_btn_save" class="floatL" style="margin-bottom: -14px; margin-left: 35px;">						
+					
 					<c:if test='${billingOpInfo.billIssueStatus eq "M"}'>
-						<button type="button" onclick="javascript:fnBillingSava();">
-							<img src="<c:url value='/images/btn_save.png'/>" />
-						</button>
+						
+						<button type="button" title="계산서맵핑취소" class="purpleBtnStyle" onclick="javascript:fnMappingCancel()">계산서맵핑취소</button>
 						<!-- 매핑이 완료되면 수금완료 버튼  -->
-						<button type="button" class="btnComp" onclick="javascript:fnComplete();">
+						<button type="button" title="수금완료" class="blueBtnStyle" onclick="javascript:fnComplete()">수금완료</button>
+						<%-- <button type="button" class="btnComp" onclick="javascript:fnComplete();">
 							<img src="<c:url value='/images/btn_end_pay.png'/>" />
-						</button>
+						</button> --%>
 					</c:if>
 					<c:if test='${billingOpInfo.billIssueStatus eq "E"}'>
 						<!-- 수금이 완료되면 수금완료 취소 버튼  -->
-						<a href="javascript:fnCompleteCancel()" style="color: #0c35ff;">수금취소</a>
+						<!-- <a href="javascript:fnCompleteCancel()" style="color: #0c35ff;">수금취소</a> -->
+						<button type="button" title="수금완료취소" class="purpleBtnStyle" onclick="javascript:fnCompleteCancel()">수금완료취소</button>
 					</c:if>					
+				</div>
+				<div id="m_btn_save" class="floatR" style="margin-bottom: -14px; margin-right: 5px;">						
+					<c:if test='${billingOpInfo.billIssueStatus eq "R" or billingOpInfo.billIssueStatus eq "M"}'>
+						<button type="button" onclick="javascript:fnBillingSava();">
+							<img src="<c:url value='/images/btn_save.png'/>" />
+						</button>
+					</c:if>			
 				</div>
 				<div class="floatN floatC"></div>
 			</div>

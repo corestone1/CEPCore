@@ -210,6 +210,33 @@
 		.backgroundgray {
 			background-color: #d5d5d6;
 		}
+		/* 거래처 스크롤 위치지정 */
+		#m_div_accountList {
+			left: 187px;
+    		margin-top: -7px;
+		}
+		/* 파랑버튼이미지  */
+		.blueBtnStyle {
+			width: 115px;
+		    height: 26px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
+		}
+		/* 보라버튼이미지  */
+		.purpleBtnStyle {
+			width: 115px;
+		    height: 26px;
+		    background-color: #a392f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #a392f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
+		}
 	</style>
 	<script>
 		
@@ -218,9 +245,13 @@
 			$("#slt_billTurnNo").on("change", function(){
 				//changeParantIframUrl();
 				
-				form = document.reqForm;
+				/* form = document.reqForm;
 				form.action = "<c:url value='/mngMaint/bill/detail/billForm.do'/>";
-				form.submit(); 
+				form.submit();  */
+				window.parent.document.getElementById("m_iframGubun").value="detail";
+     			window.parent.document.getElementById("m_billTurnNo").value=$('#slt_billTurnNo').val();
+     			
+     			window.parent.changeIframeUrl();
 			});
 			
 			//거래처 검색
@@ -315,11 +346,8 @@
 		 
 		 function fn_saveBtn() {
 			 
-			 var billInfo = $("#frm_reqForm").serializeArray();
-			 
-			 console.log("========= billInfo =======\n" + billInfo);
-			 
-			 
+			 var billInfo = $("#frm_reqForm").serializeArray();			 
+			 //console.log("========= billInfo =======\n" + billInfo);			 
 			 for(var i = 0; i < billInfo.length; i++) {
 				 //부가세 정보
 				/*  if('billTaxYn' == billInfo[i]['name']){
@@ -397,15 +425,17 @@
 			form.submit(); 
 		 }
 		 
-		 function fnViewBillInsert() {
+		 function fnViewBill() {
+			 //alert("=========>"+ $('#ipt_billCtFkKey').val());
+			 window.parent.document.getElementById("m_iframGubun").value="detail";
+		     window.parent.document.getElementById("m_billTurnNo").value=$('#slt_billTurnNo').val();
+		     
 			 var url = '/mngMaint/bill/popup/viewWriteSdBilling.do';
 			 var dialogId = 'program_layer';
 			 var varParam = {"billCtFkKey" : $('#ipt_billCtFkKey').val()};
 			
 			 var button = new Array;
 			 button = [];
-			 
-			 
 			 
 			 /* showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); */ 
 			 parent.showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:545px');
@@ -491,9 +521,11 @@
 		};
 		//거래처 검색
 		var fnViewAccountList = function(pObject, pjAccountList){
-			var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 189px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			var html = '<div id="m_div_accountList">'
+		         + '<ul class="accountList">' ;
+			/* var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 189px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
 			         + '<ul class="accountList">'
-			       ;//+ '<div style="margin: 5px;">';
+			       ;//+ '<div style="margin: 5px;">'; */
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {
 			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
@@ -515,6 +547,171 @@
 				$('#m_div_accountList').remove();
 			});
 		};
+		
+		/* 계산서 정보추가 */
+		function fnBillInsert(billCtFkKey) {
+			window.parent.document.getElementById("m_iframGubun").value="detail";
+    		window.parent.document.getElementById("m_billTurnNo").value=$('#slt_billTurnNo').val();
+    		
+			var url = '/mngMaint/bill/popup/viewWriteSdBilling.do';
+			var dialogId = 'program_layer';
+			var varParam = {"billCtFkKey" : billCtFkKey};
+			
+			var button = new Array;
+			button = [];			 
+			 
+			 /* showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px'); */ 
+			 parent.showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:545px;');
+			
+		 }
+		
+		/* 매핑취소. */
+		function fnMappingCancel() {
+			//alert("====>"+$('#slt_billTurnNo').val());
+			var varParam = {};
+			if(confirm($('#slt_billTurnNo').val()+"회차에 대한 매핑취소처리를  하시겠습니까?")) {
+				/* 매핑취소시  billIssueStatus 상태값을  M 에서 R으로 변경한다. */
+				var billInfo = {
+						'pjKey' : $('#ipt_pjKey').val()
+						, 'billCallKey' : $('#ipt_billCallKey').val()
+						, 'billCtFkKey' : $('#ipt_billCtFkKey').val()
+ 						, 'billIssueStatus' : 'R'
+ 	 					, 'billMappingYn' : 'N'
+				}
+				
+				$.ajax({
+		        	url :"/mngMaint/bill/detail/cancelSdBillMapping.do",
+		        	type:"POST",  
+		            data: billInfo,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){	  
+		        		//console.log("step1.====>"+data.successYN);
+		        		if(data.successYN=='Y') {
+		        			alert($('#slt_billTurnNo').val()+"회차에 대한 세금계산서매핑 취소처리를 성공했습니다.");
+		        			
+		        			/* form = document.reqForm;
+			    			form.action = "/mngMaint/bill/detail/billForm.do";
+			    			form.submit();  */			
+		        			window.parent.document.getElementById("m_iframGubun").value="detail";
+		            		window.parent.document.getElementById("m_billTurnNo").value=$('#slt_billTurnNo').val();
+		            			
+		            		window.parent.changeIframeUrl();
+		        		} else {
+		        			alert($('#slt_billTurnNo').val()+"회차에 대한 세금계산서매핑 취소처리를 실패했습니다.");
+		        		}	        		        		
+		        		
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+			    });
+			}
+			
+		}
+		
+		/* 수금완료 */
+		function fnComplete(){
+			var varParam = {};
+			var billIssueStatus = '${billInfo.billIssueStatus}';
+ 			if(billIssueStatus == 'M') {
+ 				if(confirm($('#slt_billTurnNo').val()+"회차에 대한 수금완료처리를 하시겠습니까?")) {
+ 					/* 수금완료시 시  billIssueStatus 상태값을  E 로 변경한다. */
+ 					var billInfo = {
+ 							'pjKey' : $('#ipt_pjKey').val()
+ 							, 'billCallKey' : $('#ipt_billCallKey').val()
+ 							, 'salesKey' : $('#ipt_billCtFkKey').val()
+ 							, 'billIssueStatus' : 'E'
+ 					}
+ 					
+ 					$.ajax({
+ 				        	url :"/mngMaint/bill/detail/updateSdCollectStatus.do",
+ 				        	type:"POST",  
+ 				            data: billInfo,
+ 				     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+ 				     	    dataType: 'json',
+ 				            async : false,
+ 				        	success:function(data){	
+ 				        		if(data.successYN=='Y') {
+ 				        			alert($('#slt_billTurnNo').val()+"회차에 대한 수금완료처리를 성공했습니다.");
+ 				        			
+ 				        			/* form = document.reqForm;
+ 					    			form.action = "/mngMaint/bill/detail/main.do";
+ 					    			form.submit(); 	 */		    			
+ 				        			window.parent.document.getElementById("m_iframGubun").value="detail";
+ 			            			window.parent.document.getElementById("m_billTurnNo").value=$('#slt_billTurnNo').val();
+ 			            			
+ 			            			window.parent.changeIframeUrl();
+ 				        		} else {
+ 				        			alert($('#slt_billTurnNo').val()+"회차에 대한 수금완료처리를 실패했습니다.");
+ 				        		}
+ 				        		        		
+ 				        		
+ 				            },
+ 				        	error: function(request, status, error) {
+ 				        		if(request.status != '0') {
+ 				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+ 				        		}
+ 				        	} 
+ 				    });
+ 				}
+ 			} else {
+ 				if(billIssueStatus == 'R') {
+ 					alert("현재 세금계산서 요청상태 입니다. \n수금완료는 세금계산서 맵핑 후 완료할 수 있습니다.")
+ 				} else if(billIssueStatus == 'I') {
+ 					alert("현재 세금계산서 발행상태 입니다. \n수금완료는 세금계산서 맵핑 후 완료할 수 있습니다.")
+ 				}
+ 			}
+			
+	 	}
+		/* 수금완료취소  */
+		function fnCompleteCancel() {
+			//alert("====>"+$('#slt_billTurnNo').val());
+			var varParam = {};
+			if(confirm($('#slt_billTurnNo').val()+"회차에 대한 수금완료처리를 취소 하시겠습니까?")) {
+				/* 수금취소시  billIssueStatus 상태값을  E 에서 M으로 변경한다. */
+				var billInfo = {
+						'pjKey' : $('#ipt_pjKey').val()
+						, 'billCallKey' : $('#ipt_billCallKey').val()
+						, 'salesKey' : $('#ipt_billCtFkKey').val()
+ 						, 'billIssueStatus' : 'M'
+				}
+				
+				$.ajax({
+		        	url :"/mngMaint/bill/detail/updateSdCollectStatus.do",
+		        	type:"POST",  
+		            data: billInfo,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){	  
+		        		//console.log("step1.====>"+data.successYN);
+		        		if(data.successYN=='Y') {
+		        			alert($('#slt_billTurnNo').val()+"회차에 대한 수금취소처리를 성공했습니다.");
+		        			
+		        			/* form = document.reqForm;
+			    			form.action = "/mngMaint/bill/detail/billForm.do";
+			    			form.submit();  */			
+		        			window.parent.document.getElementById("m_iframGubun").value="detail";
+		            		window.parent.document.getElementById("m_billTurnNo").value=$('#slt_billTurnNo').val();
+		            			
+		            		window.parent.changeIframeUrl();
+		        		} else {
+		        			alert($('#slt_billTurnNo').val()+"회차에 대한 수금취소처리를 실패했습니다.");
+		        		}	        		        		
+		        		
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+			    });
+			}
+		}
 	</script>
 </head>
 <body>
@@ -638,7 +835,15 @@
 				<tr>
 					<td class="backgroundgray">계산서번호</td>	
 					<td>
-						<c:out value="${billInfo.billNo}"/>
+						<c:if test="${billInfo.billNo eq null and billInfo.billIssueStatus eq 'R'}">
+							<button type="button" class="btnComp" onclick="javascript:fnBillInsert('${billInfo.billCtFkKey }');">
+								<img src="<c:url value='/images/btn_mapping_bill.png'/>" />
+							</button>
+						</c:if>
+						<c:if test="${billInfo.billNo ne null}">
+							<c:out value="${billInfo.billNo}"/>
+						</c:if>
+						<%-- <c:out value="${billInfo.billNo}"/> --%>
 					</td>
 				</tr>
 				<tr>
@@ -661,13 +866,25 @@
 					<button type="button" id="req"   value="계산서 발행 요청" onclick="javascript:fnBillRequest();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_request.png'/>" style=""/></button>
 				</c:if>
 				<c:if test='${billInfo.billIssueStatus eq "R"}'>
-					<button type="button" id="req"   value="계산서 발행 수정" onclick="javascript:fnBillRequest();" style="" ><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" style=""/></button>
+					<button type="button" id="req"   value="계산서 요청 수정" onclick="javascript:fnBillRequest();" style="" ><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" style=""/></button>
 					<!--계산서 요청 등록 후 삭제.  -->
-					<button type="button" id="req"   value="계산서 발행 취소" onclick="javascript:fnDeleteBillRequest();" style="" ><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" style=""/></button>
+					<button type="button" id="req"   value="계산서 요청 취소" onclick="javascript:fnDeleteBillRequest();" style="" ><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" style=""/></button>
+					<button type="button" title="계산서정보보기" class="blueBtnStyle" onclick="javascript:fnViewBill()">계산서매핑</button>
 				</c:if>
 				
-				<c:if test='${billInfo.billIssueStatus != null && billInfo.billCallKey != null}'>
-				<button type="button" id="req"   value="계산서 XML등록" onclick="javascript:fnViewBillInsert();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_xml.png'/>" style=""/></button>
+				<c:if test='${billInfo.billIssueStatus eq "M"}'>
+				<!-- 매핑완료인경우  -->
+					<button type="button" title="계산서맵핑취소" class="purpleBtnStyle" onclick="javascript:fnMappingCancel()">계산서맵핑취소</button>
+					<button type="button" title="수금완료" class="blueBtnStyle" onclick="javascript:fnComplete()">수금완료</button>
+				</c:if>
+				<c:if test='${billInfo.billIssueStatus eq "E"}'>
+					<!-- 수금완료인경우  -->
+					<button type="button" title="수금완료취소" class="purpleBtnStyle" onclick="javascript:fnCompleteCancel()">수금완료취소</button>
+				</c:if>
+				<c:if test='${billInfo.billIssueStatus != null && billInfo.billNo != null}'>
+				
+				<button type="button" title="계산서정보보기" class="blueBtnStyle" onclick="javascript:fnViewBill()">계산서정보보기</button>
+				<%-- <button type="button" id="req"   value="계산서 XML등록" onclick="javascript:fnViewBillInsert();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_xml.png'/>" style=""/></button> --%>
 				<%-- <button type="button" id="check" value="발행완료"      onclick="javascript:fnBillPublish();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_end.png'/>"  style=""/></button> --%>
 				</c:if>
 				

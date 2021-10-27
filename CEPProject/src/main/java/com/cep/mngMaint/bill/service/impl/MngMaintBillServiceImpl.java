@@ -293,6 +293,7 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 	public List<EgovMap> selectSdBillList(MngMaintBillSearchVO searchVO ) throws Exception {
 		return mapper.selectSdBillList(searchVO);
 	}
+	
 	@Override
 	@Transactional
 	public void insertSdBillingXml(MngMaintBillVO mngMaintBillVO) throws Exception {
@@ -315,11 +316,11 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 			
 			maintBillVO.setBillCtFkKey(mngMaintBillVO.getBillCtFkKey());
 			
-			//세금계산서 정보 등록
+			//1.MT_SD_BILLING_OP_TB 세금계산서 요청 정보 업데이트(계산서 번호, 발행일자, 요청상태)
 			mapper.updatetBillInfo(maintBillVO);
 			
 			/*
-			 * 1. 유지보수 매출세금계산서 정보를 업데이트 한다.		
+			 * 2. 유지보수 매출(수금) 정보 상태를 업데이트 한다.		
 			 * MT_SALES_DETAIL_TB.SALES_STATUS_CD 업데이트.	
 			 */
 			mapper.updateSaleDetailStatusCd(maintBillVO);
@@ -330,10 +331,49 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 		
 //		2. 
 	}
+	
+	@Override
+	@Transactional
+	public void cancelSdBillMapping(MngMaintBillVO mngMaintBillVO) throws Exception {
+		/*
+		 * '계산서 발급 상태 - R:요청 >> I:발급 >> M:매핑 >> E: 수금 or 지급 완료'
+		 * 맵핑에서 요청상태로 변경한다. (M ==> R)
+		 */
+		//String billIssueStatus ="R"; 
+//		MngMaintBillVO maintBillVO = new MngMaintBillVO();
+		try {
+			//세금계산서 정보 셋팅.
+			
+			//maintBillVO.setBillMappingYn("N"); //매핑취소.
+			//maintBillVO.setBillIssueStatus(billIssueStatus);
+//			maintBillVO.setModEmpKey(mngMaintBillVO.getModEmpKey());
+			
+			//where
+//			maintBillVO.setBillCallKey(mngMaintBillVO.getBillCallKey());
+			
+//			maintBillVO.setBillCtFkKey(mngMaintBillVO.getBillCtFkKey());
+			
+			/*
+			 * 1.MT_SD_BILLING_OP_TB 세금계산서 요청 정보 업데이트(계산서 번호, 발행일자, 요청상태)
+			 * 계산서번호 = NULL
+			 * 발행일자 = NULL
+			 * 요청상태 = R
+			 */
+			mapper.updatetBillInfo(mngMaintBillVO);
+			
+			/*
+			 * 2. 유지보수 매출(수금) 정보 상태를 업데이트 한다.		
+			 * MT_SALES_DETAIL_TB.SALES_STATUS_CD 업데이트.	
+			 */
+			mapper.updateSaleDetailStatusCd(mngMaintBillVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
 
 	@Override
 	@Transactional
-	public void updateSdPaymentStatus(MngMaintBillVO mngMaintBillVO) throws Exception {
+	public void updateSdCollectStatus(MngMaintBillVO mngMaintBillVO) throws Exception {
 		/*
 		 * '계산서 발급 상태 - R:요청 >> I:발급 >> M:매핑 >> E: 수금 or 지급 완료'
 		 *  E : 수금완료처리.

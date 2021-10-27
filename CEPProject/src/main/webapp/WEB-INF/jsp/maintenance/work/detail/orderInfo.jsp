@@ -682,7 +682,7 @@
 										<th scope="row">미지급금</th>
 										<!-- <th scope="row">부가세포함</th> -->
 										<th scope="row">발주일자</th>
-										<th scope="row">결재조건</th>
+										<th scope="row">결제조건</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -836,7 +836,7 @@
 							<div class="floatR">
 								<button type="button" title="매입금 지급요청" class="blueBtnStyle" onclick="fnMovePaymentDetail();">매입금 지급요청</button>
 								<button type="button" value="수정" onclick="fn_addView('');"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제" onclick="fn_mdeleteWorkOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<%-- <button type="button" value="삭제" onclick="fn_mdeleteWorkOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 							</div>
 						</div>

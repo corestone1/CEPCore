@@ -133,7 +133,7 @@
 			background-color: #d3d3d3;
 		}
 		.mContents > .fxd .title ul li {
-			width: 16.65%;
+			width: 20%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -986,7 +986,7 @@
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
-									<td>유지보수 금액</td>
+									<td>총계약금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<%-- <tr>
@@ -1123,7 +1123,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label>*</label>유지보수금액</td>
+									<td><label>*</label>총계약금액</td>
 									<td>
 										<input type="text"  id="m_mtAmount" name="mtAmount" value="<c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/>" amountOnly required style="width: 140px; text-align: right;"/>
 									</td>
@@ -1228,7 +1228,7 @@
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" title="기본정보수정" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
 							<button type="button" title="기본정보삭제" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
-							<button type="button" title="계산서 발행 요청" value="삭제" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1243,12 +1243,12 @@
 							<c:when test="${parmMtSbCtYn == 'Y'}">
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-								<li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li>
+								<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
 							</c:when>
 							<c:otherwise>
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label>매입정보</label></li>
-								<li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li>
+								<!-- <li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li> -->
 							</c:otherwise>
 						</c:choose>
 						
@@ -1457,7 +1457,7 @@
 						
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-							<button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+							<%-- <button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>
 					</div>

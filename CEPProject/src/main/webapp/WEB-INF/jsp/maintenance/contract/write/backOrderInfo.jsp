@@ -191,13 +191,17 @@
 			width : calc(100% - 46px);
 			text-align: center;
 		}
-      	.accountList li {
+		#m_div_accountList {
+			left: 147px;
+    		margin-top: -5px;
+		}
+      	/* .accountList li {
 			text-align: left;
 			margin-left: 10px;
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
-		}
+		} */
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -236,7 +240,7 @@
 		
 		//거래처 검색
 		var fnSearchAccoutList = function(pObject, pstAccountNm) {
-			$('#div_accountList').remove();
+			$('#m_div_accountList').remove();
 		
 			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
 			
@@ -261,12 +265,15 @@
 		};
 		//거래처 검색
 		var fnViewAccountList = function(pObject, pjAccountList){
-			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			/* var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
 			         + '<ul class="accountList">'
-			       ;//+ '<div style="margin: 5px;">';
+			       ;//+ '<div style="margin: 5px;">'; */
+			var html = '<div id="m_div_accountList">'
+				         + '<ul class="m_accountList">'
+				       ;//+ '<div style="margin: 5px;">';
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {
-			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
 			    	        ;
 			    	}
 			       
@@ -278,12 +285,12 @@
 			$('#tr_account').after(html);
 			
 			
-			$("[id^='li_account']").click(function(event) {
+			$("[id^='m_li_account']").click(function(event) {
 				
 				$('#mtOrderAcKeyNm').val(this.innerText); 
 				$('#mtOrderAcKey').val(this.title);
 				$('#mtOrderAcKey').change();
-				$('#div_accountList').remove();
+				$('#m_div_accountList').remove();
 			});
 		};
 		
@@ -916,7 +923,7 @@
 							}
 							if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
 								//필수값 모두 통과하여 저장 프로세스 호출.
-								//saveBackOrder();
+								saveBackOrder();
 							} else {
 								return false;
 							}
@@ -1309,7 +1316,7 @@
 							<td class="tdContents">
 								<%-- <input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" />	
 								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey" value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/> --%>	
-								<input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" style="width: 152px" autocomplete="off" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" required/>
+								<input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" style="width: 163px" autocomplete="off" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" required/>
 								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey"  value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/>
 								
 							</td>
@@ -1346,7 +1353,7 @@
 							</td> -->
 							<td class="tdTitle"><label>*</label> 발주합계</td>
 							<td class="tdContents">
-								<input type="text"  id="orderTotalAmount" name="mtOrderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="text-align: right;"/>	
+								<input type="text"  id="orderTotalAmount" name="mtOrderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="width: 163px;text-align: right;"/>	
 							</td>
 							<td class="tdTitle"><label>*</label> 결제조건</td>
 							<td class="tdContents" colspan="3">
