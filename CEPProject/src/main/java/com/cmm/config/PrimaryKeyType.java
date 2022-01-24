@@ -37,8 +37,10 @@ public enum PrimaryKeyType {
 	, MAINTENACE_WORK("MW") // 유지보수 작업
 	, MAINTENACE_PAYMENT("MP") //지급, 매입
 	, MAINTENACE_GUARANTEE("MG") //유지보수 보증보험
-	, MAINTENACE_SALES_PLAN("MS") //유지보수 매출수금계획.(MT_SALES_DETAIL_TB)
+	, MAINTENACE_SALES_ORDER("SO") //유지보수 매출 주문메인.(MT_SALES_ORDER_TB)
+	, MAINTENACE_SALES_PLAN("MS") //유지보수 매출 계산서계획.(MT_SALES_DETAIL_TB)
 	, MAINTENACE_BILLING_OP("MB") //유지보수 세금계산서 요청.(MT_SD_BILLING_OP_TB)
+	, MAINTENACE_PAYMENT_PLAN("PP") //유지보수 매입지급계획.(MT_PAYMENT_DETAIL_TB)
 	, SALES_DETAIL("SD")
 	, PROJECT_ORDER("PO")
 	, PAYMENT("PY")

@@ -212,8 +212,8 @@
 		}
 		/* 거래처 스크롤 위치지정 */
 		#m_div_accountList {
-			left: 187px;
-    		margin-top: -7px;
+			left: 191px;
+    		margin-top: -9px;
 		}
 		/* 파랑버튼이미지  */
 		.blueBtnStyle {
@@ -258,7 +258,7 @@
 			$("#ipt_billAcNm").on("keydown", function(event){
 				
 				if(event.keyCode == 13) {		
-					
+					//$("#m_tr_account").css('border-bottom',' 0px solid #ebe9ee');
 					fnSearchAccoutList(this, $(this).val());
 				}						
 			});
@@ -544,7 +544,8 @@
 				$('#ipt_billAcNm').val(this.innerText); 
 				$('#ipt_billAcKey').val(this.title);
 				$('#ipt_billAcKey').change();
-				$('#m_div_accountList').remove();
+				$('#m_div_accountList').remove();				
+				
 			});
 		};
 		
@@ -726,6 +727,7 @@
 		<div class="floatC">
 		
 			<input type="hidden" id="ipt_pjKey"  name="pjKey" value="${pjKey}" />
+			<input type="hidden" id="ipt_mtSalesOrderKey"  name="mtSalesOrderKey" value="${mtSalesOrderKey}" />
 			<input type="hidden" id="ipt_acKey"  name="acKey" value="${acKey}" />
 			<input type="hidden" id="ipt_billCallKey"      name="billCallKey"     value="${billInfo.billCallKey}" />
 			<%-- <input type="hidden" id="ipt_billAcKey"        name="billAcKey"           value="${billAcKey}" /> --%>
@@ -782,9 +784,9 @@
 						<span class="cbspan">부가세 포함</span> --%>
 					</td>
 				</tr>
-				<tr id="m_tr_account">
+				<tr>
 					<td class="backgroundpurple"><label>*</label>매출거래처</td>	
-					<td>
+					<td id="m_tr_account">
 						<%-- <select id="ipt_billAcDirectorKey" name="billAcDirectorName" style="width:120px;">
 							<c:forEach var="directorList" items="${directorList}" varStatus="status">
 								<option value='${directorList.acDirectorKey}' <c:if test="${billInfo.billAcDirectorKey == directorList.acDirectorKey}">selected </c:if>>
@@ -792,7 +794,7 @@
 								</option>
 							</c:forEach>
 						</select> --%>
-						<input type="text" id="ipt_billAcNm" name="billAcNm" class="search" value="<c:out value="${billInfo.billAcNm}"/>" autocomplete="off" required/>
+						<input type="text" id="ipt_billAcNm" name="billAcNm" class="pname" value="<c:out value="${billInfo.billAcNm}"/>" readonly="readonly"/>
 						<input type="hidden" id="ipt_billAcKey" name="billAcKey" value="<c:out value="${billInfo.billAcKey}"/>" />
 					</td>
 				</tr>

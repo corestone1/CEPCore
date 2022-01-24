@@ -141,14 +141,14 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 22px);
+			width: calc(100% - 22px) !important;
 			height: 55px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			/* resize: none; */
 		}
 		.popContainer .bottomBtn {
 			position: absolute;
@@ -326,7 +326,7 @@
 					}				
 					
 				} else if(varUrl == "writeSalesPlanView"){					
-					if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수계약 계산서계획정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -339,8 +339,14 @@
 						return false;
 					}				
 					
-				} else if(varUrl == "purchaseAmountView"){					
+				} else if(varUrl == "purchaseAmountView"){				
 					if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
+						url = '/maintenance/contract/write/'+varUrl+'.do';
+					} else {
+						return false;
+					}
+				} else if(varUrl == "writePaymentPlanView"){				
+					if(confirm("유지보수계약 지급계획정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -637,6 +643,22 @@
 			}
 			
 		}
+		function fn_nextBtn(){
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 지급계획정보 등록화면으로 이동하시겠습니까?")) {
+				var url = '/maintenance/contract/write/writePaymentPlanView.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+						"mtIntegrateKey":$('#mtIntegrateKey').val(),
+						"parmMtSbCtYn":"Y"
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			} else {
+				return false;
+			}
+			
+		}
 		
 		function fn_saveBtn(){
 			if(confirm("유지보수계약 매입정보를 저장하시겠습니까?")) {
@@ -774,9 +796,10 @@
 				<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
-				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
 				<li class="colorWhite cursorP on">매입정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('writePaymentPlanView');">지급계획정보</li>
 			</ul>
 		</div>
 		<form action="/" id="mtBasicForm" name="mtBasicForm" method="post"> 
@@ -1018,7 +1041,9 @@
 					<div class="floatL btnCenter">
 						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>				
-							
+					<div class="floatR" >
+						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
+					</div>		
 					<div class="floatN floatC"></div>
 				</div>
 			</div>		

@@ -392,7 +392,9 @@
 		}
 		
 		function changeIframeUrl() {
+			console.log("changeIframeUrl=== call==========");
 			document.m_mtMovePayment.action = "/mngMaint/payment/detail/main.do";
+			//document.m_mtMovePayment.action = "/maintenance/work/detail/orderInfo.do";
            	document.m_mtMovePayment.submit();
 		}
 		
@@ -411,6 +413,8 @@
 		<input type="hidden" id="m_mtOrderKey" name="mtOrderKey" value="<c:out value="${mtOrderKey}"/>"/>	
 		<input type="hidden" id="m_iframGubun" name="iframGubun" />	
 		<input type="hidden" id="m_paymentKey" name="paymentKey"/>
+		<input type="hidden" id="m_proceedTurn" name="proceedTurn" value="<c:out value="${proceedTurn}"/>"/>
+		<input type="hidden" id="m_totalTurn" name="totalTurn" value="<c:out value="${totalTurn}"/>"/>
 	</form>
 	<div id="listForm" class="listForm">
 		<div class="sfcnt"></div>

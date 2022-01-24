@@ -320,6 +320,8 @@
 		    , ORDER_AMOUNT 
 		    , YET_PAYMENT_AMOUNT
 		    , DONE_PAYMENT_AMOUNT
+		    , BILL_PURCHASE_CD
+		    , BILL_MF_CD
 		    , REG_DT 
 		    , REG_TM 
 		    , REG_EMP_KEY
@@ -334,6 +336,8 @@
 		    , #{orderAmount}
 		    , #{orderAmount}
 		    , 0
+		    , #{billPurchaseCd}
+		    , #{billMfCd}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey}
@@ -351,7 +355,6 @@
 		    , ORDER_UPRICE 
 		    , ORDER_RECEIPT_DT 
 		    , MT_RATE
-		    , ORDER_KIND
 		    , ORDER_PM_DETAIL
 		    , REG_DT 
 		    , REG_TM 
@@ -367,7 +370,6 @@
 		    , #{item.orderUprice}
 		    , #{item.orderReceiptDt}
 		    , 0
-		    , #{item.orderKind}
 		    , #{item.orderPmDetail}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
@@ -402,10 +404,12 @@
 			, MO.ORDER_DT AS orderDt
 			, MO.YET_PAYMENT_AMOUNT AS yetPaymentAmount
 			, MO.DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, MO.BILL_PURCHASE_CD AS billPurchaseCd
+			, MO.BILL_MF_CD AS billMfCd
 			, (
 				SELECT 
 					IFNULL(SUM(CALL_AMOUNT),0) 
-				FROM MT_PAYMENT_TB 
+				FROM MT_PC_BILLING_OP_TB 
 				WHERE PAYMENT_BUY_FK_KEY=#{mtOrderKey}
 					AND DELETE_YN = 'N'
 				) AS callTotalAmount /* 지급요청금액*/
@@ -430,6 +434,8 @@
 			, MO.ORDER_DT AS orderDt
 			, MO.YET_PAYMENT_AMOUNT AS yetPaymentAmount
 			, MO.DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, MO.BILL_PURCHASE_CD AS billPurchaseCd
+			, MO.BILL_MF_CD AS billMfCd
 		FROM MT_ORDER_TB MO , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
 		WHERE 1=1
 			<if test="mtIntegrateKey != null and mtIntegrateKey != ''">
@@ -456,6 +462,22 @@
 			, MP.ORDER_UPRICE AS orderUprice
 			, MP.ORDER_RECEIPT_DT AS orderReceiptDt
   			, MP.MT_RATE AS mtRate
+			, MP.ORDER_PM_DETAIL AS orderPmDetail
+		FROM MT_ORDER_PRODUCT_TB MP, PM_PRODUCT_MNG_TB PM
+		WHERE MP.MT_ORDER_KEY = #{mtOrderKey}
+			AND MP.DELETE_YN='N'
+			AND MP.ORDER_PM_FK_KEY = PM.PM_KEY
+	</select>
+	<!-- <select id="selectWorkOrderProductList" parameterType="String" resultType="com.cep.maintenance.work.vo.MtOrderProductVO">
+		SELECT
+			MP.MT_ORDER_KEY AS mtOrderKey
+			, MP.ORDER_SEQ AS orderSeq
+			, MP.ORDER_PM_FK_KEY AS orderPmFkKey
+			, PM.PM_NM_CD AS orderPmFkNm
+			, MP.ORDER_QUANTITY AS orderQuantity
+			, MP.ORDER_UPRICE AS orderUprice
+			, MP.ORDER_RECEIPT_DT AS orderReceiptDt
+  			, MP.MT_RATE AS mtRate
 			, MP.ORDER_KIND AS orderKind
 			, CD.CD_NM AS orderKindNm
 			, MP.ORDER_PM_DETAIL AS orderPmDetail
@@ -465,7 +487,7 @@
 			AND CD.CD_UP_CD='PRODUCT'
 			AND MP.ORDER_PM_FK_KEY = PM.PM_KEY
 			AND MP.ORDER_KIND = CD.CD_KEY
-	</select>
+	</select> -->
 	
 	<!-- 유지보수작업별 거래처별 발주메인 삭제 -->
 	<update id="deleteWorkOrder" parameterType="java.util.HashMap">
@@ -563,6 +585,8 @@
 			, ORDER_AMOUNT = #{orderAmount}
 			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
 			, ORDER_DT = #{orderDt}
+			, BILL_PURCHASE_CD = #{billPurchaseCd}
+			, BILL_MF_CD = #{billMfCd}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
@@ -588,7 +612,7 @@
 				, ORDER_UPRICE = #{item.orderUprice}
 				, ORDER_RECEIPT_DT = #{item.orderReceiptDt}
 				<!-- , MT_RATE = #{item.mtRate} -->
-		    	, ORDER_KIND = #{item.orderKind}
+		    	<!-- , ORDER_KIND = #{item.orderKind} -->
 		    	, ORDER_PM_DETAIL = #{item.orderPmDetail}
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 

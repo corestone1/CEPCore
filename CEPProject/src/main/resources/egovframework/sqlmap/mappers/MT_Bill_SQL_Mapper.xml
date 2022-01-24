@@ -40,6 +40,7 @@
 			FROM MT_SALES_DETAIL_TB 
 			WHERE 1=1 
 				AND SALES_CT_FK_KEY= #{pjKey} 
+				AND MT_SALES_ORDER_KEY = #{mtSalesOrderKey} 
 				AND DELETE_YN='N'
 			) T2,
 			(
@@ -48,6 +49,7 @@
 			FROM MT_SALES_DETAIL_TB 
 			WHERE 1=1 
 				AND SALES_CT_FK_KEY= #{pjKey} 
+				AND MT_SALES_ORDER_KEY = #{mtSalesOrderKey} 
 				AND DELETE_YN='N' 
 				AND SALES_STATUS_CD IS NULL	
 			) T3,
@@ -56,6 +58,7 @@
 			FROM MT_SALES_DETAIL_TB 
 			WHERE 1=1 
 				AND SALES_CT_FK_KEY= #{pjKey} 
+				AND MT_SALES_ORDER_KEY = #{mtSalesOrderKey} 
 		    AND SALES_STATUS_CD ='E'
 				AND DELETE_YN='N'
 			) T4
@@ -65,6 +68,7 @@
 	<select id="selectBillDetailInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
 		
 		SELECT PSO.BILL_FK_MT_KEY          AS PJ_KEY                  /* 프로젝트 키 */
+		     , PSO.MT_SALES_ORDER_KEY      AS MT_SALES_ORDER_KEY      /* 매출계약 관리키 */
 		     , PSO.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 게산서 요청 관리키 */
 		     , PSO.BILL_CT_FK_KEY          AS BILL_CT_FK_KEY          /* 수금계획 관리키(MT_SALES_DETAIL_TB.SALES_KEY) */
 		     , PSO.BILL_TURN_NO            AS BILL_TURN_NO            /* 계산서 회차 */
@@ -83,6 +87,7 @@
 		FROM   MT_SD_BILLING_OP_TB PSO, CMM_ACCOUNT_TB CAT
 		WHERE 1=1
 		  AND PSO.BILL_FK_MT_KEY = #{pjKey}
+		  AND PSO.MT_SALES_ORDER_KEY = #{mtSalesOrderKey}
 		  AND PSO.BILL_TURN_NO   = #{billTurnNo}
 		  AND PSO.DELETE_YN      = 'N'		
 		  AND PSO.BILL_AC_KEY    = CAT.AC_KEY	
@@ -91,30 +96,35 @@
 	<!-- 세금계산서 요청 생성정보 조회  -->
 	<select id="selectBillDefaultInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
 		
-		SELECT PSD.SALES_KEY           AS BILL_CT_FK_KEY           /* 매출 관리키 */
+		SELECT PSD.SALES_KEY           AS BILL_CT_FK_KEY      /* 매출 관리키 */
 		     , PSD.SALES_CT_FK_KEY     AS PJ_KEY              /* 프로젝트 키 */
 		     , PSD.SALES_TURN          AS BILL_TURN_NO        /* 회차 */
 		     , PSD.SALES_COLLECT_RATE  AS SALES_COLLECT_RATE  /* 수금비율 */
 		     , PSD.SALES_TURN_AMOUNT   AS BILL_AMOUNT         /* 발행 예상 금액 */
 		     , PSD.SALES_BILL_FC_DT    AS BILL_REQUEST_DT     /* 계산서 예상 발행일 */
-		FROM   MT_SALES_DETAIL_TB  PSD
+		     , SO.MT_SALES_AC_KEY      AS BILL_AC_KEY         /* 매출거래처 관리키*/
+		     , CA.AC_NM                AS BILL_AC_NM          /* 매출거래처명 */
+		FROM   MT_SALES_DETAIL_TB  PSD, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA
 		WHERE  PSD.SALES_CT_FK_KEY = #{pjKey} 
-		  AND  PSD.SALES_TURN      = #{billTurnNo}
+			AND PSD.MT_SALES_ORDER_KEY = #{mtSalesOrderKey} 
+		  	AND PSD.SALES_TURN      = #{billTurnNo}
+		  	AND PSD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+		  	AND SO.MT_SALES_AC_KEY = CA.AC_KEY
 	
 	</select>	
 	
-	
+	<!-- 매출세금계산서 요청정보 등록  -->
 	<insert id="insertBillRequest" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
 		INSERT INTO MT_SD_BILLING_OP_TB
 		(
 			  BILL_CALL_KEY
 			, BILL_FK_MT_KEY
+			, MT_SALES_ORDER_KEY
 			, BILL_CT_FK_KEY
 			, BILL_TURN_NO
 			, BILL_AMOUNT
 			, BILL_ISSUE_EMAIL
 			, BILL_ISSUE_STATUS
-			, BILL_ISSUE_TYPE
 			, BILL_REQUEST_DT
 			, BILL_AC_KEY
 			, BILL_AC_DIRECTOR_NAME
@@ -128,12 +138,12 @@
 		(
 			  #{billCallKey}
 			, #{pjKey}
+			, #{mtSalesOrderKey}
 			, #{billCtFkKey}
 			, #{billTurnNo}
 			, #{billAmount}
 			, #{billIssueEmail}
 			, #{billIssueStatus}
-			, #{billIssueType}
 			, #{billRequestDt}
 			, #{billAcKey}
 			, #{billAcDirectorName}
@@ -146,13 +156,49 @@
 		
 	</insert>	
 	
+	<!-- 매출세금계산서 계산서발행정보 등록  -->
+	<insert id="insertBillIssue" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+		INSERT INTO MT_SD_BILLING_OP_TB
+		(
+			  BILL_CALL_KEY     /* 계산서 요청관리키 */
+			, BILL_FK_MT_KEY    /* 유지보수관리키 */
+			, MT_SALES_ORDER_KEY/* 유지보수 매출계약관리키(MT_SALES_ORDER_TB.MT_SALES_ORDER_KEY) */
+			, BILL_CT_FK_KEY    /* 수금계획 관리키(MT_SALES_DETAIL_TB.SALES_KEY) */
+			, BILL_TURN_NO      /* 계산서 회차 번호 */
+			, BILL_AMOUNT       /* 계산서 금액 */
+			, BILL_ISSUE_STATUS /* 계산서 발급 상태 - R:요청, I:발급, M:매핑, E:지급완료 */
+			, BILL_REQUEST_DT   /* 계산서 발행 요청일 */
+			, BILL_ISSUE_DT     /* 계산서 발행일 */
+			, BILL_AC_KEY       /* 매출처 관리키(사업자번호) */
+			, REG_DT
+			, REG_TM 
+			, REG_EMP_KEY
+		)
+		VALUES
+		(
+			  #{billCallKey}
+			, #{pjKey}
+			, #{mtSalesOrderKey}
+			, #{billCtFkKey}
+			, #{billTurnNo}
+			, #{billAmount}
+			, #{billIssueStatus}
+			, #{billIssueDt}
+			, #{billIssueDt}
+			, #{billAcKey}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(),'%k%i%s')
+			, #{regEmpKey}
+		)		
+	</insert>	
+	
 	<!-- 유지보수 매출(수금) 정보 상태 업데이트 -->
 	<update id="updateSaleDetailStatusCd" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
 	
 		UPDATE MT_SALES_DETAIL_TB
 			SET SALES_STATUS_CD = #{billIssueStatus}
-			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/		
-		WHERE SALES_KEY       = #{billCtFkKey}
+			, SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt} /* 수금완료일*/						
+		WHERE SALES_KEY = #{billCtFkKey}
 	
 	</update>	
 	
@@ -161,6 +207,7 @@
 		
 		SELECT SALES_KEY           AS SALES_KEY         /* 매출 관리키 */
 		     , SALES_CT_FK_KEY     AS MT_INTEGRATE_KEY  /* 유지보수 관리키 */
+		     , MT_SALES_ORDER_KEY  AS MT_SALES_ORDER_KEY /*매출계약 관리키 */
 		     , SALES_YEAR_MONTH    AS SALES_YEAR_MONTH  /* 요청년월(YYYYMM) */
 		     , SALES_STATUS_CD     AS SALES_STATUS_CD  /* 상태코드 */
 		FROM   MT_SALES_DETAIL_TB  
@@ -207,23 +254,19 @@
 			</if>	
 			<if test="mtSalesDecCallYnOrg != null and mtSalesDecCallYnOrg != ''">	
 				, MT_SALES_DEC_CALL_YN = #{mtSalesDecCallYnOrg}
-			</if>	
-				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
-				, MOD_EMP_KEY = #{modEmpKey}
+			</if>
 		WHERE MT_INTEGRATE_KEY =  #{mtIntegrateKey}	
 			AND MT_SALES_YEAR = #{mtSalesYear}	/* yyyy */
 			AND DELETE_YN='N'
 	</update>
 	
-	
+	<!-- 매출세금계산서 요청정보 수정  -->
 	<update id="updateBillRequest" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
 	
 		UPDATE MT_SD_BILLING_OP_TB
 		SET   BILL_AMOUNT           = #{billAmount}
 			, BILL_ISSUE_EMAIL      = #{billIssueEmail}
 			, BILL_ISSUE_STATUS     = #{billIssueStatus}
-			, BILL_ISSUE_TYPE       = #{billIssueType} 
 			, BILL_REQUEST_DT       = #{billRequestDt}
 			, BILL_AC_DIRECTOR_NAME = #{billAcDirectorName}
 			, BILL_AC_DIRECTOR_TEL  = #{billAcDirectorTel}
@@ -234,6 +277,21 @@
 		WHERE BILL_CALL_KEY         = #{billCallKey}
 	
 	</update>	
+	
+	<!-- 매출세금계산서 계산서 발행정보 수정  -->
+	<update id="updateBillIssue" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
+	
+		UPDATE MT_SD_BILLING_OP_TB
+		SET   BILL_ISSUE_STATUS  = #{billIssueStatus}
+			, BILL_REQUEST_DT = #{billIssueDt} /* 수금요청일*/		
+			, BILL_ISSUE_DT   = #{billIssueDt} /* 수금완료일*/			
+			, BILL_AC_KEY     = #{billAcKey} /* 매출처 관리키(사업자번호)*/	
+			, MOD_DT          = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM          = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY     = #{modEmpKey}
+		WHERE BILL_CALL_KEY   = #{billCallKey}
+	
+	</update>		
 	
 	<!-- 세금계산서 상태업데이트, 세금계산서 정보 업데이트.  -->
 	<update id="updatetBillInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillVO">
@@ -316,6 +374,9 @@
 		<if test="pjKey != null and pjKey != ''">
 			AND PSB.BILL_FK_MT_KEY = #{pjKey}
 		</if>  
+		<if test="mtSalesOrderKey != null and mtSalesOrderKey != ''">
+			AND PSD.MT_SALES_ORDER_KEY = #{mtSalesOrderKey}
+		</if>
 		<if test="billCtFkKey != null and billCtFkKey != ''">
 			AND PSD.SALES_KEY =  #{billCtFkKey}
 		</if> 
@@ -662,11 +723,27 @@
 			, (
 				SELECT 
 					IFNULL(SUM(CALL_AMOUNT),0) 
-				FROM MT_PAYMENT_TB 
+				FROM MT_PC_BILLING_OP_TB 
 				WHERE PAYMENT_BUY_FK_KEY=#{mtOrderKey}
 					AND DELETE_YN = 'N'
 				) AS CALL_TOTAL_AMOUNT /* 지급요청금액*/
-		FROM MT_BACK_ORDER_TB MO, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_TB CAT, CMM_ACCOUNT_DIRECTOR_TB AD,CMM_EMPLOYEE_TB CEM
+			, (
+				SELECT 
+					MAX(PAYMENT_TURN)
+  				FROM MT_PAYMENT_DETAIL_TB  
+  				WHERE MT_ORDER_KEY=#{mtOrderKey}
+    				AND DELETE_YN='N'
+			) AS TOTAL_TURN /* 전체 회차*/
+			, (
+				SELECT 
+					MIN(PAYMENT_TURN)
+  				FROM MT_PAYMENT_DETAIL_TB  
+  				WHERE MT_ORDER_KEY=#{mtOrderKey}
+  					AND PAYMENT_STATUS_CD IS NULL
+    				AND DELETE_YN='N'
+			) AS PROCEED_TURN /* 진행할 회차*/
+		FROM MT_BACK_ORDER_TB MO, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_TB CAT
+			, CMM_ACCOUNT_DIRECTOR_TB AD,CMM_EMPLOYEE_TB CEM
 		WHERE 1=1		
 			AND MO.MT_ORDER_KEY = #{mtOrderKey}
 			AND MO.DELETE_YN='N'  
@@ -705,10 +782,12 @@
 			, (
 				SELECT 
 					IFNULL(SUM(CALL_AMOUNT),0) 
-				FROM MT_PAYMENT_TB 
+				FROM MT_PC_BILLING_OP_TB 
 				WHERE PAYMENT_BUY_FK_KEY=#{mtOrderKey}
 					AND DELETE_YN = 'N'
 				) AS CALL_TOTAL_AMOUNT /* 지급요청금액*/
+			, 1 AS TOTAL_TURN /* 전체 회차*/
+			, 1 AS PROCEED_TURN /* 진행할 회차*/
 		FROM MT_ORDER_TB MO, MT_CONTRACT_TB MC, CMM_ACCOUNT_TB CA, CMM_ACCOUNT_TB CAT, CMM_ACCOUNT_DIRECTOR_TB AD,CMM_EMPLOYEE_TB CEM
 		WHERE 1=1		
 			AND MO.MT_ORDER_KEY = #{mtOrderKey}
@@ -727,15 +806,37 @@
 		SELECT
 			MB.BILL_NO
 			, MB.BILL_ISSUE_DT
+			, MP.CALL_AMOUNT AS BILL_AMOUNT
+			, MP.PAYMENT_CALL_DT
+			, MP.PAYMENT_DT
+			, MP.PAYMENT_STATUS_CD
+			, MP.PAYMENT_KEY
+			, MP.PAYMENT_DT
+			, MB.BILL_FK_PJ_KEY     /* 유지보수 관리키(MT_INTEGRATE_KEY) */
+			, MP.PAYMENT_KEY        /* 지급요청관리키(MT_PC_BILLING_OP_TB.PAYMENT_KEY) */
+			, MP.PAYMENT_DT_FK_KEY  /* 지급계획키*/
+			, MP.PAYMENT_TURN
+			, PAYMENT_BUY_FK_KEY
+		FROM MT_PC_BILLING_OP_TB MP LEFT OUTER JOIN CMM_PC_BILLING_TB MB  
+			ON MB.BILL_NO = MP.BILL_FK_KEY AND MB.BILL_MAPPING_YN='Y' AND MB.DELETE_YN = 'N'
+		WHERE 1=1
+			AND MP.PAYMENT_BUY_FK_KEY =#{mtOrderKey}/*발주관리키*/
+			AND MP.DELETE_YN = 'N'
+		ORDER BY MP.PAYMENT_STATUS_CD, PAYMENT_TURN
+	</select>	
+<!-- 	<select id="selectPaymentRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		SELECT
+			MB.BILL_NO
+			, MB.BILL_ISSUE_DT
 			, MB.BILL_AMOUNT
 			, MP.PAYMENT_CALL_DT
 			, MP.PAYMENT_DT
 			, MP.PAYMENT_STATUS_CD
 			, CM.CD_NM AS PAYMENT_STATUS_CD_NM /*지급상태명*/ 
 			, MP.PAYMENT_KEY
-			, MB.BILL_FK_PJ_KEY
-			, MB.BILL_CT_FK_KEY
-		FROM CMM_PC_BILLING_TB MB, MT_PAYMENT_TB MP , CMM_CODE_MNG_TB CM
+			, MB.BILL_FK_PJ_KEY /* 유지보수 관리키(MT_INTEGRATE_KEY)
+			, MB.BILL_CT_FK_KEY /* 지급요청관리키(MT_PC_BILLING_OP_TB.PAYMENT_KEY) */
+		FROM CMM_PC_BILLING_TB MB, MT_PC_BILLING_OP_TB MP , CMM_CODE_MNG_TB CM
 		WHERE 1=1
 			AND MP.PAYMENT_BUY_FK_KEY = #{mtOrderKey} /*발주관리키*/
 			AND MP.DELETE_YN = 'N'
@@ -745,10 +846,63 @@
 			AND MP.PAYMENT_STATUS_CD = CM.CD_KEY
 			AND CM.CD_CLASS='PYST'
 		ORDER BY MP.PAYMENT_STATUS_CD, PAYMENT_TURN
-	</select>
+	</select> -->
 	
 	<!-- 지급정보 상세 -->
 	<select id="selectPaymentRequestInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		SELECT 
+			MP.PAYMENT_KEY AS PAYMENT_KEY                         /* 지금관리키*/
+			, MP.PAYMENT_DT_FK_KEY                                /* 지급계획키*/
+			, MP.PAYMENT_TURN AS PAYMENT_TURN                     /* 회차정보 */         
+      		, MP.CALL_AMOUNT AS CALL_AMOUNT                       /* 요청금액*/
+			, MP.PAYMENT_STATUS_CD AS PAYMENT_STATUS_CD           /*지급상태코드 */
+			, MP.PAYMENT_CALL_DT AS PAYMENT_CALL_DT               /* 지급요청일자*/
+			, MP.BILL_FK_KEY AS BILL_FK_KEY                       /* BILL_NO*/
+			, MP.PAYMENT_AC_FK_KEY AS PAYMENT_AC_FK_KEY           /*매입처 관리키 */
+			, MP.PAYMENT_ACC_SEQ_FK_KEY AS PAYMENT_ACC_SEQ_FK_KEY /*지급계좌 관리키 */
+			, MP.REMARK AS REMARK                                 /*요청사항 */
+		FROM MT_PC_BILLING_OP_TB MP
+		WHERE PAYMENT_BUY_FK_KEY = #{mtOrderKey} 
+			AND MP.PAYMENT_TURN = #{proceedTurn}
+			AND MP.DELETE_YN='N'
+	</select>	
+<!-- 	<select id="selectPaymentRequestInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		SELECT 
+			MP.PAYMENT_KEY AS PAYMENT_KEY                         /* 지금관리키*/
+			, MP.PAYMENT_DT_FK_KEY                                /* 지급계획키*/
+			, MP.PAYMENT_TURN AS PAYMENT_TURN                     /* 회차정보 */         
+      		, MP.CALL_AMOUNT AS CALL_AMOUNT                       /* 요청금액*/
+			, MP.PAYMENT_STATUS_CD AS PAYMENT_STATUS_CD           /*지급상태코드 */
+			, MP.PAYMENT_CALL_DT AS PAYMENT_CALL_DT               /* 지급요청일자*/
+			, MP.BILL_FK_KEY AS BILL_FK_KEY                       /* BILL_NO*/
+			, MP.PAYMENT_AC_FK_KEY AS PAYMENT_AC_FK_KEY           /*매입처 관리키 */
+			, MP.PAYMENT_ACC_SEQ_FK_KEY AS PAYMENT_ACC_SEQ_FK_KEY /*지급계좌 관리키 */
+			, MP.REMARK AS REMARK                                 /*요청사항 */
+		FROM MT_PC_BILLING_OP_TB MP
+		WHERE PAYMENT_KEY = #{paymentKey}
+	</select>	 -->
+	
+	
+	<!-- 
+		지급계획정보에서 불러오는 지급정보 상세 
+		백계약인 경우 selectPaymentRequestInfo 쿼리 정보가 없는 경우
+		MT_PAYMENT_DETAIL_TB에서 기본정보를 조회하여 보여준다.
+	-->
+	<select id="selectPaymentDetailRequestInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
+		SELECT 
+			PAYMENT_KEY AS PAYMENT_DT_FK_KEY
+			, PAYMENT_TURN
+			, PAYMENT_TURN_AMOUNT AS CALL_AMOUNT
+			, PAYMENT_STATUS_CD
+			, PAYMENT_FC_DT AS PAYMENT_CALL_DT
+			, PAYMENT_YEAR_MONTH
+		FROM MT_PAYMENT_DETAIL_TB
+		WHERE MT_ORDER_KEY = #{mtOrderKey}/*발주관리키*/
+			AND PAYMENT_TURN = #{proceedTurn}/*지급회차*/
+			AND DELETE_YN = 'N'
+	</select>		
+	
+<!-- 	<select id="selectPaymentRequestInfo" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
 		SELECT 
 			MP.PAYMENT_KEY AS PAYMENT_KEY /* 지금관리키*/
       		, MP.CALL_AMOUNT AS CALL_AMOUNT /* 요청금액*/
@@ -759,11 +913,55 @@
 			, MP.PAYMENT_AC_FK_KEY AS PAYMENT_AC_FK_KEY/*매입처 관리키 */
 			, MP.PAYMENT_ACC_SEQ_FK_KEY AS PAYMENT_ACC_SEQ_FK_KEY /*지급계좌 관리키 */
 			, MP.REMARK AS REMARK/*요청사항 */
-		FROM MT_PAYMENT_TB MP, CMM_CODE_MNG_TB CM
+		FROM MT_PC_BILLING_OP_TB MP, CMM_CODE_MNG_TB CM
 		WHERE PAYMENT_KEY = #{paymentKey}
 			AND MP.PAYMENT_STATUS_CD = CM.CD_KEY
 			AND CM.CD_CLASS='PYST'
-	</select>
+	</select> -->
+	
+	<!-- 지급 요청 상태가 변경할때   MT_BUY_AMOUNT_TB업데이트 수행.-->
+	<update id="updateMtBuyAmountStatus" parameterType="com.cep.maintenance.contract.vo.MtBuyAmountVO">
+		UPDATE MT_BUY_AMOUNT_TB SET DELETE_YN = 'N'	
+			<if test="mtBuyJanCallYn != null and mtBuyJanCallYn != ''">	
+				, MT_BUY_JAN_CALL_YN = #{mtBuyJanCallYn}
+			</if>	
+			<if test="mtBuyFebCallYn != null and mtBuyFebCallYn != ''">	
+				, MT_BUY_FEB_CALL_YN = #{mtBuyFebCallYn}
+			</if>	
+			<if test="mtBuyMarCallYn != null and mtBuyMarCallYn != ''">	
+				, MT_BUY_MAR_CALL_YN = #{mtBuyMarCallYn}
+			</if>	
+			<if test="mtBuyAprCallYn != null and mtBuyAprCallYn != ''">	
+				, MT_BUY_APR_CALL_YN = #{mtBuyAprCallYn}
+			</if>	
+			<if test="mtBuyMayCallYn != null and mtBuyMayCallYn != ''">	
+				, MT_BUY_MAY_CALL_YN = #{mtBuyMayCallYn}
+			</if>	
+			<if test="mtBuyJunCallYn != null and mtBuyJunCallYn != ''">	
+				, MT_BUY_JUN_CALL_YN = #{mtBuyJunCallYn}
+			</if>	
+			<if test="mtBuyJulCallYn != null and mtBuyJulCallYn != ''">	
+				, MT_BUY_JUL_CALL_YN = #{mtBuyJulCallYn}
+			</if>	
+			<if test="mtBuyAugCallYn != null and mtBuyAugCallYn != ''">	
+				, MT_BUY_AUG_CALL_YN = #{mtBuyAugCallYn}
+			</if>	
+			<if test="mtBuySepCallYn != null and mtBuySepCallYn != ''">	
+				, MT_BUY_SEP_CALL_YN = #{mtBuySepCallYn}
+			</if>	
+			<if test="mtBuyOctCallYn != null and mtBuyOctCallYn != ''">	
+				, MT_BUY_OCT_CALL_YN = #{mtBuyOctCallYn}
+			</if>	
+			<if test="mtBuyNovCallYn != null and mtBuyNovCallYn != ''">	
+				, MT_BUY_NOV_CALL_YN = #{mtBuyNovCallYn}
+			</if>	
+			<if test="mtBuyDecCallYn != null and mtBuyDecCallYn != ''">	
+				, MT_BUY_DEC_CALL_YN = #{mtBuyDecCallYn}
+			</if>	
+		WHERE MT_INTEGRATE_KEY =  #{mtIntegrateKey}	
+			AND MT_BUY_YEAR = #{mtBuyYear}	/* yyyy */
+			AND DELETE_YN='N'
+	</update>	
 	
 		<!-- 세금계산서 매핑대상 목록 조회 -->
 	<select id="selectMappingBillList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">				
@@ -796,13 +994,15 @@
 	-->
 	<!-- 1.1 지급정보요청(세금계산서 매핑)  -->
 	<insert id="writePaymentRequestInfo" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		INSERT INTO MT_PAYMENT_TB (  
+		INSERT INTO MT_PC_BILLING_OP_TB (  
 			PAYMENT_KEY
 			, PAYMENT_BUY_FK_KEY
 			, MT_ORDER_TYPE
+			, PAYMENT_DT_FK_KEY
 			, PAYMENT_STATUS_CD
 			, PAYMENT_TURN
 			, PAYMENT_CALL_DT
+			, PAYMENT_DT
 			, CALL_AMOUNT
 			, PAYMENT_AC_FK_KEY
 			, PAYMENT_ACC_SEQ_FK_KEY
@@ -816,9 +1016,11 @@
 			#{paymentKey}
 			, #{paymentBuyFkKey}
 			, #{mtOrderType}
-			, 'PYST2000'
-			, (SELECT IFNULL(MAX(a.PAYMENT_TURN) + 1, 1) FROM MT_PAYMENT_TB a WHERE a.PAYMENT_BUY_FK_KEY=#{paymentBuyFkKey} AND DELETE_YN='N')
+			, #{paymentDtFkKey}
+			, #{paymentStatusCd}
+			, (SELECT IFNULL(MAX(a.PAYMENT_TURN) + 1, 1) FROM MT_PC_BILLING_OP_TB a WHERE a.PAYMENT_BUY_FK_KEY=#{paymentBuyFkKey} AND DELETE_YN='N')
 			, #{paymentCallDt}
+			, #{paymentDt}
 			, #{callAmount}
 			, #{paymentAcFkKey}
 			, #{paymentAccSeqFkKey}
@@ -834,7 +1036,7 @@
 	<update id="updatePaymentRequestBill" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
 		UPDATE CMM_PC_BILLING_TB SET 
 			BILL_FK_PJ_KEY = #{mtIntegrateKey} /* 유지보수 관리키 */
-			, BILL_CT_FK_KEY = #{paymentKey} /* 지급관리키 MT_PAYMENT_TB.PAYMENT_KEY */
+			, BILL_CT_FK_KEY = #{paymentKey} /* 지급관리키 MT_PC_BILLING_OP_TB.PAYMENT_KEY */
 			, BILL_MAPPING_YN ='Y'
 			, BILL_CT_CLASS_CD ='MT'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
@@ -847,7 +1049,7 @@
 	
 	<!--매핑정보 수정(확인전까지 수정가능)  -->
 	<update id="updatePaymentRequestInfo" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		UPDATE MT_PAYMENT_TB SET
+		UPDATE MT_PC_BILLING_OP_TB SET
 			PAYMENT_CALL_DT = #{paymentCallDt} /* 요청지급일자 */
 			, PAYMENT_ACC_SEQ_FK_KEY = #{paymentAccSeqFkKey} /* 지급계좌 */
 			, REMARK = #{remark} /*요청사항.*/
@@ -859,13 +1061,13 @@
 	
 	
 	<!-- 
-		매핑취소 (상태가 요청(PYST2000)일때만 가능함)
-		1.1 MT_PAYMENT_TB 삭제처리.
+		매핑취소 (상태가 요청(R)일때만 가능함)
+		1.1 MT_PC_BILLING_OP_TB 삭제처리.
 		1.2 CMM_PC_BILLING_TB 매핑취소처리.
 	 -->
-	<!-- 1.1 MT_PAYMENT_TB 삭제처리.  -->
+	<!-- 1.1 MT_PC_BILLING_OP_TB 삭제처리.  -->
 	<update id="deletePaymentRequest" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		UPDATE MT_PAYMENT_TB SET
+		UPDATE MT_PC_BILLING_OP_TB SET
 			DELETE_YN = 'Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
@@ -877,7 +1079,7 @@
 	<update id="deletePaymentRequestBill" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
 		UPDATE CMM_PC_BILLING_TB SET 
 			BILL_FK_PJ_KEY = NULL
-			, BILL_CT_FK_KEY = NULL/* 지급관리키 MT_PAYMENT_TB.PAYMENT_KEY */
+			, BILL_CT_FK_KEY = NULL/* 지급관리키 MT_PC_BILLING_OP_TB.PAYMENT_KEY */
 			, BILL_MAPPING_YN ='N'
 			, BILL_CT_CLASS_CD = NULL
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
@@ -888,8 +1090,8 @@
 	
 	<!--지급요청확인   -->
 	<update id="updatePaymentRequestConfirm" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		UPDATE MT_PAYMENT_TB SET
-			PAYMENT_STATUS_CD = 'PYST3000' /* 확인 상태로 변경 */
+		UPDATE MT_PC_BILLING_OP_TB SET
+			PAYMENT_STATUS_CD = 'C' /* 확인 상태로 변경 */
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
@@ -898,8 +1100,8 @@
 	
 	<!--지급요청확인  취소 -->
 	<update id="cancelPaymentRequestConfirm" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		UPDATE MT_PAYMENT_TB SET
-			PAYMENT_STATUS_CD = 'PYST2000' /* 확인 상태로 변경 */
+		UPDATE MT_PC_BILLING_OP_TB SET
+			PAYMENT_STATUS_CD = 'R' /* 확인 상태로 변경 */
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
@@ -907,19 +1109,40 @@
 	</update>
 
 	<!--
+		  
+		1. 지급계획테이블(MT_PAYMENT_DETAIL_TB) status변경
+		
+	 -->
+	<update id="updatePaymentDetailStatusCd" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
+		UPDATE MT_PAYMENT_DETAIL_TB SET
+			PAYMENT_STATUS_CD = #{paymentStatusCd}
+			, PAYMENT_FINISH_DT = #{paymentDt}
+		WHERE PAYMENT_KEY = #{paymentDtFkKey}
+	</update>	
+	
+	<!--
 		지급완료  
-		1. 지급테이블(MT_PAYMENT_TB) 완료처리 : updatePaymentRequestFinish
+		1. 지급테이블(MT_PC_BILLING_OP_TB) 완료처리 : updatePaymentRequestFinish
 		2. 발주 미지급, 지급금액 변경 : updateOrderPaymentAmount
 	 -->
-	<update id="updatePaymentRequestFinish" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		UPDATE MT_PAYMENT_TB SET
-			PAYMENT_STATUS_CD = 'PYST4000' /* 확인 상태로 변경 */
+	 <update id="updatePaymentRequestFinish" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
+		UPDATE MT_PC_BILLING_OP_TB SET
+			PAYMENT_STATUS_CD = 'E' /* 확인 상태로 변경 */
+			, PAYMENT_DT =  #{paymentDt}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PAYMENT_KEY = #{paymentKey}
+	</update>
+	<!-- <update id="updatePaymentRequestFinish" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
+		UPDATE MT_PC_BILLING_OP_TB SET
+			PAYMENT_STATUS_CD = 'E' /* 확인 상태로 변경 */
 			, PAYMENT_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE PAYMENT_KEY = #{paymentKey}
-	</update>	
+	</update> -->	
 	
 	<!--지급완료 지급금액, 미지금금액변경   -->
 	<update id="updateOrderPaymentAmount" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
@@ -942,12 +1165,12 @@
 	
 	<!--
 		지급완료  취소 
-		1. 지급테이블(MT_PAYMENT_TB) 취소처리 : cancelPaymentRequestFinish
+		1. 지급테이블(MT_PC_BILLING_OP_TB) 취소처리 : cancelPaymentRequestFinish
 		2. 발주 미지급, 지급금액 변경 : cancelOrderPaymentAmount
 	-->
 	<update id="cancelPaymentRequestFinish" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
-		UPDATE MT_PAYMENT_TB SET
-			PAYMENT_STATUS_CD = 'PYST3000' /* 확인 상태로 변경 */
+		UPDATE MT_PC_BILLING_OP_TB SET
+			PAYMENT_STATUS_CD = 'C' /* 확인 상태로 변경 */
 			, PAYMENT_DT = NULL
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
@@ -980,7 +1203,7 @@
 			, BO.YET_PAYMENT_AMOUNT
 			, BO.DONE_PAYMENT_AMOUNT
 			, IFNULL(SUM(CALL_AMOUNT),0) AS CALL_TOTAL_AMOUNT 
-		FROM MT_BACK_ORDER_TB BO, MT_PAYMENT_TB MP 
+		FROM MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB MP 
 		WHERE BO.MT_ORDER_KEY = #{mtOderKey} 
 			AND BO.DELETE_YN = 'N'
 			AND BO.MT_ORDER_KEY = MP.PAYMENT_BUY_FK_KEY
@@ -994,7 +1217,7 @@
 			, MO.YET_PAYMENT_AMOUNT
 			, MO.DONE_PAYMENT_AMOUNT
 			, IFNULL(SUM(CALL_AMOUNT),0) AS CALL_TOTAL_AMOUNT 
-		FROM MT_ORDER_TB MO, MT_PAYMENT_TB MP 
+		FROM MT_ORDER_TB MO, MT_PC_BILLING_OP_TB MP 
 		WHERE MO.MT_ORDER_KEY = #{mtOderKey} 
 			AND MO.DELETE_YN = 'N'
 			AND MO.MT_ORDER_KEY = MP.PAYMENT_BUY_FK_KEY
@@ -1003,8 +1226,484 @@
 	
 	
 	<!-- 유지보수 관리 ==> 계산서일정 조회쿼리. -->
-	<select id="selectMtBillRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">	
-		<!-- 매출(SD) 세금계산서. -->
+	<select id="selectMtBillRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		<!-- 매출 계산서 조회. -->
+		<if test="billType == 'SD'">
+			<!-- 계산서 일정으로 조회하는 경우 -->
+			<if test="dateSearchType == 'BR'">
+			SELECT 
+				'SD'                      AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
+				, SD.SALES_CT_FK_KEY      AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+				, SD.SALES_KEY            AS PLAN_DETAIL_KEY  /* 수금계획 관리키 */
+				, CA.AC_NM                AS MT_AC_NM         /* 유지보수 고객사 */
+				, MC.MT_NM                AS MT_NM            /* 유지보수명 */
+				, CA2.AC_NM               AS BILL_AC_NM       /* 거래처(매출) 명 */  
+				, NULL                    AS BILL_NO          /* 계산서 번호, 승인번호  */
+				, SD.SALES_TURN_AMOUNT    AS BILL_AMOUNT      /* 수금계획 회차금액 */
+				, NULL                    AS BILL_ISSUE_DT    /* 매출세금계산서 발행일자 */
+				, NULL                    AS BILL_REQ_KEY     /* 매출계산서 요청 관리키 */			
+				, NULL                    AS MT_ORDER_TYPE    /* 매입(PC)에서만 사용*/
+				, NULL                    AS MT_ORDER_KEY     /* 매입(PC)에서만 사용*/
+				, NULL                    AS MT_WORK_KEY      /* 매입(PC)에서만 사용*/
+				, SD.SALES_BILL_FC_DT     AS BILL_REQUEST_DT  /* 수금계획 계산서예상일자 */
+				, NULL                    AS BILL_FINISH_DT   /* 수금완료일자 */
+				, SD.SALES_STATUS_CD      AS BILL_STATUS_CD   /* 수금계획 상태 */
+				, CE.EMP_NM               AS SALE_EMP_NM      /* 유지보수 영업담당 */			
+			FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+				, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+				, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			WHERE 1=1
+			<!-- 계산서 검색 구분(BI:계산서발행일, BR:예상일자, FD:수금/지급완료일자)로 검색 -->		
+			<if test="dateSearchType == 'BR'">
+				<if test="fromDate != null and fromDate != ''">
+					AND SD.SALES_BILL_FC_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서예상일자 FROM */
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND SD.SALES_BILL_FC_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서예상일자 TO */
+				]]>
+				</if>	
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처 선택하고 검색어 입력 */
+			</if> 
+				AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+				AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+				AND MC.MT_AC_KEY = CA.AC_KEY 
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+				AND SD.SALES_STATUS_CD IS NULL
+				AND SD.DELETE_YN='N'
+				AND MC.DELETE_YN='N'
+				AND SO.DELETE_YN='N'
+				AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+			UNION ALL
+			SELECT 
+				'SD'                         AS BILL_TYPE
+				, SD.SALES_CT_FK_KEY         AS MT_INTEGRATE_KEY	
+				, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+				, CA.AC_NM                   AS MT_AC_NM
+				, MC.MT_NM                   AS MT_NM
+				, CA2.AC_NM                  AS BILL_AC_NM
+				, SB.BILL_NO                 AS BILL_NO
+				, SD.SALES_TURN_AMOUNT       AS BILL_AMOUNT
+				, SB.BILL_ISSUE_DT           AS BILL_ISSUE_DT
+				, SB.BILL_CALL_KEY           AS BILL_REQ_KEY		
+				, NULL                       AS MT_ORDER_TYPE    /* 매입(PC)에서만 사용*/
+				, NULL                       AS MT_ORDER_KEY     /* 매입(PC)에서만 사용*/
+				, NULL                       AS MT_WORK_KEY      /* 매입(PC)에서만 사용*/
+				, SD.SALES_BILL_FC_DT        AS BILL_REQUEST_DT  /* 발행요청일 */
+				, SB.SALES_COLLECT_FINISH_DT AS BILL_FINISH_DT   /* 수금완료 일자 */
+				, SD.SALES_STATUS_CD         AS BILL_STATUS_CD   /* 계산서 상태코드*/
+				, CE.EMP_NM                  AS SALE_EMP_NM      /* 유지보수 영업담당 */			
+			FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+				, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+				, MT_SD_BILLING_OP_TB SB, CMM_ACCOUNT_TB CAT
+				, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			WHERE 1=1
+			<if test="dateSearchType == 'BR'">
+				<if test="fromDate != null and fromDate != ''">
+					AND SD.SALES_BILL_FC_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서예상일자 FROM */
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND SD.SALES_BILL_FC_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서예상일자 TO */
+				]]>
+				</if>	
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처 선택하고 검색어 입력 */
+			</if> 
+				AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+				AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+				AND MC.MT_AC_KEY = CA.AC_KEY 
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+				AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+				AND SB.BILL_AC_KEY    = CAT.AC_KEY
+				AND SD.SALES_STATUS_CD IS NOT NULL
+				AND SD.DELETE_YN='N'
+				AND MC.DELETE_YN='N'
+				AND SB.DELETE_YN = 'N'
+				AND SO.DELETE_YN = 'N'
+				AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+			ORDER BY BILL_REQUEST_DT DESC	
+			</if>	<!-- END <if test="dateSearchType == 'BR'"> -->
+			<!-- 계산서 발행일자, 수금일자로 조회하는 경우 -->
+			<if test="dateSearchType == 'BI' or dateSearchType == 'FD'">		
+			SELECT 
+				'SD'                         AS BILL_TYPE
+				, SD.SALES_CT_FK_KEY         AS MT_INTEGRATE_KEY	
+				, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+				, CA.AC_NM                   AS MT_AC_NM
+				, MC.MT_NM                   AS MT_NM
+				, CA2.AC_NM                  AS BILL_AC_NM
+				, SB.BILL_NO                 AS BILL_NO
+				, SD.SALES_TURN_AMOUNT       AS BILL_AMOUNT
+				, SB.BILL_ISSUE_DT           AS BILL_ISSUE_DT
+				, SB.BILL_CALL_KEY           AS BILL_REQ_KEY		
+				, NULL                       AS MT_ORDER_TYPE    /* 매입(PC)에서만 사용*/
+				, NULL                       AS MT_ORDER_KEY     /* 매입(PC)에서만 사용*/
+				, NULL                       AS MT_WORK_KEY      /* 매입(PC)에서만 사용*/
+				, SD.SALES_BILL_FC_DT        AS BILL_REQUEST_DT  /* 발행요청일 */
+				, SB.SALES_COLLECT_FINISH_DT AS BILL_FINISH_DT   /* 수금완료 일자 */
+				, SD.SALES_STATUS_CD         AS BILL_STATUS_CD   /* 계산서 상태코드*/
+				, CE.EMP_NM                  AS SALE_EMP_NM      /* 유지보수 영업담당 */			
+			FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+				, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+				, MT_SD_BILLING_OP_TB SB, CMM_ACCOUNT_TB CAT
+				, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			WHERE 1=1
+			<if test="dateSearchType == 'BI'">
+				<if test="fromDate != null and fromDate != ''">
+					AND SB.BILL_ISSUE_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서발행일자 FROM */
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND SB.BILL_ISSUE_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서발행일자 TO */
+				]]>
+				</if>	
+			</if>
+			<if test="dateSearchType == 'FD'">
+				<if test="fromDate != null and fromDate != ''">
+					AND SB.SALES_COLLECT_FINISH_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서완료일자 FROM */
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND SB.SALES_COLLECT_FINISH_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서완료일자 TO */
+				]]>
+				</if>	
+				AND SD.SALES_STATUS_CD ='E' /* 수금완료 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>
+			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처 선택하고 검색어 입력 */
+			</if> 
+				AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+				AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+				AND MC.MT_AC_KEY = CA.AC_KEY 
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+				AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+				AND SB.BILL_AC_KEY    = CAT.AC_KEY
+				AND SD.SALES_STATUS_CD IS NOT NULL
+				AND SD.DELETE_YN='N'
+				AND MC.DELETE_YN='N'
+				AND SB.DELETE_YN = 'N'
+				AND SO.DELETE_YN = 'N'
+				AND SO.MT_SALES_AC_KEY = CA2.AC_KEY		 					
+				<if test="dateSearchType == 'BI'">
+					ORDER BY SB.BILL_ISSUE_DT DESC /* 계산서 발행일*/
+				</if>					 					
+				<if test="dateSearchType == 'FD'">
+					ORDER BY SB.SALES_COLLECT_FINISH_DT DESC /* 수금완료일자*/
+				</if>			
+			</if> <!-- END <if test="dateSearchType == 'BI' or dateSearchType == 'FD'"> -->
+		</if> <!--  END <if test="billType == 'SD'"> -->
+		
+		<!-- 매입 계산서 조회. -->
+		<if test="billType == 'PC'">	
+			<!-- 지급계획 일정으로 조회하는 경우 -->
+			<if test="dateSearchType == 'BR'">
+				SELECT 
+					'PC'                      AS BILL_TYPE         /* 매입(PC), 매출(SD) 구분 */
+					, PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY  /* 유지보수 관리키 */
+					, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   /* 백계약지급계획 관리키 */
+					, CA.AC_NM                AS MT_AC_NM          /* 유지보수 고객사 */
+					, MC.MT_NM                AS MT_NM             /* 유지보수명 */
+					, CA2.AC_NM               AS BILL_AC_NM        /* 지급 매입처 명 */ 
+					, NULL                    AS BILL_NO           /* 계산서 번호, 승인번호  */
+					, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT       /* 지급계획 회차금액 */
+					, NULL                    AS BILL_ISSUE_DT	   /* 계산서 발행일*/
+					, NULL                    AS BILL_REQ_KEY      /* 수금요청 요청 관리키 */			
+					, 'BO'                    AS MT_ORDER_TYPE     /* 백계약(BO), 작업발주(PO)*/
+					, BO.MT_ORDER_KEY         AS MT_ORDER_KEY      /* 발주키 */
+					, NULL                    AS MT_WORK_KEY       /* MT_ORDER_TYPE='PO'에서만 사용*/
+					, PD.PAYMENT_FC_DT        AS BILL_REQUEST_DT   /* 지급 계획 예상일자 */
+					, NULL                    AS BILL_FINISH_DT    /* 지급완료일자 */
+					, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD    /* 지급계획 상태 */
+					, CE.EMP_NM               AS SALE_EMP_NM       /* 유지보수 영업담당 */			
+				FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+					, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+					, MT_BACK_ORDER_TB BO, CMM_ACCOUNT_TB CA2
+				WHERE 1=1
+				<if test="fromDate != null and fromDate != ''">
+					AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+				]]>			
+				</if>		
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+				</if>
+					AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+					AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY
+					AND MC.MT_AC_KEY        = CA.AC_KEY 
+					AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+					AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+					AND PD.PAYMENT_STATUS_CD IS NULL
+					AND PD.DELETE_YN        = 'N'
+					AND MC.DELETE_YN        = 'N'
+					AND BO.DELETE_YN        = 'N'	
+				UNION ALL
+				SELECT 
+					'PC'                      AS BILL_TYPE        
+					, PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
+					, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+					, CA.AC_NM                AS MT_AC_NM
+					, MC.MT_NM                AS MT_NM
+					, CA2.AC_NM               AS BILL_AC_NM
+					, NULL                    AS BILL_NO
+					, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT
+					, NULL                    AS BILL_ISSUE_DT
+					, PB.PAYMENT_KEY          AS BILL_REQ_KEY
+					, PB.MT_ORDER_TYPE        AS MT_ORDER_TYPE
+					, BO.MT_ORDER_KEY         AS MT_ORDER_KEY 
+					, NULL                    AS MT_WORK_KEY 
+					, PB.PAYMENT_CALL_DT      AS BILL_REQUEST_DT  /* 지급요청일자*/			
+					, PB.PAYMENT_DT           AS BILL_FINISH_DT
+					, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD			
+					, CE.EMP_NM               AS SALE_EMP_NM       
+				FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+					, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+					, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2		
+				WHERE 1=1
+				<if test="fromDate != null and fromDate != ''">
+					AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+				]]>			
+				</if>		
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+				</if>
+					AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+					AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY			
+					AND MC.MT_AC_KEY        = CA.AC_KEY 
+					AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+					AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+					AND PD.PAYMENT_KEY      = PB.PAYMENT_DT_FK_KEY		
+					AND PB.MT_ORDER_TYPE    = 'BO'  
+					AND PD.PAYMENT_STATUS_CD IS NOT NULL
+					AND PD.DELETE_YN        = 'N'
+					AND MC.DELETE_YN        = 'N'
+					AND PB.DELETE_YN        = 'N'
+					AND BO.DELETE_YN        = 'N'				
+	
+				UNION ALL
+				SELECT
+					'PC'                            AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
+					, MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+					, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+					, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
+					, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+					, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+					, MB.BILL_NO                    AS BILL_NO          /* 계산서 번호, 승인번호  */
+					, MB.BILL_AMOUNT                AS BILL_AMOUNT      /* 공급가액 */
+					, MB.BILL_ISSUE_DT              AS BILL_ISSUE_DT    /* 계산서 발행일*/
+					, MP.PAYMENT_KEY                AS BILL_REQ_KEY     /* 수금요청 관리키*/
+					, MP.MT_ORDER_TYPE              AS MT_ORDER_TYPE    /* 백계약(BO), 작업발주(PO)*/
+					, MP.PAYMENT_BUY_FK_KEY         AS MT_ORDER_KEY     /* 발주키*/
+					, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업관리키*/
+					, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
+					, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
+					, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
+					, CE.EMP_NM                     AS REQ_EMP_NM
+				FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+					, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+					, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+					, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+					, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
+					, CMM_EMPLOYEE_TB CE   /*등록자정보테이블*/
+					, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+				WHERE 1=1
+					<if test="fromDate != null and fromDate != ''">
+						AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
+					</if>
+					<if test="toDate != null and toDate != ''">
+					<![CDATA[
+						AND MP.PAYMENT_CALL_DT <= REPLACE(#{toDate}, '-', '')
+					]]>
+					</if>	
+	
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CAT1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처 선택하고 검색어 입력 */
+				</if>
+					AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+					AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+					AND MB.BILL_NO = MP.BILL_FK_KEY
+					AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+					AND MC.MT_AC_KEY = CAT2.AC_KEY
+					AND MC.REG_EMP_KEY = CE.EMP_KEY 
+					AND MO.DELETE_YN = 'N'
+					AND MC.DELETE_YN = 'N'
+					AND MP.DELETE_YN = 'N'
+					AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+					AND MB.DELETE_YN = 'N'
+					AND MP.MT_ORDER_TYPE='PO' 			
+				ORDER BY BILL_REQUEST_DT DESC 
+			</if> <!--  END <if test="dateSearchType == 'BR'"> -->
+			
+			<!-- 계산서 발행일자, 지급일자로 조회하는 경우 -->
+			<if test="dateSearchType == 'BI' or dateSearchType == 'FD'">			
+				SELECT 
+					'PC'                      AS BILL_TYPE        
+					, PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
+					, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+					, CA.AC_NM                AS MT_AC_NM
+					, MC.MT_NM                AS MT_NM
+					, CA2.AC_NM               AS BILL_AC_NM
+					, NULL                    AS BILL_NO
+					, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT
+					, MB.BILL_ISSUE_DT        AS BILL_ISSUE_DT
+					, PB.PAYMENT_KEY          AS BILL_REQ_KEY
+					, PB.MT_ORDER_TYPE        AS MT_ORDER_TYPE
+					, BO.MT_ORDER_KEY         AS MT_ORDER_KEY 
+					, NULL                    AS MT_WORK_KEY 
+					, PB.PAYMENT_CALL_DT      AS BILL_REQUEST_DT  /* 지급요청일자*/			
+					, PB.PAYMENT_DT           AS BILL_FINISH_DT
+					, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD			
+					, CE.EMP_NM               AS SALE_EMP_NM       
+				FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+					, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+					, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2		
+				WHERE 1=1
+				<if test="dateSearchType == 'BI'">
+					<if test="fromDate != null and fromDate != ''">
+						AND MB.BILL_ISSUE_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서 발행일 FROM */
+					</if>
+					<if test="toDate != null and toDate != ''">
+					<![CDATA[
+						AND MB.BILL_ISSUE_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서발행일자 TO */
+					]]>
+					</if>	
+				</if>
+				<if test="dateSearchType == 'FD'">
+					<if test="fromDate != null and fromDate != ''">
+						AND PB.PAYMENT_DT >= REPLACE(#{fromDate}, '-', '') /* 지급완료일자 FROM */
+					</if>
+					<if test="toDate != null and toDate != ''">
+					<![CDATA[
+						AND PB.PAYMENT_DT <= REPLACE(#{toDate}, '-', '')  /* 지급완료일자 TO */
+					]]>
+					</if>	
+					AND PD.PAYMENT_STATUS_CD ='E' /* 지급완료 */
+				</if>
+		
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+				</if>
+					AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+					AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY			
+					AND MC.MT_AC_KEY        = CA.AC_KEY 
+					AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+					AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+					AND PD.PAYMENT_KEY      = PB.PAYMENT_DT_FK_KEY		
+					AND PB.MT_ORDER_TYPE    = 'BO'  
+					AND PD.PAYMENT_STATUS_CD IS NOT NULL
+					AND PD.DELETE_YN        = 'N'
+					AND MC.DELETE_YN        = 'N'
+					AND PB.DELETE_YN        = 'N'
+					AND BO.DELETE_YN        = 'N'				
+				UNION ALL
+				SELECT
+					'PC'                            AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
+					, MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+					, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+					, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
+					, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+					, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+					, MB.BILL_NO                    AS BILL_NO          /* 계산서 번호, 승인번호  */
+					, MB.BILL_AMOUNT                AS BILL_AMOUNT      /* 공급가액 */
+					, MB.BILL_ISSUE_DT              AS BILL_ISSUE_DT    /* 계산서 발행일*/
+					, MP.PAYMENT_KEY                AS BILL_REQ_KEY     /* 수금요청 관리키*/
+					, MP.MT_ORDER_TYPE              AS MT_ORDER_TYPE    /* 백계약(BO), 작업발주(PO)*/
+					, MP.PAYMENT_BUY_FK_KEY         AS MT_ORDER_KEY     /* 발주키*/
+					, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업관리키*/
+					, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
+					, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
+					, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
+					, CE.EMP_NM                     AS REQ_EMP_NM
+				FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+					, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+					, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+					, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+					, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
+					, CMM_EMPLOYEE_TB CE   /*등록자정보테이블*/
+					, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+				WHERE 1=1
+				<if test="dateSearchType == 'BI'">
+					<if test="fromDate != null and fromDate != ''">
+						AND MB.BILL_ISSUE_DT >= REPLACE(#{fromDate}, '-', '')
+					</if>
+					<if test="toDate != null and toDate != ''">
+					<![CDATA[
+						AND MB.BILL_ISSUE_DT <= REPLACE(#{toDate}, '-', '')
+					]]>
+					</if>	
+				</if>
+				<if test="dateSearchType == 'FD'">
+					<if test="fromDate != null and fromDate != ''">
+						AND MP.PAYMENT_DT >= REPLACE(#{fromDate}, '-', '')
+					</if>
+					<if test="toDate != null and toDate != ''">
+					<![CDATA[
+						AND MP.PAYMENT_DT <= REPLACE(#{toDate}, '-', '')
+					]]>
+					</if>	
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CAT1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처 선택하고 검색어 입력 */
+				</if>
+					AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+					AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+					AND MB.BILL_NO = MP.BILL_FK_KEY
+					AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+					AND MC.MT_AC_KEY = CAT2.AC_KEY
+					AND MC.REG_EMP_KEY = CE.EMP_KEY 
+					AND MO.DELETE_YN = 'N'
+					AND MC.DELETE_YN = 'N'
+					AND MP.DELETE_YN = 'N'
+					AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+					AND MB.DELETE_YN = 'N'
+					AND MP.MT_ORDER_TYPE='PO' 						
+				<if test="dateSearchType == 'BI'">
+					ORDER BY BILL_ISSUE_DT DESC /* 계산서 발행일*/
+				</if>
+				<if test="dateSearchType == 'FD'">
+					ORDER BY BILL_FINISH_DT DESC /* 지급완료일자*/
+				</if>		
+			
+			</if> <!--  END <if test="dateSearchType == 'BI' or dateSearchType == 'FD'"> -->
+		
+		</if> <!--  END <if test="billType == 'PC'"> -->
+	</select>
+	<!-- <select id="selectMtBillRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">	
+		매출(SD) 세금계산서.
 		<if test="billType == 'SD'">
 			SELECT 
 				'SD'                          AS BILL_TYPE               /* 매입(PC), 매출(SD) 구분 */
@@ -1022,7 +1721,6 @@
 				, PSB.BILL_REQUEST_DT         AS BILL_REQUEST_DT         /* 발행요청일 */
 				, PSB.SALES_COLLECT_FINISH_DT AS BILL_FINISH_DT          /* 수금완료 일자 */
 				, PSB.BILL_ISSUE_STATUS       AS BILL_STATUS_CD          /* 계산서 상태코드*/	
-				, ''                          AS BILL_STATUS_NM          /*계산서상태명*/ 
 				, CET.EMP_NM                  AS REQ_EMP_NM              /* 계산서 요청자 등록자 */
 			FROM MT_SD_BILLING_OP_TB PSB
 			JOIN MT_CONTRACT_TB	     MCT  ON PSB.BILL_FK_MT_KEY = MCT.MT_INTEGRATE_KEY AND MCT.DELETE_YN = 'N'
@@ -1030,6 +1728,7 @@
 			JOIN CMM_ACCOUNT_TB      CAT2 ON MCT.MT_AC_KEY      = CAT2.AC_KEY
 			JOIN CMM_EMPLOYEE_TB     CET  ON PSB.REG_EMP_KEY    = CET.EMP_KEY
 			WHERE  1=1	
+				AND PSB.DELETE_YN      = 'N'
 			/* 계산서 검색 구분(BI:계산서발행일, BR:계산서요청일, FD:지급완료일자)로 검색 */
 			<if test="dateSearchType == 'BI'">
 				<if test="fromDate != null and fromDate != ''">
@@ -1056,17 +1755,16 @@
 			</if>
 			<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
 				AND CAT.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처 선택하고 검색어 입력 */
-			</if>   	
-				AND PSB.DELETE_YN      = 'N'
+			</if>   					
 			<if test="dateSearchType == 'BI'">
 				ORDER BY PSB.BILL_ISSUE_DT DESC /* 계산서 발행일*/
 			</if>
 			<if test="dateSearchType == 'BR'">
 				ORDER BY PSB.BILL_REQUEST_DT  DESC /* 수금요청일자*/
 			</if>
-		</if> <!-- end <if test="billType == 'SD'"> --> 
+		</if> end <if test="billType == 'SD'"> 
 		
-		 <!--  매입(PC) 세금계산서. -->
+		  매입(PC) 세금계산서.
 		<if test="billType == 'PC'">
 			SELECT
 				'PC'                            AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
@@ -1084,11 +1782,9 @@
 				, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
 				, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
 				, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
-				, CM.CD_NM                      AS BILL_STATUS_NM   /*계산서상태명*/ 
 				, CE.EMP_NM                     AS REQ_EMP_NM
 			FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
-				, MT_PAYMENT_TB MP     /*지급요청테이블*/ 
-				, CMM_CODE_MNG_TB CM   /*코드테이블*/ 
+				, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
 				, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
 				, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
 				, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
@@ -1129,8 +1825,6 @@
 				AND MP.DELETE_YN = 'N'
 				AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
 				AND MB.DELETE_YN = 'N'
-				AND MP.PAYMENT_STATUS_CD = CM.CD_KEY
-				AND CM.CD_CLASS='PYST'
 				AND MP.MT_ORDER_TYPE='BO'   
 			UNION ALL
 			SELECT
@@ -1149,11 +1843,9 @@
 				, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
 				, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
 				, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
-				, CM.CD_NM                      AS BILL_STATUS_NM   /* 계산서상태명*/ 
 				, CE.EMP_NM                     AS REQ_EMP_NM
 			FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
-				, MT_PAYMENT_TB MP     /*지급요청테이블*/ 
-				, CMM_CODE_MNG_TB CM   /*코드테이블*/ 
+				, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
 				, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
 				, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
 				, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
@@ -1197,8 +1889,6 @@
 				AND MP.DELETE_YN = 'N'
 				AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
 				AND MB.DELETE_YN = 'N'
-				AND MP.PAYMENT_STATUS_CD = CM.CD_KEY
-				AND CM.CD_CLASS='PYST'
 				AND MP.MT_ORDER_TYPE='PO' 			
 			<if test="dateSearchType == 'BI'">
 				ORDER BY BILL_ISSUE_DT DESC /* 계산서 발행일*/
@@ -1207,10 +1897,266 @@
 				ORDER BY BILL_REQUEST_DT DESC /* 지급요청일자*/
 			</if>		
 		</if>
-	</select>
+	</select> -->
 	
 	<!--유지보수관리 >> 수금.지급현황  >> 수금 현황 목록조회   -->
 	<select id="selectMtCollectRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		<!-- 전체 일정(초기)으로 조회하는 경우 -->
+		<if test="dateSearchType == null or dateSearchType == ''">
+		SELECT 
+			SD.SALES_CT_FK_KEY        AS MT_INTEGRATE_KEY     /* 유지보수 관리키 */
+			, SD.SALES_KEY            AS PLAN_DETAIL_KEY      /* 수금계획 관리키 */
+			, CA.AC_NM                AS MT_AC_NM             /* 유지보수 고객사 */
+			, MC.MT_NM                AS MT_NM                /* 유지보수명 */
+			, CA2.AC_NM               AS BILL_AC_NM           /* 거래처(매출) 명 */ 
+			, SD.SALES_TURN_AMOUNT    AS BILL_AMOUNT          /* 수금계획 회차금액 */
+			, SD.SALES_COLLECT_FC_DT  AS SALES_COLLECT_FC_DT  /* 수금계획 예상일자 */
+			, NULL                    AS BILL_FINISH_DT       /* 수금완료일자 */
+			, SD.SALES_STATUS_CD      AS BILL_STATUS_CD       /* 수금계획 상태 */
+			, CE.EMP_NM               AS SALE_EMP_NM          /* 유지보수 영업담당 */			
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		/* 계산서 검색 구분(BR:예상일자, FD:수금/지급완료일자)로 검색 */	
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_COLLECT_FC_DT >= REPLACE(#{fromDate}, '-', '') /* 수금계획 예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_COLLECT_FC_DT <= REPLACE(#{toDate}, '-', '')  /* 수금계획 예상일자 TO */
+		]]>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		
+		<if test="searchWord != null and searchWord != ''">					
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출/매입) 선택하고 검색어 입력 */
+			</if>		
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_STATUS_CD IS NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SO.DELETE_YN='N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		UNION ALL
+		SELECT 
+			SD.SALES_CT_FK_KEY           AS MT_INTEGRATE_KEY	
+			, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+			, CA.AC_NM                   AS MT_AC_NM
+			, MC.MT_NM                   AS MT_NM
+			, CA2.AC_NM                  AS BILL_AC_NM
+			, SD.SALES_TURN_AMOUNT       AS BILL_AMOUNT	
+			, SD.SALES_COLLECT_FC_DT     AS SALES_COLLECT_FC_DT
+			, SB.SALES_COLLECT_FINISH_DT AS BILL_FINISH_DT   /* 수금완료 일자 */
+			, SD.SALES_STATUS_CD         AS BILL_STATUS_CD   /* 계산서 상태코드*/
+			, CE.EMP_NM                  AS SALE_EMP_NM      /* 유지보수 영업담당 */			
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			, MT_SD_BILLING_OP_TB SB
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_COLLECT_FC_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_COLLECT_FC_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서예상일자 TO */
+		]]>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">					
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출/매입) 선택하고 검색어 입력 */
+			</if>		
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+			AND SD.SALES_STATUS_CD IS NOT NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SB.DELETE_YN = 'N'
+			AND SO.DELETE_YN = 'N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		ORDER BY SALES_COLLECT_FC_DT DESC	
+		</if>	<!-- END <if test="dateSearchType == null or dateSearchType == ''"> -->
+		<!-- 수금완료로 조회하는 경우 -->
+		<if test='dateSearchType == "E" '>		
+		SELECT 
+			SD.SALES_CT_FK_KEY         AS MT_INTEGRATE_KEY	
+			, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+			, CA.AC_NM                   AS MT_AC_NM
+			, MC.MT_NM                   AS MT_NM
+			, CA2.AC_NM                  AS BILL_AC_NM
+			, SD.SALES_TURN_AMOUNT       AS BILL_AMOUNT	
+			, SD.SALES_COLLECT_FC_DT     AS SALES_COLLECT_FC_DT 
+			, SB.SALES_COLLECT_FINISH_DT AS BILL_FINISH_DT       /* 수금완료 일자 */
+			, SD.SALES_STATUS_CD         AS BILL_STATUS_CD       /* 계산서 상태코드*/
+			, CE.EMP_NM                  AS SALE_EMP_NM          /* 유지보수 영업담당 */			
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			, MT_SD_BILLING_OP_TB SB
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SB.SALES_COLLECT_FINISH_DT >= REPLACE(#{fromDate}, '-', '') /* 수금완료일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SB.SALES_COLLECT_FINISH_DT <= REPLACE(#{toDate}, '-', '')  /* 수금완료일자 TO */
+		]]>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">					
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출/매입) 선택하고 검색어 입력 */
+			</if>		
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+			AND SD.SALES_STATUS_CD ='E'
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SB.DELETE_YN = 'N'
+			AND SO.DELETE_YN = 'N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		ORDER BY BILL_FINISH_DT DESC	
+		</if> <!-- END <if test="dateSearchType == 'E' "> -->
+		
+		<!-- 예정건으로 조회하는 경우 -->
+		<if test='dateSearchType == "NE"'>
+		SELECT 
+			SD.SALES_CT_FK_KEY        AS MT_INTEGRATE_KEY     /* 유지보수 관리키 */
+			, SD.SALES_KEY            AS PLAN_DETAIL_KEY      /* 수금계획 관리키 */
+			, CA.AC_NM                AS MT_AC_NM             /* 유지보수 고객사 */
+			, MC.MT_NM                AS MT_NM                /* 유지보수명 */
+			, CA2.AC_NM               AS BILL_AC_NM           /* 거래처(매출) 명 */ 
+			, SD.SALES_TURN_AMOUNT    AS BILL_AMOUNT          /* 수금계획 회차금액 */
+			, SD.SALES_COLLECT_FC_DT  AS SALES_COLLECT_FC_DT  /* 수금계획 계산서예상일자 */
+			, NULL                    AS BILL_FINISH_DT       /* 수금완료일자 */
+			, SD.SALES_STATUS_CD      AS BILL_STATUS_CD       /* 수금계획 상태 */
+			, CE.EMP_NM               AS SALE_EMP_NM          /* 유지보수 영업담당 */			
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		/* 계산서 검색 구분(BR:예상일자, FD:수금/지급완료일자)로 검색 */	
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_COLLECT_FC_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_COLLECT_FC_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서예상일자 TO */
+		]]>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">					
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출/매입) 선택하고 검색어 입력 */
+			</if>		
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_STATUS_CD IS NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SO.DELETE_YN='N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		UNION ALL
+		SELECT 
+			SD.SALES_CT_FK_KEY         AS MT_INTEGRATE_KEY	
+			, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+			, CA.AC_NM                   AS MT_AC_NM
+			, MC.MT_NM                   AS MT_NM
+			, CA2.AC_NM                  AS BILL_AC_NM
+			, SD.SALES_TURN_AMOUNT       AS BILL_AMOUNT	
+			, SD.SALES_COLLECT_FC_DT     AS SALES_COLLECT_FC_DT
+			, SB.SALES_COLLECT_FINISH_DT AS BILL_FINISH_DT   /* 수금완료 일자 */
+			, SD.SALES_STATUS_CD         AS BILL_STATUS_CD   /* 계산서 상태코드*/
+			, CE.EMP_NM                  AS SALE_EMP_NM      /* 유지보수 영업담당 */			
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			, MT_SD_BILLING_OP_TB SB
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_COLLECT_FC_DT >= REPLACE(#{fromDate}, '-', '') /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_COLLECT_FC_DT <= REPLACE(#{toDate}, '-', '')  /* 계산서예상일자 TO */
+		]]>
+		</if>	
+		<if test="searchWord != null and searchWord != ''">					
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출/매입) 선택하고 검색어 입력 */
+			</if>		
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+			AND SD.SALES_STATUS_CD !='E'
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SB.DELETE_YN = 'N'
+			AND SO.DELETE_YN = 'N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		ORDER BY SALES_COLLECT_FC_DT DESC	
+		</if>	<!-- END <if test="dateSearchType == null or dateSearchType == ''"> -->	
+	</select>		
+	<!-- <select id="selectMtCollectRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
 		SELECT
 			MT_INTEGRATE_KEY    /* 유지보수 관리키 */
 		  , SALES_KEY           /* 수금계획 관리키 */
@@ -1239,9 +2185,9 @@
 				, CMM_ACCOUNT_TB CA    /*고객사정보테이블*/ 
 				, CMM_EMPLOYEE_TB CE   /*영업사원정보테이블*/
 			WHERE 1=1
-			<!-- 예정일자로 검색. -->
+			예정일자로 검색.
 			<if test='dateSearchType == "NE"'>
-			<!-- <if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'NE'"> -->
+			<if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'NE'">
 				<if test="fromDate != null and fromDate != ''">
 					AND MS.SALES_COLLECT_FC_DT >= REPLACE(#{fromDate}, '-', '')
 				</if>
@@ -1251,9 +2197,9 @@
 				]]>
 				</if>
 			</if>
-			<!-- 완료일자로 검색 검색. -->
+			완료일자로 검색 검색.
 			<if test='dateSearchType == "E"'>
-			<!-- <if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'E'"> -->
+			<if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'E'">
 				<if test="fromDate != null and fromDate != ''">
 					AND MS.SALES_COLLECT_FINISH_DT >= REPLACE(#{fromDate}, '-', '')
 				</if>
@@ -1283,10 +2229,463 @@
 			</if>
 		</if>
 		ORDER BY DAT.SALES_COLLECT_DT DESC	
-	</select>
+	</select> -->
 	
 	<!--유지보수관리 >> 수금.지급현황  >> 지급 현황 목록조회  -->
 	<select id="selectMtPaymentRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		<!-- 전체 일정(초기)으로 조회하는 경우 -->
+		<if test="dateSearchType == null or dateSearchType == ''">
+		SELECT 
+			PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY  /* 유지보수 관리키 */
+			, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   /* 백계약지급계획 관리키 */
+			, CA.AC_NM                AS MT_AC_NM          /* 유지보수 고객사 */
+			, MC.MT_NM                AS MT_NM             /* 유지보수명 */
+			, CA2.AC_NM               AS BILL_AC_NM        /* 지급 매입처 명 */ 
+			, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT       /* 지급계획 회차금액 */
+			, NULL                    AS BILL_REQ_KEY      /* 수금요청 요청 관리키 */			
+			, 'BO'                    AS MT_ORDER_TYPE     /* 백계약(BO), 작업발주(PO)*/
+			, BO.MT_ORDER_KEY         AS MT_ORDER_KEY      /* 발주키 */
+			, NULL                    AS MT_WORK_KEY       /* MT_ORDER_TYPE='PO'에서만 사용*/
+			, PD.PAYMENT_FC_DT        AS BILL_REQUEST_DT   /* 지급 계획 예상일자 */
+			, NULL                    AS BILL_FINISH_DT    /* 지급완료일자 */
+			, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD    /* 지급계획 상태 */
+			, CE.EMP_NM               AS SALE_EMP_NM       /* 유지보수 영업담당 */			
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_BACK_ORDER_TB BO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY
+			AND MC.MT_AC_KEY        = CA.AC_KEY 
+			AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+			AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+			AND PD.PAYMENT_STATUS_CD IS NULL
+			AND PD.DELETE_YN        = 'N'
+			AND MC.DELETE_YN        = 'N'
+			AND BO.DELETE_YN        = 'N'	
+		UNION ALL
+		SELECT 
+			PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
+			, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+			, CA.AC_NM                AS MT_AC_NM
+			, MC.MT_NM                AS MT_NM
+			, CA2.AC_NM               AS BILL_AC_NM
+			, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT
+			, PB.PAYMENT_KEY          AS BILL_REQ_KEY
+			, PB.MT_ORDER_TYPE        AS MT_ORDER_TYPE
+			, BO.MT_ORDER_KEY         AS MT_ORDER_KEY 
+			, NULL                    AS MT_WORK_KEY 
+			, PB.PAYMENT_CALL_DT      AS BILL_REQUEST_DT  /* 지급요청일자*/			
+			, PB.PAYMENT_DT           AS BILL_FINISH_DT
+			, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD			
+			, CE.EMP_NM               AS SALE_EMP_NM       
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2		
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY			
+			AND MC.MT_AC_KEY        = CA.AC_KEY 
+			AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+			AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+			AND PD.PAYMENT_KEY      = PB.PAYMENT_DT_FK_KEY		
+			AND PB.MT_ORDER_TYPE    = 'BO'  
+			AND PD.PAYMENT_STATUS_CD IS NOT NULL
+			AND PD.DELETE_YN        = 'N'
+			AND MC.DELETE_YN        = 'N'
+			AND PB.DELETE_YN        = 'N'
+			AND BO.DELETE_YN        = 'N'				
+		UNION ALL
+		SELECT
+			MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+			, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+			, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
+			, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+			, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+			, MB.BILL_AMOUNT                AS BILL_AMOUNT      /* 공급가액 */
+			, MP.PAYMENT_KEY                AS BILL_REQ_KEY     /* 수금요청 관리키*/
+			, MP.MT_ORDER_TYPE              AS MT_ORDER_TYPE    /* 백계약(BO), 작업발주(PO)*/
+			, MP.PAYMENT_BUY_FK_KEY         AS MT_ORDER_KEY     /* 발주키*/
+			, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업관리키*/
+			, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
+			, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
+			, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
+			, CE.EMP_NM                     AS REQ_EMP_NM
+		FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+			, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+			, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
+			, CMM_EMPLOYEE_TB CE   /*등록자정보테이블*/
+			, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+		WHERE 1=1
+			<if test="fromDate != null and fromDate != ''">
+				AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
+			</if>
+			<if test="toDate != null and toDate != ''">
+			<![CDATA[
+				AND MP.PAYMENT_CALL_DT <= REPLACE(#{toDate}, '-', '')
+			]]>
+			</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CAT2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CAT1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+			AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+			AND MB.BILL_NO = MP.BILL_FK_KEY
+			AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+			AND MC.MT_AC_KEY = CAT2.AC_KEY
+			AND MC.REG_EMP_KEY = CE.EMP_KEY 
+			AND MO.DELETE_YN = 'N'
+			AND MC.DELETE_YN = 'N'
+			AND MP.DELETE_YN = 'N'
+			AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+			AND MB.DELETE_YN = 'N'
+			AND MP.MT_ORDER_TYPE='PO' 			
+		ORDER BY BILL_REQUEST_DT DESC 	
+		</if>	<!-- END <if test="dateSearchType == null or dateSearchType == ''"> -->	
+		
+		<!-- 수금완료로 조회하는 경우 -->
+		<if test='dateSearchType == "E" '>		
+		SELECT 
+			PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
+			, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+			, CA.AC_NM                AS MT_AC_NM
+			, MC.MT_NM                AS MT_NM
+			, CA2.AC_NM               AS BILL_AC_NM
+			, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT
+			, PB.PAYMENT_KEY          AS BILL_REQ_KEY
+			, PB.MT_ORDER_TYPE        AS MT_ORDER_TYPE
+			, BO.MT_ORDER_KEY         AS MT_ORDER_KEY 
+			, NULL                    AS MT_WORK_KEY 
+			, PB.PAYMENT_CALL_DT      AS BILL_REQUEST_DT  /* 지급요청일자*/			
+			, PB.PAYMENT_DT           AS BILL_FINISH_DT
+			, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD			
+			, CE.EMP_NM               AS SALE_EMP_NM       
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2		
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY			
+			AND MC.MT_AC_KEY        = CA.AC_KEY 
+			AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+			AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+			AND PD.PAYMENT_KEY      = PB.PAYMENT_DT_FK_KEY		
+			AND PB.MT_ORDER_TYPE    = 'BO'  
+			AND PB.PAYMENT_STATUS_CD ='E'
+			AND PD.DELETE_YN        = 'N'
+			AND MC.DELETE_YN        = 'N'
+			AND PB.DELETE_YN        = 'N'
+			AND BO.DELETE_YN        = 'N'				
+			UNION ALL
+		SELECT
+			MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+			, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+			, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
+			, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+			, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+			, MB.BILL_AMOUNT                AS BILL_AMOUNT      /* 공급가액 */
+			, MP.PAYMENT_KEY                AS BILL_REQ_KEY     /* 수금요청 관리키*/
+			, MP.MT_ORDER_TYPE              AS MT_ORDER_TYPE    /* 백계약(BO), 작업발주(PO)*/
+			, MP.PAYMENT_BUY_FK_KEY         AS MT_ORDER_KEY     /* 발주키*/
+			, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업관리키*/
+			, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
+			, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
+			, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
+			, CE.EMP_NM                     AS REQ_EMP_NM
+		FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+			, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+			, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
+			, CMM_EMPLOYEE_TB CE   /*등록자정보테이블*/
+			, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+		WHERE 1=1
+			<if test="fromDate != null and fromDate != ''">
+				AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
+			</if>
+			<if test="toDate != null and toDate != ''">
+			<![CDATA[
+				AND MP.PAYMENT_CALL_DT <= REPLACE(#{toDate}, '-', '')
+			]]>
+			</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CAT2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CAT1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+			AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+			AND MB.BILL_NO = MP.BILL_FK_KEY
+			AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+			AND MC.MT_AC_KEY = CAT2.AC_KEY
+			AND MC.REG_EMP_KEY = CE.EMP_KEY 
+			AND MO.DELETE_YN = 'N'
+			AND MC.DELETE_YN = 'N'
+			AND MP.DELETE_YN = 'N'
+			AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+			AND MB.DELETE_YN = 'N'
+			AND MP.MT_ORDER_TYPE='PO' 			
+			AND MP.PAYMENT_STATUS_CD ='E'
+		ORDER BY BILL_FINISH_DT DESC 	
+		</if> <!-- END <if test="dateSearchType == 'E' "> -->
+		
+		<!-- 예정건으로 조회하는 경우 -->
+		<if test="dateSearchType == 'NE'">
+		SELECT 
+			PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY  /* 유지보수 관리키 */
+			, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   /* 백계약지급계획 관리키 */
+			, CA.AC_NM                AS MT_AC_NM          /* 유지보수 고객사 */
+			, MC.MT_NM                AS MT_NM             /* 유지보수명 */
+			, CA2.AC_NM               AS BILL_AC_NM        /* 지급 매입처 명 */ 
+			, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT       /* 지급계획 회차금액 */
+			, NULL                    AS BILL_REQ_KEY      /* 수금요청 요청 관리키 */			
+			, 'BO'                    AS MT_ORDER_TYPE     /* 백계약(BO), 작업발주(PO)*/
+			, BO.MT_ORDER_KEY         AS MT_ORDER_KEY      /* 발주키 */
+			, NULL                    AS MT_WORK_KEY       /* MT_ORDER_TYPE='PO'에서만 사용*/
+			, PD.PAYMENT_FC_DT        AS BILL_REQUEST_DT   /* 지급 계획 예상일자 */
+			, NULL                    AS BILL_FINISH_DT    /* 지급완료일자 */
+			, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD    /* 지급계획 상태 */
+			, CE.EMP_NM               AS SALE_EMP_NM       /* 유지보수 영업담당 */			
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_BACK_ORDER_TB BO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY
+			AND MC.MT_AC_KEY        = CA.AC_KEY 
+			AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+			AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+			AND PD.PAYMENT_STATUS_CD IS NULL
+			AND PD.DELETE_YN        = 'N'
+			AND MC.DELETE_YN        = 'N'
+			AND BO.DELETE_YN        = 'N'	
+		UNION ALL
+		SELECT 
+			PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
+			, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+			, CA.AC_NM                AS MT_AC_NM
+			, MC.MT_NM                AS MT_NM
+			, CA2.AC_NM               AS BILL_AC_NM
+			, PD.PAYMENT_TURN_AMOUNT  AS BILL_AMOUNT
+			, PB.PAYMENT_KEY          AS BILL_REQ_KEY
+			, PB.MT_ORDER_TYPE        AS MT_ORDER_TYPE
+			, BO.MT_ORDER_KEY         AS MT_ORDER_KEY 
+			, NULL                    AS MT_WORK_KEY 
+			, PB.PAYMENT_CALL_DT      AS BILL_REQUEST_DT  /* 지급요청일자*/			
+			, PB.PAYMENT_DT           AS BILL_FINISH_DT
+			, PD.PAYMENT_STATUS_CD    AS BILL_STATUS_CD			
+			, CE.EMP_NM               AS SALE_EMP_NM       
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2		
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY     = BO.MT_ORDER_KEY			
+			AND MC.MT_AC_KEY        = CA.AC_KEY 
+			AND BO.MT_ORDER_AC_KEY  = CA2.AC_KEY
+			AND MC.MT_SALE_EMP_KEY  = CE.EMP_KEY
+			AND PD.PAYMENT_KEY      = PB.PAYMENT_DT_FK_KEY		
+			AND PB.MT_ORDER_TYPE    = 'BO'  
+			AND PB.PAYMENT_STATUS_CD !='E'
+			AND PD.DELETE_YN        = 'N'
+			AND MC.DELETE_YN        = 'N'
+			AND PB.DELETE_YN        = 'N'
+			AND BO.DELETE_YN        = 'N'				
+			UNION ALL
+		SELECT
+			MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+			, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+			, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
+			, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+			, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+			, MB.BILL_AMOUNT                AS BILL_AMOUNT      /* 공급가액 */
+			, MP.PAYMENT_KEY                AS BILL_REQ_KEY     /* 수금요청 관리키*/
+			, MP.MT_ORDER_TYPE              AS MT_ORDER_TYPE    /* 백계약(BO), 작업발주(PO)*/
+			, MP.PAYMENT_BUY_FK_KEY         AS MT_ORDER_KEY     /* 발주키*/
+			, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업관리키*/
+			, MP.PAYMENT_CALL_DT            AS BILL_REQUEST_DT  /* 지급요청일자*/
+			, MP.PAYMENT_DT                 AS BILL_FINISH_DT   /* 지급완료일*/
+			, MP.PAYMENT_STATUS_CD          AS BILL_STATUS_CD   /* 계산서 상태코드*/
+			, CE.EMP_NM                     AS REQ_EMP_NM
+		FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+			, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+			, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
+			, CMM_EMPLOYEE_TB CE   /*등록자정보테이블*/
+			, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+		WHERE 1=1
+			<if test="fromDate != null and fromDate != ''">
+				AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
+			</if>
+			<if test="toDate != null and toDate != ''">
+			<![CDATA[
+				AND MP.PAYMENT_CALL_DT <= REPLACE(#{toDate}, '-', '')
+			]]>
+			</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+			AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+			AND MB.BILL_NO = MP.BILL_FK_KEY
+			AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+			AND MC.MT_AC_KEY = CAT2.AC_KEY
+			AND MC.REG_EMP_KEY = CE.EMP_KEY 
+			AND MO.DELETE_YN = 'N'
+			AND MC.DELETE_YN = 'N'
+			AND MP.DELETE_YN = 'N'
+			AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+			AND MB.DELETE_YN = 'N'
+			AND MP.MT_ORDER_TYPE='PO' 			
+			AND MP.PAYMENT_STATUS_CD !='E'
+		ORDER BY BILL_REQUEST_DT DESC 	
+		</if>	<!-- END <if test="dateSearchType == 'NE'"> -->	
+	</select>
+	<!-- <select id="selectMtPaymentRequestList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
 		SELECT 
 			MT_INTEGRATE_KEY  /* 유지보수 관리키 */
 			, MT_WORK_KEY     /* 유지보수작업관리키*/	
@@ -1311,23 +2710,23 @@
 				, MP.PAYMENT_STATUS_CD    AS BILL_STATUS_CD     /* 지급 상태코드*/
 				, CM.CD_NM                AS BILL_STATUS_NM     /* 지급 상태명*/ 
 				, MP.CALL_AMOUNT          AS CALL_AMOUNT        /*지급금액*/
-				, CASE WHEN MP.PAYMENT_STATUS_CD ='PYST4000'
+				, CASE WHEN MP.PAYMENT_STATUS_CD ='E'
 					THEN MP.PAYMENT_DT
 					ELSE MP.PAYMENT_CALL_DT  END AS PAYMENT_DT  /* 지급예정일 */
 			    , MC.MT_CT_DT             AS MT_CT_DT           /* 유지보수 계약일자 */
 				, MC.MT_NM                AS MT_NM              /* 유지보수명 */
 				, CA.AC_NM                AS PAYMENT_AC_NM      /* 매입처명 */
 				, CE.EMP_NM               AS MT_SALES_EMP_NM    /* 영업담당자명 */    
-			FROM MT_PAYMENT_TB MP     /*지급요청테이블*/ 
+			FROM MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
 				, MT_CONTRACT_TB MC   /*유지보수기본정보테이블*/ 
 				, MT_BACK_ORDER_TB BO /*유지보수백계약정보테이블*/ 
 				, CMM_ACCOUNT_TB CA   /*고객사정보테이블*/ 
 				, CMM_EMPLOYEE_TB CE  /*영업사원정보테이블*/
 				, CMM_CODE_MNG_TB CM  /*코드테이블*/ 
 			WHERE 1=1	
-			<!-- 예정일자로 검색. -->
+			예정일자로 검색.
 			<if test='dateSearchType == "NE"'>
-			<!-- <if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'NE'"> -->
+			<if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'NE'">
 				<if test="fromDate != null and fromDate != ''">
 					AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
 				</if>
@@ -1337,9 +2736,9 @@
 				]]>
 				</if>
 			</if>
-			<!-- 완료일자로 검색 검색. -->
+			완료일자로 검색 검색.
 			<if test='dateSearchType == "E"'>
-			<!-- <if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'E'"> -->
+			<if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'E'">
 				<if test="fromDate != null and fromDate != ''">
 					AND MP.PAYMENT_DT >= REPLACE(#{fromDate}, '-', '')
 				</if>
@@ -1372,23 +2771,23 @@
 				, MP.PAYMENT_STATUS_CD    AS BILL_STATUS_CD    /* 지급 상태코드*/
 				, CM.CD_NM                AS BILL_STATUS_NM    /* 지급 상태명*/ 
 				, MP.CALL_AMOUNT          AS CALL_AMOUNT       /*지급금액*/
-				, CASE WHEN MP.PAYMENT_STATUS_CD = 'PYST4000'
+				, CASE WHEN MP.PAYMENT_STATUS_CD = 'E'
 					THEN MP.PAYMENT_DT
 					ELSE MP.PAYMENT_CALL_DT  END AS PAYMENT_DT  /* 지급예정일 */
 			    , MC.MT_CT_DT             AS MT_CT_DT           /* 유지보수 계약일자 */
 				, MC.MT_NM                AS MT_NM              /* 유지보수명 */
 				, CA.AC_NM                AS PAYMENT_AC_NM      /* 매입처명 */
 				, CE.EMP_NM               AS MT_SALES_EMP_NM    /* 영업담당자명 */    
-			FROM MT_PAYMENT_TB MP     /*지급요청테이블*/ 
+			FROM MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
 				, MT_CONTRACT_TB MC   /*유지보수기본정보테이블*/ 
 				, MT_ORDER_TB PO       /*유지보수작업발주테이블*/ 
 				, CMM_ACCOUNT_TB CA    /*고객사정보테이블*/ 
 				, CMM_EMPLOYEE_TB CE   /*영업사원정보테이블*/
 				, CMM_CODE_MNG_TB CM   /*코드테이블*/ 
 			WHERE 1=1	
-			<!-- 예정일자로 검색. -->
+			예정일자로 검색.
 			<if test='dateSearchType == "NE"'>
-			<!-- <if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'NE'"> -->
+			<if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'NE'">
 				<if test="fromDate != null and fromDate != ''">
 					AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
 				</if>
@@ -1398,9 +2797,9 @@
 				]]>
 				</if>
 			</if>
-			<!-- 완료일자로 검색 검색. -->
+			완료일자로 검색 검색.
 			<if test='dateSearchType == "E"'>
-			<!-- <if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'E'"> -->
+			<if test="dateSearchType != null and dateSearchType != '' and dateSearchType == 'E'">
 				<if test="fromDate != null and fromDate != ''">
 					AND MP.PAYMENT_DT >= REPLACE(#{fromDate}, '-', '')
 				</if>
@@ -1435,5 +2834,563 @@
 			</if>
 		</if>
 		ORDER BY DAT.PAYMENT_DT DESC	
+	</select> -->
+	<!-- 경영지원에서 사용하는 매출계산서 목록  -->
+	<select id="selectMtSalesBillPlanList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		SELECT 
+			SD.SALES_KEY                /* 수금계획 관리키 */
+			, SD.SALES_CT_FK_KEY        /* 유지보수 관리키 */
+			, SO.MT_SALES_ORDER_KEY     /* 유지보수 매출계약 관리키 */
+			, SD.SALES_YEAR_MONTH       /* 수금계획 년월 */
+			, SD.SALES_TURN             /* 수금계획 회차 */
+			, SD.SALES_COLLECT_RATE     /* 수금계획 수금비율 */
+			, SD.SALES_TURN_AMOUNT      /* 수금계획 회차금액 */
+			, SD.SALES_CHARGE_DT        /* 수금계획 매출청구일자 */
+			, SD.SALES_BILL_FC_DT       /* 수금계획 계산서예상일자 */
+			, SD.SALES_COLLECT_FC_DT    /* 수금계획 일자 */
+			, SD.SALES_STATUS_CD        /* 수금계획 상태 */
+			, MC.MT_NM                  /* 유지보수명 */
+			, CA.AC_NM AS MT_AC_NM      /* 유지보수 고객사 */
+			, CE.EMP_NM AS SALE_EMP_NM  /* 유지보수 영업담당 */
+			, SO.BILL_ISSUE_TYPE AS BILL_ISSUE_TYPE   /* 계산서 구분(Y:정발행, N:역발행) */
+			, SO.MT_SALES_AC_KEY AS BILL_AC_KEY       /* 수금 매출처 관리키 */
+			, CA2.AC_NM AS BILL_AC_NM        /* 수금 매출처 명 */  
+			, SO.BILL_SALES_CD AS BILL_SALES_CD     /* 계산서 매출구분 */
+			, SO.BILL_MF_CD AS BILL_MF_CD        /* 계산서 제조사구분 */  
+			, NULL AS BILL_ISSUE_DT     /* 매출세금계산서 발행일자 */
+			, NULL AS SALES_COLLECT_FINISH_DT /* 수금완료일자 */
+			, NULL AS BILL_CALL_KEY     /* 매출계산서 요청 관리키 */
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_BILL_FC_DT >= #{fromDate} /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_BILL_FC_DT <= #{toDate}  /* 계산서예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출) 선택하고 검색어 입력 */
+			</if>
+		</if>				
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_STATUS_CD IS NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SO.DELETE_YN='N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		UNION ALL
+		SELECT 
+			SD.SALES_KEY
+			, SD.SALES_CT_FK_KEY
+			, SO.MT_SALES_ORDER_KEY
+			, SD.SALES_YEAR_MONTH
+			, SD.SALES_TURN
+			, SD.SALES_COLLECT_RATE
+			, SD.SALES_TURN_AMOUNT
+			, SD.SALES_CHARGE_DT
+			, SD.SALES_BILL_FC_DT
+			, SD.SALES_COLLECT_FC_DT
+			, SD.SALES_STATUS_CD
+			, MC.MT_NM
+			, CA.AC_NM AS MT_AC_NM
+			, CE.EMP_NM AS SALE_EMP_NM
+			, SO.BILL_ISSUE_TYPE AS BILL_ISSUE_TYPE
+			, SO.MT_SALES_AC_KEY AS BILL_AC_KEY 
+			, CA2.AC_NM AS BILL_AC_NM
+			, SO.BILL_SALES_CD AS BILL_SALES_CD     
+			, SO.BILL_MF_CD AS BILL_MF_CD     
+			, SB.BILL_ISSUE_DT
+			, SB.SALES_COLLECT_FINISH_DT
+			, SB.BILL_CALL_KEY
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SD_BILLING_OP_TB SB, CMM_ACCOUNT_TB CAT
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_BILL_FC_DT >= #{fromDate} /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_BILL_FC_DT <= #{toDate}  /* 계산서예상일자 TO */
+		]]>			
+		</if>				
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매출) 선택하고 검색어 입력 */
+			</if>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+			AND SB.BILL_AC_KEY    = CAT.AC_KEY
+			AND SD.SALES_STATUS_CD IS NOT NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SB.DELETE_YN = 'N'
+			AND SO.DELETE_YN = 'N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+		ORDER BY SALES_BILL_FC_DT DESC	
+	</select>	
+	<!-- <select id="selectMtSalesBillPlanList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		SELECT 
+			SD.SALES_KEY                /* 수금계획 관리키 */
+			, SD.SALES_CT_FK_KEY        /* 유지보수 관리키 */
+			, SO.MT_SALES_ORDER_KEY     /* 유지보수 매출계약 관리키 */
+			, SD.SALES_YEAR_MONTH       /* 수금계획 년월 */
+			, SD.SALES_TURN             /* 수금계획 회차 */
+			, SD.SALES_COLLECT_RATE     /* 수금계획 수금비율 */
+			, SD.SALES_TURN_AMOUNT      /* 수금계획 회차금액 */
+			, SD.SALES_CHARGE_DT        /* 수금계획 매출청구일자 */
+			, SD.SALES_BILL_FC_DT       /* 수금계획 계산서예상일자 */
+			, SD.SALES_COLLECT_FC_DT    /* 수금계획 일자 */
+			, SD.SALES_STATUS_CD        /* 수금계획 상태 */
+			, MC.MT_NM                  /* 유지보수명 */
+			, CA.AC_NM AS MT_AC_NM      /* 유지보수 고객사 */
+			, CE.EMP_NM AS SALE_EMP_NM  /* 유지보수 영업담당 */
+			, SO.BILL_ISSUE_TYPE AS BILL_ISSUE_TYPE   /* 계산서 구분(Y:정발행, N:역발행) */
+			, SO.MT_SALES_AC_KEY AS BILL_AC_KEY       /* 수금 매출처 관리키 */
+			, CA2.AC_NM AS BILL_AC_NM        /* 수금 매출처 명 */  
+			, CM.CD_NM AS BILL_SALES_CD     /* 계산서 매출구분 */
+			, MF.AC_NM AS BILL_MF_CD        /* 계산서 제조사구분 */  
+			, NULL AS BILL_ISSUE_DT     /* 매출세금계산서 발행일자 */
+			, NULL AS SALES_COLLECT_FINISH_DT /* 수금완료일자 */
+			, NULL AS BILL_CALL_KEY     /* 매출계산서 요청 관리키 */
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			, CMM_ACCOUNT_TB MF, CMM_CODE_MNG_TB CM
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_BILL_FC_DT >= #{fromDate} /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_BILL_FC_DT <= #{toDate}  /* 계산서예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+			AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+		</if>
+		<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+			AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+		</if>
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_STATUS_CD IS NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SO.DELETE_YN='N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+			AND SO.BILL_MF_CD = MF.AC_KEY
+			AND MF.MF_YN='Y'
+			AND SO.BILL_SALES_CD = CM.CD_KEY
+			AND CM.CD_UP_CD='PDFG1000'			
+		UNION ALL
+		SELECT 
+			SD.SALES_KEY
+			, SD.SALES_CT_FK_KEY
+			, SO.MT_SALES_ORDER_KEY
+			, SD.SALES_YEAR_MONTH
+			, SD.SALES_TURN
+			, SD.SALES_COLLECT_RATE
+			, SD.SALES_TURN_AMOUNT
+			, SD.SALES_CHARGE_DT
+			, SD.SALES_BILL_FC_DT
+			, SD.SALES_COLLECT_FC_DT
+			, SD.SALES_STATUS_CD
+			, MC.MT_NM
+			, CA.AC_NM AS MT_AC_NM
+			, CE.EMP_NM AS SALE_EMP_NM
+			, SO.BILL_ISSUE_TYPE AS BILL_ISSUE_TYPE
+			, SO.MT_SALES_AC_KEY AS BILL_AC_KEY 
+			, CA2.AC_NM AS BILL_AC_NM
+			, CM.CD_NM AS BILL_SALES_CD  
+			, MF.AC_NM AS BILL_MF_CD
+			, SB.BILL_ISSUE_DT
+			, SB.SALES_COLLECT_FINISH_DT
+			, SB.BILL_CALL_KEY
+		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_SD_BILLING_OP_TB SB, CMM_ACCOUNT_TB CAT
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
+			, CMM_ACCOUNT_TB MF, CMM_CODE_MNG_TB CM
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND SD.SALES_BILL_FC_DT >= #{fromDate} /* 계산서예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND SD.SALES_BILL_FC_DT <= #{toDate}  /* 계산서예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+			AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+		</if>
+		<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+			AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+		</if>
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = SD.SALES_CT_FK_KEY
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+			AND SB.BILL_AC_KEY    = CAT.AC_KEY
+			AND SD.SALES_STATUS_CD IS NOT NULL
+			AND SD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND SB.DELETE_YN = 'N'
+			AND SO.DELETE_YN = 'N'
+			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
+			AND SO.BILL_MF_CD = MF.AC_KEY
+			AND MF.MF_YN='Y'
+			AND SO.BILL_SALES_CD = CM.CD_KEY
+			AND CM.CD_UP_CD='PDFG1000'  			
+		ORDER BY SALES_BILL_FC_DT DESC	
+	</select> -->	
+	
+	<!-- 경영지원 수금계획 처리 목록.  -->
+	<select id="selectMtPaymentPlanList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		SELECT 
+			'BO' AS MT_ORDER_TYPE             /* 유지보수 발주구분(BO:백계약, PO:작업발주)*/
+			, PD.PAYMENT_KEY AS PAYMENT_DT_KEY  /* 지급계획 관리키 */
+			, PD.MT_INTEGRATE_KEY             /* 유지보수 관리키 */
+			, BO.MT_ORDER_KEY                 /* 유지보수 백계약 관리키 */
+			, NULL            AS MT_WORK_KEY  /* 유지보수작업 관리키 */
+			, PD.PAYMENT_YEAR_MONTH           /* 지급계획 년월 */
+			, PD.PAYMENT_TURN                 /* 지급계획 회차 */
+			, PD.PAYMENT_RATE                 /* 지급계획 지급비율 */
+			, PD.PAYMENT_TURN_AMOUNT          /* 지급계획 회차금액 */
+			, PD.PAYMENT_FC_DT                /* 지급계획 지급예상일자 */
+			, PD.PAYMENT_STATUS_CD            /* 지급계획 상태 */
+			, MC.MT_NM                        /* 유지보수명 */
+			, CA.AC_NM AS MT_AC_NM            /* 유지보수 고객사 */
+			, CE.EMP_NM AS SALE_EMP_NM        /* 유지보수 영업담당 */
+			, BO.MT_ORDER_AC_KEY AS BILL_AC_KEY /* 지급 매입처 관리키 */
+			, CA2.AC_NM AS BILL_AC_NM         /* 지급 매입처 명 */  
+			, BO.BILL_PURCHASE_CD             /* 지급 매입구분 */
+			, BO.BILL_MF_CD                   /* 매입 제조사구분 */  
+			, NULL AS PAYMENT_DT              /* 지급완료일자 */
+			, NULL AS PAYMENT_CALL_KEY        /* 지급 요청 관리키 */
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_BACK_ORDER_TB BO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY = BO.MT_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND PD.PAYMENT_STATUS_CD IS NULL
+			AND PD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND BO.DELETE_YN='N'
+			AND BO.MT_ORDER_AC_KEY = CA2.AC_KEY			
+		UNION ALL
+		SELECT 
+			'BO' AS MT_ORDER_TYPE             
+			, PD.PAYMENT_KEY AS PAYMENT_DT_KEY
+			, PD.MT_INTEGRATE_KEY
+			, BO.MT_ORDER_KEY
+			, NULL  AS MT_WORK_KEY  /* 유지보수작업 관리키 */
+			, PD.PAYMENT_YEAR_MONTH 
+			, PD.PAYMENT_TURN 
+			, PD.PAYMENT_RATE
+			, PD.PAYMENT_TURN_AMOUNT
+			, PD.PAYMENT_FC_DT
+			, PD.PAYMENT_STATUS_CD
+			, MC.MT_NM
+			, CA.AC_NM AS MT_AC_NM
+			, CE.EMP_NM AS SALE_EMP_NM
+			, BO.MT_ORDER_AC_KEY AS BILL_AC_KEY
+			, CA2.AC_NM AS BILL_AC_NM
+			, BO.BILL_PURCHASE_CD  
+			, BO.BILL_MF_CD
+			, PB.PAYMENT_DT AS PAYMENT_DT
+			, PB.PAYMENT_KEY AS PAYMENT_CALL_KEY
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2			
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY = BO.MT_ORDER_KEY			
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND PD.PAYMENT_KEY = PB.PAYMENT_DT_FK_KEY			
+			AND PD.PAYMENT_STATUS_CD IS NOT NULL
+			AND PD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND PB.DELETE_YN = 'N'
+			AND BO.DELETE_YN = 'N'
+			AND PB.MT_ORDER_TYPE='BO' 	
+			AND BO.MT_ORDER_AC_KEY = CA2.AC_KEY	
+		UNION ALL
+		SELECT
+			'PO' AS MT_ORDER_TYPE            
+			, NULL                          AS PAYMENT_DT_KEY
+			, MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+			, MO.MT_ORDER_KEY               AS MT_ORDER_KEY     /* 발주키*/
+			, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업 관리키 */
+			, SUBSTRING(MP.PAYMENT_CALL_DT, 1, 6) AS PAYMENT_YEAR_MONTH 
+			, 1                             AS PAYMENT_TURN 
+			, 100                           AS PAYMENT_RATE
+			, MB.BILL_AMOUNT                AS PAYMENT_TURN_AMOUNT
+			, MP.PAYMENT_CALL_DT            AS PAYMENT_FC_DT
+			, MP.PAYMENT_STATUS_CD          AS PAYMENT_STATUS_CD
+			, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+			, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
+			, CE.EMP_NM                     AS SALE_EMP_NM      /* 작업발주등록자 */
+			, MO.ORDER_AC_KEY               AS BILL_AC_KEY      /* 지급 매입처 관리키 */
+			, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+			, MO.BILL_PURCHASE_CD           AS BILL_PURCHASE_CD /* 지급 매입구분 */
+			, MO.BILL_MF_CD                 AS BILL_MF_CD       /* 매입 제조사구분 */  
+			, MP.PAYMENT_DT                 AS PAYMENT_DT       /* 지급완료일*/
+			, MP.PAYMENT_KEY                AS PAYMENT_CALL_KEY /* 지급 요청 관리키*/			
+		FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+			, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+			, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT2  /*고객사정보테이블*/
+			, CMM_EMPLOYEE_TB CE   /*등록자정보테이블*/
+			, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+		WHERE 1=1
+			<if test="fromDate != null and fromDate != ''">
+				AND MP.PAYMENT_CALL_DT >= REPLACE(#{fromDate}, '-', '')
+			</if>
+			<if test="toDate != null and toDate != ''">
+			<![CDATA[
+				AND MP.PAYMENT_CALL_DT <= REPLACE(#{toDate}, '-', '')
+			]]>
+			</if>		
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+		</if>
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CAT2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CAT1.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>
+			AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+			AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+			AND MB.BILL_NO = MP.BILL_FK_KEY
+			AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+			AND MC.MT_AC_KEY = CAT2.AC_KEY
+			AND MO.REG_EMP_KEY = CE.EMP_KEY 
+			AND MO.DELETE_YN = 'N'
+			AND MC.DELETE_YN = 'N'
+			AND MP.DELETE_YN = 'N'
+			AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+			AND MB.DELETE_YN = 'N'
+			AND MP.MT_ORDER_TYPE='PO' 				
+		ORDER BY PAYMENT_FC_DT DESC
+	</select>	
+	<!-- <select id="selectMtPaymentPlanList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
+		SELECT 
+			PD.PAYMENT_KEY AS PAYMENT_DT_KEY  /* 지급계획 관리키 */
+			, PD.MT_INTEGRATE_KEY             /* 유지보수 관리키 */
+			, BO.MT_ORDER_KEY                 /* 유지보수 백계약 관리키 */
+			, PD.PAYMENT_YEAR_MONTH           /* 지급계획 년월 */
+			, PD.PAYMENT_TURN                 /* 지급계획 회차 */
+			, PD.PAYMENT_RATE                 /* 지급계획 지급비율 */
+			, PD.PAYMENT_TURN_AMOUNT          /* 지급계획 회차금액 */
+			, PD.PAYMENT_FC_DT                /* 지급계획 지급예상일자 */
+			, PD.PAYMENT_STATUS_CD            /* 지급계획 상태 */
+			, MC.MT_NM                        /* 유지보수명 */
+			, CA.AC_NM AS MT_AC_NM            /* 유지보수 고객사 */
+			, CE.EMP_NM AS SALE_EMP_NM        /* 유지보수 영업담당 */
+			, BO.MT_ORDER_AC_KEY AS BILL_AC_KEY /* 지급 매입처 관리키 */
+			, CA2.AC_NM AS BILL_AC_NM         /* 지급 매입처 명 */  
+			, BO.BILL_PURCHASE_CD             /* 지급 매입구분 */
+			, BO.BILL_MF_CD                   /* 매입 제조사구분 */  
+			, NULL AS PAYMENT_DT              /* 지급완료일자 */
+			, NULL AS PAYMENT_CALL_KEY        /* 지급 요청 관리키 */
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+			, MT_BACK_ORDER_TB BO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY = BO.MT_ORDER_KEY
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND PD.PAYMENT_STATUS_CD IS NULL
+			AND PD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND BO.DELETE_YN='N'
+			AND BO.MT_ORDER_AC_KEY = CA2.AC_KEY			
+		UNION ALL
+		SELECT 
+			PD.PAYMENT_KEY AS PAYMENT_DT_KEY
+			, PD.MT_INTEGRATE_KEY
+			, BO.MT_ORDER_KEY
+			, PD.PAYMENT_YEAR_MONTH 
+			, PD.PAYMENT_TURN 
+			, PD.PAYMENT_RATE
+			, PD.PAYMENT_TURN_AMOUNT
+			, PD.PAYMENT_FC_DT
+			, PD.PAYMENT_STATUS_CD
+			, MC.MT_NM
+			, CA.AC_NM AS MT_AC_NM
+			, CE.EMP_NM AS SALE_EMP_NM
+			, BO.MT_ORDER_AC_KEY AS BILL_AC_KEY
+			, CA2.AC_NM AS BILL_AC_NM
+			, BO.BILL_PURCHASE_CD  
+			, BO.BILL_MF_CD
+			, PB.PAYMENT_DT AS PAYMENT_DT
+			, PB.PAYMENT_KEY AS PAYMENT_CALL_KEY
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, CMM_ACCOUNT_TB CA2			
+		WHERE 1=1
+		<if test="fromDate != null and fromDate != ''">
+			AND PD.PAYMENT_FC_DT >= #{fromDate} /* 지급예상일자 FROM */
+		</if>
+		<if test="toDate != null and toDate != ''">
+		<![CDATA[
+			AND PD.PAYMENT_FC_DT <= #{toDate}  /* 지급예상일자 TO */
+		]]>			
+		</if>		
+		<if test="searchWord != null and searchWord != ''">
+			<if test="searchGubun == 'PJ'">
+				AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%') /* 프로젝트선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'CU'">
+				AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 고객사 선택하고 검색어 입력 */
+			</if>			
+			<if test="searchGubun == 'BA'">
+				AND CA2.AC_NM LIKE CONCAT('%', #{searchWord}, '%') /* 거래처(매입) 선택하고 검색어 입력 */
+			</if>
+		</if>	
+		<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+			AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%') /* 영업담당 검색어 입력 */
+		</if>
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY = BO.MT_ORDER_KEY			
+			AND MC.MT_AC_KEY = CA.AC_KEY 
+			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			AND PD.PAYMENT_KEY = PB.PAYMENT_DT_FK_KEY			
+			AND PD.PAYMENT_STATUS_CD IS NOT NULL
+			AND PD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND PB.DELETE_YN = 'N'
+			AND BO.DELETE_YN = 'N'
+			AND BO.MT_ORDER_AC_KEY = CA2.AC_KEY	
+		ORDER BY PAYMENT_FC_DT DESC
+	</select>	 -->
+	
+	<!-- 매출/매입 세금계산서 제조사 구분 목록. -->
+	<select id="selectManufacturerList"  resultType="egovMap">
+		SELECT 
+			AC_KEY AS CODE_KEY
+			, AC_NM AS CODE_NM 
+		FROM CMM_ACCOUNT_TB
+		WHERE MF_YN='Y' AND DELETE_YN='N'	
+		ORDER BY CODE_KEY
 	</select>
 </mapper>

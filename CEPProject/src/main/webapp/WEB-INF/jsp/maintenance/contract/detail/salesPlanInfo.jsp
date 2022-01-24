@@ -103,7 +103,7 @@
 			overflow-x: hidden;
 			float: left;
 			width: 997px;		
-			height: 533px;
+			height: 484px;
 		}
 		
 		.mContents .dtl2 thead {
@@ -114,7 +114,7 @@
 		/* 커서포인터 */
 		.mContents .dtl2 tbody tr {
 		    display: table;
-		    width: 997px;
+		    width: 996px;
 		    /* cursor: pointer; */
 		}
 		
@@ -155,7 +155,7 @@
 		}
 		/* 제품정보>매출정보>백계약정보>매입정보 버튼 크기및 모양    */
 		.mContents > .fxd .title ul li {
-			width: 20%;
+			width: 16.65%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -322,6 +322,49 @@
 			font-size: 14px;
 			color: #21a17e;
 		}
+		.bottomtr {
+			color: #26a07d;
+    		background-color: #ccf4d7;
+    		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
+		}
+		input[class="pname2"] {
+			font-family: "Noto Sans KR", sans-serif !important;
+			/* width: 130px; */
+			height: 18px;
+			border: none;
+			outline: none;
+			background-color: #f6f7fc;
+			/* color: #26a07d; */
+			text-align: left;
+			font-size: 18px;
+			font-weight: 500;
+			margin-bottom: 5px;			
+		}
+		.bottomtr input[class="pname"] {
+			font-family: "Noto Sans KR", sans-serif !important;
+			width: 130px;
+			height: 18px;
+			border: none;
+			outline: none;
+			background-color: #ccf4d7;
+			color: #26a07d;
+			text-align: left;
+			font-size: 15px;
+			font-weight: 400;
+			margin-bottom: 1px;
+			padding-left:60px;
+		}
+		.stitle select{
+			height: 34px;
+			font-size: 14px;
+			width: 97px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			-webkit-appearance: none;
+			background: url(/images/arrow_down.png) no-repeat 91% 50%;
+			background-color: #fff;
+			color: #0e8a67;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -417,6 +460,21 @@
 					} else {
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
 					}
+				} else if(this.title == "paymentPlanInfo"){
+					
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지금계획 상세화면으로 이동하시겠습니까?")){
+								document.m_mtMoveForm.action = "/maintenance/contract/detail/paymentPlanInfo.do";
+					           	document.m_mtMoveForm.submit();
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+						}
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+					}
 				}
 				
 			}); //메뉴바를 이용한 화면이동
@@ -495,6 +553,97 @@
 				if(event.keyCode == 13) {						
 					fnSearchAccoutList(this, $(this).val());
 				}						
+			});			
+			
+			//매출거래처 selectbox선택
+			$('#m_mtSaveOrderAcKey').change(function(){
+				//console.log("=========>"+$('#m1_mtIntegrateKey').val()+" / "+$('#m_mtSaveOrderAcKey option:selected').val()+"<=====");
+				//선택값을 저장한다.
+				 var varParam = {
+						"mtIntegrateKey": $('#m1_mtIntegrateKey').val(),
+						"mtSalesOrderKey":$('#m_mtSaveOrderAcKey option:selected').val()
+				};
+				console.log("mtIntegrateKey===>"+$('#m1_mtIntegrateKey').val());
+				console.log("mtSalesOrderKey===>"+$('#m_mtSaveOrderAcKey option:selected').val());
+				var html = ''; 
+				var mtBillTotalAmount=0;
+				var salesStatusCdNm = '';
+				var billIssueRuleNm = '';
+				$.ajax({
+		        	url:"/maintenance/contract/detail/salesPlanInfoWithSalesOderKey.do",
+		            dataType: 'json',
+		            type:"post",  
+		            data: JSON.stringify(varParam),
+		     	   	contentType: "application/json; charset=UTF-8",
+		     	  	beforeSend: function(xhr) {
+		        		xhr.setRequestHeader("AJAX", true);
+		        		//xhr.setRequestHeader(header, token);
+		        	},
+		            success:function(data){
+		            	console.log("data.successYN===>"+JSON.stringify(data)+data.successYN+" / "+data.billIssueRule);		            	
+		            	if("Y" == data.successYN){
+		            		if(data.billIssueRule== 'BF') {
+		            			billIssueRuleNm = '발행요청 이전평일';
+            				} else if(data.billIssueRule == 'BD') {
+            					billIssueRuleNm = '발행요청일';
+            				} else if(data.billIssueRule == 'AF') {
+            					billIssueRuleNm = '발행요청 이후평일';
+            				} else {
+            					billIssueRuleNm =data.billIssueRule;
+            				}
+		            		if ( data.salesPlanList.length > 0 ) {
+		            			for(i = 0; i < data.salesPlanList.length; i++) {
+		            				mtBillTotalAmount = mtBillTotalAmount+data.salesPlanList[i].salesTurnAmount;
+		            				if(data.salesPlanList[i].salesStatusCd == 'R') {
+		            					salesStatusCdNm = '계산서발행요청';
+		            				} else if(data.salesPlanList[i].salesStatusCd == 'I') {
+		            					salesStatusCdNm = '계산서발급';
+		            				} else if(data.salesPlanList[i].salesStatusCd == 'M') {
+		            					salesStatusCdNm = '계산서매핑';
+		            				} else if(data.salesPlanList[i].salesStatusCd == 'E') {
+		            					salesStatusCdNm = '수금완료';
+		            				} else if(data.salesPlanList[i].salesStatusCd == null) {
+		            					salesStatusCdNm = '계산서발행전';
+		            				} else {
+		            					salesStatusCdNm =data.salesPlanList[i].salesStatusCd;
+		            				}
+									html += ''
+										+ '<tr>'
+										+ '	<td>'+(i+1)+'</td>'
+										+ '	<td class="textalignC">'+data.salesPlanList[i].salesTurn+' 회차</td>'
+										+ '	<td class="textalignC">'+addDateMinus(data.salesPlanList[i].salesYearMonth)+'</td>'
+										+ '	<td class="textalignR">'+addCommas(data.salesPlanList[i].salesCollectRate)+'</td>'
+										+ '	<td class="textalignR">'+addCommas(data.salesPlanList[i].salesTurnAmount)+'</td>'
+										+ '	<td>'+addDateMinus(data.salesPlanList[i].salesBillFcDt)+'</td>'
+										+ '	<td>'+addDateMinus(data.salesPlanList[i].salesCollectFcDt)+'</td>'
+										+ '	<td class="textalignC"><span>'+salesStatusCdNm+'</span></td>'
+										+ '</tr>'		
+		            					+ ''
+		            							            					
+		            			}
+		            			$('.dtl2 tbody').html('');
+		        				$('.dtl2 tbody').append(html);
+		        				
+		        				$('#mtSalesTotalAmount').val(addCommas(mtBillTotalAmount));
+		        				$('#mtbillIssueRule').val(billIssueRuleNm);
+			                } else {
+			                	$('.dtl2 tbody').html('');
+			                	$('#mtbillIssueRule').val('');
+			                	$('#mtSalesTotalAmount').val('0');
+			                	alert("해당 거래처의 계산서 계획정보가 없습니다.");
+			                }
+		            	} else {
+		                	alert("해당 거래처의 계산서 계획정보 조회를 실패하였습니다.");
+		                }
+						
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		        }); 
+				
 			});		
 			
 		}); // end $(document).ready()
@@ -658,6 +807,7 @@
 			var dialogId = 'program_layer';
 			var varParam = {
 					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+					"mtSalesOrderKey":$('#m_mtSaveOrderAcKey option:selected').val(),
 					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'		
 			}
 			var button = new Array;
@@ -770,7 +920,7 @@
 </head>
 <body>
 	<div class="sfcnt"></div>
-	<div class="nav"></div>
+	<!-- <div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
@@ -1067,15 +1217,77 @@
 					<ul>
 						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">제품정보</label></li>
 						<li id="LI_TOPBar_SL" title="salesAmountInfo"><label style="cursor: pointer;">매출정보</label></li>
-						<li id="LI_TOPBar_SL" class="on" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
-						<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
-						<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-						<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
+						<li id="LI_TOPBar_SL" class="on" title="salesPlanInfo" ><label style="cursor: pointer;">계산서계획</label></li>
+						<c:choose>
+							<c:when test="${parmMtSbCtYn == 'Y'}">
+								<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
+								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
+								<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label style="cursor: pointer;">지급계획</label></li> 
+							</c:when>
+							<c:otherwise>
+								<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
+								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label>매입정보</label></li>
+								<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label>지급계획</label></li>
+							</c:otherwise>
+						</c:choose>
 						<li></li>
 					</ul>
 				</div>
 				<div id="listForm">
-					<div class="stitle cg colorBlack">수금계획정보</div>
+<%-- 					<div class="stitle cg colorBlack">
+						계산서계획정보
+						<c:choose>
+							<c:when test="${billIssueRule eq 'BF'}">
+								(계산서발행구분 : 계산서발행요청  이전평일)
+							</c:when>
+							<c:when test="${billIssueRule eq 'BD'}">
+								(계산서발행구분 : 계산서발행요청일)
+							</c:when>
+							<c:when test="${billIssueRule eq 'AF'}">
+								(계산서발행구분 : 계산서발행요청 이후평일)
+							</c:when>
+							<c:otherwise>
+								(계산서발행구분 : ${billIssueRule})
+							</c:otherwise>
+						</c:choose>
+					</div> --%>
+					<div class="stitle cg colorBlack">
+						<div class="floatL" style="height:37px">
+							계산서계획정보
+							<c:if test="${null !=salesOrderSelectBox && salesOrderSelectBox.size()>1}">
+							<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:200px;height: 30px;">																					
+								<c:forEach var="order" items="${salesOrderSelectBox}" varStatus="status">
+									<option value="<c:out value="${order.mtSalesOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+								</c:forEach>
+							</select>
+							</c:if>
+						</div>
+						<div class="floatR" style="height:37px">
+							(계산서발행구분 :
+							<c:choose>
+								<c:when test="${billIssueRule eq 'BF'}">
+								<input type="text" id="mtbillIssueRule" class="pname2"  value="발행요청  이전평일" readonly />
+									
+								</c:when>
+								<c:when test="${billIssueRule eq 'BD'}">
+								<input type="text" id="mtbillIssueRule" class="pname2"  value="발행요청일" readonly />
+									<!-- (계산서발행구분 : 계산서발행요청일) -->
+								</c:when>
+								<c:when test="${billIssueRule eq 'AF'}">
+								<input type="text" id="mtbillIssueRule" class="pname2"  value="발행요청  이후평일" readonly />
+									
+								</c:when>
+								<c:otherwise>
+								<input type="text" id="mtbillIssueRule" class="pname2"  value="${billIssueRule}" readonly />
+									
+								</c:otherwise>
+							</c:choose>
+							)
+						</div>
+						
+						
+					</div>					
+					
 					<div class="floatC submiddle" style="border-bottom: 2px solid #c4c4c4;">
 						<table class="dtl2">
 							<thead class="ftw400">
@@ -1085,13 +1297,15 @@
 									<th scope="row">매출년월</th>
 									<th scope="row">회차비율</th>
 									<th scope="row">회차금액</th>
-									<th scope="row">계산서일정</th>
+									<th scope="row">계산서발행요청일</th>
 									<th scope="row">수금예정일</th>
 									<th scope="row">상태</th>
 								</tr>
 							</thead>
 							<tbody>
-							<c:forEach var="list" items="${mtSalesPlanList}" varStatus="status">		
+							<c:set var = "mtBillTotalAmount" value="0" />
+							<c:forEach var="list" items="${mtSalesPlanList}" varStatus="status">	
+								<c:set var = "mtBillTotalAmount" value="${mtBillTotalAmount + list.salesTurnAmount}" />	
 								<tr>							
 									<td><c:out value="${status.count}"/></td>
 									<td class="textalignC"><c:out value="${list.salesTurn}"/>&nbsp;회차</td>
@@ -1127,6 +1341,15 @@
 							</tbody>
 						</table>
 					</div>
+					<table style="width: 997px; height: 48px;">
+						<tr class="bottomtr">
+							<td class="textalignR" style="width: 71px">계산서 합계</td>
+							<td style="width: 109px">
+								<%-- <c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/> --%>
+								<input type="text" id="mtSalesTotalAmount" class="pname"  value="<c:out value="${displayUtil.commaStr(mtBillTotalAmount)}"/>" readonly />
+							</td>
+						</tr>
+					</table>
 					<div class="bottom">
 						<div class="floatR">
 							<button type="button" value="수정" onclick="fn_editMtSalesPlanBtn()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>

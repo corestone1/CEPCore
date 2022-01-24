@@ -5,7 +5,7 @@
 <html>
 <head>
 	<%-- <script src="<c:url value='/js/jquery.serializeObject.js'/>"></script> --%>
-	<title>제품정보 등록</title>
+	<title>장비별작업정보 등록</title>
 	<style>
 		.prodTable table {
 			border-bottom : 2px solid #e5e5e5;
@@ -49,16 +49,6 @@
 		.popContainer .left ul li:hover {
 			background-color: #fff;
 			color: #32bc94;
-		}
-		.popContainer .contents {
-			position: absolute;
-			width: calc(100% - 201px);
-			height: 601px;
-			top: 107px;
-			left: 201px;			
-			z-index: 3;
-			background-color: #f6f7fc;
-			overflow-y: auto;
 		}
 		.popContainer .contents > div {
 			margin: 10px 54px 0 45px;
@@ -129,14 +119,14 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 20px);
+			width: calc(100% - 20px) !important;
 			height: 90px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			/* resize: none; */
 		}
 		.popContainer .bottomBtn {
 			position: absolute;
@@ -153,6 +143,7 @@
 		.popContainer .contents .btnWrap {
 			margin : 20px 0px 15px 45px;
 			width: 845px;
+			height : 10px;
 		}
 		.popContainer .contents td.tdTitle label {
 			color: red;
@@ -161,6 +152,34 @@
 		.btnCenter {
 			width : calc(100% - 46px);
 			text-align: center;
+		}
+		.popContainer .contents {
+			position: absolute;
+			width: calc(100% - 201px);
+			height: 533px;
+			top: 107px;
+			left: 201px;			
+			z-index: 3;
+			background-color: #f6f7fc;
+			
+		}
+		#prodWrap {
+			height: 456px;
+			width: 870px;
+			overflow-y: auto;
+		}
+		.btnWrap {
+			/* margin : 20px 0px -14px 49px;			
+			width : 842px; */
+			height : 50px;
+			background-color: #f6f7fc;
+			width: calc(100% - 290px);
+			margin-top: 613px;
+			margin-left: 200px;
+			padding-top:20px;
+			padding-left: 45px;
+			padding-right: 45px;
+			top:25px;
 		}
 	</style>
 	<script>
@@ -270,7 +289,7 @@
 	    	$('#'+type+'Wrap').append(clone);
 		}
 		
-		/* 제품정보 접기/펴기*/
+		/* 장비별작업정보 접기/펴기*/
 		function fn_viewSummary(obj) {
 	         var tbody = obj.parentNode.parentNode.parentNode;
 	         var jtbody = $(tbody);
@@ -287,7 +306,7 @@
 	         }
 		}
 		
-		/* 제품정보 삭제*/
+		/* 장비별작업정보 삭제*/
 		function fn_delete(obj, type) {
 			var productName;
 			var serialNum;
@@ -307,7 +326,7 @@
 				}
 				//삭제 key
 				deleteKey =  $('#prodList-'+listNum+'-mtWorkSeq').val();
-				if(confirm(productName+" 제품정보를 삭제하시겠습니까?")) {
+				if(confirm(productName+" 장비별작업정보를 삭제하시겠습니까?")) {
 					//삭제key list를 만든다.
 					if(deleteKey !=''){
 						$('#deleteListKeys').val($('#deleteListKeys').val()+deleteKey+":");
@@ -332,7 +351,7 @@
 			    	}  
 				});*/
 			} else {
-				alert("제품정보는 한개 이상 존재해야 합니다.");
+				alert("장비별작업정보는 한개 이상 존재해야 합니다.");
 			}			   
 		}
 		
@@ -345,7 +364,7 @@
 					actionTitle = "저장";
 				}
 				
-				if(confirm("유지보수작업 제품정보를 "+actionTitle+"하시겠습니까?")) {
+				if(confirm("유지보수작업 장비별작업정보를 "+actionTitle+"하시겠습니까?")) {
 					saveProductList(actionTitle);
 				} else {
 					return false;
@@ -533,7 +552,7 @@
 		<div class="left">
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
-					<li id="work_product" class="colorWhite cursorP on">제품정보</li>
+					<li id="work_product" class="colorWhite cursorP on">장비별작업정보</li>
 					<c:if test="${mtWorkOrderYn eq 'Y' }">
 					<li id="work_order" class="colorWhite cursorP" onclick="fn_changeView('orderInfoView');">발주정보</li>
 					</c:if>
@@ -558,92 +577,93 @@
 		</form>
 		<form action="/" id="mtListForm" name="mtListForm"  method="post">
 			<div class="contents">
+				
+				<div class="subjectContainer">
+					<table class="subject">
+						<tr>		
+							<td class="subTitle" style="border-top: none;">
+								<label class="ftw400">장비별작업정보</label>
+							</td>
+							<td class="subBtn" style="border-top: none;cursor: pointer;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+							
+						</tr>
+					</table>
+				</div>
 				<div id="prodWrap">
-					<div class="subjectContainer">
-						<table class="subject">
-							<tr>		
-								<td class="subTitle" style="border-top: none;">
-									<label class="ftw400">제품정보</label>
+				<c:choose>
+					<c:when test="${listCount == 0}">
+					<div class="prodTable">
+						<input type="hidden" name="lastNum" value="0" />
+						<table>
+							<tr>
+								<td class="tdTitle firstTd">제품</td>
+								<td class="tdContents firstTd">
+									<input type="text" id="prodList-0-mtPmKeyNm" name="mtPmKeyNm" class="search" onclick="fn_findMtProduct(this)" autocomplete="off" onkeypress="return false;" required/>	
+									<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />
+									<input type="hidden" id="prodList-0-mtWorkSeq" name="mtWorkSeq" />
 								</td>
-								<td class="subBtn" style="border-top: none;cursor: pointer;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
-								
+								<td class="tdTitle firstTd" style="padding-left:50px">시리얼번호</td>
+								<td class="tdContents firstTd">
+									<input type="text" id="prodList-0-mtPmSerialNum"  name="mtPmSerialNum"  style="width: 164px" readonly="readonly"/>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+		                        	<img id="prodList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">작업내용</td>
+								<td class="tdContents" colspan="3"><textarea id="prodList-0-mtPmWorkCont" name="mtPmWorkCont" required></textarea></td>
 							</tr>
 						</table>
 					</div>
-					<c:choose>
-						<c:when test="${listCount == 0}">
-						<div class="prodTable">
-							<input type="hidden" name="lastNum" value="0" />
-							<table>
-								<tr>
-									<td class="tdTitle firstTd">제품</td>
-									<td class="tdContents firstTd">
-										<input type="text" id="prodList-0-mtPmKeyNm" name="mtPmKeyNm" class="search" onclick="fn_findMtProduct(this)" autocomplete="off" onkeypress="return false;" required/>	
-										<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />
-										<input type="hidden" id="prodList-0-mtWorkSeq" name="mtWorkSeq" />
-									</td>
-									<td class="tdTitle firstTd" style="padding-left:50px">시리얼번호</td>
-									<td class="tdContents firstTd">
-										<input type="text" id="prodList-0-mtPmSerialNum"  name="mtPmSerialNum"  style="width: 164px" readonly="readonly"/>
-										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-			                        	<img id="prodList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
-									</td>
-								</tr>
-								<tr class="dpTbRow">
-									<td class="tdTitle">작업내용</td>
-									<td class="tdContents" colspan="3"><textarea id="prodList-0-mtPmWorkCont" name="mtPmWorkCont" required></textarea></td>
-								</tr>
-							</table>
-						</div>
-						</c:when>
-						<c:otherwise>
-						<c:forEach var="list" items="${mtWorkProductList}" varStatus="status">
-						<div class="prodTable">
-							<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>"/>
-							<table>
-								<tr>
-									<td class="tdTitle firstTd">제품</td>
-									<td class="tdContents firstTd">
-										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmKeyNm" name="mtPmKeyNm" value="<c:out value="${list.mtPmKeyNm}"/>" class="search" onclick="fn_findMtProduct(this)" autocomplete="off" onkeypress="return false;" required/>	
-										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>" />
-										
-										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtWorkSeq" name="mtWorkSeq" value="<c:out value="${list.mtWorkSeq}"/>"/>
-									</td>
-									<td class="tdTitle firstTd" style="padding-left:50px">시리얼번호</td>
-									<td class="tdContents firstTd">
-										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum"  name="mtPmSerialNum" value="<c:out value="${list.mtPmSerialNum}"/>"  style="width: 164px" readonly="readonly"/>
-										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-			                        	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
-									</td>
-								</tr>
-								<tr class="dpTbRow">
-									<td class="tdTitle">작업내용</td>
-									<td class="tdContents" colspan="3"><textarea id="prodList-<c:out value="${status.index}"/>-mtPmWorkCont" name="mtPmWorkCont" required><c:out value="${list.mtPmWorkCont}"/></textarea></td>
-								</tr>
-							</table>
-						</div>			
-						</c:forEach>			
-						</c:otherwise>					
-					</c:choose>
-
-				</div>
-				<div class="btnWrap floatL">
-					<div class="floatL">
-						<button type="button"><img src="<c:url value='/images/btn_prev.png'/>" onclick="fn_prevBtn();"/></button>
-					</div>
-					<div class="floatL btnCenter">
-						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</c:when>
+					<c:otherwise>
+					<c:forEach var="list" items="${mtWorkProductList}" varStatus="status">
+					<div class="prodTable">
+						<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>"/>
+						<table>
+							<tr>
+								<td class="tdTitle firstTd">제품</td>
+								<td class="tdContents firstTd">
+									<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmKeyNm" name="mtPmKeyNm" value="<c:out value="${list.mtPmKeyNm}"/>" class="search" onclick="fn_findMtProduct(this)" autocomplete="off" onkeypress="return false;" required/>	
+									<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>" />
+									
+									<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtWorkSeq" name="mtWorkSeq" value="<c:out value="${list.mtWorkSeq}"/>"/>
+								</td>
+								<td class="tdTitle firstTd" style="padding-left:50px">시리얼번호</td>
+								<td class="tdContents firstTd">
+									<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum"  name="mtPmSerialNum" value="<c:out value="${list.mtPmSerialNum}"/>"  style="width: 164px" readonly="readonly"/>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+		                        	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>	
+								</td>
+							</tr>
+							<tr class="dpTbRow">
+								<td class="tdTitle">작업내용</td>
+								<td class="tdContents" colspan="3"><textarea id="prodList-<c:out value="${status.index}"/>-mtPmWorkCont" name="mtPmWorkCont" required><c:out value="${list.mtPmWorkCont}"/></textarea></td>
+							</tr>
+						</table>
 					</div>			
-				<c:if test="${mtWorkOrderYn eq 'Y' }">	
-					<div class="floatR" >
-						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
-					</div>
-				</c:if>
-					<div class="floatN floatC"></div>
-				</div>
+					</c:forEach>			
+					</c:otherwise>					
+				</c:choose>
+
+			</div>
 			</div>		
+			<div class="btnWrap floatL">
+				<div class="floatL">
+					<button type="button"><img src="<c:url value='/images/btn_prev.png'/>" onclick="fn_prevBtn();"/></button>
+				</div>
+				<div class="floatL btnCenter">
+					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+				</div>			
+			<c:if test="${mtWorkOrderYn eq 'Y' }">	
+				<div class="floatR" >
+					<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
+				</div>
+			</c:if>
+				<div class="floatN floatC"></div>
+			</div>
 		</form>
 	</div>
 </body>

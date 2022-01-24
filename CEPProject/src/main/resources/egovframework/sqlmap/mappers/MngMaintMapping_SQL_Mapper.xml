@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngMaint.mapping.service.impl.MngMaintMappingMapper">
+	
+	
+	<select id="selectOrderBillList" parameterType="orderBillVO" resultType="egovMap">		
+		
+		SELECT 
+			PO.PJ_ORDER_KEY AS PJ_ORDER_KEY
+		     , CA.AC_NM AS ORDER_AC_NM
+		     , PM.PJ_NM AS PJ_NM
+		     , PO.ORDER_DT AS ORDER_DT
+		     , PO.ORDER_AC_KEY AS ORDER_AC_KEY
+		     , PO.ORDER_AMOUNT AS ORDER_AMOUNT
+		     , PO.BILL_MAPPED_AMOUNT AS BILL_MAPPED_AMOUNT
+		     , CE.EMP_NM AS ORDER_EMP_NM
+		     , PO.BILL_MAPPING_NUM AS BILL_MAPPING_NUM
+		     , PO.ORDER_AC_KEY
+		FROM PJ_ORDER_TB PO
+		JOIN PJ_MAIN_TB PM  
+		ON PO.ORDER_CT_FK_KEY  = PM.PJ_KEY
+		JOIN CMM_ACCOUNT_TB CA
+		ON PO.ORDER_AC_KEY = CA.AC_KEY
+		JOIN CMM_EMPLOYEE_TB CE
+		ON PO.REG_EMP_KEY = CE.EMP_KEY
+		JOIN PJ_PURCHASE_TB PC       
+		ON PO.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
+		WHERE PO.DELETE_YN='N'
+		<if test="orderEmpNm != null and orderEmpNm != ''">
+		  	AND  CE.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%')) /* 발주담당자 조건검색  */
+		</if>
+		<if test="pjNm != null and pjNm != ''">
+		  	AND  PM.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))  /* 프로젝트명 조건검색 */
+		</if>
+		<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
+		  	AND  PO.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
+		</if>
+		<if test="acKey != null and acKey != ''">
+		  	AND  PO.ORDER_AC_KEY LIKE CONCAT('%', CONCAT(#{acKey}, '%'))  /* 사업자번호 조건검색 */
+		</if>
+		<if test="orderAcNm != null and orderAcNm != ''">
+		  	AND  CA.AC_NM LIKE CONCAT('%', CONCAT(#{orderAcNm}, '%'))  /* 거래처상호 조건검색 */
+		</if>
+    	ORDER BY ORDER_DT
+		
+	</select>
+	
+</mapper>

@@ -28,10 +28,12 @@ import com.cmm.util.CepStringUtil;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
-
+	//유지보수 매출계약관리키(MT_SALES_ORDER_TB)
+    private String mtSalesOrderKey;
 
     // 유지보수 통합 관리키 유지보수계약 PK
-    private String mtIntegrateKey;
+    private String mtIntegrateKey;    
+
     
     //유지보수 매출 관리키
     private String mtSalesKey;
@@ -654,6 +656,14 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setDeleteYn(String deleteYn) {
 		this.deleteYn = deleteYn;
+	}
+
+	public String getMtSalesOrderKey() {
+		return mtSalesOrderKey;
+	}
+
+	public void setMtSalesOrderKey(String mtSalesOrderKey) {
+		this.mtSalesOrderKey = mtSalesOrderKey;
 	}
     
 }

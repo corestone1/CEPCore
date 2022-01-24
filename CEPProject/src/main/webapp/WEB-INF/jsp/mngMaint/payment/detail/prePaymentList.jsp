@@ -220,6 +220,7 @@
 				//document.compForm.m0_paymentKey.value=$($(this).children().eq(7).text()).val();
 				
 				$('#m0_paymentKey').val($(this).children().eq(7).text());
+				$('#m0_proceedTurn').val($(this).children().eq(9).text());
 				/* location.href = "/maintenance/detail/prodInfo.do"; */
 				document.compForm.action = "/mngMaint/payment/detail/paymentForm.do";
 	            document.compForm.submit();  
@@ -275,9 +276,13 @@
 		}
 		
 		function fnMovePaymentForm() {			
-			form = document.compForm;
-			form.action = "/mngMaint/payment/detail/paymentForm.do";
-			form.submit(); 
+			//form = document.compForm;
+			//form.action = "/mngMaint/payment/detail/paymentForm.do";
+			//form.submit(); 
+			window.parent.document.getElementById("m_iframGubun").value="detail";
+    		window.parent.document.getElementById("m_proceedTurn").value=$('#m0_proceedTurn').val();
+    			
+    		window.parent.changeIframeUrl();
 		}
 	</script>
 </head>
@@ -296,6 +301,8 @@
 			<input type="hidden" id="m0_mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>"/>	
 			<input type="hidden" id="m0_mtOrderKey" name="mtOrderKey" value="<c:out value="${mtOrderKey}"/>"/>	
 			<input type="hidden" id="m0_billAcKey" name="billAcKey" value="<c:out value="${billAcKey}"/>"/>	
+			<input type="hidden" id="m0_proceedTurn"  name="proceedTurn" value="${proceedTurn}" />
+			<input type="hidden" id="m0_totalTurn" name="totalTurn" value="${totalTurn}" />
 			<input type="hidden" id="m0_paymentKey" name="paymentKey" />	
 					
 			<%-- <input type="hidden" id="buyKey" value="${ prePaymentList[0].paymentBuyFkKey }" /> --%>
@@ -310,6 +317,8 @@
 						<th>지급완료일</th>
 						<th>계산서 요청 상태</th>
 						<th style="max-width: 0px; display: none;"></th>
+						<th style="max-width: 0px; display: none;"></th>
+						<th style="max-width: 0px; display: none;"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -321,8 +330,34 @@
 							<td><span>${displayUtil.commaStr(result.billAmount) }</span></td>
 							<td><span>${displayUtil.displayDate(result.paymentCallDt) }</span></td>
 							<td><span>${displayUtil.displayDate(result.paymentDt) }</span></td>
-							<td><span>${result.paymentStatusCdNm }</span></td>
+							<td>								
+							<c:choose>
+								<c:when test="${result.paymentStatusCd eq 'W'}">
+									<span>요청대기</span>
+								</c:when>
+								<c:when test="${result.paymentStatusCd eq 'M'}">
+									<span>계산서매핑</span>
+								</c:when>
+								<c:when test="${result.paymentStatusCd eq 'R'}">
+									<span>지급요청</span>
+								</c:when>
+								<c:when test="${result.paymentStatusCd eq 'C'}">
+									<span>지급승인</span>
+								</c:when>
+								<c:when test="${result.paymentStatusCd eq 'E'}">
+									<span>지급완료</span>
+								</c:when>
+								<c:when test="${result.paymentStatusCd == null }">
+									<span>지급요청전</span>
+								</c:when>
+								<c:otherwise>
+									<span>${list.paymentStatusCd}</span>
+								</c:otherwise>
+							</c:choose>
+							</td>
 							<td style="max-width: 0px; display: none;">${result.paymentKey}</td>
+							<td style="max-width: 0px; display: none;">${result.paymentDtFkKey}</td>
+							<td style="max-width: 0px; display: none;">${result.paymentTurn}</td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -23,6 +23,36 @@ public class MngMaintBillScheduleServiceImpl implements MngMaintBillScheduleServ
 		
 	@Override
 	public List<EgovMap> selectMtBillRequestList(MngMaintBillSearchVO searchVO) throws Exception {
-		return mapper.selectMtBillRequestList(searchVO);
+		List<EgovMap> billReqList = null;
+		try {
+			billReqList = mapper.selectMtBillRequestList(searchVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return billReqList;
 	}	
+	
+
+
+	@Override
+	public List<EgovMap> selectMtSalesBillPlanList(MngMaintBillSearchVO searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMtSalesBillPlanList(searchVO);
+	}
+
+
+
+	@Override
+	public List<EgovMap> selectManufacturerList() throws Exception {
+		// TODO Auto-generated method stub 
+		return mapper.selectManufacturerList();
+	}
+
+
+
+	@Override
+	public List<EgovMap> selectMtPaymentPlanList(MngMaintBillSearchVO searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMtPaymentPlanList(searchVO);
+	}
 }

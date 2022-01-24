@@ -52,6 +52,8 @@ public class MtDefaultVO implements Serializable{
 	private String mtOrderType;//발주구분(백계약:BO, 장애발주:PO)
 	private String searchOderAcKeyNm;//뱔주처명
 	
+	private String selectMtSalesOrderKey; //매출품목 메인키.
+	
 	/**
 	 * @return the fromDate
 	 */
@@ -374,6 +376,12 @@ public class MtDefaultVO implements Serializable{
 	}
 	public void setSearchOderAcKeyNm(String searchOderAcKeyNm) {
 		this.searchOderAcKeyNm = searchOderAcKeyNm;
+	}
+	public String getSelectMtSalesOrderKey() {
+		return selectMtSalesOrderKey;
+	}
+	public void setSelectMtSalesOrderKey(String selectMtSalesOrderKey) {
+		this.selectMtSalesOrderKey = selectMtSalesOrderKey;
 	}
 	
 }

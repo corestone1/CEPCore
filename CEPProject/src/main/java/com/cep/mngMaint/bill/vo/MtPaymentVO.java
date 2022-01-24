@@ -11,7 +11,11 @@ public class MtPaymentVO extends MngMaintBillSearchVO implements Serializable{
 	private String paymentKey; //지급관리키
 	private String mtOrderType; // Mt order type (BO:백계약 지급, PC:작업발주 지급) 
 	private String paymentBuyFkKey; //mtOrderKey
-	private String paymentStatusCd; //요청/승인 상태 코드
+	private String paymentDtFkKey; //지급계획 관리키(MT_PAYMENT_DETAIL_TB.PAYMENT_KEY)
+	/*
+	 * W:대기(PYST1000) > M:매핑 > R:요청(PYST2000) > C:승인(PYST3000) > E:지급완료(PYST4000)
+	 */
+	private String paymentStatusCd; //요청/승인 상태 코드 
 	private String paymentStatusCdNm; //요청/승인 상태 코드명
 	private int paymentTurn;//mtOrderKey+순번(자동)
 	private String paymentCallDt;//지급요청일자
@@ -30,6 +34,7 @@ public class MtPaymentVO extends MngMaintBillSearchVO implements Serializable{
 	
 	private String currentStatus; //현재 요청상태
 	private String requestStatus; //변경할 요청상태.
+	private String paymentYearMonth;
 	
 	public String getPaymentKey() {
 		return paymentKey;
@@ -162,5 +167,17 @@ public class MtPaymentVO extends MngMaintBillSearchVO implements Serializable{
 	}
 	public void setRequestStatus(String requestStatus) {
 		this.requestStatus = requestStatus;
+	}
+	public String getPaymentDtFkKey() {
+		return paymentDtFkKey;
+	}
+	public void setPaymentDtFkKey(String paymentDtFkKey) {
+		this.paymentDtFkKey = paymentDtFkKey;
+	}
+	public String getPaymentYearMonth() {
+		return paymentYearMonth;
+	}
+	public void setPaymentYearMonth(String paymentYearMonth) {
+		this.paymentYearMonth = paymentYearMonth;
 	}
 }

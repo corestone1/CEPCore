@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cep.maintenance.amount.service.MtAmountService;
+import com.cep.maintenance.amount.vo.MtPaymentPlanVO;
 import com.cep.maintenance.amount.vo.MtPurchaseVO;
 import com.cep.maintenance.amount.vo.MtSalesPlanVO;
 import com.cep.maintenance.contract.service.MtContractService;
@@ -166,6 +167,7 @@ public class MtAmountServiceImple implements MtAmountService {
 			updateList = new ArrayList<>();
 			for (int i = 0; i < salesPlanCnt; i++) {
 				checkSalesPlanVO = mtSalesPlanVO.getMtSalesPlanVoList().get(i);
+				checkSalesPlanVO.setMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
 				if("".equals(CepStringUtil.getDefaultValue(checkSalesPlanVO.getSalesKey(), ""))) {
 					//등록 데이타.
 					insertList.add(checkSalesPlanVO);
@@ -177,6 +179,7 @@ public class MtAmountServiceImple implements MtAmountService {
 			
 //			deletePalnVo.setMtIntegrateKey(mtSalesPlanVO.getMtIntegrateKey());
 			deletePalnVo.setSalesCtFkKey(mtSalesPlanVO.getMtIntegrateKey());
+			deletePalnVo.setMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
 			deleteMtSalesPlan(deletePalnVo);
 			
 			if(insertList.size()>0) {
@@ -190,11 +193,13 @@ public class MtAmountServiceImple implements MtAmountService {
 			if(updateList.size()>0) {
 				updateParam = new HashMap<>();
 				updateParam.put("mtSalesPlanVoList", updateList);	
-				updateParam.put("regEmpKey", mtSalesPlanVO.getModEmpKey());
+				updateParam.put("modEmpKey", mtSalesPlanVO.getModEmpKey());
 				
 				updateMtSalesPlanList(updateParam);
 			}
 			
+			//계산서 계획정보 등록(or 수정)시 MT_CONTRACT_TB.BILL_ISSUE_RULE정보를 업데이트 한다.
+			mtAmountMapper.updateBillIssueRule(mtSalesPlanVO);
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -268,4 +273,135 @@ public class MtAmountServiceImple implements MtAmountService {
 		
 	}
 
+	@Override
+	public List<MtPaymentPlanVO> selectMtPaymentPlanList(MtPaymentPlanVO mtPaymentPlanVO) throws Exception {
+		List<MtPaymentPlanVO> paymentPlanVoList = null;
+		try {
+			paymentPlanVoList= mtAmountMapper.selectMtPaymentPlanList(mtPaymentPlanVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return paymentPlanVoList;
+	}
+
+	@Override
+	@Transactional
+	public void writeMtPaymentPlanList(MtPaymentPlanVO mtPaymentPlanVO) throws Exception {
+		List<MtPaymentPlanVO> insertList = null;
+		List<MtPaymentPlanVO> updateList = null;
+		int paymentPlanCnt = mtPaymentPlanVO.getMtPaymentPlanVOList().size();
+		
+		MtPaymentPlanVO checkPaymentPlanVO = null;
+		Map<String, Object> insertParam = null;
+		Map<String, Object> updateParam = null;
+		
+		MtPaymentPlanVO deletePalnVo = new MtPaymentPlanVO();
+		
+		/*
+		 * 1.등록데이타와 수정데이타 분리
+		 * 2.등록데이타 pk생성
+		 * 3.checkPaymentPlanVO.getMtIntegrateKey()와  
+		 *   checkPaymentPlanVO.getMtOrderKey() 기준으로 삭제 flag처리. 
+		 * 3.등록데이타 등록
+		 * 4.수정데이타 업데이트
+		 */
+		try {
+			insertList = new ArrayList<>();
+			updateList = new ArrayList<>();
+			for (int i = 0; i < paymentPlanCnt; i++) {
+				checkPaymentPlanVO = mtPaymentPlanVO.getMtPaymentPlanVOList().get(i);
+//				checkPaymentPlanVO.setMtIntegrateKey(mtPaymentPlanVO.getMtIntegrateKey());
+				checkPaymentPlanVO.setMtOrderKey(mtPaymentPlanVO.getMtOrderKey());
+				if("".equals(CepStringUtil.getDefaultValue(checkPaymentPlanVO.getPaymentKey(), ""))) {
+					//등록 데이타.
+					insertList.add(checkPaymentPlanVO);
+				} else {
+					//업데이트 데이타.
+					updateList.add(checkPaymentPlanVO);
+				}					
+			}
+			if(updateList.size()>0) {
+				deletePalnVo.setMtIntegrateKey(mtPaymentPlanVO.getMtIntegrateKey());
+				deletePalnVo.setMtOrderKey(mtPaymentPlanVO.getMtOrderKey());
+				deleteMtPaymentPlan(deletePalnVo);
+			}
+			
+			
+			if(insertList.size()>0) {
+				insertParam = new HashMap<>();
+				insertParam.put("mtPaymentPlanVoList", insertList);	
+				insertParam.put("regEmpKey", mtPaymentPlanVO.getRegEmpKey());
+				
+				writeMtPaymentPlanList(insertParam);
+			}
+			
+			if(updateList.size()>0) {
+				updateParam = new HashMap<>();
+				updateParam.put("mtPaymentPlanVoList", updateList);	
+				updateParam.put("modEmpKey", mtPaymentPlanVO.getModEmpKey());
+				
+				updateMtPaymentPlanList(updateParam);
+			}
+		
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
+
+	@Override
+	public void writeMtPaymentPlanList(Map<String, Object> insertParam) throws Exception {
+		List<MtPaymentPlanVO> paymentPlanVoList = null;
+		
+		try {
+			paymentPlanVoList = (List<MtPaymentPlanVO>)insertParam.get("mtPaymentPlanVoList");
+			if(null != paymentPlanVoList && paymentPlanVoList.size()>0) {
+				//유지보수 매입 지급계획 PK를 생성한다.
+				paymentPlanVoList = makePaymentPlanPkey(paymentPlanVoList);
+				//PK값이 셋팅된 list를 다시 insertParam에 넣는다.
+				insertParam.put("mtPaymentPlanVoList", paymentPlanVoList);
+				mtAmountMapper.writeMtPaymentPlanList(insertParam);
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+
+	private List<MtPaymentPlanVO> makePaymentPlanPkey(List<MtPaymentPlanVO> paymentPlanVoList) throws Exception{
+		List<MtPaymentPlanVO> planVoList = new ArrayList<MtPaymentPlanVO>();
+		MtPaymentPlanVO paymentPlanVO = null;
+		int planCnt = 0;
+		try {
+			planCnt = paymentPlanVoList.size();
+			for (int i = 0; i < planCnt; i++) {
+				paymentPlanVO = paymentPlanVoList.get(i);
+				paymentPlanVO.setPaymentKey(service.makePrimaryKey(PrimaryKeyType.MAINTENACE_PAYMENT_PLAN));
+				planVoList.add(paymentPlanVO);
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return planVoList;
+	}
+	
+	@Override
+	public void updateMtPaymentPlanList(Map<String, Object> updateParam) throws Exception {
+		try {
+			mtAmountMapper.updateMtPaymentPlanList(updateParam);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
+	
+	
+	public void deleteMtPaymentPlan(MtPaymentPlanVO mtPaymentPlanVO) throws Exception {
+		try {
+			mtAmountMapper.deleteMtPaymentPlan(mtPaymentPlanVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
 }

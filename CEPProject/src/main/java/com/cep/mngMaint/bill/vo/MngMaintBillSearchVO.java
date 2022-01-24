@@ -13,6 +13,7 @@ public class MngMaintBillSearchVO implements Serializable{
 	private String mtIntegrateKey; //유지보수 계약 PK
 	private String billFkMtKey;//유지보수관리키(MT_INTEGRATE_KEY)
 	private String pjKey;
+	private String mtSalesOrderKey; //유지보수 매출계약 관리키
 	private int    billTurnNo;
 	private String billNo;
 	private String salesKey; //수금계획(매출) pk(MT_SALES_DETAIL_TB.SALES_KEY)
@@ -21,8 +22,9 @@ public class MngMaintBillSearchVO implements Serializable{
 	private String searchFromDate;
 	private String searchToDate;
 	
-	private String billAcKey; //사업자번호
-	private String acKey;//사업자번호
+	private String billAcKey; // 거래처 사업자번호
+//	private String billAcNm; // 매출처명
+	private String acKey;// 고객사 사업자번호
 	private String searchBillGroup; //전체(null), 매입(PC),매출(SD)구분
 	private String searchAcNm;
 	private String searchPjNm;
@@ -65,6 +67,13 @@ public class MngMaintBillSearchVO implements Serializable{
 	 * 
 	 */
 	private String dateSearchType; 
+	
+	private String searchSaleEmpNm; //영업담당자.
+	
+	private String paymentDtFkKey; // MT_PAYMENT_DETAIL_TB.PAYMENT_KEY
+	
+//	private String mtSalesAcKey;//매출처 사업자 번호
+//	private String mtSalesAcNm;//매출서 사업자명.
 	
 	/**
 	 * @return String - the mtIntegrateKey
@@ -398,4 +407,40 @@ public class MngMaintBillSearchVO implements Serializable{
 	public void setDateSearchType(String dateSearchType) {
 		this.dateSearchType = dateSearchType;
 	}
+	public String getSearchSaleEmpNm() {
+		return searchSaleEmpNm;
+	}
+	public void setSearchSaleEmpNm(String searchSaleEmpNm) {
+		this.searchSaleEmpNm = searchSaleEmpNm;
+	}
+	public String getMtSalesOrderKey() {
+		return mtSalesOrderKey;
+	}
+	public void setMtSalesOrderKey(String mtSalesOrderKey) {
+		this.mtSalesOrderKey = mtSalesOrderKey;
+	}
+	public String getPaymentDtFkKey() {
+		return paymentDtFkKey;
+	}
+	public void setPaymentDtFkKey(String paymentDtFkKey) {
+		this.paymentDtFkKey = paymentDtFkKey;
+	}
+//	public String getBillAcNm() {
+//		return billAcNm;
+//	}
+//	public void setBillAcNm(String billAcNm) {
+//		this.billAcNm = billAcNm;
+//	}
+//	public String getMtSalesAcKey() {
+//		return mtSalesAcKey;
+//	}
+//	public void setMtSalesAcKey(String mtSalesAcKey) {
+//		this.mtSalesAcKey = mtSalesAcKey;
+//	}
+//	public String getMtSalesAcNm() {
+//		return mtSalesAcNm;
+//	}
+//	public void setMtSalesAcNm(String mtSalesAcNm) {
+//		this.mtSalesAcNm = mtSalesAcNm;
+//	}
 }

@@ -129,6 +129,7 @@
 	<insert id="writeMtSalesPlanList" parameterType="java.util.Map">
 		INSERT INTO MT_SALES_DETAIL_TB (
 		    SALES_KEY 
+		    , MT_SALES_ORDER_KEY
 		    , SALES_CT_FK_KEY 
 		    , SALES_YEAR_MONTH
 		    , SALES_TURN 
@@ -144,6 +145,7 @@
 		<foreach collection="mtSalesPlanVoList" item="item" separator=",">
 		    (
 		    #{item.salesKey} 
+		    , #{item.mtSalesOrderKey}
 		    , #{item.salesCtFkKey}
 		    , #{item.salesYearMonth}
 		    , #{item.salesTurn}
@@ -172,13 +174,16 @@
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE SALES_CT_FK_KEY = #{item.salesCtFkKey}
+				AND MT_SALES_ORDER_KEY = #{item.mtSalesOrderKey}
 				AND SALES_YEAR_MONTH = #{item.salesYearMonth}
 		</foreach>
 	</update>
-		
+	
+	<!-- 유지보수 매출 계산서계획정보 조회  -->	
 	<select id="selectMtSalesPlanList" parameterType="com.cep.maintenance.amount.vo.MtSalesPlanVO" resultType="com.cep.maintenance.amount.vo.MtSalesPlanVO">
 		SELECT 
 			SALES_KEY AS salesKey
+			, MT_SALES_ORDER_KEY as mtSalesOrderKey
 			, SALES_CT_FK_KEY AS salesCtFkKey
 			, SALES_YEAR_MONTH AS salesYearMonth
 			, SALES_TURN AS salesTurn
@@ -193,6 +198,9 @@
 		WHERE 1=1
 		<if test="salesCtFkKey != null and salesCtFkKey != ''">
 			AND SALES_CT_FK_KEY= #{salesCtFkKey}
+		</if>
+		<if test="selectMtSalesOrderKey != null and selectMtSalesOrderKey != ''">
+			AND MT_SALES_ORDER_KEY= #{selectMtSalesOrderKey}
 		</if>
 		<if test="salesKey != null and salesKey != ''">
 			AND SALES_KEY = #{salesKey}
@@ -210,10 +218,112 @@
 		<if test="salesCtFkKey != null and salesCtFkKey != ''">
 			AND SALES_CT_FK_KEY= #{salesCtFkKey}
 		</if>
+		<if test="mtSalesOrderKey != null and mtSalesOrderKey != ''">
+			AND MT_SALES_ORDER_KEY= #{mtSalesOrderKey}
+		</if>
 		<if test="salesKey != null and salesKey != ''">
 			AND SALES_KEY = #{salesKey}
 		</if>
+	</update>	
+	
+	<update id="updateBillIssueRule" parameterType="com.cep.maintenance.amount.vo.MtSalesPlanVO">	
+		UPDATE MT_SALES_ORDER_TB SET
+			BILL_ISSUE_RULE  = #{billIssueRule}
+		WHERE MT_INTEGRATE_KEY= #{salesCtFkKey}
+			AND MT_SALES_ORDER_KEY= #{mtSalesOrderKey}
 	</update>			
+	
+	<!-- 유지보수 매입 지급계획정보 조회. -->
+	<select id="selectMtPaymentPlanList" parameterType="com.cep.maintenance.amount.vo.MtPaymentPlanVO" resultType="com.cep.maintenance.amount.vo.MtPaymentPlanVO">
+		SELECT 
+			PAYMENT_KEY AS paymentKey
+			, MT_ORDER_KEY as mtOrderKey
+			, MT_INTEGRATE_KEY AS mtIntegrateKey
+			, PAYMENT_YEAR_MONTH AS paymentYearMonth
+			, PAYMENT_TURN AS paymentTurn
+			, PAYMENT_RATE AS paymentRate
+			, PAYMENT_TURN_AMOUNT AS paymentTurnAmount
+			, PAYMENT_FC_DT AS paymentFcDt
+			, PAYMENT_FINISH_DT AS paymentFinishDt
+			, PAYMENT_STATUS_CD AS paymentStatusCd
+		FROM MT_PAYMENT_DETAIL_TB
+		WHERE MT_INTEGRATE_KEY= #{mtIntegrateKey}		
+		<if test="mtOrderKey != null and mtOrderKey != ''">
+			AND MT_ORDER_KEY= #{mtOrderKey}
+		</if>
+		<if test="paymentKey != null and paymentKey != ''">
+			AND PAYMENT_KEY = #{paymentKey}
+		</if>
+			AND DELETE_YN='N'
+	</select>
+	
+	<!-- 유지보수 수금계획 정보 등록  -->
+	<insert id="writeMtPaymentPlanList" parameterType="java.util.Map">
+		INSERT INTO MT_PAYMENT_DETAIL_TB (
+		    PAYMENT_KEY 
+		    , MT_ORDER_KEY
+		    , MT_INTEGRATE_KEY 
+		    , PAYMENT_YEAR_MONTH
+		    , PAYMENT_TURN 
+		    , PAYMENT_RATE 
+		    , PAYMENT_TURN_AMOUNT 
+		    , PAYMENT_FC_DT 
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY)
+		VALUES
+		<foreach collection="mtPaymentPlanVoList" item="item" separator=",">
+		    (
+		    #{item.paymentKey} 
+		    , #{item.mtOrderKey}
+		    , #{item.mtIntegrateKey}
+		    , #{item.paymentYearMonth}
+		    , #{item.paymentTurn}
+		    , #{item.paymentRate}
+		    , #{item.paymentTurnAmount}
+		    , #{item.paymentFcDt}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey})
+		</foreach>    		
+	</insert>	
+	
+	<!-- 유지보수 수금계획 정보 수정 -->
+	<update id="updateMtPaymentPlanList" parameterType="java.util.HashMap">
+		<foreach collection="mtPaymentPlanVoList" item="item" separator=";" close=";">
+			UPDATE MT_PAYMENT_DETAIL_TB
+			SET PAYMENT_TURN=#{item.paymentTurn} 
+				, PAYMENT_RATE = #{item.paymentRate}
+				, PAYMENT_TURN_AMOUNT = #{item.paymentTurnAmount}
+				, PAYMENT_FC_DT = #{item.paymentFcDt}
+				, DELETE_YN = 'N'
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE MT_INTEGRATE_KEY = #{item.mtIntegrateKey}
+				AND MT_ORDER_KEY = #{item.mtOrderKey}
+				AND SALES_YEAR_MONTH = #{item.salesYearMonth}
+		</foreach>
+	</update>
+	
+	<!-- 유지보수 수금계획 정보 삭제 -->
+	<update id="deleteMtPaymentPlan" parameterType="com.cep.maintenance.amount.vo.MtPaymentPlanVO">	
+		UPDATE MT_PAYMENT_DETAIL_TB SET
+			DELETE_YN  = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE 1=1
+		<if test="mtIntegrateKey != null and mtIntegrateKey != ''">
+			AND MT_INTEGRATE_KEY = #{mtIntegrateKey}
+		</if>
+		<if test="mtOrderKey != null and mtOrderKey != ''">
+			AND MT_ORDER_KEY = #{mtOrderKey}
+		</if>
+		<if test="paymentKey != null and paymentKey != ''">
+			AND PAYMENT_KEY = #{paymentKey}
+		</if>
+	</update>	
 	
 	
 	

@@ -229,11 +229,11 @@
 						<c:forEach var="item" items="${mtProductList}" varStatus="status">
 	            			<tr>
 	            				<td>
-									<a href="#" onclick="javascript:fn_productSelect('${item.mtPmKey}', '${item.pmNmCd}', '${item.mtPmSerialNum}', '${displayUtil.commaStr(item.mtPmQuantity)}', '${displayUtil.commaStr(item.mtPmUprice)}', '${displayUtil.makeMultiNumber(item.mtPmQuantity,item.mtPmUprice)}', '${displayUtil.displayDate(item.mtPmStartDt)}', '${displayUtil.displayDate(item.mtPmEndDt)}');" class="btn btn_gray">선택</a>
+									<a href="#" onclick="javascript:fn_productSelect('${item.mtSalesPmKey}', '${item.mtPmNmCd}', '${item.mtPmSerialNum}', '${displayUtil.commaStr(item.mtPmQuantity)}', '${displayUtil.commaStr(item.mtPmUprice)}', '${displayUtil.makeMultiNumber(item.mtPmQuantity,item.mtPmUprice)}', '${displayUtil.displayDate(item.mtPmStartDt)}', '${displayUtil.displayDate(item.mtPmEndDt)}');" class="btn btn_gray">선택</a>
 	            				</td>
 	            				<td align="center" class="listtd">
 	            					<%-- <c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/> --%>
-	            					<c:out value="${item.pmNmCd}"/>
+	            					<c:out value="${item.mtPmNmCd}"/>
 	            				</td>
 	            				<td align="center" class="listtd"><c:out value="${item.mtPmSerialNum}"/>&nbsp;</td>
 	            				<td align="right" class="listtd"><c:out value="${displayUtil.commaStr(item.mtPmQuantity)}"/>&nbsp;</td>

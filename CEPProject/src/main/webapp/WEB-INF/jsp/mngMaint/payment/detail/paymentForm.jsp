@@ -191,7 +191,7 @@
 		}
 		textarea {
 			width: calc(100% - 20px);
-			height: 329px;
+			height: 279px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -272,7 +272,18 @@
 					 $(this).val('N');
 				 } 
 			}); */
-			
+			$("#slt_paymentTurn").on("change", function(){
+				//changeParantIframUrl();
+				
+				/* form = document.reqForm;
+				form.action = "<c:url value='/mngMaint/bill/detail/billForm.do'/>";
+				form.submit();  */
+				window.parent.document.getElementById("m_iframGubun").value="detail";
+     			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
+				//window.parent.document.getElementById("m_paymentKey").value=$('#m0_paymentKey').val();
+     			
+     			window.parent.changeIframeUrl();
+			});
 		});
 		/*
 		지급요청 상태 변경
@@ -298,9 +309,9 @@
 				processGubun="확인";
 			}
 			
-			if(requestStatus == "PYST2000") {
+			if(requestStatus == "R") {
 				title = "매입금 지급확인에 대한 "+processGubun;
-			} else if(requestStatus == "PYST3000") {
+			} else if(requestStatus == "C") {
 				if(currentStatus<requestStatus) {
 					title = "매입금 지급확인에 대한 "+processGubun;
 				} else {
@@ -308,7 +319,7 @@
 					//지급액, 미지급액 변동으로 부모창 새로고침 필요
 					parentReloadYN="Y";
 				}				
-			} else if(requestStatus == "PYST4000") {
+			} else if(requestStatus == "E") {
 				title = "매입금  지급완료에 대한 "+processGubun;
 				//지급액, 미지급액 변동으로 부모창 새로고침 필요
 				parentReloadYN="Y";
@@ -358,8 +369,8 @@
 		            		if(parentReloadYN=="Y") {
 		            			//window.parent.location.reload();
 		            			window.parent.document.getElementById("m_iframGubun").value="detail";
-		            			window.parent.document.getElementById("m_paymentKey").value=$('#m0_paymentKey').val();
-		            			
+		            			//window.parent.document.getElementById("m_paymentKey").value=$('#m0_paymentKey').val();
+		            			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
 		            			window.parent.changeIframeUrl();
 		            		} else {
 		            			/* var url = '/mngMaint/payment/detail/paymentForm.do';
@@ -538,18 +549,23 @@
 	            		//업로드 파일을 선택하지 않은 경우
             			if($('#m0_paymentKey').val() !=''){
 	            			alert("유지보수 매입금 지급요청 수정을 성공하였습니다.");
-	            			
+	            			/*
 	            			form = document.paymentReqForm;
 			    			form.action = "/mngMaint/payment/detail/paymentForm.do";
 			    			form.submit(); 
-			    			
+			    			*/
+	            			window.parent.document.getElementById("m_iframGubun").value="detail";
+	             			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
+	             			
+	             			window.parent.changeIframeUrl();
 	            		} else {
 	            			alert("유지보수 매입금 지급요청 등록을 성공하였습니다.");
 	            			// 관리키를 셋팅한다.
 	            			$('#m0_paymentKey').val(paramData.paymentKey)
 	            			
 	            			window.parent.document.getElementById("m_iframGubun").value="detail";
-	            			window.parent.document.getElementById("m_paymentKey").value=paramData.paymentKey;
+	            			//window.parent.document.getElementById("m_paymentKey").value=paramData.paymentKey;
+	            			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
 	            			
 	            			window.parent.changeIframeUrl();
 	            			
@@ -688,12 +704,30 @@
 			<input type="hidden" id="m0_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${paymentRequestInfo.mtIntegrateKey}"/>"/>
 			<input type="hidden" id="m0_mtWorkKey" name="mtWorkKey" value="<c:out value="${paymentRequestInfo.mtWorkKey}"/>"/>		
 			<input type="hidden" id="m0_mtOrderKey" name="mtOrderKey" value="<c:out value="${paymentRequestInfo.paymentBuyFkKey}"/>"/>	
+			<input type="hidden" id="m0_paymentDtFkKey" name="paymentDtFkKey" value="<c:out value="${paymentRequestInfo.paymentDtFkKey}"/>"/>	
 			<input type="hidden" id="m0_billAcKey" name="billAcKey" value="<c:out value="${paymentRequestInfo.paymentAcFkKey}"/>"/>	
 			<input type="hidden" id="m0_paymentBuyFkKey" name="paymentBuyFkKey" value="<c:out value="${paymentRequestInfo.paymentBuyFkKey}"/>"/>	
 			<input type="hidden" id="m0_paymentAcFkKey" name="paymentAcFkKey" value="<c:out value="${paymentRequestInfo.paymentAcFkKey}"/>"/>
 			<input type="hidden" id="m0_paymentKey" name="paymentKey" value="<c:out value="${paymentRequestInfo.paymentKey}"/>"/>	
+			<input type="hidden" id="m0_totalTurn" name="totalTurn" value="${totalTurn}" />
+			<input type="hidden" id="m0_proceedTurn" name="proceedTurn" value="${proceedTurn}" />
+			<input type="hidden" id="m0_proceedTurn" name="paymentStatusCd" value="R" />
+			<input type="hidden" id="m0_paymentYearMonth" name="paymentYearMonth" value="<c:out value="${paymentRequestInfo.paymentYearMonth}"/>"/>	
 			<div class="pmWrap">
 				<table class="dtl" id="info0">
+					<tr>
+						<td class="backgroundpurple"><label>*</label>회차</td>
+						<td>
+							<select id="slt_paymentTurn" name="paymentTurn" style="width:120px;" required>
+								<c:forEach var="i" begin="1" end="${totalTurn}" step="1">
+									<option value="${i}" <c:if test='${paymentRequestInfo.paymentTurn == i}'>selected</c:if>>
+										<c:out value="${i}" />회차
+									</option>
+								</c:forEach>
+							</select> 
+							
+						</td>
+					</tr>
 					<tr>
 						<td><label>*</label>계산서정보</td>
 						<td>
@@ -735,7 +769,31 @@
 					<tr>
 						<td>&nbsp;&nbsp;요청상태</td>	
 						<td>
-							<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="<c:out value="${paymentRequestInfo.paymentStatusCdNm}"/>" class="pname" readOnly/>
+							<c:choose>
+								<c:when test="${paymentRequestInfo.paymentStatusCd eq 'W'}">
+									<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="요청대기" class="pname" readOnly/>									
+								</c:when>
+								<c:when test="${paymentRequestInfo.paymentStatusCd eq 'M'}">
+									<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="계산서매핑" class="pname" readOnly/>
+								</c:when>
+								<c:when test="${paymentRequestInfo.paymentStatusCd eq 'R'}">
+									<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="지급요청" class="pname" readOnly/>
+								</c:when>
+								<c:when test="${paymentRequestInfo.paymentStatusCd eq 'C'}">
+									<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="지급확인" class="pname" readOnly/>
+								</c:when>
+								<c:when test="${paymentRequestInfo.paymentStatusCd eq 'E'}">
+									<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="지급완료" class="pname" readOnly/>
+								</c:when>
+								<c:when test="${paymentRequestInfo.paymentStatusCd == null }">
+									<input type="text"  id="paymentStatusCdNm"  name="paymentStatusCdNm" value="지급요청전" class="pname" readOnly/>
+								</c:when>
+								<c:otherwise>
+									<input type="text"  id="paymentStatusCdNm"  name="pamentStatusCdNm" value="<c:out value="${paymentRequestInfo.paymentStatusCd}"/>" class="pname" readOnly/>
+									
+								</c:otherwise>
+							</c:choose>
+							
 							
 						</td>
 					</tr>
@@ -752,26 +810,26 @@
 						<img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" />
 					</button>
 					</c:if>
-					<c:if test='${paymentRequestInfo.paymentStatusCd == "PYST2000"}'><!--요청상태  -->
+					<c:if test='${paymentRequestInfo.paymentStatusCd == "R"}'><!--요청상태  -->
 					<button type="button" title="매입금 지급요청 삭제" onclick="fn_deleteBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_del.png'/>" />
 					</button>
 					<button type="button" title="매입금 지급요청 수정" onclick="fn_saveBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" />
 					</button>
-					<button type="button" title="매입금 지급요청확인" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'PYST3000')">
+					<button type="button" title="매입금 지급요청확인" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'C')">
 						<img class="cursorP" src="<c:url value='/images/btn_ack_pay.png'/>" />
 					</button>
 					</c:if>
 					
-					<c:if test='${paymentRequestInfo.paymentStatusCd == "PYST3000"}'><!--확인상태  -->
-					<button type="button" title="매입금 지급요청 확인취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'PYST2000')">확인취소</button>
-					<button type="button" title="매입금 지급요청 지급완료" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'PYST4000')">지급완료</button>
+					<c:if test='${paymentRequestInfo.paymentStatusCd == "C"}'><!--확인상태  -->
+					<button type="button" title="매입금 지급요청 확인취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'R')">확인취소</button>
+					<button type="button" title="매입금 지급요청 지급완료" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'E')">지급완료</button>
 					
 					</c:if>
 					
-					<c:if test='${paymentRequestInfo.paymentStatusCd == "PYST4000"}'><!--완료상태  -->
-					<button type="button" title="매입금 지급요청 지급취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'PYST3000')">지급완료취소</button>					
+					<c:if test='${paymentRequestInfo.paymentStatusCd == "E"}'><!--완료상태  -->
+					<button type="button" title="매입금 지급요청 지급취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'C')">지급완료취소</button>					
 					</c:if>
 					
 				</div>

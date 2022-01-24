@@ -77,6 +77,34 @@ public interface MngMaintBillService {
 	public void deleteBillRequest(MngMaintBillVO mngMaintBillVO) throws Exception;
 	
 	/**
+	 * 영업지원에서 세금계산서 발행완료 처리
+	 * 1. 매출세금계산서 테이블(MT_SD_BILLING_OP_TB)에 계산서 발행정보등록
+	 * 2. MT_SALES_DETAIL_TB.SALES_STATUS_CD 상태 업데이트.
+	 * 3. MT_SALES_AMOUNT_TB의 월별 상태코드를 업데이트 한다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 23. 오전 10:41:54
+	 * @author aranghoo
+	 */
+	public String insertBillIssue(MngMaintBillVO mngMaintBillVO) throws Exception;
+	
+	/**
+	 * 
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @throws Exception
+	 * @cdate 2021. 11. 23. 오후 1:08:22
+	 * @author aranghoo
+	 */
+	public void updateBillIssue(MngMaintBillVO mngMaintBillVO) throws Exception;
+	
+	/**
 	 *유지보수 매출  계산서 요청 수정.
 	 * <pre>
 	 * </pre>

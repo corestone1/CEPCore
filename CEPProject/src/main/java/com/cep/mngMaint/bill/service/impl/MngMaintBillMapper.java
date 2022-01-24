@@ -2,6 +2,7 @@
 
 import java.util.List;
 
+import com.cep.maintenance.contract.vo.MtBuyAmountVO;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
@@ -69,6 +70,30 @@ public interface MngMaintBillMapper {
 	public void insertBillRequest(MngMaintBillVO mngMaintBillVO) throws Exception;
 	
 	/**
+	 * 영업지원에서 세금계산서 발행완료 처리
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @throws Exception
+	 * @cdate 2021. 11. 23. 오후 12:58:10
+	 * @author aranghoo
+	 */
+	public void insertBillIssue(MngMaintBillVO mngMaintBillVO) throws Exception;
+	
+	/**
+	 * 영업지원에서 세금계산서 발행완료 수정.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @throws Exception
+	 * @cdate 2021. 11. 23. 오후 12:58:50
+	 * @author aranghoo
+	 */
+	public void updateBillIssue(MngMaintBillVO mngMaintBillVO) throws Exception;
+	
+	/**
 	 * MT_SALES_DETAIL_TB .SALES_STATUS_CD 업데이트
 	 * <pre>
 	 * </pre>
@@ -78,7 +103,7 @@ public interface MngMaintBillMapper {
 	 * @cdate 2021. 8. 30. 오후 10:54:27
 	 * @author aranghoo
 	 */
-	public void  updateSaleDetailStatusCd(MngMaintBillVO mngMaintBillVO) throws Exception;
+	public void updateSaleDetailStatusCd(MngMaintBillVO mngMaintBillVO) throws Exception;
 	
 
 
@@ -223,9 +248,12 @@ public interface MngMaintBillMapper {
 	 * 지급정보 상세화면
 	 * 등록된 지급요청정보를 조회한다.
 	 * 조회된 지급정보 상세에서 상태(PAYMENT_STATUS_CD)에 따라 수정, 확인, 완료가 가능하다.
-	 *  - PAYMENT_STATUS_CD=PYST2000(요청) 상태 : 수정버튼, 요청취소, 확인
-	 *  - PAYMENT_STATUS_CD=PYST3000(확인) 상태 : 확인취소, 완료
-	 *  - PAYMENT_STATUS_CD=PYST4000(완료) 상태 : 완료취소
+	 * W:대기(PYST1000) > M:매핑 > R:요청(PYST2000) > C:확인(PYST3000) > E:지급완료(PYST4000)
+	 *  - PAYMENT_STATUS_CD=W(대기 : PYST1000) 상태 : 수정버튼
+	 *  - PAYMENT_STATUS_CD=M(매핑 :         ) 상태 : 수정버튼, 요청버튼, 확인버튼
+	 *  - PAYMENT_STATUS_CD=R(요청 : PYST2000) 상태 : 수정버튼, 요청취소, 확인
+	 *  - PAYMENT_STATUS_CD=C(확인 : PYST3000) 상태 : 확인취소, 완료
+	 *  - PAYMENT_STATUS_CD=E(완료 : PYST4000) 상태 : 완료취소
 	 * <pre>
 	 * </pre>
 	 * 
@@ -236,6 +264,20 @@ public interface MngMaintBillMapper {
 	 * @author aranghoo
 	 */
 	public EgovMap selectPaymentRequestInfo(MngMaintBillSearchVO searchVO) throws Exception;
+	
+	/**
+	 * selectPaymentRequestInfo에서 조회되지 않는 경우 
+	 * MT_PAYMENT_DETAIL_TB에서 등록할 기본정보를 조회하여 뿌려준다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param searchVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 12. 16. 오전 11:07:44
+	 * @author aranghoo
+	 */
+	public EgovMap selectPaymentDetailRequestInfo(MngMaintBillSearchVO searchVO) throws Exception;
 	
 	/**
 	 * 세금계산서 맵핑목록을 가져온다.
@@ -356,6 +398,31 @@ public interface MngMaintBillMapper {
 	public void updatePaymentRequestFinish(MtPaymentVO mtPaymentVO) throws Exception;
 	
 	/**
+	 * MT_BUY_AMOUNT_TB의 월별 CALL_YN의 상태값을 변경한다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtBuyAmountVO
+	 * @throws Exception
+	 * @cdate 2021. 12. 15. 오후 1:36:09
+	 * @author aranghoo
+	 */
+	public void updateMtBuyAmountStatus(MtBuyAmountVO mtBuyAmountVO) throws Exception;
+	
+	/**
+	 * MT_PAYMENT_DETAIL_TB.PAYMENT_STATUS_CD
+	 * MT_PAYMENT_DETAIL_TB.PAYMENT_FINISH_DT
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtPaymentVO
+	 * @throws Exception
+	 * @cdate 2021. 12. 13. 오후 9:58:03
+	 * @author aranghoo
+	 */
+	public void updatePaymentDetailStatusCd(MtPaymentVO mtPaymentVO) throws Exception;
+	
+	/**
 	 * 발주 미지급, 지급금액 완료금액 변경
 	 * <pre>
 	 * </pre>
@@ -467,5 +534,43 @@ public interface MngMaintBillMapper {
 	 * @author aranghoo
 	 */
 	public List<EgovMap> selectMtPaymentRequestList(MngMaintBillSearchVO searchVO) throws Exception;
+	
+	/**
+	 * 유지보수관리 >> 수금계획목록
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param searchVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 17. 오후 3:25:10
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtSalesBillPlanList(MngMaintBillSearchVO searchVO) throws Exception;
+	
+	/**
+	 * 매출/매입 세금계산서 제조사 구분 목록.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 22. 오후 4:12:56
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectManufacturerList() throws Exception;
+	
+	/**
+	 * 유지보수관리 >> 지급계획목록
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param searchVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 12. 13. 오후 3:57:40
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtPaymentPlanList(MngMaintBillSearchVO searchVO) throws Exception;
 	
 }

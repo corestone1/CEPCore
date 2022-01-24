@@ -7,6 +7,7 @@ import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtGuarantyBondVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
+import com.cep.maintenance.contract.vo.MtSalesOrderVO;
 import com.cmm.config.PrimaryKeyType;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -86,7 +87,7 @@ public interface MtContractService {
 	  * @return
 	  * @throws Exception
 	 */
-	MtContractVO selectContractBasicDetail(String mtIntegrateKey)  throws Exception;
+	MtContractVO selectContractBasicDetail(String mtIntegrateKey)  throws Exception;	
 	
 	
 	/**
@@ -116,6 +117,19 @@ public interface MtContractService {
 	 Map<String, Object> selectMtContractCount(String mtIntegrateKey)  throws Exception;
 	
 	/* ============================== 유지보수계약 제품  ======================================*/
+	 
+	 /**
+	  * 
+	   * @Method Name : selectSalesOrderSelectBoxList
+	   * @Cdate       : 2020. 12. 16.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약별 백계약 등록 selectBox리스트회
+	   * @param mtIntegrateKey
+	   * @return
+	   * @throws Exception
+	  */
+	 List<EgovMap> selectSalesOrderSelectBoxList(String mtIntegrateKey) throws Exception;
 	
 	/**
 	 * 
@@ -127,7 +141,24 @@ public interface MtContractService {
 	  * @param productVO
 	  * @throws Exception
 	 */
-	void writeMtContractProductList(MtContractProductVO productVO) throws Exception;
+	 String writeContractSalesOrder(MtSalesOrderVO mtSalesOrderVO) throws Exception;
+	
+	/**
+	 * 유지보수 매출계약 삭제.
+	 * 1. 유지보수 거래처별 수금금액 전체삭제(MT_SALES_AMOUNT_TB)
+	 * 2. 유지보수 매출계약 제품삭제.
+	 * 3.유지보수 매출계약 메인삭제
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param modEmpKey
+	 * @param mtSalesOrderKey
+	 * @param mtIntegrateKey
+	 * @throws Exception
+	 * @cdate 2021. 11. 29. 오후 6:02:40
+	 * @author aranghoo
+	 */
+	void deleteSalesOrder(String modEmpKey, String mtSalesOrderKey, String mtIntegrateKey)  throws Exception;
 	
 	/**
 	 * 
@@ -140,7 +171,7 @@ public interface MtContractService {
 	  * @param deleteKeyList
 	  * @throws Exception
 	 */
-	void deleteMtContractProductList(String modEmpKey, String[] deleteKeyList) throws Exception;
+	void deleteMtContractProductList(String modEmpKey, String[] deleteKeyList, String mtSalesOrderKey) throws Exception;
 	
 	/**
 	 * 
@@ -202,11 +233,12 @@ public interface MtContractService {
 	 * @Author      : aranghoo
 	 * @Modification: 
 	 * @Method Description :매출등록화며에서 보여줄 계약 금액정보를 조회한다.
-	 * @param mtIntegrateKey
+	  * @param selectIntegrateKey
+	  * @param selectMtSalesOrderKey
 	 * @return
 	 * @throws Exception
 	*/
-	Map<String, Object> selectContractAmountInfo(String mtIntegrateKey) throws Exception;
+	Map<String, Object> selectContractAmountInfo(MtDefaultVO searchVO) throws Exception;
 	
 	/**
 	 * 
@@ -215,11 +247,12 @@ public interface MtContractService {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description :유지보수계약 매출총금액
-	  * @param mtIntegrateKey
+	  * @param selectIntegrateKey
+	  * @param selectMtSalesOrderKey
 	  * @return
 	  * @throws Exception
 	 */
-	int selectMtSalesTotalAmount(String mtIntegrateKey) throws Exception;
+	int selectMtSalesTotalAmount(MtDefaultVO searchVO) throws Exception;
 	 
 	/**
 	 * 
@@ -252,11 +285,12 @@ public interface MtContractService {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description : 유지보수계약 매출정보 목록조회
-	  * @param mtIntegrateKey
+	  * @param selectIntegrateKey
+	  * @param selectMtSalesOrderKey
 	  * @return
 	  * @throws Exception
 	 */
-	List<?> selectMtContractSalesAmountList(String mtIntegrateKey)  throws Exception;
+	List<?> selectMtContractSalesAmountList(MtDefaultVO searchVO)  throws Exception;
 	
 	/**
 	 * 
@@ -278,10 +312,11 @@ public interface MtContractService {
 	  * @Modification: 
 	  * @Method Description :유지보수계약별 매출목록 전체삭제
 	  * @param mtIntegrateKey
+	  * @param mtSalesOrderKey
 	  * @param modEmpKey
 	  * @throws Exception
 	 */
-	void deleteMtContractSalesAmountAll(String mtIntegrateKey, String modEmpKey) throws Exception;
+	void deleteMtContractSalesAmountAll(String mtIntegrateKey, String mtSalesOrderKey, String modEmpKey) throws Exception;
 	
 	/**
 	 * 
@@ -325,6 +360,33 @@ public interface MtContractService {
 	   * @throws Exception
 	  */
 	 List<EgovMap> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	 
+	 
+	 /**
+	  * 
+	   * @Method Name : selectSalesOrderDetail
+	   * @Cdate       : 2021. 11. 26.
+	   * @Author      : aranghoo
+	   * @Modification: 
+	   * @Method Description :유지보수계약별 매출품목 메인상세 
+	   * @param searchVO(mtIntegrateKey, selectKey)
+	   * @return
+	   * @throws Exception
+	  */
+	 MtSalesOrderVO selectSalesOrderDetail(MtDefaultVO searchVO) throws Exception;
+	 
+	 /**
+	 * 유지보수 매출계약 목록 리스트
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 30. 오후 1:37:18
+	 * @author aranghoo
+	 */
+	List<MtSalesOrderVO> selectSalesOrderList(String mtIntegrateKey) throws Exception;
 	 
 	 /**
 	  * 
@@ -727,6 +789,18 @@ public interface MtContractService {
 	  * @throws Exception
 	 */
 	List<?> selectAcDirectorList(String acKey)  throws Exception;
+	
+	/**
+	 * 매출/매입 세금계산서 제조사 구분 목록.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 22. 오후 4:15:32
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectManufacturerList() throws Exception;
 
 	/**
 	 * 

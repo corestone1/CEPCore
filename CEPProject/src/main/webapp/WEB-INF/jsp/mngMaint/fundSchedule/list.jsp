@@ -36,7 +36,7 @@
 		}
 		.contentsWrap .contents .top select {
 			height: 38px;
-			width: 130px;
+			width: 112px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
@@ -81,7 +81,7 @@
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
-			width: 92%;
+			width: 97%;
 			margin: 0 auto;
 		}
 		.middle table tbody tr:hover {
@@ -91,38 +91,39 @@
 			padding: 10px 0;
 			border: 1px solid #edebef;
 			color: #535353;
-			font-size: 13px;
+			font-size: 14px;
 		}
 		.middle table thead th:first-child,
-		.middle table tbody td:first-child{
-			width: 76px;
-			max-width: 76px;
+		.middle table tbody td:first-child,
+		.middle table thead th:nth-child(3),
+		.middle table tbody td:nth-child(3) {
+			width: 95px;
+			max-width: 95px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
-			width: 260px;
-			max-width: 260px;
-		}
-		.middle table thead th:nth-child(3),
-		.middle table tbody td:nth-child(3) {
-			width: 130px;
-			max-width: 130px;
+			width: 190px;
+			max-width: 190px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 120px;
-			max-width: 120px;
-		}
-		.middle table thead th:nth-child(5),
-		.middle table tbody td:nth-child(5) {
-			width: 80px;
-			max-width: 80px;
-		}
-		.middle table thead th:nth-child(6),
-		.middle table tbody td:nth-child(6) {
 			width: 100px;
 			max-width: 100px;
 		}
+		.middle table thead th:nth-child(5),
+		.middle table tbody td:nth-child(5) {
+			width: 65px;
+			max-width: 65px;
+		}
+		.middle table thead th:nth-child(6),
+		.middle table tbody td:nth-child(6),
+		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 80px;
+			max-width: 80px;
+		}
+		
+		
 		.middle table tbody tr td > img {
 			width: 25px;
 			vertical-align: middle;
@@ -187,7 +188,7 @@
 		}
 		
 		.contentsWrap .contents input[class^="calendar"] {
-			width: 120px;
+			width: 95px;
 			height: 36px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -196,6 +197,19 @@
 	</style>
 	<script>
 		$(document).ready(function() {
+			//검색어 검색
+			$("input[name^='searchWord']").on("keydown", function(event){
+				if(event.keyCode == 13) {		
+					fn_searchList();
+				}						
+			});
+			
+			//영업담당 검색
+			$("input[name^='searchSaleEmpNm']").on("keydown", function(event){
+				if(event.keyCode == 13) {		
+					fn_searchList();
+				}						
+			});
 		});
 		
 		function fn_searchList()
@@ -232,7 +246,7 @@
 <body>
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -241,13 +255,19 @@
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
-						<form:select path="dateSearchType">
+						<form:select path="dateSearchType" style="width: 90px;">
 							<form:option value="" label="전체" />
 							<form:option value="NE" label="미완료" />
 							<form:option value="E" label="완료" />
 						</form:select>
 						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>						
-						<form:input path="searchWord" type="text" placeholder="거래처명"/>
+						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 70px"/>
+						<form:select path="searchGubun">
+							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="CU" label="고객사" />
+							<form:option value="BA" label="거래처" />
+						</form:select>						
+						<form:input path="searchWord" type="text" placeholder="검색어"/>
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -257,25 +277,51 @@
 						<table class="textalignC ftw200" id="fl">
 							<thead class="ftw400">
 								<tr>
-									<th scope="row">계약일자</th>
+									<th scope="row">고객사</th>
 									<th scope="row">유지보수명</th>
-									<th scope="row">고객사명</th>
-									<th scope="row">수금액(VAT별도)</th>
+									<th scope="row">매출처명</th>
+									<th scope="row">수금액</th>
 									<th scope="row">담당자</th>
-									<th scope="row">수금일정</th>
+									<th scope="row">수금예정일</th>
+									<th scope="row">수금완료일</th>
+									<th scope="row">상태</th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:set var = "callTotalAmount" value="0" />
 								<c:forEach var="result" items="${mtCollectRequestList}" varStatus="status">
-									<c:set var = "callTotalAmount" value="${callTotalAmount + result.salesTurnAmount}" />
+									<c:set var = "callTotalAmount" value="${callTotalAmount + result.billAmount}" />
 									<tr>
-										<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}" /></td>
-										<td><span class="textalignL"><c:out value="${result.mtNm}" /></span></td>
-										<td><span><c:out value="${result.mtAcNm}" /></span></td>
-										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesTurnAmount)}" /></span></td>
-										<td><c:out value="${result.mtSalesEmpNm}" /></td>
-										<td><c:out value="${displayUtil.displayDate(result.salesCollectDt)}" /></td>
+										<td class="textalignL"><span title="${result.mtAcNm}">&nbsp;<c:out value="${result.mtAcNm}" /></span></td>
+										<td class="textalignL"><span title="${result.mtNm}" >&nbsp;<c:out value="${result.mtNm}" /></span></td>
+										<td class="textalignL"><span title="${result.billAcNm}">&nbsp;<c:out value="${result.billAcNm}" /></span></td>
+										<td class="textalignR"><span title="${displayUtil.commaStr(result.billAmount)}"><c:out value="${displayUtil.commaStr(result.billAmount)}" />&nbsp;</span></td>
+										<td><c:out value="${result.saleEmpNm}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.salesCollectFcDt)}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.billFinishDt)}" /></td>
+										<td>
+									<c:choose>
+										<c:when test="${result.billStatusCd eq 'R'}">
+											<span title="발행요청">발행요청</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'I'}">
+											<span title="계산서발급">계산서발급</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'M'}">
+											<span title="계산서맵핑">계산서맵핑</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'E'}">
+											<span title="수금완료">수금완료</span>
+										</c:when>
+										<c:when test="${result.billStatusCd == null }">
+											<span title="발행전">발행전</span>
+										</c:when>
+										<c:otherwise>
+											<span>${result.billStatusCd}</span>
+										</c:otherwise>
+									</c:choose>
+										
+										</td>
 									</tr>
 								</c:forEach>
 								<!-- 
@@ -295,7 +341,7 @@
 							<table>
 								<tbody class="ftw400">
 									<tr>
-										<td colspan="5">합계<label class="colSum"><c:out value="${displayUtil.commaStr(callTotalAmount) }"/>원 (부가세별도)</label></td>
+										<td colspan="5">수금합계<label class="colSum"><c:out value="${displayUtil.commaStr(callTotalAmount) }"/>원 (부가세별도)</label></td>
 									</tr>
 								</tbody>
 							</table>
@@ -305,25 +351,54 @@
 						<table class="textalignC ftw200" id="fl">
 							<thead class="ftw400">
 								<tr>
-									<th scope="row">계약일자</th>
+									<th scope="row">고객사</th>
 									<th scope="row">유지보수명</th>
 									<th scope="row">매입처명</th>
-									<th scope="row">지급액(VAT별도)</th>
+									<th scope="row">지급액</th>
 									<th scope="row">담당자</th>
-									<th scope="row">지급일정</th>
+									<th scope="row">지급예정일</th>
+									<th scope="row">지급완료일</th>
+									<th scope="row">상태</th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:set var = "paymentTotalAmount" value="0" />
 								<c:forEach var="result" items="${mtPaymentRequestList}" varStatus="status">
-									<c:set var = "paymentTotalAmount" value="${paymentTotalAmount + result.callAmount}" />
+									<c:set var = "paymentTotalAmount" value="${paymentTotalAmount + result.billAmount}" />
 									<tr>
-										<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}" /></td>
-										<td><span class="textalignL"><c:out value="${result.mtNm}" /></span></td>
-										<td><span><c:out value="${result.paymentAcNm}" /></span></td>
-										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.callAmount)}" /></span></td>
-										<td><c:out value="${result.mtSalesEmpNm}" /></td>
-										<td><c:out value="${displayUtil.displayDate(result.paymentDt)}" /></td>
+										<td class="textalignL"><span title="${result.mtAcNm}">&nbsp;<c:out value="${result.mtAcNm}" /></span></td>
+										<td class="textalignL"><span title="${result.mtNm}" >&nbsp;<c:out value="${result.mtNm}" /></span></td>
+										<td class="textalignL"><span title="${result.billAcNm}">&nbsp;<c:out value="${result.billAcNm}" /></span></td>
+										<td class="textalignR"><span title="${displayUtil.commaStr(result.billAmount)}"><c:out value="${displayUtil.commaStr(result.billAmount)}" />&nbsp;</span></td>
+										<td><c:out value="${result.saleEmpNm}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.billRequestDt)}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.billFinishDt)}" /></td>
+										<td>
+									<c:choose>
+										<c:when test="${result.billStatusCd eq 'W'}">
+											<span title="요청대기">요청대기</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'M'}">
+											<span title="계산서매핑">계산서매핑</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'R'}">
+											<span title="지급요청">지급요청</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'C'}">
+											<span title="지급승인">지급승인</span>
+										</c:when>
+										<c:when test="${result.billStatusCd eq 'E'}">
+											<span title="지급완료">지급완료</span>
+										</c:when>
+										<c:when test="${result.billStatusCd == null }">
+											<span title="지급요청전">지급요청전</span>
+										</c:when>
+										<c:otherwise>
+											<span>${result.billStatusCd}</span>
+										</c:otherwise>
+									</c:choose>
+										
+										</td>
 									</tr>
 								</c:forEach>
 								<!-- 
@@ -343,7 +418,7 @@
 							<table>
 								<tbody class="ftw400">
 									<tr>
-										<td colspan="5">합계<label class="paySum"><c:out value="${displayUtil.commaStr(paymentTotalAmount) }"/>원 (부가세별도)</label></td>
+										<td colspan="5">지급합계<label class="paySum"><c:out value="${displayUtil.commaStr(paymentTotalAmount) }"/>원 (부가세별도)</label></td>
 									</tr>
 								</tbody>
 							</table>

@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>유지보수계약 상세(제품정보)</title>
+	<title>유지보수계약 상세(매출계약정보)</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -133,7 +133,7 @@
 			background-color: #d3d3d3;
 		}
 		.mContents > .fxd .title ul li {
-			width: 20%;
+			width: 16.65%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -149,87 +149,51 @@
 			color: #fff  !important;
 			background-color: #4c3d92;
 		}
-		.mContents .dtl {
+		.mContents .dtl, .mContents .dtl2 {
 			width: 997px;
-			font-size: 14px;
+			font-size: 15px;
 			border-collapse: collapse;
 			font-weight: 300;
 			overflow: hidden;
 			border-top: 4px solid #6a5baf;
 		}
-		.mContents .dtl thead {
+		.mContents .dtl thead, .mContents .dtl2 thead {
 			background-color: #e1dff5;
 			float: left;
 			width: 997px;
 		}
-		.mContents .dtl thead tr {
+		.mContents .dtl thead tr, .mContents .dtl2 thead tr {
 			display: table;
 			width: 997px;
 		}
-		.mContents .dtl tbody {
+		.mContents .dtl tbody, .mContents .dtl2 tbody {
 			width: 997px;
-			/* height: 534px; */
-			height: 487px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
 			border-bottom: 2px solid #c4c4c4;
 		}
-		.mContents .dtl tbody tr {
+		.mContents .dtl tbody tr, .mContents .dtl2 tbody tr {
 			display: table;
 			width: 997px;
 			cursor: pointer;
 		}
-		.mContents .dtl tbody tr:hover {
+		.mContents .dtl tbody tr:hover, .mContents .dtl2 tbody tr:hover {
 			background-color: #ddf0ec
 		}
 		.mContents .dtl tbody tr td:nth-child(3) {
 			font-weight: 400;
 		}
-		.mContents .dtl thead th, .mContents .dtl tbody tr td {
+		.mContents .dtl thead th, .mContents .dtl tbody tr td,
+		.mContents .dtl2 thead th, .mContents .dtl2 tbody tr td {
 			padding: 10px 7px;
 			border: 1px solid #edebef;
 			text-align: center;
 		}
-		.mContents .dtl tbody tr td {
+		.mContents .dtl tbody tr td, .mContents .dtl2 tbody tr td {
 			font-weight: 200;
 		}
-		.mContents .dtl thead th:first-child,
-		.mContents .dtl tbody td:first-child {
-			width: 45px;
-			padding: 0;
-		}
-		.mContents .dtl thead th:nth-child(2),
-		.mContents .dtl tbody td:nth-child(2){
-			width: 40px;
-		}
-		.mContents .dtl thead th:nth-child(3),
-		.mContents .dtl tbody td:nth-child(3) {
-			width: 190px;
-			max-width: 190px;
-		}
-		.mContents .dtl thead th:nth-child(4),
-		.mContents .dtl tbody td:nth-child(4) {
-			width: 160px;
-			max-width: 160px;
-		}
-		.mContents .dtl thead th:nth-child(5),
-		.mContents .dtl tbody td:nth-child(5){
-			width: 85px;
-		}
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6) {
-			width: 60px;
-		}
-		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7) {
-			width: 90px;
-		}
-		.mContents .dtl thead th:nth-child(8),
-		.mContents .dtl tbody td:nth-child(8) {
-			width: 180px;
-		}
-		.mContents .dtl tbody tr td > span {
+		.mContents .dtl tbody tr td > span, .mContents .dtl2 tbody tr td > span {
 			display: inline-block;
 			overflow:hidden; 
 			text-overflow:ellipsis; 
@@ -237,7 +201,7 @@
 			width: 90%;
 			margin: 0 auto;
 		}
-		.mContents .dtl tbody tr td img {
+		.mContents .dtl tbody tr td img, .mContents .dtl2 tbody tr td img {
 			width: 13px;
 			vertical-align: middle;
 			margin-bottom: 5px;
@@ -358,7 +322,85 @@
     		background-color: #ccf4d7;
     		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
 		}
-			
+		
+		.mContents .dtl thead th:first-child,
+		.mContents .dtl tbody td:first-child {
+			width: 45px;
+			padding: 0;
+		}
+		.mContents .dtl thead th:nth-child(2),
+		.mContents .dtl tbody td:nth-child(2){
+			width: 30px;
+		}
+		.mContents .dtl thead th:nth-child(3),
+		.mContents .dtl tbody td:nth-child(3) {
+			width: 160px;
+			max-width: 160px;
+		}
+		.mContents .dtl thead th:nth-child(4),
+		.mContents .dtl tbody td:nth-child(4) {
+			width: 70px;
+			max-width: 70px;
+		}
+		.mContents .dtl thead th:nth-child(5),
+		.mContents .dtl tbody td:nth-child(5){
+			width: 95px;
+		}
+		.mContents .dtl thead th:nth-child(6),
+		.mContents .dtl tbody td:nth-child(6) {
+			width: 95px;
+		}
+		.mContents .dtl thead th:nth-child(7),
+		.mContents .dtl tbody td:nth-child(7) {
+			width: 55px;
+		}
+		.mContents .dtl thead th:nth-child(8),
+		.mContents .dtl tbody td:nth-child(8) {
+			width: 70px;
+			max-width: 70px;
+		}
+		.mContents .dtl thead th:nth-child(9),
+		.mContents .dtl tbody td:nth-child(9) {
+			width: 70px;
+			max-width: 70px;
+		}
+		.mContents .dtl thead th:nth-child(10),
+		.mContents .dtl tbody td:nth-child(10) {
+			width: 170px;
+		}	
+		
+		/* dtl2 */
+		.mContents .dtl2 thead th:first-child,
+		.mContents .dtl2 tbody td:first-child {
+			width: 45px;
+		}
+		.mContents .dtl2 thead th:nth-child(2),
+		.mContents .dtl2 tbody td:nth-child(2){
+			width: 210px;
+			max-width: 210px;
+		}
+		.mContents .dtl2 thead th:nth-child(3),
+		.mContents .dtl2 tbody td:nth-child(3) {
+			width: 170px;
+			max-width: 170px;
+		}
+		.mContents .dtl2 thead th:nth-child(4),
+		.mContents .dtl2 tbody td:nth-child(4) {
+			width: 85px;
+		}
+		.mContents .dtl2 thead th:nth-child(5),
+		.mContents .dtl2 tbody td:nth-child(5){
+			width: 60px;
+		}
+		.mContents .dtl2 thead th:nth-child(6),
+		.mContents .dtl2 tbody td:nth-child(6) {
+			width: 100px;
+		}
+		.mContents .dtl2 thead th:nth-child(7),
+		.mContents .dtl2 tbody td:nth-child(7) {
+			width: 180px;
+			max-width: 180px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -386,6 +428,12 @@
 			
 			'<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
 				$('#m_delete_forecast').show();
+			'</c:if>'
+					
+			
+			'<c:if test="${mtSalesOrderList.size() >0 }">'
+				//매출계약 목록 라이오 버튼값 셋팅
+				$("input:radio[name='m_gubun']:radio[value='${selectKey}']").prop('checked', true);
 			'</c:if>'
 			
 			$('li[id^=LI_TOPBar]').click(function(event){
@@ -416,7 +464,7 @@
 				} else if(this.title == "salesPlanInfo"){
 					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획 상세화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획 상세화면으로 이동하시겠습니까?")){
 							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesPlanInfo.do";
 				           	document.m_mtMoveForm.submit();
 						}
@@ -457,6 +505,21 @@
 					} else {
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
 					}
+				} else if(this.title == "paymentPlanInfo"){
+					
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지금계획 상세화면으로 이동하시겠습니까?")){
+								document.m_mtMoveForm.action = "/maintenance/contract/detail/paymentPlanInfo.do";
+					           	document.m_mtMoveForm.submit();
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+						}
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+					}
 				}
 			});
 
@@ -465,6 +528,40 @@
 			
 			var html = '';
 			$('#prodList .dtl tbody tr').click(function() {
+				/* alert("=====>"+$(this).attr('class')); */
+				if($(this).attr('class') != "viewOpen trcheckcolor") {
+					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
+					       + '<div style="margin: 5px 71px;">'
+					       + '<ul class="detailList">'
+					       + '<li>비고</li>'
+					       + '<li><pre>'+$(this).children().eq(10).text().trim()+'</pre></li>'
+						   + '</ul>'
+					       + '</div>'
+					       + '</div>';
+					$(this).after(html);
+					$(this).attr('class', 'viewOpen trcheckcolor');
+					var className = $(this).children().children().eq(3).attr('class');
+					//console.log("className====>"+className);
+					if(className === "down") {
+						$(this).children().children().eq(3).attr('src','<c:url value='/images/arrow_up.png'/>');
+						$(this).children().children().eq(3).attr('class', "up");
+					} else {
+
+						$(this).children().children().eq(3).attr('src','<c:url value='/images/arrow_down.png'/>');
+						$(this).children().children().eq(3).attr('class', "down");
+					}
+					
+				} else {
+					$(this).children().children().eq(3).attr('src','<c:url value='/images/arrow_down.png'/>');
+					$(this).children().children().eq(3).attr('class', "down");
+					$(this).removeClass('viewOpen');
+					$(this).next().remove();
+				}
+			});
+			
+			$(document).on("click","#prodList .dtl2 tbody tr", function() {
+			//$('#prodList .dtl2 tbody tr').click(function() {
+				
 				/* alert("=====>"+$(this).attr('class')); */
 				if($(this).attr('class') != "viewOpen trcheckcolor") {
 					html = '<div style="width:997px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
@@ -578,12 +675,14 @@
 			});
 					
 			//거래처 검색
-			$("#m_mtAcNm").on("keydown", function(event){
-				
+			$("#mtSalesAcNm").on("keydown", function(event){
+				console.log("=============");
 				if(event.keyCode == 13) {						
 					fnSearchAccoutList(this, $(this).val());
 				}						
 			});		
+			
+			
 			
 		});//end document.ready
 		
@@ -614,8 +713,9 @@
 		};
 		//거래처 검색
 		var fnViewAccountList = function(pObject, pjAccountList){
-			var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 138px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
-			         + '<ul class="accountList">'
+			/* var html = '<div id="m_div_accountList" style="width:179px; padding-top: 7px; margin-left: 138px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">' */
+			var html = '<div id="m_div_accountList" >'         
+					+ '<ul class="accountList">'
 			       ;//+ '<div style="margin: 5px;">';
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {
@@ -632,9 +732,9 @@
 			
 			$("[id^='m_li_account']").click(function(event) {
 				
-				$('#m_mtAcNm').val(this.innerText); 
-				$('#m_mtAcKey').val(this.title);
-				$('#m_mtAcKey').change();
+				$('#mtSalesAcNm').val(this.innerText); 
+				$('#mtSalesAcKey').val(this.title);
+				$('#mtSalesAcKey').change();
 				$('#m_div_accountList').remove();
 			});
 		};
@@ -764,12 +864,13 @@
 	        });  
 		}
 		
-		function fn_addView(){
+		function fn_editView(){
 			
 			var url = '/maintenance/contract/write/productInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+					"selectKey": $('#selectKey').val(),
 					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'					
 			}
 			var button = new Array;
@@ -785,7 +886,7 @@
 				if(confirm("선택한 제품을 삭제하시겠습니까?")){
 					obj = {};
 					obj["mtIntegrateKey"] = document.m_mtMoveForm.mtIntegrateKey.value;
-					obj["mtPmKey"] = $('input[name="m_gubun"]:checked').val();
+					obj["mtSalesPmKey"] = $('input[name="m_gubun"]:checked').val();
 					$.ajax({
 			        	url:"/maintenance/contract/detail/deleteMtProduct.do",
 			            dataType: 'text', 
@@ -927,18 +1028,99 @@
 		//계산서 발생요청
 		function fnMoveBillDetail() {
 			
-			if(confirm("유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?")){
-				document.m_mtMoveForm.action = "/mngMaint/bill/detail/main.do";
-	           	document.m_mtMoveForm.submit();
+			if(confirm($('#m0_mtSalesAcNm').val()+" 계산서발행요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMoveCollect.action = "/mngMaint/bill/detail/main.do";
+	           	document.m_mtMoveCollect.submit();
 			}
 			
 		}
+		//매출목록을 선택하면 하단 제품목록 조회.
+		function selectProductList(mtSalesOrderKey,mtSalesAcKey,mtSalesAcNm) {
+			//alert(mtSalesOrderKey+'/'+$('#selectKey').val());
+			if(mtSalesOrderKey !=$('#selectKey').val()) {
+				//선택값을 저장한다.
+				$('#m0_mtSalesOrderKey').val(mtSalesOrderKey);
+				$('#m0_mtSalesAcKey').val(mtSalesAcKey);
+				$('#m0_mtSalesAcNm').val(mtSalesAcNm);
+				$('#selectKey').val(mtSalesOrderKey);
+				var varParam = {
+						"selectIntegrateKey":$('#m1_mtIntegrateKey').val(),
+						"selectMtSalesOrderKey":mtSalesOrderKey				
+				};
+				//console.log("varParam==>"+varParam);
+				var html = '';
+				$.ajax({
+		        	url:"/maintenance/contract/detail/selectSalesOrderProductList.do",
+		            dataType: 'json',
+		            type:"post",  
+		            data: JSON.stringify(varParam),
+		     	   	contentType: "application/json; charset=UTF-8",
+		     	  	beforeSend: function(xhr) {
+		        		xhr.setRequestHeader("AJAX", true);
+		        		//xhr.setRequestHeader(header, token);
+		        	},
+		            success:function(data){
+		            	//console.log("data.successYN===>"+data.successYN+" / "+data.productList.length);		            	
+		            	if("Y" == data.successYN){
+		            		if ( data.productList.length > 0 ) {
+		            			for(i = 0; i < data.productList.length; i++) {
+									html += '<tr>'
+				        				+ '<td>'+(i+1)+'</td>'
+				        				+ '<td class="textalignL"><span title="'+data.productList[i].mtPmNmCd+'">'+data.productList[i].mtPmNmCd+'</span><img class="down" src="/images/arrow_down.png"/></td>'		
+				        				+ '<td><span title="'+data.productList[i].mtPmSerialNum+'">'+data.productList[i].mtPmSerialNum+'</span></td>'		
+				        				+ '<td class="textalignR"><span title="'+addCommas(data.productList[i].mtPmUprice)+'">'+addCommas(data.productList[i].mtPmUprice)+'</span></td>'	
+				        				+ '<td>'+addCommas(data.productList[i].mtPmQuantity)+'</td>'
+				        				+ '<td class="textalignR"><span title="'+addCommas(data.productList[i].mtPmQuantity*data.productList[i].mtPmUprice)+'">'+addCommas(data.productList[i].mtPmQuantity*data.productList[i].mtPmUprice)+'</span></td>'	
+				        				+ '<td>'+addDateMinus(data.productList[i].mtPmStartDt)+' ~ '+addDateMinus(data.productList[i].mtPmEndDt)+'</td>'
+				        				+ '<td style="max-width: 0px; display: none;">'+data.productList[i].mtPmDetail+'</td>'
+				        				+ '<td style="max-width: 0px; display: none;">'+data.productList[i].remark+'</td>'				        				
+		            				+ '</tr>'	
+		            			}
+		            			$('.dtl2 tbody').html('');
+		        				$('.dtl2 tbody').append(html);
+			                } else {
+			                	
+			                	alert("해당 거래처의 매출계약 제품정보가 없습니다.");
+			                	$('.dtl2 tbody').html('');
+			                }
+		            	} else {
+		                	alert("해당 거래처의 매출계약 제품정보 조회를 실패하였습니다.");
+		                }
+						
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		        });
+				
+				
+			} else {
+				return false;
+			}
+		}
+		
+		//매출처별 계약 추가.
+		function fn_addView(btnOption){
+			var url = '/maintenance/contract/write/productInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',					
+					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'	,
+					"btnOption" : btnOption
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+		}
+		
 	</script>
 </head>
 <body>
 	
 	<div class="sfcnt"></div>
-	<div class="nav"></div>
+	<!-- <div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
@@ -947,14 +1129,22 @@
 					<div class="stitle cg">기본정보  
 						
 					</div> 
+					<form id="m_mtMoveCollect" name="m_mtMoveCollect" method="post">
+						<input type="hidden" id="m0_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+						<input type="hidden" id="m0_mtSalesOrderKey" name="mtSalesOrderKey" value="<c:out value="${selectKey}"/>"/>	
+						<input type="hidden" id="m0_mtSalesAcKey" name="mtSalesAcKey" value="<c:out value="${mtSalesAcKey}"/>"/>
+						<input type="hidden" id="m0_mtSalesAcNm" name="mtSalesAcNm" value="<c:out value="${mtSalesAcNm}"/>"/>
+					</form>
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
 						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+						
 					</form>
 					<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
 						<input type="hidden" id="m2_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
 						<input type="hidden" id="m_linkDeleteKey" name="linkDeleteKey"/>
 						<input type="hidden" id="bdKey" name="bdKey" value="${mtGuarantyBondInfo.gbKey}" />
+						<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${selectKey}"/>"/>
 						<div id="basicForm">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
@@ -1228,7 +1418,7 @@
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" title="기본정보수정" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
 							<button type="button" title="기본정보삭제" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
-							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
+							
 						</div>
 					</form>
 				</div>
@@ -1238,17 +1428,17 @@
 					<ul>
 						<li id="LI_TOPBar_PD" class="on" title="productInfo" ><label style="cursor: pointer;">제품정보</label></li>
 						<li id="LI_TOPBar_SL" title="salesAmountInfo" ><label style="cursor: pointer;">매출정보</label></li>
-						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
+						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">계산서계획</label></li>
 						<c:choose>
 							<c:when test="${parmMtSbCtYn == 'Y'}">
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-								<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
+								<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label style="cursor: pointer;">지급계획</label></li>
 							</c:when>
 							<c:otherwise>
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label>매입정보</label></li>
-								<!-- <li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li> -->
+								<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label>지급계획</label></li>
 							</c:otherwise>
 						</c:choose>
 						
@@ -1256,18 +1446,140 @@
 					</ul>
 				</div>
 				<div id="prodList">
-					<div class="stitle cg colorBlack floatL">
-						제품정보
-						<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/>
+					<div class="stitle cg colorBlack">
+						매출계약정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView('newOrder')"/>
 					</div>
-					<%-- <div class="stitle2 floatR">
-						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>
-					</div> --%>
-					<div class="floatC middle">
+					<div class="floatC middle" style="border-bottom: 2px solid #c4c4c4;">
 						<table class="dtl">
 							<thead class="ftw400">
 								<tr>
 									<th scope="row">선택</th>
+									<th scope="row">No</th>
+									<th scope="row">매출처</th>
+									<th scope="row">매출처담당</th>
+									<th scope="row">합계금액</th>
+									<th scope="row">미지급금</th>
+									<th scope="row">발행구분</th>
+									<th scope="row">매출구분</th> 
+									<th scope="row">제조사</th>
+									<th scope="row">결제조건</th>
+									<th style="max-width: 0px; display: none;"></th>
+								</tr>
+							</thead>
+							<tbody style="height: 98px;">
+							<c:forEach var="list" items="${mtSalesOrderList}" varStatus="status">
+							<c:choose>
+								<c:when test="${status.count==1}">
+								<tr class="trcheckcolor">
+									<td onclick="event.cancelBubble = true;">
+										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtSalesOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtSalesOrderKey}"/>','${list.mtSalesAcKey}','${list.mtSalesAcNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
+									</td>
+									<td><c:out value="${status.count}"/></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtSalesAcNm}"/>"><c:out value="${list.mtSalesAcNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td><c:out value="${list.mtSalesAcDirectorNm}"/></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtSalesAmount)}"/></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetCollectAmount)}"/></td>
+									<td>
+									<c:choose>
+										<c:when test='${list.billIssueType eq "N"}'>
+										역발행
+										</c:when>
+										<c:when test='${list.billIssueType eq "Y"}'>
+										정발행
+										</c:when>
+										<c:otherwise>
+										정발행
+										</c:otherwise>
+									</c:choose>									
+									</td>
+									<td><c:out value="${list.billSalesNm}"/></td>
+									<td><c:out value="${list.billMfNm}"/></td>
+									<td><span title="<c:out value="${list.mtSalesPayTerms}"/>"><c:out value="${list.mtSalesPayTerms}"/></span></td>
+									<td style="max-width: 0px; display: none;">
+										<c:out value="${list.remark}"/>
+									</td>
+								</tr>
+								</c:when>
+								<c:otherwise>
+								<tr>
+									
+									<td onclick="event.cancelBubble = true;">
+										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtSalesOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtSalesOrderKey}"/>','${list.mtSalesAcNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
+									</td>
+									<td><c:out value="${status.count}"/></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtSalesAcNm}"/>"><c:out value="${list.mtSalesAcNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td><c:out value="${list.mtSalesAcDirectorNm}"/></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtSalesAmount)}"/></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetCollectAmount)}"/></td>
+									<td>
+									<c:choose>
+										<c:when test='${list.billIssueType eq "N"}'>
+										역발행
+										</c:when>
+										<c:when test='${list.billIssueType eq "Y"}'>
+										정발행
+										</c:when>
+										<c:otherwise>
+										정발행
+										</c:otherwise>
+									</c:choose>									
+									</td>
+									<td><c:out value="${list.billSalesNm}"/></td>
+									<td><c:out value="${list.billMfNm}"/></td>
+									<td><span title="<c:out value="${list.mtSalesPayTerms}"/>"><c:out value="${list.mtSalesPayTerms}"/></span></td>
+									<td style="max-width: 0px; display: none;">
+										<c:out value="${list.remark}"/>
+									</td>
+								</tr>
+								
+								</c:otherwise>
+							</c:choose>								
+							</c:forEach> 
+								<%--<tr>
+									<td onclick="event.cancelBubble = true;">
+										<input type="radio" class="tRadio" name="m_gubun" id="check2" value="S1210005" onclick="selectProductList('SO210005','미래에셋생명');"><label for="check2" class="cursorP">										
+									</label>
+									
+									</td>
+									<td>2</td>
+									<td class="textalignL"><span>대원CTS </span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td>홍길동</td>
+									<td class="textalignR">6,160,000</td>
+									<td class="textalignR">6,160,000</td>
+									<td>서비스</td>
+									<td>IBM</td>
+									<td>계산서 발행 후 90일</td><td style="max-width: 0px; display: none;"></td>
+								</tr>
+								 <tr>
+									<td onclick="event.cancelBubble = true;">
+										<input type="radio" class="tRadio" name="m_gubun" id="check3" value="S1210004" onclick="selectProductList('SO210004','미래에셋생명');"><label for="check3" class="cursorP">										
+									</label>
+									
+									</td>
+									<td>3</td>
+									<td class="textalignL"><span>대원CTS </span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td>홍길동</td>
+									<td class="textalignR">6,160,000</td>
+									<td class="textalignR">6,160,000</td>
+									<td>서비스</td>
+									<td>IBM</td>
+									<td>계산서 발행 후 90일</td><td style="max-width: 0px; display: none;"></td>
+								</tr> --%>
+								
+							</tbody>
+						</table>
+					</div>
+					<div class="stitle cg colorBlack floatL">
+						제품정보
+						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/> --%>
+					</div>
+					<%-- <div class="stitle2 floatR">
+						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>
+					</div> --%>
+					<div class="floatC submiddle">
+						<table class="dtl2">
+							<thead class="ftw400">
+								<tr>
 									<th scope="row">No</th>
 									<th scope="row">제품</th>
 									<th scope="row">시리얼번호</th>
@@ -1279,14 +1591,11 @@
 									<th style="max-width: 0px; display: none;"></th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody style="height: 319px;">
 							<c:forEach var="list" items="${productList}" varStatus="status">
 								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtPmKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
-									</td>
 									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span title="<c:out value="${list.pmNmCd}"/>"><c:out value="${list.pmNmCd}"/></span> <img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtPmNmCd}"/>"><c:out value="${list.mtPmNmCd}"/></span> <img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
 									<td><span title="<c:out value="${list.mtPmSerialNum}"/>"><c:out value="${list.mtPmSerialNum}"/></span></td>
 									<td class="textalignR"><span title="<c:out value="${displayUtil.commaStr(list.mtPmUprice)}"/>"><c:out value="${displayUtil.commaStr(list.mtPmUprice)}"/></span></td>
 									<td><c:out value="${displayUtil.commaStr(list.mtPmQuantity)}"/></td>
@@ -1300,163 +1609,21 @@
 									</td>
 								</tr>
 							</c:forEach>
-								 <%-- <tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check7" /><label for="check7" class="cursorP"/>
-									</td>
-									<td>11</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" class="down" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">60,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check8" /><label for="check8" class="cursorP"/>
-									</td>
-									<td>12</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">60,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check9" /><label for="check9" class="cursorP"/>
-									</td>
-									<td>13</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check10" /><label for="check10" class="cursorP"/>
-									</td>
-									<td>15</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check11" /><label for="check11" class="cursorP"/>
-									</td>
-									<td>16</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check12" /><label for="check12" class="cursorP"/>
-									</td>
-									<td>17</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check13" /><label for="check13" class="cursorP"/>
-									</td>
-									<td>18</td>
-									<td class="textalignL"><span title="PowerEdge R640">PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">TX112380SERAL3</span></td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr>
-								<tr>
-									<td onclick="event.cancelBubble = true;">
-										<input type="radio" class="tRadio" name="m_gubun" id="check15" /><label for="check15" class="cursorP"/>
-									</td>
-									<td>19</td>
-									<td class="textalignL"><span title="PowerEdge R640PowerEdge R640">PowerEdge R640PowerEdge R640</span> <img class="down" src="<c:url value='/images/arrow_down.png'/>" /></td>
-									<td><span title="2020010341000026zzz0h1sj">2020010341000026zzz0h1sj</span></td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>5</td>
-									<td class="textalignR"><span title="600,000,000">600,000,000</span></td>
-									<td>2021-02-29 ~ 2021-12-32</td>
-									<td style="max-width: 0px; display: none;">
-										상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세상세세상세상세상세상세상세상세상세
-									</td>
-									<td style="max-width: 0px; display: none;">
-										비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고
-									</td>
-								</tr> --%>
+								
 							</tbody>
 						</table>
-						<table style="width: 997px">
+						<%-- <table style="width: 997px">
 							<tr class="bottomtr">
 								<td class="textalignR" style="width: 230px">제품합계</td>
 								<td style="width: 92px"><c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/></td>
 							</tr>
-						</table>
+						</table> --%>
 					</div>
 					<div class="bottom">
 						
 						<div class="floatR">
-							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
+							<button type="button" value="수정" onclick="fn_editView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<%-- <button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>

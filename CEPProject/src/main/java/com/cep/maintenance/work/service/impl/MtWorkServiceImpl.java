@@ -394,10 +394,10 @@ public class MtWorkServiceImpl implements MtWorkService {
 							projectPurchaseVO.setBuyAmount(orderAmountWithOutTax); //발주금액
 							projectPurchaseVO.setYetPaymentAmount(orderAmountWithOutTax); //미지금금액
 							projectPurchaseVO.setModEmpKey(mtOrderVO.getModEmpKey());			
-							updateCnt = amountService.updateMtWorkPurchaseInfo(projectPurchaseVO);
-							if(updateCnt<=0) {
-								throw new Exception("Can't update MT_PURCHASE_TB table please check.(BUY_ORDER_FK_KEY:"+mtOrderVO.getMtOrderKey()+")");
-							}
+//							updateCnt = amountService.updateMtWorkPurchaseInfo(projectPurchaseVO);
+//							if(updateCnt<=0) {
+//								throw new Exception("Can't update MT_PURCHASE_TB table please check.(BUY_ORDER_FK_KEY:"+mtOrderVO.getMtOrderKey()+")");
+//							}
 						} else {
 							throw new Exception("Can't update MT_PURCHASE_TB table because  DONE_PAYMENT_AMOUNT("+checkPurchaseVO.getDonePaymentAmount()+") is greater than zero.(BUY_ORDER_FK_KEY:"+mtOrderVO.getMtOrderKey()+")");
 						}

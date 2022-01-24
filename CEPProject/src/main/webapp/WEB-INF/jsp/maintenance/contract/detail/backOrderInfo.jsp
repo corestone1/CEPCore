@@ -158,7 +158,7 @@
 		}
 		/* 제품정보>매출정보>백계약정보>매입정보 버튼 크기및 모양    */
 		.mContents > .fxd .title ul li {
-			width: 20%;
+			width: 16.65%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -198,23 +198,24 @@
 		}
 		.mContents .dtl thead th:nth-child(2),
 		.mContents .dtl tbody td:nth-child(2) {
-			width: 51px;
+			width: 35px;
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 200px;
+			width: 155px;
+			max-width: 155px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
-			width: 100px;
+			width: 67px;
 		}
 		.mContents .dtl thead th:nth-child(5) ,
 		.mContents .dtl thead th:nth-child(6) {
-			width: 100px;
+			width: 85px;
 		}
 		.mContents .dtl tbody td:nth-child(5),
 		.mContents .dtl tbody td:nth-child(6) {
-			width: 100px;
+			width: 85px;
 			text-align: right;
 		}
 		/* .mContents .dtl thead th:nth-child(6),
@@ -223,11 +224,20 @@
 		} */
 		.mContents .dtl thead th:nth-child(7),
 		.mContents .dtl tbody td:nth-child(7){
-			width: 100px;
+			width: 80px;
 		}
 		.mContents .dtl thead th:nth-child(8),
 		.mContents .dtl tbody td:nth-child(8) {
-			width: 265px;
+			width: 75px;
+		}	
+		.mContents .dtl thead th:nth-child(9),
+		.mContents .dtl tbody td:nth-child(9) {
+			width: 75px;
+		}	
+		.mContents .dtl thead th:nth-child(10),
+		.mContents .dtl tbody td:nth-child(10) {
+			width: 150px;
+			max-width: 150px;
 		}	
 		/* 발주정보, 제품정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
@@ -448,7 +458,7 @@
 				} else if(this.title == "salesPlanInfo"){
 					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획 상세화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획 상세화면으로 이동하시겠습니까?")){
 							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesPlanInfo.do";
 				           	document.m_mtMoveForm.submit();
 						}
@@ -489,6 +499,21 @@
 					} else {
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
 					}
+				} else if(this.title == "paymentPlanInfo"){
+					
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지금계획 상세화면으로 이동하시겠습니까?")){
+								document.m_mtMoveForm.action = "/maintenance/contract/detail/paymentPlanInfo.do";
+					           	document.m_mtMoveForm.submit();
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+						}
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+					}
 				}
 				
 			}); //메뉴바를 이용한 화면이동
@@ -497,11 +522,11 @@
 			var html = '';
 			$('#listForm .dtl tbody tr').click(function() {
 				if($(this).attr('class') != "viewOpen trcheckcolor") {
-					html = '<div style="width:982px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
+					html = '<div style="width:996px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 					       + '<div style="margin: 5px 71px;">'
 					       + '<ul class="detailList">'
 					       + '<li>비고</li>'
-					       + '<li><pre>'+$(this).children().eq(8).text().trim()+'</pre></li>'
+					       + '<li><pre>'+$(this).children().eq(10).text().trim()+'</pre></li>'
 						   + '</ul>'
 					       + '</div>'
 					       + '</div>';
@@ -993,7 +1018,7 @@
 
 
 	<div class="sfcnt"></div>
-	<div class="nav"></div>
+	<!-- <div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
@@ -1295,10 +1320,10 @@
 					<ul>
 						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">제품정보</label></li>
 						<li id="LI_TOPBar_SL" title="salesAmountInfo"><label style="cursor: pointer;">매출정보</label></li>
-						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
+						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">계산서계획</label></li>
 						<li id="LI_TOPBar_BC" class="on" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 						<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-						<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
+						<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label style="cursor: pointer;">지급계획</label></li>
 						<li></li>
 					</ul>
 				</div>
@@ -1313,11 +1338,13 @@
 									<th scope="row">선택</th>
 									<th scope="row">No</th>
 									<th scope="row">매입처</th>
-									<th scope="row">매입처담당자</th>
+									<th scope="row">매입처담당</th>
 									<th scope="row">합계금액</th>
-										<th scope="row">미지급금</th>
+									<th scope="row">미지급금</th>
 									<!-- <th scope="row">부가세포함</th> -->
 									<th scope="row">발주일자</th>
+									<th scope="row">매입구분</th>
+									<th scope="row">제조사</th>
 									<th scope="row">결제조건</th>
 									<th style="max-width: 0px; display: none;"></th>
 								</tr>
@@ -1331,13 +1358,15 @@
 										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtOrderKey}"/>','${list.mtOrderAcKeyNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
 									</td>
 									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtOrderAcKeyNm}"/>"><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
 									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
 									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
 									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetPaymentAmount)}"/></td>
 									<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
-									<td><c:out value="${list.mtOrderPayTerms}"/></td>
+									<td><c:out value="${list.billPurchaseCd}"/></td>
+									<td><c:out value="${list.billMfCd}"/></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtOrderPayTerms}"/>"><c:out value="${list.mtOrderPayTerms}"/></span></td>
 									<td style="max-width: 0px; display: none;">
 										<c:out value="${list.remark}"/>
 									</td>
@@ -1349,13 +1378,15 @@
 										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtOrderKey}"/>','${list.mtOrderAcKeyNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
 									</td>
 									<td><c:out value="${status.count}"/></td>
-									<td class="textalignL"><span><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtOrderAcKeyNm}"/>"><c:out value="${list.mtOrderAcKeyNm}"/></span><img class="down" src="<c:url value='/images/arrow_down.png'/>"  /></td>
 									<td><c:out value="${list.mtOrderAcDirectorNm}"/></td>
 									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></td>
 									<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetPaymentAmount)}"/></td>
 									<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 									<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
-									<td><c:out value="${list.mtOrderPayTerms}"/></td>
+									<td><c:out value="${list.billPurchaseCd}"/></td>
+									<td><c:out value="${list.billMfCd}"/></td>
+									<td class="textalignL"><span title="<c:out value="${list.mtOrderPayTerms}"/>"><c:out value="${list.mtOrderPayTerms}"/></span></td>
 									<td style="max-width: 0px; display: none;">
 										<c:out value="${list.remark}"/>
 									</td>

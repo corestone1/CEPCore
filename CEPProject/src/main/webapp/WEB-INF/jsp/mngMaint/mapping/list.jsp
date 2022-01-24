@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>발주-계산서 매핑</title>
+	<title>발주-계산서 매핑(유지보수)</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -203,7 +203,7 @@
 <body>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">

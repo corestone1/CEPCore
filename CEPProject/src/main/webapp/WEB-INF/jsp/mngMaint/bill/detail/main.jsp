@@ -388,12 +388,13 @@
 <body>
 	<form id="m_mtMoveCollect" name="m_mtMoveCollect" method="post">
 		<input type="hidden" id="m_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/><!-- 백계약:BO, 작업발주:PO -->
+		<input type="hidden" id="m_mtSalesOrderKey" name="mtSalesOrderKey" value="<c:out value="${mtSalesOrderKey}"/>"/>
 		<input type="hidden" id="m_billTurnNo" name="billTurnNo" value="<c:out value="${billTurnNo}"/>"/>
 		<input type="hidden" id="m_iframGubun" name="iframGubun" />	
 	</form>
 	<div id="listForm" class="listForm">
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">

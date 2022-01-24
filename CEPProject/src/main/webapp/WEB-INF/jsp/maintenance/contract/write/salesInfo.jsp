@@ -91,6 +91,18 @@
 			font-size: 14px;
 			margin-bottom: 3px;
 		}
+		.popContainer .contents1 select{
+			width: 205px;
+			height: 30px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			-webkit-appearance: none;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
+			background-color: #fff;
+			color: #535353;
+			font-size: 15px;
+			margin-bottom: 3px;
+		}
 		.popContainer .contents2 input[class="numberTy"] {
 			width: 27px;
 		}
@@ -144,14 +156,14 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 22px);
+			width: calc(100% - 22px) !important;
 			height: 55px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			/* resize: none; */
 		}
 		.popContainer .bottomBtn {
 			position: absolute;
@@ -266,7 +278,7 @@
 			text-align: right !important;
 		}	
 		.popContainer .contents .btnWrap {
-			margin : 20px 36px 15px 38px;
+			margin : 33px 36px 15px 38px;
 		}
 		.btnCenter {
 			width : calc(100% - 46px);
@@ -278,6 +290,30 @@
       	} */
 	</style>
 	<script>
+	
+		$(document).ready(function() {
+			'<c:if test="${listCount > 2 }">'
+			fn_viewSummaryUpAll();
+			'</c:if>'
+			//지원담당자정보 셋팅
+			//$('#salesList-0-mtSalesYear').val("${nowYear}").attr("selected", "true");
+			//console.log("${nowYear}");
+	
+			//$('#mtStartDt').val("${contractAmountInfo.mtStartDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
+			//$('#mtEndDt').val("${contractAmountInfo.mtEndDt}}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
+			//$('#mtPmStartDt').val("${contractAmountInfo.mtPmStartDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
+			//$('#mtPmEndDt').val("${contractAmountInfo.mtPmEndDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
+			$('#mtStartDt').val(addDateMinus("${contractAmountInfo.mtStartDt}"));
+			$('#mtEndDt').val(addDateMinus("${contractAmountInfo.mtEndDt}"));
+			$('#mtPmStartDt').val(addDateMinus("${contractAmountInfo.mtPmStartDt}"));
+			$('#mtPmEndDt').val(addDateMinus("${contractAmountInfo.mtPmEndDt}"));
+			$('#mtAmount').val(addCommas("${contractAmountInfo.mtAmount}"));
+			$('#mtPmTotalAmount').val(addCommas("${contractAmountInfo.mtPmTotalAmount}"));			
+		
+			$('#mtSaveOrderAcKey').val("${mtSalesOrderKey}").attr("selected", "true");
+			
+			fn_calculate();
+		});
 		/* 리스트 데이타 만들기.*/
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
@@ -353,27 +389,6 @@
 			return dupYear; 
 		}
 		
-		$(document).ready(function() {
-			'<c:if test="${listCount > 2 }">'
-			fn_viewSummaryUpAll();
-			'</c:if>'
-			//지원담당자정보 셋팅
-			//$('#salesList-0-mtSalesYear').val("${nowYear}").attr("selected", "true");
-			//console.log("${nowYear}");
-
-			//$('#mtStartDt').val("${contractAmountInfo.mtStartDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			//$('#mtEndDt').val("${contractAmountInfo.mtEndDt}}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			//$('#mtPmStartDt').val("${contractAmountInfo.mtPmStartDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			//$('#mtPmEndDt').val("${contractAmountInfo.mtPmEndDt}".replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
-			$('#mtStartDt').val(addDateMinus("${contractAmountInfo.mtStartDt}"));
-			$('#mtEndDt').val(addDateMinus("${contractAmountInfo.mtEndDt}"));
-			$('#mtPmStartDt').val(addDateMinus("${contractAmountInfo.mtPmStartDt}"));
-			$('#mtPmEndDt').val(addDateMinus("${contractAmountInfo.mtPmEndDt}"));
-			$('#mtAmount').val(addCommas("${contractAmountInfo.mtAmount}"));
-			$('#mtPmTotalAmount').val(addCommas("${contractAmountInfo.mtPmTotalAmount}"));			
-		
-			fn_calculate();
-		});
 		/**
 		*  화면을 이동시킨다.
 		*  @param {string} varUrl 이동해야할 url
@@ -408,7 +423,7 @@
 					
 				} else if(varUrl == "writeSalesPlanView"){					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획정보 화면으로 이동하시겠습니까?")){
 							url = '/maintenance/contract/write/'+varUrl+'.do';
 						} else {
 							return false;
@@ -452,7 +467,24 @@
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
 						return false;
 					}
+				} else if(varUrl == "writePaymentPlanView"){
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지급계획정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+							return false;
+						}						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+						return false;
+					}					
 				}
+				
 			} else {
 				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
 				return false;
@@ -668,7 +700,7 @@
 		function fn_nextBtn(){
 			if("${parmMtSbCtYn}" == "Y"){
 				if("${mtContractCountInfo.mtSalesAmountCnt}" > 0){
-					if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 수금계획정보 등록화면으로 이동하시겠습니까?")) {
+					if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 계산서계획정보 등록화면으로 이동하시겠습니까?")) {
 						var url = '/maintenance/contract/write/writeSalesPlanView.do';
 						var dialogId = 'program_layer';
 						var varParam = {
@@ -697,6 +729,7 @@
 			//년도 중복을 체크한다.
 			var checkYear = $("#mtListForm").checkDuplicate();
 			var actionTitle;
+			var confirmTitle;
 			//console.log("checkYear===========>"+checkYear);
 			if('' != checkYear) {
 				alert(checkYear);
@@ -706,7 +739,13 @@
 				} else {
 					actionTitle = "저장";
 				}
-				if(confirm("유지보수계약 매출정보를  "+actionTitle+"하시겠습니까?")) {
+				//매출금액과 총계약금액이 다른경우 경고 문구 추가.
+				if($('#mtSaleTotalAmount').val() ==$('#mtAmount').val()){
+					confirmTitle = "유지보수계약 매출정보를  "+actionTitle+"하시겠습니까?";
+				} else {
+					confirmTitle = "총계약금액("+$('#mtAmount').val()+")과 매출총금액("+$('#mtSaleTotalAmount').val()+")이 다릅니다. \n유지보수계약 매출정보를  "+actionTitle+"하시겠습니까?";
+				}
+				if(confirm(confirmTitle)) {
 					//매출정보를 저장한다.
 					var object = {};
 					var listObject = new Array();
@@ -839,6 +878,21 @@
 				//console.log("beforeAmount====>"+ beforeAmount);
 			});
 		} */
+		
+		//등록된 거래처 정보를 선택하면 해당 등록 내역을 가져온다.
+		$('#mtSaveOrderAcKey').change(function(){
+			var url = '/maintenance/contract/write/salesInfoView.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+					"mtIntegrateKey":$('#mtIntegrateKey').val(),
+					"mtSalesOrderKey":$('#mtSaveOrderAcKey option:selected').val(),
+					"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			
+		});
 	</script>
 </head>
 <body>
@@ -853,10 +907,11 @@
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 					<li class="colorWhite cursorP on">매출정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>
 					<c:if test="${parmMtSbCtYn eq 'Y' }">		
 					<li class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');">백계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');">매입정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('writePaymentPlanView');">지급계획정보</li>
 					</c:if>
 			</ul>
 		</div>
@@ -873,6 +928,7 @@
 			<input type="hidden" id="updateYn" name="updateYn" value="<c:out value="${updateYn}"/>" /> -->
 			<input type="hidden" id="parmMtSbCtYn" name="parmMtSbCtYn" value="<c:out value="${parmMtSbCtYn}"/>" />
 			<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
+			<input type="hidden" id="mtSalesOrderKey" name="mtSalesOrderKey" value="<c:out value="${mtSalesOrderKey}"/>" />
 			<input type="hidden" id="rowNum" name="rowNum" value="<c:out value="${listCount}"/>" />
 			<input type="hidden" id="deleteListKeys" name="deleteListKeys"  />
 			<div class="contents1">
@@ -882,6 +938,11 @@
 						<tr>		
 							<td class="subTitle" style="border-top: none;border: 0px;">
 								<label class="ftw400">유지보수 계약정보</label>
+								<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey">																		
+									<c:forEach var="order" items="${salesOrderSelectBox}" varStatus="status">
+											<option value="<c:out value="${order.mtSalesOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+									</c:forEach>									
+								</select>
 							</td>
 						</tr>
 					</table>

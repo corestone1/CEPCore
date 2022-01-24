@@ -132,7 +132,7 @@
 			background-color: #d3d3d3;
 		}
 		.mContents > .fxd .title ul li {
-			width: 20%;
+			width: 16.65%;
 			line-height: 46px;
 			color: #777777;
 			background-color: #d3d3d3;
@@ -200,8 +200,10 @@
 			padding: 10px 7px;
 			border: 1px solid #edebef;
 			text-align: center;
-			width: 122px;
-    		max-width: 122px;
+			width: 102px;
+			max-width: 102px;
+			/* width: 122px;
+    		max-width: 122px; */
 		}
 		/* .mContents .dtl tbody tr td {
 			text-align: right !important;
@@ -299,7 +301,22 @@
 			outline: none;
 			background-color: #ddf0ec;
 		}
-		.stitle2 input[class="pname"]{
+		
+		.bottomtr input[class="pname"] {
+			font-family: "Noto Sans KR", sans-serif !important;
+			width: 130px;
+			height: 18px;
+			border: none;
+			outline: none;
+			background-color: #ccf4d7;
+			color: #26a07d;
+			text-align: left;
+			font-size: 15px;
+			font-weight: 400;
+			margin-bottom: 1px;
+			padding: 0px 0px;
+		}
+/* 		.stitle2 input[class="pname"]{
 			width: 130px;
 			border : none;
 			outline: none;
@@ -307,7 +324,7 @@
 			text-align: right;
 			font-size: 17px;
 			font-weight: 400;
-		}
+		} */
 		input[type="text"] {
 		 	width: 138px;
 		    height: 34px;
@@ -342,6 +359,17 @@
 			color: #26a07d;
     		background-color: #ccf4d7;
     		box-shadow: inset 0px 6px 7px -2px #c1e6cb;
+		}
+		#prodList select{
+			height: 34px;
+			font-size: 14px;
+			width: 97px;
+			border: 1px solid #e9e9e9;
+			padding: 0 10px;
+			-webkit-appearance: none;
+			background: url(/images/arrow_down.png) no-repeat 91% 50%;
+			background-color: #fff;
+			color: #0e8a67;
 		}
 	</style>
 	<script>
@@ -396,7 +424,7 @@
 				} else if(this.title == "salesPlanInfo"){
 					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획 상세화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획 상세화면으로 이동하시겠습니까?")){
 							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesPlanInfo.do";
 				           	document.m_mtMoveForm.submit();
 						}
@@ -428,6 +456,21 @@
 						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
 							if(confirm("유지보수계약 매입정보 상세화면으로 이동하시겠습니까?")){
 								document.m_mtMoveForm.action = "/maintenance/contract/detail/purchaseAmountInfo.do";
+					           	document.m_mtMoveForm.submit();
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+						}
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+					}
+				} else if(this.title == "paymentPlanInfo"){
+					
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지금계획 상세화면으로 이동하시겠습니까?")){
+								document.m_mtMoveForm.action = "/maintenance/contract/detail/paymentPlanInfo.do";
 					           	document.m_mtMoveForm.submit();
 							}
 						} else {
@@ -528,6 +571,95 @@
 				if(event.keyCode == 13) {						
 					fnSearchAccoutList(this, $(this).val());
 				}						
+			});		
+			
+			//매출거래처 selectbox선택
+			$('#m_mtSaveOrderAcKey').change(function(){
+				//console.log("=========>"+$('#m1_mtIntegrateKey').val()+" / "+$('#m_mtSaveOrderAcKey option:selected').val()+"<=====");
+				//선택값을 저장한다.
+				 var varParam = {
+						"mtIntegrateKey": $('#m1_mtIntegrateKey').val(),
+						"mtSalesOrderKey":$('#m_mtSaveOrderAcKey option:selected').val()
+				};
+				console.log("mtIntegrateKey===>"+$('#m1_mtIntegrateKey').val());
+				console.log("mtSalesOrderKey===>"+$('#m_mtSaveOrderAcKey option:selected').val());
+				console.log("mtSalesOrderKey===>"+JSON.stringify(varParam));
+				var html = ''; 
+				$.ajax({
+		        	url:"/maintenance/contract/detail/salesInfoDetailWithSalesKey.do",
+		            dataType: 'json',
+		            type:"post",  
+		            data: JSON.stringify(varParam),
+		     	   	contentType: "application/json; charset=UTF-8",
+		     	  	beforeSend: function(xhr) {
+		        		xhr.setRequestHeader("AJAX", true);
+		        		//xhr.setRequestHeader(header, token);
+		        	},
+		            success:function(data){
+		            	console.log("data.successYN===>"+data.successYN+" / "+data.mtSalesAmountList.length);		            	
+		            	if("Y" == data.successYN){
+		            		$('#mtSalesTotalAmount').val(addCommas(data.mtSalesTotalAmount));
+		            		if ( data.mtSalesAmountList.length > 0 ) {
+		            			for(i = 0; i < data.mtSalesAmountList.length; i++) {
+									html += '<tbody>'
+										+ '<tr>'
+										+ '	<td rowspan="2" style="width: 10px" style="10px">'
+										+ '		<input type="radio" class="tRadio" name="m_gubun" id="check'+(i+1)+'" value="'+data.mtSalesAmountList[i].mtSalesKey+'" /><label for="check'+(i+1)+'" class="cursorP"/>'
+										+ '	</td>'
+										+ '	<td style="width: 130px; max-width: 130px"><span title="'+data.mtSalesAmountList[i].mtSalesAcNm+'">'+data.mtSalesAmountList[i].mtSalesAcNm+'</span></td>'
+										+ '	<td style="font-weight: 400;">'+data.mtSalesAmountList[i].mtSalesYear+'</td>'
+										+ '	<td title="1월">'+addCommas(data.mtSalesAmountList[i].mtSalesJanAmount)+'</td>'
+										+ '	<td title="2월">'+addCommas(data.mtSalesAmountList[i].mtSalesFebAmount)+'</td>'
+										+ '	<td title="3월">'+addCommas(data.mtSalesAmountList[i].mtSalesMarAmount)+'</td>'
+										+ '	<td title="4월">'+addCommas(data.mtSalesAmountList[i].mtSalesAprAmount)+'</td>'
+										+ '	<td title="5월">'+addCommas(data.mtSalesAmountList[i].mtSalesMayAmount)+'</td>'
+										+ '	<td title="6월">'+addCommas(data.mtSalesAmountList[i].mtSalesJunAmount)+'</td>'
+										+ '</tr>'
+										+ '<tr>'
+										+ '	<td style="width: 130px; max-width: 130px"><span title="'+data.mtSalesAmountList[i].mtSalesPayTerms+'">'+data.mtSalesAmountList[i].mtSalesPayTerms+'</span></td>'
+										+ '	<td title="년도합계">'
+										+ addCommas(
+										data.mtSalesAmountList[i].mtSalesJanAmount
+										+ data.mtSalesAmountList[i].mtSalesFebAmount
+										+ data.mtSalesAmountList[i].mtSalesMarAmount
+										+ data.mtSalesAmountList[i].mtSalesAprAmount
+										+ data.mtSalesAmountList[i].mtSalesMayAmount
+										+ data.mtSalesAmountList[i].mtSalesJunAmount
+										+ data.mtSalesAmountList[i].mtSalesJulAmount
+										+ data.mtSalesAmountList[i].mtSalesAugAmount
+										+ data.mtSalesAmountList[i].mtSalesSepAmount
+										+ data.mtSalesAmountList[i].mtSalesOctAmount
+										+ data.mtSalesAmountList[i].mtSalesNovAmount
+										+ data.mtSalesAmountList[i].mtSalesDecAmount
+										 )
+										+ '	</td>'
+										+ '	<td title="7월">'+addCommas(data.mtSalesAmountList[i].mtSalesJulAmount)+'</td>'
+										+ '	<td title="8월">'+addCommas(data.mtSalesAmountList[i].mtSalesAugAmount)+'</td>'
+										+ '	<td title="9월">'+addCommas(data.mtSalesAmountList[i].mtSalesSepAmount)+'</td>'
+										+ '	<td title="10월">'+addCommas(data.mtSalesAmountList[i].mtSalesOctAmount)+'</td>'
+										+ '	<td title="11월">'+addCommas(data.mtSalesAmountList[i].mtSalesNovAmount)+'</td>'
+										+ '	<td title="12월">'+addCommas(data.mtSalesAmountList[i].mtSalesDecAmount)+'</td>'
+										+ '</tr>'		
+		            					+ '</tbody>'
+		            							            					
+		            			}
+		            			$('.dtlWrap table').html('');
+		        				$('.dtlWrap table').append(html);
+			                } else {
+			                	alert("해당 거래처의 매출정보가 없습니다.");
+			                }
+		            	} else {
+		                	alert("해당 거래처의 매출정보 조회를 실패하였습니다.");
+		                }
+						
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		        }); 
+				
 			});		
 			
 		}); //end $(document).ready()
@@ -684,12 +816,13 @@
 	        });  
 		}
 		
-		function fn_addView(){
+		function fn_editView(){
 			
 			var url = '/maintenance/contract/write/salesInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 					"mtIntegrateKey":'<c:out value="${basicContractInfo.mtIntegrateKey}"/>',
+					"mtSalesOrderKey":$('input[name="m_gubun"]:checked').val(),					
 					"parmMtSbCtYn":'<c:out value="${basicContractInfo.mtSbCtYn}"/>'			
 			}
 			var button = new Array;
@@ -842,11 +975,12 @@
 			}
 			
 		}
+		
 	</script>
 </head>
 <body>
 	<div class="sfcnt"></div>
-	<div class="nav"></div>
+	<!-- <div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
@@ -1141,17 +1275,17 @@
 					<ul>
 						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">제품정보</label></li>
 						<li id="LI_TOPBar_SL" class="on" title="salesAmountInfo"><label style="cursor: pointer;">매출정보</label></li>
-						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
+						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">계산서계획</label></li>
 						<c:choose>
 							<c:when test="${parmMtSbCtYn == 'Y'}">
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-								<!-- <li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li> -->
+								<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label style="cursor: pointer;">지급계획</label></li> 
 							</c:when>
 							<c:otherwise>
 								<li id="LI_TOPBar_BC" title="backOrderInfo"><label>백계약정보</label></li>
 								<li id="LI_TOPBar_PA" title="purchaseAmountInfo"><label>매입정보</label></li>
-								<!-- <li id="LI_TOPBar_PA" title="#"><label>지급계획</label></li> -->
+								<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label>지급계획</label></li>
 							</c:otherwise>
 						</c:choose>
 						<li></li>
@@ -1161,6 +1295,14 @@
 					<div class="stitle cg colorBlack floatL">
 						매출정보
 						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/> --%>
+						<c:if test="${null !=salesOrderSelectBox && salesOrderSelectBox.size()>1}">
+						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:200px;height: 30px;">
+							<option value="">전체</option>														
+						<c:forEach var="order" items="${salesOrderSelectBox}" varStatus="status">
+							<option value="<c:out value="${order.mtSalesOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+						</c:forEach>
+						</select>
+						</c:if>
 					</div>
 					<%-- <div class="stitle2 floatR">
 						매출총 합계 : <input type="text" id="salesTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
@@ -1169,7 +1311,8 @@
 						<table class="dtl">
 							<thead class="ftw400">
 								<tr>
-									<th rowspan="2" style="width: 30px; max-width: 28px;">선택</th>
+									<th rowspan="2" style="width: 10px">선택</th>
+									<th style="width: 130px; max-width: 130px">거래처명</th>
 									<th>연도</th>
 									<th>1월</th>
 									<th>2월</th>
@@ -1179,6 +1322,7 @@
 									<th>6월</th>
 								</tr>
 								<tr>
+									<th style="width: 130px; max-width: 130px">결제조건</th>
 									<th>합계</th>
 									<th>7월</th>
 									<th>8월</th>
@@ -1196,10 +1340,11 @@
 						
 							<tbody>
 								<tr>
-									<td rowspan="2" style="width: 11px">
+									<td rowspan="2" style="width: 10px">
 										<!-- <input type="checkbox" class="tRadio" id="check1"/><label for="check1" class="cursorP"></label> -->
-										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtSalesKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
+										<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtSalesOrderKey}"/>" /><label for="check<c:out value="${status.count}"/>" class="cursorP"/>
 									</td>
+									<td style="width: 130px; max-width: 130px"><span title="${list.mtSalesAcNm}"><c:out value="${list.mtSalesAcNm}"/></span></td>
 									<td style="font-weight:400"><c:out value="${list.mtSalesYear}"/> 년</td>
 									<td title="1월"><c:out value="${displayUtil.commaStr(list.mtSalesJanAmount)}"/></td>
 									<td title="2월"><c:out value="${displayUtil.commaStr(list.mtSalesFebAmount)}"/></td>
@@ -1209,6 +1354,7 @@
 									<td title="6월"><c:out value="${displayUtil.commaStr(list.mtSalesJunAmount)}"/></td>
 								</tr>
 								<tr>
+									<td style="width: 130px; max-width: 130px"><span title="${list.mtSalesPayTerms}"><c:out value="${list.mtSalesPayTerms}"/></span></td>
 									<td title="년도합계">
 									<c:out value="${displayUtil.makeAddNumber(
 									list.mtSalesJanAmount
@@ -1321,14 +1467,17 @@
 						</table>						
 					</div>
 					<table style="width: 997px">
-							<tr class="bottomtr">
-								<td class="textalignR" style="width: 230px">매출합계</td>
-								<td style="width: 92px"><c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/></td>
-							</tr>
-						</table>
+						<tr class="bottomtr">
+							<td class="textalignR" style="width: 230px">매출합계</td>
+							<td style="width: 92px">
+								<%-- <c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/> --%>
+								<input type="text" id="mtSalesTotalAmount" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly />
+							</td>
+						</tr>
+					</table>
 					<div class="bottom">
 						<div class="floatR">
-							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+							<button type="button" value="수정" onclick="fn_editView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<%-- <button type="button" value="삭제" onclick="fn_deleteMtSalesBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>

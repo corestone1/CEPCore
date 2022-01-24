@@ -1,6 +1,7 @@
 package com.cep.mngMaint.fundSchedule.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -19,6 +20,8 @@ import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
 
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+
 @Controller
 public class MngMaintFundScheduleController {
 	private static final Logger logger = LoggerFactory.getLogger(MngMaintFundScheduleController.class);
@@ -31,11 +34,13 @@ public class MngMaintFundScheduleController {
 		
 		String toDay = null;
 		Map<String, String> searchParam = null;
-		
+		List<EgovMap> mtCollectRequestList = null; //수금현황
+		List<EgovMap> mtPaymentRequestList = null; //지급현황
 		try {
 			logger.debug("searchVO.getFromDate()===>"+searchVO.getFromDate());
 			logger.debug("searchVO.getOrderDtTo()===>"+searchVO.getToDate());
 			logger.debug("searchVO.getDateSearchType()===>"+searchVO.getDateSearchType());
+			logger.debug("searchVO.getSearchGubun()===>"+searchVO.getSearchGubun());
 			logger.debug("searchVO.getSearchWord()===>"+searchVO.getSearchWord());
 			
 			toDay = CepDateUtil.getToday(null);	
@@ -54,9 +59,12 @@ public class MngMaintFundScheduleController {
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
 			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
 			
+			mtCollectRequestList = service.selectMtCollectRequestList(searchVO);
+			mtPaymentRequestList = service.selectMtPaymentRequestList(searchVO);
+			
 			model.put("searchParam", searchParam);
-			model.put("mtCollectRequestList", service.selectMtCollectRequestList(searchVO));
-			model.put("mtPaymentRequestList", service.selectMtPaymentRequestList(searchVO));
+			model.put("mtCollectRequestList", mtCollectRequestList);
+			model.put("mtPaymentRequestList", mtPaymentRequestList);
 			model.put("displayUtil", new CepDisplayUtil());
 		} catch (Exception e) {
 			logger.error("{}", e);

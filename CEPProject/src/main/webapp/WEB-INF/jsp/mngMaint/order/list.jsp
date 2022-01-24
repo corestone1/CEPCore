@@ -181,24 +181,40 @@
 		.contentsWrap .contents .top input[class="search"] {
 			width: 260px;
 		}
+		.bottom table tr td {
+			padding: 10px;
+			color: #26a07d;
+			background-color: #ecf6f4;
+			text-align: right;
+			width: 121px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
 			
 			$('.middle table tbody tr').click(function() {
 				
+				var mtIntegrateKey = $(this).children().eq(11).text();
+				var mtOrderKey = $(this).children().eq(12).text();
+				var orderCtFkKey = $(this).children().eq(13).text();
+				
+				
+				
 				$('#mtIntegrateKey').val($(this).children().eq(11).text());
 				$('#mtOrderKey').val($(this).children().eq(12).text());
 				$('#orderCtFkKey').val($(this).children().eq(13).text());
 				if('BO' == $(this).children().eq(10).text()){					
 					//백계약 상세
-					document.listForm.action = '/maintenance/contract/detail/backOrderInfo.do';
+					//document.listForm.action = '/maintenance/contract/detail/backOrderInfo.do';
+					window.open("/maintenance/contract/detail/backOrderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey+"&orderCtFkKey="+orderCtFkKey);
 				} else if('PO' == $(this).children().eq(10).text()){
 					//작업발주.
-					document.listForm.action = '/maintenance/work/detail/orderInfo.do';
+					//document.listForm.action = '/maintenance/work/detail/orderInfo.do';
+					window.open("/maintenance/work/detail/orderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey+"&orderCtFkKey="+orderCtFkKey);
 				}
-				//alert("mtOrderType==>"+$(this).children().eq(10).text());
-				document.listForm.submit(); 
+
+				//document.listForm.submit(); 
+				
 				//alert("===>"+mtOrderType+"/"+mtIntegrateKey+"/"+mtOrderKey+"/"+mtWorkKey);
 			});
 			
@@ -238,13 +254,13 @@
 		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey"/>
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
-						<div class="title floatL"><label class="ftw500">발주 목록</label></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div>
+						<div class="title floatL"><label class="ftw500">유지보수 발주목록</label></div>
+						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('addInfo')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<form:select path="mtOrderType">
@@ -289,7 +305,9 @@
 							</tr>
 						</thead>
 						<tbody>
+						<c:set var = "totalAmount" value="0" />
 						<c:forEach var="list" items="${orderList}" varStatus="status">
+							<c:set var = "totalAmount" value="${totalAmount + list.mtOrderAmount}" />
 							<tr>
 								<td><c:out value="${status.count}"/></td>
 								<td>
@@ -305,16 +323,16 @@
 								</c:otherwise>
 							</c:choose>	
 								</td>
-								<td><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
-								<td align="left"><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
-								<td><span title="${list.mtOrderAcKeyNm}"><c:out value="${list.mtOrderAcKeyNm}"/></span></td>
-								<td><span title="${list.mtAcDirectorNm}"><c:out value="${list.mtAcDirectorNm}"/></span></td>
+								<td class="textalignL"><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
+								<td class="textalignL"><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
+								<td class="textalignL"><span title="${list.mtOrderAcKeyNm}"><c:out value="${list.mtOrderAcKeyNm}"/></span></td>
+								<td><c:out value="${list.mtAcDirectorNm}"/></td>
 								<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>
-								<td align="right">
+								<td class="textalignR">
 									<span title="${displayUtil.commaStr(list.mtOrderAmount)}" style="margin-right:10px"><c:out value="${displayUtil.commaStr(list.mtOrderAmount)}"/></span>
 								</td>
-								<td><span title="${list.saleEmpNm}"><c:out value="${list.saleEmpNm}"/></span></td>
-								<td><span title="${list.mtOrderPayTerms}"><c:out value="${list.mtOrderPayTerms}"/></span></td>
+								<td><c:out value="${list.saleEmpNm}"/></td>
+								<td class="textalignL"><span title="${list.mtOrderPayTerms}"><c:out value="${list.mtOrderPayTerms}"/></span></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderType}"/></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtIntegrateKey}"/></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderKey}"/></td>
@@ -507,11 +525,16 @@
 					</table>
 				</div>
 				<div class="bottom">
-					<div class="floatR">
-						<button value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-						<button value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
-					</div>
+					<table>
+						<tbody class="ftw400">
+							<tr>								
+								<td style="width:1006px;">합계 :</td>
+								
+								<td style="text-align: left;width: 615px;"><span><c:out value="${displayUtil.commaStr(totalAmount)}"/> 원</span></td>
+							</tr>
+						</tbody>
+					</table>
+					
 				</div>
 			</div>
 		</div>

@@ -237,9 +237,11 @@
 				if("Y" == "${basicContractInfo.mtSbCtYn}"){
 					$('#back_order').show();
 					$('#back_buy').show();
+					$('#back_pay').show();
 				} else {
 					$('#back_order').hide();
 					$('#back_buy').hide();
+					$('#back_pay').hide();
 				}				
 				//보증증권유무 셋팅
 				//$('#gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
@@ -349,7 +351,7 @@
 		function fnSearchAccoutList(pObject, pstAccountNm) {
 			$('#m_div_accountList').remove();
 		
-			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			var jsonData = {'acNm' : pstAccountNm};
 			
 			 $.ajax({
 		        	url :"/mngCommon/account/searchList.do",
@@ -374,7 +376,7 @@
 			function fnViewAccountList(pObject, pjAccountList){
 			/* var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">' */
 			var html = '<div id="m_div_accountList" >'         
-				+ '<ul class="accountList">'
+				+ '<ul class="m_accountList">'
 			       ;//+ '<div style="margin: 5px;">';
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {			    	  
@@ -434,7 +436,7 @@
 					
 				} else if(varUrl == "writeSalesPlanView"){					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획정보 화면으로 이동하시겠습니까?")){
 							url = '/maintenance/contract/write/'+varUrl+'.do';
 						} else {
 							return false;
@@ -482,7 +484,27 @@
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
 						return false;
 					}
-				}				
+				} else if(varUrl == "writePaymentPlanView"){
+					
+					if("${basicContractInfo.mtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지급계획정보 화면으로 이동하시겠습니까?")){
+								url = '/maintenance/contract/write/'+varUrl+'.do';
+							} else {
+								return false;
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+							return false;
+						}
+
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+						return false;
+					}
+				}
+				
 			} else {
 				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
 				return false;
@@ -708,9 +730,11 @@
 			if("Y" == param){
 				$('#back_order').show();
 				$('#back_buy').show();
+				$('#back_pay').show();
 			} else {
 				$('#back_order').hide();
 				$('#back_buy').hide();
+				$('#back_pay').hide();
 			}
 		}
 		
@@ -917,9 +941,10 @@
 				<li class="colorWhite cursorP on">기본정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
-				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>				
+				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>				
 				<li id="back_order" class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');" style="display:none">백계약정보</li>
 				<li id="back_buy" class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');" style="display:none">매입정보</li>
+				<li id="back_pay" class="colorWhite cursorP" onclick="fn_changeView('writePaymentPlanView');"  style="display:none">지급계획정보</li>
 			</ul>
 		</div>
 		<div class="contents">
@@ -966,9 +991,9 @@
 								<input type="text" id="mtNm" name="mtNm" value="<c:out value="${basicContractInfo.mtNm}"/>" required/>
 							</td>
 						</tr>
-						<tr id="tr_account">
+						<tr>
 							<td class="tdTitle"><label>*</label> 고객사</td>
-							<td class="tdContents">
+							<td class="tdContents" id="tr_account">
 								<input type="text" name="mtAcNm" id="mtAcNm" class="search" value="<c:out value="${basicContractInfo.mtAcNm}" />" autocomplete="off"  required/>	
 								<input type="hidden" name="mtAcKey" id="mtAcKey"  value="<c:out value="${basicContractInfo.mtAcKey}"/>" />	
 							</td>

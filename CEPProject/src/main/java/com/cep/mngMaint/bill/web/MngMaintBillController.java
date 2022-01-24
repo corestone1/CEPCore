@@ -144,6 +144,10 @@ public class MngMaintBillController {
 			logger.debug("searchVO.getPjKey()  : {}", searchVO.getPjKey());
 			logger.debug("searchVO.getBillNo() : {}", searchVO.getBillNo());
 			logger.debug("searchVO.getBillTurnNo() : {}", searchVO.getBillTurnNo());
+			logger.debug("searchVO.getMtSalesOrderKey() : {}", searchVO.getMtSalesOrderKey());
+			logger.debug("searchVO.getIframGubun() : {}", searchVO.getIframGubun());
+//			logger.debug("searchVO.getMtSalesAcKey() : {}", searchVO.getMtSalesAcKey());
+//			logger.debug("searchVO.getMtSalesAcNm() : {}", searchVO.getMtSalesAcNm());
 			billBasicInfo =service.selectBillBasicInfo(searchVO);
 			//기본정보 조회
 			model.addAttribute("basicInfo", billBasicInfo);
@@ -154,6 +158,8 @@ public class MngMaintBillController {
 				iframUrl.append("/mngMaint/bill/detail/preBillList.do");
 				iframUrl.append("?pjKey=");
 				iframUrl.append(searchVO.getPjKey());
+				iframUrl.append("&mtSalesOrderKey=");
+				iframUrl.append(searchVO.getMtSalesOrderKey());
 				iframUrl.append("&acKey=");
 				iframUrl.append(billBasicInfo.get("mtAcKey"));
 				iframUrl.append("&billTurnNo=");
@@ -166,6 +172,8 @@ public class MngMaintBillController {
 				iframUrl.append("/mngMaint/bill/detail/billForm.do");
 				iframUrl.append("?pjKey=");
 				iframUrl.append(searchVO.getPjKey());
+				iframUrl.append("&mtSalesOrderKey=");
+				iframUrl.append(searchVO.getMtSalesOrderKey());
 				iframUrl.append("&acKey=");
 				iframUrl.append(billBasicInfo.get("mtAcKey"));
 				iframUrl.append("&billTurnNo=");
@@ -177,6 +185,8 @@ public class MngMaintBillController {
 				iframUrl.append("/mngMaint/bill/detail/preBillList.do");
 				iframUrl.append("?pjKey=");
 				iframUrl.append(searchVO.getPjKey());
+				iframUrl.append("&mtSalesOrderKey=");
+				iframUrl.append(searchVO.getMtSalesOrderKey());
 				iframUrl.append("&acKey=");
 				iframUrl.append(billBasicInfo.get("mtAcKey"));
 				iframUrl.append("&billTurnNo=");
@@ -188,7 +198,10 @@ public class MngMaintBillController {
 			//ifram의 url주소
 			model.addAttribute("iframUrl", iframUrl.toString());
 			model.addAttribute("pjKey", searchVO.getPjKey());
+			model.addAttribute("mtSalesOrderKey", searchVO.getMtSalesOrderKey());
 			model.addAttribute("billTurnNo", billTurnNo);
+//			model.addAttribute("mtSalesAcKey", searchVO.getMtSalesAcKey());
+//			model.addAttribute("mtSalesAcNm", searchVO.getMtSalesAcNm());
 		}catch(Exception e){
 			logger.error("{}", e);
 			throw e;
@@ -215,10 +228,13 @@ public class MngMaintBillController {
 		try{
 			logger.debug("searchVO.getBillNo()     : {}", searchVO.getBillNo());
 			logger.debug("searchVO.getPjKey()      : {}", searchVO.getPjKey());
+			logger.debug("searchVO.getMtSalesOrderKey()      : {}", searchVO.getMtSalesOrderKey());
 			logger.debug("searchVO.getBillTurnNo() : {}", searchVO.getBillTurnNo());
 			logger.debug("searchVO.getTotalTurn() : {}", searchVO.getTotalTurn());
 //			logger.debug("searchVO.getBillTurnNo() : {}", searchVO.getBillTurnNo());
 			logger.debug("searchVO.getAcKey() : {}", searchVO.getAcKey());
+//			logger.debug("searchVO.getMtSalesAcKey() : {}", searchVO.getMtSalesAcKey());
+//			logger.debug("searchVO.getMtSalesAcNm() : {}", searchVO.getMtSalesAcNm());
 			
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			
@@ -229,10 +245,11 @@ public class MngMaintBillController {
 			model.addAttribute("billInfo", service.selectBillDetailInfo(searchVO));
 			
 			model.addAttribute("pjKey", searchVO.getPjKey());
+			model.addAttribute("mtSalesOrderKey", searchVO.getMtSalesOrderKey());
 			model.addAttribute("acKey", searchVO.getAcKey());
 			model.addAttribute("billTurnNo", searchVO.getBillTurnNo());
 			model.addAttribute("totalTurn", searchVO.getTotalTurn());
-			
+
 			//고객사 키 전달
 //			model.addAttribute("billAcKey", searchVO.getAcKey()); 
 			
@@ -269,7 +286,7 @@ public class MngMaintBillController {
 	@ResponseBody
 	public Map<String, Object> writeBillReqeust(@ModelAttribute("mngMaintBillVO") MngMaintBillVO mngMaintBillVO, HttpServletRequest request, HttpServletResponse respons) throws Exception {
 		String billCallKey = null;
-		logger.debug("=============== write ======================");
+		logger.debug("=============== writeBillReqeust write ======================");
 //		logger.debug("=== mngMaintBillVO.getPjKey()             = {}", mngMaintBillVO.getPjKey());
 //		logger.debug("=== mngMaintBillVO.getBillCtFkKey()       = {}", mngMaintBillVO.getBillCtFkKey());
 //		logger.debug("=== mngMaintBillVO.getBillAcKey()         = {}", mngMaintBillVO.getBillAcKey());
@@ -289,7 +306,7 @@ public class MngMaintBillController {
 		HashMap<String, String> sessionMap = null;
 		
 		try {
-						
+						 
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngMaintBillVO.setRegEmpKey(sessionMap.get("empKey"));
@@ -338,9 +355,12 @@ public class MngMaintBillController {
 	public Map<String, Object> deleteBillReqeust(@ModelAttribute("mngMaintBillVO") MngMaintBillVO mngMaintBillVO, HttpServletRequest request, HttpServletResponse respons) throws Exception {
 		
 		logger.debug("=============== deleteBillReqeust ======================");
+		logger.debug("=== mngMaintBillVO.getPjKey()       = {}", mngMaintBillVO.getPjKey());
+		logger.debug("=== mngMaintBillVO.getMtSalesOrderKey()       = {}", mngMaintBillVO.getMtSalesOrderKey());
 		logger.debug("=== mngMaintBillVO.getBillCallKey()       = {}", mngMaintBillVO.getBillCallKey());
 		logger.debug("=== mngMaintBillVO.getSalesKey     ()     = {}", mngMaintBillVO.getSalesKey());
-		logger.debug("=== mngMaintBillVO.getBillCtFkKey)        = {}", mngMaintBillVO.getBillCtFkKey());
+		logger.debug("=== mngMaintBillVO.getBillCtFkKey        = {}", mngMaintBillVO.getBillCtFkKey());
+		logger.debug("=== mngMaintBillVO.getBillMappingYn        = {}", mngMaintBillVO.getBillMappingYn());
 		
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
@@ -357,6 +377,77 @@ public class MngMaintBillController {
 			
 			
 			returnMap.put("billIssueStatus", null);
+			returnMap.put("successYN", "Y");
+		}catch(Exception e){
+			returnMap.put("successYN", "N");
+			logger.error("{}", e);
+			//throw e;
+		}		
+		return returnMap;
+	}
+	
+	/**
+	 * 영업지원에서 세금계산서 발행완료 처리
+	 * 유지보수관리 >> 매출계획목록 >> 발행완료 처리.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mngMaintBillVO
+	 * @param request
+	 * @param respons
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 23. 오전 10:39:57
+	 * @author aranghoo
+	 */
+	@RequestMapping(value="/mngMaint/bill/detail/writeBillIssue.do")
+	@ResponseBody
+	public Map<String, Object> writeBillIssue(@ModelAttribute("mngMaintBillVO") MngMaintBillVO mngMaintBillVO, HttpServletRequest request, HttpServletResponse respons) throws Exception {
+		String billCallKey = null;
+		logger.debug("=============== writeBillIssue write ======================");
+//		logger.debug("=== mngMaintBillVO.getPjKey()             = {}", mngMaintBillVO.getPjKey());
+//		logger.debug("=== mngMaintBillVO.getBillCtFkKey()       = {}", mngMaintBillVO.getBillCtFkKey());
+//		logger.debug("=== mngMaintBillVO.getBillAcKey()         = {}", mngMaintBillVO.getBillAcKey());
+//		logger.debug("=== mngMaintBillVO.getBillCallKey()       = {}", mngMaintBillVO.getBillCallKey());
+//		logger.debug("=== mngMaintBillVO.getBillIssueType()     = {}", mngMaintBillVO.getBillIssueType());
+//		logger.debug("=== mngMaintBillVO.getBillTurnNo()        = {}", mngMaintBillVO.getBillTurnNo());
+//		logger.debug("=== mngMaintBillVO.getBillAmount()        = {}", mngMaintBillVO.getBillAmount());
+//		logger.debug("=== mngMaintBillVO.getBillTaxYn()         = {}", mngMaintBillVO.getBillTaxYn());
+//		logger.debug("=== mngMaintBillVO.getBillAcDirectorKey() = {}", mngMaintBillVO.getBillAcDirectorKey());
+//		logger.debug("=== mngMaintBillVO.getBillAcDirectorTel() = {}", mngMaintBillVO.getBillAcDirectorTel());
+//		logger.debug("=== mngMaintBillVO.getBillRequestDt()     = {}", mngMaintBillVO.getBillRequestDt());
+//		logger.debug("=== mngMaintBillVO.getRemark()            = {}", mngMaintBillVO.getRemark());
+		
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		HashMap<String, String> sessionMap = null;
+		
+		try {
+						 
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			mngMaintBillVO.setRegEmpKey(sessionMap.get("empKey"));
+			mngMaintBillVO.setModEmpKey(sessionMap.get("empKey"));
+			
+			if("".equals(CepStringUtil.getDefaultValue(mngMaintBillVO.getBillTaxYn(), ""))) {
+				mngMaintBillVO.setBillTaxYn("N");
+			}
+			
+			if("".equals(CepStringUtil.getDefaultValue(mngMaintBillVO.getBillCallKey(), ""))) {
+				//계산서 요청 관리키가 없는 경우 등록
+				billCallKey = service.insertBillIssue(mngMaintBillVO);
+			} else {
+				//계산서 요청 관리키가 있는 경우 수정
+				service.updateBillIssue(mngMaintBillVO);
+				
+				billCallKey = mngMaintBillVO.getBillCallKey();
+			}
+			logger.debug("=== billCallKey            = {}", billCallKey);
+			
+			
+			returnMap.put("billCallKey", billCallKey);
+			returnMap.put("billIssueStatus", "I");
 			returnMap.put("successYN", "Y");
 		}catch(Exception e){
 			returnMap.put("successYN", "N");
@@ -436,6 +527,7 @@ public class MngMaintBillController {
 		List<EgovMap> sdBillList = null;
 		try{
 			logger.debug("searchVO.getPjKey()      : {}", searchVO.getPjKey());
+			logger.debug("searchVO.getMtSalesOrderKey()      : {}", searchVO.getMtSalesOrderKey());
 			logger.debug("searchVO.getAcKey()      : {}", searchVO.getAcKey());
 			logger.debug("searchVO.getBillTurnNo()      : {}", searchVO.getBillTurnNo());
 			logger.debug("searchVO.getTotalTurn()  : {}", searchVO.getTotalTurn());
@@ -624,7 +716,7 @@ public class MngMaintBillController {
 		logger.debug("=== mngMaintBillVO.getPjKey()             = {}", mngMaintBillVO.getPjKey());
 		logger.debug("=== mngMaintBillVO.getBillCallKey()       = {}", mngMaintBillVO.getBillCallKey());
 		logger.debug("=== mngMaintBillVO.getSalesKey()          = {}", mngMaintBillVO.getSalesKey());
-		logger.debug("=== mngMaintBillVO.getSalesKey()          = {}", mngMaintBillVO.getSalesKey());
+		logger.debug("=== mngMaintBillVO.getBillIssueStatus()   = {}", mngMaintBillVO.getBillIssueStatus());
 		
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
@@ -669,11 +761,13 @@ public class MngMaintBillController {
 		EgovMap paymentBasicInfo = null;
 		StringBuffer iframUrl = new StringBuffer();
 		try{
+			logger.debug("searchVO.getPaymentKey() : {}", searchVO.getPaymentKey());
 			logger.debug("searchVO.getMtOrderType() : {}", searchVO.getMtOrderType());
 			logger.debug("searchVO.getMtIntegrateKey() : {}", searchVO.getMtIntegrateKey());
 			logger.debug("searchVO.getMtWorkKey() : {}", searchVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
 			logger.debug("searchVO.getMtOrderKey()  : {}", searchVO.getMtOrderKey());
 			logger.debug("searchVO.getIframGubun()  : {}", searchVO.getIframGubun());
+			logger.debug("searchVO.getProceedTurn() : {}", searchVO.getProceedTurn());
 			
 			paymentBasicInfo = service.selectPaymentBasicInfo(searchVO);
 			
@@ -694,6 +788,8 @@ public class MngMaintBillController {
 				//발주관리키.
 				model.addAttribute("mtOrderKey", searchVO.getMtOrderKey());
 				
+
+				
 				//해당 구분값이 없는 경우 list로 보여준다.
 				if("list".equals(CepStringUtil.getDefaultValue(searchVO.getIframGubun(), "list").toLowerCase())) {
 					iframUrl.append("/mngMaint/payment/detail/prePaymentList.do");
@@ -707,6 +803,10 @@ public class MngMaintBillController {
 					iframUrl.append(searchVO.getMtOrderKey());
 					iframUrl.append("&billAcKey=");
 					iframUrl.append(paymentBasicInfo.get("orderAcKey"));
+					iframUrl.append("&proceedTurn=");
+					iframUrl.append(paymentBasicInfo.get("proceedTurn"));
+					iframUrl.append("&totalTurn=");
+					iframUrl.append(paymentBasicInfo.get("totalTurn"));
 				} else {
 
 					iframUrl.append("/mngMaint/payment/detail/paymentForm.do");
@@ -722,8 +822,19 @@ public class MngMaintBillController {
 					iframUrl.append(paymentBasicInfo.get("orderAcKey"));
 					iframUrl.append("&paymentKey=");
 					iframUrl.append(searchVO.getPaymentKey());
+					iframUrl.append("&proceedTurn=");
+					if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getProceedTurn(), ""))) {
+						iframUrl.append(searchVO.getProceedTurn());
+					} else {
+						iframUrl.append(paymentBasicInfo.get("proceedTurn"));
+					}
+					
+					iframUrl.append("&totalTurn=");
+					iframUrl.append(paymentBasicInfo.get("totalTurn"));
 				}
+
 				
+				model.addAttribute("totalTurn", paymentBasicInfo.get("totalTurn"));
 				//ifram의 url주소
 				model.addAttribute("iframUrl", iframUrl.toString());
 			}
@@ -749,6 +860,8 @@ public class MngMaintBillController {
 			logger.debug("searchVO.getMtWorkKey() : {}", searchVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
 			logger.debug("searchVO.getMtOrderKey()  : {}", searchVO.getMtOrderKey()); //발주키 
 			logger.debug("searchVO.getBillAcKey()  : {}", searchVO.getBillAcKey()); //매입사업자번호.
+			logger.debug("searchVO.getProceedTurn()  : {}", searchVO.getProceedTurn()); //진행회차.
+			logger.debug("searchVO.getTotalTurn()  : {}", searchVO.getTotalTurn()); //전체회차.
 			
 			paymentRequestList = service.selectPaymentRequestList(searchVO);
 			
@@ -777,7 +890,8 @@ public class MngMaintBillController {
 			
 			//사업자번호(매입처관리키)
 			model.addAttribute("billAcKey", searchVO.getBillAcKey());
-			
+			model.addAttribute("proceedTurn", searchVO.getProceedTurn());
+			model.addAttribute("totalTurn", searchVO.getTotalTurn());
 		}catch(Exception e){
 			logger.error("{}", e);
 			throw e;
@@ -833,19 +947,24 @@ public class MngMaintBillController {
 		EgovMap orderAmountInfo = null;
 		try {
 			logger.debug("searchVO.getMtOrderType() : {}", searchVO.getMtOrderType());
+			logger.debug("searchVO.getPaymentDtFkKey() : {}", searchVO.getPaymentDtFkKey());
 			logger.debug("searchVO.getMtIntegrateKey() : {}", searchVO.getMtIntegrateKey());
 			logger.debug("searchVO.getMtWorkKey() : {}", searchVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
 			logger.debug("searchVO.getMtOrderKey()  : {}", searchVO.getMtOrderKey()); //발주키
 			logger.debug("searchVO.getBillAcKey()  : {}", searchVO.getBillAcKey()); //매입사업자번호.
 			logger.debug("searchVO.getPaymentKey()  : {}", searchVO.getPaymentKey()); //지급관리키.
+			logger.debug("searchVO.getProceedTurn()  : {}", searchVO.getProceedTurn()); //진행회차.
+			logger.debug("searchVO.getTotalTurn()  : {}", searchVO.getTotalTurn()); //전체회차.		
 			
 			//paymentKey가 있는 경우 상세조회, 없는 경우는 등록화면.
-			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getPaymentKey(), ""))) {
-				paymentRequestInfo = service.selectPaymentRequestInfo(searchVO);
-			} else {
-				paymentRequestInfo = new EgovMap();
-				
-			}
+//			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getPaymentKey(), ""))) {
+//				paymentRequestInfo = service.selectPaymentRequestInfo(searchVO);
+//			} else {
+//				paymentRequestInfo = new EgovMap();
+//				
+//			}
+			
+			paymentRequestInfo = service.selectPaymentRequestInfo(searchVO);
 			
 			//해당매입처의 계좌정보를 조회한다.
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getBillAcKey(), ""))) {
@@ -879,6 +998,9 @@ public class MngMaintBillController {
 			
 			model.addAttribute("displayUtil", new CepDisplayUtil());				
 			
+
+			model.addAttribute("proceedTurn", searchVO.getProceedTurn());
+			model.addAttribute("totalTurn", searchVO.getTotalTurn());
 //			model.addAttribute("mtOrderType", searchVO.getMtOrderType());
 //			//유지보수 key
 //			model.addAttribute("mtIntegrateKey", searchVO.getMtIntegrateKey());
@@ -916,6 +1038,174 @@ public class MngMaintBillController {
 		
 		return "mngMaint/payment/detail/paymentForm";
 	}
+	
+	/**
+	 * 
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param request
+	 * @param mtPaymentVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 12. 13. 오후 9:33:26
+	 * @author aranghoo
+	 */
+	@RequestMapping(value="/mngMaint/payment/detail/writePaymentComplete.do")
+	@ResponseBody
+	public Map<String, Object> writePaymentComplete(HttpServletRequest request, @ModelAttribute("mtPaymentVO")  MtPaymentVO mtPaymentVO) throws Exception {
+		String paymentKey = null;
+		logger.debug("=============== writePaymentComplete ======================");
+
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		HashMap<String, String> sessionMap = null;
+		
+//		EgovMap paymentRequestInfo = null;
+//		String paymentStatusCdNm = null;
+		try {
+			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
+			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
+			logger.debug("mtPaymentVO.getPaymentBuyFkKey()  : {}", mtPaymentVO.getPaymentBuyFkKey()); //발주키
+			logger.debug("mtPaymentVO.getMtOrderKey()  : {}", mtPaymentVO.getMtOrderKey()); //발주키
+			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
+			logger.debug("mtPaymentVO.getPaymentDtFkKey() : {}", mtPaymentVO.getPaymentDtFkKey());
+			logger.debug("mtPaymentVO.getPaymentStatusCd() : {}", mtPaymentVO.getPaymentStatusCd());
+			logger.debug("mtPaymentVO.getPaymentTurn() : {}", mtPaymentVO.getPaymentTurn());
+			logger.debug("mtPaymentVO.getPaymentCallDt() : {}", mtPaymentVO.getPaymentCallDt());
+			logger.debug("mtPaymentVO.getPaymentDt() : {}", mtPaymentVO.getPaymentDt());
+			logger.debug("mtPaymentVO.getCallAmount() : {}", mtPaymentVO.getCallAmount());
+			logger.debug("mtPaymentVO.getPaymentAcFkKey()  : {}", mtPaymentVO.getPaymentAcFkKey()); //매입사업자번호.
+			logger.debug("mtPaymentVO.getBillAcKey()  : {}", mtPaymentVO.getBillAcKey()); //매입사업자번호.
+			logger.debug("mtPaymentVO.getPaymentYearMonth()  : {}", mtPaymentVO.getPaymentYearMonth()); 
+			
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 			
+			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
+			
+			
+						
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
+			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getMtOrderType(), ""))) {
+				if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
+					logger.debug("writePaymentComplete insert===========>");
+					//계산서 요청 관리키가 없는 경우 등록
+					paymentKey = service.writePaymentRequestInfo(mtPaymentVO);
+					
+					
+				} else {
+					logger.debug("writePaymentComplete update===========>");
+					//계산서 요청 관리키가 있는 경우 수정
+					service.updatePaymentRequestInfo(mtPaymentVO);
+					paymentKey = mtPaymentVO.getPaymentKey();
+									
+				}
+				returnMap.put("successYN", "Y");
+			} else {
+				returnMap.put("successYN", "N");
+			}
+						
+			
+			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
+			//유지보수 key
+			returnMap.put("mtIntegrateKey", mtPaymentVO.getMtIntegrateKey());
+			
+			//유지보수 작업관리키
+			returnMap.put("mtWorkKey", mtPaymentVO.getMtWorkKey());
+			//발주관리키.
+			returnMap.put("paymentBuyFkKey", mtPaymentVO.getPaymentBuyFkKey());
+			
+			//사업자번호(매입처관리키)
+			returnMap.put("paymentAcFkKey", mtPaymentVO.getPaymentAcFkKey());
+			
+			returnMap.put("paymentKey", paymentKey);
+			
+		}catch(Exception e){
+			returnMap.put("successYN", "N");
+			logger.error("{}", e);
+			//throw e;
+		}		
+		return returnMap;
+	}
+//	@RequestMapping(value="/mngMaint/payment/detail/writePaymentComplete.do", method=RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String, Object> writePaymentComplete(HttpServletRequest request, @RequestBody MtPaymentVO mtPaymentVO) throws Exception {
+//		String paymentKey = null;
+//		logger.debug("=============== writePaymentComplete ======================");
+//
+//		
+//		Map<String, Object> returnMap = new HashMap<String, Object>();
+//		
+//		HashMap<String, String> sessionMap = null;
+//		
+////		EgovMap paymentRequestInfo = null;
+////		String paymentStatusCdNm = null;
+//		try {
+//			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
+//			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
+//			logger.debug("mtPaymentVO.getPaymentBuyFkKey()  : {}", mtPaymentVO.getPaymentBuyFkKey()); //발주키
+//			logger.debug("mtPaymentVO.getMtOrderKey()  : {}", mtPaymentVO.getMtOrderKey()); //발주키
+//			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
+//			logger.debug("mtPaymentVO.getPaymentStatusCd() : {}", mtPaymentVO.getPaymentStatusCd());
+//			
+//			
+//			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 			
+//			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
+//			
+//			logger.debug("mtPaymentVO.getBillAcKey()  : {}", mtPaymentVO.getBillAcKey()); //매입사업자번호.
+//			logger.debug("mtPaymentVO.getPaymentAcFkKey()  : {}", mtPaymentVO.getPaymentAcFkKey()); //매입사업자번호.
+//			logger.debug("mtPaymentVO.getPaymentYearMonth()  : {}", mtPaymentVO.getPaymentYearMonth()); 
+//						
+//			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+//			
+//			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
+//			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
+//			
+//			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getMtOrderType(), ""))) {
+//				if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
+//					//계산서 요청 관리키가 없는 경우 등록
+//					//paymentKey = service.writePaymentRequestInfo(mtPaymentVO);
+//					
+////					mtPaymentVO.setPaymentKey(paymentKey);
+////					paymentRequestInfo = service.selectPaymentRequestInfo(mtPaymentVO);
+////					paymentStatusCdNm = (String)paymentRequestInfo.get("paymentRequestInfo");
+//				} else {
+//					//계산서 요청 관리키가 있는 경우 수정
+//					service.updatePaymentRequestInfo(mtPaymentVO);
+//					paymentKey = mtPaymentVO.getPaymentKey();
+//									
+//				}
+//				returnMap.put("successYN", "Y");
+//			} else {
+//				returnMap.put("successYN", "N");
+//			}
+//						
+//			
+//			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
+//			//유지보수 key
+//			returnMap.put("mtIntegrateKey", mtPaymentVO.getMtIntegrateKey());
+//			
+//			//유지보수 작업관리키
+//			returnMap.put("mtWorkKey", mtPaymentVO.getMtWorkKey());
+//			//발주관리키.
+//			returnMap.put("paymentBuyFkKey", mtPaymentVO.getPaymentBuyFkKey());
+//			
+//			//사업자번호(매입처관리키)
+//			returnMap.put("paymentAcFkKey", mtPaymentVO.getPaymentAcFkKey());
+//			
+//			returnMap.put("paymentKey", paymentKey);
+//			
+//		}catch(Exception e){
+//			returnMap.put("successYN", "N");
+//			logger.error("{}", e);
+//			//throw e;
+//		}		
+//		return returnMap;
+//	}
 	
 	/**
 	 * 매입지급요청 등록.
@@ -1183,10 +1473,11 @@ public class MngMaintBillController {
 		
 //		EgovMap paymentRequestInfo = null;
 //		String paymentStatusCdNm = null;
+		String successYN = "N";
 		try {
 			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
-			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getBillFkKey()); 
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 
 			
 			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
@@ -1205,40 +1496,45 @@ public class MngMaintBillController {
 			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
 			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
 			
-			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
-				if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))
-						&& !"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
-					
-					if("PYST2000".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
-						//요청에 대한 승인(확인) 취소
-						service.cancelPaymentRequestConfirm(mtPaymentVO);
-					} else if("PYST3000".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
-						//요청 승인(확인)과 지급취소가 있음
-						if("PYST2000".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
-							//요청승인(확인)
-							service.updatePaymentRequestConfirm(mtPaymentVO);
-						} else if("PYST4000".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
-							//지급취소
-							service.cancelPaymentRequestFinish(mtPaymentVO);
-						}
-					} else if("PYST4000".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
-						//지급확인.
-						service.updatePaymentRequestFinish(mtPaymentVO);
-					}
-					
-					service.updatePaymentRequestInfo(mtPaymentVO);
-					
-					returnMap.put("successYN", "Y");
-				}else {
-					returnMap.put("successYN", "N");
-				}
-
-				
-				
-				
-			} else {
-				returnMap.put("successYN", "N");
-			}
+			
+			successYN = updatePaymentRequestStatusCode(mtPaymentVO);
+			returnMap.put("successYN", successYN);
+			
+//			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
+//				if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))
+//						&& !"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//					
+//					if("R".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//						//요청에 대한 승인(확인) 취소
+//						service.cancelPaymentRequestConfirm(mtPaymentVO);
+//					} else if("C".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//						//요청 승인(확인)과 지급취소가 있음
+//						if("R".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+//							//요청승인(확인)
+//							service.updatePaymentRequestConfirm(mtPaymentVO);
+//						} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+//							//지급취소
+//							service.cancelPaymentRequestFinish(mtPaymentVO);
+//						}
+//					} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//						//지급확인.
+//						if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentDt(), ""))) {
+//							mtPaymentVO.setPaymentDt(CepDateUtil.getToday("yyyyMMdd"));
+//						}
+//						service.updatePaymentRequestFinish(mtPaymentVO);
+//					}
+//
+//					returnMap.put("successYN", "Y");
+//				}else {
+//					returnMap.put("successYN", "N");
+//				}
+//
+//				
+//				
+//				
+//			} else {
+//				returnMap.put("successYN", "N");
+//			}
 						
 			
 			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
@@ -1261,5 +1557,141 @@ public class MngMaintBillController {
 			//throw e;
 		}		
 		return returnMap;
+	}
+	
+	
+	@RequestMapping(value="/mngMaint/payment/detail/updatePaymentRequestStatus2.do")
+	@ResponseBody
+	public Map<String, Object> updatePaymentRequestStatus2(HttpServletRequest request, @ModelAttribute("mtPaymentVO") MtPaymentVO mtPaymentVO) throws Exception {
+		
+		logger.debug("=============== updatePaymentRequestInfo ======================");
+
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		HashMap<String, String> sessionMap = null;
+		
+//		EgovMap paymentRequestInfo = null;
+//		String paymentStatusCdNm = null;
+		String successYN = "N";
+		try {
+			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
+			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 
+			
+			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
+			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
+			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
+			logger.debug("mtPaymentVO.getMtOrderKey()  : {}", mtPaymentVO.getMtOrderKey()); //발주키
+			logger.debug("mtPaymentVO.getPaymentBuyFkKey()  : {}", mtPaymentVO.getPaymentBuyFkKey()); //발주키
+			logger.debug("mtPaymentVO.getBillAcKey()  : {}", mtPaymentVO.getBillAcKey()); //매입사업자번호.
+			logger.debug("mtPaymentVO.getPaymentAcFkKey()  : {}", mtPaymentVO.getPaymentAcFkKey()); //매입사업자번호.
+			logger.debug("mtPaymentVO.getPaymentKey()  : {}", mtPaymentVO.getPaymentKey()); //지급관리키.			
+			logger.debug("mtPaymentVO.getCurrentStatus()  : {}", mtPaymentVO.getCurrentStatus()); //현재 요청상태
+			logger.debug("mtPaymentVO.getRequestStatus()  : {}", mtPaymentVO.getRequestStatus()); //변경할 요청상태.
+						
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
+			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
+			
+			successYN = updatePaymentRequestStatusCode(mtPaymentVO);
+			returnMap.put("successYN", successYN);
+			
+//			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
+//				if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))
+//						&& !"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//					
+//					if("R".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//						//요청에 대한 승인(확인) 취소
+//						service.cancelPaymentRequestConfirm(mtPaymentVO);
+//					} else if("C".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//						//요청 승인(확인)과 지급취소가 있음
+//						if("R".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+//							//요청승인(확인)
+//							service.updatePaymentRequestConfirm(mtPaymentVO);
+//						} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+//							//지급취소
+//							service.cancelPaymentRequestFinish(mtPaymentVO);
+//						}
+//					} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+//						//지급확인.
+//						if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentDt(), ""))) {
+//							mtPaymentVO.setPaymentDt(CepDateUtil.getToday("yyyyMMdd"));
+//						}
+//						service.updatePaymentRequestFinish(mtPaymentVO);
+//					}
+//					
+//					
+//					returnMap.put("successYN", "Y");
+//				}else {
+//					returnMap.put("successYN", "N");
+//				}
+//
+//				
+//				
+//				
+//			} else {
+//				returnMap.put("successYN", "N");
+//			}
+						
+			
+			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
+			
+			//유지보수 key
+			returnMap.put("mtIntegrateKey", mtPaymentVO.getMtIntegrateKey());
+			
+			//유지보수 작업관리키
+			returnMap.put("mtWorkKey", mtPaymentVO.getMtWorkKey());
+			//발주관리키.
+			returnMap.put("paymentBuyFkKey", mtPaymentVO.getPaymentBuyFkKey());
+			
+			//사업자번호(매입처관리키)
+			returnMap.put("paymentAcFkKey", mtPaymentVO.getPaymentAcFkKey());
+						
+			
+		}catch(Exception e){
+			returnMap.put("successYN", "N");
+			logger.error("{}", e);
+			//throw e;
+		}		
+		return returnMap;
+	}
+	
+	private String updatePaymentRequestStatusCode(MtPaymentVO mtPaymentVO) throws Exception{
+		String successYN = "N";
+		try {
+			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
+				if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))
+						&& !"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+					
+					if("R".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+						//요청에 대한 승인(확인) 취소
+						service.cancelPaymentRequestConfirm(mtPaymentVO);
+					} else if("C".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+						//요청 승인(확인)과 지급취소가 있음
+						if("R".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+							//요청승인(확인)
+							service.updatePaymentRequestConfirm(mtPaymentVO);
+						} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+							//지급취소
+							service.cancelPaymentRequestFinish(mtPaymentVO);
+						}
+					} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+						//지급확인.
+						if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentDt(), ""))) {
+							mtPaymentVO.setPaymentDt(CepDateUtil.getToday("yyyyMMdd"));
+						}
+						service.updatePaymentRequestFinish(mtPaymentVO);
+					}					
+					successYN = "Y";
+				}
+				
+			}
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		return successYN;
 	}
 }

@@ -293,7 +293,7 @@
 			//$('#mtWorkOrderYn').val("${basicWorkInfo.mtWorkOrderYn}").attr("selected", "true");
 			$("input:radio[name='mtWorkOrderYn']:radio[value='${basicWorkInfo.mtWorkOrderYn}']").prop('checked', true);
 			
-			//제품정보 커서 생성
+			//장비별작업정보 커서 생성
 			if("Y"=="${basicWorkInfo.mtWorkPmYn}"){
 				$("#productLabel").css('cursor','pointer');
 			}
@@ -315,7 +315,7 @@
 						document.m_mtBasicForm.action = "/maintenance/work/detail/productInfo.do";
 			           	document.m_mtBasicForm.submit();
 					} else {
-						alert("제품정보가 없습니다.\n 제품등록여부를 Y로 변경 후 제품정보를 등록하세요.")
+						alert("장비별작업정보가 없습니다.\n 제품등록여부를 Y로 변경 후 장비별작업정보를 등록하세요.")
 					}
 				} else if(this.title == "orderInfo"){
 					//console.log("orderInfo===>${basicWorkInfo.mtWorkOrderYn}")
@@ -510,7 +510,7 @@
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
 		<input type="hidden" id="editMode" name="editMode"  value="0"/>
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
@@ -548,7 +548,7 @@
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
-									<td>유지보수 금액</td>
+									<td>총계약금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<%-- <tr>
@@ -612,7 +612,7 @@
 					<div class="title">
 						<ul>
 							<li id="LI_TOPBar_WB" class="on" title="basicInfo"><label style="cursor: pointer;">작업정보</label></li>
-							<li id="LI_TOPBar_WP" title="productInfo"><label id="productLabel">제품정보</label></li>
+							<li id="LI_TOPBar_WP" title="productInfo"><label id="productLabel">장비별작업정보</label></li>
 							<li id="LI_TOPBar_WO" title="orderInfo"><label id="orderLabel">발주정보</label></li>
 							<li></li>
 						</ul>

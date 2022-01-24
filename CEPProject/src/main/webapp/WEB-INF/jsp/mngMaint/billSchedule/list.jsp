@@ -215,18 +215,26 @@
 				billType : 매입(PC), 매출(SD) 구분
 			*/
 			$('.middle table tbody tr').click(function() {
+				var mtIntegrateKey = $(this).children().eq(12).text();
+				var pjKey = $(this).children().eq(12).text();
+				var mtOrderType = $(this).children().eq(13).text();
+				var mtWorkKey = $(this).children().eq(14).text();
+				var mtOrderKey = $(this).children().eq(15).text();
+				var billType = $(this).children().eq(16).text();
 				console.log("==========");
-				console.log("mtIntegrateKey=========="+$(this).children().eq(12).text());
-				console.log("mtOrderType=========="+$(this).children().eq(13).text());
-				console.log("mtWorkKey=========="+$(this).children().eq(14).text());
-				console.log("mtOrderKey=========="+$(this).children().eq(15).text());
-				console.log("billType=========="+$(this).children().eq(16).text());
+				console.log("mtIntegrateKey=========="+mtIntegrateKey);
+				console.log("mtOrderType=========="+mtOrderType);
+				console.log("mtWorkKey=========="+mtWorkKey);
+				console.log("mtOrderKey=========="+mtOrderKey);
+				console.log("billType=========="+billType);
 				
 				$('#mtIntegrateKey').val($(this).children().eq(12).text());
 				$('#pjKey').val($(this).children().eq(12).text());
 				$('#mtOrderType').val($(this).children().eq(13).text());
 				$('#mtWorkKey').val($(this).children().eq(14).text());
 				$('#mtOrderKey').val($(this).children().eq(15).text());
+				
+				
 				
 				if('SD' == $(this).children().eq(16).text()){
 					//제품등록 ==> 매출 ==> 수금요청화면으로 이동
@@ -238,14 +246,16 @@
 					}
 				} else if('PC' == $(this).children().eq(16).text()){
 					//발주 ==> 매입  ==> 지급요청화면으로 이동
+					window.open("/mngMaint/payment/detail/main.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderType="+mtOrderType+"&mtWorkKey="+mtWorkKey+"&mtOrderKey="+mtOrderKey+"&iframGubun=list");
 					
-					
-					if(confirm('"'+$(this).children().eq(4).text()+' 매입금 지급요청 화면으로 이동하시겠습니까?')){
+					/* if(confirm('"'+$(this).children().eq(4).text()+' 매입금 지급요청 화면으로 이동하시겠습니까?')){
 						document.listForm.action = "/mngMaint/payment/detail/main.do";
 			           	document.listForm.submit();
 					} else {
 						return false;
-					}
+					} */
+					
+					
 				}
 				//$('#mtIntegrateKey').val($(this).children().eq(11).text());
 				//$('#mtOrderKey').val($(this).children().eq(12).text());
@@ -279,7 +289,7 @@
 		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
 		<input type="hidden" id="iframGubun" name="iframGubun" value="list"/>
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -321,7 +331,7 @@
 								<th scope="row">발행일</th>
 								<th scope="row">완료일</th>
 								<th scope="row">요청상태</th>
-								<th scope="row">요청자</th>
+								<th scope="row">영업담당</th>
 								<th style="max-width: 0px; display: none;">mtIntegrateKey</th>
 								<th style="max-width: 0px; display: none;">mtOrderType</th>
 								<th style="max-width: 0px; display: none;">mtWorkKey</th>
@@ -341,7 +351,7 @@
 									매출
 								</c:when>
 								<c:when test="${list.billType eq 'PC'}">
-									매입
+									매입(${list.mtOrderType})
 								</c:when>
 								<c:otherwise>
 									<c:out value="${list.billType}"/>
@@ -370,12 +380,27 @@
 								<c:when test="${list.billStatusCd eq 'E' && list.billType eq 'SD'}">
 									<span>수금완료</span>
 								</c:when>
+								<c:when test="${list.billStatusCd eq 'W' && list.billType eq 'PC'}">
+									<span>대기</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'M' && list.billType eq 'PC'}">
+									<span>계산서매핑</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'R' && list.billType eq 'PC'}">
+									<span>요청</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'C' && list.billType eq 'PC'}">
+									<span>확인</span>
+								</c:when>
+								<c:when test="${list.billStatusCd eq 'E' && list.billType eq 'PC'}">
+									<span>지급완료</span>
+								</c:when>
 								<c:otherwise>
-									<span>${list.billStatusNm}</span>
+									<span>${list.billStatusCd}</span>
 								</c:otherwise>
 							</c:choose>
 								</td>
-								<td><span title="${list.reqEmpNm}"><c:out value="${list.reqEmpNm}"/></span></td>
+								<td><span title="${list.saleEmpNm}"><c:out value="${list.saleEmpNm}"/></span></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtIntegrateKey}"/></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderType}"/></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtWorkKey}"/></td>
