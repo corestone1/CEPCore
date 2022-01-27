@@ -137,7 +137,7 @@
 			background-color: #d3d3d3;
 		}
 		
-		.mContents>.fxd .title ul li {
+		.mContents > .fxd .title ul li {
 			width: 16.65%;
 			line-height: 46px;
 			color: #777777;
@@ -473,7 +473,7 @@
 				} else if(this.title == "salesPlanInfo"){
 					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획 상세화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획 상세화면으로 이동하시겠습니까?")){
 							document.m_mtMoveForm.action = "/maintenance/contract/detail/salesPlanInfo.do";
 				           	document.m_mtMoveForm.submit();
 						}
@@ -514,7 +514,22 @@
 					} else {
 						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
 					}
-				}				
+				} else if(this.title == "paymentPlanInfo"){
+					
+					if("${parmMtSbCtYn}" == "Y"){
+						if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+							if(confirm("유지보수계약 지금계획 상세화면으로 이동하시겠습니까?")){
+								document.m_mtMoveForm.action = "/maintenance/contract/detail/paymentPlanInfo.do";
+					           	document.m_mtMoveForm.submit();
+							}
+						} else {
+							alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+						}
+						
+					} else {
+						alert(" 백계약 정보가 N으로 설정되었습니다.\n 기본정보에서 백계약정보를 Y로 변경 후 백계약정보를 먼저 등록하세요.");
+					}
+				}		
 			});
 			
 
@@ -1005,12 +1020,21 @@
 			button = [];
 			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:575px');
 		}
+		//계산서 발생요청
+		function fnMoveBillDetail() {
+			
+			if(confirm("유지보수계약 계산서발행요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMoveForm.action = "/mngMaint/bill/detail/main.do";
+	           	document.m_mtMoveForm.submit();
+			}
+			
+		}
    </script>
 </head>
 <body>
 	<%-- <input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/> --%>
 	<div class="sfcnt"></div>
-	<div class="nav"></div>
+	<!-- <div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
@@ -1302,6 +1326,7 @@
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>							
 							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1311,10 +1336,10 @@
 					<ul>
 						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">제품정보</label></li>
 						<li id="LI_TOPBar_SL" title="salesAmountInfo"><label style="cursor: pointer;">매출정보</label></li>
-						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">수금계획</label></li>
+						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">계산서계획</label></li>
 						<li id="LI_TOPBar_BC" title="backOrderInfo"><label style="cursor: pointer;">백계약정보</label></li>
-						<li id="LI_TOPBar_PA" class="on" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>
-						<li id="LI_TOPBar_PA" title="#"><label style="cursor: pointer;">지급계획</label></li>
+						<li id="LI_TOPBar_PA" class="on" title="purchaseAmountInfo"><label style="cursor: pointer;">매입정보</label></li>						
+						<li id="LI_TOPBar_PA" title="paymentPlanInfo"><label style="cursor: pointer;">지급계획</label></li>
 						<li></li>
 					</ul>
 				</div>
@@ -1339,7 +1364,7 @@
 						</select> --%>
 						
 						<c:if test="${null !=backOrderSelectBox && backOrderSelectBox.size()>1}">
-						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:150px;height: 30px;">
+						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:200px;height: 30px;">
 							<option value="">전체</option>														
 						<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">
 							<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>

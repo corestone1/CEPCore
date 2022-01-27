@@ -78,7 +78,8 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 550px;
+			/* height: 550px; */
+			height: 500px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -119,8 +120,8 @@
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
-			width: 115px;
-			max-width: 145px;
+			width: 100px;
+			max-width: 100px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
@@ -144,19 +145,23 @@
 		}
 		.middle table thead th:nth-child(10),
 		.middle table tbody td:nth-child(10) {
-			width: 90px;
+			width: 75px;
 		}
 		.middle table thead th:nth-child(11),
 		.middle table tbody td:nth-child(11) {
 			width: 80px;
 		}
 		.middle table thead th:nth-child(12),
+		.middle table tbody td:nth-child(12) {
+			width: 95px;
+		}
+		
+		
 		.middle table thead th:nth-child(13),
-		.middle table thead th:nth-child(14),
-		.middle table tbody td:nth-child(12),
 		.middle table tbody td:nth-child(13),
+		.middle table thead th:nth-child(14),
 		.middle table tbody td:nth-child(14) {
-			width: 100px;
+			width: 130px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -192,6 +197,11 @@
 		.bottom > div {
 			margin-top: 22px;
 		}
+		.bottomtr {
+			height: 50px;
+			color: #26a07d;
+    		background-color: #ccf4d7;
+    		
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -216,7 +226,7 @@
 			        console.log("배열에 담긴 값 : "+tdArr); */
 
 				//$("input[name=selectKey]").val($('#check'+$(this).children().eq(1).text()).val());			
-				document.listForm.selectKey.value=$('#check'+$(this).children().eq(1).text()).val();
+				document.listForm.mtIntegrateKey.value=$('#check'+$(this).children().eq(1).text()).val();
 				/* location.href = "/maintenance/detail/prodInfo.do"; */
 				document.listForm.action = "/maintenance/contract/detail/productInfo.do";
 	           	document.listForm.submit();  
@@ -371,9 +381,9 @@
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<input type="hidden" name="btnOption" />
 		<!-- <input type="hidden" id="selectKey" name="selectKey"/> -->
-		<input type="hidden" id="selectKey" name="selectKey"/>
+		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey"/>
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -421,18 +431,22 @@
 								<th scope="row">검수방법</th>
 								<th scope="row">백계약유무</th>
 								<th scope="row">영업담당자</th>
-								<th scope="row">관리담당자</th>
-								<th scope="row">지원담당자</th>
+								<th scope="row">매출금액</th>
+								<th scope="row">매입금액</th>
 							</tr>
 						</thead>
 						<tbody id="tbm">
+						<c:set var = "totalMtAmount" value="0" />
+						<c:set var = "totalMtOrderAmount" value="0" />
 						<c:forEach var="result" items="${resultList}" varStatus="status">
+							<c:set var = "totalMtAmount" value="${totalMtAmount + result.mtAmount}" />
+							<c:set var = "totalMtOrderAmount" value="${totalMtOrderAmount + result.mtOrderAmount}" />
 							<tr>
 								<td onclick="event.cancelBubble = true;">
 									<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${result.rowNum}"/>" value="<c:out value="${result.mtIntegrateKey}"/>" /><label for="check<c:out value="${result.rowNum}"/>" class="cursorP"/>
 								</td>
 								<td><c:out value="${result.rowNum}"/></td>
-								<td><c:out value="${result.mtCtKey}"/></td>
+								<td><c:out value="${result.mtIntegrateKey}"/></td>
 								<td align="left"><span title="${result.mtAcNm}"><c:out value="${result.mtAcNm}"/></span></td>
 								<td align="left" class="listtd"><span title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}"/></td>
@@ -442,18 +456,26 @@
 								<td><c:out value="${result.mtImCd}"/></td>
 								<td><c:out value="${result.mtSbCtYn}"/></td>
 								<td><c:out value="${result.saleEmpNm}"/></td>
-								<td><c:out value="${result.mngEmpNm}"/></td>
-								<td><c:out value="${result.supportEmpNm}"/></td>
+								<td><c:out value="${displayUtil.commaStr(result.mtAmount)}"/></td>
+								<td><c:out value="${displayUtil.commaStr(result.mtOrderAmount)}"/></td>
 							</tr>						
 						</c:forEach>
 							
 						</tbody>
 					</table>
+					
 				</div>
+				<table>
+						<tr class="bottomtr">
+							<td class="textalignR" style="width:1200px; padding-right: 25px;"></td>
+							<td style="width:230px;">매출합계 : <c:out value="${displayUtil.commaStr(totalMtAmount)}"/></td>
+							<td style="width:230px;">매입합계 : <c:out value="${displayUtil.commaStr(totalMtOrderAmount)}"/></td>
+						</tr>
+					</table>
 				<div class="bottom">
 					<div class="floatR">
 						<button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-						<button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+						<%-- <button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 						<button type="button" value="엑셀 다운로드" onclick="fn_excelBtn();"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>"/></button>
 					</div>
 				</div>

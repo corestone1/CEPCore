@@ -24,12 +24,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cep.forecast.service.ForecastService;
 import com.cep.forecast.vo.ForecastVO;
 import com.cep.maintenance.amount.service.MtAmountService;
+import com.cep.maintenance.amount.vo.MtPaymentPlanVO;
 import com.cep.maintenance.amount.vo.MtSalesPlanVO;
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtGuarantyBondVO;
 import com.cep.maintenance.contract.vo.MtSaleAmountListVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
+import com.cep.maintenance.contract.vo.MtSalesOrderVO;
+import com.cep.mngCommon.code.service.CodeService;
+import com.cep.mngCommon.code.vo.CodeSearchVO;
+import com.cep.mngCommon.code.vo.CodeVO;
 import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectSalesVO;
 import com.cep.project.vo.ProjectVO;
@@ -65,6 +70,9 @@ public class MtContractController {
 	
 	@Resource(name="forecastService")
 	private ForecastService forecastService;
+	
+	@Resource(name="codeService")
+	private CodeService codeService;
 	
 	//첨부파일 관련.
 	@Resource(name="fileMngService")
@@ -529,12 +537,21 @@ public class MtContractController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/write/productInfoView.do")
-	public String writeProductInfoView(HttpServletRequest request, MtContractProductVO productVO, ModelMap model) throws Exception {
-		List<?> mtProductList = null;		
+	public String writeProductInfoView(HttpServletRequest request, MtSalesOrderVO salesOrderVO, ModelMap model) throws Exception {
+//		List<?> mtProductList = null;		
 		MtDefaultVO searchVO = null;
 		int listCount = 0;
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		MtContractVO basicContractInfo = null; //유지보수 기본정보
+		List<EgovMap> salesOrderSelectBox = null;
+		EgovMap map = null;
+		List < ? > acDirectorList = null;
+		MtSalesOrderVO mtSalesOrderVO = null;
+		
+
+		CodeSearchVO codeSearchVO = null;
+		List<CodeVO> salesCodeList = null;
+		List<EgovMap> manufacturerList = null;
 		try {
 			//테스트
 //			productVO.setMtIntegrateKey("MA200024");
@@ -543,36 +560,107 @@ public class MtContractController {
 //				//테스트
 //				productVO.setMtIntegrateKey("MA200024");
 //			}
-			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
-			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
+			logger.debug("mtIntegrateKey===>"+salesOrderVO.getMtIntegrateKey());
+			logger.debug("getSelectKey===>"+salesOrderVO.getSelectKey());
+			logger.debug("parmMtSbCtYn===>"+salesOrderVO.getParmMtSbCtYn());
+			logger.debug("getBtnOption===>"+salesOrderVO.getBtnOption());
 			
-			if(!"".equals(CepStringUtil.getDefaultValue(productVO.getMtIntegrateKey(), ""))) {
+			if(!"".equals(CepStringUtil.getDefaultValue(salesOrderVO.getMtIntegrateKey(), ""))) {
 				//기본정보 조회
-				basicContractInfo = service.selectContractBasicDetail(productVO.getMtIntegrateKey());
+				basicContractInfo = service.selectContractBasicDetail(salesOrderVO.getMtIntegrateKey());
 				if(null != basicContractInfo) {
-					searchVO = new MtDefaultVO();
-					searchVO.setSelectIntegrateKey(productVO.getMtIntegrateKey());
-					//제품조회
+					/*
+					 * 매출, 수금, 백계약 왼쪽 탭을 클릭할 수 있는지 확인 하기 위해
+					 * 해당 저장된 개수를 가져온다.
+					 */
+					mtContractCountInfo = service.selectMtContractCount(salesOrderVO.getMtIntegrateKey());
+					
+					//매출등록 매출거래처 목록을 가져온다.
+					salesOrderSelectBox = service.selectSalesOrderSelectBoxList(salesOrderVO.getMtIntegrateKey());	
+					
+					if(null !=salesOrderSelectBox && salesOrderSelectBox.size()>0){
+						salesOrderVO.setMtSaveCnt(salesOrderSelectBox.size());
+						
+						if("newOrder".equals(CepStringUtil.getDefaultValue(salesOrderVO.getBtnOption(), ""))){
+							mtSalesOrderVO = salesOrderVO;
+						} else {
+							
+							searchVO = new MtDefaultVO();
+							searchVO.setSelectIntegrateKey(salesOrderVO.getMtIntegrateKey());
+							if(!"".equals(CepStringUtil.getDefaultValue(salesOrderVO.getSelectKey(), ""))){
+								
+								//매출 selectbox에서 선택을 한경우 해당 매출관리키를 이용하여 검색.
+								searchVO.setSelectMtSalesOrderKey(salesOrderVO.getSelectKey());
+//								mtSalesOrderVO =  service.selectSalesOrderDetail(salesOrderVO.getSelectKey());
+								mtSalesOrderVO =  service.selectSalesOrderDetail(searchVO);
+								
+							} else {
+								
+								//선택되지 않고 처음 로딩하는 경우 처음 매출거래처의 목록을 조회한다.
+								map = salesOrderSelectBox.get(0);
+								searchVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+								//logger.debug("getSelectMtSalesOrderKey1===============>"+searchVO.getSelectMtSalesOrderKey());
+								mtSalesOrderVO = service.selectSalesOrderDetail(searchVO);
+								salesOrderVO.setSelectKey((String)map.get("mtSalesOrderKey"));
+							}
+
+							if(null != mtSalesOrderVO){
+								mtSalesOrderVO.setSelectKey(salesOrderVO.getSelectKey());
+								mtSalesOrderVO.setMtSaveCnt(salesOrderVO.getMtSaveCnt());
+								if(null !=mtSalesOrderVO.getMtSalesOrderProductVoList() && mtSalesOrderVO.getMtSalesOrderProductVoList().size()>1){
+									listCount = mtSalesOrderVO.getMtSalesOrderProductVoList().size();
+								}
+								
+								acDirectorList =service.selectAcDirectorList(mtSalesOrderVO.getMtSalesAcKey());
+							}
+						}
+						
+						
+					} else {
+						mtSalesOrderVO = salesOrderVO;
+					}
+					
+					
+					/*//제품조회
 					mtProductList = service.selectMtContractProductList(searchVO);
 					if(null != mtProductList && mtProductList.size()>0) {
 						listCount = mtProductList.size();
-					}
-					mtContractCountInfo = service.selectMtContractCount(productVO.getMtIntegrateKey());
+					}*/
+					
+//					codeSearchVO = new CodeSearchVO();
+//					codeSearchVO.setCdUpCd("PDFG1000");
+//					lltCodeList = codeService.selectCodeList(codeSearchVO); //계산서 매출구분
+//					manufacturerList = service.selectManufacturerList();//계산서 제조사구분
+					
+//					salesCodeList = CepStringUtil.getSalesCodeList();
+//					manufacturerList = CepStringUtil.getManuFacturerList()
 				}
 				
 			}
 			
-			model.put("mtIntegrateKey", productVO.getMtIntegrateKey());		
+			model.put("mtIntegrateKey", salesOrderVO.getMtIntegrateKey());		
 //			model.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
 			
 			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
 			model.put("mtContFromDate", basicContractInfo.getMtStartDt()); //유지보수 계약 시작일자.
 			model.put("mtContEndDate", basicContractInfo.getMtEndDt()); //유지보수 계약 종료일자.
 			model.put("basicContractInfo", basicContractInfo); //유지보수 계약 종료일자.
-			model.put("mtProductList", mtProductList);
+//			model.put("mtProductList", mtProductList);
 			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("listCount", listCount);
+			
+			model.put("mtSalesOrderVO", mtSalesOrderVO);
+			model.put("salesOrderSelectBox", salesOrderSelectBox);
+			model.put("acDirectorList", acDirectorList);
+			
+			//2021-12-06
+			model.put("salesCodeList", CepStringUtil.getSalesCodeList());
+			model.put("manufacturerList", CepStringUtil.getManuFacturerList());
+			
+			
+//			model.put("salesCodeList", lltCodeList);
+//			model.put("manufacturerList", manufacturerList);
 //			model.put("mtIntegrateKey", "MA200024");	
 //			model.put("parmMtSbCtYn", "Y"); //백계약여부.
 			
@@ -590,7 +678,7 @@ public class MtContractController {
 	  * @Cdate       : 2020. 12. 3.
 	  * @Author      : aranghoo
 	  * @Modification: 
-	  * @Method Description :유지보수계약 제품정보를 등록, 수정.
+	  * @Method Description :유지보수 매출 제품정보를 등록, 수정.
 	  * @param request
 	  * @param mtContractVO
 	  * @param model
@@ -600,25 +688,26 @@ public class MtContractController {
 	@RequestMapping(value="/write/productInfo.do", method=RequestMethod.POST)
 	@ResponseBody
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> writeProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
+	public Map<String, Object> writeProductInfo(HttpServletRequest request, @RequestBody MtSalesOrderVO mtSalesOrderVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> sessionMap = null;
 //		MtSaleAmountListVO mtSalesAmountListVO = null;
+		String salesOrderKey = null;
 		try {			
-			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
-			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
+			logger.debug("mtIntegrateKey===>"+mtSalesOrderVO.getMtIntegrateKey());
+			logger.debug("parmMtSbCtYn===>"+mtSalesOrderVO.getParmMtSbCtYn());
 			
-			logger.debug("size=>"+productVO.getMtContractProductVoList().size());
-			logger.debug("rowNum=>"+productVO.getRowNum());
-			logger.debug("getUpdateYn=>"+productVO.getUpdateYn());
+			logger.debug("mtSalesOrderVO.getMtSalesOrderProductVoList().size()=>"+mtSalesOrderVO.getMtSalesOrderProductVoList().size());
+			logger.debug("rowNum=>"+mtSalesOrderVO.getRowNum());
+			logger.debug("getUpdateYn=>"+mtSalesOrderVO.getUpdateYn());
 //			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
 //				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
 //			}
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
-			productVO.setRegEmpKey(sessionMap.get("empKey"));
-			productVO.setModEmpKey(sessionMap.get("empKey"));
-			service.writeMtContractProductList(productVO);
+			mtSalesOrderVO.setRegEmpKey(sessionMap.get("empKey"));
+			mtSalesOrderVO.setModEmpKey(sessionMap.get("empKey"));
+			salesOrderKey = service.writeContractSalesOrder(mtSalesOrderVO);
 			
 			
 //			//매출정보를 자동생성한다.
@@ -627,9 +716,10 @@ public class MtContractController {
 //			mtSalesAmountListVO.setRegEmpKey(sessionMap.get("empKey"));
 //			mtSalesAmountListVO.setModEmpKey(sessionMap.get("empKey"));
 			
-			
-			returnMap.put("mtIntegrateKey", productVO.getMtIntegrateKey());
-			returnMap.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+			returnMap.put("salesOrderKey", salesOrderKey);
+			returnMap.put("selectKey", salesOrderKey);
+			returnMap.put("mtIntegrateKey", mtSalesOrderVO.getMtIntegrateKey());
+			returnMap.put("parmMtSbCtYn", mtSalesOrderVO.getParmMtSbCtYn()); //백계약여부.
 			returnMap.put("updateYn", "N");
 			returnMap.put("successYN", "Y");
 		} catch (Exception e) {
@@ -639,6 +729,46 @@ public class MtContractController {
 		
 		return returnMap;
 	}
+//	public Map<String, Object> writeProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
+//		Map<String, Object> returnMap = new HashMap<String, Object>();
+//		HashMap<String, String> sessionMap = null;
+////		MtSaleAmountListVO mtSalesAmountListVO = null;
+//		String salesOrderKey = null;
+//		try {			
+//			logger.debug("mtIntegrateKey===>"+productVO.getMtIntegrateKey());
+//			logger.debug("parmMtSbCtYn===>"+productVO.getParmMtSbCtYn());
+//			
+//			logger.debug("size=>"+productVO.getMtContractProductVoList().size());
+//			logger.debug("rowNum=>"+productVO.getRowNum());
+//			logger.debug("getUpdateYn=>"+productVO.getUpdateYn());
+////			for (int i = 0; i < productVO.getMtContractProductVoList().size(); i++) {
+////				logger.debug("getMtPmFkKey ===>"+productVO.getMtContractProductVoList().get(i).getMtPmFkKey());
+////			}
+//			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+//			
+//			productVO.setRegEmpKey(sessionMap.get("empKey"));
+//			productVO.setModEmpKey(sessionMap.get("empKey"));
+//			service.writeMtContractProductList(productVO);
+//			
+//			
+////			//매출정보를 자동생성한다.
+////			mtSalesAmountListVO = new MtSaleAmountListVO();
+////			mtSalesAmountListVO.setMtIntegrateKey(productVO.getMtIntegrateKey());
+////			mtSalesAmountListVO.setRegEmpKey(sessionMap.get("empKey"));
+////			mtSalesAmountListVO.setModEmpKey(sessionMap.get("empKey"));
+//			
+//			returnMap.put("salesOrderKey", salesOrderKey);
+//			returnMap.put("mtIntegrateKey", productVO.getMtIntegrateKey());
+//			returnMap.put("parmMtSbCtYn", productVO.getParmMtSbCtYn()); //백계약여부.
+//			returnMap.put("updateYn", "N");
+//			returnMap.put("successYN", "Y");
+//		} catch (Exception e) {
+//			logger.error("",e);
+//			returnMap.put("successYN", "N");
+//		}
+//		
+//		return returnMap;
+//	}
 	
 	/**
 	 * 
@@ -654,7 +784,8 @@ public class MtContractController {
 	 */
 	@RequestMapping(value="/detail/productInfo.do")
 //	public String selectMtDetailProductInfo(@ModelAttribute("searchVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
-	public String selectMtDetailProductInfo(MtContractVO mtContractVO, ModelMap model) throws Exception {
+//	public String selectMtDetailProductInfo(MtContractVO mtContractVO, ModelMap model) throws Exception {
+	public String selectMtDetailProductInfo(MtSalesOrderVO mtSalesOrderVO, ModelMap model) throws Exception {
 		List<?> empList = null;
 		List <?> acDirectorList = null; // 고객사 담당자 리스트.
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
@@ -672,43 +803,80 @@ public class MtContractController {
 		//보증증권 정보
 //		MtBiddingVO mtBiddingVO = null;
 		MtGuarantyBondVO mtGuarantyBondVO = null;
+		
+		//2021-11-30
+		List<MtSalesOrderVO> mtSalesOrderList = null;
+		MtSalesOrderVO tempSalesOrder = null;
+		String mtSalesAcKey = null;
+		String mtSalesAcNm = null;
+		int salesCnt = 0;
 		try {
-			logger.debug("mtContractVO.getSelectKey()====>"+mtContractVO.getSelectKey());
-			if("".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), "")) && 
-					!"".equals(CepStringUtil.getDefaultValue(mtContractVO.getSelectKey(), ""))) {
-				mtContractVO.setMtIntegrateKey(mtContractVO.getSelectKey());
+			logger.debug("mtSalesOrderVO.getSelectKey()====>"+mtSalesOrderVO.getSelectKey());
+			logger.debug("mtSalesOrderVO.getMtIntegrateKey()====>"+mtSalesOrderVO.getMtIntegrateKey());
+//			if("".equals(CepStringUtil.getDefaultValue(mtSalesOrderVO.getMtIntegrateKey(), "")) && 
+//					!"".equals(CepStringUtil.getDefaultValue(mtSalesOrderVO.getSelectKey(), ""))) {
+//				mtSalesOrderVO.setMtIntegrateKey(mtSalesOrderVO.getSelectKey());
+//			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesOrderVO.getMtIntegrateKey(), ""))) {
+				//기본정보 조회
+				//basicContractInfo = service.selectContractBasicDetail(mtContractVO.getSelectKey());
+				basicContractInfo = service.selectContractBasicDetail(mtSalesOrderVO.getMtIntegrateKey());
+				if(null != basicContractInfo) {
+					
+					mtSalesOrderList = service.selectSalesOrderList(mtSalesOrderVO.getMtIntegrateKey());
+					
+					if(null != mtSalesOrderList && mtSalesOrderList.size()>0) {
+						searchVO = new MtDefaultVO();
+						searchVO.setSelectIntegrateKey(mtSalesOrderVO.getMtIntegrateKey());
+						
+						if("".equals(CepStringUtil.getDefaultValue(mtSalesOrderVO.getSelectKey(), ""))) {
+							//초기 매출계약 품목조회.
+							searchVO.setSelectMtSalesOrderKey(mtSalesOrderList.get(0).getMtSalesOrderKey());
+							mtSalesAcKey = mtSalesOrderList.get(0).getMtSalesAcKey();
+							mtSalesAcNm = mtSalesOrderList.get(0).getMtSalesAcNm();
+						}else {
+							searchVO.setSelectMtSalesOrderKey(mtSalesOrderVO.getSelectKey());
+							salesCnt = mtSalesOrderList.size();
+							for (int i = 0; i < salesCnt; i++) {
+								tempSalesOrder = mtSalesOrderList.get(i);
+								if(mtSalesOrderVO.getSelectKey().equals(tempSalesOrder.getSelectKey())) {
+									mtSalesAcKey = tempSalesOrder.getMtSalesAcKey();
+									mtSalesAcNm = tempSalesOrder.getMtSalesAcNm();
+									break;
+								}
+							}
+						}
+						
+						//제품정보 조회 
+						productList = service.selectMtContractProductList(searchVO);
+					}
+					
+					
+					
+					//직원정보 조회
+					empList = service.selectEmployeeList();
+					// 거래처 직원정보 조회
+					acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+					
+					mtContractCountInfo = service.selectMtContractCount(mtSalesOrderVO.getMtIntegrateKey());
+					
+					mtPmTotalAmount = service.selectMtPmTotalAmount(mtSalesOrderVO.getMtIntegrateKey());
+					
+					//보증증권
+					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesOrderVO.getMtIntegrateKey());
+					
+//					logger.debug("mtBiddingVO.getGbIssueYn()========>"+mtGuarantyBondVO.getGbIssueYn());
+					//기본정보 첨부파일
+					fileVO.setFileCtKey(mtSalesOrderVO.getMtIntegrateKey());
+					fileVO.setFileWorkClass("mtContract");
+					
+					fileResult = fileMngService.selectFileList(fileVO);
+					
+					
+				}
 			}
 			
-			//기본정보 조회
-			//basicContractInfo = service.selectContractBasicDetail(mtContractVO.getSelectKey());
-			basicContractInfo = service.selectContractBasicDetail(mtContractVO.getMtIntegrateKey());
-			if(null != basicContractInfo) {
-				searchVO = new MtDefaultVO();
-				searchVO.setSelectIntegrateKey(mtContractVO.getMtIntegrateKey());
-				//제품정보 조회
-				productList = service.selectMtContractProductList(searchVO);
-				
-				//직원정보 조회
-				empList = service.selectEmployeeList();
-				// 거래처 직원정보 조회
-				acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
-				
-				mtContractCountInfo = service.selectMtContractCount(mtContractVO.getMtIntegrateKey());
-				
-				mtPmTotalAmount = service.selectMtPmTotalAmount(mtContractVO.getMtIntegrateKey());
-				
-				//보증증권
-				mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtContractVO.getMtIntegrateKey());
-				
-//				logger.debug("mtBiddingVO.getGbIssueYn()========>"+mtGuarantyBondVO.getGbIssueYn());
-				//첨부파일
-				fileVO.setFileCtKey(mtContractVO.getMtIntegrateKey());
-				fileVO.setFileWorkClass("mtContract");
-				
-				fileResult = fileMngService.selectFileList(fileVO);
-				
-				
-			}
 			
 
 			
@@ -718,6 +886,7 @@ public class MtContractController {
 			model.put("empList", empList);
 			
 			model.put("mtContractCountInfo", mtContractCountInfo);
+			model.put("mtSalesOrderList", mtSalesOrderList);
 			model.put("productList", productList);
 			model.put("mtPmTotalAmount", mtPmTotalAmount);
 			
@@ -729,6 +898,11 @@ public class MtContractController {
 			//보증증권
 			model.put("mtGuarantyBondInfo", mtGuarantyBondVO);
 			
+			model.put("selectKey", searchVO.getSelectMtSalesOrderKey());	
+			model.put("mtSalesAcNm", mtSalesAcNm);	
+			model.put("mtSalesAcKey", mtSalesAcKey);
+			
+			
 		} catch (Exception e) {
 			logger.error("selectMtDetailProductInfo error", e);
 		}
@@ -737,6 +911,71 @@ public class MtContractController {
 		return "maintenance/contract/detail/productInfo";
 	}
 	
+
+	
+	@RequestMapping(value="/detail/selectSalesOrderProductList.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object>  selectSalesOrderProductList(@RequestBody MtDefaultVO searchVO, ModelMap model) throws Exception {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<?> productList = null;
+//		MtDefaultVO searchVO = null;
+	     try {
+	    	 
+	    	 logger.debug("mtIntegrateKey=======>"+searchVO.getSelectIntegrateKey());
+	    	 logger.debug("mtSalesOrderKey=======>"+searchVO.getSelectMtSalesOrderKey());
+	    	 if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSelectIntegrateKey(), "")) 
+	    			 && !"".equals(CepStringUtil.getDefaultValue(searchVO.getSelectMtSalesOrderKey(), ""))) {
+	    		 returnMap = new HashMap<String, Object>();
+//	    		 searchVO = new MtDefaultVO();
+//	    		 searchVO.setSelectIntegrateKey(mtIntegrateKey);
+//	    		 searchVO.setSelectMtSalesOrderKey(mtSalesOrderKey);
+	    		//제품정보 조회
+				productList = service.selectMtContractProductList(searchVO);
+		         
+		         logger.debug("productList.size=====>"+productList.size());
+		//         modelAndView.setViewName("jsonView");
+		         returnMap.put("productList", productList);
+		         returnMap.put("successYN", "Y");
+	    	 } else {
+	    		 returnMap.put("successYN", "N");
+	    	 }
+	    	
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("selectSalesOrderProductList error {}", e);
+		}
+	    
+	     return returnMap; 
+	}
+	
+	@RequestMapping(value="/delete/salesOrder.do", method=RequestMethod.POST)
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> deleteSalesOrder(HttpServletRequest request, @RequestBody MtSalesOrderVO mtSalesOrderVO) throws Exception {
+
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		try {		
+			
+//			model.put("toDay", CepDateUtil.getToday("yyyy-MM-dd"));
+//			model.put("toDay", CepDateUtil.getToday("yyyyMMdd"));
+			logger.debug("mtSalesOrderVO.getMtIntegrateKey()===>"+mtSalesOrderVO.getMtIntegrateKey());
+			logger.debug("mtSalesOrderVO.getMtSalesOrderKey()===>"+mtSalesOrderVO.getMtSalesOrderKey());
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			service.deleteSalesOrder(sessionMap.get("empKey"), mtSalesOrderVO.getMtSalesOrderKey(), mtSalesOrderVO.getMtIntegrateKey());
+			
+			returnMap.put("mtIntegrateKey", mtSalesOrderVO.getMtIntegrateKey());
+			returnMap.put("successYN", "Y");
+			
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("error", e);
+		}
+		
+		return returnMap;
+	}
 	
 	@RequestMapping(value="/detail/deleteMtProduct.do", method=RequestMethod.POST)
 	@ResponseBody 
@@ -755,12 +994,12 @@ public class MtContractController {
 			
 			//logger.debug("productVO.getMtIntegrateKey()=====>"+productVO.getMtIntegrateKey()+"/"+productVO.getMtPmKey());
 			
-			if(!"".equals(CepStringUtil.getDefaultValue(productVO.getMtPmKey(), ""))) {
+			if(!"".equals(CepStringUtil.getDefaultValue(productVO.getMtSalesPmKey(), ""))) {
 				
 				deleteKeyList = new String[1];
-				deleteKeyList[0] = String.valueOf(productVO.getMtPmKey());
+				deleteKeyList[0] = String.valueOf(productVO.getMtSalesPmKey());
 				// 유지보수계약 관리키가 존재하므로 수정
-				service.deleteMtContractProductList(sessionMap.get("empKey"), deleteKeyList);
+				service.deleteMtContractProductList(sessionMap.get("empKey"), deleteKeyList, productVO.getMtSalesOrderKey());
 				
 				//logger.debug("deleteKeyList.length=====>"+deleteKeyList.length+" / "+deleteKeyList[0]);
 				returnMap.put("successYN", "Y");
@@ -791,7 +1030,7 @@ public class MtContractController {
 	  * @return
 	  * @throws Exception
 	 */
-	@RequestMapping(value="/write/updateProductInfo.do", method=RequestMethod.POST)
+/*	@RequestMapping(value="/write/updateProductInfo.do", method=RequestMethod.POST)
 	@ResponseBody
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> updateProductInfo(HttpServletRequest request, @RequestBody MtContractProductVO productVO) throws Exception {
@@ -819,7 +1058,7 @@ public class MtContractController {
 		}
 		
 		return returnMap;
-	}
+	}*/
 	
 	//==========================================================  매출 =======================================================
 	
@@ -835,6 +1074,7 @@ public class MtContractController {
 	  * @return
 	  * @throws Exception
 	 */
+	
 	@RequestMapping(value="/detail/salesInfo.do")
 	public String salesInfoDetail(MtSalesAmountVO mtSalesAmountVO, ModelMap model) throws Exception {
 
@@ -851,12 +1091,28 @@ public class MtContractController {
 		
 		//보증증권 정보
 		MtGuarantyBondVO mtGuarantyBondVO = null;
+		
+		//2021-12-01
+		List<EgovMap> salesOrderSelectBox = null;
+//		EgovMap map = null;
+		MtDefaultVO searchVO = new MtDefaultVO();
 		try {
+			logger.debug("mtSalesAmountVO.getMtIntegrateKey()===>"+mtSalesAmountVO.getMtIntegrateKey());
+			logger.debug("mtSalesAmountVO.getMtSalesOrderKey()===>"+mtSalesAmountVO.getMtSalesOrderKey());
 			//기본정보 조회
 			basicContractInfo = service.selectContractBasicDetail(mtSalesAmountVO.getMtIntegrateKey());
+			
+			searchVO.setSelectIntegrateKey(mtSalesAmountVO.getMtIntegrateKey());
 			if(null != basicContractInfo) {
+				//매출등록 매출거래처 목록을 가져온다.
+				salesOrderSelectBox = service.selectSalesOrderSelectBoxList(mtSalesAmountVO.getMtIntegrateKey());	
+				
+				if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtSalesOrderKey(), ""))){
+					searchVO.setSelectMtSalesOrderKey(mtSalesAmountVO.getMtSalesOrderKey());
+				}
+				
 				// 조회
-				mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesAmountVO.getMtIntegrateKey());
+				mtSalesAmountList = service.selectMtContractSalesAmountList(searchVO);
 				//직원정보 조회
 				empList = service.selectEmployeeList();
 				// 거래처 직원정보 조회
@@ -865,7 +1121,7 @@ public class MtContractController {
 				mtContractCountInfo = service.selectMtContractCount(mtSalesAmountVO.getMtIntegrateKey());
 				
 				//매출 총 금액
-				mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesAmountVO.getMtIntegrateKey());
+				mtSalesTotalAmount = service.selectMtSalesTotalAmount(searchVO);
 				
 				//보증증권
 				mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesAmountVO.getMtIntegrateKey());
@@ -887,6 +1143,7 @@ public class MtContractController {
 			
 			model.put("mtSalesAmountList", mtSalesAmountList);		
 			model.put("mtSalesTotalAmount", mtSalesTotalAmount);	
+			model.put("salesOrderSelectBox", salesOrderSelectBox);
 			
 			model.put("displayUtil", new CepDisplayUtil());
 			
@@ -902,6 +1159,61 @@ public class MtContractController {
 		}
 		
 		return "maintenance/contract/detail/salesInfo";
+	}
+	
+	/**
+	 * 매출금액 조회화면에서 매출처 selectbox를 선택할때 호출.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtSalesAmountVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 12. 2. 오전 10:35:19
+	 * @author aranghoo
+	 */
+	@ResponseBody
+	@RequestMapping(value="/detail/salesInfoDetailWithSalesKey.do")
+	public Map<String, Object> salesInfoDetailWithSalesKey(@RequestBody MtSalesAmountVO mtSalesAmountVO) throws Exception {
+
+		List<?> mtSalesAmountList = null;
+		int mtSalesTotalAmount = 0;
+		
+		MtDefaultVO searchVO = new MtDefaultVO();
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try {
+			logger.debug("mtSalesAmountVO.getMtIntegrateKey()===>"+mtSalesAmountVO.getMtIntegrateKey());
+			logger.debug("mtSalesAmountVO.getMtSalesOrderKey()===>"+mtSalesAmountVO.getMtSalesOrderKey());
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), "")) ) {
+				
+				searchVO.setSelectIntegrateKey(mtSalesAmountVO.getMtIntegrateKey());
+				
+				if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtSalesOrderKey(), ""))){
+					searchVO.setSelectMtSalesOrderKey(mtSalesAmountVO.getMtSalesOrderKey());
+				}
+				
+				// 조회
+				mtSalesAmountList = service.selectMtContractSalesAmountList(searchVO);
+				
+				 if(null != mtSalesAmountList && mtSalesAmountList.size()>0) {
+					//매출 총 금액
+						mtSalesTotalAmount = service.selectMtSalesTotalAmount(searchVO);
+				 }
+				
+				 returnMap.put("mtSalesAmountList", mtSalesAmountList);	
+				 returnMap.put("mtSalesTotalAmount", mtSalesTotalAmount);	
+				 returnMap.put("successYN", "Y");
+			} else {
+				returnMap.put("successYN", "N");
+			}					
+			
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("error", e);
+		}
+		
+		return returnMap;
 	}
 	
 	/**
@@ -970,31 +1282,52 @@ public class MtContractController {
 		 int mtSalesTotalAmount = 0;
 		 Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 
-		
+		//2021-11-30
+		 List<EgovMap> salesOrderSelectBox = null;
+		 EgovMap map = null;
+//		 String mtSalesOrderKey = null;
 		try {		
-			
-//			if("".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), ""))){
-//				//테스트
-//				mtSalesAmountVO.setMtIntegrateKey("MA200024");
-//				mtSalesAmountVO.setParmMtSbCtYn("Y");
-//			}
-			
-			
-			logger.debug("mtIntegrateKey===>"+mtSalesAmountVO.getMtIntegrateKey());
+						
+			logger.debug("getMtIntegrateKey===>"+mtSalesAmountVO.getMtIntegrateKey());
+			logger.debug("getMtSalesOrderKey===>"+mtSalesAmountVO.getMtSalesOrderKey());
+			logger.debug("getSelectKey===>"+mtSalesAmountVO.getSelectKey());
 			logger.debug("parmMtSbCtYn===>"+mtSalesAmountVO.getParmMtSbCtYn());
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), ""))) {
-				contractAmountInfo = service.selectContractAmountInfo(mtSalesAmountVO.getMtIntegrateKey());
+				mtSalesAmountVO.setSelectIntegrateKey(mtSalesAmountVO.getMtIntegrateKey());
+				//매출등록 매출거래처 목록을 가져온다.
+				salesOrderSelectBox = service.selectSalesOrderSelectBoxList(mtSalesAmountVO.getMtIntegrateKey());	
 				
-				mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesAmountVO.getMtIntegrateKey());
-				if(null !=mtSalesAmountList && mtSalesAmountList.size()>0) {
-					listCount = mtSalesAmountList.size();					
-					//매출 총 금액
-					mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesAmountVO.getMtIntegrateKey());
-//					logger.debug("mtSalesTotalAmount=====>"+mtSalesTotalAmount);		
+				
+				if(null !=salesOrderSelectBox && salesOrderSelectBox.size()>0){
+					if("".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtSalesOrderKey(), ""))){
+						map = salesOrderSelectBox.get(0);
+						mtSalesAmountVO.setMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+						mtSalesAmountVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+					}else {
+						mtSalesAmountVO.setSelectMtSalesOrderKey(mtSalesAmountVO.getMtSalesOrderKey());
+					}
 					
+//					contractAmountInfo = service.selectContractAmountInfo(mtSalesAmountVO.getMtIntegrateKey());
+					//매출계약 품목금액
+					contractAmountInfo = service.selectContractAmountInfo(mtSalesAmountVO);
+					
+//					mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesAmountVO.getMtIntegrateKey());
+					
+					mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesAmountVO);
+					
+					if(null !=mtSalesAmountList && mtSalesAmountList.size()>0) {
+						listCount = mtSalesAmountList.size();					
+						//매출 총 금액
+						mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesAmountVO);
+//						logger.debug("mtSalesTotalAmount=====>"+mtSalesTotalAmount);		
+						
+					}
+					mtContractCountInfo = service.selectMtContractCount(mtSalesAmountVO.getMtIntegrateKey());
 				}
-				mtContractCountInfo = service.selectMtContractCount(mtSalesAmountVO.getMtIntegrateKey());
+				
+				
+				
 			}
 						
 			
@@ -1008,7 +1341,8 @@ public class MtContractController {
 			model.put("mtSalesAmountList",mtSalesAmountList);
 			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("mtSalesTotalAmount",mtSalesTotalAmount);
-			
+			model.put("salesOrderSelectBox", salesOrderSelectBox);
+			model.put("mtSalesOrderKey", mtSalesAmountVO.getMtSalesOrderKey());
 			
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("listCount", listCount);
@@ -1046,6 +1380,8 @@ public class MtContractController {
 //		String mtIntegrateKey = null;
 		try {
 			logger.debug("deleteKeys================>"+mtSalesAmountVO.getDeleteListKeys());
+			logger.debug("getMtSalesOrderKey================>"+mtSalesAmountVO.getMtSalesOrderKey());
+			logger.debug("parmMtSbCtYn================>"+mtSalesAmountVO.getParmMtSbCtYn());
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mtSalesAmountVO.setRegEmpKey(sessionMap.get("empKey"));
@@ -1057,6 +1393,7 @@ public class MtContractController {
 			returnMap = new HashMap<>();
 			returnMap.put("parmMtSbCtYn", mtSalesAmountVO.getParmMtSbCtYn()); //백계약여부.
 			returnMap.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());
+			returnMap.put("mtSalesOrderKey", mtSalesAmountVO.getMtSalesOrderKey());
 //			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
 //			returnMap.put("updateYn", "N");
 			returnMap.put("successYN", "Y");
@@ -1093,28 +1430,71 @@ public class MtContractController {
 		
 		//보증증권 정보
 		MtGuarantyBondVO mtGuarantyBondVO = null;
+		
+		//2021-12-02
+		List<EgovMap> salesOrderSelectBox = null;
+		EgovMap map = null;
+		MtDefaultVO searchVO = null;
+		String billIssueRule = null;
 		try {
-			//기본정보 조회
-			basicContractInfo = service.selectContractBasicDetail(mtSalesPlanVO.getMtIntegrateKey());
-			if(null != basicContractInfo) {
-				//매출수금계획(MT_SALES_DETAIL_TB)기준으로 수금계획을 데이타를 조회한다.
-				salesPlanList = amountService.selectMtSalesPlanList(mtSalesPlanVO);
-				//직원정보 조회
-				empList = service.selectEmployeeList();
-				// 거래처 직원정보 조회
-				acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+			
+			logger.debug("getMtIntegrateKey===>"+mtSalesPlanVO.getMtIntegrateKey());
+			logger.debug("getMtSalesOrderKey===>"+mtSalesPlanVO.getMtSalesOrderKey());
+			logger.debug("getSelectKey===>"+mtSalesPlanVO.getSelectKey());
+			logger.debug("parmMtSbCtYn===>"+mtSalesPlanVO.getParmMtSbCtYn());
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesPlanVO.getMtIntegrateKey(), ""))) {
 				
-				mtContractCountInfo = service.selectMtContractCount(mtSalesPlanVO.getMtIntegrateKey());
-								
-				//보증증권
-				mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesPlanVO.getMtIntegrateKey());
+				//매출등록 매출거래처 목록을 가져온다.
+				salesOrderSelectBox = service.selectSalesOrderSelectBoxList(mtSalesPlanVO.getMtIntegrateKey());	
 				
-				//첨부파일
-				fileVO.setFileCtKey(mtSalesPlanVO.getMtIntegrateKey());
-				fileVO.setFileWorkClass("mtContract");
 				
-				fileResult = fileMngService.selectFileList(fileVO);
+				//기본정보 조회
+				basicContractInfo = service.selectContractBasicDetail(mtSalesPlanVO.getMtIntegrateKey());
+				if(null != basicContractInfo) {
+					
+					if(null !=salesOrderSelectBox && salesOrderSelectBox.size()>0){
+						searchVO = new MtDefaultVO();
+						searchVO.setSelectIntegrateKey(mtSalesPlanVO.getMtIntegrateKey());
+						
+						if("".equals(CepStringUtil.getDefaultValue(mtSalesPlanVO.getMtSalesOrderKey(), ""))){
+							map = salesOrderSelectBox.get(0);
+//							mtSalesPlanVO.setMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+							searchVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+							mtSalesPlanVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+							billIssueRule= (String)map.get("billIssueRule");
+						} else {
+							searchVO.setSelectMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
+							mtSalesPlanVO.setSelectMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
+							
+							for (int i = 0; i < salesOrderSelectBox.size(); i++) {
+								map = salesOrderSelectBox.get(i);
+								if(mtSalesPlanVO.getMtSalesOrderKey().equals((String)map.get("mtSalesOrderKey"))) {
+									billIssueRule= (String)map.get("billIssueRule");
+								}
+							}
+						}
+					}
+					//매출수금계획(MT_SALES_DETAIL_TB)기준으로 수금계획을 데이타를 조회한다.
+					salesPlanList = amountService.selectMtSalesPlanList(mtSalesPlanVO);
+					//직원정보 조회
+					empList = service.selectEmployeeList();
+					// 거래처 직원정보 조회
+					acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+					
+					mtContractCountInfo = service.selectMtContractCount(mtSalesPlanVO.getMtIntegrateKey());
+									
+					//보증증권
+					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesPlanVO.getMtIntegrateKey());
+					
+					//첨부파일
+					fileVO.setFileCtKey(mtSalesPlanVO.getMtIntegrateKey());
+					fileVO.setFileWorkClass("mtContract");
+					
+					fileResult = fileMngService.selectFileList(fileVO);
+				}
 			}
+			
 			
 
 			
@@ -1134,6 +1514,9 @@ public class MtContractController {
 			//보증증권
 			model.put("mtGuarantyBondInfo", mtGuarantyBondVO);
 			
+			model.put("salesOrderSelectBox",salesOrderSelectBox);
+			//계산서 발행구분정보 코드
+			model.put("billIssueRule", billIssueRule);
 		} catch (Exception e) {
 			
 			logger.error("error", e);
@@ -1142,7 +1525,71 @@ public class MtContractController {
 		return "maintenance/contract/detail/salesPlanInfo";
 	}
 	
-	private List<MtSalesPlanVO> makeSalesPlanList(List<?> mtSalesAmountList, String mtIntegrateKey, int mtSalesTotalAmount) throws Exception {
+	@ResponseBody
+	@RequestMapping(value="/detail/salesPlanInfoWithSalesOderKey.do", method=RequestMethod.POST)
+	public Map<String, Object>  salesPlanInfoWithSalesOderKey( @RequestBody MtSalesPlanVO mtSalesPlanVO) throws Exception {
+
+		List<MtSalesPlanVO> salesPlanList = null; //매출수금예상(MT_SALES_DETAIL_TB) 테이블에서 조회한 데이타.
+//		int mtPurchaseTotalAmount = 0;
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		//2021-12-02
+		List<EgovMap> salesOrderSelectBox = null;
+		EgovMap map = null;
+		MtDefaultVO searchVO = null;
+		String billIssueRule = null;
+		try {
+	    	 
+	    	 logger.debug("getMtIntegrateKey===>"+mtSalesPlanVO.getMtIntegrateKey());
+	    	 logger.debug("getMtSalesOrderKey===>"+mtSalesPlanVO.getMtSalesOrderKey());
+	    	 
+	    	 if(!"".equals(CepStringUtil.getDefaultValue(mtSalesPlanVO.getMtIntegrateKey(), "")) ) {   		
+	    	     
+	    		 searchVO = new MtDefaultVO();
+	    		 searchVO.setSelectIntegrateKey(mtSalesPlanVO.getMtIntegrateKey());
+	    		 //매출등록 매출거래처 목록을 가져온다.
+	    		 salesOrderSelectBox = service.selectSalesOrderSelectBoxList(mtSalesPlanVO.getMtIntegrateKey());
+	    		 
+	    		 //logger.debug("salesOrderSelectBox.size()===>"+salesOrderSelectBox.size());
+	    		 searchVO.setSelectMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
+	    		 mtSalesPlanVO.setSelectMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
+				
+	    		 for (int i = 0; i < salesOrderSelectBox.size(); i++) {
+	    			 map = salesOrderSelectBox.get(i);
+	    			 if(mtSalesPlanVO.getMtSalesOrderKey().equals((String)map.get("mtSalesOrderKey"))) {
+	    				 billIssueRule= (String)map.get("billIssueRule");
+	    				 
+	    				 //logger.debug("billIssueRule===>"+billIssueRule);
+	    			 }
+	    		 }
+	    		 logger.debug("getSalesCtFkKey===>"+mtSalesPlanVO.getSalesCtFkKey());
+		    	 logger.debug("getSelectMtSalesOrderKey===>"+mtSalesPlanVO.getSelectMtSalesOrderKey());
+		    	 
+	    		 //매출수금계획(MT_SALES_DETAIL_TB)기준으로 수금계획을 데이타를 조회한다.
+	    		 salesPlanList = amountService.selectMtSalesPlanList(mtSalesPlanVO);    		 
+
+		         //logger.debug("salesPlanList.size=====>"+salesPlanList.size());
+		//         modelAndView.setViewName("jsonView");
+		         returnMap.put("salesPlanList", salesPlanList);
+		         returnMap.put("billIssueRule", billIssueRule);
+//		         returnMap.put("mtPurchaseTotalAmount", mtPurchaseTotalAmount);
+		         returnMap.put("successYN", "Y");
+	    	 } else {
+	    		 returnMap.put("successYN", "N");
+	    	 }
+	    	
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("selectPurchaseAmountListWithOderKey error", e);
+		}
+	    
+	     return returnMap; 
+	}
+	
+	/*
+	 * 매출정보(MT_SALES_AMOUNT_TB)를 기준으로 계산서 계획정보를 임시로 생성한다.
+	 */
+	private List<MtSalesPlanVO> makeSalesPlanList(List<?> mtSalesAmountList, String mtIntegrateKey, String mtSalesOrderKey, int mtSalesTotalAmount) throws Exception {
 		int listCount = 0;
 		List<MtSalesPlanVO> salesAmountList = new ArrayList<>();
 		MtSalesPlanVO salesVO = null;
@@ -1162,12 +1609,13 @@ public class MtContractController {
 //				logger.debug("mtSalesJanAmount=====>"+(Long)salesMap.get("mtSalesFebAmount")+"/"+((Long)salesMap.get("mtSalesFebAmount")>0));
 				if((Long)salesMap.get("mtSalesJanAmount")>0) { //1월
 					salesVO = new MtSalesPlanVO();
-					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtIntegrateKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"01");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesJanAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesJanAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0101");
+//					salesVO.setSalesBillFcDt(saleYear+"0101");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1176,11 +1624,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesFebAmount")>0) { //2월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"02");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesFebAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesFebAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0201");
+//					salesVO.setSalesBillFcDt(saleYear+"0201");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1189,11 +1638,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesMarAmount")>0) { //3월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"03");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesMarAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesMarAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0301");
+//					salesVO.setSalesBillFcDt(saleYear+"0301");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1202,11 +1652,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesAprAmount")>0) { //4월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"04");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesAprAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesAprAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0401");
+//					salesVO.setSalesBillFcDt(saleYear+"0401");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1215,11 +1666,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesMayAmount")>0) { //5월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"05");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesMayAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesMayAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0501");
+//					salesVO.setSalesBillFcDt(saleYear+"0501");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1228,11 +1680,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesJunAmount")>0) { //6월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"06");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesJunAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesJunAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0601");
+//					salesVO.setSalesBillFcDt(saleYear+"0601");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1241,11 +1694,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesJulAmount")>0) { //7월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"07");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesJulAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesJulAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0701");
+//					salesVO.setSalesBillFcDt(saleYear+"0701");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1254,11 +1708,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesAugAmount")>0) { //8월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"08");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesAugAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesAugAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0801");
+//					salesVO.setSalesBillFcDt(saleYear+"0801");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1267,11 +1722,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesSepAmount")>0) { //9월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"09");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesSepAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesSepAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"0901");
+//					salesVO.setSalesBillFcDt(saleYear+"0901");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1280,11 +1736,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesOctAmount")>0) { //10월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"10");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesOctAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesOctAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"1001");
+//					salesVO.setSalesBillFcDt(saleYear+"1001");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1293,11 +1750,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesNovAmount")>0) { //11월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"11");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesNovAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesNovAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"1101");
+//					salesVO.setSalesBillFcDt(saleYear+"1101");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1306,11 +1764,12 @@ public class MtContractController {
 				if((Long)salesMap.get("mtSalesDecAmount")>0) { //12월
 					salesVO = new MtSalesPlanVO();
 					salesVO.setSalesCtFkKey(mtIntegrateKey);
+					salesVO.setMtSalesOrderKey(mtSalesOrderKey);
 					salesVO.setSalesYearMonth(saleYear+"12");
 					salesVO.setSalesTurn(salesTurn);
 					salesVO.setSalesCollectRate((int)(( (double)(((Long)salesMap.get("mtSalesDecAmount")).intValue())/(double)mtSalesTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
 					salesVO.setSalesTurnAmount(((Long)salesMap.get("mtSalesDecAmount")).intValue());
-					salesVO.setSalesBillFcDt(saleYear+"1201");
+//					salesVO.setSalesBillFcDt(saleYear+"1201");
 					salesAmountList.add(salesVO);
 //					salesAmountMap.put(salesVO.getSalesYearMonth(), salesVO);
 					salesTurn++;
@@ -1328,7 +1787,13 @@ public class MtContractController {
 	
 	
 	/**
-	 * 수금계획 등록 조회화면.
+	 * 수금계획(매출계산서계획) 등록 조회화면.
+	 * 1. MT_SALES_AMOUNT_TB테이블 기준으로 매출계산서 계획정보를 임시로 생성한다.
+	 * 2. 계산서 계획정보(MT_SALES_DETAIL_TB)를 조회한다.
+	 * 3. 1번 항목과 2번항목을 조합하여 계산서 계획정보를 만든다.
+	 *    3.1 2번항목(계획정보)가 있는 경우 계획정보를 보여주고 금액이 달라진 경우 계산서 일자를 초기화 한다..
+	 *    3.2 2번항목이 없는 경우(처음으로 저장하는 경우) 1번 항목을 매출계산서 계획정보로 보여준다.
+	 *    
 	 * <pre>
 	 * </pre>
 	 * 
@@ -1342,7 +1807,7 @@ public class MtContractController {
 	 */
 	@RequestMapping(value="/write/writeSalesPlanView.do")
 	public String writeSalesPlanView(HttpServletRequest request, MtSalesPlanVO mtSalesPlanVO, ModelMap model) throws Exception {
-		 Map<String, Object> contractAmountInfo = null;
+//		 Map<String, Object> contractAmountInfo = null;
 		 List<?> mtSalesAmountList = null;
 		 int mtSalesTotalAmount = 0;
 		 Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
@@ -1362,7 +1827,18 @@ public class MtContractController {
 		 MtSalesPlanVO salesPlanVO = null;
 		 MtSalesPlanVO salesAmountVO = null;
 		 MtSalesPlanVO salesDetailVO = null;
+//		 MtContractVO basicContractInfo = null;
+		 //2021-12-01
+		 List<EgovMap> salesOrderSelectBox = null;
+		 EgovMap map = null;
+		 
+		 MtDefaultVO searchVO = null;
+		 String billIssueRule = null;
 		try {		
+			logger.debug("getMtIntegrateKey===>"+mtSalesPlanVO.getMtIntegrateKey());
+			logger.debug("getMtSalesOrderKey===>"+mtSalesPlanVO.getMtSalesOrderKey());
+			logger.debug("getSelectKey===>"+mtSalesPlanVO.getSelectKey());
+			logger.debug("parmMtSbCtYn===>"+mtSalesPlanVO.getParmMtSbCtYn());
 			
 //			if("".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), ""))){
 //				//테스트
@@ -1371,68 +1847,119 @@ public class MtContractController {
 //			}
 			
 			
-			logger.debug("mtIntegrateKey===>"+mtSalesPlanVO.getMtIntegrateKey());
-			logger.debug("parmMtSbCtYn===>"+mtSalesPlanVO.getParmMtSbCtYn());
+//			logger.debug("mtIntegrateKey===>"+mtSalesPlanVO.getMtIntegrateKey());
+//			logger.debug("parmMtSbCtYn===>"+mtSalesPlanVO.getParmMtSbCtYn());
+			//기본정보 조회
+//			basicContractInfo = service.selectContractBasicDetail(mtSalesPlanVO.getMtIntegrateKey());
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesPlanVO.getMtIntegrateKey(), ""))) {
-				contractAmountInfo = service.selectContractAmountInfo(mtSalesPlanVO.getMtIntegrateKey());
 				
-				mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesPlanVO.getMtIntegrateKey());
-				if(null !=mtSalesAmountList && mtSalesAmountList.size()>0) {
-					//매출 총 금액
-					mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesPlanVO.getMtIntegrateKey());
-					//매출금액(MT_SALES_AMOUNT_TB)을 기준으로 월별 수금계획에 대한 데이타를 생성한다.
-					salesAmountList = makeSalesPlanList(mtSalesAmountList, mtSalesPlanVO.getMtIntegrateKey(), mtSalesTotalAmount);
+				//매출등록 매출거래처 목록을 가져온다.
+				salesOrderSelectBox = service.selectSalesOrderSelectBoxList(mtSalesPlanVO.getMtIntegrateKey());	
+				
+				if(null !=salesOrderSelectBox && salesOrderSelectBox.size()>0){
+					searchVO = new MtDefaultVO();
+					searchVO.setSelectIntegrateKey(mtSalesPlanVO.getMtIntegrateKey());
 					
-//					salesAmountList = (List<MtSalesPlanVO>)salesInfoMap.get("salesAmountList");
-					
-					//매출수금계획(MT_SALES_DETAIL_TB)기준으로 수금계획을 데이타를 조회한다.
-					salesDetailList = amountService.selectMtSalesPlanList(mtSalesPlanVO);
-					
-					//MT_SALES_DETAIL_TB테이블에서 조회된 데이타가 없는 경우  MT_SALES_AMOUNT_TB의 데이타를 사용한다.
-					if(null ==salesDetailList || salesDetailList.size()==0) {
-						salesPlanList = salesAmountList;
+					if("".equals(CepStringUtil.getDefaultValue(mtSalesPlanVO.getMtSalesOrderKey(), ""))){
+						map = salesOrderSelectBox.get(0);
+//						mtSalesPlanVO.setMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+						searchVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+						mtSalesPlanVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+						billIssueRule= (String)map.get("billIssueRule");
 					} else {
-						salesPlanList = new ArrayList<>();
-						salesDetailCnt = salesDetailList.size();
-						//MT_SALES_DETAIL_TB테이블 기준으로 데이타를 변경한다.
-						salesDetailMap = new HashMap<>();
-						for (int i = 0; i < salesDetailCnt; i++) {
-							salesPlanVO = salesDetailList.get(i);
-							salesDetailMap.put(salesPlanVO.getSalesYearMonth(), salesPlanVO);
-						}
+						searchVO.setSelectMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
+						mtSalesPlanVO.setSelectMtSalesOrderKey(mtSalesPlanVO.getMtSalesOrderKey());
 						
-						salesDetailCnt = salesAmountList.size();
-						for (int i = 0; i < salesDetailCnt; i++) {
-							salesAmountVO = salesAmountList.get(i);
-							salesDetailVO = salesDetailMap.get(salesAmountVO.getSalesYearMonth());
-							if(null != salesDetailVO) {
-								salesDetailVO.setSalesTurn(salesAmountVO.getSalesTurn());
-								salesDetailVO.setSalesCollectRate(salesAmountVO.getSalesCollectRate());
-								salesDetailVO.setSalesTurnAmount(salesAmountVO.getSalesTurnAmount());
-								salesPlanList.add(salesDetailVO);
-							} else {
-								salesPlanList.add(salesAmountVO);
+						for (int i = 0; i < salesOrderSelectBox.size(); i++) {
+							map = salesOrderSelectBox.get(i);
+							if(mtSalesPlanVO.getMtSalesOrderKey().equals((String)map.get("mtSalesOrderKey"))) {
+								billIssueRule= (String)map.get("billIssueRule");
 							}
 						}
-//						keys = salesAmountMap.keySet().toArray();
-//						for (int i = 0; i < keys.length; i++) {
-//							salesAmountVO = salesAmountMap.get(keys[i]);
-//							salesDetailVO = salesDetailMap.get(keys[i]);
-//							if(null != salesDetailVO) {
-//								
+					}
+//					contractAmountInfo = service.selectContractAmountInfo(mtSalesPlanVO.getMtIntegrateKey());
+					//유지보수 매출테이블(MT_SALES_AMOUNT_TB)에서 년도/월별 매출금액을 조회한다.
+					mtSalesAmountList = service.selectMtContractSalesAmountList(searchVO);
+					if(null !=mtSalesAmountList && mtSalesAmountList.size()>0) {
+						//매출 총 금액
+						mtSalesTotalAmount = service.selectMtSalesTotalAmount(searchVO);
+						//1. 매출금액(MT_SALES_AMOUNT_TB)을 기준으로 월별 수금계획에 대한 데이타를 생성한다.
+						
+						salesAmountList = makeSalesPlanList(mtSalesAmountList, mtSalesPlanVO.getMtIntegrateKey(), mtSalesPlanVO.getSelectMtSalesOrderKey(),mtSalesTotalAmount);
+//						salesAmountList = (List<MtSalesPlanVO>)salesInfoMap.get("salesAmountList");
+						
+						//2. 계산서계획정보(매출수금계획)(MT_SALES_DETAIL_TB)기준으로 계산서계획정보 데이타를 조회한다.
+						salesDetailList = amountService.selectMtSalesPlanList(mtSalesPlanVO);
+						
+						/*
+						 * 3. 1번 항목과 2번항목을 조합하여 계산서 계획정보를 만든다.
+						 * MT_SALES_DETAIL_TB테이블에서 조회된 데이타가 없는 경우  MT_SALES_AMOUNT_TB의 데이타를 사용한다.
+						 */
+						if(null ==salesDetailList || salesDetailList.size()==0) {
+							salesPlanList = salesAmountList;
+						} else {
+							salesPlanList = new ArrayList<>();
+							salesDetailCnt = salesDetailList.size();
+							//MT_SALES_DETAIL_TB테이블 기준으로 데이타를 변경한다.
+							salesDetailMap = new HashMap<>();
+							for (int i = 0; i < salesDetailCnt; i++) {
+								salesPlanVO = salesDetailList.get(i);
+								//년월별로 데이타를 분리한다.
+								salesDetailMap.put(salesPlanVO.getSalesYearMonth(), salesPlanVO);
+							}
+							
+							//년월별로 분리한 데이타중 매출정보의 금액으로 금액을 셋팅한다.
+							salesDetailCnt = salesAmountList.size();
+							for (int i = 0; i < salesDetailCnt; i++) {
+								salesAmountVO = salesAmountList.get(i);
+								salesDetailVO = salesDetailMap.get(salesAmountVO.getSalesYearMonth());
+								/*
+								 * 3.1 2번항목(계획정보)가 있는 경우 계획정보를 보여주고 금액이 달라진 경우 계산서 일자를 초기화 한다..
+								 * 매출계산서계획정보(MT_SALES_DETAIL_TB)의 해당 년월에 대한 정보가 존재하는 경우 
+								 */
+								if(null != salesDetailVO) {
+//									회차, 요율, 금액에 대한 정보를 매출정보에서 가져온다.
+									if(salesDetailVO.getSalesTurnAmount() != salesAmountVO.getSalesTurnAmount()) {
+										/*
+										 * 금액이 달라진 경우 계산서 일자를 초기화 해준다.다시저장을 눌러줄기위해.
+										 * 그렇지 않은경우 해당 내용이 저장되었는지 알수 없음.
+										 */
+										salesDetailVO.setSalesBillFcDt(null);
+									}
+									salesDetailVO.setSalesTurn(salesAmountVO.getSalesTurn());
+									salesDetailVO.setSalesCollectRate(salesAmountVO.getSalesCollectRate());
+									salesDetailVO.setSalesTurnAmount(salesAmountVO.getSalesTurnAmount());
+									
+									salesPlanList.add(salesDetailVO);
+								} else {
+									/*
+									 * 3.2 2번항목이 없는 경우(처음으로 저장하는 경우) 1번 항목을 매출계산서 계획정보로 보여준다.
+									 * 해당 회차(년월)에 대한 정보가 없는 경우 1번의 매출정보를 셋팅한다.
+									 */
+									salesPlanList.add(salesAmountVO);
+								}
+							}
+//							keys = salesAmountMap.keySet().toArray();
+//							for (int i = 0; i < keys.length; i++) {
+//								salesAmountVO = salesAmountMap.get(keys[i]);
+//								salesDetailVO = salesDetailMap.get(keys[i]);
+//								if(null != salesDetailVO) {
+//									
+//								}
 //							}
+						}
+						
+//						List<ProjectSalesVO> salesPlanList = makeSalesPlanList(mtSalesAmountList, mtSalesAmountVO.getMtIntegrateKey(), mtSalesTotalAmount);
+//						logger.debug("salesPlanList.size()=====>"+salesPlanList.size());
+//						for (int i = 0; i < salesPlanList.size(); i++) {
+//							ProjectSalesVO vo = salesPlanList.get(i);
+//							logger.debug("=====>"+vo.getSalesTurn()+"/"+vo.getSalesCollectRate()+"/"+vo.getSalesTurnAmount()+"/"+vo.getSalesBillFcDt());
 //						}
 					}
-					
-//					List<ProjectSalesVO> salesPlanList = makeSalesPlanList(mtSalesAmountList, mtSalesAmountVO.getMtIntegrateKey(), mtSalesTotalAmount);
-//					logger.debug("salesPlanList.size()=====>"+salesPlanList.size());
-//					for (int i = 0; i < salesPlanList.size(); i++) {
-//						ProjectSalesVO vo = salesPlanList.get(i);
-//						logger.debug("=====>"+vo.getSalesTurn()+"/"+vo.getSalesCollectRate()+"/"+vo.getSalesTurnAmount()+"/"+vo.getSalesBillFcDt());
-//					}
+					mtContractCountInfo = service.selectMtContractCount(mtSalesPlanVO.getMtIntegrateKey());
 				}
-				mtContractCountInfo = service.selectMtContractCount(mtSalesPlanVO.getMtIntegrateKey());
+				
 			}
 						
 			
@@ -1440,14 +1967,17 @@ public class MtContractController {
 //			model.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());		
 //			model.put("yearList", CepDateUtil.makeYear(-5, 5));	
 //			model.put("nowYear", CepDateUtil.getToday("yyyy"));
+//			model.put("basicContractInfo", basicContractInfo);	
 			model.put("mtIntegrateKey", mtSalesPlanVO.getMtIntegrateKey());	
+			model.put("mtSalesOrderKey", searchVO.getSelectMtSalesOrderKey());
 			model.put("parmMtSbCtYn", mtSalesPlanVO.getParmMtSbCtYn()); //백계약여부.
-			model.put("contractAmountInfo",contractAmountInfo);
+//			model.put("contractAmountInfo",contractAmountInfo);
 			model.put("salesPlanList",salesPlanList);
 			model.put("mtContractCountInfo", mtContractCountInfo);
 			model.put("mtSalesTotalAmount",mtSalesTotalAmount);
-			
-			
+			model.put("salesOrderSelectBox",salesOrderSelectBox);
+			//계산서 발행구분정보 코드
+			model.put("billIssueRule", billIssueRule);
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("successYN", "Y");
 			
@@ -1473,7 +2003,11 @@ public class MtContractController {
 			
 			mtSalesPlanVO.setRegEmpKey(sessionMap.get("empKey"));
 			mtSalesPlanVO.setModEmpKey(sessionMap.get("empKey"));
-			logger.debug("============>"+mtSalesPlanVO.getMtSalesPlanVoList().size());
+			logger.debug("mtSalesPlanVO.getMtSalesPlanVoList().size()============>"+mtSalesPlanVO.getMtSalesPlanVoList().size());
+			logger.debug("mtSalesPlanVO.getBillIssueRule()============>"+mtSalesPlanVO.getBillIssueRule());
+			logger.debug("mtSalesPlanVO.getSalesCtFkKey()============>"+mtSalesPlanVO.getSalesCtFkKey());
+			logger.debug("mtSalesPlanVO.getMtIntegrateKey()============>"+mtSalesPlanVO.getMtIntegrateKey());
+			logger.debug("mtSalesPlanVO.getMtSalesOrderKey()============>"+mtSalesPlanVO.getMtSalesOrderKey());
 			if(null != mtSalesPlanVO.getMtSalesPlanVoList() && mtSalesPlanVO.getMtSalesPlanVoList().size()>0) {
 			
 				//유지보수 수금계획에 대해 등록/업데이트/삭제를 수행한다.
@@ -1481,6 +2015,7 @@ public class MtContractController {
 			}
 						
 			returnMap.put("mtIntegrateKey", mtSalesPlanVO.getMtIntegrateKey());
+			returnMap.put("mtSalesOrderKey", mtSalesPlanVO.getMtSalesOrderKey());
 			returnMap.put("parmMtSbCtYn", mtSalesPlanVO.getParmMtSbCtYn()); //백계약여부.
 			
 			returnMap.put("successYN", "Y");
@@ -1532,7 +2067,8 @@ public class MtContractController {
 		//보증증권 정보
 		MtGuarantyBondVO mtGuarantyBondVO = null;
 		try {
-			
+
+			logger.debug("mtBackOrderVO.getSelectKey(1)===>"+mtBackOrderVO.getSelectKey());
 			if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))) {
 				//기본정보 조회
 				basicContractInfo = service.selectContractBasicDetail(mtBackOrderVO.getMtIntegrateKey());
@@ -1543,7 +2079,7 @@ public class MtContractController {
 					
 					
 					if(null != backOrderList && backOrderList.size()>0) {
-						backOrderListCnt = backOrderList.size();
+//						backOrderListCnt = backOrderList.size();
 						if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getSelectKey(), ""))) {
 							/*
 							 * 선택한 거래처의 백계약 품목 조회
@@ -1553,7 +2089,17 @@ public class MtContractController {
 							//선택되지 않은경우 초기 상세화면을 콜한경우 첫번째값을 선택.
 							mtBackOrderVO.setSelectKey(backOrderList.get(0).getMtOrderKey());
 							selectMtOrderAcKeyNm = backOrderList.get(0).getMtOrderAcKeyNm();
+						}else {
+							backOrderListCnt = backOrderList.size();
+							for (int i = 0; i < backOrderListCnt; i++) {
+								vo = backOrderList.get(i);
+								if(mtBackOrderVO.getSelectKey().equals(vo.getMtOrderKey())) {
+									selectMtOrderAcKeyNm = vo.getMtOrderAcKeyNm();
+									break;
+								}
+							}
 						}
+						logger.debug("mtBackOrderVO.getSelectKey(2)===>"+mtBackOrderVO.getSelectKey());
 						/*
 						 * 선택한 거래처의 백계약 품목 조회
 						 * getSelectKey : backorder key (mtOrderKey)
@@ -1801,6 +2347,9 @@ public class MtContractController {
 			model.put("acDirectorList", acDirectorList);
 //			model.put("backOrderBoxList", backOrderBoxList);
 //			model.put("backOrderBoxList", null);
+			//2021-12-06
+			model.put("purchaseCodeList", CepStringUtil.getPurchaseCodeList());
+			model.put("manufacturerList", CepStringUtil.getManuFacturerList());
 		} catch (Exception e) {
 			logger.error("writeBackOrderInfoView error", e);
 		}
@@ -2207,6 +2756,641 @@ public class MtContractController {
 		
 		return returnMap;
 	}	
+	
+	
+	/*
+	 * 매입정보(MT_BUY_AMOUNT_TB)를 기준으로 지급계획정보를 임시로 생성한다.
+	 */
+	private List<MtPaymentPlanVO> makePaymentPlanList(List<?> purchaseAmountList, String mtIntegrateKey, String mtOrderKey, int mtPurchaseTotalAmount) throws Exception {
+		int listCount = 0;
+		List<MtPaymentPlanVO> paymentAmountList = new ArrayList<>();
+		MtPaymentPlanVO mtPaymentPlanVO = null;
+		EgovMap purchaseMap = null;
+		String muyYear = null;
+		int paymentTurn=1;
+		 try {
+			 listCount = purchaseAmountList.size();
+			//월별 수금계획에 대한 데이타를 생성한다.
+			for (int i = 0; i < listCount; i++) {
+				purchaseMap = (EgovMap)purchaseAmountList.get(i);
+				muyYear = (String)purchaseMap.get("mtBuyYear");
+
+				if((Long)purchaseMap.get("mtBuyJanAmount")>0) { //1월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"01");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyJanAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyJanAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyFebAmount")>0) { //2월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"02");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyFebAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyFebAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyMarAmount")>0) { //3월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"03");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyMarAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyMarAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyAprAmount")>0) { //4월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"04");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyAprAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyAprAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyMayAmount")>0) { //5월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"05");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyMayAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyMayAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyJunAmount")>0) { //6월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"06");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyJunAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyJunAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyJulAmount")>0) { //7월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"07");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyJulAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyJulAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyAugAmount")>0) { //8월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"08");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyAugAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyAugAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuySepAmount")>0) { //9월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"09");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuySepAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuySepAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyOctAmount")>0) { //10월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"10");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyOctAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyOctAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyNovAmount")>0) { //11월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"11");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyNovAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyNovAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+				
+				if((Long)purchaseMap.get("mtBuyDecAmount")>0) { //12월
+					mtPaymentPlanVO = new MtPaymentPlanVO();
+					mtPaymentPlanVO.setMtIntegrateKey(mtIntegrateKey);
+					mtPaymentPlanVO.setMtOrderKey(mtOrderKey);
+					mtPaymentPlanVO.setPaymentYearMonth(muyYear+"12");
+					mtPaymentPlanVO.setPaymentTurn(paymentTurn);
+					mtPaymentPlanVO.setPaymentRate((int)(( (double)(((Long)purchaseMap.get("mtBuyDecAmount")).intValue())/(double)mtPurchaseTotalAmount)*100)); //월매출금액/전체매출금액 으로 기본셋팅
+					mtPaymentPlanVO.setPaymentTurnAmount(((Long)purchaseMap.get("mtBuyDecAmount")).intValue());
+					paymentAmountList.add(mtPaymentPlanVO);
+					paymentTurn++;
+				}
+			}
+
+			 
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return paymentAmountList;
+	}
+	
+	
+	
+	/**
+	 * 지급계획(매출계산서계획) 등록 조회화면.
+	 * 1. MT_BUY_AMOUNT_TB테이블 기준으로 지급 계획정보를 임시로 생성한다.
+	 * 2. 계산서 계획정보(MT_SALES_DETAIL_TB)를 조회한다.
+	 * 3. 1번 항목과 2번항목을 조합하여 계산서 계획정보를 만든다.
+	 *    3.1 2번항목(계획정보)가 있는 경우 계획정보를 보여주고 금액이 달라진 경우 계산서 일자를 초기화 한다..
+	 *    3.2 2번항목이 없는 경우(처음으로 저장하는 경우) 1번 항목을 매출계산서 계획정보로 보여준다.
+	 *    
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param request
+	 * @param mtSalesAmountVO
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 8. 23. 오후 3:55:56
+	 * @author aranghoo
+	 */
+	@RequestMapping(value="/write/writePaymentPlanView.do")
+	public String writePaymentPlanView(HttpServletRequest request, MtPaymentPlanVO mtPaymentPlanVO, ModelMap model) throws Exception {
+
+		List<?> purchaseAmountList = null; //매입 금액 리스트(MT_BUY_AMOUNT_TB)
+		int mtPurchaseTotalAmount = 0; //거래처별 매입 전체 금액
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+		List<MtPaymentPlanVO> paymentAmountList = null; //메출테이블(MT_BUY_AMOUNT_TB)에서 조회한 데이타
+		 
+		int paymentDetailCnt = 0;
+		List<MtPaymentPlanVO> paymentDetailList = null; //매입지금예상(MT_PAYMENT_DETAIL_TB) 테이블에서 조회한 데이타.
+		Map<String, MtPaymentPlanVO> paymentDetailMap = null;		 
+		 
+		List<MtPaymentPlanVO> paymentPlanList = null; //
+		MtPaymentPlanVO paymentPlanVO = null;
+		MtPaymentPlanVO paymentAmountVO = null;
+		MtPaymentPlanVO paymentDetailVO = null;
+		 
+		List<EgovMap> backOrderSelectBox = null; //백계약 발주.
+		EgovMap map = null;
+		 
+		try {		
+			logger.debug("getMtIntegrateKey===>"+mtPaymentPlanVO.getMtIntegrateKey());
+			logger.debug("getMtOrderKey===>"+mtPaymentPlanVO.getMtOrderKey());
+			logger.debug("getSelectKey===>"+mtPaymentPlanVO.getSelectKey());
+			logger.debug("parmMtSbCtYn===>"+mtPaymentPlanVO.getParmMtSbCtYn());
+
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentPlanVO.getMtIntegrateKey(), ""))) {
+				
+				//백계약 발주등록 매입거래처 목록을 가져온다.
+				backOrderSelectBox = service.selectBackOrderSelectBoxList(mtPaymentPlanVO.getMtIntegrateKey());	
+				
+				if(null !=backOrderSelectBox && backOrderSelectBox.size()>0){					
+					
+					if("".equals(CepStringUtil.getDefaultValue(mtPaymentPlanVO.getMtOrderKey(), ""))){
+						//처음 화면이 로딩되는 경우 매입거래처를 선택하지 못하는 경우 첫번째 거래처에 대한 지급계획정보를 조회한다.
+						map = backOrderSelectBox.get(0);
+						mtPaymentPlanVO.setMtOrderKey((String)map.get("mtOrderKey"));
+					}
+					
+					//유지보수 매입테이블(MT_BUY_AMOUNT_TB)에서 년도/월별 매출금액을 조회한다.
+					purchaseAmountList = service.selectMtContractBuyAmountList(
+							mtPaymentPlanVO.getMtIntegrateKey(), mtPaymentPlanVO.getMtOrderKey());
+					
+					if(null !=purchaseAmountList && purchaseAmountList.size()>0) {
+						//매출 총 금액
+						mtPurchaseTotalAmount = service.selectMtBuyTotalAmount(
+								mtPaymentPlanVO.getMtIntegrateKey(), mtPaymentPlanVO.getMtOrderKey());
+						//1. 매입금액(MT_BUY_AMOUNT_TB)을 기준으로 월별 수금계획에 대한 데이타를 생성한다.
+						
+						paymentAmountList = makePaymentPlanList(purchaseAmountList, mtPaymentPlanVO.getMtIntegrateKey(), mtPaymentPlanVO.getMtOrderKey(),mtPurchaseTotalAmount);
+												
+						//2. 지급계획정보(MT_PAYMENT_DETAIL_TB)기준으로 지급계획정보 데이타를 조회한다.
+						paymentDetailList = amountService.selectMtPaymentPlanList(mtPaymentPlanVO);
+						
+						/*
+						 * 3. 1번 항목과 2번항목을 조합하여 매입지급 계획정보를 만든다.
+						 * MT_PAYMENT_DETAIL_TB테이블에서 조회된 데이타가 없는 경우  paymentAmountList(MT_BUY_AMOUNT_TB)의 데이타를 사용한다.
+						 */
+						if(null ==paymentDetailList || paymentDetailList.size()==0) {
+							paymentPlanList = paymentAmountList;
+						} else {
+							paymentPlanList = new ArrayList<>();
+							paymentDetailCnt = paymentDetailList.size();
+							//MT_PAYMENT_DETAIL_TB테이블 기준으로 데이타를 변경한다.
+							paymentDetailMap = new HashMap<>();
+							for (int i = 0; i < paymentDetailCnt; i++) {
+								paymentPlanVO = paymentDetailList.get(i);
+								//년월별로 데이타를 분리한다.
+								paymentDetailMap.put(paymentPlanVO.getPaymentYearMonth(), paymentPlanVO);
+							}
+							
+							//년월별로 분리한 데이타중 매입정보의 금액으로 금액을 셋팅한다.
+							paymentDetailCnt = paymentAmountList.size();
+							for (int i = 0; i < paymentDetailCnt; i++) {
+								paymentAmountVO = paymentAmountList.get(i);
+								paymentDetailVO = paymentDetailMap.get(paymentAmountVO.getPaymentYearMonth());
+								/*
+								 * 3.1 2번항목(계획정보)가 있는 경우 계획정보를 보여주고 금액이 달라진 경우 계산서 일자를 초기화 한다..
+								 * 매입 지급계획정보(MT_PAYMENT_DETAIL_TB)의 해당 년월에 대한 정보가 존재하는 경우 
+								 */
+								if(null != paymentDetailVO) {
+//									회차, 요율, 금액에 대한 정보를 매출정보에서 가져온다.
+									if(paymentDetailVO.getPaymentTurnAmount() != paymentAmountVO.getPaymentTurnAmount()) {
+										/*
+										 * 금액이 달라진 경우 지급예정일자를 초기화 해준다.다시저장을 눌러줄기위해.
+										 * 그렇지 않은경우 해당 내용이 저장되었는지 알수 없음.
+										 */
+										paymentDetailVO.setPaymentFcDt(null);
+									}
+									paymentDetailVO.setPaymentTurn(paymentAmountVO.getPaymentTurn());
+									paymentDetailVO.setPaymentRate(paymentAmountVO.getPaymentRate());
+									paymentDetailVO.setPaymentTurnAmount(paymentAmountVO.getPaymentTurnAmount());
+									
+									paymentPlanList.add(paymentDetailVO);
+								} else {
+									/*
+									 * 3.2 2번항목이 없는 경우(처음으로 저장하는 경우) 1번 항목을 매입 지급계획정보로 보여준다.
+									 * 해당 회차(년월)에 대한 정보가 없는 경우 1번의 매입정보를 셋팅한다.
+									 */
+									paymentPlanList.add(paymentAmountVO);
+								}
+							}
+						}
+						
+
+					}
+					mtContractCountInfo = service.selectMtContractCount(mtPaymentPlanVO.getMtIntegrateKey());
+				}
+				
+			}
+						
+			model.put("mtIntegrateKey", mtPaymentPlanVO.getMtIntegrateKey());	
+			model.put("mtOrderKey", mtPaymentPlanVO.getMtOrderKey());
+			model.put("parmMtSbCtYn", mtPaymentPlanVO.getParmMtSbCtYn()); //백계약여부.
+			model.put("paymentPlanList",paymentPlanList);
+			model.put("mtContractCountInfo", mtContractCountInfo);
+			model.put("mtPurchaseTotalAmount",mtPurchaseTotalAmount);
+			model.put("backOrderSelectBox",backOrderSelectBox);
+			
+			model.put("displayUtil", new CepDisplayUtil());
+			model.put("successYN", "Y");
+			
+		} catch (Exception e) {
+			logger.error("",e);
+			model.put("successYN", "N");
+		}
+		
+		return "maintenance/contract/write/paymentPlanInfo";
+	}		
+	
+
+	@RequestMapping(value="/write/writePaymentPlan.do")
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> writePaymentPlan(HttpServletRequest request, @RequestBody MtPaymentPlanVO mtPaymentPlanVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		try {					
+			logger.debug("mtIntegrateKey===>"+mtPaymentPlanVO.getMtIntegrateKey());
+			logger.debug("mtOrderKey===>"+mtPaymentPlanVO.getMtOrderKey());
+			logger.debug("parmMtSbCtYn===>"+mtPaymentPlanVO.getParmMtSbCtYn());
+			
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			mtPaymentPlanVO.setRegEmpKey(sessionMap.get("empKey"));
+			mtPaymentPlanVO.setModEmpKey(sessionMap.get("empKey"));
+			logger.debug("mtSalesPlanVO.getMtPaymentPlanVOList().size()============>"+mtPaymentPlanVO.getMtPaymentPlanVOList().size());
+			logger.debug("mtSalesPlanVO.getMtIntegrateKey()============>"+mtPaymentPlanVO.getMtIntegrateKey());
+			logger.debug("mtSalesPlanVO.getMtOrderKey()============>"+mtPaymentPlanVO.getMtOrderKey());
+			if(null != mtPaymentPlanVO.getMtPaymentPlanVOList() && mtPaymentPlanVO.getMtPaymentPlanVOList().size()>0) {
+			
+				//유지보수 수금계획에 대해 등록/업데이트/삭제를 수행한다.
+				amountService.writeMtPaymentPlanList(mtPaymentPlanVO);
+			}
+						
+			returnMap.put("mtIntegrateKey", mtPaymentPlanVO.getMtIntegrateKey());
+			returnMap.put("mtOrderKey", mtPaymentPlanVO.getMtOrderKey());
+			returnMap.put("parmMtSbCtYn", mtPaymentPlanVO.getParmMtSbCtYn()); //백계약여부.
+			
+			returnMap.put("successYN", "Y");
+			
+		} catch (Exception e) {
+			logger.error("",e);
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
+	}	
+	/**
+	 * 지급정보 조회
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtSalesPlanVO
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 9. 29. 오후 4:29:00
+	 * @author aranghoo
+	 */
+	@RequestMapping(value="/detail/paymentPlanInfo.do")
+	public String paymentPlanInfo(MtPaymentPlanVO mtPaymentPlanVO, ModelMap model) throws Exception {
+		List<MtPaymentPlanVO> paymentPlanList = null; //매입 지급예상(MT_PAYMENT_DETAIL_TB) 테이블에서 조회한 데이타.
+		MtContractVO basicContractInfo = null;
+		List<?> empList = null;
+		List <?> acDirectorList = null; // 고객사 담당자 리스트.
+		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
+		//보증증권 정보
+		MtGuarantyBondVO mtGuarantyBondVO = null;
+		
+		//2021-12-02
+		List<EgovMap> backOrderSelectBox = null; //백계약 발주.
+		EgovMap map = null;
+//		MtDefaultVO searchVO = null;
+		try {
+			
+			logger.debug("getMtIntegrateKey===>"+mtPaymentPlanVO.getMtIntegrateKey());
+			logger.debug("getMtOrderKey===>"+mtPaymentPlanVO.getMtOrderKey());
+			logger.debug("getSelectKey===>"+mtPaymentPlanVO.getSelectKey());
+			logger.debug("parmMtSbCtYn===>"+mtPaymentPlanVO.getParmMtSbCtYn());
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentPlanVO.getMtIntegrateKey(), ""))) {
+				
+				//백계약 발주등록 매입거래처 목록을 가져온다.
+				backOrderSelectBox = service.selectBackOrderSelectBoxList(mtPaymentPlanVO.getMtIntegrateKey());	
+				
+				
+				//기본정보 조회
+				basicContractInfo = service.selectContractBasicDetail(mtPaymentPlanVO.getMtIntegrateKey());
+				if(null != basicContractInfo) {
+					
+					if(null !=backOrderSelectBox && backOrderSelectBox.size()>0){
+						
+						
+						if("".equals(CepStringUtil.getDefaultValue(mtPaymentPlanVO.getMtOrderKey(), ""))){
+							map = backOrderSelectBox.get(0);
+//							mtSalesPlanVO.setMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+							mtPaymentPlanVO.setMtOrderKey((String)map.get("mtOrderKey"));
+						}
+					}
+					//지급계획정보(MT_PAYMENT_DETAIL_TB)기준으로 지급계획정보 데이타를 조회한다.
+					paymentPlanList = amountService.selectMtPaymentPlanList(mtPaymentPlanVO);
+					//직원정보 조회
+					empList = service.selectEmployeeList();
+					// 거래처 직원정보 조회
+					acDirectorList = service.selectAcDirectorList(basicContractInfo.getMtAcKey());
+					
+					mtContractCountInfo = service.selectMtContractCount(mtPaymentPlanVO.getMtIntegrateKey());
+									
+					//보증증권
+					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtPaymentPlanVO.getMtIntegrateKey());
+					
+					//첨부파일
+					fileVO.setFileCtKey(mtPaymentPlanVO.getMtIntegrateKey());
+					fileVO.setFileWorkClass("mtContract");
+					
+					fileResult = fileMngService.selectFileList(fileVO);
+				}
+			}
+			
+			
+
+			
+			model.put("basicContractInfo", basicContractInfo);
+			model.put("acDirectorList", acDirectorList);
+			model.put("parmMtSbCtYn", basicContractInfo.getMtSbCtYn()); //백계약여부.
+			model.put("mtContractCountInfo", mtContractCountInfo);	
+			model.put("empList", empList);
+			//수금계획정보
+			model.put("paymentPlanList", paymentPlanList);	
+			
+			model.put("displayUtil", new CepDisplayUtil());
+			
+			//첨부파일 관련
+			model.addAttribute("fileList", fileResult);
+			
+			//보증증권
+			model.put("mtGuarantyBondInfo", mtGuarantyBondVO);
+			
+			model.put("backOrderSelectBox",backOrderSelectBox);
+			
+			model.put("selectOrderKey", mtPaymentPlanVO.getMtOrderKey());
+		} catch (Exception e) {
+			
+			logger.error("error", e);
+		}
+		
+		return "maintenance/contract/detail/paymentPlanInfo";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/detail/paymentPlanInfoWithOrderKey.do", method=RequestMethod.POST)
+	public Map<String, Object>  paymentPlanInfoWithOrderKey( @RequestBody MtPaymentPlanVO mtPaymentPlanVO) throws Exception {
+
+		List<MtPaymentPlanVO> paymentPlanList = null; //매입 지급예상(MT_PAYMENT_DETAIL_TB) 테이블에서 조회한 데이타.
+//		int mtPurchaseTotalAmount = 0;
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		//2021-12-02
+//		List<EgovMap> salesOrderSelectBox = null;
+//		EgovMap map = null;
+//		MtDefaultVO searchVO = null;
+		try {
+	    	 
+	    	 logger.debug("getMtIntegrateKey===>"+mtPaymentPlanVO.getMtIntegrateKey());
+	    	 logger.debug("getMtOrderKey===>"+mtPaymentPlanVO.getMtOrderKey());
+	    	 
+	    	 if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentPlanVO.getMtIntegrateKey(), "")) ) {   		
+	    	     
+		    	//지급계획정보(MT_PAYMENT_DETAIL_TB)기준으로 지급계획정보 데이타를 조회한다.
+				paymentPlanList = amountService.selectMtPaymentPlanList(mtPaymentPlanVO);  		 
+				//수금계획정보
+				returnMap.put("paymentPlanList", paymentPlanList);
+		        returnMap.put("successYN", "Y");
+	    	 } else {
+	    		 returnMap.put("successYN", "N");
+	    	 }
+	    	
+		} catch (Exception e) {
+			returnMap.put("successYN", "N");
+			logger.error("selectPurchaseAmountListWithOderKey error", e);
+		}
+	    
+	     return returnMap; 
+	}
+	
+	/**
+	 * 지금계획 등록화면
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param request
+	 * @param mtSalesPlanVO
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 9. 29. 오후 4:30:45
+	 * @author aranghoo
+	 */
+//	@RequestMapping(value="/write/writePayPlanView.do")
+//	public String writePayPlanView(HttpServletRequest request, MtSalesPlanVO mtSalesPlanVO, ModelMap model) throws Exception {
+//		 Map<String, Object> contractAmountInfo = null;
+//		 List<?> mtSalesAmountList = null;
+//		 int mtSalesTotalAmount = 0;
+//		 Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
+////		 int salesTurnCnt = 0;
+////		 ProjectSalesVO salesVO = null;
+////		 EgovMap salesMap = null;
+////		 String saleYear = null;
+////		 Map<String, Object> salesInfoMap = new HashMap<>();
+//		 List<MtSalesPlanVO> salesAmountList = null; //메출테이블(MT_SALES_AMOUNT_TB)에서 조회한 데이타
+////		 Map<String, MtSalesPlanVO> salesAmountMap = null;
+//		 
+//		 int salesDetailCnt = 0;
+//		 List<MtSalesPlanVO> salesDetailList = null; //매출수금예상(MT_SALES_DETAIL_TB) 테이블에서 조회한 데이타.
+//		 Map<String, MtSalesPlanVO> salesDetailMap = null;		 
+//		 
+//		 List<MtSalesPlanVO> salesPlanList = null;
+//		 MtSalesPlanVO salesPlanVO = null;
+//		 MtSalesPlanVO salesAmountVO = null;
+//		 MtSalesPlanVO salesDetailVO = null;
+//		try {		
+//			
+////			if("".equals(CepStringUtil.getDefaultValue(mtSalesAmountVO.getMtIntegrateKey(), ""))){
+////				//테스트
+////				mtSalesAmountVO.setMtIntegrateKey("MA200024");
+////				mtSalesAmountVO.setParmMtSbCtYn("Y");
+////			}
+//			
+//			
+//			logger.debug("mtIntegrateKey===>"+mtSalesPlanVO.getMtIntegrateKey());
+//			logger.debug("parmMtSbCtYn===>"+mtSalesPlanVO.getParmMtSbCtYn());
+//			
+//			if(!"".equals(CepStringUtil.getDefaultValue(mtSalesPlanVO.getMtIntegrateKey(), ""))) {
+//				contractAmountInfo = service.selectContractAmountInfo(mtSalesPlanVO.getMtIntegrateKey());
+//				
+//				mtSalesAmountList = service.selectMtContractSalesAmountList(mtSalesPlanVO.getMtIntegrateKey());
+//				if(null !=mtSalesAmountList && mtSalesAmountList.size()>0) {
+//					//매출 총 금액
+//					mtSalesTotalAmount = service.selectMtSalesTotalAmount(mtSalesPlanVO.getMtIntegrateKey());
+//					//매출금액(MT_SALES_AMOUNT_TB)을 기준으로 월별 수금계획에 대한 데이타를 생성한다.
+//					salesAmountList = makeSalesPlanList(mtSalesAmountList, mtSalesPlanVO.getMtIntegrateKey(), mtSalesTotalAmount);
+//					
+////					salesAmountList = (List<MtSalesPlanVO>)salesInfoMap.get("salesAmountList");
+//					
+//					//매출수금계획(MT_SALES_DETAIL_TB)기준으로 수금계획을 데이타를 조회한다.
+//					salesDetailList = amountService.selectMtSalesPlanList(mtSalesPlanVO);
+//					
+//					//MT_SALES_DETAIL_TB테이블에서 조회된 데이타가 없는 경우  MT_SALES_AMOUNT_TB의 데이타를 사용한다.
+//					if(null ==salesDetailList || salesDetailList.size()==0) {
+//						salesPlanList = salesAmountList;
+//					} else {
+//						salesPlanList = new ArrayList<>();
+//						salesDetailCnt = salesDetailList.size();
+//						//MT_SALES_DETAIL_TB테이블 기준으로 데이타를 변경한다.
+//						salesDetailMap = new HashMap<>();
+//						for (int i = 0; i < salesDetailCnt; i++) {
+//							salesPlanVO = salesDetailList.get(i);
+//							salesDetailMap.put(salesPlanVO.getSalesYearMonth(), salesPlanVO);
+//						}
+//						
+//						salesDetailCnt = salesAmountList.size();
+//						for (int i = 0; i < salesDetailCnt; i++) {
+//							salesAmountVO = salesAmountList.get(i);
+//							salesDetailVO = salesDetailMap.get(salesAmountVO.getSalesYearMonth());
+//							if(null != salesDetailVO) {
+//								salesDetailVO.setSalesTurn(salesAmountVO.getSalesTurn());
+//								salesDetailVO.setSalesCollectRate(salesAmountVO.getSalesCollectRate());
+//								salesDetailVO.setSalesTurnAmount(salesAmountVO.getSalesTurnAmount());
+//								salesPlanList.add(salesDetailVO);
+//							} else {
+//								salesPlanList.add(salesAmountVO);
+//							}
+//						}
+////						keys = salesAmountMap.keySet().toArray();
+////						for (int i = 0; i < keys.length; i++) {
+////							salesAmountVO = salesAmountMap.get(keys[i]);
+////							salesDetailVO = salesDetailMap.get(keys[i]);
+////							if(null != salesDetailVO) {
+////								
+////							}
+////						}
+//					}
+//					
+////					List<ProjectSalesVO> salesPlanList = makeSalesPlanList(mtSalesAmountList, mtSalesAmountVO.getMtIntegrateKey(), mtSalesTotalAmount);
+////					logger.debug("salesPlanList.size()=====>"+salesPlanList.size());
+////					for (int i = 0; i < salesPlanList.size(); i++) {
+////						ProjectSalesVO vo = salesPlanList.get(i);
+////						logger.debug("=====>"+vo.getSalesTurn()+"/"+vo.getSalesCollectRate()+"/"+vo.getSalesTurnAmount()+"/"+vo.getSalesBillFcDt());
+////					}
+//				}
+//				mtContractCountInfo = service.selectMtContractCount(mtSalesPlanVO.getMtIntegrateKey());
+//			}
+//						
+//			
+////			model.put("updateYn", mtSalesAmountVO.getUpdateYn());	
+////			model.put("mtIntegrateKey", mtSalesAmountVO.getMtIntegrateKey());		
+////			model.put("yearList", CepDateUtil.makeYear(-5, 5));	
+////			model.put("nowYear", CepDateUtil.getToday("yyyy"));
+//			model.put("mtIntegrateKey", mtSalesPlanVO.getMtIntegrateKey());	
+//			model.put("parmMtSbCtYn", mtSalesPlanVO.getParmMtSbCtYn()); //백계약여부.
+//			model.put("contractAmountInfo",contractAmountInfo);
+//			model.put("salesPlanList",salesPlanList);
+//			model.put("mtContractCountInfo", mtContractCountInfo);
+//			model.put("mtSalesTotalAmount",mtSalesTotalAmount);
+//			
+//			
+//			model.put("displayUtil", new CepDisplayUtil());
+//			model.put("successYN", "Y");
+//			
+//		} catch (Exception e) {
+//			logger.error("",e);
+//			model.put("successYN", "N");
+//		}
+//		
+//		return "maintenance/contract/write/salesPlanInfo";
+//	}	
 	///////////////////////////////////////////////////////////////////////////////////
 	
 	

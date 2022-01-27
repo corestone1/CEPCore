@@ -48,7 +48,7 @@
 		form .contents > .fxd {
 			width: 60%;
 		}
-		/* 소타이틀(기본정보, 발주정보, 제품정보) 관련 css*/
+		/* 소타이틀(기본정보, 발주정보, 장비별작업정보) 관련 css*/
 		form .contents .stitle {
 			font-size: 18px;
 			font-weight: 500;
@@ -137,7 +137,7 @@
 		    cursor: pointer;
 		}		
 		
-		/* 제품정보 테이블 틀 나오게 하는 부분 */
+		/* 장비별작업정보 테이블 틀 나오게 하는 부분 */
 		form .contents .dtl thead th, form .contents .dtl tbody tr td {
 			padding: 10px 7px;
 			border: 1px solid #edebef;
@@ -181,16 +181,16 @@
 			background-color: #ddf0ec
 		}
 
-		/* 제품정보 글짜크기 */
+		/* 장비별작업정보 글짜크기 */
 		.dtl tbody tr td {
 			font-weight: 200;
 		}
 		
-		/* 제품정보 세로싸이즈 */
+		/* 장비별작업정보 세로싸이즈 */
 		form .contents .dtl tbody {
 			height: 534px;
 		}
-		/* 제품정보 테이블 크기조정 */
+		/* 장비별작업정보 테이블 크기조정 */
 		form .contents .dtl thead th:first-child,
 		form .contents .dtl tbody td:first-child {
 			width: 40px;
@@ -218,7 +218,7 @@
 		form .contents .dtl tbody td:nth-child(5){
 			padding-right: 9px;
 		}
-		/* 제품정보에서 제품과 제품상세  ... 으로 표시. */
+		/* 장비별작업정보에서 제품과 제품상세  ... 으로 표시. */
  		form .contents .dtl tbody tr td > span {
 			display: inline-block;
 			overflow:hidden; 
@@ -227,20 +227,20 @@
 			width: 90%;
 			margin: 0 auto;
 		}
-		/* 제품정보>제품에서 V 크기 및 위치  */
+		/* 장비별작업정보>제품에서 V 크기 및 위치  */
 		form .contents .dtl tbody tr td img {
 			width: 13px;
 			vertical-align: middle;
 			margin-bottom: 5px;
 		}
 		
-		/* 제품정보 클릭했을때 나타나는 내용에서 제목(제품상세) */
+		/* 장비별작업정보 클릭했을때 나타나는 내용에서 제목(제품상세) */
 		.detailList li:nth-child(2n-1) {
 		    width: 82px;
 		    font-weight: 400;
 		    color: #158566;
 		}
-		/* 제품정보 클릭했을대 나타나는 내용 */
+		/* 장비별작업정보 클릭했을대 나타나는 내용 */
 		.detailList li:nth-child(2n) {
 			/* width: 316px; */
 			overflow: hidden;
@@ -265,7 +265,7 @@
 						document.m_listForm.action = "/maintenance/work/detail/productInfo.do";
 			           	document.m_listForm.submit();
 					} else {
-						alert("제품정보가 없습니다.\n 제품등록여부를 Y로 변경 후 제품정보를 등록하세요.")
+						alert("장비별작업정보가 없습니다.\n 제품등록여부를 Y로 변경 후 장비별작업정보를 등록하세요.")
 					}
 				} else if(this.title == "orderInfo"){
 					//console.log("orderInfo===>${basicWorkInfo.mtWorkOrderYn}")
@@ -366,12 +366,12 @@
 			            	var paramData = JSON.parse(data);
 			            	
 			            	if("Y" == paramData.successYN){
-			            		alert("유지보수계약 제품정보 삭제를 성공하였습니다.");
+			            		alert("유지보수계약 장비별작업정보 삭제를 성공하였습니다.");
 			            		
 			            		document.m_listForm.action = "/maintenance/work/detail/productInfo.do";
 			    	           	document.m_listForm.submit();
 			            	} else {
-			            		alert("유지보수계약 제품정보 삭제를 실패하였습니다.");
+			            		alert("유지보수계약 장비별작업정보 삭제를 실패하였습니다.");
 			            		
 			            	}
 			            	 
@@ -406,7 +406,7 @@
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${mtWorkKey}"/>"/>		
 		<input type="hidden" id="mtWorkSeq" name="mtWorkSeq" />		
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
@@ -444,7 +444,7 @@
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
-									<td>유지보수 금액</td>
+									<td>총계약금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<%-- <tr>
@@ -508,13 +508,13 @@
 					<div class="title">
 						<ul>
 							<li id="LI_TOPBar_WB" title="basicInfo"><label style="cursor: pointer;">작업정보</label></li>
-							<li id="LI_TOPBar_WB" class="on"><label style="cursor: pointer;">제품정보</label></li>
+							<li id="LI_TOPBar_WB" class="on"><label style="cursor: pointer;">장비별작업정보</label></li>
 							<li id="LI_TOPBar_WO" title="orderInfo"><label id="orderLabel">발주정보</label></li>
 							<li></li>
 						</ul>
 					</div>
 					<div id="detailForm">
-						<div class="stitle cg colorBlack">제품정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/></div>
+						<div class="stitle cg colorBlack">장비별작업정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/></div>
 						<div class="floatC middle">
 							<table class="dtl">
 								<thead class="ftw400">
@@ -642,7 +642,7 @@
 						<div class="bottom">
 							<div class="floatR">
 								<button type="button" value="수정" onclick="fn_addView();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<%-- <button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

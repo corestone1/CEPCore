@@ -722,7 +722,7 @@ public class MtWorkController {
 		List<?> empList = null;
 		List < ? > acDirectorList = null;
 		MtOrderVO returnVo = null;
-		List<CodeVO> orderKindCodeList = null;
+//		List<CodeVO> orderKindCodeList = null;
 		CodeSearchVO searchVO = null;
 		int listCount = 1;
 		logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtOrderVO.getMtIntegrateKey()+" / "+mtOrderVO.getOrderCtFkKey());
@@ -773,7 +773,7 @@ public class MtWorkController {
 			}
 			searchVO = new CodeSearchVO();
 			searchVO.setCdUpCd("PRODUCT");
-			orderKindCodeList = codeService.selectCodeList(searchVO);
+//			orderKindCodeList = codeService.selectCodeList(searchVO);
 			logger.debug("returnVo.getMtSaveCnt()=====>"+returnVo.getMtSaveCnt());
 			logger.debug("returnVo.getSelectKey()=====>"+returnVo.getSelectKey());
 //			empList = mtcService.selectEmployeeList();
@@ -791,8 +791,13 @@ public class MtWorkController {
 			model.put("mtWorkPmYn", basicWorkInfo.getMtWorkPmYn());
 			model.put("mtWorkOrderYn", basicWorkInfo.getMtWorkOrderYn());
 			model.put("selectKey", mtOrderVO.getSelectKey());		
-			model.put("orderKindCodeList", orderKindCodeList);
+//			model.put("orderKindCodeList", orderKindCodeList);
 			model.put("successYN", "Y");
+			
+			//2021-12-06
+			model.put("purchaseCodeList", CepStringUtil.getPurchaseCodeList());
+			model.put("manufacturerList", CepStringUtil.getManuFacturerList());
+			
 		} catch (Exception e) {
 			model.put("successYN", "Y");
 			logger.error("addBasicInfo error", e);
@@ -873,6 +878,7 @@ public class MtWorkController {
 		//첨부파일 관련
 		FileVO fileVO = new FileVO();
 		List<?> fileResult = null;
+		int mtOrderListCnt = 0;
 		try {
 			
 			logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtOrderVO.getMtIntegrateKey()+" / "+mtOrderVO.getOrderCtFkKey());
@@ -897,6 +903,12 @@ public class MtWorkController {
 						//발주거래처명
 						selectMtOrderAcKeyNm = mtOrderList.get(0).getOrderAcKeyNm();
 					}
+//					else {
+//						mtOrderListCnt =  mtOrderList.size();
+//						for (int i = 0; i < mtOrderListCnt; i++) {
+//							
+//						}
+//					}
 					/*
 					 * 선택한 거래처의 발주품목을 조회한다.
 					 * mtOrderVO.getSelectKey() : mtOrderKey

@@ -6,6 +6,7 @@ package com.cep.maintenance.amount.service;
 import java.util.List;
 import java.util.Map;
 
+import com.cep.maintenance.amount.vo.MtPaymentPlanVO;
 import com.cep.maintenance.amount.vo.MtPurchaseVO;
 import com.cep.maintenance.amount.vo.MtSalesPlanVO;
 import com.cep.project.vo.ProjectPurchaseVO;
@@ -140,7 +141,7 @@ public interface MtAmountService {
 	void updateMtSalesPlanList(Map<String, Object> updateParam)throws Exception;
 	
 	/**
-	 * 유지보수 매출 수금계획 데이타를 조회한다.
+	 * 유지보수 매출 계산서계획(수금계획) 데이타를 조회한다.
 	 * salesCtFkKey : 유지보수 키를 이용하여 해당 유지보수에 대한 데이타 전체조회.
 	 * salesKey : salesKey에 해당하는 한건만 조회.
 	 * <pre>
@@ -155,7 +156,7 @@ public interface MtAmountService {
 	List<MtSalesPlanVO> selectMtSalesPlanList(MtSalesPlanVO salesPlanVO) throws Exception;  
 	
 	/**
-	 * 유지보수 매출 수금계획데이타를 삭제한다.
+	 * 유지보수 매출 계산서계획(수금계획)데이타를 삭제한다.
 	 * salesCtFkKey : 유지보수 키를 이용하여 해당 유지보수에 대한 데이타 전체삭제.
 	 * salesKey : salesKey에 해당하는 한건만 삭제.
 	 * <pre>
@@ -167,4 +168,54 @@ public interface MtAmountService {
 	 * @author aranghoo
 	 */
 	void deleteMtSalesPlan(MtSalesPlanVO salesPlanVO) throws Exception;  
+	
+	
+	/**
+	 * 유지보수 매입 지급계획정보를 조회한다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtPaymentPlanVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 12. 9. 오후 1:55:21
+	 * @author aranghoo
+	 */
+	List<MtPaymentPlanVO> selectMtPaymentPlanList(MtPaymentPlanVO mtPaymentPlanVO) throws Exception;  
+	
+	
+	/**
+	 * 유지보수 매입 지급계획 데이타 입력/업데이트.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtPaymentPlanVO
+	 * @throws Exception
+	 * @cdate 2021. 12. 10. 오후 3:30:50
+	 * @author aranghoo
+	 */
+	void writeMtPaymentPlanList(MtPaymentPlanVO mtPaymentPlanVO) throws Exception;
+	/**
+	 * 유지보수 매입 지급계획 데이타 입력
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param insertParam
+	 * @throws Exception
+	 * @cdate 2021. 12. 10. 오후 8:21:50
+	 * @author aranghoo
+	 */
+	void writeMtPaymentPlanList(Map<String, Object> insertParam) throws Exception;
+	
+	/**
+	 * 유지보수  매입 지급계획 테이타 수정
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param updateParam
+	 * @throws Exception
+	 * @cdate 2021. 12. 10. 오후 8:22:43
+	 * @author aranghoo
+	 */
+	void updateMtPaymentPlanList(Map<String, Object> updateParam)throws Exception;
 }

@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cmm.util.CepStringUtil;
+
 @SuppressWarnings("serial")
 @Alias("mtSalesAmountVO")
 /**
@@ -26,10 +28,12 @@ import org.apache.ibatis.type.Alias;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
-
+	//유지보수 매출계약관리키(MT_SALES_ORDER_TB)
+    private String mtSalesOrderKey;
 
     // 유지보수 통합 관리키 유지보수계약 PK
-    private String mtIntegrateKey;
+    private String mtIntegrateKey;    
+
     
     //유지보수 매출 관리키
     private String mtSalesKey;
@@ -193,9 +197,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesJanCallYn
 	 */
 	public String getMtSalesJanCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesJanCallYn, "N");
+	}
+	public String getMtSalesJanCallYnOrg() {
 		return mtSalesJanCallYn;
 	}
-
 	/**
 	 * @param mtSalesJanCallYn the mtSalesJanCallYn to set
 	 */
@@ -221,9 +227,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesFebCallYn
 	 */
 	public String getMtSalesFebCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesFebCallYn, "N");
+	}
+	public String getMtSalesFebCallYnOrg() {
 		return mtSalesFebCallYn;
 	}
-
 	/**
 	 * @param mtSalesFebCallYn the mtSalesFebCallYn to set
 	 */
@@ -249,6 +257,10 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesMarCallYn
 	 */
 	public String getMtSalesMarCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesMarCallYn, "N");
+	}
+	
+	public String getMtSalesMarCallYnOrg() {
 		return mtSalesMarCallYn;
 	}
 
@@ -277,6 +289,10 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesAprCallYn
 	 */
 	public String getMtSalesAprCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesAprCallYn, "N");
+	}
+	
+	public String getMtSalesAprCallYnOrg() {
 		return mtSalesAprCallYn;
 	}
 
@@ -305,6 +321,9 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesMayCallYn
 	 */
 	public String getMtSalesMayCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesMayCallYn, "N");
+	}
+	public String getMtSalesMayCallYnOrg() {
 		return mtSalesMayCallYn;
 	}
 
@@ -333,9 +352,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesJunCallYn
 	 */
 	public String getMtSalesJunCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesJunCallYn, "N");
+	}
+	public String getMtSalesJunCallYnOrg() {
 		return mtSalesJunCallYn;
 	}
-
 	/**
 	 * @param mtSalesJunCallYn the mtSalesJunCallYn to set
 	 */
@@ -361,9 +382,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesJulCallYn
 	 */
 	public String getMtSalesJulCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesJulCallYn, "N");
+	}
+	public String getMtSalesJulCallYnOrg() {
 		return mtSalesJulCallYn;
 	}
-
 	/**
 	 * @param mtSalesJulCallYn the mtSalesJulCallYn to set
 	 */
@@ -389,6 +412,9 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesAugCallYn
 	 */
 	public String getMtSalesAugCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesAugCallYn, "N");
+	}
+	public String getMtSalesAugCallYnOrg() {
 		return mtSalesAugCallYn;
 	}
 
@@ -417,9 +443,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesSepCallYn
 	 */
 	public String getMtSalesSepCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesSepCallYn, "N");
+	}
+	public String getMtSalesSepCallYnOrg() {
 		return mtSalesSepCallYn;
 	}
-
 	/**
 	 * @param mtSalesSepCallYn the mtSalesSepCallYn to set
 	 */
@@ -445,6 +473,9 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesOctCallYn
 	 */
 	public String getMtSalesOctCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesOctCallYn, "N");
+	}
+	public String getMtSalesOctCallYnOrg() {
 		return mtSalesOctCallYn;
 	}
 
@@ -473,9 +504,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesNovCallYn
 	 */
 	public String getMtSalesNovCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesNovCallYn, "N");
+	}
+	public String getMtSalesNovCallYnOrg() {
 		return mtSalesNovCallYn;
 	}
-
 	/**
 	 * @param mtSalesNovCallYn the mtSalesNovCallYn to set
 	 */
@@ -501,9 +534,11 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 * @return the mtSalesDecCallYn
 	 */
 	public String getMtSalesDecCallYn() {
+		return CepStringUtil.getDefaultValue(mtSalesDecCallYn, "N");
+	}
+	public String getMtSalesDecCallYnOrg() {
 		return mtSalesDecCallYn;
 	}
-
 	/**
 	 * @param mtSalesDecCallYn the mtSalesDecCallYn to set
 	 */
@@ -621,6 +656,14 @@ public class MtSalesAmountVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setDeleteYn(String deleteYn) {
 		this.deleteYn = deleteYn;
+	}
+
+	public String getMtSalesOrderKey() {
+		return mtSalesOrderKey;
+	}
+
+	public void setMtSalesOrderKey(String mtSalesOrderKey) {
+		this.mtSalesOrderKey = mtSalesOrderKey;
 	}
     
 }

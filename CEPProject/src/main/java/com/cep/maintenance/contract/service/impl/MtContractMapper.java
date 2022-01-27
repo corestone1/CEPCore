@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtGuarantyBondVO;
+import com.cep.maintenance.contract.vo.MtSalesOrderVO;
 import com.cep.maintenance.contract.vo.MtBackOrderProductVO;
 import com.cep.maintenance.contract.vo.MtBackOrderVO;
 import com.cep.maintenance.contract.vo.MtBiddingVO;
@@ -99,6 +100,57 @@ public interface MtContractMapper {
 	
 	/**
 	 * 
+	  * @Method Name : selectSalesOrderSelectBoxList
+	  * @Cdate       : 2021. 11. 26.
+	  * @Author      : aranghoo
+	  * @Modification: 
+	  * @Method Description :유지보수계약별 매출 거래처 selectBox목록 조회
+	  * @param mtIntegrateKey
+	  * @return
+	  * @throws Exception
+	 */
+	public List<EgovMap> selectSalesOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	
+	/**
+	 * 유지보수 계약별 매출 메인 상세조회.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param selectSalesOrderDetail
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 26. 오후 4:18:06
+	 * @author aranghoo
+	 */
+	public MtSalesOrderVO selectSalesOrderDetail(String mtSalesOrderKey) throws Exception;
+	
+	/**
+	 * 유지보수 매출계약 목록 리스트
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 30. 오후 1:35:51
+	 * @author aranghoo
+	 */
+	public List<MtSalesOrderVO> selectSalesOrderList(String mtIntegrateKey) throws Exception;
+	
+	/**
+	 * 유지보수 계약별 매출계약 메인등록.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtSalesOrderVO
+	 * @throws Exception
+	 * @cdate 2021. 11. 29. 오후 5:14:51
+	 * @author aranghoo
+	 */
+	public void writeContractSalesOrder(MtSalesOrderVO mtSalesOrderVO) throws Exception;
+	
+	/**
+	 * 
 	  * @Method Name : writeContractProductList
 	  * @Cdate       : 2020. 12. 7.
 	  * @Author      : aranghoo
@@ -108,6 +160,51 @@ public interface MtContractMapper {
 	  * @throws Exception
 	 */
 	public void writeMtContractProductList(Map<String, Object> insertParam) throws Exception;
+	
+	
+	/**
+	 * 유지보수 매출계약 메인삭제.
+	 * mtSalesOrderKey
+	 * modEmpKey
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param deleteParam
+	 * @throws Exception
+	 * @cdate 2021. 11. 29. 오후 5:15:55
+	 * @author aranghoo
+	 */
+	public void deleteSalesOrder(Map<String, Object> deleteParam) throws Exception;
+	
+	/**
+	 * 유지보수 계약 삭제시 해당 유지보수에 관련된 매출계약 삭제.
+	 * mtIntegrateKey
+	 * modEmpKey
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param deleteParam
+	 * @throws Exception
+	 * @cdate 2021. 11. 29. 오후 5:18:12
+	 * @author aranghoo
+	 */
+	public void deleteSalesOrderAll(Map<String, Object> deleteParam) throws Exception;
+	
+	
+	/**
+	 * 유지보수 매출계약 삭제시 해당 매출거래처에 해당하는 제품 삭제.
+	 * mtIntegrateKey
+	 * mtSalesOrderKey
+	 * modEmpKey
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param deleteParam
+	 * @throws Exception
+	 * @cdate 2021. 11. 29. 오후 5:19:48
+	 * @author aranghoo
+	 */
+	public void deleteMtSalesOrderProductAll(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
 	 * 
@@ -134,6 +231,16 @@ public interface MtContractMapper {
 	public void deleteMtContractProductAll(Map<String, Object> deleteParam) throws Exception;
 	
 	/**
+	 * 유지보수 매출계약 메인정보수정.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @cdate 2021. 11. 29. 오후 5:21:59
+	 * @author aranghoo
+	 */
+	public void updateSalesOrder(MtSalesOrderVO mtSalesOrderVO)throws Exception;
+	
+	/**
 	 * 
 	  * @Method Name : updateMtContractProductList
 	  * @Cdate       : 2020. 12. 22.
@@ -156,7 +263,7 @@ public interface MtContractMapper {
 	  * @return
 	  * @throws Exception
 	 */
-	public List<?> selectMtContractProductList(MtDefaultVO searchVO)  throws Exception;
+	public List<MtContractProductVO> selectMtContractProductList(MtDefaultVO searchVO)  throws Exception;
 	
 	
 	/**
@@ -185,6 +292,21 @@ public interface MtContractMapper {
 	 */
 	public int selectMtPmTotalAmount(String mtIntegrateKey) throws Exception;
 	/* ============================== 유지보수계약 매출  ======================================*/
+	
+	/**
+	 * 매출데이타 자동생성시   계산서 발행요청이 있는 데이타를 조회하여 맵핑하는 조회쿼리
+	 * <pre>
+	 * </pre>
+	 * 
+	 * 
+	 * @param selectIntegrateKey
+	 * @param selectMtSalesOrderKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 10. 15. 오후 9:17:11
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtReqBillList(MtDefaultVO searchVO) throws Exception;
 
 	/**
 	 * 
@@ -193,11 +315,12 @@ public interface MtContractMapper {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description : 매출등록화면에서 보여줄 계약 금액정보를 조회한다.
-	  * @param mtIntegrateKey
+	  * @param selectIntegrateKey
+	  * @param selectMtSalesOrderKey
 	  * @return
 	  * @throws Exception
 	 */
-	public Map<String, Object> selectContractAmountInfo(String mtIntegrateKey) throws Exception;
+	public Map<String, Object> selectContractAmountInfo(MtDefaultVO searchVO) throws Exception;
 	
 	
 	/**
@@ -207,11 +330,12 @@ public interface MtContractMapper {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description :유지보수계약 매출총금액
-	  * @param mtIntegrateKey
+	  * @param selectIntegrateKey
+	  * @param selectMtSalesOrderKey
 	  * @return
 	  * @throws Exception
 	 */
-	public int selectMtSalesTotalAmount(String mtIntegrateKey) throws Exception;
+	public int selectMtSalesTotalAmount(MtDefaultVO searchVO) throws Exception;
 	
 	
 	/**
@@ -234,11 +358,12 @@ public interface MtContractMapper {
 	  * @Author      : aranghoo
 	  * @Modification: 
 	  * @Method Description : 유지보수계약 매출정보 목록조회
-	  * @param mtIntegrateKey
+	  * @param selectIntegrateKey
+	  * @param selectMtSalesOrderKey
 	  * @return
 	  * @throws Exception
 	 */
-	public List<?> selectMtContractSalesAmountList(String mtIntegrateKey)  throws Exception;
+	public List<?> selectMtContractSalesAmountList(MtDefaultVO searchVO)  throws Exception;
 	
 	/**
 	 * 
@@ -753,6 +878,16 @@ public interface MtContractMapper {
 	 */
 	public String makePrimaryKey(String keyType) throws Exception;
 	
-	
+	/**
+	 * 매출/매입 세금계산서 제조사 구분 목록.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @return
+	 * @throws Exception
+	 * @cdate 2021. 11. 22. 오후 4:12:56
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectManufacturerList() throws Exception;
 	
 }

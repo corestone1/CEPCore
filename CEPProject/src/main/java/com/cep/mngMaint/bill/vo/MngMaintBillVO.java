@@ -12,6 +12,7 @@ import com.cmm.util.CepStringUtil;
 public class MngMaintBillVO implements Serializable {
 	private static final long serialVersionUID = 6249212047489119229L;
 	
+	private String billGroup; // 매입(PC), 매출(SD) 구분
 	private String billNo; //계산서 번호  MT_SD_BILLING_TB PK,  MT_SD_BILLING_OP_TB fk,
 	private String billCtFkKey; //매출관리키 MT_SD_BILLING_TB ,  MT_SD_BILLING_OP_TB ==> MT_SALES_DETAIL_TB PK
 	private String salesKey; //MT_SALES_DETAIL_TB PK
@@ -46,6 +47,13 @@ public class MngMaintBillVO implements Serializable {
 	private String salesCollectFinishDt; // 수금완료일자
 	
 	private List<MngMaintBillVO> mngBillInsertVOList;
+	
+	//2021-11-23
+	private String billSalesCd; //매출구분
+	private String billMfCd; //제조사구분.
+		
+	//2021-12-03
+	private String mtSalesOrderKey; //매출계약관리키(MT_SALES_ORDER_TB.MT_SALES_ORDER_KEY)
 
 	/**
 	 * @return String - the billNo
@@ -454,6 +462,38 @@ public class MngMaintBillVO implements Serializable {
 
 	public void setSalesCollectFinishDt(String salesCollectFinishDt) {
 		this.salesCollectFinishDt = salesCollectFinishDt;
+	}
+
+	public String getBillGroup() {
+		return billGroup;
+	}
+
+	public void setBillGroup(String billGroup) {
+		this.billGroup = billGroup;
+	}
+
+	public String getBillSalesCd() {
+		return billSalesCd;
+	}
+
+	public void setBillSalesCd(String billSalesCd) {
+		this.billSalesCd = billSalesCd;
+	}
+
+	public String getBillMfCd() {
+		return billMfCd;
+	}
+
+	public void setBillMfCd(String billMfCd) {
+		this.billMfCd = billMfCd;
+	}
+
+	public String getMtSalesOrderKey() {
+		return mtSalesOrderKey;
+	}
+
+	public void setMtSalesOrderKey(String mtSalesOrderKey) {
+		this.mtSalesOrderKey = mtSalesOrderKey;
 	}
 
 }

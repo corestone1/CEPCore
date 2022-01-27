@@ -79,6 +79,16 @@ public class MtBackOrderVO extends MtDefaultVO implements Serializable{
     private String deleteYn;
     
     private List<MtBackOrderProductVO> mtBackOrderProductVoList;
+    
+    private int yetPaymentAmount; //미지급금액
+    
+    private int donePaymentAmount; //지급완료금액
+    
+    private int callTotalAmount; //지급요청 총금액
+    
+    //2021-12-06
+    private String billPurchaseCd; //매입구분(HW, SW,외주용역,기타)
+    private String billMfCd; //제조사
 
 	/**
 	 * @return the mtOrderKey
@@ -344,5 +354,45 @@ public class MtBackOrderVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtOrderAcDirectorNm(String mtOrderAcDirectorNm) {
 		this.mtOrderAcDirectorNm = mtOrderAcDirectorNm;
+	}
+
+	public int getYetPaymentAmount() {
+		return yetPaymentAmount;
+	}
+
+	public void setYetPaymentAmount(int yetPaymentAmount) {
+		this.yetPaymentAmount = yetPaymentAmount;
+	}
+
+	public int getDonePaymentAmount() {
+		return donePaymentAmount;
+	}
+
+	public void setDonePaymentAmount(int donePaymentAmount) {
+		this.donePaymentAmount = donePaymentAmount;
+	}
+
+	public int getCallTotalAmount() {
+		return callTotalAmount;
+	}
+
+	public void setCallTotalAmount(int callTotalAmount) {
+		this.callTotalAmount = callTotalAmount;
+	}
+
+	public String getBillPurchaseCd() {
+		return billPurchaseCd;
+	}
+
+	public void setBillPurchaseCd(String billPurchaseCd) {
+		this.billPurchaseCd = billPurchaseCd;
+	}
+
+	public String getBillMfCd() {
+		return billMfCd;
+	}
+
+	public void setBillMfCd(String billMfCd) {
+		this.billMfCd = billMfCd;
 	}
 }

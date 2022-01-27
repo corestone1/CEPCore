@@ -39,7 +39,7 @@
 		form .mContents > .fxd {
 			width: 60%;
 		}
-		/* 소타이틀(기본정보, 발주정보, 제품정보) 관련 css*/
+		/* 소타이틀(기본정보, 발주정보, 장비별작업정보) 관련 css*/
 		form .mContents .stitle {
 			font-size: 18px;
 			font-weight: 500;
@@ -177,7 +177,7 @@
 			height: 133px;
 		}
 		
-		/* 발주정보 테이블 크기조정 */
+		/* 백계약정보 테이블 크기조정 */
 		.mContents .dtl thead th:first-child,
 		.mContents .dtl tbody td:first-child {
 			width: 51px;
@@ -185,45 +185,58 @@
 		}
 		.mContents .dtl thead th:nth-child(2),
 		.mContents .dtl tbody td:nth-child(2) {
-			width: 51px;
+			width: 35px;
 		}
 		.mContents .dtl thead th:nth-child(3),
 		.mContents .dtl tbody td:nth-child(3) {
-			width: 213px;
+			width: 155px;
+			max-width: 155px;
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
-			width: 100px;
+			width: 67px;
 		}
-		.mContents .dtl thead th:nth-child(5) {
-			width: 100px;
+		.mContents .dtl thead th:nth-child(5) ,
+		.mContents .dtl thead th:nth-child(6) {
+			width: 85px;
 		}
-		.mContents .dtl tbody td:nth-child(5) {
-			width: 100px;
+		.mContents .dtl tbody td:nth-child(5),
+		.mContents .dtl tbody td:nth-child(6) {
+			width: 85px;
 			text-align: right;
 		}
 		/* .mContents .dtl thead th:nth-child(6),
 		.mContents .dtl tbody td:nth-child(6) {
 			width: 80px;
 		} */
-		.mContents .dtl thead th:nth-child(6),
-		.mContents .dtl tbody td:nth-child(6){
-			width: 100px;
-		}
 		.mContents .dtl thead th:nth-child(7),
-		.mContents .dtl tbody td:nth-child(7) {
-			width: 300px;
+		.mContents .dtl tbody td:nth-child(7){
+			width: 80px;
+		}
+		.mContents .dtl thead th:nth-child(8),
+		.mContents .dtl tbody td:nth-child(8) {
+			width: 75px;
 		}	
-		/* 발주정보, 제품정보 글짜크기 */
+		.mContents .dtl thead th:nth-child(9),
+		.mContents .dtl tbody td:nth-child(9) {
+			width: 75px;
+		}	
+		.mContents .dtl thead th:nth-child(10),
+		.mContents .dtl tbody td:nth-child(10) {
+			width: 150px;
+			max-width : 150px;
+		}	
+		
+		/* 발주정보, 장비별작업정보 글짜크기 */
 		.dtl tbody tr td, .dtl2 tbody tr td {
 			font-weight: 200;
 		}
 		
-		/* 제품정보 세로싸이즈 */
+		/* 장비별작업정보 세로싸이즈 */
 		.mContents .dtl2 tbody {
 			height: 294px;
 		}
-		/* 제품정보 테이블 크기조정 */
+		/* 장비별작업정보 테이블 크기조정 */
 		.dtl2 thead th:first-child,
 		.dtl2 tbody td:first-child {
 			width: 51px;
@@ -231,6 +244,7 @@
 		.dtl2 thead th:nth-child(2),
 		.dtl2 tbody td:nth-child(2) {
 			width: 190px;
+			max-width: 190px;
 		}
 		.dtl2 thead th:nth-child(3),
 		.dtl2 tbody td:nth-child(3) {
@@ -257,29 +271,38 @@
 			width: 250px;			
     		max-width: 250px;
 		}
-		/* 제품정보에서 제품과 제품상세  ... 으로 표시. */
+		/* 장비별작업정보에서 제품과 제품상세  ... 으로 표시. */
+		.dtl tbody tr td > span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 97%;
+			margin: 0 auto;
+		}
+		
 		.dtl2 tbody tr td > span {
 			display: inline-block;
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
-			width: 84%;
+			width: 91%;
 			margin: 0 auto;
 		}
-		/* 제품정보>제품에서 V 크기 및 위치  */
+		/* 장비별작업정보>제품에서 V 크기 및 위치  */
 		.dtl2 tbody tr td img {
 			width: 13px;
 			vertical-align: middle;
 			margin-bottom: 5px;
 		}
 		
-		/* 제품정보 클릭했을때 나타나는 내용에서 제목(제품상세) */
+		/* 장비별작업정보 클릭했을때 나타나는 내용에서 제목(제품상세) */
 		.detailList li:nth-child(2n-1) {
 		    width: 82px;
 		    font-weight: 400;
 		    color: #158566;
 		}
-		/* 제품정보 클릭했을대 나타나는 내용 */
+		/* 장비별작업정보 클릭했을대 나타나는 내용 */
 		.detailList li:nth-child(2n) {
 			/* width: 316px; */
 			overflow: hidden;
@@ -287,6 +310,17 @@
 			white-space: nowrap;
 			font-weight: 200;
 			color: #21a17e;
+		}
+		/* 버튼이미지  */
+		.blueBtnStyle {
+			width: 115px;
+		    height: 27px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    font-weight: bold;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
 		}
 	</style>
 	<script>
@@ -307,7 +341,7 @@
 						document.m_listForm.action = "/maintenance/work/detail/productInfo.do";
 			           	document.m_listForm.submit();
 					} else {
-						alert("제품정보가 없습니다.\n 제품등록여부를 Y로 변경 후 제품정보를 등록하세요.")
+						alert("장비별작업정보가 없습니다.\n 제품등록여부를 Y로 변경 후 장비별작업정보를 등록하세요.")
 					}
 				} else if(this.title == "orderInfo"){
 					//console.log("orderInfo===>${basicWorkInfo.mtWorkOrderYn}")
@@ -519,18 +553,36 @@
 			fileDownload("<c:url value='/file/download.do'/>", data);  
 		}
 		
+
 		
+
+		//발주 매입금 지금요청 버튼 클릭
+		function fnMovePaymentDetail() {			
+			if(confirm($('#selectMtOrderAcKeyNm').val()+" 매입금지급요청 화면으로 이동하시겠습니까?")){
+				document.m_mtMovePayment.action = "/mngMaint/payment/detail/main.do";
+	           	document.m_mtMovePayment.submit();
+			}
+			
+		}
 	</script>
 </head>
 <body>
+
+	<form id="m_mtMovePayment" name="m_mtMovePayment" method="post">
+		<input type="hidden" id="m0_mtOrderType" name="mtOrderType" value="PO"/><!-- 백계약:BO, 작업발주:PO -->
+		<input type="hidden" id="m0_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+		<input type="hidden" id="m0_mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>	
+		<input type="hidden" id="m0_mtOrderKey" name="mtOrderKey" value="<c:out value="${selectKey}"/>"/>	
+		<input type="hidden" id="m0_iframGubun" name="iframGubun" value="list"/>	
+	</form>
 	<form id="m_listForm" name="m_listForm" method="post">
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>	
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>		
 		<input type="hidden" id="selectMtOrderAcKeyNm"  value="<c:out value="${selectMtOrderAcKeyNm}"/>"/>
-						<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${selectKey}"/>"/>
+		<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${selectKey}"/>"/>
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="mContentsWrap">
 			<div class="mContents mgauto">
 				<div class="floatL">
@@ -568,7 +620,7 @@
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
-									<td>유지보수 금액</td>
+									<td>총계약금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<%-- <tr>
@@ -632,7 +684,7 @@
 					<div class="title">
 						<ul>
 							<li id="LI_TOPBar_WB" title="basicInfo"><label style="cursor: pointer;">작업정보</label></li>
-							<li id="LI_TOPBar_WB" title="productInfo"><label id="productLabel">제품정보</label></li>
+							<li id="LI_TOPBar_WB" title="productInfo"><label id="productLabel">장비별작업정보</label></li>
 							<li id="LI_TOPBar_WO" class="on" title="orderInfo"><label>발주정보</label></li>
 							<li></li>
 						</ul>
@@ -646,11 +698,14 @@
 										<th scope="row">선택</th>
 										<th scope="row">No</th>
 										<th scope="row">매입처</th>
-										<th scope="row">매입처담당자</th>
+										<th scope="row">매입처담당</th>
 										<th scope="row">합계금액</th>
+										<th scope="row">미지급금</th>
 										<!-- <th scope="row">부가세포함</th> -->
 										<th scope="row">발주일자</th>
-										<th scope="row">결재조건</th>
+										<th scope="row">매입구분</th>
+										<th scope="row">제조사</th>
+										<th scope="row">결제조건</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -662,12 +717,15 @@
 											<input type="radio" class="tRadio" name="m_gubun" id="check<c:out value="${status.count}"/>" value="<c:out value="${list.mtOrderKey}"/>" onclick="selectProductList('<c:out value="${list.mtOrderKey}"/>','${list.orderAcKeyNm}');"/><label for="check<c:out value="${status.count}"/>" class="cursorP" />										
 										</td>
 										<td><c:out value="${status.count}"/></td>
-										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
+										<td class="textalignL"><span title="<c:out value="${list.orderAcKeyNm}"/>"><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
+										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetPaymentAmount)}"/></td>
 										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
-										<td><c:out value="${list.orderPayTerms}"/></td>
+										<td><c:out value="${list.billPurchaseCd}"/></td>
+										<td><c:out value="${list.billMfCd}"/></td>
+										<td class="textalignL"><span title="<c:out value="${list.orderPayTerms}"/>"><c:out value="${list.orderPayTerms}"/></span></td>
 									</tr>
 									</c:when>
 									<c:otherwise>
@@ -679,6 +737,7 @@
 										<td class="textalignL"><span><c:out value="${list.orderAcKeyNm}"/></span></td>
 										<td><c:out value="${list.orderAcDirectorNm}"/></td>
 										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.orderAmount)}"/></td>
+										<td class="textalignR"><c:out value="${displayUtil.commaStr(list.yetPaymentAmount)}"/></td>
 										<%-- <td><c:out value="${list.taxYn}"/></td> --%>
 										<td><c:out value="${displayUtil.displayDate(list.orderDt)}"/></td>
 										<td><c:out value="${list.orderPayTerms}"/></td>
@@ -690,7 +749,7 @@
 							</table>
 						</div>
 						
-						<div class="stitle cg colorBlack" style="margin-top: 18px;">제품정보</div>
+						<div class="stitle cg colorBlack" style="margin-top: 18px;">발주제품정보</div>
 						<div class="floatC submiddle" style="border-bottom: 2px solid #c4c4c4	">
 							<table class="dtl2">
 								<thead class="ftw400">
@@ -718,7 +777,7 @@
 										<td class="textalignR"><c:out value="${displayUtil.makeMultiNumber(list.orderQuantity, list.orderUprice)}"/></td>
 										<td><c:out value="${displayUtil.displayDate(list.orderReceiptDt)}"/></td>
 										<td><c:out value="${list.orderKindNm}"/></td>
-										<td>
+										<td class="textalignL">
 											<span title="<c:out value="${list.orderPmDetail}"/>"><c:out value="${list.orderPmDetail}"/></span>										
 										</td>
 									</tr>
@@ -800,8 +859,9 @@
 						</div>
 						<div class="bottom">
 							<div class="floatR">
+								<button type="button" title="매입금 지급요청" class="blueBtnStyle" onclick="fnMovePaymentDetail();">매입금 지급요청</button>
 								<button type="button" value="수정" onclick="fn_addView('');"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-								<button type="button" value="삭제" onclick="fn_mdeleteWorkOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+								<%-- <button type="button" value="삭제" onclick="fn_mdeleteWorkOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 							</div>
 						</div>

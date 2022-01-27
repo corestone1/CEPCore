@@ -1,15 +1,20 @@
 package com.cmm.util;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+
 public class CepStringUtil {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CepStringUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(CepStringUtil.class);
 	
 	/**
      * 인자로 받은 String이 null일 경우 ""로 리턴
@@ -120,6 +125,138 @@ public class CepStringUtil {
     	
     	return (uri + query);
     	
+    }
+    
+    /**
+     * 매출/매입 제조사 구분
+     *
+     * <pre>
+     * </pre>
+     * 
+     * @return
+     * @cdate 2021. 12. 6. 오후 9:04:25
+     * @author aranghoo
+     */
+    public static List<Map<String, String>> getManuFacturerList() {
+    	List<Map<String, String>> manufacturerList = new ArrayList<>();
+    	
+    	Map<String, String> manufactureCode = null;
+    	try {
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "EMC");
+    		manufactureCode.put("codeNm", "EMC");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "IBM");
+    		manufactureCode.put("codeNm", "IBM");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "Hitachi");
+    		manufactureCode.put("codeNm", "Hitachi");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "FCoreXCM");
+    		manufactureCode.put("codeNm", "FCoreXCM");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "FCoreXMA");
+    		manufactureCode.put("codeNm", "FCoreXMA");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "F5");
+    		manufactureCode.put("codeNm", "F5");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "HP");
+    		manufactureCode.put("codeNm", "HP");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "NAC");
+    		manufactureCode.put("codeNm", "NAC");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "기타");
+    		manufactureCode.put("codeNm", "기타");
+    		manufacturerList.add(manufactureCode);
+    		manufactureCode = new HashMap<String, String>();
+    		manufactureCode.put("codeKey", "브로케이드");
+    		manufactureCode.put("codeNm", "브로케이드");
+    		manufacturerList.add(manufactureCode);
+		} catch (Exception e) {
+			logger.error("getManuFacturerList err = {}",e);
+		}
+    	
+    	return manufacturerList;
+    }
+    
+    /**
+     * 매입구분
+     * <pre>
+     * </pre>
+     * 
+     * @return
+     * @cdate 2021. 12. 6. 오후 9:24:07
+     * @author aranghoo
+     */
+    public static List<Map<String, String>> getSalesCodeList() {
+    	List<Map<String, String>> salesCodeList = new ArrayList<>();
+    	Map<String, String>salesCode = null;
+    	try {
+    		salesCode = new HashMap<>();
+    		salesCode.put("cdKey", "HW");
+    		salesCode.put("cdNm", "HW");
+    		salesCodeList.add(salesCode);
+    		salesCode = new HashMap<>();
+    		salesCode.put("cdKey", "SW");
+    		salesCode.put("cdNm", "SW");
+    		salesCodeList.add(salesCode);
+    		salesCode = new HashMap<>();
+    		salesCode.put("cdKey", "외주용역");
+    		salesCode.put("cdNm", "외주용역");
+    		salesCodeList.add(salesCode);
+    		salesCode = new HashMap<>();
+    		salesCode.put("cdKey", "기타");
+    		salesCode.put("cdNm", "기타");
+    		salesCodeList.add(salesCode);
+		} catch (Exception e) {
+			logger.error("getSalesCodeList err = {}",e);
+		}
+    	return salesCodeList;
+    }
+    
+    /**
+     * 매입구분
+     * <pre>
+     * </pre>
+     * 
+     * @return
+     * @cdate 2021. 12. 6. 오후 9:24:07
+     * @author aranghoo
+     */
+    public static List<Map<String, String>> getPurchaseCodeList() {
+    	List<Map<String, String>> purchaseCodeList = new ArrayList<>();
+    	Map<String, String> purchaseCode = null;
+    	try {
+    		purchaseCode = new HashMap<>();
+    		purchaseCode.put("cdKey", "HW");
+    		purchaseCode.put("cdNm", "HW");
+    		purchaseCodeList.add(purchaseCode);
+    		purchaseCode = new HashMap<>();
+    		purchaseCode.put("cdKey", "SW");
+    		purchaseCode.put("cdNm", "SW");
+    		purchaseCodeList.add(purchaseCode);
+    		purchaseCode = new HashMap<>();
+    		purchaseCode.put("cdKey", "외주용역");
+    		purchaseCode.put("cdNm", "외주용역");
+    		purchaseCodeList.add(purchaseCode);
+    		purchaseCode = new HashMap<>();
+    		purchaseCode.put("cdKey", "기타");
+    		purchaseCode.put("cdNm", "기타");
+    		purchaseCodeList.add(purchaseCode);
+		} catch (Exception e) {
+			logger.error("getManuFacturerList err = {}",e);
+		}
+    	return purchaseCodeList;
     }
     
 }

@@ -49,7 +49,23 @@
 			left: 201px;			
 			z-index: 3;
 			background-color: #f6f7fc;
+			/* overflow-y: auto; */
+		}
+		
+		.popContainer .contents #prodWrap {
+			margin: 0px 47px 0 45px;
+			width: 870px;			
+			height: 254px;
+			/* 
+			top: 107px;
+			left: 201px;	 		
+			z-index: 3;*/
+			background-color: #f6f7fc;
+			overflow-x: hidden;
 			overflow-y: auto;
+		}
+		.popContainer .contents #secondTitle {
+			margin: -15px 47px 0 45px;
 		}
 		.popContainer .contents > div {
 			margin: 10px 47px 0 45px;
@@ -59,7 +75,7 @@
 	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents select {
-			width: 153px;
+			width: 128px;
 			/* height: 40px; */
 			height: 35px;
 			border: 1px solid #e9e9e9;
@@ -94,8 +110,7 @@
 			width: 27px;
 		}
 		.popContainer .contents input[class^="calendar"] {
-			width: 130px;
-			//height: 40px;
+			width: 130px;			
 			height: 33px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -140,14 +155,14 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 22px);
-			height: 55px;
+			width: calc(100% - 22px) !important;
+			height: 53px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			/* resize: none; */
 		}
 		.popContainer .bottomBtn {
 			position: absolute;
@@ -191,13 +206,17 @@
 			width : calc(100% - 46px);
 			text-align: center;
 		}
-      	.accountList li {
+		#m_div_accountList {
+			left: 147px;
+    		margin-top: 35px;
+		}
+      	/* .accountList li {
 			text-align: left;
 			margin-left: 10px;
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
-		}
+		} */
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -219,14 +238,15 @@
 			처음 로딩시  저장된 리스트가 2개보다 많으면  모두 접는다.
 			2개까지는 스크롤바가 생성되지 않음.
 			*/
-			'<c:if test="${listCount > 1 }">'
+			'<c:if test="${listCount > 2 }">'
 			fn_viewSummaryUpAll();
 			'</c:if>'
 			
 			//거래처 검색
 			$("#mtOrderAcKeyNm").on("keydown", function(event){
 				
-				if(event.keyCode == 13) {						
+				if(event.keyCode == 13) {		
+					
 					fnSearchAccoutList(this, $(this).val());
 				}
 					
@@ -236,7 +256,7 @@
 		
 		//거래처 검색
 		var fnSearchAccoutList = function(pObject, pstAccountNm) {
-			$('#div_accountList').remove();
+			$('#m_div_accountList').remove();
 		
 			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
 			
@@ -261,12 +281,15 @@
 		};
 		//거래처 검색
 		var fnViewAccountList = function(pObject, pjAccountList){
-			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			/* var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
 			         + '<ul class="accountList">'
-			       ;//+ '<div style="margin: 5px;">';
+			       ;//+ '<div style="margin: 5px;">'; */
+			var html = '<div id="m_div_accountList">'
+				         + '<ul class="m_accountList">'
+				       ;//+ '<div style="margin: 5px;">';
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {
-			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
 			    	        ;
 			    	}
 			       
@@ -278,12 +301,12 @@
 			$('#tr_account').after(html);
 			
 			
-			$("[id^='li_account']").click(function(event) {
+			$("[id^='m_li_account']").click(function(event) {
 				
 				$('#mtOrderAcKeyNm').val(this.innerText); 
 				$('#mtOrderAcKey').val(this.title);
 				$('#mtOrderAcKey').change();
-				$('#div_accountList').remove();
+				$('#m_div_accountList').remove();
 			});
 		};
 		
@@ -321,7 +344,7 @@
 					
 				} else if(varUrl == "writeSalesPlanView"){					
 					if("${mtContractCountInfo.mtProductCnt}" > 0){
-						if(confirm("유지보수계약 수금계획정보 화면으로 이동하시겠습니까?")){
+						if(confirm("유지보수계약 계산서계획정보 화면으로 이동하시겠습니까?")){
 							url = '/maintenance/contract/write/'+varUrl+'.do';
 						} else {
 							return false;
@@ -349,7 +372,7 @@
 						return false;
 					}					
 					
-				} else if(varUrl == "purchaseAmountView"){					
+				} else if(varUrl == "purchaseAmountView"){			
 					if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
 						if(confirm("유지보수계약 매입정보 화면으로 이동하시겠습니까?")){
 							url = '/maintenance/contract/write/'+varUrl+'.do';
@@ -360,7 +383,19 @@
 						alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
 						return false;
 					}
+				} else if(varUrl == "writePaymentPlanView"){			
+					if("${mtContractCountInfo.mtBackOrderCnt}" > 0){
+						if(confirm("유지보수계약 지급계획정보 화면으로 이동하시겠습니까?")){
+							url = '/maintenance/contract/write/'+varUrl+'.do';
+						} else {
+							return false;
+						}
+					} else {
+						alert(" 유지보수계약 백계약정보가 등록되지 않았습니다.\n 유지보수계약 백계약정보를 먼저 등록하세요.");
+						return false;
+					}
 				}
+				
 			} else {
 				alert(" 유지보수계약 기본정보가 등록되지 않아 화면을 이동할 수 없습니다.");
 				return false;
@@ -507,6 +542,84 @@
 			return checkDate; 
 		}
 		
+		/* 
+			매입정보데이타 업데이트 여부를 확인한다.
+			제품정보 리스트를 검증.
+			1. 제품별  전체금액이 달라진 경우
+			2. 제품별 계약시작월 또는 계약종료월이 달라진 경우.
+		*/
+		jQuery.fn.purchaseUpadteYn = function() {
+			var purchaseUpadteAmountYn = 'N';		
+			var totalAmount;
+			var startDate;
+			var endDate;	
+			var beforeTotalAmount;
+			var beforeStartDate;
+			var beforeEndDate;
+			try {
+				//console.log("contractDate====>"+contractDate);
+				if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) { 
+					var arr = this.serializeArray(); 
+					if(arr){							
+						jQuery.each(arr, function() {
+							if('N'==purchaseUpadteAmountYn) {
+								//console.log("this.name====>"+this.name);
+								//기존에 입력된 데이타(수정전 데이타.)
+								if('beforeTotalAmount' == this.name){ 
+									beforeTotalAmount = this.value;	
+								} else if('beforeMtStartDt' == this.name){
+									beforeStartDate = this.value;									
+								} else if('beforeMtEndDt' == this.name) {
+									beforeEndDate = this.value;
+								}
+								//현재 입력된 데이타(수정된 데이타.)
+								if('totalAmount' == this.name){ 
+									totalAmount = this.value;	
+								} else if('mtStartDt' == this.name.split('-')[2]){
+									startDate = this.value;									
+								} else if('mtEndDt' == this.name.split('-')[2]) {
+									endDate = this.value;
+								}
+								
+								if('beforeMtEndDt' == this.name){
+									//console.log("===>"+beforeTotalAmount+"("+totalAmount+"), "+beforeStartDate+"("+startDate+"), "+beforeEndDate+"("+endDate+")");
+									//console.log("===>"+beforeTotalAmount+"("+totalAmount+"), "+beforeStartDate.substr(0,7)+"("+startDate.substr(0,7)+"), "+beforeEndDate.substr(0,7)+"("+endDate.substr(0,7)+")");
+									if(beforeTotalAmount !=totalAmount ) {
+										//console.log("전체금액이 달라지면 매출정보 업데이트");
+										//전체금액이 달라지면 매출정보 업데이트
+										purchaseUpadteAmountYn = "Y";
+									} else if(beforeStartDate.substr(0,7) != startDate.substr(0,7)) {
+										//console.log("시작월이  달라지면 매출정보 업데이트");
+										//시작월이  달라지면 매출정보 업데이트
+										purchaseUpadteAmountYn = "Y";
+									} else if(beforeEndDate.substr(0,7) != endDate.substr(0,7)) {
+										//console.log("종료월이  달라지면 매출정보 업데이트");
+										//종료월이  달라지면 매출정보 업데이트
+										purchaseUpadteAmountYn = "Y";
+									}
+									beforeTotalAmount ='';
+									beforeStartDate ='';
+									beforeEndDate ='';
+									totalAmount='';
+									startDate ='';
+									endDate ='';
+									
+								}
+								
+							} else {
+								//break;
+								return purchaseUpadteAmountYn;
+							}
+
+						}); 	              
+					} 
+				} 
+			}catch(e) { 
+				alert(e.message); 
+			}finally {} 
+			return purchaseUpadteAmountYn; 
+		}
+		
 		function fn_addInfoTable() {
 			
 			var type = "prod";
@@ -651,6 +764,8 @@
 			var deleteUprice = 0;
 			var deleteQuantity = 0;
 			var totalAmount = removeCommas($('#orderTotalAmount').val())*1;
+			var yetPaymentAmount =($('#yetPaymentAmount').val())*1; 
+			var oldMtOrderAmount =($('#oldMtOrderAmount').val())*1; 
 			deleteUprice = removeCommas($('#prodList-'+num+'-mtOrderPmUprice').val())*1;
 			deleteQuantity = removeCommas($('#prodList-'+num+'-mtOrderPmQuantity').val())*1;
 			
@@ -658,6 +773,20 @@
 			//전체금액에서 삭제금액을 뺀다.
 			$('#orderTotalAmount').val(addCommas(totalAmount-(deleteUprice*deleteQuantity)));
 			
+			//console.log("1==========>"+(totalAmount-(deleteUprice*deleteQuantity)) );
+			//console.log("2==========>"+oldMtOrderAmount);
+			//console.log("3==========>"+yetPaymentAmount);
+			//console.log("4==========>"+( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount));
+			//console.log("5==========>"+(yetPaymentAmount + ( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount) ));
+			//yetPaymentAmount금액을 계산한다. (yetPaymentAmount+변경된 금액)
+			$('#yetPaymentAmount').val( yetPaymentAmount+ ( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount) );
+			//이전금액셋팅.
+			$('#oldMtOrderAmount').val(totalAmount-(deleteUprice*deleteQuantity));
+			
+			//발주금액이 지급요청금액보다 작으면 경고문구
+			if(removeCommas($('#orderTotalAmount').val())*1 <$('#callTotalAmount').val()*1) {
+				alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
+			}
 		}
 		
 		
@@ -750,6 +879,10 @@
 				
 				var orderAmount = quantity*pmUprice;
 				
+				//미지급금액 계산 추가 2021-10-15
+				var yetPaymentAmount =($('#yetPaymentAmount').val())*1; 
+				var oldMtOrderAmount =($('#oldMtOrderAmount').val())*1; 
+				
 				//console.log("quantity * pmUprice =orderAmount ====>"+quantity+" * "+pmUprice+" = "+(quantity*pmUprice));
 				
 				//제품별 계산(단가*수량 = 합계)
@@ -758,6 +891,15 @@
 				//발주합계 금액 계산
 				$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
 				
+				//yetPaymentAmount금액을 계산한다. (yetPaymentAmount+변경된 금액)
+				$('#yetPaymentAmount').val( yetPaymentAmount+ ( (orderTotalAmount+(orderAmount-beforeAmount))-oldMtOrderAmount) );
+				//이전금액셋팅.
+				$('#oldMtOrderAmount').val(orderTotalAmount+(orderAmount-beforeAmount));
+				
+				//발주금액이 지급요청금액보다 작으면 경고문구
+				if(removeCommas($('#orderTotalAmount').val())*1 <$('#callTotalAmount').val()*1) {
+					alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
+				}
 				//console.log("num=>"+num);
 				//console.log("amount11====>"+ amount+"/"+totalAmount+"/"+beforeAmount);			
 			});
@@ -823,7 +965,7 @@
 		
 		//이전화면으로 이동
 		function fn_prevBtn(){
-			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 수금계획정보 등록화면으로 이동하시겠습니까?")) {
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 계산서계획정보 등록화면으로 이동하시겠습니까?")) {
 				var url = '/maintenance/contract/write/writeSalesPlanView.do';
 				var dialogId = 'program_layer';
 				var varParam = {
@@ -867,40 +1009,81 @@
 		function fn_saveBtn(){
 			var actionTitle;
 			var checkDate;
-			//필수값 체크를 완료하면 저장 프로세스 시작.
-			if ($("#mtBasicForm")[0].checkValidity()){
+			var purchaseUpadteYnGubun;
+			//발주합계금액이 지금요청금액보다 큰 경우에만 저장 가능. 지급요청 완료된 금액보다 작아지면 저장안됨.
+			if(removeCommas($('#orderTotalAmount').val())*1 > $('#callTotalAmount').val()*1) {
 				
-				if ($("#mtListForm")[0].checkValidity()){
-					
-					checkDate = $("#mtListForm").checkPmDate();
-					
-					if('' != checkDate) {
-						alert(checkDate);
+				/*
+					처음등록하는 경우는 무조건 매입정보를 등록하고
+					수정인 경우 매입정보 업데이트(updateYn) 하는 기준
+					1. 발주합계 금액이 달라진 경우
+					2. 제품별  전체금액이 달라진 경우
+					3. 제품별 계약기간 월이 달라진 경우.				
+				*/
+				//필수값 체크를 완료하면 저장 프로세스 시작.
+				if ($("#mtBasicForm")[0].checkValidity()){
+					alert(111111);
+					if ($("#mtListForm")[0].checkValidity()){
+						
+						checkDate = $("#mtListForm").checkPmDate();
+						
+						if('' != checkDate) {
+							alert(checkDate);
+						} else {
+							if($('#popSelectKey').val() !=''){
+								//수정
+								actionTitle = "수정";	
+							} else {
+								//등록
+								actionTitle = "저장";
+							}
+							if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
+								//console.log("mtSaveCnt====>"+$('#mtSaveCnt').val()+"/"+purchaseUpadteYnGubun);
+								//등록된 갯수가 0보다 크면 수정.
+								if($('#mtSaveCnt').val()*1 >0) {
+									//1. 백계약 발주합계 금액이 달라지는 경우 업데이트
+									//console.log("===>"+reqProductTotalAmount+"("+$('#beforeProductAmount').val()+"), "+reqProductTotalAmount+"("+$('#mtAmount').val()+")");
+									if($('#orderTotalAmount').val() != $('#beforeOrderTotalAmount').val()) {
+										$('#updateYn').val("Y");
+									}else {
+										//2. 발주합계 금액이 같고
+										purchaseUpadteYnGubun = $("#mtListForm").purchaseUpadteYn();
+										//console.log("1updateYn====>"+$('#updateYn').val()+"/"+purchaseUpadteYnGubun);
+										//3.  제품별 백계약 유지보수 월이 달라진 경우나 제품별  전체금액이 달라진 경우 업데이트
+										if("Y"==purchaseUpadteYnGubun) {
+											$('#updateYn').val("Y");
+										}												
+									}				
+								}
+								//필수값 모두 통과하여 저장 프로세스 호출.
+								saveBackOrder();
+								//console.log("2updateYn====>"+$('#updateYn').val()+"/"+purchaseUpadteYnGubun);
+							} else {
+								return false;
+							}
+						}
+						
+						
 					} else {
-						if($('#popSelectKey').val() !=''){
-							//수정
-							actionTitle = "수정";	
-						} else {
-							//등록
-							actionTitle = "저장";
-						}
-						if(confirm("유지보수계약 백계약정보를  "+actionTitle+"하시겠습니까?")) {
-							//필수값 모두 통과하여 저장 프로세스 호출.
-							saveBackOrder();
-						} else {
-							return false;
-						}
+						 $("#mtListForm")[0].reportValidity();	
+					}				
+					
+				}  else {
+					if($('#billPurchaseCd').val()=='') {
+						alert("매입 구분을 먼저 선택하세요!!")
+					} else if($('#billMfCd').val()=='') {
+						alert("제조사 구분을 먼저 선택하세요!!")
+					} else {
+						 //Validate Form
+				        $("#mtBasicForm")[0].reportValidity();	
 					}
 					
-					
-				} else {
-					 $("#mtListForm")[0].reportValidity();	
-				}				
-				
-			}  else {
-				 //Validate Form
-		        $("#mtBasicForm")[0].reportValidity();	
+				}
+			} else {
+				//발주금액이 지급요청금액보다 작으면 경고문구
+				alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
 			}
+			
 		}
 		// 저장
 		function saveBackOrder(){
@@ -927,7 +1110,7 @@
             }
            	//백계약 제품List를 담아준다.			
             object["mtBackOrderProductVoList"]=listData;
-			console.log("listData====>"+listData);
+			//console.log("listData====>"+listData);
 			//object["mtWorkProductVoList" = listObject];
            	var sendData = JSON.stringify(object);
            
@@ -1006,82 +1189,94 @@
 			var acKeyNm = $('#mtOrderAcKeyNm').val();
 			//console.log("selectKey=========>"+$('#popSelectKey').val());
 			//console.log("mtOrderAcKeyNm=========>"+$('#mtOrderAcKeyNm').val() );
-			if($('#popSelectKey').val() !='') {
-				/* if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
-					var url = '/maintenance/contract/delete/backOrderAll.do';
-					var dialogId = 'program_layer';
-					var varParam = {
-							"mtIntegrateKey":$('#mtIntegrateKey').val(),
-							"selectKey":$('#selectKey').val()
-					}
-					var button = new Array;
-					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-				} */
-				var sendData = {
-						"mtIntegrateKey":$('#mtIntegrateKey').val(),
-						"selectKey":$('#popSelectKey').val()
-				}				
-				
-				if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
-					$.ajax({
-			        	url:"/maintenance/contract/delete/backOrder.do",
-			            dataType: 'text', 
-			            type:"post",  
-						data: JSON.stringify(sendData),
-						
-			            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
-			            
-			     	   	contentType: "application/json; charset=UTF-8", 
-			     	  	beforeSend: function(xhr) {
-			     	  		
-			        		xhr.setRequestHeader("AJAX", true);	        		
-			        	},
-			            success:function(data){	
-			            	//console.log("data==>"+data);
-			            	var paramData = JSON.parse(data);
-			            	
-			            	
-			            	if("Y" == paramData.successYN){
-			            		alert("유지보수계약 백계약정보  삭제를 성공하였습니다.");
-		            			//유지보수계약 백계약 등록화면으로 이동
-			            		var url='/maintenance/contract/write/backOrderInfoView.do';
-			            		            			
-				    			var dialogId = 'program_layer';
-				    			var varParam = paramData
-				    			var button = new Array;
-				    			button = [];
-				    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-				            	
-			            	} else {
-			            		alert("유지보수작업 백계약정보 삭제를 실패하였습니다.");
-			            		
-			            	}
-			            	
-			            	
-			            },
-			        	error: function(request, status, error) {
-			        		if(request.status != '0') {
-			        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-			        		}
-			        	} 
-			        }
-		           	 
-		           	);
-				}
-				
-				
+			if($('#callTotalAmount').val()*1 > 0) {
+				//지급요청금액이 존재하면 삭제할 수 없다.
+				alert("지급요청금액 ("+addCommas($('#callTotalAmount').val())+")이 존재하여 삭제할 수 없습니다.");
 			} else {
-				alert("삭제할 거래처 정보를 선택하세요.");
-			}
-			
-			
+				if($('#popSelectKey').val() !='') {
+					/* if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
+						var url = '/maintenance/contract/delete/backOrderAll.do';
+						var dialogId = 'program_layer';
+						var varParam = {
+								"mtIntegrateKey":$('#mtIntegrateKey').val(),
+								"selectKey":$('#selectKey').val()
+						}
+						var button = new Array;
+						button = [];
+						showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+					} */
+					var sendData = {
+							"mtIntegrateKey":$('#mtIntegrateKey').val(),
+							"selectKey":$('#popSelectKey').val()
+					}				
+					
+					if(confirm(acKeyNm+"의 백계약 정보를 삭제하시겠습니까?")){
+						$.ajax({
+				        	url:"/maintenance/contract/delete/backOrder.do",
+				            dataType: 'text', 
+				            type:"post",  
+							data: JSON.stringify(sendData),
+							
+				            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
+				            
+				     	   	contentType: "application/json; charset=UTF-8", 
+				     	  	beforeSend: function(xhr) {
+				     	  		
+				        		xhr.setRequestHeader("AJAX", true);	        		
+				        	},
+				            success:function(data){	
+				            	//console.log("data==>"+data);
+				            	var paramData = JSON.parse(data);
+				            	
+				            	
+				            	if("Y" == paramData.successYN){
+				            		alert("유지보수계약 백계약정보  삭제를 성공하였습니다.");
+			            			//유지보수계약 백계약 등록화면으로 이동
+				            		var url='/maintenance/contract/write/backOrderInfoView.do';
+				            		            			
+					    			var dialogId = 'program_layer';
+					    			var varParam = paramData
+					    			var button = new Array;
+					    			button = [];
+					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+					            	
+				            	} else {
+				            		alert("유지보수 백계약정보 삭제를 실패하였습니다.");
+				            		
+				            	}
+				            	
+				            	
+				            },
+				        	error: function(request, status, error) {
+				        		if(request.status != '0') {
+				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				        		}
+				        	} 
+				        }
+			           	 
+			           	);
+					}
+					
+					
+				} else {
+					alert("삭제할 거래처 정보를 선택하세요.");
+				}
+			}						
 		}	
 
 
 		function fnUpdateSaleAmount(param) {
 			//alert(param);
 			$('#updateYn').val(param);
+		}
+		
+		//발주합계금액 readOnly해제.
+		function fn_editTotalAmount() {
+			//console.log('--1111111111111111');
+			document.getElementById('orderTotalAmount').readOnly = false;
+			alert("발주합계 금액 읽기전용을 해제하여 금액수정이 가능합니다.!!");
+			//console.log('11222222222222');
+			
 		}
 		
 		/* function fn_viewSummaryUpAll(){
@@ -1206,9 +1401,10 @@
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>		
-					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">수금계획정보</li>			
+					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>			
 					<li class="colorWhite cursorP on">백계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('purchaseAmountView');">매입정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('writePaymentPlanView');">지급계획정보</li>
 			</ul>
 		</div>
 		
@@ -1217,7 +1413,7 @@
 				<div>
 					<table class="subject1">						
 						<tr>      
-							<td class="subTitle" style="border-top: none;" colspan="5">
+							<td class="subTitle" style="border-top: none;" colspan="6">
 								<label class="ftw400">백계약등록</label>&nbsp;&nbsp;&nbsp;	
 								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewBackOrder();" style="vertical-align: middle;cursor: pointer;"/>
 								
@@ -1234,13 +1430,14 @@
 									</select>
 								</c:if>
 							</td>
+							<%-- 2021-11-12 : 발주금액, 제품별 금액, 계약기간이 달라지는 경우 자동으로 업데이트 상태롤 파악해서 매입정보 업데이트.
 							<td style="width: 342px;">
 							<c:if test="${mtBackOrderVO.mtOrderKey !=null }">
 							유지보수 매입금액 업데이트여부 :
 									<input type="radio" class="tRadio" name="checkUpdateYn" value="Y" id="updateYn1" onclick="fnUpdateSaleAmount('Y')"/><label for="updateYn1" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
 									<input type="radio" class="tRadio" name="checkUpdateYn" value="N" id="updateYn2" onclick="fnUpdateSaleAmount('N')"checked="checked"/><label for="updateYn2" class="cursorP" style="width: 22px;height: 22px;"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
 							</c:if>
-							</td>
+							</td> --%>
 						</tr>
 					</table>
 					<form action="/" id="mtBasicForm" name="mtBasicForm"  method="post">
@@ -1262,177 +1459,229 @@
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${mtBackOrderVO.selectKey}"/>"/>
 						<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtBackOrderVO.mtOrderKey}"/>"/>
 						
-					<table>
-						<tr id="tr_account">
-							<td class="tdTitle"><label>*</label> 매입처</td>
-							<td class="tdContents">
-								<%-- <input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" />	
-								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey" value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/> --%>	
-								<input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" style="width: 152px" autocomplete="off" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" required/>
-								<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey"  value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/>
-								
-							</td>
-							<td class="tdTitle"><label>*</label> 매입처담당자</td>
-							<td class="tdContents">
-							<c:choose>
-								<c:when test="${mtBackOrderVO.selectKey eq '' ||  mtBackOrderVO.selectKey eq 'null'||  mtBackOrderVO.selectKey eq null}">
-									<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
-										<option value="">선택</option>
-									</select>
-								</c:when>
-								<c:otherwise>
-									<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
-										<c:forEach var="emp" items="${acDirectorList}" varStatus="status">												
-											<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
-										</c:forEach>
-										
-									</select>
-								</c:otherwise>
-							</c:choose> 
-								
-							</td>
-							<td class="tdTitle"><label>*</label> 발주일자</td>
-							<td class="tdContents">
-								<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
-								<input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" style="width: 153px" required/>
-							</td>
-						</tr>
-						<tr>
-							<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
-							<td class="tdContents">
-								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-							</td> -->
-							<td class="tdTitle"><label>*</label> 발주합계</td>
-							<td class="tdContents">
-								<input type="text"  id="orderTotalAmount" name="mtOrderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="text-align: right;"/>	
-							</td>
-							<td class="tdTitle"><label>*</label> 결제조건</td>
-							<td class="tdContents" colspan="3">
-								<input type="text" name="mtOrderPayTerms" style="width: 435px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
-							</td>
-						</tr>
-						<tr >
-							<td class="tdTitle">비고</td>
-							<td class="tdContents" colspan="5"><textarea id="prodList-0-remark" name="remark" ><c:out value="${mtBackOrderVO.remark}"/></textarea></td>
-						</tr>
-					</table>
-					</form>
-					<form action="/" id="mtListForm" name="mtListForm"  method="post">
-					<div id="prodWrap">
-						<table class="subject2">
-							<tr> 
-								<td class="subTitle" style="border-top: none;"  colspan="6">
-									<label class="ftw400">제품정보</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle;cursor: pointer;"/>
+						<input type="hidden" id="oldMtOrderAmount" name="oldMtOrderAmount" value="<c:out value="${mtBackOrderVO.mtOrderAmount}"/>"/>
+						<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${mtBackOrderVO.yetPaymentAmount}"/>"/>
+						<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${mtBackOrderVO.callTotalAmount}"/>"/>
+						<table style="width:860px;">
+							<tr>
+								<td class="tdTitle" style="width:138px;"><label>*</label> 매입처</td>
+								<td class="tdContents">
+									<%-- <input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" />	
+									<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey" value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/> --%>	
+									<input type="text" id="mtOrderAcKeyNm" name="mtOrderAcKeyNm" class="search" style="width: 163px" autocomplete="off" value="<c:out value="${mtBackOrderVO.getMtOrderAcKeyNm()}"/>" required/>
+									<input type="hidden" id="mtOrderAcKey" name="mtOrderAcKey"  value="<c:out value="${mtBackOrderVO.getMtOrderAcKey()}"/>"/>
+									
 								</td>
-								<%-- <td colspan="5" class="floatL">
-									<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
-								</td> --%>
-								
-								<!-- <td colspan="4" style="visibility:hidden;width: 200px" ></td> -->
+								<td class="tdTitle"><label>*</label> 매입처담당</td>
+								<td class="tdContents">
+								<c:choose>
+									<c:when test="${mtBackOrderVO.selectKey eq '' ||  mtBackOrderVO.selectKey eq 'null'||  mtBackOrderVO.selectKey eq null}">
+										<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
+											<option value="">선택</option>
+										</select>
+									</c:when>
+									<c:otherwise>
+										<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
+											<c:forEach var="emp" items="${acDirectorList}" varStatus="status">												
+												<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
+											</c:forEach>
+											
+										</select>
+									</c:otherwise>
+								</c:choose> 
+									
+								</td>
+								<td class="tdTitle" style="width:50px; max-width:50px;"><label>*</label> 매입구분</td>
+								<td class="tdContents" id="tr_account">
+									<select id="billPurchaseCd" name="billPurchaseCd" style="width:115px;" required>
+										<option value="" style="color:#bec3c9;">매입구분</option>
+										<c:forEach var="billPurchaseCode" items="${purchaseCodeList}" varStatus="status1">			
+										<c:choose>
+											<c:when test='${mtBackOrderVO.billPurchaseCd == billPurchaseCode.cdKey}'>
+											<option value="<c:out value="${billPurchaseCode.cdKey}"/>" selected="selected"><c:out value="${billPurchaseCode.cdNm}"/></option>
+											</c:when>
+											<c:otherwise>
+											<option value="<c:out value="${billPurchaseCode.cdKey}"/>"><c:out value="${billPurchaseCode.cdNm}"/></option>
+											</c:otherwise>
+										
+										</c:choose>										
+										</c:forEach>	
+									</select>
+									<select id="billMfCd" name="billMfCd" style="width:120px;" required>
+										<option value="" style="color:#bec3c9;">제조사</option>
+										
+										<c:forEach var="billMfCd" items="${manufacturerList}" varStatus="status2">										
+										<c:choose>
+											<c:when test='${mtBackOrderVO.billMfCd == billMfCd.codeKey}'>
+											<option value="<c:out value="${billMfCd.codeKey}"/>" selected="selected"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:when>
+											<c:otherwise>
+											<option value="<c:out value="${billMfCd.codeKey}"/>"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:otherwise>
+										</c:choose>
+										</c:forEach>	
+									</select>	
+								</td>
+							</tr>
+							<tr>
+								<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
+								<td class="tdContents">
+									<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+									<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+								</td> -->
+								<td class="tdTitle"><label>*</label> 발주합계<button type="button" onclick="fn_editTotalAmount();"><img src="<c:url value='/images/edit_icon.png'/>" style="width: 19px;vertical-align: middle;margin-bottom: 1px;margin-left: 4px;"/></button></td>
+								<td class="tdContents">
+									<input type="text"  id="orderTotalAmount" name="mtOrderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="width: 163px;text-align: right;"/>	
+									<input type="hidden"  id="beforeOrderTotalAmount" value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>"/>
+								</td>
+								<td class="tdTitle"><label>*</label> 발주일자</td>
+								<td class="tdContents"  id="tr_account">
+									<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
+									<input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" style="width: 105px" required/>
+								</td>
+								<td class="tdTitle"><label>*</label> 결제조건</td>
+								<td class="tdContents">
+									<input type="text" name="mtOrderPayTerms" style="width: 217px" required value="<c:out value="${mtBackOrderVO.mtOrderPayTerms}"/>" />	
+								</td>
+							</tr>
+							<tr >
+								<td class="tdTitle">비고</td>
+								<td class="tdContents" colspan="5"><textarea id="prodList-0-remark" name="remark" ><c:out value="${mtBackOrderVO.remark}"/></textarea></td>
 							</tr>
 						</table>
-						<c:choose>
-							<c:when test="${mtBackOrderVO.mtBackOrderProductVoList.size() eq '' ||  mtBackOrderVO.mtBackOrderProductVoList.size() eq '0'||  mtBackOrderVO.mtBackOrderProductVoList.size() eq null}">
-							<div class="prodTable">
-								<input type="hidden" name="lastNum" value="0" />
-								<table>								
-									<tr>
-										<td class="tdTitle firstTd"><label>*</label> 제품</td>
-										<td class="tdContents firstTd">
-											<input type="text" id="prodList-0-mtPmKeyNm" name="mtPmKeyNm" class="search"  onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
-											<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />
-											<input type="hidden" id="prodList-0-mtOrderPmKey" name="mtOrderPmKey"/>	
-											<input type="hidden" id="prodList-0-checkStartDt" />
-											<input type="hidden" id="prodList-0-checkEndDt" />
-											<!-- <input type="text" id="prodList-0-mtPmKey" name="mtPmKey" class="search" />
-											<input type="hidden" id="prodList-0-mtPmKeyNm"  name="mtPmKeyNm"/> -->
-												
-										</td>
-										<td class="tdTitle firstTd">시리얼번호</td>
-										<td class="tdContents firstTd">
-											<input type="text" id="prodList-0-mtPmSerialNum" name="mtPmSerialNum" readonly="readonly"/>	
-										</td>
-										<td class="tdTitle firstTd"><label>*</label> 수량</td>
-										<td class="tdContents firstTd">
-											<input type="text" id="prodList-0-mtOrderPmQuantity" name="mtOrderPmQuantity" amountOnly class="calculate" style="width: 75px;" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-											<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-				                           	<img id="prodList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
-										</td>
-									</tr>
-									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label> 단가</td>
-										<td class="tdContents">
-											<input type="text" id="prodList-0-mtOrderPmUprice" name="mtOrderPmUprice" amountOnly required class="calculate"/>
-										</td>
-										<td class="tdTitle">합계</td>
-										<td class="tdContents" colspan="3">
-											<input type="text" id="prodList-0-totalAmount" name="totalAmount" readonly="readonly" style="text-align: right;"/>
-										</td>									
-									</tr>
-									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label> 계약기간</td>
-										<td class="tdContents" colspan="5">
-											<input type="text" id="prodList-0-mtStartDt" name="prodList-0-mtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
-											<input type="text" id="prodList-0-mtEndDt" name="prodList-0-mtEndDt" placeholder="to" class="calendar toDt" required/>
-										</td>
-									</tr>
-								</table>
-							</div>
-							</c:when>
-							<c:otherwise>
-							<c:forEach var="list" items="${mtBackOrderVO.mtBackOrderProductVoList}" varStatus="status">
-							<div class="prodTable">
-								<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
-								<table>								
-									<tr>
-										<td class="tdTitle firstTd"><label>*</label> 제품</td>
-										<td class="tdContents firstTd">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmKeyNm" name="mtPmKeyNm" class="search" value="<c:out value="${list.mtPmKeyNm}"/>" required onclick="fn_findMtProduct(this)"/>	
-											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
-											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtOrderPmKey" name="mtOrderPmKey" value="<c:out value="${list.mtOrderPmKey}"/>"/>	
-								
-											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-checkStartDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>"  />
-											<input type="hidden" id="prodList-<c:out value="${status.index}"/>-checkEndDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>"  />
-										</td>
-										<td class="tdTitle firstTd">시리얼번호</td>
-										<td class="tdContents firstTd">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum" name="mtPmSerialNum" readonly="readonly" value="<c:out value="${list.mtPmSerialNum}"/>"/>
-										</td>
-										<td class="tdTitle firstTd"><label>*</label> 수량</td>
-										<td class="tdContents firstTd">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtOrderPmQuantity" name="mtOrderPmQuantity" amountOnly required class="calculate" style="width: 75px;" value="<c:out value="${displayUtil.commaStr(list.mtOrderPmQuantity)}"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-											<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-				                           	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
-										</td>
-									</tr>
-									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label> 단가</td>
-										<td class="tdContents">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtOrderPmUprice" name="mtOrderPmUprice" amountOnly required class="calculate" value="<c:out value="${displayUtil.commaStr(list.mtOrderPmUprice)}"/>"/>
-										</td>
-										<td class="tdTitle">합계</td>
-										<td class="tdContents" colspan="3">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" readonly="readonly" value="<c:out value="${displayUtil.makeMultiNumber(list.mtOrderPmQuantity, list.mtOrderPmUprice)}"/>" style="text-align: right;"/>	
-										</td>									
-									</tr>
-									<tr class="dpTbRow">
-										<td class="tdTitle"><label>*</label> 계약기간</td>
-										<td class="tdContents" colspan="5">
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtStartDt" name="prodList-<c:out value="${status.index}"/>-mtStartDt" placeholder="from" class="calendar fromDt" required value="<c:out value="${displayUtil.displayDate(list.mtStartDt)}"/>" /> ~ 
-											<input type="text" id="prodList-<c:out value="${status.index}"/>-mtEndDt" name="prodList-<c:out value="${status.index}"/>-mtEndDt" placeholder="to" class="calendar toDt" required value="<c:out value="${displayUtil.displayDate(list.mtEndDt)}"/>" />
-										</td>
-									</tr>
-								</table>
-							</div>
-							</c:forEach>
-							</c:otherwise>
-						</c:choose>
-						
-					</div>
-					</form>		
+					</form>
 				</div>
+					
+					
+				<form action="/" id="mtListForm" name="mtListForm"  method="post">
+				<div id="secondTitle">
+					<table class="subject2">
+						<tr> 
+							<td class="subTitle" style="border-top: none;"  colspan="6">
+								<label class="ftw400">제품정보</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle;cursor: pointer;"/>
+							</td>
+							<%-- <td colspan="5" class="floatL">
+								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
+							</td> --%>
+							
+							<!-- <td colspan="4" style="visibility:hidden;width: 200px" ></td> -->
+						</tr>
+					</table>
+				</div>
+				
+				<div id="prodWrap">
+					
+					<c:choose>
+						<c:when test="${mtBackOrderVO.mtBackOrderProductVoList.size() eq '' ||  mtBackOrderVO.mtBackOrderProductVoList.size() eq '0'||  mtBackOrderVO.mtBackOrderProductVoList.size() eq null}">
+						<div class="prodTable">
+							<input type="hidden" name="lastNum" value="0" />
+							<table>								
+								<tr>
+									<td class="tdTitle firstTd"><label>*</label> 제품</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-0-mtPmKeyNm" name="mtPmKeyNm" class="search"  onclick="fn_findMtProduct(this)" onkeypress="return false;" required/>	
+										<input type="hidden" id="prodList-0-mtPmKey" name="mtPmKey" />
+										<input type="hidden" id="prodList-0-mtOrderPmKey" name="mtOrderPmKey"/>	
+										<input type="hidden" id="prodList-0-checkStartDt" />
+										<input type="hidden" id="prodList-0-checkEndDt" />
+										<!-- <input type="text" id="prodList-0-mtPmKey" name="mtPmKey" class="search" />
+										<input type="hidden" id="prodList-0-mtPmKeyNm"  name="mtPmKeyNm"/> -->
+											
+									</td>
+									<td class="tdTitle firstTd">시리얼번호</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-0-mtPmSerialNum" name="mtPmSerialNum" readonly="readonly"/>	
+									</td>
+									<td class="tdTitle firstTd"><label>*</label> 수량</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-0-mtOrderPmQuantity" name="mtOrderPmQuantity" amountOnly class="calculate" style="width: 75px;" required/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+			                           	<img id="prodList-0-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label> 단가</td>
+									<td class="tdContents">
+										<input type="text" id="prodList-0-mtOrderPmUprice" name="mtOrderPmUprice" amountOnly required class="calculate"/>
+									</td>
+									<td class="tdTitle">합계</td>
+									<td class="tdContents" colspan="3">
+										<input type="text" id="prodList-0-totalAmount" name="totalAmount" readonly="readonly" style="text-align: right;"/>
+									</td>									
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label> 계약기간</td>
+									<td class="tdContents" colspan="5">
+										<input type="text" id="prodList-0-mtStartDt" name="prodList-0-mtStartDt" placeholder="from" class="calendar fromDt" required/> ~ 
+										<input type="text" id="prodList-0-mtEndDt" name="prodList-0-mtEndDt" placeholder="to" class="calendar toDt" required/>
+									</td>
+								</tr>
+							</table>
+						</div>
+						</c:when>
+						<c:otherwise>
+						<c:forEach var="list" items="${mtBackOrderVO.mtBackOrderProductVoList}" varStatus="status">
+						<div class="prodTable">
+							<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
+							<table>								
+								<tr>
+									<td class="tdTitle firstTd"><label>*</label> 제품</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmKeyNm" name="mtPmKeyNm" class="search" value="<c:out value="${list.mtPmKeyNm}"/>" required onclick="fn_findMtProduct(this)"/>	
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtPmKey" name="mtPmKey" value="<c:out value="${list.mtPmKey}"/>"/>	
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-mtOrderPmKey" name="mtOrderPmKey" value="<c:out value="${list.mtOrderPmKey}"/>"/>	
+							
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-checkStartDt" value="<c:out value="${displayUtil.displayDate(list.mtPmStartDt)}"/>"  />
+										<input type="hidden" id="prodList-<c:out value="${status.index}"/>-checkEndDt" value="<c:out value="${displayUtil.displayDate(list.mtPmEndDt)}"/>"  />
+									</td>
+									<td class="tdTitle firstTd">시리얼번호</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtPmSerialNum" name="mtPmSerialNum" readonly="readonly" value="<c:out value="${list.mtPmSerialNum}"/>"/>
+									</td>
+									<td class="tdTitle firstTd"><label>*</label> 수량</td>
+									<td class="tdContents firstTd">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtOrderPmQuantity" name="mtOrderPmQuantity" amountOnly required class="calculate" style="width: 75px;" value="<c:out value="${displayUtil.commaStr(list.mtOrderPmQuantity)}"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+										<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+			                           	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+									</td>
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label> 단가</td>
+									<td class="tdContents">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtOrderPmUprice" name="mtOrderPmUprice" amountOnly required class="calculate" value="<c:out value="${displayUtil.commaStr(list.mtOrderPmUprice)}"/>"/>
+									</td>
+									<td class="tdTitle">합계</td>
+									<td class="tdContents" colspan="3">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" readonly="readonly" value="<c:out value="${displayUtil.makeMultiNumber(list.mtOrderPmQuantity, list.mtOrderPmUprice)}"/>" style="text-align: right;"/>
+										<input type="hidden" name="beforeTotalAmount" value="<c:out value="${displayUtil.makeMultiNumber(list.mtOrderPmQuantity, list.mtOrderPmUprice)}"/>"/>	
+									</td>									
+								</tr>
+								<tr class="dpTbRow">
+									<td class="tdTitle"><label>*</label> 계약기간</td>
+									<td class="tdContents" colspan="5">
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtStartDt" name="prodList-<c:out value="${status.index}"/>-mtStartDt" placeholder="from" class="calendar fromDt" required value="<c:out value="${displayUtil.displayDate(list.mtStartDt)}"/>" /> ~ 
+										<input type="text" id="prodList-<c:out value="${status.index}"/>-mtEndDt" name="prodList-<c:out value="${status.index}"/>-mtEndDt" placeholder="to" class="calendar toDt" required value="<c:out value="${displayUtil.displayDate(list.mtEndDt)}"/>" />
+										<input type="hidden" name="beforeMtStartDt" value="<c:out value="${displayUtil.displayDate(list.mtStartDt)}"/>"/>
+										<input type="hidden" name="beforeMtEndDt" value="<c:out value="${displayUtil.displayDate(list.mtEndDt)}"/>"/>
+									</td>
+								</tr>
+							</table>
+						</div>
+						</c:forEach>
+						</c:otherwise>
+					</c:choose>
+					
+				</div>
+				</form>		
+				
+				
+				
+				
+				
+				
+				
+				
 				<div class="btnWrap floatL">
 					<div class="floatL">
 						<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>

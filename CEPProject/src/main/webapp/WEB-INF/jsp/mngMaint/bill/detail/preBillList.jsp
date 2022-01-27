@@ -154,11 +154,11 @@
 		}
 		.mContents .dtl thead th:nth-child(4),
 		.mContents .dtl tbody td:nth-child(4) {
-			width: 130px;
+			width: 135px;
 		}
 		.mContents .dtl thead th:nth-child(5),
 		.mContents .dtl tbody td:nth-child(5) {
-			width: 90px;
+			width: 85px;
 		}
 		.mContents .dtl thead th:nth-child(6),
 		.mContents .dtl tbody td:nth-child(6) {
@@ -176,10 +176,30 @@
 		.mContents .dtl tbody td:nth-child(9) {
 			width: 90px;
 		}	 */	
+		.mContents .dtl tbody tr td a {
+		    color: #000;
+		}
+		#frm_reqForm .dtl tbody tr {
+		    display: table;
+		    width: 999px;
+		    cursor: pointer;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			
+			$('#info2 tr').click(function() {
+				//console.log("====>"+$(this).children().eq(0).text())
+				/* location.href = "/maintenance/detail/prodInfo.do"; */
+				
+				/* $('#ipt_billTurnNo').val($(this).children().eq(0).text());				
+				document.reqForm.action = "/mngMaint/bill/detail/billForm.do";
+	            document.reqForm.submit(); */
+	            
+				window.parent.document.getElementById("m_iframGubun").value="detail";
+	    		window.parent.document.getElementById("m_billTurnNo").value=$(this).children().eq(0).text();
+	    			
+	    		window.parent.changeIframeUrl();
+			});
 			                
 		});
 		
@@ -226,9 +246,13 @@
 		
 	 	function fnMoveBillForm() {
 			
-			form = document.reqForm;
+			/* form = document.reqForm;
 			form.action = "<c:url value='/mngMaint/bill/detail/billForm.do'/>";
-			form.submit(); 
+			form.submit();  */
+	 		window.parent.document.getElementById("m_iframGubun").value="detail";
+    		window.parent.document.getElementById("m_billTurnNo").value=$('#ipt_billTurnNo').val();
+    			
+    		window.parent.changeIframeUrl();
 		}
 	 	
 	 	function fnComplete(pstPjKey, pstBillCallKey, pstSalesKey, billIssueStatus, turnNo){
@@ -238,7 +262,7 @@
  					var billInfo = {'pjKey' : pstPjKey, 'billCallKey' : pstBillCallKey, 'salesKey' : pstSalesKey, 'billIssueStatus' : 'E'};
  					
  					$.ajax({
- 				        	url :"/mngMaint/bill/detail/updateSdPaymentStatus.do",
+ 				        	url :"/mngMaint/bill/detail/updateSdCollectStatus.do",
  				        	type:"POST",  
  				            data: billInfo,
  				     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -312,25 +336,28 @@
 			<table class="dtl" id="info2">
 				<thead class="ftw400">
 					<tr>
-						<th scope="row">No</th>
+						<th scope="row">회차</th>
 						<th scope="row">계산서 번호</th>
 						<th scope="row">발행일자</th>
 						<th scope="row">매출처</th>
-						<th scope="row">거래처 담당자</th>
+						<th scope="row">매출처 담당자</th>
 						<th scope="row">계산서 금액</th>
 						<!-- <th scope="row">수금 금액</th> -->
 						<th scope="row">발행구분</th>
 						<th scope="row">진행상태</th>
-						<th scope="row">수금완료</th>
+						<th scope="row">수금완료일</th>
+						<th style="max-width: 0px; display: none;">billTurnNo</th>
 					</tr>
 				</thead>
 				<tbody>
 				<c:forEach var="result" items="${prePaymentList }" varStatus="status">
 					<tr>
-						<td>${status.count }</td>
+						<%-- <td>${status.count }</td> --%>
+						<td>${result.billTurnNo }</td>
 						<td><span>${result.billNo }</span></td>
 						<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
-						<td><span><a href="javascript:fnViewBillInsert('${result.salesKey}')" style="color: #0c35ff;"><c:out value="${result.billAcNm}"/></a></span></td>
+						<td><span><c:out value="${result.billAcNm}"/></span></td>
+						<%-- <td><span><a href="javascript:fnViewBillInsert('${result.salesKey}')" ><c:out value="${result.billAcNm}"/></a></span></td> --%>
 						<td><span>${result.billAcDirectorNm }</span></td>
 						<td class="textalignR"><span>${displayUtil.commaStr(result.billAmount) }</span></td>
 						<%-- <td class="textalignR"><span>${displayUtil.commaStr(result.billTotalAmount) }</span></td> --%>
@@ -370,7 +397,8 @@
 							
 						</td>
 						<td>
-							<c:choose>
+							<span>${displayUtil.displayDate(result.salesCollectFinishDt) }</span>
+							<%-- <c:choose>
 								<c:when test="${empty result.salesCollectFinishDt }">
 									<c:set var="key" value="${result.salesCollectFinishDt }" />
 									<button type="button" class="btnComp" onclick="javascript:fnComplete('${result.mtKey}', '${result.billCallKey}' ,'${result.salesKey}','${result.billIssueStatus}', '${status.count}');">
@@ -380,8 +408,9 @@
 								<c:otherwise>
 									<span>${displayUtil.displayDate(result.salesCollectFinishDt) }</span>
 								</c:otherwise>
-							</c:choose>
+							</c:choose> --%>
 						</td>
+						<td style="max-width: 0px; display: none;"><c:out value="${result.billTurnNo}"/></td>
 					</tr>
 				</c:forEach>
 					<!-- <tr>

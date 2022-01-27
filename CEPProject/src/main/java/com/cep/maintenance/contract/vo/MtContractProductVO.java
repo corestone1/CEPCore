@@ -30,9 +30,15 @@ import com.cmm.util.CepStringUtil;
 public class MtContractProductVO extends MtDefaultVO implements Serializable{
 
 //	private static final long serialVersionUID = 1L;
+	
+	//유지보수 매출 제품관리키
+	private int mtSalesPmKey;
+	
+	//유지보수 매출관리키(MT_SALES_ORDER_TB.MT_SALES_ORDER_KEY)
+	private String mtSalesOrderKey;
 
 	// 유지보수 제품 관리키 
-    private int mtPmKey;
+//    private int mtPmKey;
 
     // 유지보수 통합 관리키 유지보수 계약 PK
     private String mtIntegrateKey;
@@ -86,21 +92,21 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
     // 삭제 여부 초기값 (N)
     private String deleteYn;
     
-    private List<MtContractProductVO> mtContractProductVoList;
+//    private List<MtContractProductVO> mtContractProductVoList;
 
 	/**
 	 * @return the mtPmKey
 	 */
-	public int getMtPmKey() {
+/*	public int getMtPmKey() {
 		return mtPmKey;
 	}
 
-	/**
+	*//**
 	 * @param mtPmKey the mtPmKey to set
-	 */
+	 *//*
 	public void setMtPmKey(int mtPmKey) {
 		this.mtPmKey = mtPmKey;
-	}
+	}*/
 
 	/**
 	 * @return the mtIntegrateKey
@@ -376,16 +382,16 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
 	/**
 	 * @return the mtContractProductVoList
 	 */
-	public List<MtContractProductVO> getMtContractProductVoList() {
-		return mtContractProductVoList;
-	}
-
-	/**
-	 * @param mtContractProductVoList the mtContractProductVoList to set
-	 */
-	public void setMtContractProductVoList(List<MtContractProductVO> mtContractProductVoList) {
-		this.mtContractProductVoList = mtContractProductVoList;
-	}
+//	public List<MtContractProductVO> getMtContractProductVoList() {
+//		return mtContractProductVoList;
+//	}
+//
+//	/**
+//	 * @param mtContractProductVoList the mtContractProductVoList to set
+//	 */
+//	public void setMtContractProductVoList(List<MtContractProductVO> mtContractProductVoList) {
+//		this.mtContractProductVoList = mtContractProductVoList;
+//	}
 
 	/**
 	 * @return the mtPmNmCd
@@ -399,6 +405,23 @@ public class MtContractProductVO extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtPmNmCd(String mtPmNmCd) {
 		this.mtPmNmCd = mtPmNmCd;
+	}
+
+
+	public String getMtSalesOrderKey() {
+		return mtSalesOrderKey;
+	}
+
+	public void setMtSalesOrderKey(String mtSalesOrderKey) {
+		this.mtSalesOrderKey = mtSalesOrderKey;
+	}
+
+	public int getMtSalesPmKey() {
+		return mtSalesPmKey;
+	}
+
+	public void setMtSalesPmKey(int mtSalesPmKey) {
+		this.mtSalesPmKey = mtSalesPmKey;
 	}
 
 

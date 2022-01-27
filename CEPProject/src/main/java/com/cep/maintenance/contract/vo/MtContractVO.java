@@ -66,12 +66,18 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 	private String modTm; // 유지보수 수정시간
 	private String modEmpKey; //유지보수 수정직원 관리키
 	
+	private long mtOrderAmount; //유지보수 백계약+발주 금액
+	
 //	private Map<String, List<MtContractLinkVO>> contractLinkList; // 유지보수계약 연계 정보(Forcast(S), Project(P))
 	private MtContractLinkVO mtForcastLinkVo;
 	private MtContractLinkVO mtProjectLinkVo;
 	
+	//
+	private int callTotalAmount; //계산서 발행요청 금액.
 	// 파일 작업 구분
 	private String workClass;
+	
+	
 	
 	public String getWorkClass() {
 		return workClass;
@@ -549,6 +555,20 @@ public class MtContractVO extends MtDefaultVO implements Serializable{
 		this.mtProjectLinkVo = mtProjectLinkVo;
 	}
 
+	
+	public int getCallTotalAmount() {
+		return callTotalAmount;
+	}
+	public void setCallTotalAmount(int callTotalAmount) {
+		this.callTotalAmount = callTotalAmount;
+	}
+
+	public long getMtOrderAmount() {
+		return mtOrderAmount;
+	}
+	public void setMtOrderAmount(long mtOrderAmount) {
+		this.mtOrderAmount = mtOrderAmount;
+	}
 	
 //	private String convertDate(String date){
 //		String convertDate = null;

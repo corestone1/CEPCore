@@ -41,16 +41,6 @@
 			background-color: #fff;
 			color: #32bc94;
 		}
-		.popContainer .contents {
-			position: absolute;
-			width: calc(100% - 201px);
-			height: 601px;
-			top: 107px;
-			left: 201px;			
-			z-index: 3;
-			background-color: #f6f7fc;
-			overflow-y: auto;
-		}
 		.popContainer .contents > div {
 			margin: 10px 47px 0 45px;
 		}
@@ -59,7 +49,7 @@
 	  		border-spacing: 0 3px;
 		}
 		.popContainer .contents select {
-			width: 153px;
+			width: 128px;
 			/* height: 40px; */
 			height: 35px;
 			border: 1px solid #e9e9e9;
@@ -84,8 +74,7 @@
 			margin-bottom: 3px;
 		}
 		.popContainer input[class="search"] {
-			/* height: 38px; */
-			height: 32px;
+			height: 34px;		
 			background-image: url('/images/search_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
@@ -140,14 +129,14 @@
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
-			width: calc(100% - 22px);
-			height: 52px;
+			width: calc(100% - 22px) !important;
+			height: 53px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			/* resize: none; */
 		}
 		.popContainer .bottomBtn {
 			position: absolute;
@@ -169,11 +158,12 @@
 		} 
 		.popContainer .contents .subject2 {
 			border-bottom: 2px solid #e5e5e5;
-			padding-bottom: 9px;
+			padding-bottom: 0px;
 		}
 		.popContainer .contents .btnWrap {
-			margin : 20px 0px 15px 49px;			
+			margin : 20px 0px -14px 49px;			
 			width : 842px;
+			height : 32px;
 		}
 		.calculate {
 			text-align: right !important;
@@ -188,16 +178,55 @@
 			table-layout: fixed;
 		}
 		.btnCenter {
-			width : calc(100% - 46px);
+			width : calc(100% - 64px);
 			text-align: center;
 		}
-      	.accountList li {
+		#m_div_accountList {
+			left: 148px;
+    		margin-top: 36px;
+		}
+		input[type="text"] {
+		    width: 138px;
+		    height: 31px;
+		    border: 1px solid #e9e9e9;    
+		    background-color: #fff;
+		    font-size: 14px;
+		}		
+		.popContainer .contents {
+			position: absolute;
+			width: calc(100% - 201px);
+			height: 533px;
+			top: 107px;
+			left: 201px;			
+			z-index: 3;
+			background-color: #f6f7fc;
+			
+		}
+		#prodWrap {
+			height: 307px;
+			width: 870px;
+			overflow-y: auto;
+		}
+		.btnWrap {
+			/* margin : 20px 0px -14px 49px;			
+			width : 842px; */
+			height : 50px;
+			background-color: #f6f7fc;
+			width: calc(100% - 246px);
+			margin-top: 613px;
+			margin-left: 200px;
+			padding-top:20px;
+			padding-left: 45px;
+			top:25px;
+			
+		}
+      	/* .accountList li {
 			text-align: left;
 			margin-left: 10px;
 			line-height: 2.3;
 			font-size: 14px;
 			color: #21a17e;
-		}
+		} */
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -277,7 +306,7 @@
 		
 		//거래처 검색
 		var fnSearchAccoutList = function(pObject, pstAccountNm) {
-			$('#div_accountList').remove();
+			$('#m_div_accountList').remove();
 		
 			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
 			
@@ -302,12 +331,15 @@
 		};
 		//거래처 검색
 		var fnViewAccountList = function(pObject, pjAccountList){
-			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			var html = '<div id="m_div_accountList">'
+		         + '<ul class="m_accountList">'
+		       ;//+ '<div style="margin: 5px;">';
+/* 			var html = '<div id="div_accountList" style="width:179px; padding-top: 7px; margin-left: 112px; padding-bottom: 7px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
 			         + '<ul class="accountList">'
-			       ;//+ '<div style="margin: 5px;">';
+			       ;//+ '<div style="margin: 5px;">'; */
 			       
 			       for(var i=0; i < pjAccountList.length; i++) {
-			    	   html += '<li id="li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+			    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
 			    	        ;
 			    	}
 			       
@@ -319,12 +351,12 @@
 			$('#tr_account').after(html);
 			
 			
-			$("[id^='li_account']").click(function(event) {
+			$("[id^='m_li_account']").click(function(event) {
 				
 				$('#orderAcKeyNm').val(this.innerText); 
 				$('#orderAcKey').val(this.title);
 				$('#orderAcKey').change();
-				$('#div_accountList').remove();
+				$('#m_div_accountList').remove();
 			});
 		};
 	
@@ -549,6 +581,11 @@
 			var deleteUprice = 0;
 			var deleteQuantity = 0;
 			var totalAmount = removeCommas($('#orderTotalAmount').val())*1;
+
+			var yetPaymentAmount =($('#yetPaymentAmount').val())*1; 
+			var oldMtOrderAmount =($('#oldMtOrderAmount').val())*1; 
+			
+			
 			deleteUprice = removeCommas($('#prodList-'+num+'-orderUprice').val())*1;
 			deleteQuantity = removeCommas($('#prodList-'+num+'-orderQuantity').val())*1;
 			
@@ -556,6 +593,15 @@
 			//전체금액에서 삭제금액을 뺀다.
 			$('#orderTotalAmount').val(addCommas(totalAmount-(deleteUprice*deleteQuantity)));
 			
+			//yetPaymentAmount금액을 계산한다. (yetPaymentAmount+변경된 금액)
+			$('#yetPaymentAmount').val( yetPaymentAmount+ ( (totalAmount-(deleteUprice*deleteQuantity))-oldMtOrderAmount) );
+			//이전금액셋팅.
+			$('#oldMtOrderAmount').val(totalAmount-(deleteUprice*deleteQuantity));
+			
+			//발주금액이 지급요청금액보다 작으면 경고문구
+			if(removeCommas($('#orderTotalAmount').val())*1 <$('#callTotalAmount').val()*1) {
+				alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
+			}
 		}
 		
 		//단가 * 수량 계산
@@ -585,6 +631,10 @@
 				
 				var orderAmount = quantity*pmUprice;
 				
+				//미지급금액 계산 추가 2021-10-15
+				var yetPaymentAmount =($('#yetPaymentAmount').val())*1; 
+				var oldMtOrderAmount =($('#oldMtOrderAmount').val())*1; 
+				
 				//console.log("quantity * pmUprice =orderAmount ====>"+quantity+" * "+pmUprice+" = "+(quantity*pmUprice));
 				
 				//제품별 계산(단가*수량 = 합계)
@@ -593,8 +643,16 @@
 				//발주합계 금액 계산
 				$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
 				
+				//yetPaymentAmount금액을 계산한다. (yetPaymentAmount+변경된 금액)
+				$('#yetPaymentAmount').val( yetPaymentAmount+ ( (orderTotalAmount+(orderAmount-beforeAmount))-oldMtOrderAmount) );
+				//이전금액셋팅.
+				$('#oldMtOrderAmount').val(orderTotalAmount+(orderAmount-beforeAmount));
 				//console.log("num=>"+num);
 				//console.log("amount11====>"+ amount+"/"+totalAmount+"/"+beforeAmount);			
+				//발주금액이 지급요청금액보다 작으면 경고문구
+				if(removeCommas($('#orderTotalAmount').val())*1 <$('#callTotalAmount').val()*1) {
+					alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
+				}
 			});
 			
 		}
@@ -628,7 +686,7 @@
 						return false;
 					}
 				} else if(varUrl == "productInfoView"){
-					if(confirm("유지보수작업 제품정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수작업 장비별작업정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/work/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -660,7 +718,7 @@
 			var whereMsg;
 			var whereUrl;
 			if("Y" == $('#sv_mtWorkPmYn').val()){
-				whereMsg = "제품정보";
+				whereMsg = "장비별작업정보";
 				whereUrl = "/maintenance/work/write/productInfoView.do";
 			} else {
 				whereMsg = "기본정보";
@@ -702,35 +760,50 @@
 		function fn_saveBtn(){
 			var actionTitle;
 			var checkDate;
-			//필수값 체크를 완료하면 저장 프로세스 시작.
-			if ($("#mtBasicForm")[0].checkValidity()){
-				
-				if ($("#mtListForm")[0].checkValidity()){
+			
+			if(removeCommas($('#orderTotalAmount').val())*1 >= $('#callTotalAmount').val()*1) {
+				//필수값 체크를 완료하면 저장 프로세스 시작.
+				if ($("#mtBasicForm")[0].checkValidity()){
 					
-					if($('#popSelectKey').val() !=''){
-						//수정
-						actionTitle = "수정";	
+					if ($("#mtListForm")[0].checkValidity()){
+						
+						if($('#popSelectKey').val() !=''){
+							//수정
+							actionTitle = "수정";	
+						} else {
+							//등록
+							actionTitle = "저장";
+						}
+						if(confirm("유지보수작업 발주정보를  "+actionTitle+"하시겠습니까?")) {
+							//필수값 모두 통과하여 저장 프로세스 호출.
+							saveWorkOrder();
+							//var listData = $("#mtListForm").serializeObject();
+						} else {
+							return false;
+						}
+						
+						
 					} else {
-						//등록
-						actionTitle = "저장";
-					}
-					if(confirm("유지보수작업 발주정보를  "+actionTitle+"하시겠습니까?")) {
-						//필수값 모두 통과하여 저장 프로세스 호출.
-						saveWorkOrder();
-						//var listData = $("#mtListForm").serializeObject();
+						 $("#mtListForm")[0].reportValidity();	
+					}				
+					
+				}  else {
+					if($('#billPurchaseCd').val()=='') {
+						alert("매입 구분을 먼저 선택하세요!!")
+					} else if($('#billMfCd').val()=='') {
+						alert("제조사 구분을 먼저 선택하세요!!")
 					} else {
-						return false;
+						 //Validate Form
+				        $("#mtBasicForm")[0].reportValidity();	
 					}
-					
-					
-				} else {
-					 $("#mtListForm")[0].reportValidity();	
-				}				
-				
-			}  else {
-				 //Validate Form
-		        $("#mtBasicForm")[0].reportValidity();	
+					 //Validate Form
+			       // $("#mtBasicForm")[0].reportValidity();	
+				}
+			} else {
+				//발주금액이 지급요청금액보다 작으면 경고문구
+				alert("발주금액("+$('#orderTotalAmount').val()+")이 지급요청금액 ("+addCommas($('#callTotalAmount').val())+") 보다  작아서 해당내용을 수정할 수 없습니다.");
 			}
+			
 		}
 		// 저장
 		function saveWorkOrder(){
@@ -838,64 +911,70 @@
 			var acKeyNm = $('#orderAcKeyNm').val();
 			//console.log("selectKey=========>"+$('#popSelectKey').val());
 			//console.log("mtOrderAcKeyNm=========>"+$('#mtOrderAcKeyNm').val() );
-			if($('#popSelectKey').val() !='') {
-				var sendData = {
-						"mtIntegrateKey":$('#mtIntegrateKey').val(),
-    					"orderCtFkKey":$('#orderCtFkKey').val(),
-						"selectKey":$('#popSelectKey').val()
-				}				
-				
-				if(confirm(acKeyNm+"의 발주 정보를 삭제하시겠습니까?")){
-					$.ajax({
-			        	url:"/maintenance/work/delete/workOrder.do",
-			            dataType: 'text', 
-			            type:"post",  
-						data: JSON.stringify(sendData),
-						
-			            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
-			            
-			     	   	contentType: "application/json; charset=UTF-8", 
-			     	  	beforeSend: function(xhr) {
-			     	  		
-			        		xhr.setRequestHeader("AJAX", true);	        		
-			        	},
-			            success:function(data){	
-			            	//console.log("data==>"+data);
-			            	var paramData = JSON.parse(data);
-			            	
-			            	
-			            	if("Y" == paramData.successYN){
-			            		alert("유지보수작업 발주정보  삭제를 성공하였습니다.");
-		            			//유지보수계약 백계약 등록화면으로 이동
-			            		var url='/maintenance/work/write/orderInfoView.do';
-			            		            			
-				    			var dialogId = 'program_layer';
-				    			var varParam = paramData
-				    			var button = new Array;
-				    			button = [];
-				    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-				            	
-			            	} else {
-			            		alert("유지보수작업 발주정보 삭제를 실패하였습니다.");
-			            		
-			            	}
-			            	
-			            	
-			            },
-			        	error: function(request, status, error) {
-			        		if(request.status != '0') {
-			        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-			        		}
-			        	} 
-			        }
-		           	 
-		           	);
-				}
-				
-				
+			if($('#callTotalAmount').val()*1 > 0) {
+				//지급요청금액이 존재하면 삭제할 수 없다.
+				alert("지급요청금액 ("+addCommas($('#callTotalAmount').val())+")이 존재하여 삭제할 수 없습니다.");
 			} else {
-				alert("삭제할 거래처 정보를 선택하세요.");
+				if($('#popSelectKey').val() !='') {
+					var sendData = {
+							"mtIntegrateKey":$('#mtIntegrateKey').val(),
+	    					"orderCtFkKey":$('#orderCtFkKey').val(),
+							"selectKey":$('#popSelectKey').val()
+					}				
+					
+					if(confirm(acKeyNm+"의 발주 정보를 삭제하시겠습니까?")){
+						$.ajax({
+				        	url:"/maintenance/work/delete/workOrder.do",
+				            dataType: 'text', 
+				            type:"post",  
+							data: JSON.stringify(sendData),
+							
+				            traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
+				            
+				     	   	contentType: "application/json; charset=UTF-8", 
+				     	  	beforeSend: function(xhr) {
+				     	  		
+				        		xhr.setRequestHeader("AJAX", true);	        		
+				        	},
+				            success:function(data){	
+				            	//console.log("data==>"+data);
+				            	var paramData = JSON.parse(data);
+				            	
+				            	
+				            	if("Y" == paramData.successYN){
+				            		alert("유지보수작업 발주정보  삭제를 성공하였습니다.");
+			            			//유지보수계약 백계약 등록화면으로 이동
+				            		var url='/maintenance/work/write/orderInfoView.do';
+				            		            			
+					    			var dialogId = 'program_layer';
+					    			var varParam = paramData
+					    			var button = new Array;
+					    			button = [];
+					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+					            	
+				            	} else {
+				            		alert("유지보수작업 발주정보 삭제를 실패하였습니다.");
+				            		
+				            	}
+				            	
+				            	
+				            },
+				        	error: function(request, status, error) {
+				        		if(request.status != '0') {
+				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				        		}
+				        	} 
+				        }
+			           	 
+			           	);
+					}
+					
+					
+				} else {
+					alert("삭제할 거래처 정보를 선택하세요.");
+				}
 			}
+			
 			
 			
 		}	
@@ -908,13 +987,23 @@
 			/* window.open('/maintenance/contract/popup/mtProductList.do?whereNum='+num+'&selectIntegrateKey='+$('#mtIntegrateKey').val()
 					,'MT_PRODUCT_POPUP'
 					,'width=1000px,height=400,left=600,status=no,title=no,toolbar=no,menubar=no,location=no'); */
-			window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-orderPmFkKey&returnNm=prodList-'+num+'-orderPmFkNm','PRODUCT_LIST','width=1000px,height=713px,left=600');					
+			//window.open('/mngCommon/product/popup/searchListPopup.do?returnType=O&returnKey=prodList-'+num+'-orderPmFkKey&returnNm=prodList-'+num+'-orderPmFkNm','PRODUCT_LIST','width=1000px,height=713px,left=600');	
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600');
 		}
 
 
 		function fnUpdateSaleAmount(param) {
 			//alert(param);
 			$('#updateYn').val(param);
+		}
+		
+		//발주합계금액 readOnly해제.
+		function fn_editTotalAmount() {
+			//console.log('--1111111111111111');
+			document.getElementById('orderTotalAmount').readOnly = false;
+			alert("발주합계 금액 읽기전용을 해제하여 금액수정이 가능합니다.!!");
+			//console.log('11222222222222');
+			
 		}
 	</script>
 </head>
@@ -929,122 +1018,141 @@
 			<ul class="ftw400">
 				<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
 				<c:if test="${mtWorkPmYn eq 'Y' }">
-				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">장비별작업정보</li>
 				</c:if>
 				<li class="colorWhite cursorP on">발주정보</li>
 			</ul>
 		</div>
 		
-			<div class="contents">
-				<div>
-					<table class="subject1">
-						<tr>		
-							<td class="subTitle" style="border-top: none;" colspan="5" >
-								<label class="ftw500">발주등록</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<!-- </td>
-							<td class="subTitle" colspan="5"  style="border-top: none;"> -->
-							<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewOrder();"  style="vertical-align: middle;cursor: pointer;"/>				
-								
-							<c:if test="${workOrderSelectBox.size() >0 }">
-								<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
-									<c:forEach var="order" items="${workOrderSelectBox}" varStatus="status">
-										<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
-									</c:forEach>							
+		<div class="contents">
+			<div>
+				<table class="subject1">
+					<tr>		
+						<td class="subTitle" style="border-top: none;" >
+							<label class="ftw500">발주등록</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<!-- </td>
+						<td class="subTitle" colspan="5"  style="border-top: none;"> -->
+						<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewOrder();"  style="vertical-align: middle;cursor: pointer;"/>				
+							
+						<c:if test="${workOrderSelectBox.size() >0 }">
+							<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
+								<c:forEach var="order" items="${workOrderSelectBox}" varStatus="status">
+									<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+								</c:forEach>							
+							</select>
+							<select id="mtSaveOrderCheck"  style="display:none">															
+								<c:forEach var="order" items="${workOrderSelectBox}" varStatus="status">
+									<option value="<c:out value="${order.orderAcKey}"/>"><c:out value="${order.mtOrderKey}"/></option>
+								</c:forEach>							
+							</select>
+						</c:if>
+						</td>
+					</tr>
+				</table>	
+				<form action="/" id="mtBasicForm" name="mtBasicForm" method="post"> 
+					<input type="hidden" id="prodLength" name="prodLength" value="<c:out value="${listCount}"/>" />
+					<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
+					<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkOrderVO.orderCtFkKey}"/>" />
+					<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${orderCtFkKey}"/>" />
+					<input type="hidden" id="sv_mtWorkPmYn" name="sv_mtWorkPmYn" value="<c:out value="${mtWorkPmYn}"/>"/>
+					<input type="hidden" id="btnOption" name="btnOption" />
+					<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${mtWorkOrderVO.selectKey}"/>"/>
+					<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtWorkOrderVO.mtOrderKey}"/>"/>
+					
+					<input type="hidden" id="oldMtOrderAmount" name="oldMtOrderAmount" value="<c:out value="${mtWorkOrderVO.orderAmount}"/>"/>
+					<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${mtWorkOrderVO.yetPaymentAmount}"/>"/>						
+					<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${mtWorkOrderVO.callTotalAmount}"/>"/>
+					<table>
+						<tr>
+							<td class="tdTitle" style="width:138px;"><label>*</label> 매입처</td>
+							<td class="tdContents">
+								<input type="text" id="orderAcKeyNm" name="orderAcKeyNm"  class="search"  style="width: 163px" autocomplete="off" value="<c:out value="${mtWorkOrderVO.orderAcKeyNm}"/>" required/>
+								<input type="hidden" id="orderAcKey" name="orderAcKey"  value="<c:out value="${mtWorkOrderVO.orderAcKey}"/>"/>	
+							</td>
+							<td class="tdTitle"><label>*</label> 매입담당자 </td>
+							<td class="tdContents">
+							<c:choose>
+								<c:when test="${acDirectorList eq '' ||  acDirectorList.size() eq ''||  acDirectorList.size() eq '0'}">
+									<select id="orderAcDirectorKey" name="orderAcDirectorKey" required>
+										<option value="">선택</option>
+									</select>
+								</c:when>
+								<c:otherwise>
+									<select id="orderAcDirectorKey" name="orderAcDirectorKey" required>
+										<c:forEach var="emp" items="${acDirectorList}" varStatus="status">												
+											<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
+										</c:forEach>
+										
+									</select>
+								</c:otherwise>
+							</c:choose> 
+							</td>
+							<td class="tdTitle" style="width:50px; max-width:50px;"><label>*</label> 매입구분</td>
+							<td class="tdContents" id="tr_account">
+								<select id="billPurchaseCd" name="billPurchaseCd" style="width:115px;" required>
+									<option value="" style="color:#bec3c9;">매입구분</option>
+									<c:forEach var="billPurchaseCode" items="${purchaseCodeList}" varStatus="status1">			
+									<c:choose>
+										<c:when test='${mtWorkOrderVO.billPurchaseCd == billPurchaseCode.cdKey}'>
+										<option value="<c:out value="${billPurchaseCode.cdKey}"/>" selected="selected"><c:out value="${billPurchaseCode.cdNm}"/></option>
+										</c:when>
+										<c:otherwise>
+										<option value="<c:out value="${billPurchaseCode.cdKey}"/>"><c:out value="${billPurchaseCode.cdNm}"/></option>
+										</c:otherwise>
+									
+									</c:choose>										
+									</c:forEach>	
 								</select>
-								<select id="mtSaveOrderCheck"  style="display:none">															
-									<c:forEach var="order" items="${workOrderSelectBox}" varStatus="status">
-										<option value="<c:out value="${order.orderAcKey}"/>"><c:out value="${order.mtOrderKey}"/></option>
-									</c:forEach>							
-								</select>
-							</c:if>
+								<select id="billMfCd" name="billMfCd" style="width:120px;" required>
+									<option value="" style="color:#bec3c9;">제조사</option>
+									
+									<c:forEach var="billMfCd" items="${manufacturerList}" varStatus="status2">										
+									<c:choose>
+										<c:when test='${mtWorkOrderVO.billMfCd == billMfCd.codeKey}'>
+										<option value="<c:out value="${billMfCd.codeKey}"/>" selected="selected"><c:out value="${billMfCd.codeNm}"/></option>
+										</c:when>
+										<c:otherwise>
+										<option value="<c:out value="${billMfCd.codeKey}"/>"><c:out value="${billMfCd.codeNm}"/></option>
+										</c:otherwise>
+									</c:choose>
+									</c:forEach>	
+								</select>	
 							</td>
 						</tr>
-					</table>	
-					<form action="/" id="mtBasicForm" name="mtBasicForm" method="post"> 
-						<input type="hidden" id="prodLength" name="prodLength" value="<c:out value="${listCount}"/>" />
-						<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${mtIntegrateKey}"/>" />
-						<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkOrderVO.orderCtFkKey}"/>" />
-						<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${orderCtFkKey}"/>" />
-						<input type="hidden" id="sv_mtWorkPmYn" name="sv_mtWorkPmYn" value="<c:out value="${mtWorkPmYn}"/>"/>
-						<input type="hidden" id="btnOption" name="btnOption" />
-						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${mtWorkOrderVO.selectKey}"/>"/>
-						<input type="hidden" id="mtOrderKey" name="mtOrderKey" value="<c:out value="${mtWorkOrderVO.mtOrderKey}"/>"/>
-						<table>
-							<%-- <tr>		
-								<td class="subTitle" style="border-top: none;">
-									<label class="ftw500">발주등록</label>
-								</td>
-								<td class="subBtn" colspan="5"  style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" /></td>
-							</tr> --%>
-							<!-- <tr>
-								<td class="tdTitle">프로젝트명</td>
-								<td class="tdContents" colspan="3">
-									<input type="text" class="search" onclick="fn_searchListPop()" onkeypress="return false;" autocomplete="off" required style="width: 431px;"/>
-									<input type="hidden" name="orderCtFkKey"/>
-									<input type="hidden" name="orderCtClass" value="M">
-								</td>
-								<td class="tdTitle">고객사</td>
-								<td class="tdContents"><input type="text"  /></td>
-							</tr> -->
-							<tr id="tr_account">
-								<td class="tdTitle"><label>*</label> 매입처</td>
-								<td class="tdContents">
-									<input type="text" id="orderAcKeyNm" name="orderAcKeyNm"  autocomplete="off" value="<c:out value="${mtWorkOrderVO.orderAcKeyNm}"/>" required/>
-									<input type="hidden" id="orderAcKey" name="orderAcKey"  value="<c:out value="${mtWorkOrderVO.orderAcKey}"/>"/>	
-								</td>
-								<td class="tdTitle"><label>*</label> 매입처담당자 </td>
-								<td class="tdContents">
-								<c:choose>
-									<c:when test="${acDirectorList eq '' ||  acDirectorList.size() eq ''||  acDirectorList.size() eq '0'}">
-										<select id="orderAcDirectorKey" name="orderAcDirectorKey" required>
-											<option value="">선택</option>
-										</select>
-									</c:when>
-									<c:otherwise>
-										<select id="orderAcDirectorKey" name="orderAcDirectorKey" required>
-											<c:forEach var="emp" items="${acDirectorList}" varStatus="status">												
-												<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
-											</c:forEach>
-											
-										</select>
-									</c:otherwise>
-								</c:choose> 
-								</td>
-								<td class="tdTitle"><label>*</label> 발주일자</td>
-								<td class="tdContents">
-									<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
-									<input type="text" name="orderDt" value="<c:out value="${displayUtil.displayDate(mtWorkOrderVO.orderDt)}"/>" class="calendar fromDt" style="width: 153px" required/>
-								</td>
-							</tr>
-							<tr>
-								<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
-								<td class="tdContents">
-									<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
-									<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
-								</td> -->
-								<td class="tdTitle"><label>*</label> 발주합계</td>
-								<td class="tdContents">
-									<input type="text"  id="orderTotalAmount" name="orderAmount" amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="text-align: right;"/>	
-								</td>
-								<td class="tdTitle"><label>*</label> 결제조건</td>
-								<td class="tdContents" colspan="3">
-									<input type="text" name="orderPayTerms" style="width: 435px" required value="<c:out value="${mtWorkOrderVO.orderPayTerms}"/>" />	
-								</td>
-							</tr>
-						</table>
-					</form>
-					<form action="/" id="mtListForm" name="mtListForm"  method="post">
+						<tr>
+							<!-- <td class="tdTitle"><label>*</label> 부가세 포함</td>
+							<td class="tdContents">
+								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT1" value="Y" /><label for="prodList-0-hasVAT1" class="cursorP"></label>&nbsp;&nbsp;Y&nbsp;&nbsp;
+								<input type="radio" class="tRadio" name="taxYn" id="prodList-0-hasVAT2" value="N" checked="checked"/><label for="prodList-0-hasVAT2" class="cursorP"></label>&nbsp;&nbsp;N&nbsp;&nbsp;
+							</td> -->
+							<td class="tdTitle"><label>*</label> 발주합계<button type="button" onclick="fn_editTotalAmount();"><img src="<c:url value='/images/edit_icon.png'/>" style="width: 19px;vertical-align: middle;margin-bottom: 1px;margin-left: 4px;"/></button></td>
+							<td class="tdContents">
+								<input type="text"  id="orderTotalAmount" name="orderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="width: 163px;text-align: right;"/>	
+							</td>
+							<td class="tdTitle"><label>*</label> 발주일자</td>
+							<td class="tdContents" id="tr_account">
+								<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
+								<input type="text" name="orderDt" value="<c:out value="${displayUtil.displayDate(mtWorkOrderVO.orderDt)}"/>" class="calendar fromDt" style="width: 105px" required/>
+							</td>
+							<td class="tdTitle"><label>*</label> 결제조건</td>
+							<td class="tdContents" colspan="3">
+								<input type="text" name="orderPayTerms" style="width: 217px" required value="<c:out value="${mtWorkOrderVO.orderPayTerms}"/>" />	
+							</td>
+						</tr>
+					</table>
+				</form>
+				<form action="/" id="mtListForm" name="mtListForm"  method="post">				
+					<table class="subject2">
+						<tr>		
+							<td class="subTitle" style="border-top: none;"  colspan="5">
+								<label class="ftw500">제품정보</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<!-- </td>
+							<td class="subTitle" colspan="5"  style="border-top: none;"> -->
+								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="vertical-align: middle;cursor: pointer;"/>
+							</td>
+						</tr>
+					</table>
 					<div id="prodWrap">
-						<table class="subject2">
-							<tr>		
-								<td class="subTitle" style="border-top: none;"  colspan="5">
-									<label class="ftw500">제품정보</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<!-- </td>
-								<td class="subTitle" colspan="5"  style="border-top: none;"> -->
-									<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="vertical-align: middle;cursor: pointer;"/>
-								</td>
-							</tr>
-						</table>
 					<c:choose>
 						<c:when test="${mtWorkOrderVO.mtOrderProductVoList eq null ||  mtWorkOrderVO.mtOrderProductVoList == ''||  mtWorkOrderVO.mtOrderProductVoList.size()== 0}">
 						<div class="prodTable">
@@ -1074,17 +1182,17 @@
 										<input type="text" id="prodList-0-orderUprice" name="orderUprice" amountOnly class="calculate" required/>
 									</td>	
 									<td class="tdTitle"><label>*</label> 입고일자</td>
-									<td class="tdContents">
+									<td class="tdContents" colspan="3">
 										<input type="text" id="prodList-0-orderReceiptDt" name="orderReceiptDt"  class="calendar toDt" required/>
 									</td>
-									<td class="tdTitle"><label>*</label> 매입구분</td>
+									<%-- <td class="tdTitle"><label>*</label> 매입구분</td>
 									<td class="tdContents">
 										<select id="prodList-0-orderKind" name="orderKind" required>
 										<c:forEach var="code" items="${orderKindCodeList}" varStatus="status">												
 											<option value="<c:out value="${code.cdKey}"/>"><c:out value="${code.cdNm}"/></option>
 										</c:forEach>	
 										</select>		
-									</td>
+									</td> --%>
 								</tr>
 								<tr class="dpTbRow">
 									<td class="tdTitle lastTd">제품상세</td>
@@ -1123,21 +1231,21 @@
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-orderUprice" name="orderUprice" amountOnly class="calculate" value="<c:out value="${displayUtil.commaStr(list.orderUprice)}"/>" required/>
 									</td>	
 									<td class="tdTitle"><label>*</label> 입고일자</td>
-									<td class="tdContents">
+									<td class="tdContents" colspan="3">
 										<input type="text" id="prodList-<c:out value="${status.index}"/>-orderReceiptDt" name="orderReceiptDt"  class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.orderReceiptDt)}"/>"  required/>
 									</td>
-									<td class="tdTitle"><label>*</label> 매입구분</td>
+									<%-- <td class="tdTitle"><label>*</label> 매입구분</td>
 									<td class="tdContents">
 										<select id="prodList-<c:out value="${status.index}"/>-orderKind" name="orderKind" value="<c:out value="${list.orderKind}"/>" required>	
 										<c:forEach var="code2" items="${orderKindCodeList}" >												
 											<option value="<c:out value="${code2.cdKey}"/>" <c:if test='${list.orderKind == code2.cdKey}'>selected</c:if>><c:out value="${code2.cdNm}"/></option>
 										</c:forEach>											
-											<%-- <option value="HW" <c:if test='${list.orderKind== "HW"}'>selected</c:if>>하드웨어</option>
+											<option value="HW" <c:if test='${list.orderKind== "HW"}'>selected</c:if>>하드웨어</option>
 											<option value="SW" <c:if test='${list.orderKind== "SW"}'>selected</c:if>>소프트웨어</option>
 											<option value="SV" <c:if test='${list.orderKind== "SV"}'>selected</c:if>>서비스</option>
-											<option value="ET" <c:if test='${list.orderKind== "ET"}'>selected</c:if>>기타</option> --%>
+											<option value="ET" <c:if test='${list.orderKind== "ET"}'>selected</c:if>>기타</option>
 										</select>		
-									</td>
+									</td> --%>
 								</tr>
 								<tr class="dpTbRow">
 									<td class="tdTitle lastTd">제품상세</td>
@@ -1152,20 +1260,21 @@
 						</c:otherwise>
 					</c:choose>
 					</div>
-				</form>
+			</form>
+			</div>
+			
+		</div>
+		<div class="btnWrap floatL">
+				<div class="floatL">
+					<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 				</div>
-				<div class="btnWrap floatL">
-					<div class="floatL">
-						<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-					</div>
-					<div class="floatL btnCenter">
-						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-						<c:if test="${not empty mtWorkOrderVO.selectKey}">						
-						<button type="button" onclick="fn_deleteWorkOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
-						</c:if>
-					</div>
-					<div class="floatN floatC"></div>
+				<div class="floatL btnCenter">
+					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					<c:if test="${not empty mtWorkOrderVO.selectKey}">						
+					<button type="button" onclick="fn_deleteWorkOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
+					</c:if>
 				</div>
+				<div class="floatN floatC"></div>
 			</div>
 	</div>
 </body>

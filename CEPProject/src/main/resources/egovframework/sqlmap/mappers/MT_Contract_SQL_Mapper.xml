@@ -36,9 +36,11 @@
 		<result property="modDt" column="MOD_DT"/>
 		<result property="modTm" column="MOD_TM"/>
 		<result property="modEmpKey" column="MOD_EMP_KEY"/>
+		<result property="callTotalAmount" column="CALL_TOTAL_AMOUNT"/>
+		<result property="mtOrderAmount" column="MT_ORDER_AMOUNT"/>
 	</resultMap>
 	
-	<!-- 유지보수 기본정보 등록 -->
+	<!-- 유지보수 기본정보 등록  -->
 	<insert id="writeContractBasic" parameterType="com.cep.maintenance.contract.vo.MtContractVO">
 		INSERT INTO MT_CONTRACT_TB (
 			MT_INTEGRATE_KEY
@@ -176,7 +178,7 @@
 				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
 			  	AND DELETE_YN='N'
 			  	ORDER BY MT_CT_DT DESC
-		) M			 -->
+		) M			 
 		SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
 		FROM (
 			SELECT MC.MT_CT_KEY
@@ -220,8 +222,120 @@
 				AND MC.MT_MNG_EMP_KEY= CE2.EMP_KEY
 				AND MC.MT_SUPPORT_EMP_KEY = CE3.EMP_KEY 
 			  	AND MC.DELETE_YN='N'
-			  	ORDER BY MT_CT_DT DESC 
+		) M
+			  	ORDER BY MT_CT_DT DESC -->
+		SELECT @rownum:=@rownum+1 AS ROW_NUM , M.* 
+		FROM (
+			SELECT MC.MT_CT_KEY
+				, MC.MT_INTEGRATE_KEY
+				, MC.MT_AC_KEY
+				, CA.AC_NM AS MT_AC_NM
+				, MC.MT_NM
+				, MC.MT_CT_DT
+				, MC.MT_START_DT
+				, MC.MT_END_DT
+				, MC.MT_RG_INSPECT_CNT
+				, MC.MT_IM_CD
+				, MC.MT_SB_CT_YN
+				, CE.EMP_NM AS SALE_EMP_NM
+				, MC.MT_AMOUNT
+				, IFNULL(MO.MT_ORDER_AMOUNT,0) AS MT_ORDER_AMOUNT
+			FROM MT_CONTRACT_TB MC LEFT JOIN
+				(
+					SELECT MT_INTEGRATE_KEY, SUM(MT_ORDER_AMOUNT) AS MT_ORDER_AMOUNT FROM (
+						SELECT MC2.MT_INTEGRATE_KEY , SUM(MT_ORDER_AMOUNT) AS MT_ORDER_AMOUNT
+						FROM MT_BACK_ORDER_TB BO, MT_CONTRACT_TB MC2
+							, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+						WHERE 1=1
+						<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
+							AND MC2.MT_CT_DT LIKE CONCAT(year(NOW()),'%')
+						</if>
+						<if test="fromDate != null and fromDate != ''">
+							AND MC2.MT_CT_DT >= #{fromDate}
+						</if>
+						<if test="toDate != null and toDate != ''">
+						<![CDATA[
+							AND MC2.MT_CT_DT <= #{toDate}
+						]]>
+						</if>
+						<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+							AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+						</if>
+						<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+							AND MC2.MT_NM LIKE CONCAT('%', #{searchWord}, '%')
+						</if>
+						<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+							AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%')
+						</if>
+							AND MC2.MT_INTEGRATE_KEY = BO.MT_INTEGRATE_KEY
+							AND MC2.MT_AC_KEY = CA.AC_KEY 
+							AND MC2.MT_SALE_EMP_KEY = CE.EMP_KEY
+							AND BO.DELETE_YN='N'
+							AND MC2.DELETE_YN='N'
+						GROUP BY MT_INTEGRATE_KEY
+						UNION
+						SELECT MC2.MT_INTEGRATE_KEY, SUM(ORDER_AMOUNT) AS MT_ORDER_AMOUNT
+						FROM MT_ORDER_TB MO, MT_CONTRACT_TB MC2, MT_WORK_TB MW
+							, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
+						WHERE 1=1
+						<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
+							AND MC2.MT_CT_DT LIKE CONCAT(year(NOW()),'%')
+						</if>
+						<if test="fromDate != null and fromDate != ''">
+							AND MC2.MT_CT_DT >= #{fromDate}
+						</if>
+						<if test="toDate != null and toDate != ''">
+						<![CDATA[
+							AND MC2.MT_CT_DT <= #{toDate}
+						]]>
+						</if>
+						<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+							AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+						</if>
+						<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+							AND MC2.MT_NM LIKE CONCAT('%', #{searchWord}, '%')
+						</if>
+						<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+							AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%')
+						</if>
+							AND MC2.MT_INTEGRATE_KEY = MO.MT_INTEGRATE_KEY
+							AND MO.ORDER_CT_FK_KEY = MW.MT_WORK_KEY
+							AND MC2.MT_AC_KEY = CA.AC_KEY 
+							AND MC2.MT_SALE_EMP_KEY = CE.EMP_KEY
+							AND MO.DELETE_YN ='N'
+							AND MC2.DELETE_YN ='N'
+							AND MW.DELETE_YN = 'N'
+						GROUP BY MT_INTEGRATE_KEY
+					) OD
+					GROUP BY MT_INTEGRATE_KEY				
+				) MO ON MC.MT_INTEGRATE_KEY = MO.MT_INTEGRATE_KEY			
+				, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE, (SELECT @ROWNUM := 0) AS R
+			WHERE 1=1	
+				<if test="(fromDate == null or fromDate == '') and (toDate == null or toDate == '')">
+					AND MC.MT_CT_DT LIKE CONCAT(year(NOW()),'%')
+				</if>
+				<if test="fromDate != null and fromDate != ''">
+					AND MC.MT_CT_DT >= #{fromDate}
+				</if>
+				<if test="toDate != null and toDate != ''">
+				<![CDATA[
+					AND MC.MT_CT_DT <= #{toDate}
+				]]>
+				</if>
+				<if test="searchSaleEmpNm != null and searchSaleEmpNm != ''">
+					AND CE.EMP_NM LIKE CONCAT('%', #{searchSaleEmpNm}, '%')
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='PJ'">					
+					AND MC.MT_NM LIKE CONCAT('%', #{searchWord}, '%')
+				</if>
+				<if test="searchWord != null and searchWord != '' and searchGubun =='CU'">					
+					AND CA.AC_NM LIKE CONCAT('%', #{searchWord}, '%')
+				</if>
+			  	AND MC.MT_AC_KEY = CA.AC_KEY 
+				AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
+			  	AND MC.DELETE_YN='N'
 		) M			
+			  	ORDER BY MT_CT_DT DESC 			  	
 	</select>
 	
 	<!-- 기본정보 상세보기 -->
@@ -272,20 +386,192 @@
 	</update>
 	
 	<!-- 유지보수계약 단계별 등록 갯수 조회 -->
-	<select id="selectMtContractCount" parameterType="String" resultType="egovMap">			
+<!-- 	<select id="selectMtContractCount" parameterType="String" resultType="egovMap">			
 		SELECT 
-		  (SELECT COUNT(1) FROM MT_PRODUCT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_PRODUCT_CNT
+		  (SELECT COUNT(1) FROM MT_SALES_PRODUCT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_PRODUCT_CNT
 		  , (SELECT COUNT(1) FROM MT_SALES_AMOUNT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_SALES_AMOUNT_CNT
 		  , (SELECT COUNT(1) FROM MT_BACK_ORDER_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_BACK_ORDER_CNT
 		  , (SELECT COUNT(1) FROM MT_BUY_AMOUNT_TB WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N') AS MT_BUY_AMOUNT_CNT	
+	</select> -->
+	<select id="selectMtContractCount" parameterType="String" resultType="egovMap">			
+		SELECT 
+			MP.PRODUCT_TOTAL_AMOUNT
+			, MP.MT_PRODUCT_CNT  
+			, SA.MT_SALES_AMOUNT_CNT
+			, BO.MT_BACK_ORDER_CNT
+			, BA.MT_BUY_AMOUNT_CNT
+		FROM   
+			(
+				SELECT 
+					SUM(MT_PM_QUANTITY*MT_PM_UPRICE) AS PRODUCT_TOTAL_AMOUNT
+					, COUNT(1) AS MT_PRODUCT_CNT  
+				FROM MT_SALES_PRODUCT_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) MP
+			, (
+				SELECT COUNT(1) AS MT_SALES_AMOUNT_CNT 
+				FROM MT_SALES_AMOUNT_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) SA 
+			, (
+				SELECT COUNT(1) AS MT_BACK_ORDER_CNT 
+				FROM MT_BACK_ORDER_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) BO
+			, (
+				SELECT COUNT(1) AS MT_BUY_AMOUNT_CNT 
+				FROM MT_BUY_AMOUNT_TB 
+				WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey} AND DELETE_YN='N'
+			) BA
+			, MT_CONTRACT_TB MC
+		WHERE MC.MT_INTEGRATE_KEY=#{mtIntegrateKey}
+			AND MC.DELETE_YN='N'
 	</select>
 	<!-- ===========================유지보수 계약 제품========================================= -->
 	
+		<!-- 유지보수계약별 매출계약 등록 리스트회 -->
+	<select id="selectSalesOrderSelectBoxList" parameterType="String" resultType="egovMap">			
+		SELECT 
+			SO.MT_SALES_ORDER_KEY
+			, SO.MT_SALES_AC_KEY
+			, SO.BILL_ISSUE_RULE
+			, CA.AC_NM AS MT_AC_NM
+		FROM MT_SALES_ORDER_TB SO , CMM_ACCOUNT_TB CA
+		WHERE SO.MT_INTEGRATE_KEY=#{mtIntegrateKey}
+			AND SO.DELETE_YN='N'	
+			AND SO.MT_SALES_AC_KEY = CA.AC_KEY				
+	</select>
+	
+	<!-- 유지보수계약별 매출계약 등록 메인상세 -->
+	<select id="selectSalesOrderDetail" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtSalesOrderVO">			
+	
+		SELECT 
+			SO.MT_SALES_ORDER_KEY AS mtSalesOrderKey
+			, SO.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, SO.MT_SALES_AC_KEY AS mtSalesAcKey
+		  	, CA.AC_NM AS mtSalesAcNm
+			, SO.MT_SALES_AC_DIRECTOR_KEY AS mtSalesAcDirectorKey
+			, SO.MT_SALES_PAY_TERMS AS mtSalesPayTerms
+			, SO.MT_SALES_AMOUNT AS mtSalesAmount
+      		, SO.BILL_SALES_CD AS billSalesCd
+      		, SO.BILL_MF_CD AS billMfCd
+			, SO.REMARK AS remark
+			, SO.YET_COLLECT_AMOUNT AS yetCollectAmount
+			, SO.DONE_COLLECT_AMOUNT AS doneCollectAmount
+			, SO.BILL_ISSUE_TYPE AS billIssueType
+			, (
+				SELECT 
+					IFNULL(SUM(BILL_AMOUNT),0) 
+				FROM MT_SD_BILLING_OP_TB 
+				WHERE MT_SALES_ORDER_KEY=#{mtSalesOrderKey} 
+					AND DELETE_YN = 'N'
+				) AS callTotalAmount			
+		FROM MT_SALES_ORDER_TB SO , CMM_ACCOUNT_TB CA
+		WHERE MT_SALES_ORDER_KEY = #{mtSalesOrderKey} 
+			AND SO.DELETE_YN='N'  
+		  	AND SO.MT_SALES_AC_KEY = CA.AC_KEY
+	</select>	
+	
+	<!-- 유지보수계약별 매출계약 목록조회  -->
+	<select id="selectSalesOrderList" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtSalesOrderVO">			
+		SELECT 
+			SO.MT_SALES_ORDER_KEY AS mtSalesOrderKey
+			, SO.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, SO.MT_SALES_AC_KEY AS mtSalesAcKey
+		  	, CA.AC_NM AS mtSalesAcNm
+			, SO.MT_SALES_AC_DIRECTOR_KEY AS mtSalesAcDirectorKey
+			, AD.AC_DIRECTOR_NM AS mtSalesAcDirectorNm
+			, SO.MT_SALES_PAY_TERMS AS mtSalesPayTerms
+			, SO.MT_SALES_AMOUNT AS mtSalesAmount
+			, SO.BILL_ISSUE_TYPE AS billIssueType
+      		, SO.BILL_SALES_CD AS billSalesCd
+			, SO.BILL_SALES_CD AS billSalesNm
+      		, SO.BILL_MF_CD AS billMfCd
+			, SO.BILL_MF_CD AS billMfNm
+			, SO.REMARK AS remark
+			, SO.YET_COLLECT_AMOUNT AS yetCollectAmount
+			, SO.DONE_COLLECT_AMOUNT AS doneCollectAmount
+		FROM MT_SALES_ORDER_TB SO , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
+		WHERE SO.MT_INTEGRATE_KEY = #{mtIntegrateKey} 
+			AND SO.DELETE_YN='N'  
+		  	AND SO.MT_SALES_AC_KEY = CA.AC_KEY
+		  	AND SO.MT_SALES_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+        ORDER BY CA.AC_NM    
+	</select>	
+<!-- 	<select id="selectSalesOrderList" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtSalesOrderVO">			
+		SELECT 
+			SO.MT_SALES_ORDER_KEY AS mtSalesOrderKey
+			, SO.MT_INTEGRATE_KEY AS mtIntegrateKey
+			, SO.MT_SALES_AC_KEY AS mtSalesAcKey
+		  	, CA.AC_NM AS mtSalesAcNm
+			, SO.MT_SALES_AC_DIRECTOR_KEY AS mtSalesAcDirectorKey
+			, AD.AC_DIRECTOR_NM AS mtSalesAcDirectorNm
+			, SO.MT_SALES_PAY_TERMS AS mtSalesPayTerms
+			, SO.MT_SALES_AMOUNT AS mtSalesAmount
+			, SO.BILL_ISSUE_TYPE AS billIssueType
+      		, SO.BILL_SALES_CD AS billSalesCd
+			, SD.CD_NM AS billSalesNm
+      		, SO.BILL_MF_CD AS billMfCd
+			, MF.AC_NM AS billMfNm
+			, SO.REMARK AS remark
+			, SO.YET_COLLECT_AMOUNT AS yetCollectAmount
+			, SO.DONE_COLLECT_AMOUNT AS doneCollectAmount
+		FROM MT_SALES_ORDER_TB SO , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
+			, CMM_ACCOUNT_TB MF, CMM_CODE_MNG_TB SD    
+		WHERE SO.MT_INTEGRATE_KEY = #{mtIntegrateKey} 
+			AND SO.DELETE_YN='N'  
+		  	AND SO.MT_SALES_AC_KEY = CA.AC_KEY
+		  	AND SO.MT_SALES_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+        	AND SO.BILL_MF_CD = MF.AC_KEY
+        	AND MF.MF_YN='Y'
+        	AND SO.BILL_SALES_CD = SD.CD_KEY
+        	AND SD.CD_UP_CD='PDFG1000'
+        ORDER BY CA.AC_NM
+	</select> -->	
+	<!-- 유지보수계약 백계약 등록 -->
+	<insert id="writeContractSalesOrder" parameterType="com.cep.maintenance.contract.vo.MtSalesOrderVO">	
+		<!-- 유지보수계약 백계약 메인등록 -->
+		INSERT INTO MT_SALES_ORDER_TB (
+		    MT_SALES_ORDER_KEY 
+		    , MT_INTEGRATE_KEY 
+		    , MT_SALES_AC_KEY 
+		    , MT_SALES_AC_DIRECTOR_KEY 
+		    , MT_SALES_PAY_TERMS 
+		    , MT_SALES_AMOUNT 
+		    , YET_COLLECT_AMOUNT
+		    , DONE_COLLECT_AMOUNT
+		    , BILL_ISSUE_TYPE
+		    , BILL_SALES_CD 
+		    , BILL_MF_CD 
+		    , REMARK 
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY
+		) VALUES (
+		    #{mtSalesOrderKey} 
+		    , #{mtIntegrateKey} 
+		    , #{mtSalesAcKey}
+		    , #{mtSalesAcDirectorKey}
+		    , #{mtSalesPayTerms}
+		    , #{mtSalesAmount}
+		    , #{mtSalesAmount}
+		    , 0
+		    , #{billIssueType}
+		    , #{billSalesCd}
+		    , #{billMfCd}
+		    , #{remark}
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey}
+		)				
+	</insert>	
+		
 	<!-- 유지보수계약 제품정보 등록. -->
 	<insert id="writeMtContractProductList" parameterType="java.util.Map">
 		
-		INSERT INTO MT_PRODUCT_TB (
-			MT_INTEGRATE_KEY 
+		INSERT INTO MT_SALES_PRODUCT_TB (
+			MT_SALES_ORDER_KEY
+			, MT_INTEGRATE_KEY 
 			, MT_PM_FK_KEY
 		    , MT_PM_DETAIL 
 		    , MT_PM_SERIAL_NUM 
@@ -302,7 +588,8 @@
 		VALUES
 		<foreach collection="mtContractProductVoList" item="item" separator=",">
 		    (
-		     #{mtIntegrateKey}
+		     #{mtSalesOrderKey}
+		    , #{mtIntegrateKey}
 		    , #{item.mtPmFkKey}
 		    , #{item.mtPmDetail} 
 		    , #{item.mtPmSerialNum}
@@ -320,22 +607,28 @@
 	</insert>
 	
 	<!-- 유지보수계약별  제품목록 조회 -->
-	<select id="selectMtContractProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
+	<select id="selectMtContractProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="com.cep.maintenance.contract.vo.MtContractProductVO">
+	<!-- <select id="selectMtContractProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap"> -->			
 		SELECT
-		  	MP.MT_PM_KEY
-		  	, MP.MT_PM_FK_KEY
-		  	, PM.PM_NM_CD
-		  	, MP.MT_PM_DETAIL
-		  	, MP.MT_PM_SERIAL_NUM
-		  	, MP.MT_PM_QUANTITY
-		  	, MP.MT_PM_UPRICE
-		  	, MP.MT_PM_START_DT
-		  	, MP.MT_PM_END_DT
-		  	, MP.REMARK
-		FROM MT_PRODUCT_TB MP, PM_PRODUCT_MNG_TB PM
-		WHERE MP.MT_PM_FK_KEY = PM.PM_KEY
+			MT_SALES_PM_KEY AS mtSalesPmKey
+			, MT_SALES_ORDER_KEY AS mtSalesOrderKey
+		  	, MP.MT_PM_FK_KEY AS mtPmFkKey
+		  	, PM.PM_NM_CD AS mtPmNmCd
+		  	, MP.MT_PM_DETAIL AS mtPmDetail
+		  	, MP.MT_PM_SERIAL_NUM AS mtPmSerialNum
+		  	, MP.MT_PM_QUANTITY AS mtPmQuantity
+		  	, MP.MT_PM_UPRICE AS mtPmUprice
+		  	, MP.MT_PM_START_DT AS mtPmStartDt
+		  	, MP.MT_PM_END_DT AS mtPmEndDt
+		  	, MP.REMARK AS remark
+		FROM MT_SALES_PRODUCT_TB MP, PM_PRODUCT_MNG_TB PM
+		WHERE 1=1
 			AND MP.MT_INTEGRATE_KEY = #{selectIntegrateKey}
+			AND MP.MT_PM_FK_KEY = PM.PM_KEY			
 			AND MP.DELETE_YN = 'N'
+		<if test="selectMtSalesOrderKey != null and selectMtSalesOrderKey != ''">
+			AND MP.MT_SALES_ORDER_KEY = #{selectMtSalesOrderKey}
+		</if>
 		<if test="searchPmNmCd != null and searchPmNmCd != ''">
 			AND PM.PM_NM_CD LIKE CONCAT(#{searchPmNmCd}, '%')
 		</if>
@@ -345,7 +638,27 @@
 			
 	</select>
 	
+	<!-- 유지보수프로젝트 연계  제품목록 조회 -->
 	<select id="selectPjContractProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
+		SELECT
+			OP.ORDER_PM_FK_KEY AS MT_PM_KEY
+			, PM.PM_NM_CD AS PM_NM_CD
+			, OP.ORDER_QUANTITY AS MT_PM_QUANTITY
+			, OP.ORDER_UPRICE AS MT_PM_UPRICE
+			, OP.ORDER_QUANTITY * OP.ORDER_UPRICE AS TOTAL_AMOUNT
+			, OP.MT_RATE AS MT_RATE
+			, OP.REMARK AS MT_PM_DETAIL
+		FROM PJ_ORDER_TB PO, PJ_ORDER_PRODUCT_TB OP , PM_PRODUCT_MNG_TB PM
+		WHERE PO.ORDER_CT_FK_KEY = #{selectIntegrateKey}
+			AND PO.DELETE_YN = 'N'
+		<if test="searchPmNmCd != null and searchPmNmCd != ''">
+			AND PM.PM_NM_CD LIKE CONCAT('%', #{searchPmNmCd}, '%')
+		</if>	
+			AND PO.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
+			AND OP.ORDER_PM_FK_KEY = PM.PM_KEY			
+	</select>
+	
+<!-- 	<select id="selectPjContractProductList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
 		SELECT
 			OP.ORDER_PM_FK_KEY AS MT_PM_KEY
 			, PM.PM_NM_CD AS PM_NM_CD
@@ -362,20 +675,51 @@
 		</if>	
 			AND CO.ORDER_KEY = OP.ORDER_KEY
 			AND OP.ORDER_PM_FK_KEY = PM.PM_KEY			
-	</select>
+	</select> -->
 	
 	<!-- 유지보수계약 제품 총금액을 가져온다. -->
 	<select id="selectMtPmTotalAmount" parameterType="String" resultType="int">			
 		SELECT
 		  	IFNULL(SUM(MT_PM_QUANTITY * MT_PM_UPRICE),0) AS MT_PM_TOTAL_AMOUNT
-		FROM MT_PRODUCT_TB MP
+		FROM MT_SALES_PRODUCT_TB MP
 		WHERE MT_INTEGRATE_KEY = #{mtIntegrateKey}
 			AND DELETE_YN = 'N'
-	</select>
+	</select>	
+		
+	<!-- 유지보수계약별 거래처별 매출계약 삭제 -->
+	<update id="deleteSalesOrder" parameterType="java.util.HashMap">
+		UPDATE MT_SALES_ORDER_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_SALES_ORDER_KEY=#{mtSalesOrderKey}
+	</update>	
+	
+	<!-- 유지보수매출거래처별  제품 전체 삭제 -->
+	<update id="deleteMtSalesOrderProductAll" parameterType="java.util.HashMap">	
+		UPDATE MT_SALES_PRODUCT_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}	
+			AND MT_SALES_ORDER_KEY = #{mtSalesOrderKey}	
+	</update>
 	
 	<!-- 유지보수계약별 제품 전체삭제 -->
 	<update id="deleteMtContractProductAll" parameterType="java.util.HashMap">
-		UPDATE MT_PRODUCT_TB
+		UPDATE MT_SALES_PRODUCT_TB
+		SET DELETE_YN='Y'
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}			
+	</update>
+	
+	<!-- 유지보수계약별 거래처별 매출계약 삭제 -->
+	<update id="deleteSalesOrderAll" parameterType="java.util.HashMap">
+		UPDATE MT_SALES_ORDER_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
@@ -383,24 +727,44 @@
 		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
 	</update>
 	
-		<!-- 유지보수계약별  제품목록 리스트삭제 -->
+	
+	<!-- 유지보수계약별  제품목록 리스트삭제 -->
 	<update id="deleteMtContractProductList" parameterType="java.util.HashMap">	
-		UPDATE MT_PRODUCT_TB
+		UPDATE MT_SALES_PRODUCT_TB
 		SET DELETE_YN='Y'
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 			, MOD_EMP_KEY = #{modEmpKey}
-			WHERE MT_PM_KEY IN
+			WHERE MT_SALES_ORDER_KEY = #{mtSalesOrderKey}
+			 AND MT_SALES_PM_KEY IN
 			<foreach collection="deleteKeyList" item="item" index="index" separator="," open="(" close=")">
 				#{item}
 			</foreach>		
 	</update>
 	
 	
+	<!-- 유지보수계약별 매출계약 정보수정 -->
+	<update id="updateSalesOrder" parameterType="com.cep.maintenance.contract.vo.MtSalesOrderVO">	
+		UPDATE MT_SALES_ORDER_TB
+		SET MT_SALES_AC_KEY = #{mtSalesAcKey}
+			, MT_SALES_AC_DIRECTOR_KEY = #{mtSalesAcDirectorKey}
+			, MT_SALES_PAY_TERMS = #{mtSalesPayTerms}
+			, MT_SALES_AMOUNT = #{mtSalesAmount}
+			, YET_COLLECT_AMOUNT = #{yetCollectAmount}
+			, BILL_ISSUE_TYPE = #{billIssueType}
+			, BILL_SALES_CD = #{billSalesCd}
+			, BILL_MF_CD = #{billMfCd}
+			, REMARK = #{remark}
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE MT_SALES_ORDER_KEY = #{mtSalesOrderKey} 
+	</update>	
+	
 	<!-- 유지보수계약별 제품목록 정보수정 -->
 	<update id="updateMtContractProductList" parameterType="java.util.HashMap">	
 		<foreach collection="mtContractProductVoList" item="item" separator=";" close=";">
-			UPDATE MT_PRODUCT_TB
+			UPDATE MT_SALES_PRODUCT_TB
 			SET MT_PM_FK_KEY = #{item.mtPmFkKey}
 				, MT_PM_DETAIL = #{item.mtPmDetail}
 				, MT_PM_SERIAL_NUM = #{item.mtPmSerialNum}
@@ -412,7 +776,7 @@
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
 				, MOD_EMP_KEY = #{modEmpKey}
-			WHERE MT_PM_KEY = #{item.mtPmKey} 
+			WHERE MT_SALES_PM_KEY = #{item.mtSalesPmKey} 
 		
 		</foreach>
 	</update>	
@@ -420,7 +784,7 @@
 	<!-- ===========================유지보수 계약 매출========================================= -->
 
 	<!-- 매출등록화면에서 보여주는 기본정보.  -->
-	<select id="selectContractAmountInfo" parameterType="String" resultType="egovMap">			
+	<select id="selectContractAmountInfo" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
 		SELECT 
 		  	MC.MT_START_DT
 		  	, MC.MT_END_DT
@@ -428,15 +792,18 @@
 		  	, MIN(MP.MT_PM_START_DT) AS MT_PM_START_DT
 		  	, MAX(MP.MT_PM_END_DT) AS MT_PM_END_DT
 		  	, SUM(MP.MT_PM_QUANTITY * MP.MT_PM_UPRICE) AS MT_PM_TOTAL_AMOUNT
-		FROM MT_CONTRACT_TB MC, MT_PRODUCT_TB MP  
-		WHERE MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}	
+		FROM MT_CONTRACT_TB MC, MT_SALES_PRODUCT_TB MP  
+		WHERE MC.MT_INTEGRATE_KEY = #{selectIntegrateKey}	
+		<if test="selectMtSalesOrderKey != null and selectMtSalesOrderKey != ''">
+			AND MP.MT_SALES_ORDER_KEY =#{selectMtSalesOrderKey}
+		</if>
 			AND MC.DELETE_YN = 'N'
       		AND MP.DELETE_YN = 'N'      
-		  	AND MC.MT_INTEGRATE_KEY = MP.MT_INTEGRATE_KEY;	
+		  	AND MC.MT_INTEGRATE_KEY = MP.MT_INTEGRATE_KEY
 	</select>		
 	
 	<!-- 유지보수계약 매출총금액 -->
-	<select id="selectMtSalesTotalAmount" parameterType="String" resultType="int">			
+	<select id="selectMtSalesTotalAmount" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="int">			
 		SELECT
 			IFNULL(SUM(MT_SALES_JAN_AMOUNT 
 			+ MT_SALES_FEB_AMOUNT 
@@ -451,16 +818,34 @@
 			+ MT_SALES_NOV_AMOUNT 
 			+ MT_SALES_DEC_AMOUNT),0) AS  MT_SALES_TOTAL_AMOUNT 
 		FROM MT_SALES_AMOUNT_TB 
-		WHERE MT_INTEGRATE_KEY = #{mtIntegrateKey}
-		AND DELETE_YN = 'N'
+		WHERE MT_INTEGRATE_KEY = #{selectIntegrateKey}
+		<if test="selectMtSalesOrderKey != null and selectMtSalesOrderKey != ''">
+			AND MT_SALES_ORDER_KEY = #{selectMtSalesOrderKey}
+		</if>
+			AND DELETE_YN = 'N'
+	</select>	
+	
+	<!-- 매출데이타 자동생성시   계산서 발행요청이 있는 데이타를 조회하여 맵핑하는 조회쿼리.  -->
+	<select id="selectMtReqBillList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
+		SELECT
+			SALES_YEAR_MONTH
+			, SALES_TURN_AMOUNT
+			, SALES_STATUS_CD
+		FROM MT_SALES_DETAIL_TB 
+		WHERE SALES_CT_FK_KEY= #{selectIntegrateKey}
+			AND MT_SALES_ORDER_KEY = #{selectMtSalesOrderKey}
+			AND DELETE_YN='N' 
+			AND SALES_STATUS_CD IS NOT NULL 
+			ORDER BY SALES_YEAR_MONTH 
 	</select>	
 	
 	
 	<!-- 유지보수계약 매출금액 등록 -->
 	<insert id="writeMtContractSalesAmountList" parameterType="java.util.Map">
 		INSERT INTO MT_SALES_AMOUNT_TB (
-		    MT_INTEGRATE_KEY 
+		    MT_SALES_ORDER_KEY
 		    , MT_SALES_KEY 
+		    , MT_INTEGRATE_KEY 
 		    , MT_SALES_YEAR 
 		    , MT_SALES_JAN_AMOUNT 
 		    , MT_SALES_FEB_AMOUNT 
@@ -474,14 +859,27 @@
 		    , MT_SALES_OCT_AMOUNT  
 		    , MT_SALES_NOV_AMOUNT 
 		    , MT_SALES_DEC_AMOUNT 
+		    , MT_SALES_JAN_CALL_YN
+		    , MT_SALES_FEB_CALL_YN 
+		    , MT_SALES_MAR_CALL_YN
+		    , MT_SALES_APR_CALL_YN 
+		    , MT_SALES_MAY_CALL_YN 
+		    , MT_SALES_JUN_CALL_YN 
+		    , MT_SALES_JUL_CALL_YN 
+		    , MT_SALES_AUG_CALL_YN 
+		    , MT_SALES_SEP_CALL_YN  
+		    , MT_SALES_OCT_CALL_YN  
+		    , MT_SALES_NOV_CALL_YN 
+		    , MT_SALES_DEC_CALL_YN
 		    , REG_DT 
 		    , REG_TM 
 		    , REG_EMP_KEY)
 		VALUES
 		<foreach collection="mtSalesAmountVOList" item="item" separator=",">
 		    (
-		    #{mtIntegrateKey} 
-		    , (SELECT IFNULL(MAX(a.MT_SALES_KEY) + 1, 1) FROM MT_SALES_AMOUNT_TB a WHERE a.MT_INTEGRATE_KEY=#{mtIntegrateKey}) 
+		    #{mtSalesOrderKey} 
+		    , (SELECT IFNULL(MAX(a.MT_SALES_KEY) + 1, 1) FROM MT_SALES_AMOUNT_TB a WHERE a.MT_SALES_ORDER_KEY=#{mtSalesOrderKey}) 
+		    , #{mtIntegrateKey}
 		    , #{item.mtSalesYear}
 		    , #{item.mtSalesJanAmount}
 		    , #{item.mtSalesFebAmount}
@@ -494,7 +892,19 @@
 		    , #{item.mtSalesSepAmount}
 		    , #{item.mtSalesOctAmount}
 		    , #{item.mtSalesNovAmount}
-		    , #{item.mtSalesDecAmount}
+		    , #{item.mtSalesDecAmount}		    
+		    , #{item.mtSalesJanCallYn}
+		    , #{item.mtSalesFebCallYn}
+		    , #{item.mtSalesMarCallYn}
+		    , #{item.mtSalesAprCallYn}
+		    , #{item.mtSalesMayCallYn}
+		    , #{item.mtSalesJunCallYn}
+		    , #{item.mtSalesJulCallYn}
+		    , #{item.mtSalesAugCallYn}
+		    , #{item.mtSalesSepCallYn}
+		    , #{item.mtSalesOctCallYn}
+		    , #{item.mtSalesNovCallYn}
+		    , #{item.mtSalesDecCallYn}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
 		    , #{regEmpKey})
@@ -502,7 +912,51 @@
 	</insert>
 	
 	<!-- 유지보수계약 매출정보 목록 조회 -->
-	<select id="selectMtContractSalesAmountList" parameterType="String" resultType="egovMap">			
+	<select id="selectMtContractSalesAmountList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
+		SELECT 
+			SA.MT_INTEGRATE_KEY 
+			, SA.MT_SALES_ORDER_KEY
+			, SO.MT_SALES_PAY_TERMS
+			, SO.MT_SALES_AC_KEY AS MT_SALES_AC_KEY
+		  	, CA.AC_NM AS MT_SALES_AC_NM
+			, SA.MT_SALES_KEY 
+			, SA.MT_SALES_YEAR 
+			, IFNULL(SA.MT_SALES_JAN_AMOUNT, 0) AS MT_SALES_JAN_AMOUNT
+			, IFNULL(SA.MT_SALES_FEB_AMOUNT, 0) AS MT_SALES_FEB_AMOUNT
+			, IFNULL(SA.MT_SALES_MAR_AMOUNT, 0) AS MT_SALES_MAR_AMOUNT
+			, IFNULL(SA.MT_SALES_APR_AMOUNT, 0) AS MT_SALES_APR_AMOUNT
+			, IFNULL(SA.MT_SALES_MAY_AMOUNT, 0) AS MT_SALES_MAY_AMOUNT
+			, IFNULL(SA.MT_SALES_JUN_AMOUNT, 0) AS MT_SALES_JUN_AMOUNT
+			, IFNULL(SA.MT_SALES_JUL_AMOUNT, 0) AS MT_SALES_JUL_AMOUNT
+			, IFNULL(SA.MT_SALES_AUG_AMOUNT, 0) AS MT_SALES_AUG_AMOUNT
+			, IFNULL(SA.MT_SALES_SEP_AMOUNT, 0) AS MT_SALES_SEP_AMOUNT
+			, IFNULL(SA.MT_SALES_OCT_AMOUNT, 0) AS MT_SALES_OCT_AMOUNT
+			, IFNULL(SA.MT_SALES_NOV_AMOUNT, 0) AS MT_SALES_NOV_AMOUNT
+			, IFNULL(SA.MT_SALES_DEC_AMOUNT, 0) AS MT_SALES_DEC_AMOUNT
+			, SA.MT_SALES_JAN_CALL_YN
+			, SA.MT_SALES_FEB_CALL_YN 
+			, SA.MT_SALES_MAR_CALL_YN 
+			, SA.MT_SALES_APR_CALL_YN 
+			, SA.MT_SALES_MAY_CALL_YN 
+			, SA.MT_SALES_JUN_CALL_YN 
+			, SA.MT_SALES_JUL_CALL_YN 
+			, SA.MT_SALES_AUG_CALL_YN 
+			, SA.MT_SALES_SEP_CALL_YN  
+			, SA.MT_SALES_OCT_CALL_YN  
+			, SA.MT_SALES_NOV_CALL_YN 
+			, SA.MT_SALES_DEC_CALL_YN
+		FROM MT_SALES_AMOUNT_TB SA, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA
+		WHERE SA.MT_INTEGRATE_KEY = #{selectIntegrateKey}
+		<if test="selectMtSalesOrderKey != null and selectMtSalesOrderKey != ''">
+			AND SA.MT_SALES_ORDER_KEY = #{selectMtSalesOrderKey}
+		</if>
+			AND SA.DELETE_YN='N'
+			AND SO.DELETE_YN='N'
+			AND SA.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND SO.MT_SALES_AC_KEY = CA.AC_KEY
+		ORDER BY SA.MT_SALES_ORDER_KEY, SA.MT_SALES_YEAR
+	</select>	
+	<!-- <select id="selectMtContractSalesAmountList" parameterType="com.cep.maintenance.contract.vo.MtDefaultVO" resultType="egovMap">			
 		SELECT 
 			MT_INTEGRATE_KEY 
 			, MT_SALES_KEY 
@@ -532,10 +986,13 @@
 			, MT_SALES_NOV_CALL_YN 
 			, MT_SALES_DEC_CALL_YN
 		FROM MT_SALES_AMOUNT_TB
-		WHERE MT_INTEGRATE_KEY = #{mtIntegrateKey}
+		WHERE MT_INTEGRATE_KEY = #{selectIntegrateKey}
+		<if test="selectMtSalesOrderKey != null and selectMtSalesOrderKey != ''">
+			AND MT_SALES_ORDER_KEY = #{selectMtSalesOrderKey}
+		</if>
 			AND DELETE_YN='N'
 		ORDER BY MT_SALES_YEAR
-	</select>	
+	</select>	 -->
 	
 	<!-- 유지보수계약별 매출목록 정보수정 -->
 	<update id="updateMtContractSalesAmountList" parameterType="java.util.HashMap">	
@@ -543,58 +1000,59 @@
 			UPDATE MT_SALES_AMOUNT_TB
 			SET MT_SALES_YEAR = #{item.mtSalesYear}
 				, MT_SALES_JAN_AMOUNT = #{item.mtSalesJanAmount}
-			<if test="item.mtSalesJanCallYn != null and item.mtSalesJanCallYn != ''">	
-				, MT_SALES_JAN_CALL_YN = #{item.mtSalesJanCallYn}
+			<if test="item.mtSalesJanCallYnOrg != null and item.mtSalesJanCallYnOrg != ''">	
+				, MT_SALES_JAN_CALL_YN = #{item.mtSalesJanCallYnOrg}
 			</if>	
 				, MT_SALES_FEB_AMOUNT = #{item.mtSalesFebAmount}
-			<if test="item.mtSalesFebCallYn != null and item.mtSalesFebCallYn != ''">	
-				, MT_SALES_FEB_CALL_YN = #{item.mtSalesFebCallYn}
+			<if test="item.mtSalesFebCallYnOrg != null and item.mtSalesFebCallYnOrg != ''">	
+				, MT_SALES_FEB_CALL_YN = #{item.mtSalesFebCallYnOrg}
 			</if>	
 				, MT_SALES_MAR_AMOUNT = #{item.mtSalesMarAmount}
-			<if test="item.mtSalesMarCallYn != null and item.mtSalesMarCallYn != ''">	
-				, MT_SALES_MAR_CALL_YN = #{item.mtSalesMarCallYn}
+			<if test="item.mtSalesMarCallYnOrg != null and item.mtSalesMarCallYnOrg != ''">	
+				, MT_SALES_MAR_CALL_YN = #{item.mtSalesMarCallYnOrg}
 			</if>	
 				, MT_SALES_APR_AMOUNT = #{item.mtSalesAprAmount}
-			<if test="item.mtSalesAprCallYn != null and item.mtSalesAprCallYn != ''">	
-				, MT_SALES_APR_CALL_YN = #{item.mtSalesAprCallYn}
+			<if test="item.mtSalesAprCallYnOrg != null and item.mtSalesAprCallYnOrg != ''">	
+				, MT_SALES_APR_CALL_YN = #{item.mtSalesAprCallYnOrg}
 			</if>	
 				, MT_SALES_MAY_AMOUNT = #{item.mtSalesMayAmount}
-			<if test="item.mtSalesMayCallYn != null and item.mtSalesMayCallYn != ''">	
-				, MT_SALES_MAY_CALL_YN = #{item.mtSalesMayCallYn}
+			<if test="item.mtSalesMayCallYnOrg != null and item.mtSalesMayCallYnOrg != ''">	
+				, MT_SALES_MAY_CALL_YN = #{item.mtSalesMayCallYnOrg}
 			</if>	
 				, MT_SALES_JUN_AMOUNT = #{item.mtSalesJunAmount}
-			<if test="item.mtSalesJanCallYn != null and item.mtSalesJunCallYn != ''">	
-				, MT_SALES_JUN_CALL_YN = #{item.mtSalesJunCallYn}
+			<if test="item.mtSalesJunCallYnOrg != null and item.mtSalesJunCallYnOrg != ''">	
+				, MT_SALES_JUN_CALL_YN = #{item.mtSalesJunCallYnOrg}
 			</if>	
 				, MT_SALES_JUL_AMOUNT = #{item.mtSalesJulAmount}
-			<if test="item.mtSalesJulCallYn != null and item.mtSalesJulCallYn != ''">	
-				, MT_SALES_JUL_CALL_YN = #{item.mtSalesJulCallYn}
+			<if test="item.mtSalesJulCallYnOrg != null and item.mtSalesJulCallYnOrg != ''">	
+				, MT_SALES_JUL_CALL_YN = #{item.mtSalesJulCallYnOrg}
 			</if>	
 				, MT_SALES_AUG_AMOUNT = #{item.mtSalesAugAmount}
-			<if test="item.mtSalesAugCallYn != null and item.mtSalesAugCallYn != ''">	
-				, MT_SALES_AUG_CALL_YN = #{item.mtSalesAugCallYn}
+			<if test="item.mtSalesAugCallYnOrg != null and item.mtSalesAugCallYnOrg != ''">	
+				, MT_SALES_AUG_CALL_YN = #{item.mtSalesAugCallYnOrg}
 			</if>	
 				, MT_SALES_SEP_AMOUNT = #{item.mtSalesSepAmount}
-			<if test="item.mtSalesSepCallYn != null and item.mtSalesSepCallYn != ''">	
-				, MT_SALES_SEP_CALL_YN = #{item.mtSalesSepCallYn}
+			<if test="item.mtSalesSepCallYnOrg != null and item.mtSalesSepCallYnOrg != ''">	
+				, MT_SALES_SEP_CALL_YN = #{item.mtSalesSepCallYnOrg}
 			</if>	
 				, MT_SALES_OCT_AMOUNT = #{item.mtSalesOctAmount}
-			<if test="item.mtSalesOctCallYn != null and item.mtSalesOctCallYn != ''">	
-				, MT_SALES_OCT_CALL_YN = #{item.mtSalesOctCallYn}
+			<if test="item.mtSalesOctCallYnOrg != null and item.mtSalesOctCallYnOrg != ''">	
+				, MT_SALES_OCT_CALL_YN = #{item.mtSalesOctCallYnOrg}
 			</if>	
 				, MT_SALES_NOV_AMOUNT = #{item.mtSalesNovAmount}
-			<if test="item.mtSalesNovCallYn != null and item.mtSalesNovCallYn != ''">	
-				, MT_SALES_NOV_CALL_YN = #{item.mtSalesNovCallYn}
+			<if test="item.mtSalesNovCallYnOrg != null and item.mtSalesNovCallYnOrg != ''">	
+				, MT_SALES_NOV_CALL_YN = #{item.mtSalesNovCallYnOrg}
 			</if>	
 				, MT_SALES_DEC_AMOUNT = #{item.mtSalesDecAmount}
-			<if test="item.mtSalesDecCallYn != null and item.mtSalesDecCallYn != ''">	
-				, MT_SALES_DEC_CALL_YN = #{item.mtSalesDecCallYn}
+			<if test="item.mtSalesDecCallYnOrg != null and item.mtSalesDecCallYnOrg != ''">	
+				, MT_SALES_DEC_CALL_YN = #{item.mtSalesDecCallYnOrg}
 			</if>	
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 				, MOD_EMP_KEY = #{modEmpKey}
 			WHERE MT_SALES_KEY = #{item.mtSalesKey}
-				AND MT_INTEGRATE_KEY =  #{mtIntegrateKey}					
+				AND MT_INTEGRATE_KEY =  #{mtIntegrateKey}
+				AND MT_SALES_ORDER_KEY =  #{mtSalesOrderKey}					
 		</foreach>
 	</update>	
 	
@@ -605,7 +1063,10 @@
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
-		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}
+		WHERE MT_INTEGRATE_KEY=#{mtIntegrateKey}				
+			<if test="mtSalesOrderKey != null and mtSalesOrderKey != ''">
+				AND MT_SALES_ORDER_KEY = #{mtSalesOrderKey}
+			</if>
 	</update>
 	
 	<!-- 유지보수계약별  매출목록 리스트삭제 -->
@@ -635,7 +1096,11 @@
 		    , MT_ORDER_AC_DIRECTOR_KEY 
 		    , MT_ORDER_PAY_TERMS 
 		    , MT_ORDER_AMOUNT 
+		    , YET_PAYMENT_AMOUNT
+		    , DONE_PAYMENT_AMOUNT
 		    , MT_ORDER_DT 
+		    , BILL_PURCHASE_CD
+		    , BILL_MF_CD
 		    , REMARK 
 		    , REG_DT 
 		    , REG_TM 
@@ -647,7 +1112,11 @@
 		    , #{mtOrderAcDirectorKey}
 		    , #{mtOrderPayTerms}
 		    , #{mtOrderAmount}
+		    , #{mtOrderAmount}
+		    , 0
 		    , #{mtOrderDt}
+		    , #{billPurchaseCd}
+		    , #{billMfCd}
 		    , #{remark}
 		    , DATE_FORMAT(NOW(),'%Y%m%d')
 		    , DATE_FORMAT(NOW(),'%H%i%s')
@@ -708,6 +1177,17 @@
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
 			, MB.MT_ORDER_DT AS mtOrderDt
 			, MB.REMARK AS remark
+			, MB.YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, MB.DONE_PAYMENT_AMOUNT AS donePaymentAmount
+			, MB.BILL_PURCHASE_CD AS billPurchaseCd
+			, MB.BILL_MF_CD AS billMfCd
+			, (
+				SELECT 
+					IFNULL(SUM(CALL_AMOUNT),0) 
+				FROM MT_PC_BILLING_OP_TB 
+				WHERE PAYMENT_BUY_FK_KEY=#{mtOrderKey}
+					AND DELETE_YN = 'N'
+				) AS callTotalAmount /* 지급요청금액*/
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
 		WHERE MT_ORDER_KEY = #{mtOrderKey} 
 			AND MB.DELETE_YN='N'  
@@ -727,7 +1207,11 @@
 			, MB.MT_ORDER_PAY_TERMS AS mtOrderPayTerms
 			, MB.MT_ORDER_AMOUNT AS mtOrderAmount
 			, MB.MT_ORDER_DT AS mtOrderDt
+			, MB.BILL_PURCHASE_CD AS billPurchaseCd
+			, MB.BILL_MF_CD AS billMfCd
 			, MB.REMARK AS remark
+			, MB.YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			, MB.DONE_PAYMENT_AMOUNT AS donePaymentAmount
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA, CMM_ACCOUNT_DIRECTOR_TB AD
 		WHERE MB.MT_INTEGRATE_KEY = #{mtIntegrateKey} 
 			AND MB.DELETE_YN='N'  
@@ -753,10 +1237,10 @@
 			, MT.MT_PM_DETAIL AS mtPmDetail
 			, MT.MT_PM_START_DT as mtPmStartDt
 			, MT.MT_PM_END_DT as mtPmEndDt
-		FROM MT_BACK_ORDER_PRODUCT MB, MT_PRODUCT_TB MT, PM_PRODUCT_MNG_TB PM
+		FROM MT_BACK_ORDER_PRODUCT MB, MT_SALES_PRODUCT_TB MT, PM_PRODUCT_MNG_TB PM
 		WHERE MB.MT_ORDER_KEY = #{mtOrderKey}
 			AND MB.DELETE_YN='N'
-			AND MB.MT_PM_KEY = MT.MT_PM_KEY
+			AND MB.MT_PM_KEY = MT.MT_SALES_PM_KEY
 			AND MT.MT_PM_FK_KEY = PM.PM_KEY
 	</select>
 	
@@ -823,7 +1307,10 @@
 			, MT_ORDER_AC_DIRECTOR_KEY = #{mtOrderAcDirectorKey}
 			, MT_ORDER_PAY_TERMS = #{mtOrderPayTerms}
 			, MT_ORDER_AMOUNT = #{mtOrderAmount}
+			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
 			, MT_ORDER_DT = #{mtOrderDt}
+			, BILL_PURCHASE_CD = #{billPurchaseCd}
+			, BILL_MF_CD = #{billMfCd}
 			, REMARK = #{remark}
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
@@ -1406,5 +1893,15 @@
 			SELECT make_key(#{keyType});
 	</select>
 	
+	
+		<!-- 매출/매입 세금계산서 제조사 구분 목록. -->
+	<select id="selectManufacturerList"  resultType="egovMap">
+		SELECT 
+			AC_KEY AS CODE_KEY
+			, AC_NM AS CODE_NM 
+		FROM CMM_ACCOUNT_TB
+		WHERE MF_YN='Y' AND DELETE_YN='N'	
+		ORDER BY CODE_KEY
+	</select>
 	
 </mapper>

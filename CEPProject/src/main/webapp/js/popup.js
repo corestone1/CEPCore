@@ -64,21 +64,28 @@ function showModalPop(id, url, data, button, title, args) {
       },
       close: function(event) {
          //alert(id+"/args==>"+args+"/ifram==>"+ifram+"/iframId==>"+iframId+"/reload==>"+reload);
-         if(confirm('나가시겠습니까? 변경사항이 저장되지 않을 수 있습니다.')) {
-            $('.ui-widget-overlay').removeClass('custom-overlay');
-            $('#'+id).remove();
-            if(reload) {
-               if(ifram) {
-                  document.getElementById(iframId).contentDocument.location.reload(true);
-               } else {
-                  location.reload();
-               }
-               
-            }
-            
-         } else {
-             $(this).dialog("open");
-         }
+    	  if(reload == true) {
+    		  if(confirm('나가시겠습니까? 변경사항이 저장되지 않을 수 있습니다.')) {
+    			  $('.ui-widget-overlay').removeClass('custom-overlay');
+    			  $('#'+id).remove();   	            
+    	                
+    			  if(ifram== true) {
+    				  document.getElementById(iframId).contentDocument.location.reload(true);
+    			  } else {
+    				  location.reload();
+    			  }
+    	            
+    		  } else {
+    			  $(this).dialog("open");
+    		  }
+    	  } else {
+    		  if(confirm('해당 창을 닫으시겠습니까?')) {
+    			  $('.ui-widget-overlay').removeClass('custom-overlay');
+    	          $('#'+id).remove();
+    		  } else {
+ 	             $(this).dialog("open");
+ 	         }    		  
+    	  }         
       },
       buttons: button
    });

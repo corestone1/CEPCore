@@ -31,6 +31,7 @@ public class MtSaleAmountListVO extends MtDefaultVO {
 //	private static final long serialVersionUID = 1L;
 	private List<MtSalesAmountVO> mtSalesAmountVOList;
 	private String mtIntegrateKey;
+	private String mtSalesOrderKey;
 	private String parmMtSbCtYn;
 //	private String deleteKeys;
 	private String regEmpKey;
@@ -106,5 +107,11 @@ public class MtSaleAmountListVO extends MtDefaultVO {
 	 */
 	public void setModEmpKey(String modEmpKey) {
 		this.modEmpKey = modEmpKey;
+	}
+	public String getMtSalesOrderKey() {
+		return mtSalesOrderKey;
+	}
+	public void setMtSalesOrderKey(String mtSalesOrderKey) {
+		this.mtSalesOrderKey = mtSalesOrderKey;
 	}
 }

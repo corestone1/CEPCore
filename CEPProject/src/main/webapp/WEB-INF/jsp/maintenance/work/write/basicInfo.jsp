@@ -104,14 +104,14 @@
 			background-position: 95% 50%;
 		}
 		.popContainer .contents textarea {
-			width: calc(100% - 20px);
-			height: 102px;
+			width: calc(100% - 20px) !important;
+			height: 90px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			/* resize: none; */
 		}
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
@@ -140,17 +140,20 @@
 			vertical-align: middle;
       	} 
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 15px 48px;
+			margin : 10px 48px 9px 48px;
+			height : 10px;
+			width: calc(100% - 86px);
 		}
 		.btnCenter {
-			width : calc(100% - 30px);
+			width : calc(100% - 49px);
 			text-align: center;
+			margin-left: 19px;
 		}
 
 	/* 파일업로드 관련 */
 		#fileForm {
 			position: absolute;
-			bottom: 56px;;
+			bottom: 75px;;
 			left: 41px;
 			z-index: 99;
 		}
@@ -336,7 +339,7 @@
 			    			
 			    			var button2 = new Array;
 			    			button2 = [];
-			    			showModalPop(dialogId2, url2, varParam, button, '', 'width:1144px;height:708px');
+			    			showModalPop(dialogId2, url2, varParam, button2, '', 'width:1144px;height:708px');
                			} else {
                				//첨부파일이 존재하지 않는경우.
                				//업로프 파일을 선택한 경우 파일 업로드 프로세스 수행
@@ -422,7 +425,7 @@
 			var url;
 			if($('#mtWorkKey').val() !="") {
 				if(varUrl == "productInfoView"){
-					if(confirm("유지보수작업 제품정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수작업 장비별작업정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/work/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -647,7 +650,7 @@
 			var whereUrl;
 			if($('#mtWorkKey').val() !=''){
 				if("Y" == $('#sv_mtWorkPmYn').val()){
-					whereMsg = "제품정보";
+					whereMsg = "장비별작업정보";
 					whereUrl = "/maintenance/work/write/productInfoView.do";
 				}else if( "Y" == $('#sv_mtWorkOrderYn').val()){
 					whereMsg = "발주정보";
@@ -780,7 +783,7 @@
 	<div class="left">
 		<ul class="ftw400">
 			<li class="colorWhite cursorP on">기본정보</li>
-			<li id="work_product" class="colorWhite cursorP" onclick="fn_changeView('productInfoView');" style="display:none">제품정보</li>
+			<li id="work_product" class="colorWhite cursorP" onclick="fn_changeView('productInfoView');" style="display:none">장비별작업정보</li>
 			<li id="work_order" class="colorWhite cursorP" onclick="fn_changeView('orderInfoView');" style="display:none">발주정보</li>
 		</ul>
 	</div>
@@ -849,8 +852,10 @@
 					<tr>
 						<td class="tdTitle"><label>*</label>작업기간</td>
 						<td class="tdContents" colspan="5">
-							<input type="text" id="mtWorkStartDt" name="mtWorkStartDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkStartDt)}"/>" placeholder="from" class="calendar fromDt" autocomplete="off" required/>&nbsp;<input type="text" id="mtWorkStartTm" name="mtWorkStartTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkStartTm)}"/>" timeOnly style="width: 50px" autocomplete="off" required/>&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
-							<input type="text" id="mtWorkEndDt" name="mtWorkEndDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkEndDt)}"/>" placeholder="to" class="calendar toDt" autocomplete="off" required/>&nbsp;<input type="text" id="mtWorkEndTm" name="mtWorkEndTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkEndTm)}"/>" timeOnly style="width: 50px" autocomplete="off" required/>
+							<input type="text" id="mtWorkStartDt" name="mtWorkStartDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkStartDt)}"/>" placeholder="from" class="calendar fromDt" autocomplete="off" required/>&nbsp;
+							<input type="time" id="mtWorkStartTm" name="mtWorkStartTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkStartTm)}"/>" timeOnly style="width: 110px" autocomplete="off" required/>&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp; 
+							<input type="text" id="mtWorkEndDt" name="mtWorkEndDt" value="<c:out value="${displayUtil.displayDate(basicWorkInfo.mtWorkEndDt)}"/>" placeholder="to" class="calendar toDt" autocomplete="off" required/>&nbsp;
+							<input type="time" id="mtWorkEndTm" name="mtWorkEndTm" value="<c:out value="${displayUtil.displayTime(basicWorkInfo.mtWorkEndTm)}"/>" timeOnly style="width: 110px" autocomplete="off" required/>
 						</td>
 					</tr>
 					<tr>
@@ -862,7 +867,7 @@
 								<option value="완료">완료</option>
 							</select>
 						</td>
-						<td class="tdSubTitle">제품등록유무</td>
+						<td class="tdSubTitle">작업장비등록</td>
 						<td class="tdContents">
 							<!-- <select id="mtWorkPmYn"  name="mtWorkPmYn">
 								<option value="N">N</option>
@@ -872,7 +877,7 @@
 							&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="radio" class="tRadio" name="mtWorkPmYn" value="N" id="workPmYn2" checked="checked" onclick="workPmYnClick('N');"/><label for="workPmYn2" class="cursorP"></label>&nbsp;&nbsp;N
 						</td>
-						<td class="tdSubTitle">추가발주유무</td>
+						<td class="tdSubTitle">발주유무</td>
 						<td class="tdContents">
 							<!-- <select id="mtWorkOrderYn" name="mtWorkOrderYn">
 								<option value="N">N</option>
@@ -937,7 +942,7 @@
 			</form:form>
 		</div>
 		<div class="btnWrap floatL">
-			<div class="floatL btnCenter">
+			<div class="floatL btnCenter">				
 				<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 			</div>
 			<div id="nonNextBtn"class="floatR"  style="margin-right: 7px;display:none;" >
