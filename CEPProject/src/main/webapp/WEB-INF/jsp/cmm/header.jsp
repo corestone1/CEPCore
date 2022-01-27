@@ -58,8 +58,7 @@
 			    width: 67px;
 			}
 			header ul {
-				/* width: 988px; */ /* 2차 오픈 시 변경 */
-				width: 575px;
+				width: 857px;
 			}
 			header ul li {
 				padding: 0 26px;
@@ -392,7 +391,7 @@
 						</ul>
 					</div>
 				</li>  
-				<!-- <li class="floatL textalignC cursorP">
+				<li class="floatL textalignC cursorP">
 					<a href="/maintenance/contract/contractList.do">유지보수</a>
 					<div class="">
 						<ul>
@@ -412,7 +411,7 @@
 							<li><a href="/mngMaint/fundSchedule/list.do">수금·지급 일정</a></li>
 						</ul>
 					</div>
-				</li> --> <!-- 2차 오픈 -->
+				</li>  <!-- 2차 오픈 -->
 				<li class="floatL textalignC cursorP">
 					<a href="#">공통관리</a>
 					<div class="">

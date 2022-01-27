@@ -22,6 +22,8 @@ import com.cep.mngCommon.account.vo.AccountDepositVO;
 import com.cep.mngCommon.account.vo.AccountDirectorVO;
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.account.vo.AccountVO;
+import com.cmm.config.PrimaryKeyType;
+import com.cmm.service.ComService;
 import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -48,6 +50,9 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Resource(name="accountMapper")
 	private AccountMapper mapper;
+	
+	@Resource(name="comService")
+	private ComService comService;
 	
 	
 	@Override
@@ -162,6 +167,10 @@ public class AccountServiceImpl implements AccountService {
 				
 				
 			} else {
+				if(CepStringUtil.getDefaultValue(accountVO.getAcKey(), "").equals("")) {
+					accountVO.setAcKey("9"+comService.makePrimaryKey(PrimaryKeyType.ACCOUNT));
+				}
+				
 				mapper.insertAccountInfo(accountVO);
 				
 				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO(), "[]"))) {
@@ -197,6 +206,7 @@ public class AccountServiceImpl implements AccountService {
 			}
 			
 			returnMap.put("successYN", "Y");
+			returnMap.put("acKey", accountVO.getAcKey());
 		} catch(Exception e) {
 			returnMap.put("successYN", "N");
 			throw new Exception(e);

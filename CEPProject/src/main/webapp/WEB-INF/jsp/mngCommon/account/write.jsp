@@ -224,8 +224,9 @@
 			if($("#selectKey").val() != null && $("#selectKey").val() != "" && $("#selectKey").val().length != 0) {
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />');
-				$("#chkExist").css("display", "none");
-				$("#e_acKey").attr("readonly", "true");
+				$("#e_acKey").attr("readonly", true);
+    			$("#chkExist img").attr("src", "/images/btn_green_mod.png");
+    			$("#chkExist").attr("onclick", "clearExist(this);");
 			}
 		});
 		
@@ -504,11 +505,57 @@
 			
 			var sendData = JSON.stringify(object);
 			
-			if($('#director_tbody tr').length<1) {
+			/* if($('#director_tbody tr').length<1) {
 				alert('담당자 정보는 한 개 이상 존재해야 합니다.');
-			} else {
+			} else { */
 				//console.log(sendData);	 
 			
+			if($("#e_acKey").val().length == 0) {
+				if(confirm("사업자 번호가 입력되지 않았습니다. 랜덤번호로 저장하시겠습니까?")) {
+					$.ajax({
+						url: "/mngCommon/account/insert/accountInfo.do",
+					    dataType: 'json', 
+					    type:"POST",  
+					    data: sendData,
+					 	contentType: "application/json; charset=UTF-8", 
+						beforeSend: function(xhr) {
+							xhr.setRequestHeader("AJAX", true);
+							//xhr.setRequestHeader(header, token);
+							
+						},
+					    success:function(response){	
+					    	if(response!= null && response.successYN == 'Y') {
+					    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+						    		alert("거래처 정보가 등록되었습니다.");
+					    		} else {
+					    			alert("거래처 정보가 수정되었습니다.");
+					    		}
+					    		
+					    		var url='/mngCommon/account/write.do';
+				    			var dialogId = 'program_layer';
+				    			var varParam = {
+									//"acKey":$("#e_acKey").val()
+									"acKey":response.acKey
+				    			}
+					   			var button = new Array;
+				    			button = [];
+				    			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:741px');
+					    	} else {
+					    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+					    			alert("거래처 정보 등록이 실패하였습니다.");
+					    		} else {
+					    			alert("거래처 정보 수정이 실패하였습니다.");
+					    		}
+					    	}
+					    },
+						error: function(request, status, error) {
+							if(request.status != '0') {
+								alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+							}
+						} 
+					});        
+				}
+			} else {
 				$.ajax({
 					url: "/mngCommon/account/insert/accountInfo.do",
 				    dataType: 'json', 
@@ -531,7 +578,8 @@
 				    		var url='/mngCommon/account/write.do';
 			    			var dialogId = 'program_layer';
 			    			var varParam = {
-								"acKey":$("#e_acKey").val()
+								//"acKey":$("#e_acKey").val()
+								"acKey":response.acKey
 			    			}
 				   			var button = new Array;
 			    			button = [];
@@ -551,6 +599,9 @@
 					} 
 				});        
 			}
+			
+				
+			/* } */
 		}
 	</script>
 </head>
@@ -570,9 +621,9 @@
 				<div id="basicWrap" style="padding-top: 20px;">			
 					<table>
 						<tr>
-							<td class="tdTitle"><label>*</label> 사업자번호</td>
+							<td class="tdTitle">사업자번호</td>
 							<td class="tdContents">
-								<input type="text" id="e_acKey" name="acKey" value="${accountVO.acKey }" required numberOnly maxlength="10">
+								<input type="text" id="e_acKey" name="acKey" value="${accountVO.acKey }" numberOnly maxlength="10">
 								<button type="button" onclick="isExist(this);" value="0" id="chkExist"><img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;"/></button>
 							</td>
 						</tr>
