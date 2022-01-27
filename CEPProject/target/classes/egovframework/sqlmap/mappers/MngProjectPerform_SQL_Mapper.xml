@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cep.mngProject.perform.service.impl.MngProjectPerformMapper">
+
+
+	<select id="selectWorkList" parameterType="com.cep.mngProject.perform.vo.MngProjectPerformSearchVO" resultType="egovMap">
+	
+		SELECT PWB.PJ_KEY              AS PJ_KEY            /* PJ_MAIN_TB */
+			 , PM.PJ_NM					AS PJ_NM 
+		     , PWB.PJ_WORK_SEQ         AS PJ_WORK_SEQ       /* 프로젝트 작업 순번 */
+		     , PWB.PJ_WORK_CLASS_CD    AS PJ_WORK_CLASS_CD  /* 프로젝트 작업 구분 */
+		     , PWB.PJ_WORK_DT          AS PJ_WORK_DT        /* 프로젝트 작업 일자 */
+		     , PWB.PJ_WORK_TAKE_TM     AS PJ_WORK_TAKE_TM   /* 시간(2)분(2) */
+		     , PWB.PJ_WORK_NM          AS PJ_WORK_NM        /* 프로젝트 작업 명 */
+		     , PWB.PJ_WORK_CONT        AS PJ_WORK_CONT      /* 프로젝트 작업 내용 */
+		     , PWB.PJ_WORK_RESULT      AS PJ_WORK_RESULT    /* 프로젝트 작업 처리 결과 */
+		     , PWB.REMARK              AS REMARK            /* 비고 */
+		     , PWB.PJ_WORK_TM          AS PJ_WORK_TM        /* 프로젝트 작업 시간 */
+		     , CET.EMP_NM              AS PJ_WORK_EMP_NM    /* 작업자명 */
+		     , PWB.REG_DT            AS REG_DT
+		     , PWB.REG_TM            AS REG_TM
+		     , PWB.REG_EMP_KEY       AS REG_EMP_KEY
+		     , PWB.MOD_DT            AS MOD_DT
+		     , PWB.MOD_TM            AS MOD_TM
+		     , PWB.MOD_EMP_KEY       AS MOD_EMP_KEY
+		FROM   PJ_WORK_TB      PWB   
+		LEFT OUTER JOIN 	 PJ_MAIN_TB PM ON PWB.PJ_KEY = PM.PJ_KEY
+		LEFT OUTER JOIN   CMM_EMPLOYEE_TB CET ON CET.EMP_KEY = PWB.REG_EMP_KEY
+		WHERE  1=1
+		<if test="pjKey != null and pjKey != ''">
+			AND PWB.PJ_KEY    = #{pjKey}
+		</if>
+		<if test="performDtFrom != null and performDtFrom != '' and performDtTo != null and performDtTo != ''">
+			AND PWB.PJ_WORK_DT BETWEEN REPLACE(#{performDtFrom}, '-', '') AND REPLACE(#{performDtTo}, '-', '') /* 기간 조건 검색 */
+		</if>
+		AND  PWB.DELETE_YN = 'N'   
+	
+	</select>
+	
+	<select id="selectInstallbaseList" parameterType="com.cep.mngProject.perform.vo.MngProjectPerformSearchVO" resultType="egovMap">
+		
+		SELECT PIB.PJ_KEY              AS PJ_KEY           /* PJ_MAIN_TB */
+			 , PM.PJ_NM					AS PJ_NM
+		     , PIB.INB_SEQ             AS INB_SEQ  
+		     , PIB.INB_PLACE           AS INB_PLACE        /* 설치구축 장소 */
+		     , PIB.INB_CLASS           AS INB_CLASS        /* 설치구축 구분 */
+		     , PIB.INB_PM_KEY          AS INB_PM_KEY       /* 설치구축 제품 관리키 */
+		     , PPM.PM_NM_CD            AS PM_NM            /* 설치구축 제품명 */
+		     , PIB.INB_PM_SERIAL_NO    AS INB_PM_SERIAL_NO /* 설치구축 제품 시리얼 번호 */
+		     , PIB.INB_DELIVERY_DT     AS INB_DELIVERY_DT  /* 설치구축 납품 일자 */
+		     , PIB.INB_PM_VER          AS INB_PM_VER       /* 설치구축 제품 버전 */
+		     , PIB.INB_SPEC_INFO       AS INB_SPEC_INFO    /* 설치구축 스펙 정보 */
+		     , PIB.INB_CACHE_MEM       AS INB_CACHE_MEM    /* 설치구축 캐쉬 메모리 */
+		     , PIB.INB_PORT_INFO       AS INB_PORT_INFO    /* 설치구축 포트 정보 */
+		     , PIB.INB_MNG_IP          AS INB_MNG_IP       /* 설치구축 꽌리 아이피 */
+		     , PIB.INB_PM_TYPE         AS INB_PM_TYPE      /* 설치구축 제품 유형 */
+		     , PIB.REMARK              AS REMARK           /* 비고 */
+		     , CET.EMP_NM              AS INB_EMP_NM       /* 설차구축 작업자명 */
+		     , PIB.REG_DT       AS REG_DT
+		     , PIB.REG_TM       AS REG_TM
+		     , PIB.REG_EMP_KEY  AS REG_EMP_KEY
+		     , PIB.MOD_DT       AS MOD_DT
+		     , PIB.MOD_TM       AS MOD_TM
+		     , PIB.MOD_EMP_KEY  AS MOD_EMP_KEY
+		FROM   PJ_INSTALL_AND_BUILD_TB  PIB
+		LEFT OUTER JOIN   PJ_MAIN_TB PM		ON PIB.PJ_KEY = PM.PJ_KEY
+		LEFT OUTER JOIN   PM_PRODUCT_MNG_TB        PPM  ON PPM.PM_KEY  = PIB.INB_PM_KEY
+		LEFT OUTER JOIN   CMM_EMPLOYEE_TB          CET  ON CET.EMP_KEY = PIB.REG_EMP_KEY   
+		WHERE 1=1  
+		<if test="pjKey != null and pjKey != ''">
+			AND PIB.PJ_KEY    = #{pjKey}
+		</if>
+		<if test="performDtFrom != null and performDtFrom != '' and performDtTo != null and performDtTo != ''">
+			AND PIB.INB_DELIVERY_DT BETWEEN REPLACE(#{performDtFrom}, '-', '') AND REPLACE(#{performDtTo}, '-', '') /* 기간 조건 검색 */
+		</if>
+		  AND  PIB.DELETE_YN = 'N'
+		  
+	</select>
+
+</mapper>

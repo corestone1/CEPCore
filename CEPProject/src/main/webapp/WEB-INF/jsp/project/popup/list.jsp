@@ -34,7 +34,7 @@
 		font-size: 24px;
 	}
 	.popContainer .top select {
-		height: 38px;
+		height: 40px;
 		width: 130px;
 		border: 1px solid #e9e9e9;
 		padding: 0 10px;
@@ -46,7 +46,7 @@
 	}
 	.popContainer .top input[type="text"] {
 		width: 200px;
-		height: 38px;
+		height: 40px;
 		border: 1px solid #e9e9e9;
 		padding: 0 10px;
 		background-color: #fff;
@@ -151,10 +151,6 @@
 	.popContainer .middle table tbody td:nth-child(7) {
 		width: 67px;
 	}
-	.popContainer .middle tbody a {
-	    color: #000;
-	    cursor: default;
-	}
 </style>
 <script type="text/javaScript">
 	$(document).ready(function(){
@@ -163,6 +159,8 @@
 	
 	function fn_ProjectSelect(id, nm)
 	{
+		
+		
 		//var returnKey = '${returnKey}';
 		//var returnNm = '${returnNm}';
 		try
@@ -179,10 +177,11 @@
 			
 			
 		}
-		catch(e)
-		{}
+		catch(e){
+			console.log(e);
+		}
 		
-		close();
+		close(); 
 	   /*  var dialogLayer = $('#dialogId').val();
 	    $("#" +dialogLayer).dialog('close'); */
 	}
@@ -239,7 +238,7 @@
 	            					<input type="hidden" value="<c:out value="${result.pjKey}"/>" />
 	            				</td>
 	            				<td align="left" class="listtd"><span title="${result.acKey }"><c:out value="${result.acKey}"/></span></td>
-	            				<td align="left" class="listtd"><span title="${result.pjNm }"><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
+	            				<td align="left" class="listtd"><span title="${result.pjNm }"><c:out value="${result.pjNm}"/></span></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjStartDt)}"/></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjEndDt)}"/></td>
 	            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/></td>

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cep.forecast.vo.ForecastVO;
 import com.cep.mngCommon.account.service.AccountService;
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.account.vo.AccountVO;
+import com.cmm.util.CepDisplayUtil;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -62,7 +65,10 @@ public class AccountController {
 			logger.debug("searchVO.getAcNm(11)      :: {}", searchVO.getAcNm());
 			
 			accountList = service.selectAccountList(searchVO);
+			
+			model.addAttribute("searchVO", searchVO);
 			model.put("accountList", accountList);
+			model.put("displayUtil", new CepDisplayUtil());
 		} catch (Exception e) {
 			logger.error("selectAccountListMain :: {}", e);
 		}		
@@ -110,12 +116,12 @@ public class AccountController {
 	
 	@RequestMapping(value="/detail.do")
 	public String selectDetail(HttpServletRequest request, AccountSearchVO searchVO, ModelMap model) throws Exception {
-		List<?> accountList = null;
+		AccountVO accountList = null;
 		List<?> acDirectorList = null;
 		List<?> acDepositList = null;
 		
 		try {
-			accountList = service.selectAccountList(searchVO);
+			accountList = service.selectAccountDetail(searchVO);
 			acDirectorList = service.selectAcDirectorList(searchVO);
 			acDepositList = service.selectAcDepositList(searchVO);
 			
@@ -127,5 +133,23 @@ public class AccountController {
 		}
 		
 		return "mngCommon/account/detail";
+	}
+	
+	@RequestMapping(value="/delete.do")
+	@ResponseBody
+	public Map<String, Object> deleteAccountInfo(@ModelAttribute("accountVO") AccountVO accountVO, HttpServletRequest request) throws Exception {
+		
+		logger.debug(":::::: SP_KEY ======= {}", accountVO.getAcKey());
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			service.deleteAccountInfo(request, accountVO);
+			
+		}catch(Exception e){
+			logger.error("{}", e);
+			throw e;
+		}
+		
+		return returnMap; 
 	}
 }

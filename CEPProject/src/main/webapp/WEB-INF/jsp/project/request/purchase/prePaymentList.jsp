@@ -36,6 +36,7 @@
 		    font-weight: 500;
 		    margin-bottom: 10px;
 		    margin-top: 30px;
+		    width: 997px;
 		}
 		.stitle ul {
 			width: 100%;
@@ -95,6 +96,7 @@
 		    border-collapse: collapse;
 		    overflow: hidden;
 		    border-bottom: 2px solid #6a5bae;
+		    width: 997px;
 		}
 		#compForm .dtl thead {
 			background-color: #e1dff5;

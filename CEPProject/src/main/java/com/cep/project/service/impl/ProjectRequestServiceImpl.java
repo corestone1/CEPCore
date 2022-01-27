@@ -193,7 +193,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 				
 				content = String.join(
 		                System.getProperty("line.separator"),
-		                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 요청하셨습니다. <br>(요청자: " +name+",",
+		                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 요청하였습니다. <br>(요청자: " +name+",",
 		                " 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 				
 				for(Object obj : comService.selectDeptEmployeeList("OPER_101")) {

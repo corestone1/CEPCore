@@ -18,7 +18,7 @@
 	<style>
 		html {
 			height: 663px;
-			overflow-y: auto;
+			/* overflow-y: auto; */
 		}
 		body {
 			width: 100%;
@@ -35,6 +35,7 @@
 		    font-weight: 500;
 		    margin-bottom: 10px;
 		    margin-top: 30px;
+		    width: 997px;
 		}
 		.stitle ul {
 			width: 100%;
@@ -408,6 +409,12 @@
 			if(total >= Number(parent.$("#originYetPaymentAmount").val())) {
 				$("#rqPmInfo").css("display", "none");
 			}
+			
+			if(Number($("#usable").val()) < Number(parent.$("#originYetPaymentAmount").val())) {
+				$("#btnWrap").removeClass("dpNone");
+			} else {
+				$("#btnWrap").addClass("dpNone");
+			}
 		});
 		
 		function fn_chkVali(kind, id) {
@@ -527,7 +534,7 @@
 		}
 		
 		function fn_requestPmInfo() {
-			var url = '/project/request/purchase/writePaymentInfo.do';
+			/* var url = '/project/request/purchase/writePaymentInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 				"pjKey" : $('#pjKey').val(),
@@ -535,7 +542,9 @@
 			}
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px');  
+			showModalPop(dialogId, url, varParam, button, '', 'width:657px;height:338px');   */
+			document.contentForm.target="_parent";
+			document.contentForm.submit();
 		}
 		
 		function fn_mappingBill(paymentKey, pjNm) {
@@ -612,6 +621,7 @@
 						<input type="hidden" name="pjNm" value="${resultList[0].pjNm }" />
 						<input type="hidden" name="pjSaleEmpKey" value="${resultList[0].pjSaleEmpKey }" />
 						<input type="hidden" name="link" id="link" value="" />
+						<c:set var="total" value="0" />
 						<div class="pmWrap">
 							<table class="dtl" id="info0">
 								<tr>
@@ -622,6 +632,7 @@
 										<input type="hidden" id="turnAmount${status.count }" value="${result.callAmount }" />
 										<%-- </c:forEach> --%>
 										<span class="paymentDetail down" id="${result.paymentKey }"><img src="/images/arrow_down.png" /></span>
+										<c:set var="total" value="${ total + result.callAmount }" />
 									</td>
 								</tr>
 								<tr class="dpNone ${result.paymentKey }">
@@ -665,9 +676,17 @@
 											<div class="floatR">
 												<c:choose>
 													<c:when test="${!empty paymentList and result.billFkKey ne null}">
+														<%
+															if(!session.getAttribute("empAuthCd").equals("EMAU1001")) {
+														%>
 														<button type="button" id="req" value="매입금 지급 요청" onclick="fn_chkVali('req', '${result.paymentKey}');" style="<c:if test="${result.paymentStatusCd == 'PYST2000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST2000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST2000' }">cursorP</c:if>" src="<c:url value='/images/btn_req_purchase.png'/>" style="<c:if test="${result.paymentStatusCd == 'PYST2000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+														<% } %>
 														<button type="button" id="mod" value="수정" onclick="fn_chkVali('mod', '${result.paymentKey}');" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_mod.png'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+														<%
+															if(session.getAttribute("empAuthCd").equals("EMAU1001")) {
+														%>
 														<button type="button" class="help" id="check" value="매입금 지급 승인" onclick="fn_chkVali('check', '${result.paymentKey}');"style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">cursor: default;</c:if>" <c:if test="${result.paymentStatusCd == 'PYST1000' }">disabled</c:if>><img class="<c:if test="${result.paymentStatusCd != 'PYST1000' }">cursorP</c:if>" src="<c:url value='/images/btn_ack_pay.jpg'/>" style="<c:if test="${result.paymentStatusCd == 'PYST1000' }">filter: opacity(0.2) drop-shadow(black 0px 0px 0px);</c:if>"/></button>
+														<% } %>
 													</c:when>
 													<c:otherwise>
 														
@@ -690,7 +709,7 @@
 						<td style="width: 956px;">
 							<c:if test="${empty prePaymentList}">
 								요청할 지급 정보가 없습니다. 
-								<!-- <button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();">지급 정보 등록</button> -->
+								<button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();">지급 정보 등록</button>
 							</c:if>
 							<c:if test="${!empty prePaymentList}">
 								기 지급 정보를 확인해 주세요.
@@ -700,6 +719,15 @@
 				</table>
 			</c:otherwise>
 		</c:choose>
+		<c:forEach var="result" items="${prePaymentList }" varStatus="status">
+			<c:set var="total" value="${ total + result.callAmount }" />
+		</c:forEach>
+		<input type="hidden" id="usable" value="${ total }"/>
+		<div class="dpNone" id="buttonWrap"><button type="button" class="rqPmInfo" onclick="fn_requestPmInfo();">지급 정보 등록</button></div>
+		<form action="/mngProject/mapping/list.do" id="moveToMappingPage" name="contentForm">
+			<input type="hidden" value="${ mainKey }" name="orderCtFkKey" />
+			<input type="hidden" value="${ orderVO.orderAcKey }" name="acKey" />
+		</form>
 	</div>
 </body>
 </html>

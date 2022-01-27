@@ -460,8 +460,8 @@
 		<input type="hidden" value="<c:out value="${resultCode}"/>"/>
 		<input type="hidden" name="pjKey" value=""/>
 		<input type="hidden" name="workClass" value=""/>
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -497,7 +497,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="pl">
+					<table class="textalignC ftw200 excelSheet" id="pl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>

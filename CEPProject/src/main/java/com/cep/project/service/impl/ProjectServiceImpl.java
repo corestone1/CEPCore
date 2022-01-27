@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.example.vo.SampleDefaultVO;
+import com.cep.forecast.service.impl.ForecastMapper;
+import com.cep.forecast.vo.ForecastVO;
 import com.cep.mngProject.bill.service.impl.MngProjectBillMapper;
 import com.cep.mngProject.bill.vo.MngProjectBillVO;
 import com.cep.project.service.ProjectService;
@@ -44,6 +46,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Resource(name="projectMapper")
 	private ProjectMapper mapper;
+	
+	@Resource(name="forecastMapper")
+	private ForecastMapper forecastMapper;
 	
 	@Resource(name="comMapper")
 	private ComMapper comMapper;
@@ -85,12 +90,20 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> insertBasicInfo(HttpServletRequest request, ProjectVO projectVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 		String pjKey = null;
+		String orderKey = null;
+		
+		ForecastVO forecastVO = new ForecastVO();
+		List<EgovMap> resultList = new ArrayList<EgovMap>();
+		
+		ProjectOrderVO orderVO = new ProjectOrderVO();
+		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
 		
 		try {
 			if(!CepStringUtil.getDefaultValue(projectVO.getPjKey(), "").equals("")) {
@@ -102,6 +115,28 @@ public class ProjectServiceImpl implements ProjectService {
 				projectVO.setRegEmpKey(session.get("empKey"));
 				
 			    mapper.insertBasicInfo(projectVO);
+			    
+			    forecastVO.setSpState("S");
+			    forecastVO.setSpKey(projectVO.getSpKey());
+			    forecastMapper.updateBasic(forecastVO);
+			    
+			    resultList =  forecastMapper.selectPcInfo(forecastVO);
+			    for(int i = 0; i < resultList.size(); i++) {
+			    	orderVO.setOrderAcKey(resultList.get(i).get("buyAcKey").toString());
+			    	orderVO.setOrderCtFkKey(pjKey);
+			    	orderVO.setOrderAmount(Integer.parseInt(resultList.get(i).get("fcBuyAmount").toString()));
+			    	orderVO.setPjKey(pjKey);
+			    	orderVO.setRegEmpKey(projectVO.getRegEmpKey());
+			    	
+			    	orderKey = writeOrderInfo(projectVO.getRegEmpKey(), orderVO);
+			    	
+			    	purchaseVO.setBuyOrderFkKey(orderKey);
+			    	purchaseVO.setBuyFkPjKey(pjKey);
+			    	purchaseVO.setBuyAmount(Integer.parseInt(resultList.get(i).get("fcBuyAmount").toString()));
+			    	purchaseVO.setDonePaymentAmount(0);
+			    	purchaseVO.setYetPaymentAmount(Integer.parseInt(resultList.get(i).get("fcBuyAmount").toString()));
+			    	insertPurchaseInfo(request, purchaseVO);
+			    }
 			    
 			}
 			returnMap.put("pjKey", projectVO.getPjKey());
@@ -832,8 +867,11 @@ public class ProjectServiceImpl implements ProjectService {
 				insertParam.put("regEmpKey", regEmpKey);
 				insertParam.put("pjOrderKey", orderKey);
 				insertParam.put("orderProductVOList", orderVO.getOrderProductVOList());
-				// 제품목록을 등록한다.
-				mapper.insertOrderProductInfo(insertParam);
+				
+				if(orderVO.getOrderProductVOList() != null) {
+					// 제품목록을 등록한다.
+					mapper.insertOrderProductInfo(insertParam);
+				}
 				
 			} else {
 				throw new Exception("Can't make PJ_ORDER_TB.PJ_ORDER_KEY !!!! ..");

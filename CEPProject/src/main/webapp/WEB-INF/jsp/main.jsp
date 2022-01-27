@@ -11,6 +11,10 @@
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 <style>
+body {
+	background: linear-gradient(90deg, #7664ca 50%, #f6f7fc 50%);
+    width: 1800px !important;
+}
 .loginWrap {
 	height: 100%;
 }

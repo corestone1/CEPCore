@@ -5,6 +5,7 @@
 	<resultMap id="sample" type="com.cep.main.vo.EmpVO">
 		<result property="empKey" column="EMP_KEY"/>
 		<result property="empPw" column="EMP_PW"/>
+		<result property="empAuthCd" column="EMP_AUTH_CD"/>
 	</resultMap>
 	
 	<select id="selectEmp" resultType="int">
@@ -31,7 +32,18 @@
 		SELECT EMP_NM
 		FROM CMM_EMPLOYEE_TB
 		WHERE EMP_KEY=#{empKey}
-		AND EMP_PW=#{empPw}
+		<if test="empPw != null and empPw != ''">
+			AND EMP_PW=#{empPw}
+		</if>
+		
+	</select>
+	
+	<select id="selectAuthCd" resultType="com.cep.main.vo.EmpVO">
+		
+		SELECT EMP_AUTH_CD AS empAuthCd
+		FROM CMM_EMPLOYEE_TB
+		WHERE EMP_KEY=#{empKey}
+		<!-- AND EMP_PW=#{empPw} -->
 		
 	</select>
 </mapper>

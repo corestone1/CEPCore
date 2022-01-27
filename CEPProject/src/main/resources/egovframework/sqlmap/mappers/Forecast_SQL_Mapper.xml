@@ -23,9 +23,13 @@
 		<result property="salesAcKey"      column="SALES_AC_KEY"/>
 		<result property="buyAcKey"        column="BUY_AC_KEY"/>
 		<result property="remark"          column="REMARK"/>
+		<result property="bdYn"				column="BD_YN" />
+		<result property="spStartDt"		column="SP_START_DT" />
+		<result property="spEndDt"			column="SP_END_DT" />
 		<result property="regDt"           column="REG_DT"/>
 		<result property="regTm"           column="REG_TM" />
 		<result property="regEmpKey"       column="REG_EMP_KEY" />
+		<result property="empNm"			column="EMP_NM" />
 		<result property="modDt"           column="MOD_DT"/>
 		<result property="modTm"           column="MOD_TM" />
 		<result property="modEmpKey"       column="MOD_EMP_KEY" />
@@ -35,6 +39,7 @@
 		<result property="pmNm"            column="PM_NM" />
 		<result property="salesAcNm"       column="SALES_AC_NM" />
 		<result property="buyAcNm"         column="BUY_AC_NM" />
+		
 	</resultMap>
 	
 	<!--
@@ -44,7 +49,7 @@
 	<select id="selectFocecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultMap="forecastVO">				
 	 -->
 	 
-	 <select id="selectFocecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultType="egovMap">	
+	 <select id="selectForecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultType="egovMap">	
 		SELECT SM.SP_KEY              AS SP_KEY
 		     , SM.AC_KEY              AS AC_KEY
 		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
@@ -52,16 +57,15 @@
 		     , SM.PM_DETAIL           AS PM_DETAIL
 		     , SM.PM_DETAIL2          AS PM_DETAIL2
 		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
-		     , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT
-		     , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT
-		     , SM.FC_SALES_PROFIT     AS FC_SALES_PROFIT
-		     , SM.FC_SALES_DT         AS FC_SALES_DT
+		    <!--  , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT -->
+		     <!-- , SM.FC_SALES_DT         AS FC_SALES_DT
 		     , SM.FC_COLLECT_DT       AS FC_COLLECT_DT
-		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT
+		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT -->
 		     , SM.SP_STATE            AS SP_STATE
-		     , SM.SALES_AC_KEY        AS SALES_AC_KEY
-		     , SM.BUY_AC_KEY          AS BUY_AC_KEY
+		  <!--    , SM.SALES_AC_KEY        AS SALES_AC_KEY
+		     , SM.BUY_AC_KEY          AS BUY_AC_KEY -->
 		     , SM.REMARK              AS REMARK
+		     , SM.BD_YN					AS BD_YN
 		     , SM.REG_TM              AS REG_TM
 		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
 		     , SM.MOD_DT              AS MOD_DT
@@ -70,24 +74,51 @@
 			 , AC.AC_NM               AS MF_AC_NM
 			 /*, PM.PM_NM_CD            AS PM_NM */
 			 /*, PM.PM_DETAIL_CLASS_CD  AS PM_DETAIL_CLASS_CD */
-			 , SAC.AC_NM              AS SALES_AC_NM
-			 , BAC.AC_NM              AS BUY_AC_NM
+			<!--  , SAC.AC_NM              AS SALES_AC_NM
+			 , BAC.AC_NM              AS BUY_AC_NM -->
 			 , SM.SALES_CT_CLASS      AS SALES_CT_CLASS
 			 , EP.EMP_NM				AS EMP_NM
+			 , (SELECT SUM(SL.FC_SALES_AMOUNT) FROM SP_SALES_TB SL WHERE SM.SP_KEY = SL.SALES_SP_FK_KEY AND SL.DELETE_YN = 'N') AS FC_SALES_AMOUNT
+	         , (SELECT SUM(SL.FC_BUY_AMOUNT) FROM SP_PURCHASE_TB SL WHERE SM.SP_KEY = SL.BUY_SP_FK_KEY AND SL.DELETE_YN = 'N') AS FC_BUY_AMOUNT
+	         , SS.SALES_AC_KEY			AS SALES_AC_KEY
+	         , (SELECT AC.AC_NM FROM CMM_ACCOUNT_TB AC WHERE AC.AC_KEY = SS.SALES_AC_KEY)		AS SALES_AC_NM
+	         , SM.FC_SALES_PROFIT AS FC_SALES_PROFIT
+	         , SM.SP_START_DT			AS SP_START_DT
+	         , SM.SP_END_DT				AS SP_END_DT
 		FROM SP_MAIN_TB          SM
-			 JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
+			 LEFT OUTER JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
 			 /* JOIN PM_PRODUCT_MNG_TB PM ON SM.PM_KEY = PM.PM_KEY */
-			 LEFT JOIN CMM_ACCOUNT_TB SAC   ON SM.SALES_AC_KEY = SAC.AC_KEY
-			 LEFT JOIN CMM_ACCOUNT_TB BAC   ON SM.BUY_AC_KEY = BAC.AC_KEY
-			 JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
-		WHERE 1=1	
-		
+			 <!-- LEFT JOIN CMM_ACCOUNT_TB SAC   ON SM.SALES_AC_KEY = SAC.AC_KEY
+			 LEFT JOIN CMM_ACCOUNT_TB BAC   ON SM.BUY_AC_KEY = BAC.AC_KEY -->
+			 LEFT OUTER JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
+			 LEFT OUTER JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+			 LEFT OUTER JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+		WHERE SM.DELETE_YN = 'N'
+			
 			<if test="salesEmpKey != null and salesEmpKey != ''">
 				AND SM.REG_EMP_KEY = #{salesEmpKey}
 			</if>
 		
 		  	<if test="spState != null and spState != ''" >
 		  		AND SM.SP_STATE = #{spState}
+		  	</if>
+		  	
+		  	<if test="spState == null or spState == ''" >
+		  		<!-- 2차 오픈 -->
+		  		AND SP_STATE NOT IN ("S")
+		  		AND SP_STATE NOT IN ("F")
+		  	</if>
+		  	
+		  	<!-- <if test="searchFromDt == null or searchFromDt == ''">
+		  		AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = YEAR(NOW()), YEAR(NOW()) BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4))
+		  	</if> -->
+		  	
+		  	<if test="searchFromDt != null and searchFromDt != ''">
+		  		AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = #{searchFromDt}, #{searchFromDt} BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4))
+		  	</if>
+		  	
+		  	<if test="fcSjConfQt != null and fcSjConfQt != 0">
+		  		AND SM.FC_SJ_CONF_QT = #{fcSjConfQt}
 		  	</if>
 		  
 		  	<if test="pjFlag != null and pjFlag != ''" >
@@ -97,6 +128,10 @@
 		  	<if test="pmFlag != null and pmFlag != ''" >
 		  		AND SM.PM_KEY = #{pmFlag}
 		  	</if>
+		  	
+		  	<if test="deptKey != null and deptKey != ''" >
+		  		AND (DP.DEPT_KEY = #{deptKey} OR DP.DEPT_UP_KEY = #{deptKey})
+		  	</if>
 		  
 		  	<if test="searchFlag != null and searchFlag != ''" >
 			
@@ -104,17 +139,21 @@
 	  				AND AC.AC_NM LIKE CONCAT('%', #{searchValue}, '%')
 	  			</if>
 			  	
-			<if test="searchFlag.equals('BN')" >
-	  			AND SM.SP_BUSI_NM LIKE CONCAT('%', #{searchValue}, '%')
-	  		</if>
-	  		
-	  		<if test="searchFlag.equals('SE')" >
-	  			AND EP.EMP_NM LIKE CONCAT('%', #{searchValue}, '%')
-	  		</if>
-	  		
+				<if test="searchFlag.equals('BN')" >
+		  			AND SM.SP_BUSI_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
+		  		<if test="searchFlag.equals('SE')" >
+		  			AND EP.EMP_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
+		  		<if test="searchFlag.equals('SP')" >
+		  			AND SM.SP_KEY LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
 		  </if>
 		  
-		ORDER BY SM.REG_DT DESC, SM.REG_TM DESC		
+		ORDER BY SM.SP_STATE DESC, SM.FC_SJ_CONF_QT DESC
 		
 	</select>
 	
@@ -136,10 +175,23 @@
 			<if test="fcSjConfQt != null and fcSjConfQt != ''">
 			, FC_SJ_CONF_QT
 			</if>
+			<if test="fcSalesProfit != null and fcSalesProfit != ''">
+			, FC_SALES_PROFIT
+			</if>
+			<if test="spStartDt != null and spStartDt != ''">
+			, SP_START_DT
+			</if>
+			<if test="spEndDt != null and spEndDt != ''">
+			, SP_END_DT
+			</if>
+			<if test="bdYn != null and bdYn != ''">
+			, BD_YN
+			</if> 
 			, SP_STATE
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
+			, DELETE_YN
 		)
 		VALUES
 		(
@@ -154,10 +206,23 @@
 			<if test="fcSjConfQt != null and fcSjConfQt != ''">
 			, #{fcSjConfQt}
 			</if>
+			<if test="fcSalesProfit != null and fcSalesProfit != ''">
+			, #{fcSalesProfit}
+			</if>
+			<if test="spStartDt != null and spStartDt != ''">
+			, #{spStartDt}
+			</if>
+			<if test="spEndDt != null and spEndDt != ''">
+			, #{spEndDt}
+			</if>
+			<if test="bdYn != null and bdYn != ''">
+			, #{bdYn}
+			</if> 
 			, #{spState}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%k%i%s')
 			, #{regEmpKey}
+			, 'N'
 		)
 
 	</insert>
@@ -165,16 +230,43 @@
 	<update id="updateBasic" parameterType="com.cep.forecast.vo.ForecastVO">
 	
 		UPDATE SP_MAIN_TB
-		SET    AC_KEY         = #{acKey}
-			 , SALES_CT_CLASS = #{salesCtClass}
-			 , SP_BUSI_NM     = #{spBusiNm}
-			 , PM_KEY         = #{pmKey}
-			 , PM_DETAIL      = #{pmDetail}
-			 , FC_SJ_CONF_QT  = #{fcSjConfQt}
-			 , SP_STATE       = #{spState}
-			 , MOD_DT         = DATE_FORMAT(NOW(),'%Y%m%d')
-			 , MOD_TM         = DATE_FORMAT(NOW(),'%k%i%s') 
-			 , MOD_EMP_KEY    = #{regEmpKey}
+		SET    
+			MOD_DT         = DATE_FORMAT(NOW(),'%Y%m%d')
+			<if test="acKey != null and acKey != ''">
+			, AC_KEY         = #{acKey}
+			</if>
+			<if test="salesCtClass != null and salesCtClass != ''">
+			, SALES_CT_CLASS = #{salesCtClass}
+			</if>
+			<if test="spBusiNm != null and spBusiNm != ''">
+			, SP_BUSI_NM     = #{spBusiNm}
+			</if>
+			<if test="pmKey != null and pmKey != ''">
+			, PM_KEY         = #{pmKey}
+			</if>
+			<if test="pmDetail != null and pmDetail != ''">
+			, PM_DETAIL      = #{pmDetail}
+			</if>
+			<if test="fcSjConfQt != null and fcSjConfQt != ''">
+			, FC_SJ_CONF_QT  = #{fcSjConfQt}
+			</if>
+			<if test="fcSalesProfit != null and fcSalesProfit != ''">
+			, FC_SALES_PROFIT = #{fcSalesProfit}
+			</if>
+			<if test="spState != null and spState != ''">
+			, SP_STATE       = #{spState}
+			</if>
+			<if test="bdYn != null and bdYn != ''">
+			, BD_YN       = #{bdYn}
+			</if>
+			<if test="spStartDt != null and spStartDt != ''">
+			, SP_START_DT       = #{spStartDt}
+			</if>
+			<if test="spEndDt != null and spEndDt != ''">
+			, SP_END_DT       = #{spEndDt}
+			</if>
+			, MOD_TM         = DATE_FORMAT(NOW(),'%k%i%s') 
+			, MOD_EMP_KEY    = #{regEmpKey}
 		WHERE  SP_KEY = #{spKey}
 
 	</update>
@@ -191,16 +283,18 @@
 		     , SM.PM_DETAIL           AS PM_DETAIL
 		     , SM.PM_DETAIL2			AS PM_DETAIL2
 		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
-		     , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT
-		     , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT
+		     <!-- , SM.FC_SALES_AMOUNT     AS FC_SALES_AMOUNT -->
+		     , (SELECT SUM(SL.FC_SALES_AMOUNT) FROM SP_SALES_TB SL WHERE SL.SALES_SP_FK_KEY = SM.SP_KEY AND SM.SP_KEY = #{spKey}) AS FC_SALES_AMOUNT
+		     <!-- , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT -->
+		     , (SELECT SUM(PC.FC_BUY_AMOUNT) FROM SP_PURCHASE_TB PC WHERE PC.BUY_SP_FK_KEY = SM.SP_KEY AND SM.SP_KEY = #{spKey}) AS FC_BUY_AMOUNT
 		     , SM.FC_SALES_PROFIT     AS FC_SALES_PROFIT
-		     , SM.FC_SALES_DT         AS FC_SALES_DT
-		     , SM.FC_COLLECT_DT       AS FC_COLLECT_DT
 		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT
 		     , SM.SP_STATE            AS SP_STATE
-		     , SM.SALES_AC_KEY        AS SALES_AC_KEY
 		     , SM.BUY_AC_KEY          AS BUY_AC_KEY
 		     , SM.REMARK              AS REMARK
+		     , SM.BD_YN					AS BD_YN
+		     , SM.SP_START_DT		AS SP_START_DT
+		     , SM.SP_END_DT			AS SP_END_DT
 		     , SM.REG_TM              AS REG_TM
 		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
 		     , EP.EMP_NM              AS EMP_NM
@@ -209,17 +303,194 @@
 		     , SM.MOD_TM              AS MOD_TM
 		     , SM.MOD_EMP_KEY         AS MOD_EMP_KEY
 		     , AC.AC_NM               AS MF_AC_NM
-			  , (SELECT AC_NM FROM CMM_ACCOUNT_TB WHERE AC_KEY = SM.SALES_AC_KEY) AS SALES_AC_NM
-			  , (SELECT AC_NM FROM CMM_ACCOUNT_TB WHERE AC_KEY = SM.BUY_AC_KEY)   AS BUY_AC_NM
+		     , SS.SALES_AC_KEY              AS SALES_AC_KEY
+		     , (SELECT AC_NM FROM CMM_ACCOUNT_TB WHERE AC_KEY = SS.SALES_AC_KEY) AS SALES_AC_NM
+		     , SS.FC_SALES_AMOUNT			AS FC_SALES_AMOUNT
+		     , SS.FC_SALES_DT					AS FC_SALES_DT
+		     , SS.FC_COLLECT_DT				AS FC_COLLECT_DT
+			<!-- , (SELECT AC_NM FROM CMM_ACCOUNT_TB WHERE AC_KEY = SM.BUY_AC_KEY)   AS BUY_AC_NM -->
 		FROM SP_MAIN_TB           SM
-			 JOIN CMM_ACCOUNT_TB  AC ON SM.AC_KEY  = AC.AC_KEY
-			 JOIN CMM_EMPLOYEE_TB EP ON EP.EMP_KEY = SM.REG_EMP_KEY  
+			 LEFT OUTER JOIN CMM_ACCOUNT_TB  AC ON SM.AC_KEY  = AC.AC_KEY
+			 LEFT OUTER JOIN CMM_EMPLOYEE_TB EP ON EP.EMP_KEY = SM.REG_EMP_KEY  
+			 LEFT OUTER JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
 		WHERE SM.SP_KEY = #{spKey}
+			<!-- 2차 -->
+			<!-- AND SP_STATE NOT IN ("S") -->
 		ORDER BY SM.REG_DT DESC, SM.REG_TM DESC		
 				
 	</select>
 	
-	<update id="updateFundInfo" parameterType="com.cep.forecast.vo.ForecastVO">
+	<select id="selectSalesInfo" parameterType="com.cep.forecast.vo.ForecastVO" resultType="egovMap">
+		
+		SELECT
+			DAT.SALES_KEY
+			, DAT.SALES_SP_FK_KEY
+			, DAT.SALES_AC_KEY
+			, DAT.SALES_AC_NM
+			, DAT.FC_SALES_DT
+			, DAT.FC_COLLECT_DT
+			, DAT.FC_SALES_AMOUNT
+		FROM (
+				SELECT 
+					SST.SALES_KEY						AS SALES_KEY
+					, SST.SALES_SP_FK_KEY			AS SALES_SP_FK_KEY
+					, SST.SALES_AC_KEY				AS SALES_AC_KEY
+					, AC.AC_NM							AS SALES_AC_NM
+					, SST.FC_SALES_DT					AS FC_SALES_DT
+					, SST.FC_COLLECT_DT				AS FC_COLLECT_DT
+					, SST.FC_SALES_AMOUNT			AS FC_SALES_AMOUNT
+				FROM SP_SALES_TB SST
+				LEFT OUTER JOIN CMM_ACCOUNT_TB AC ON SST.SALES_AC_KEY = AC.AC_KEY
+				WHERE SST.SALES_SP_FK_KEY = #{spKey}
+				AND SST.DELETE_YN = 'N'
+		) DAT
+		
+		ORDER BY DAT.SALES_KEY
+			
+	</select>
+	
+	<select id="selectPcInfo" parameterType="com.cep.forecast.vo.ForecastVO" resultType="egovMap">
+		
+		SELECT
+			DAT.BUY_KEY
+			, DAT.BUY_SP_FK_KEY
+			, DAT.BUY_AC_KEY
+			, DAT.BUY_AC_NM
+			, DAT.FC_BUY_DT
+			, DAT.FC_BUY_PAY_DT
+			, DAT.FC_BUY_AMOUNT
+		FROM (
+				SELECT 
+					SPC.BUY_KEY						AS BUY_KEY
+					, SPC.BUY_SP_FK_KEY			AS BUY_SP_FK_KEY
+					, SPC.BUY_AC_KEY				AS BUY_AC_KEY
+					, AC.AC_NM						AS BUY_AC_NM
+					, SPC.FC_BUY_DT				AS FC_BUY_DT
+					, SPC.FC_BUY_PAY_DT			AS FC_BUY_PAY_DT
+					, SPC.FC_BUY_AMOUNT		AS FC_BUY_AMOUNT
+				FROM SP_PURCHASE_TB SPC
+				LEFT OUTER JOIN CMM_ACCOUNT_TB AC ON SPC.BUY_AC_KEY = AC.AC_KEY
+				WHERE SPC.BUY_SP_FK_KEY = #{spKey}
+				AND SPC.DELETE_YN = 'N'
+		) DAT
+		
+		ORDER BY DAT.BUY_KEY
+		
+	</select>
+	
+	<insert id="insertSalesInfo" parameterType="java.util.Map">
+		INSERT INTO SP_SALES_TB (
+			SALES_SP_FK_KEY
+			, SALES_KEY
+			, SALES_AC_KEY
+			, FC_SALES_DT
+			, FC_COLLECT_DT
+			, FC_SALES_AMOUNT
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES 
+		<foreach collection="forecastSalesVOList" item="item" separator=",">
+		    (
+			#{salesSpFkKey}
+			, make_key(#{primaryKey})
+			, #{item.salesAcKey}
+			, #{item.fcSalesDt}
+			, #{item.fcCollectDt}
+			, #{item.fcSalesAmount}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey}
+			, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updateSalesInfo" parameterType="java.util.HashMap">
+		<foreach collection="forecastSalesVOList" item="item" separator=";" close=";">
+			UPDATE SP_SALES_TB
+			SET SALES_AC_KEY = #{item.salesAcKey}
+				, FC_SALES_DT = #{item.fcSalesDt}
+				, FC_COLLECT_DT = #{item.fcCollectDt}
+				, FC_SALES_AMOUNT = #{item.fcSalesAmount}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE SALES_KEY = #{item.salesKey}
+		</foreach>
+	</update>
+	
+	<update id="deleteSalesInfo" parameterType="java.util.HashMap">
+		UPDATE SP_SALES_TB
+		SET
+			DELETE_YN = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE SALES_KEY IN
+			<foreach collection="deleteKeyList" item="item" index="index" 	separator="," open="(" close=")">
+				#{item}
+			</foreach>
+	</update>
+	
+	<insert id="insertPcInfo" parameterType="java.util.Map">
+		INSERT INTO SP_PURCHASE_TB (
+			BUY_SP_FK_KEY
+			, BUY_KEY
+			, BUY_AC_KEY
+			, FC_BUY_DT
+			, FC_BUY_PAY_DT
+			, FC_BUY_AMOUNT
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES 
+		<foreach collection="forecastPcVOList" item="item" separator=",">
+		    (
+			#{buySpFkKey}
+			, make_key(#{primaryKey})
+			, #{item.buyAcKey}
+			, #{item.fcBuyDt}
+			, #{item.fcBuyPayDt}
+			, #{item.fcBuyAmount}
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey}
+			, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updatePcInfo" parameterType="java.util.HashMap">
+		<foreach collection="forecastPcVOList" item="item" separator=";" close=";">
+			UPDATE SP_PURCHASE_TB
+			SET BUY_AC_KEY = #{item.buyAcKey}
+				, FC_BUY_DT = #{item.fcBuyDt}
+				, FC_BUY_PAY_DT = #{item.fcBuyPayDt}
+				, FC_BUY_AMOUNT = #{item.fcBuyAmount}
+				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE BUY_KEY = #{item.buyKey}
+		</foreach>
+	</update>
+	
+	<update id="deletePcInfo" parameterType="java.util.HashMap">
+		UPDATE SP_PURCHASE_TB
+		SET
+			DELETE_YN = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE BUY_KEY IN 
+			<foreach collection="deleteKeyList" item="item" index="index" 	separator="," open="(" close=")">
+				#{item}
+			</foreach>
+	</update>
+	
+	<!-- <update id="updateFundInfo" parameterType="com.cep.forecast.vo.ForecastVO">
 		UPDATE SP_MAIN_TB 
 		SET   FC_SALES_AMOUNT  = REPLACE(#{fcSalesAmount}, ',', '')
 			, FC_BUY_AMOUNT    = REPLACE(#{fcBuyAmount}, ',', '')
@@ -232,6 +503,194 @@
 			, MOD_TM           = DATE_FORMAT(NOW(),'%k%i%s')
 			, MOD_EMP_KEY      = #{modEmpKey}
 		WHERE  SP_KEY = #{spKey}
+	</update> -->
+	
+	<select id="selectBiddingDetail" parameterType="com.cep.forecast.vo.ForecastBiddingVO" resultType="com.cep.forecast.vo.ForecastBiddingVO">
+		SELECT
+			SB.BD_KEY 								AS bdKey
+			, SB.SP_KEY								AS spKey
+			, SM.SP_BUSI_NM						AS spBusiNm
+			, SB.BD_GB_YN							AS bdGbYn
+			, SB.BD_GB_FINISH_DT					AS bdGbFinishDt
+			, SB.BD_GB_FINISH_YN					AS bdGbFinishYn
+			, SB.BD_GB_AMOUNT					AS bdGbAmount
+			, SB.BD_LIMIT_DT						AS bdLimitDt
+			, SB.BD_LIMIT_TM						AS bdLimitTm
+			, SB.BD_PROPOSAL_YN					AS bdProposalYn
+			, SB.BD_PROPOSAL_DUE_DT			AS bdProposalDueDt
+			, SB.BD_PROPOSAL_DUE_TM			AS bdProposalDueTm
+			, SB.BD_PROPOSAL_PRESENT_YN		AS bdProposalPresentYn
+			, SB.BD_PROPOSAL_PRESENT_DT		AS bdProposalPresentDt
+			, SB.BD_PROPOSAL_PRESENT_TM	AS bdProposalPresentTm
+			, SB.BD_ORIGIN_FILE_YN				AS bdOriginFileYn
+		FROM SP_BIDDING_TB		SB
+		JOIN SP_MAIN_TB			SM
+		ON SB.SP_KEY = SM.SP_KEY
+		WHERE SB.SP_KEY = #{spKey}
+		AND SB.DELETE_YN = 'N'
+	</select>
+	
+	<select id="selectBiddingFileList" parameterType="com.cep.forecast.vo.ForecastBiddingVO" resultType="egovMap">
+		SELECT
+			PBF.BD_KEY
+			, PBF.BD_SEQ
+			, PBF.BD_FILE_KIND_CD
+			, PBF.BD_DOC_CNT
+			, CCM.CD_NM  
+			, PBF.BD_FILE_DOC_NM
+		FROM SP_BIDDING_FILE_INFO_TB PBF
+		JOIN CMM_CODE_MNG_TB CCM 
+		ON PBF.BD_FILE_KIND_CD = CCM.CD_KEY
+		WHERE PBF.BD_KEY = #{bdKey}
+		AND PBF.DELETE_YN = 'N'
+	</select>
+	
+	<insert id="insertBiddingInfo" parameterType="com.cep.forecast.vo.ForecastBiddingVO">
+		INSERT INTO SP_BIDDING_TB (
+			BD_KEY
+			, SP_KEY
+			, BD_GB_YN
+			, BD_LIMIT_DT
+			, BD_ORIGIN_FILE_YN
+			<if test='bdGbYn == "Y"'>
+			, BD_GB_FINISH_YN
+			</if>
+			<if test="bdLimitTm != null and bdLimitTm != ''">
+			, BD_LIMIT_TM
+			</if>
+			, BD_PROPOSAL_YN
+			<if test="bdProposalDueDt != null and bdProposalDueDt != ''">
+			, BD_PROPOSAL_DUE_DT
+			</if>
+			<if test="bdProposalDueTm != null and bdProposalDueTm != ''">
+			, BD_PROPOSAL_DUE_TM
+			</if>
+			, BD_PROPOSAL_PRESENT_YN
+			<if test="bdProposalPresentDt != null and bdProposalPresentDt != ''">
+			, BD_PROPOSAL_PRESENT_DT
+			</if>
+			<if test="bdProposalPresentTm != null and bdProposalPresentTm != ''">
+			, BD_PROPOSAL_PRESENT_TM
+			</if>
+			, REG_DT
+			, REG_TM
+			, REG_EMP_KEY
+			, DELETE_YN
+		) VALUES (
+			#{bdKey}
+			, #{spKey}
+			, #{bdGbYn}
+			, #{bdLimitDt}
+			, #{bdOriginFileYn}
+			<if test='bdGbYn == "Y"'>
+			, 'N'
+			</if>
+			<if test="bdLimitTm != null and bdLimitTm != ''">
+			, #{bdLimitTm}
+			</if>
+			, #{bdProposalYn}
+			<if test="bdProposalDueDt != null and bdProposalDueDt != ''">
+			, #{bdProposalDueDt}
+			</if>
+			<if test="bdProposalDueTm != null and bdProposalDueTm != ''">
+			, #{bdProposalDueTm}
+			</if>
+			, #{bdProposalPresentYn}
+			<if test="bdProposalPresentDt != null and bdProposalPresentDt != ''">
+			, #{bdProposalPresentDt}
+			</if>
+			<if test="bdProposalPresentTm != null and bdProposalPresentTm != ''">
+			, #{bdProposalPresentTm}
+			</if>
+			, DATE_FORMAT(NOW(),'%Y%m%d')
+			, DATE_FORMAT(NOW(), '%H%i%s')
+			, #{regEmpKey}
+			, 'N'
+		)
+	</insert>
+	
+	<update id="updateBiddingInfo" parameterType="com.cep.forecast.vo.ForecastBiddingVO">
+		UPDATE SP_BIDDING_TB SET
+			BD_GB_YN = #{bdGbYn}
+			, BD_LIMIT_DT = #{bdLimitDt}
+			, BD_PROPOSAL_PRESENT_YN = #{bdProposalPresentYn}
+			, BD_PROPOSAL_YN = #{bdProposalYn}
+			, BD_ORIGIN_FILE_YN = #{bdOriginFileYn}
+			<if test='bdGbYn == "Y"'>
+				, BD_GB_FINISH_YN = 'N'
+			</if>
+			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
+				, BD_GB_AMOUNT=#{bdGbAmount}
+			</if>
+			<if test="bdGbStartDt != null and bdGbStartDt != ''">
+				, BD_GB_START_DT=#{bdGbStartDt}
+			</if>
+			<if test="bdGbEndDt != null and bdGbEndDt != ''">
+				, BD_GB_END_DT=#{bdGbEndDt}
+			</if>
+			<if test="bdGbFinishDt != null and bdGbFinishDt != ''">
+				, BD_GB_FINISH_DT=#{bdGbFinishDt}
+			</if>
+			<if test="bdLimitTm != null and bdLimitTm != ''">
+				, BD_LIMIT_TM=#{bdLimitTm}
+			</if>
+			<if test='bdProposalYn == "N"'>
+				, BD_PROPOSAL_DUE_DT = NULL
+				, BD_PROPOSAL_DUE_TM = NULL
+				, BD_PROPOSAL_PRESENT_DT = NULL
+				, BD_PROPOSAL_PRESENT_TM = NULL
+			</if>
+			<if test='bdProposalYn == "Y"'>
+				, BD_PROPOSAL_DUE_DT = #{bdProposalDueDt}
+				, BD_PROPOSAL_DUE_TM = #{bdProposalDueTm}
+				<if test='bdProposalPresentYn == "Y"'>
+					, BD_PROPOSAL_PRESENT_DT = #{bdProposalPresentDt}
+					, BD_PROPOSAL_PRESENT_TM = #{bdProposalPresentTm}
+				</if>
+				<if test='bdProposalPresentYn == "N"'>
+					, BD_PROPOSAL_PRESENT_DT = NULL
+					, BD_PROPOSAL_PRESENT_TM = NULL
+				</if>
+			</if>
+				, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+				, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
+				, MOD_EMP_KEY=#{modEmpKey}
+			WHERE BD_KEY = #{bdKey}
+				AND DELETE_YN = 'N'
+	</update>
+	
+	<insert id="insertBiddingFileInfo" parameterType="java.util.Map">
+		INSERT INTO SP_BIDDING_FILE_INFO_TB (
+			BD_KEY
+			, BD_SEQ
+			, BD_FILE_KIND_CD
+			, BD_FILE_DOC_NM
+			, BD_DOC_CNT
+			, DELETE_YN
+		) VALUES
+		<foreach collection="biddingFileVOList" item="item" separator=",">
+			 (
+				#{bdKey}
+				, (SELECT (SELECT COUNT(*) FROM SP_BIDDING_FILE_INFO_TB BFI WHERE BFI.BD_KEY=#{bdKey}) + 1)
+				, #{item.bdFileKindCd}
+				, #{item.bdFileDocNm}
+				, #{item.bdDocCnt}
+				, 'N'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updateBiddingFileInfo" parameterType="java.util.Map">
+		<foreach collection="biddingFileVOList" item="item" separator=";" close=";">
+			UPDATE SP_BIDDING_FILE_INFO_TB SET
+				BD_DOC_CNT = #{item.bdDocCnt}
+				<if test="item.bdDocCnt == 0">
+				, DELETE_YN='Y'
+				</if>
+			WHERE 
+				BD_KEY = #{bdKey}
+				AND BD_SEQ = #{item.bdSeq}
+		</foreach>
 	</update>
 	
 	<update id="updateProgress" parameterType="com.cep.forecast.vo.ForecastVO">
@@ -246,12 +705,23 @@
 	
 	<delete id="delete" parameterType="com.cep.forecast.vo.ForecastVO">
 	
-		DELETE FROM SP_MAIN_TB
-		WHERE  SP_KEY = #{spKey}
+		UPDATE SP_MAIN_TB
+		SET DELETE_YN = 'Y'
+			, MOD_DT      = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM      = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE SP_KEY = #{spKey}
 	
 	</delete>
 	
+	<!-- 임시(수주 등록, 1차 오픈 시에만 사용) -->
+	<delete id="changeStatus" parameterType="com.cep.forecast.vo.ForecastVO">
 	
+		UPDATE SP_MAIN_TB
+		SET SP_STATE = #{spState}
+		WHERE SP_KEY = #{spKey}
+	
+	</delete>
 	
 	
 	<!-- 영업회의 관련 -->
@@ -386,11 +856,79 @@
 			
 	</select>
 	
+	<select id="selectBdGbInfo" parameterType="com.cep.forecast.vo.ForecastBiddingVO" resultType="egovMap">
+		SELECT 
+			SMT.SP_BUSI_NM				AS SP_BUSI_NM
+			, SMT.AC_KEY					AS AC_KEY
+			, CAT.AC_NM					AS AC_NM
+			, SBT.SP_KEY						AS SP_KEY
+			, SBT.BD_KEY						AS BD_KEY
+			, SBT.BD_LIMIT_DT				AS BD_LIMIT_DT
+			, SBT.BD_GB_BD_AMOUNT	AS BD_GB_BD_AMOUNT
+			, SBT.BD_GB_RATE				AS BD_GB_RATE
+			, SBT.BD_GB_DAY				AS BD_GB_DAY
+			, SBT.BD_GB_FINISH_DT		AS BD_GB_FINISH_DT
+			, SBT.BD_GB_AMOUNT			AS BD_GB_AMOUNT
+			, SBT.BD_GB_FINISH_YN		AS BD_GB_FINISH_YN
+			, SBT.BD_GB_REQ_DT			AS BD_GB_REQ_DT
+			, SBT.REG_EMP_KEY				AS REG_EMP_KEY
+		FROM SP_MAIN_TB	 SMT
+		LEFT OUTER JOIN SP_BIDDING_TB SBT ON SMT.SP_KEY = SBT.SP_KEY AND SBT.DELETE_YN = 'N'
+		LEFT OUTER JOIN SP_SALES_TB SST ON SMT.SP_KEY = SST.SALES_SP_FK_KEY
+		LEFT OUTER JOIN CMM_ACCOUNT_TB		CAT ON SST.SALES_AC_KEY = CAT.AC_KEY
+		WHERE SMT.SP_KEY = #{spKey}
+	</select>
 	
-	
-	
-	
+	<update id="requestBiddingGb" parameterType="com.cep.forecast.vo.ForecastBiddingVO">
 		
+		UPDATE SP_BIDDING_TB
+		SET    
+			BD_GB_DAY       = #{bdGbDay}
+		     , BD_GB_RATE      = #{bdGbRate}
+		     , BD_GB_BD_AMOUNT = #{bdGbBdAmount} 
+		     , BD_GB_REQ_DT = #{bdGbReqDt}
+		     , BD_GB_FINISH_YN = 'R'
+		WHERE BD_KEY = #{bdKey}
+					
+	</update>
+	
+	<update id="modifyBiddingGb" parameterType="com.cep.forecast.vo.ForecastBiddingVO">
+		
+		UPDATE SP_BIDDING_TB
+		SET
+			BD_GB_FINISH_DT = #{bdGbFinishDt}
+			<if test="bdGbAmount > 0">
+			, BD_GB_AMOUNT = #{bdGbAmount}
+			</if>
+			, BD_GB_DAY = #{bdGbDay}
+			, BD_GB_RATE = #{bdGbRate}
+			<if test="bdGbBdAmount > 0">
+			, BD_GB_BD_AMOUNT = #{bdGbBdAmount}
+			</if>
+			, BD_GB_REQ_DT = #{bdGbReqDt}
+		WHERE BD_KEY = #{bdKey}
+		
+	</update>
+	
+	<update id="endBiddingGb" parameterType="com.cep.forecast.vo.ForecastBiddingVO">
+		
+		UPDATE SP_BIDDING_TB
+		SET
+			BD_GB_FINISH_DT = #{bdGbFinishDt}
+			<if test="bdGbAmount > 0">
+			, BD_GB_AMOUNT = #{bdGbAmount}
+			</if>
+			, BD_GB_DAY = #{bdGbDay}
+			, BD_GB_RATE = #{bdGbRate}
+			<if test="bdGbBdAmount > 0">
+			, BD_GB_BD_AMOUNT = #{bdGbBdAmount}
+			</if>
+			, BD_GB_REQ_DT = #{bdGbReqDt}
+			, BD_GB_FINISH_YN = 'Y'
+		WHERE BD_KEY = #{bdKey}
+		
+	</update>
+	
 	<select id="selectProjectList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultType="egovMap">
 	
 		SELECT PMT.PJ_STATUS_CD           AS PJ_STATUS_CD

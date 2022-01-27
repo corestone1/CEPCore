@@ -38,6 +38,18 @@ public interface ProductService {
 	  */
 	List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception;
 	
+	/**
+	  * @Method Name : selectOrderProductList
+	  * @Cdate       : 2021. 11. 25.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 발주된 제품목록을 조회 한다.
+	  * @param ProductSearchVO
+	  * @return
+	  * @throws Exception
+	  */
+	List<ProductVO> selectOrderProductList(ProductSearchVO searchVO) throws Exception;
+	
 	
 	
 	/**

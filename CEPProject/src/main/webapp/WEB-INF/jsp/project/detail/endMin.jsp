@@ -366,6 +366,9 @@
 				$(this).siblings('.upload-name').css('cursor','default');
 				$(this).siblings('.upload-name').css('pointer-events','none');
 			});
+			
+			$(parent.document).find("#modMinInfo").removeClass("dpNone");
+			$(parent.document).find("#delMinInfo").css("dpNone");
 		});
 		
 		function fn_addView(link){

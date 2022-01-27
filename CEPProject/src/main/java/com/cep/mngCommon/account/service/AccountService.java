@@ -101,4 +101,16 @@ public interface AccountService {
 	  */
 	Map<String, Object> insertAccountInfo(HttpServletRequest request, AccountVO accountVO) throws Exception;
 	
+	/**
+	  * @Method Name : deleteAccountInfo
+	  * @Cdate       : 2021. 12. 05.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 거래처 정보 삭제
+	  * @param accountVO
+	  * @return
+	  * @throws Exception
+	  */
+	void deleteAccountInfo(HttpServletRequest request, AccountVO accountVO) throws Exception;
+	
 }

@@ -104,7 +104,7 @@
 			width: 27px;
 		}
 		.popContainer .contents input[class^="calendar"] {
-			width: 130px;
+			width: 130px !important;
 			/* height: 40px; */
 			height: 33px;
 			background-image: url('/images/calendar_icon.png');
@@ -252,26 +252,26 @@
 							objArry = new Array();
 							jQuery.each(arr, function() {
 								
-							if(this.name=="orderQuantity" || this.name=="orderUprice" || this.name=="totalAmount"){
-								//숫자에서 컴마를 제거한다.
-								obj[this.name] = removeCommas(this.value); 
-							} else if(this.name=="freeMtStartDt" || this.name=="freeMtEndDt" || this.name=="orderReceiptDt") {
-								//날짜에서 -를 제거한다.
-								obj[this.name] =  removeData(this.value,"-"); 
-							} else {
-								obj[this.name] = this.value; 
-							}
-							/*
-							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
-							* 반복되는 필드값에서 아래부분만 변경사항 있음.
-							*/
-							
-							if('freeMtEndDt' == this.name){
-								obj["yetPaymentAmount"] = Number($("#yetPaymentAmount").val());
-								objArry.push(obj);
-								obj = {};
-							}
-						}); 	              
+								if(this.name=="orderQuantity" || this.name=="orderUprice" || this.name=="totalAmount"){
+									//숫자에서 컴마를 제거한다.
+									obj[this.name] = removeCommas(this.value); 
+								} else if(this.name=="freeMtStartDt" || this.name=="freeMtEndDt" || this.name=="orderReceiptDt") {
+									//날짜에서 -를 제거한다.
+									obj[this.name] =  removeData(this.value,"-"); 
+								} else {
+									obj[this.name] = this.value; 
+								}
+								/*
+								* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
+								* 반복되는 필드값에서 아래부분만 변경사항 있음.
+								*/
+								
+								if('freeMtEndDt' == this.name){
+									obj["yetPaymentAmount"] = Number($("#yetPaymentAmount").val());
+									objArry.push(obj);
+									obj = {};
+								}
+							}); 	              
 					} 
 				} 
 			}catch(e) { 
@@ -368,7 +368,8 @@
 			var deleteKey;
 			var table = obj.parentNode.parentNode.parentNode.parentNode.parentNode;
 			var selectNum = JSON.stringify($(obj.id).selector);
-			var prodLength = $('#'+type+'Length').val()*1;
+			var prodLength = $(".prodTable").length;
+				//$('#'+type+'Length').val()*1;
 			
 			
 			if(prodLength>1){
@@ -402,7 +403,8 @@
 						
 						$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
 					}
-				}
+				} 
+				console.log(prodLength);
 			} else {
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			
@@ -511,17 +513,19 @@
 				//제품별 계산(단가*수량 = 합계)
 				$("#prodList-"+num+"-totalAmount").val(addCommas(orderAmount));
 				
-				//발주합계 금액 계산
-				$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
+				var updateSum = 0;
+				$("input[name='totalAmount']").each(function() {
+					updateSum += removeCommas($(this).val()) * 1;
+				});
+				
+				if(orderTotalAmount >= updateSum) {
+					
+				} else {
+					//발주합계 금액 계산
+					$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
+				}
 			});
 			
-			/* $(".calculate").focus(function() {
-				beforeAmount = removeCommas($(this).val())*1;
-			}); */
-			/* $(document).on("focus", ".calculate", function() {
-				beforeAmount = removeCommas($(this).val())*1;
-				//console.log("beforeAmount====>"+ beforeAmount);
-			}); */
 		}
 		
 		//등록된 거래처 정보를 선택하면 해당 등록 내역을 가져온다.
@@ -555,16 +559,26 @@
 			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
 		}
 		
-		
 		function fn_saveBtn(){
-			if ($("#orderBasicForm")[0].checkValidity()){
-				if ($("#orderProductForm")[0].checkValidity()){
-					saveOrder();
-				} else {
-					 $("#orderProductForm")[0].reportValidity();	
-				}				
-			}  else {
-		        $("#orderBasicForm")[0].reportValidity();	
+			var sum = 0;
+			$("input[name='totalAmount']").each(function() {
+				sum = sum + removeCommas($(this).val()) * 1;
+			});
+			
+			console.log(sum, removeCommas($("#orderTotalAmount").val()) * 1)
+			if(sum != removeCommas($("#orderTotalAmount").val()) * 1) {
+				alert("발주 합계와 제품별 합계가 일치하지 않습니다.");
+				$("#orderTotalAmount").focus();
+			} else {
+				if ($("#orderBasicForm")[0].checkValidity()){
+					if ($("#orderProductForm")[0].checkValidity()){
+						saveOrder();
+					} else {
+						 $("#orderProductForm")[0].reportValidity();	
+					}				
+				}  else {
+			        $("#orderBasicForm")[0].reportValidity();	
+				}
 			}
 		}
 
@@ -579,7 +593,8 @@
 				total += Number($(this).val().replaceAll(",",""));
 			});
 			
-			$("#yetPaymentAmount").val(Number($("#yetPaymentAmount").val()) + total);
+			/* $("#yetPaymentAmount").val(Number($("#yetPaymentAmount").val()) + total); */
+			$("#yetPaymentAmount").val((Number($("#orderTotalAmount").val().replaceAll(",",""))) - Number($("#donePaymentAmount").val()));
 			
 			var object = {};
 			var listObject = new Array();
@@ -724,7 +739,11 @@
 			}); 
 			
 			//매입처 담당자 셋팅
-			$('#orderAcDirectorKey').val("${orderVO.orderAcDirectorKey}").attr("selected", "true");
+			if("${orderVO.orderAcDirectorKey}" == "" || "${orderVO.orderAcDirectorKey}" == null) {
+				$('#orderAcDirectorKey option:eq(0)').attr("selected", true);
+			} else {
+				$('#orderAcDirectorKey').val("${orderVO.orderAcDirectorKey}").attr("selected", "true");
+			}
 			
 			
 			// 등록된 거래처 selectBox 맵핑.
@@ -858,19 +877,35 @@
 				var button = new Array;
 				button = [];
 				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-			}
-			else {
-				if($('#popSelectKey').val() != "" || $('#popSelectKey').val().length != 0) {
+			} else {
+				if(($('#popSelectKey').val() != "" || $('#popSelectKey').val().length != 0) && $("#orderBasicForm")[0].checkValidity()) {
+					if ($("#orderProductForm")[0].checkValidity()){
+						var url = '/project/write/'+link+'.do';
+						var dialogId = 'program_layer';
+						var varParam = {
+								"pjKey": $("#pjKey").val()
+						}
+						var button = new Array;
+						button = [];
+						showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+					} else {
+						 $("#orderProductForm")[0].reportValidity();	
+					}				
+					
+				} else if(($('#popSelectKey').val() != "" || $('#popSelectKey').val().length != 0) && !$("#orderBasicForm")[0].checkValidity()) {
+					$("#orderBasicForm")[0].reportValidity();
+				} else {
+					/* alert('저장을 해주세요.'); */
+					
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
+
 					var varParam = {
 							"pjKey": $("#pjKey").val()
 					}
 					var button = new Array;
 					button = [];
 					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-				} else {
-					alert('저장을 해주세요.');
 				}
 			}
 		}
@@ -905,8 +940,8 @@
 					<table class="subject">						
 						<tr>      
 							<td class="subTitle" style="border-top: none;" colspan="6">
-								<label class="ftw400">발주등록</label>&nbsp;&nbsp;&nbsp;	
-								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewOrder();" style="vertical-align: middle"/>
+								<label class="ftw400">발주등록</label>&nbsp;
+								<img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addNewOrder();" style="vertical-align: middle"/>
 								<c:if test="${orderSelectBoxList.size() >0 }">
 									<select id="saveOrderAcKey" name="saveOrderAcKey" style="width: 127px; height: 34px;">															
 										<c:forEach var="order" items="${orderSelectBoxList}" varStatus="status">
@@ -940,6 +975,7 @@
 						<input type="hidden" name="statusCd" value="PJST3000" />
 						<input type="hidden" id="popSelectKey" name="selectKey" value="<c:out value="${orderVO.selectKey}"/>"/> 
 						<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${purchaseVO.yetPaymentAmount }"/>" />
+						<input type="hidden" id="donePaymentAmount" name="donePaymentAmount" value="<c:out value="${purchaseVO.donePaymentAmount }"/> "/>
 					<table>
 						<tr>
 							<td class="tdTitle"><label>*</label>매입처</td>
@@ -988,8 +1024,8 @@
 							<table class="subject">
 								<tr> 
 									<td class="subTitle" style="border-top: none;"  colspan="6">
-										<label class="ftw400">제품정보</label>&nbsp;&nbsp;&nbsp;
-										<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
+										<label class="ftw400">제품정보</label>&nbsp;
+										<img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
 									</td>
 									<%-- <td colspan="5" class="floatL">
 										<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
@@ -999,7 +1035,7 @@
 								</tr>
 							</table>
 							<c:choose>
-								<c:when test="${orderVO.selectKey eq '' ||  orderVO.selectKey eq 'null'||  orderVO.selectKey eq null}">
+								<c:when test="${orderVO.selectKey eq '' ||  orderVO.selectKey eq 'null' ||  orderVO.selectKey eq null || fn:length(orderVO.orderProductVOList) eq 0 }">
 								<div class="prodTable">
 									<input type="hidden" name="lastNum" value="0" />
 									<table>								
@@ -1046,54 +1082,54 @@
 								</div>
 								</c:when>
 								<c:otherwise>
-								<c:forEach var="list" items="${orderVO.orderProductVOList}" varStatus="status">
-								<div class="prodTable">
-									<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
-									<input type="hidden" name="pjOrderKey" value="<c:out value="${list.pjOrderKey}"/>" />
-									<table>								
-										<tr>
-											<td class="tdTitle firstTd"><label>*</label>제품</td>
-											<td class="tdContents firstTd">
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" class="search" value="<c:out value="${list.pmNmCd}"/>" required onclick="fn_findProduct(this)"/>	
-												<input type="hidden" id="prodList-<c:out value="${status.index}"/>-orderPmFkKey" name="orderPmFkKey" value="<c:out value="${list.orderPmFkKey}"/>"/>	
-												<input type="hidden" id="prodList-<c:out value="${status.index}"/>-orderSeq" name="orderSeq" value="<c:out value="${list.orderSeq}"/>"/>	
-												<input type="hidden" id="prodList-0-isNew" name="isNew" value="N"/>
-											</td>
-											<td class="tdTitle firstTd">합계</td>
-											<td class="tdContents firstTd">
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" readonly="readonly" value="<c:out value="${displayUtil.makeMultiNumber(list.orderQuantity, list.orderUprice)}"/>" style="text-align: right;"/>	
-											</td>
-											<td class="tdTitle firstTd"><label>*</label>수량</td>
-											<td class="tdContents firstTd">
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-orderQuantity" name="orderQuantity" amountOnly required class="calculate" style="width: 75px;" value="<c:out value="${displayUtil.commaStr(list.orderQuantity)}"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-												<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
-					                           	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
-											</td>
-										</tr>
-										<tr class="dpTbRow">
-											<td class="tdTitle"><label>*</label>단가</td>
-											<td class="tdContents">
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-orderUprice" name="orderUprice" amountOnly required class="calculate" value="<c:out value="${displayUtil.commaStr(list.orderUprice)}"/>"/>
-											</td>
-											<td class="tdTitle"><label>*</label>입고일자</td>
-											<td class="tdContents">
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-orderReceiptDt" name="orderReceiptDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.orderReceiptDt)}"/>" required/>
-											</td>
-											<td class="tdTitle">유지보수 요율</td>
-											<td class="tdContents">
-												<input type="text" id="prodList-0-mtRate" name="mtRate"  style="width:75px;" value="<c:out value="${ list.mtRate}"/>"/>&nbsp;&nbsp;%
-											</td>
-										</tr>
-										<tr class="dpTbRow">
-											<td class="tdTitle">무상유지보수</td>
-											<td class="tdContents" colspan="5">
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" /> ~ 
-												<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.freeMtEndDt)}"/>" />
-											</td>		
-										</tr>
-									</table>
-								</div>
-								</c:forEach>
+									<c:forEach var="list" items="${orderVO.orderProductVOList}" varStatus="status">
+										<div class="prodTable">
+											<input type="hidden" name="lastNum" value="<c:out value="${status.index}"/>" />
+											<input type="hidden" name="pjOrderKey" value="<c:out value="${list.pjOrderKey}"/>" />
+											<table>								
+												<tr>
+													<td class="tdTitle firstTd"><label>*</label>제품</td>
+													<td class="tdContents firstTd">
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-pmNmCd" name="pmNmCd" class="search" value="<c:out value="${list.pmNmCd}"/>" required onclick="fn_findProduct(this)"/>	
+														<input type="hidden" id="prodList-<c:out value="${status.index}"/>-orderPmFkKey" name="orderPmFkKey" value="<c:out value="${list.orderPmFkKey}"/>"/>	
+														<input type="hidden" id="prodList-<c:out value="${status.index}"/>-orderSeq" name="orderSeq" value="<c:out value="${list.orderSeq}"/>"/>	
+														<input type="hidden" id="prodList-0-isNew" name="isNew" value="N"/>
+													</td>
+													<td class="tdTitle firstTd">합계</td>
+													<td class="tdContents firstTd">
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-totalAmount" name="totalAmount" readonly="readonly" value="<c:out value="${displayUtil.makeMultiNumber(list.orderQuantity, list.orderUprice)}"/>" style="text-align: right;"/>	
+													</td>
+													<td class="tdTitle firstTd"><label>*</label>수량</td>
+													<td class="tdContents firstTd">
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-orderQuantity" name="orderQuantity" amountOnly required class="calculate" style="width: 75px;" value="<c:out value="${displayUtil.commaStr(list.orderQuantity)}"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+														<img src="<c:url value='/images/arrow_up.png'/>" class="down" onclick="fn_viewSummary(this);" style="width: 13px"/>&nbsp;&nbsp;&nbsp;
+							                           	<img id="prodList-<c:out value="${status.index}"/>-delete" src="<c:url value='/images/popup_close.png'/>" onclick="fn_delete(this, 'prod');" style="width: 11px"/>
+													</td>
+												</tr>
+												<tr class="dpTbRow">
+													<td class="tdTitle"><label>*</label>단가</td>
+													<td class="tdContents">
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-orderUprice" name="orderUprice" amountOnly required class="calculate" value="<c:out value="${displayUtil.commaStr(list.orderUprice)}"/>"/>
+													</td>
+													<td class="tdTitle"><label>*</label>입고일자</td>
+													<td class="tdContents">
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-orderReceiptDt" name="orderReceiptDt" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.orderReceiptDt)}"/>" required/>
+													</td>
+													<td class="tdTitle">유지보수 요율</td>
+													<td class="tdContents">
+														<input type="text" id="prodList-0-mtRate" name="mtRate"  style="width:75px;" value="<c:out value="${ list.mtRate}"/>"/>&nbsp;&nbsp;%
+													</td>
+												</tr>
+												<tr class="dpTbRow">
+													<td class="tdTitle">무상유지보수</td>
+													<td class="tdContents" colspan="5">
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" /> ~ 
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.freeMtEndDt)}"/>" />
+													</td>		
+												</tr>
+											</table>
+										</div>
+									</c:forEach>
 								</c:otherwise>
 							</c:choose>
 						</div>

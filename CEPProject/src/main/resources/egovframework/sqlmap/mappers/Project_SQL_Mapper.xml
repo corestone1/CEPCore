@@ -48,19 +48,23 @@
 			</if>  -->
 			
 			<if test="searchFlag != null and searchFlag != ''" >
-			
 				<if test="searchFlag.equals('PK')" >
-	  				AND PJ_KEY LIKE CONCAT('%', #{searchKeyword}, '%')
-	  			</if>
-			  	
+					AND PJ_KEY LIKE CONCAT('%', #{searchKeyword}, '%')
+				</if>
+				  	
 				<if test="searchFlag.equals('AC')" >
-		  			AND (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) LIKE CONCAT('%', #{searchKeyword}, '%')
-		  		</if>
-		  		
-		  		<if test="searchFlag.equals('NM')" >
-		  			AND PJ_NM LIKE CONCAT('%', #{searchKeyword}, '%')
-		  		</if>
-		  </if>
+					AND (SELECT a.AC_NM FROM CMM_ACCOUNT_TB a WHERE a.AC_KEY = PJ_MAIN_TB.AC_KEY) LIKE CONCAT('%', #{searchKeyword}, '%')
+				</if>
+				 		
+				<if test="searchFlag.equals('NM')" >
+					AND PJ_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				</if>
+			</if>
+		  
+			<if test="pjSaleEmpKey != null and pjSaleEmpKey != ''">
+				AND PJ_SALE_EMP_KEY = #{pjSaleEmpKey}
+			</if>
+			
 		  ORDER BY PJ_KEY DESC
 	</select>
 
@@ -1113,6 +1117,7 @@
 			, INB.INB_PM_KEY
 			, PM.PM_NM_CD AS inbPmNm
 			, PJ.PJ_STATUS_CD AS PJ_STATUS_CD
+			, PJ.PJ_NM
 			, INB.INB_PM_SERIAL_NO
 			, INB.INB_DELIVERY_DT
 			, INB.INB_PM_VER
@@ -1183,6 +1188,7 @@
 	<select id="selectWorkDetail" parameterType="projectWorkVO" resultType="egovMap">
 		SELECT
 			PW.PJ_KEY
+			, PM.PJ_NM
 			, PW.PJ_WORK_SEQ
 			, PW.PJ_WORK_CLASS_CD
 			, PW.PJ_WORK_DT

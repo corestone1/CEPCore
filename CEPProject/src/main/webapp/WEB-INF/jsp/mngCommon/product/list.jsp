@@ -339,7 +339,7 @@
 								<td><c:out value="${result.pmLineCd}"/></td>
 								<td><c:out value="${result.pmNmCd}"/>  <img class="cursorP" src="/images/arrow_down_18dp.png" /></td>
 								<td><c:out value="${result.pmReleaseDt}"/></td>
-								<td><c:out value="${result.eolDt}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.eolDt)}"/></td>
 								<td><c:out value="${result.eossDt}"/></td>
 								<input type='hidden' name='pmKey' value='<c:out value="${result.pmKey}"/>' />
 							</tr>

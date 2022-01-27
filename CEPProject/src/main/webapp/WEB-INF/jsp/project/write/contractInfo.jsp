@@ -56,11 +56,24 @@
 		.popContainer .contents > div > form >table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
-	  		width: 789px;
+	  		width: 782px;
 		}
 		/* .popContainer .contents > div > table tr:first-child td {
 			margin-bottom: 100px;
 		} */
+		.popContainer .contents .acNm {
+			font-size: 18px;
+    		color: #535353;
+    		margin-bottom: 7px;
+		}
+		.popContainer .contents td.tdTitle {
+			margin-top: 11px;
+		    font-size: 14px;
+		    color: #525252;
+		    padding-right: 20px;
+		    width: 13%;
+		    font-weight: 400;
+		}
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
@@ -74,6 +87,9 @@
 		.popContainer .contents td:last-child {
 			padding-right: 0px !important;
 		} 				
+		#salesListForm {
+			padding-left: 116px;
+		}
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
 			width: 124px;
@@ -104,19 +120,20 @@
 		 	color: #a4a4a4;
 		}
 		.popContainer .contents input {
-			width: 179px;
+			width: 179px !important;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
+			margin-bottom: 3px;
 		}
 		.popContainer .contents .disc {
 			font-size: 14px;
 		    color: #afafaf;
 		}
 		.popContainer .contents input[class="rateInfo"] {
-			width: 90px;
+			width: 90px !important;
 			height: 38px;
 		}
 		.popContainer .contents input[class="amount"] {
@@ -169,7 +186,7 @@
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('salesChargeDt' == this.name){
+							if('isNew' == this.name){
 								objArry.push(obj);
 								obj = {};
 							}
@@ -219,7 +236,7 @@
 					rowItem += "<input type='hidden' name='isNew' value='Y' />";
 					/* rowItem += "<input type='hidden' name='ctKey' value='' />"; */
 					/* </form></td>"; */
-					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type='text' id='salesChargeDt"+(beforeTurn+i+1)+"' class='calendar' name='salesChargeDt' placeholder='청구일' value='' required/></td>";
+					/* rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type='text' id='salesChargeDt"+(beforeTurn+i+1)+"' class='calendar' name='salesChargeDt' placeholder='청구일' value='' required/></td>"; */
 					rowItem += "</tr>";
 					
 					$('#addRow').append(rowItem);
@@ -290,6 +307,7 @@
 				object["projectContractSalesVOList"]=listData;
 				
 				var sendData = JSON.stringify(object);
+				/* console.log(sendData); */
 			 	$.ajax({
 					url:"/project/insert/contractInfo.do",
 					dataType: 'json', 
@@ -338,7 +356,7 @@
 							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 						}
 					} 
-				});     
+				});       
 			}
 		}
 		
@@ -358,14 +376,13 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			}
 			else {
-				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
+				/* if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) { */
 					var ctKey = "";
 					var salesKey = [];
 					for(var i = 0; i < $('#beforeTurn').val(); i++) {
 						salesKey.push($('#salesKey'+i).val());
 					}
 					ctKey = $('#ctKey').val();
-					console.log(salesKey);
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
@@ -377,14 +394,14 @@
 					var button = new Array;
 					button = [];
 					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-				} else {
+				/* } else {
 					alert('저장을 해주세요.');
-				}
+				} */
 			}
 		}
 		
 		function fn_prevView(){
-			var url = '/project/write/biddingInfo.do';
+			var url = '/project/write/basicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 				"pjKey" : $('#pjKey').val()
@@ -430,33 +447,41 @@
 					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }" /> 
 					<input type="hidden" id="collectTurn" name="collectTurn" value="${contractVO.collectTurn }" /> 
 					<input type="hidden" name="statusCd" value="PJST2000" />
+					<input type="hidden" name="salesAcKey" value="${forecastVO.salesAcKey }" />
+					<div class="acNm">
+						<c:if test="${forecastVO.salesAcNm ne null}">매출처 - ${forecastVO.salesAcNm}</c:if>
+					</div>
 					<table>
 						<tr class="ftw200">
+							<td class="tdTitle">총 계약 금액</td>
 							<td class="firstRow">
-								<input type="text" id="sum" name="ctAmount" placeholder="총 계약금액"  amountOnly class="amount"  value="${displayUtil.commaStr(contractVO.ctAmount) }" required/>&nbsp;원
-								<%-- value="<c:out value="${total eq 0 ? null : totalAmount}"/>"/> &nbsp;원 --%>
+								<input type="text" id="sum" name="ctAmount" placeholder="총 계약금액"  amountOnly class="amount"  
+										value="<c:choose><c:when test="${ contractVO.ctAmount eq null }">${displayUtil.commaStr(forecastVO.fcSalesAmount) }</c:when><c:otherwise>${displayUtil.commaStr(contractVO.ctAmount) }</c:otherwise></c:choose>" required/>&nbsp;원
 							</td>
 						</tr>
 						<tr class="ftw200">
 							<%-- <td>
 								<input type="text" id="salesChargeDt" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(contractVO.salesChargeDt)}"/>" required/> 
 							</td> --%>
+							<td class="tdTitle">결제조건</td>
 							<td>
 								<input type="text" id="ctPayTerms" name="ctPayTerms" placeholder="결제조건" value="<c:out value="${contractVO.ctPayTerms}"/>" />
 								<label class="disc">&nbsp;&nbsp;&nbsp;ex. 계산서 발행 후 30일</label>
 							</td>
 						</tr>
 						<tr class="ftw200">
+							<td class="tdTitle">계약 일자</td>
 							<td>
 								<input type="text" id="ctDt" class="calendar" name="ctDt" placeholder="계약 일자" title="계약 일자" value="<c:out value="${displayUtil.displayDate(contractVO.ctDt)}"/>" required/>
 							</td>
 						</tr>
 						<tr class="ftw200">
+							<td class="tdTitle">계약 금액</td>
 							<td>
 								<input type="hidden" id="beforeTurn" value="${contractVO.collectTurn eq null ? 0 : contractVO.collectTurn }">
 								<c:set var="turnNo" value="${contractVO.collectTurn eq null ? 0 : contractVO.collectTurn }" />
 								<select id="turnInfo" onchange="fn_turnChange()" placeholder="계약금액">
-									<option value="0" <c:if test="${contractVO.collectTurn > 0 }">style='display: none;'</c:if>>지급회차</option>
+									<option value="0" <c:if test="${contractVO.collectTurn > 0 }">style='display: none;'</c:if>>수금회차</option>
 									<option <c:if test="${!empty salesList && contractVO.collectTurn == 1}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 1 }">style='display: none;'</c:if> value="1">1회차</option>
 									<option <c:if test="${!empty salesList && contractVO.collectTurn == 2}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 2 }">style='display: none;'</c:if> value="2">2회차</option>
 									<option <c:if test="${!empty salesList && contractVO.collectTurn == 3}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 3 }">style='display: none;'</c:if> value="3">3회차</option>
@@ -494,7 +519,7 @@
 									<input type='hidden' name='salesTurn' value='${result.salesTurn }' />
 									<%-- <input type='hidden' name='salesTurnAmount' id="sAmount${status.count }" value='${result.salesTurnAmount }' /> --%>
 									<input type='hidden' name='isNew' value='N' />
-									&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type="text" id="salesChargeDt${result.salesTurn }" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(result.salesChargeDt)}"/>" required/>
+									<%-- &nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type="text" id="salesChargeDt${result.salesTurn }" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(result.salesChargeDt)}"/>" required/> --%>
 								</td>
 							</tr>
 						</c:forEach>

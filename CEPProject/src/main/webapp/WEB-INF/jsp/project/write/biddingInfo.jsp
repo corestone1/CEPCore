@@ -734,7 +734,10 @@
 						<div class="infoTable">
 							 <table>
 							 	<tr>
-									<td colspan='2' style='min-width: 96px;'><div class="ttile">입찰 서류 정보</div></td>
+									<td colspan='2' style='min-width: 96px;'>
+										<div class="ttile">입찰 서류 정보</div>
+										<button type="button" onclick="javascript:fn_reqDoc()">요청하기</button>
+									</td>
 								</tr>
 								<tr class='ftw200'>
 									<td>

@@ -11,6 +11,9 @@
 <script src="<c:url value='/js/popup.js'/>"></script>
 <script src="<c:url value='/js/common.js'/>"></script>
 <style>
+	body {
+		background-image: none;
+	}
 	fieldset {
 		border: none;
 		marign: 0;
@@ -94,6 +97,7 @@
         text-overflow:ellipsis; 
         white-space:nowrap;
         width: 84%;
+        max-width: 158px;
         margin: 0 auto;
 	}
 	.popContainer .middle table thead th, .middle table tbody td {
@@ -103,28 +107,37 @@
 	}
 	.popContainer .middle table thead th:first-child, 
 	.popContainer .middle table tbody td:first-child {
-		width: 65px;
+		width: 42px;
 	}
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2){
-		width: 162px;
+		width: 120px;
 	}
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 268px;
+		width: 191px;
 	}
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
-		width: 203px;
+		width: 121px;
 	}
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 81px;
+		width: 183px;
 	}
-	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
-		width: 60px;
+		width: 58px;
+	}
+	.popContainer .middle table thead th:nth-child(7),
+	.popContainer .middle table tbody td:nth-child(7),
+	.popContainer .middle table thead th:nth-child(8),
+	.popContainer .middle table tbody td:nth-child(8) {
+		width: 82px;
+	}
+	.popContainer .middle table thead th:nth-child(9),
+	.popContainer .middle table tbody td:nth-child(9) {
+		width: 36px;
 	}
 	
 	.popContainer .top .floatR select {
@@ -215,7 +228,6 @@
 					<form:option value="">검색조건</form:option>
 					<form:option value="AC">거래처명</form:option>
 					<form:option value="BN">사업명</form:option>
-					<form:option value="SE">담당자</form:option>
 				</form:select>
 				<form:input path="searchValue" type="text" placeholder="검색값"/>
 				<span id="span_search" class="veralignB" onclick="javascript:fn_searchList();"><img src="/images/icon_search.png" /></span>
@@ -230,22 +242,26 @@
 							<th scope="row">선택</th>
 							<th scope="row">고객사</th>
 							<th scope="row">사업명</th>
+							<th scope="row">매출처</th>
 							<th scope="row">제품</th>
 							<th scope="row">담당자</th>
+							<th scope="row">매출액</th>
+							<th scope="row">매입액</th>
 							<th scope="row">상태</th>
-							<th scope="row">수주확정Q</th>
 						</tr>
 					</thead>
 					<tbody>
 						<c:forEach var="result" items="${forecastList}" varStatus="status">
 	            			<tr>
 	            				<td><a href="#"    onclick="javascript:fn_ForecastSelect('${result.spKey}', '${result.spBusiNm}');" class="btn btn_gray">선택</a></td>
-	            				<td align="center" class="listtd">&nbsp;<span><c:out value="${result.mfAcNm}"/></span></td>
-	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.spBusiNm}"/></span>&nbsp;</td>
-	            				<td align="left"   class="listtd">&nbsp;<span><c:out value="${result.pmDetail}"/></span>&nbsp;</td>
-	            				<td align="center"   class="listtd">&nbsp;<span><c:out value="${result.empNm}"/></span>&nbsp;</td>
-	            				<td align="center" class="listtd">&nbsp;<span><c:out value="${result.spState}"/></span>&nbsp;</td>
-	            				<td align="center" class="listtd"><c:out value="${result.fcSjConfQt}"/>분기&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span style="max-width: 121px;" title="${result.mfAcNm}"><c:out value="${result.mfAcNm}"/></span></td>
+	            				<td align="left"   class="listtd">&nbsp;<span style="max-width: 182px;" title="${result.spBusiNm}"><c:out value="${result.spBusiNm}"/></span>&nbsp;</td>
+	            				<td align="left"   class="listtd">&nbsp;<span style="max-width: 121px;" title="${result.salesAcNm}"><c:out value="${result.salesAcNm}"/></span>&nbsp;</td>
+	            				<td align="left"   class="listtd">&nbsp;<span style="max-width: 182px;" title="${result.pmDetail}"><c:out value="${result.pmDetail}"/></span>&nbsp;</td>
+	            				<td align="center"   class="listtd">&nbsp;<span title="${result.empNm}"><c:out value="${result.empNm}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span title="${displayUtil.commaStr(result.fcSalesAmount)}"><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span title="${displayUtil.commaStr(result.fcBuyAmount)}"><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span title="${result.spState}"><c:out value="${result.spState}"/></span>&nbsp;</td>
 	            			</tr>
 	        			</c:forEach>						
 					</tbody>

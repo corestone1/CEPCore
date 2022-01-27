@@ -42,7 +42,23 @@ public interface AccountMapper {
 	
 	public void insertAccountInfo(AccountVO accountVO) throws Exception;
 	
+	public void updateAccountInfo(AccountVO accountVO) throws Exception;
+	
 	public void insertAcDirectorInfo(Map<String, Object> insertParam) throws Exception;
 	
+	public void updateAcDirectorInfo(Map<String, Object> updateParam) throws Exception;
+	
+	public void deleteAcDirectorInfo(Map<String, Object> updateParam) throws Exception;
+	
 	public void insertAcDepositInfo(Map<String, Object> insertParam) throws Exception;
+	
+	public void updateAcDepositInfo(Map<String, Object> updateParam) throws Exception;
+	
+	public void deleteAcDepositInfo(Map<String, Object> updateParam) throws Exception;
+	
+	public void deleteAcDepositAll(AccountVO accountVO) throws Exception;
+	
+	public void deleteAcDirectorAll(AccountVO accountVO) throws Exception;
+	
+	public void deleteAccountInfo(AccountVO accountVO) throws Exception;
 }

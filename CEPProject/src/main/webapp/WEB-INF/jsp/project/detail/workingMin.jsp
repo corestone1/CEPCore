@@ -217,29 +217,26 @@
 			margin: 0 auto;
 		}
 		.contents .dtl tbody tr td img {
-			width: 13px;
 			vertical-align: middle;
-			margin-bottom: 5px;
 		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			
+			$(parent.document).find("#modMinInfo").removeClass("dpNone");
+			$(parent.document).find("#delMinInfo").removeClass("dpNone");
 		});
 		
 		function fn_addView(link){
-			/* if(link == "forecastList") {
-				location.href="<c:url value='/forecastList.do'/>";
-			} else { */
-				var url = '/project/'+link+'.do';
-				var dialogId = 'program_layer';
-				var varParam = {
+			var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
 		
-				}
-				var button = new Array;
-				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-			/* } */
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/buildInfo.do", varParam, button, '', 'width:1144px;height:708px;ifram:true;iframid:ipt_pjKey');
 		}
 		
 		function fnCallContrect()
@@ -333,6 +330,7 @@
 									</tr>
 								</thead>
 								<tbody>
+									<!-- <tr onclick="fn_addView('buildInfo');"><td colspan="9" style="padding: 10px 7px;"><span>등록 <img src="/images/btn_add-pop-small.png" /></span></td></tr> -->
 									<c:forEach var="installList" items="${insertBaseList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">

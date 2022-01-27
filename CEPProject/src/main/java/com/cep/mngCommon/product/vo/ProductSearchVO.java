@@ -31,6 +31,8 @@ public class ProductSearchVO implements Serializable {
 	private String returnKey; //Search Popup Return값을 넘기는 객체의 ID(제품키)
 	private String returnNm;  //Search Popup Return값을 넘기는 객체의 ID(제품명)
 	
+	private String searchKey;
+	
 	
 	public String getProductDivision() {
 		return productDivision;
@@ -96,6 +98,14 @@ public class ProductSearchVO implements Serializable {
 	public void setReturnNm(String returnNm) {
 		this.returnNm = returnNm;
 	}
+	
+	public String getSearchKey() {
+		return searchKey;
+	}
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
+	}
+	
 	
 	
 }

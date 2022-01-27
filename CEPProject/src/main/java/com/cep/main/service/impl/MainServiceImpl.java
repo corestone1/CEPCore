@@ -70,4 +70,9 @@ public class MainServiceImpl implements MainService {
 		return mapper.selectName(map);
 	}
 	
+	@Override
+	public EmpVO selectAuthCd(HashMap<String, String> map) throws Exception {
+		return mapper.selectAuthCd(map);
+	}
+	
 }

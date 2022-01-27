@@ -22,6 +22,7 @@ import com.cep.mngCommon.account.vo.AccountDepositVO;
 import com.cep.mngCommon.account.vo.AccountDirectorVO;
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.account.vo.AccountVO;
+import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -92,23 +93,107 @@ public class AccountServiceImpl implements AccountService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+		List<AccountVO> insertList = new ArrayList<>();
+		List<AccountVO> updateList = new ArrayList<>();
 		
 		accountVO.setRegEmpKey(session.get("empKey"));
+		accountVO.setModEmpKey(session.get("empKey"));
 		
-		List<AccountDirectorVO> insertDirecList = new ArrayList<>();
+		/*List<AccountDirectorVO> insertDirecList = new ArrayList<>();
 		List<AccountDirectorVO> updateDirecList = new ArrayList<>();
 		List<AccountDepositVO> insertDepoList = new ArrayList<>();
-		List<AccountDepositVO> updateDepoList = new ArrayList<>();
+		List<AccountDepositVO> updateDepoList = new ArrayList<>();*/
 		
 		try {
 			if(mapper.isExist(accountVO) != 0) {
 				// 수정
+				mapper.updateAccountInfo(accountVO);
+				
+				
+				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO(), "[]"))) {
+					for(int i = 0; i < accountVO.getAccountDirectorVO().size(); i++) {
+						if(CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO().get(i).getAcDirectorKey(), "0").equals("0")) {
+							insertList.add(accountVO.getAccountDirectorVO().get(i));
+						} else if(!CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO().get(i).getAcDirectorKey(), "0").equals("0")) {
+							updateList.add(accountVO.getAccountDirectorVO().get(i));
+						}
+					}
+				}
+				
+				if(insertList != null && insertList.size() != 0) {
+					writeAcDirectorInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), insertList);
+				}
+				
+				if(updateList != null && updateList.size() != 0) {
+					updateAcDirectorInfo(accountVO.getAcKey(), accountVO.getModEmpKey(), updateList);
+				}
+				
+				insertList = new ArrayList<>();
+				updateList = new ArrayList<>();
+				
+				
+				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getAccountDepositVO(), "[]"))) {
+					for(int i = 0; i < accountVO.getAccountDepositVO().size(); i++) {
+						if(CepStringUtil.getDefaultValue(accountVO.getAccountDepositVO().get(i).getAcAdSeq(), "0").equals("0")) {
+							insertList.add(accountVO.getAccountDepositVO().get(i));
+						} else if(!CepStringUtil.getDefaultValue(accountVO.getAccountDepositVO().get(i).getAcAdSeq(), "0").equals("0")) {
+							updateList.add(accountVO.getAccountDepositVO().get(i));
+						}
+					}
+				}
+				
+				if(insertList != null && insertList.size() != 0) {
+					writeAcDepositInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), insertList);
+				}
+				
+				if(updateList != null && updateList.size() != 0) {
+					updateAcDepositInfo(accountVO.getAcKey(), accountVO.getModEmpKey(), updateList);
+				}
+				
+				
+				
+				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getDeleteDirectorList(), "[]"))) {
+					deleteAcDirectorInfo(accountVO.getAcKey(), accountVO.getModEmpKey(), accountVO.getDeleteDirectorList());
+				}
+				
+				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getDeleteDepositList(), "[]"))) {
+					deleteAcDepositInfo(accountVO.getAcKey(), accountVO.getModEmpKey(), accountVO.getDeleteDepositList());
+				}
+				
+				
 			} else {
 				mapper.insertAccountInfo(accountVO);
-				writeAcDirectorInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), accountVO.getAccountDirectorVO());
-				if(accountVO.getAccountDepositVO().size() != 0) {
-					writeAcDepositInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), accountVO.getAccountDepositVO());
+				
+				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO(), "[]"))) {
+					for(int i = 0; i < accountVO.getAccountDirectorVO().size(); i++) {
+						if(CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO().get(i).getAcDirectorKey(), "0").equals("0")) {
+							insertList.add(accountVO.getAccountDirectorVO().get(i));
+						} else if(!CepStringUtil.getDefaultValue(accountVO.getAccountDirectorVO().get(i).getAcDirectorKey(), "0").equals("0")) {
+							updateList.add(accountVO.getAccountDirectorVO().get(i));
+						}
+					}
 				}
+				
+				if(insertList != null && insertList.size() != 0) {
+					writeAcDirectorInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), insertList);
+				}
+				
+				insertList = new ArrayList<>();
+				
+				if(!"[]".equals(CepStringUtil.getDefaultValue(accountVO.getAccountDepositVO(), "[]"))) {
+					for(int i = 0; i < accountVO.getAccountDepositVO().size(); i++) {
+						if(CepStringUtil.getDefaultValue(accountVO.getAccountDepositVO().get(i).getAcAdSeq(), "0").equals("0")) {
+							insertList.add(accountVO.getAccountDepositVO().get(i));
+						} else if(!CepStringUtil.getDefaultValue(accountVO.getAccountDepositVO().get(i).getAcAdSeq(), "0").equals("0")) {
+							updateList.add(accountVO.getAccountDepositVO().get(i));
+						}
+					}
+				}
+				
+				if(insertList != null && insertList.size() != 0) {
+					writeAcDepositInfo(accountVO.getAcKey(), accountVO.getRegEmpKey(), insertList);
+				}
+				
 			}
 			
 			returnMap.put("successYN", "Y");
@@ -134,6 +219,42 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 	
+	private void updateAcDirectorInfo(String acKey, String modEmpKey, List<?> updateDirecList) throws Exception {
+		Map<String, Object> updateParam = null;
+		try {
+			updateParam = new Hashtable<>();
+			
+			updateParam.put("acKey", acKey);
+			updateParam.put("modEmpKey", modEmpKey);
+			updateParam.put("accountDirectorVO", updateDirecList);
+			mapper.updateAcDirectorInfo(updateParam);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
+	private void deleteAcDirectorInfo(String acKey, String modEmpKey, String deleteDirectorKey) throws Exception {
+		Map<String, Object> updateParam = null;
+		List<String> deleteDirectorList = new ArrayList<String>();
+		String[] deleteArray = deleteDirectorKey.split(";");
+		
+		for(int i = 0; i < deleteArray.length; i++) {
+			deleteDirectorList.add(deleteArray[i]);
+		}
+		
+		try {
+			updateParam = new Hashtable<>();
+			
+			updateParam.put("acKey", acKey);
+			updateParam.put("modEmpKey", modEmpKey);
+			
+			updateParam.put("deleteDirectorList", deleteDirectorList);
+			mapper.deleteAcDirectorInfo(updateParam);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
 	private void writeAcDepositInfo(String acKey, String regEmpKey, List<?> insertDepoList) throws Exception {
 		Map<String, Object> insertParam = null;
 		try {
@@ -146,6 +267,55 @@ public class AccountServiceImpl implements AccountService {
 		} catch(Exception e) {
 			throw new Exception(e);
 		}
+	}
+	
+	private void updateAcDepositInfo(String acKey, String modEmpKey, List<?> updateDepoList) throws Exception {
+		Map<String, Object> updateParam = null;
+		try {
+			updateParam = new Hashtable<>();
+			
+			updateParam.put("acKey", acKey);
+			updateParam.put("modEmpKey", modEmpKey);
+			updateParam.put("accountDepositVO", updateDepoList);
+			mapper.updateAcDepositInfo(updateParam);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
+	private void deleteAcDepositInfo(String acKey, String modEmpKey, String deleteDepositKey) throws Exception {
+		Map<String, Object> updateParam = null;
+		List<String> deleteDepositList = new ArrayList<String>();
+		String[] deleteArray = deleteDepositKey.split(";");
+		
+		for(int i = 0; i < deleteArray.length; i++) {
+			deleteDepositList.add(deleteArray[i]);
+		}
+		
+		try {
+			updateParam = new Hashtable<>();
+			
+			updateParam.put("acKey", acKey);
+			updateParam.put("modEmpKey", modEmpKey);
+			
+			updateParam.put("deleteDepositList", deleteDepositList);
+			mapper.deleteAcDepositInfo(updateParam);
+		} catch(Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public void deleteAccountInfo(HttpServletRequest request, AccountVO accountVO) throws Exception {
+		HashMap<String, String> session = null;
+		session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+		accountVO.setModEmpKey(session.get("empKey"));
+		
+		mapper.deleteAcDirectorAll(accountVO);
+		mapper.deleteAcDepositAll(accountVO);
+		mapper.deleteAccountInfo(accountVO);
 	}
 
 }

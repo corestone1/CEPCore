@@ -264,7 +264,7 @@
 								<button><img src="<c:url value='/images/btn_file_upload.png'/>" /></button>							
 							</td>
 							<td>
-								<input type="text" class="pname" value="EDMS이미지 암호화 검수확인서.pdf" readonly>
+								<!-- <input type="text" class="pname" value="EDMS이미지 암호화 검수확인서.pdf" readonly> -->
 							</td>
 						</tr>
 						<tr>

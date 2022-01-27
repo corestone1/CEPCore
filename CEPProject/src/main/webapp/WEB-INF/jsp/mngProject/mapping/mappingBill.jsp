@@ -322,7 +322,7 @@
 				}
 				
 				if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
-					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + originBillMappedAmount + ")");
+					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + addCommas(originBillMappedAmount) + "원)");
 				} else {
 					if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
 						$("#billMappedAmount").val(totalBillMappedAmount);

@@ -156,4 +156,41 @@ public class CepDisplayUtil {
 		acType = acKey.replaceAll(acFormat, "$1-$2-$3");
 		return acType;
 	}
+	
+	/**
+	 * 전화번호 형식으로 변경해주는 메서드
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param telVal
+	 * @return
+	 * @cdate 2021. 12. 31 
+	 * @author sylim
+	 * */
+	public static String displayTel(String telVal) {
+
+		if (!CepStringUtil.getDefaultValue(telVal, "").equals("")) {
+			if (telVal.length() == 11) {
+				// 010-1234-1234
+				telVal = telVal.substring(0, 3) + "-" + telVal.substring(3, 7) + "-" + telVal.substring(7);
+
+			} else if (telVal.length() == 8) {
+				// 1588-1234
+				telVal = telVal.substring(0, 4) + "-" + telVal.substring(4);
+			} else {
+				if (telVal.startsWith("02")) { // 서울은 02-123-1234
+					if(telVal.length() == 9) {
+						telVal = telVal.substring(0, 2) + "-" + telVal.substring(2, 5) + "-" + telVal.substring(5);
+					} else if(telVal.length() == 10) {
+						telVal = telVal.substring(0, 2) + "-" + telVal.substring(2, 6) + "-" + telVal.substring(6);
+					}
+				} else { // 그외는 012-123-1345
+					telVal = telVal.substring(0, 3) + "-" + telVal.substring(3, 6) + "-" + telVal.substring(6);
+				}
+			}
+
+		}
+
+		return telVal;
+	}
 }

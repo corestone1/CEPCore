@@ -16,7 +16,6 @@
 		}
 		form .contentsWrap {
 			background-color: #f6f7fc;
-			box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);
 			height: 830px;
 		}
 		form .contentsWrap .contents {
@@ -225,14 +224,34 @@
 <body>
 	<form id="listForm" name="listForm" method="post">
 		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL">
 							<div><label class="ftw500">월별 매출</label></div>
-							<div class="floatL"><span class="ftw500">지난해 동월(2019.12) 대비</span></div>
+							<div class="floatL">
+								<span class="ftw500">
+									지난해 동분기 (
+									<c:set var="now" value="<%=new java.util.Date() %>" />
+									<c:set var="sysYear"><fmt:formatDate value="${now }" pattern="yyyy" /></c:set>
+									<c:set var="sysMonth"><fmt:formatDate value="${now }" pattern="MM" /></c:set>
+									<c:out value="${sysYear - 1}" />.
+									<c:if test="${sysMonth eq 1 or sysMonth eq 2 or sysMonth eq 3 }">
+										1Q
+									</c:if>
+									<c:if test="${sysMonth eq 4 or sysMonth eq 5 or sysMonth eq 6 }">
+										2Q
+									</c:if>
+									<c:if test="${sysMonth eq 7 or sysMonth eq 8 or sysMonth eq 9 }">
+										3Q
+									</c:if>
+									<c:if test="${sysMonth eq 10 or sysMonth eq 11 or sysMonth eq 12 }">
+										4Q
+									</c:if> )
+								</span>
+							</div>
 							<div class="floatL textalignC">매출 10,000,000원 증가</div>
 							<div class="floatL textalignC">매입 10,000,000원 증가</div>
 						</div>
@@ -240,7 +259,7 @@
 					</div>
 					<div class="floatR">
 						<div>
-							<select>
+							<%-- <select>
 								<option value="">부서</option>
 							</select>
 							<select>
@@ -248,13 +267,13 @@
 							</select>
 							<input type="text" class="calendar" placeholder="날짜"/>
 							<input type="text" class="search" style="width: 250px;" placeholder="프로젝트명" />
-							<span><img src="<c:url value='/images/icon_search.png'/>" /></span>
+							<span><img src="<c:url value='/images/icon_search.png'/>" /></span> --%>
 						</div>
 					</div>
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="fl">
+					<!-- <table class="textalignC ftw200" id="fl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row" colspan="3" width="399px">프로젝트 담당</th>
@@ -418,10 +437,37 @@
 								<td><span title="5,000,000" class="textalignR">100,000,000</span></td>
 							</tr>
 						</tbody>
-					</table>
+					</table> -->
+				    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+				    <script type="text/javascript">
+				      google.charts.load('current', {'packages':['corechart']});
+				      google.charts.setOnLoadCallback(drawChart);
+				
+				      function drawChart() {
+				        var data = google.visualization.arrayToDataTable([
+				          ['Month', 'Sales', 'Expenses'],
+				          ['1Q',  1000,      400],
+				          ['2Q',  1170,      460],
+				          ['3Q',  660,       1120],
+				          ['4Q',  1030,      540]
+				        ]);
+				
+				        var options = {
+				          title: 'Company Performance',
+				          curveType: 'function',
+				          legend: { position: 'bottom' }
+				        };
+				
+				        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+				
+				        chart.draw(data, options);
+				      }
+				    </script>
+				    <div id="curve_chart" style="width: 1500px; height: 500px; margin-top: 30px;"></div>
+					
 				</div>
 				<div class="bottom">
-					<table>
+					<!-- <table>
 						<tbody class="ftw400">
 							<tr>
 								<td colspan="3" class="textalignC">사업총괄</td>
@@ -444,7 +490,7 @@
 								<td colspan="3" class="ftw400"><span>10,000,000,000</span></td>
 							</tr>
 						</tbody>
-					</table>
+					</table> -->
 				</div>
 			</div>
 		</div>

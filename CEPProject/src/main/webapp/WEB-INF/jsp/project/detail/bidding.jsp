@@ -529,8 +529,8 @@
 		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
 		<input type="hidden" value="<c:out value='${resultList}'/>" />
 		<input type="hidden" value="<%=request.getParameter("pjKey") %>" />
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">

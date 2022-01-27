@@ -147,11 +147,37 @@
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
 			}
+			
+			$("#projectConnect").click(function() {
+				window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall&pjFlag=P', 'PROJECT_LIST', 'width=972px,height=713px,left=600');
+			});
 		});
+		
+		function pop_projectCall(returnKey, returnNm) {
+			$.ajax({
+				url:"/project/selectProjectMappingInfo.do",
+				dataType:"json",
+				type:"post",
+				data:returnKey,
+				contentType:"application/json; charset=UTF-8",
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("AJAX", true);
+				},
+				success:function(data) {
+					$("#projectConnect").val(data.projectVO[0].pjNm);
+					$("#m_pjKey").val(data.projectVO[0].pjKey);
+				},
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					}
+				}
+			});
+		}
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600');
+			window.open('/mngCommon/product/popup/orderSearchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O&searchKey='+$("#m_pjKey").val()+'','PRODUCT_LIST','width=1000px,height=713px,left=600');
 		}
 		
 		function fn_chkVali() {
@@ -211,7 +237,7 @@
 			    		var url='/project/write/buildInfo.do';
 		    			var dialogId = 'program_layer';
 		    			var varParam = {
-							"pjKey":$("#pjKey").val(),
+							"pjKey":$("#m_pjKey").val(),
 							"inbSeq":inbSeq
 		    			}
 		    			var button = new Array;
@@ -288,11 +314,16 @@
 		<div class="contents">
 			<div>
 				<form id="infoForm" name="infoForm" method="post">
-					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
+					<input type="hidden" id="m_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>" />
 					<input type="hidden" id="resultList" value="<c:out value="${resultList}"/>" />
 					<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${resultList[0].inbSeq}"/>" />
-					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="<c:out value="${resultList[0].pjStatusCd}"/>" />
+					<%-- <input type="hidden" id="pjStatusCd" name="pjStatusCd" value="<c:out value="${resultList[0].pjStatusCd}"/>" /> --%>
+					<input type="hidden" name="statusCd" value="PJST4000" />
 					<table>
+						<tr>
+							<td class="tdTitle">프로젝트</td>
+							<td class="tdContents"><input type="text" name="pjNm" id="projectConnect" value="<c:out value="${resultList[0].pjNm}"/>" readOnly/></td>
+						</tr>
 						<tr>
 							<td class="tdTitle">설치 장소</td>
 							<td class="tdContents"><input type="text" name="inbPlace" id="inbPlace" value="<c:out value="${resultList[0].inbPlace}"/>"/></td>

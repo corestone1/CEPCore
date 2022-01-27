@@ -135,6 +135,7 @@
 		form .contents .dtl {
 			overflow: hidden;
 			margin-top: -10px;
+			border-top: 4px solid #6a5bae;
 		}
 		form .contents .dtl tbody {
 			overflow-y: auto;
@@ -156,6 +157,164 @@
 		form .contents .dtl tr td:last-child {
 			width: 774px;
 		}
+		
+		
+		form .contents .dtl2 {
+		    width: 997px;
+		    font-size: 14px;
+		    border-collapse: collapse;
+		    font-weight: 300;
+		    overflow: hidden;
+		    margin-top: -10px;
+	        border-top: 4px solid #6a5baf;
+		}
+		form .contents .dtl2 thead {
+		    background-color: #e1dff5;
+		    float: left;
+		    width: 997px;
+		}
+		form .contents .dtl2 thead tr {
+		    display: table;
+		    width: 997px;
+		}
+		form .contents .dtl2 tbody {
+		    width: 997px;
+		    /* height: 532px; */
+		    overflow-y: auto;
+		    overflow-x: hidden;
+		    float: left;
+		    border-bottom: 2px solid #c4c4c4;
+		}
+		form .contents .dtl2 tbody tr {
+		    display: table;
+		    width: 997px;
+		    cursor: pointer;
+		}
+		form .contents .dtl2 tbody tr:hover {
+		    background-color: #ddf0ec !important;
+		}
+		form .contents .dtl2 tbody tr td {
+		    font-weight: 200;
+		}
+		form .contents .dtl2 thead th:first-child, 
+		form .contents .dtl2 tbody td:first-child {
+		    width: 45px;
+		    padding: 0;
+		}
+		form .contents .dtl2 thead th:nth-child(2), 
+		form .contents .dtl2 tbody td:nth-child(2) {
+		    width: 75px;
+		}
+		form .contents .dtl2 thead th:nth-child(3), 
+		form .contents .dtl2 tbody td:nth-child(3) {
+		    width: *;
+		}
+		form .contents .dtl2 thead th, 
+		form .contents .dtl2 tbody tr td {
+		    padding: 10px 7px;
+		    border: 1px solid #edebef;
+		    text-align: center;
+		    border-top: none;
+		}
+		form .contents .dtl2 tbody tr td:nth-child(3) {
+		    font-weight: 400;
+		}
+		form .contents .dtl2 thead th:nth-child(4), 
+		form .contents .dtl2 tbody td:nth-child(4), 
+		form .contents .dtl2 thead th:nth-child(5), 
+		form .contents .dtl2 tbody td:nth-child(5) {
+		    width: 182px;
+		}
+		
+		
+		
+		form .contents .dtl3 {
+			width: 997px;
+			font-size: 14px;
+			border-collapse: collapse;
+			font-weight: 300;
+			overflow: hidden;
+			border-top: 4px solid #6a5baf;
+		}
+		form .contents .dtl3 thead {
+			background-color: #e1dff5;
+			float: left;
+			width: 997px;
+		}
+		form .contents .dtl3 thead tr {
+			display: table;
+			width: 997px;
+		}
+		form .contents .dtl3 tbody {
+			width: 997px;
+			/* height: 532px; */
+			overflow-y: auto;
+			overflow-x: hidden;
+			float: left;
+			border-bottom: 2px solid #c4c4c4;
+		}
+		form .contents .dtl3 tbody tr {
+			display: table;
+			width: 997px;
+			cursor: pointer;
+		}
+		form .contents .dtl3 tbody tr:hover {
+			background-color: #ddf0ec
+		}
+		form .contents .dtl3 tbody tr td:nth-child(2) {
+			font-weight: 400;
+		}
+		form .contents .dtl3 thead th, 
+		form .contents .dtl3 tbody tr td {
+			padding: 10px 7px;
+			border: 1px solid #edebef;
+			text-align: center;
+		}
+		form .contents .dtl3 tbody tr td {
+			font-weight: 200;
+		}
+		form .contents .dtl3 thead th:first-child,
+		form .contents .dtl3 tbody td:first-child {
+			width: 45px;
+			padding: 0;
+		}
+		form .contents .dtl3 thead th:nth-child(2),
+		form .contents .dtl3 tbody td:nth-child(2){
+			width: 183px;
+		}
+		form .contents .dtl3 thead th:nth-child(3),
+		form .contents .dtl3 tbody td:nth-child(3) {
+			width: 150px;
+		}
+		form .contents .dtl3 thead th:nth-child(4),
+		form .contents .dtl3 tbody td:nth-child(4) {
+			width: 99px;
+			max-width: 99px;
+		}
+		form .contents .dtl3 thead th:nth-child(5),
+		form .contents .dtl3 tbody td:nth-child(5){
+			width: 122px;
+		}
+		form .contents .dtl3 thead th:nth-child(6),
+		form .contents .dtl3 tbody td:nth-child(6) {
+			width: 122px;
+		}
+		form .contents .dtl3 tbody tr td > span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 90%;
+			margin: 0 auto;
+		}
+		form .contents .dtl3 tbody tr td img {
+			/* width: 13px; */
+			vertical-align: middle;
+			align: right;
+			/* margin-bottom: 5px; */
+		}
+		
+		
 		
 		input[type="text"] {
 		 	width: 177px;
@@ -226,11 +385,171 @@
 					}
 				}
 			});
+			
+			if("${salesList[0].salesKey}" != null && "${salesList[0].salesKey}" != "")
+				fnSearchGuarantyBondList("${salesList[0].salesKey}");
+			
+			//$(".contents .dtl tbody tr:first-child").css("background-color", "#ddf0ec");
+			
+			$(".contents .dtl2 tbody tr").click(function() {
+				$(".contents .dtl2 tbody tr").each(function() {
+					$(this).css("background-color", "#fff");
+				});
+				$(this).css("background-color", "#ddf0ec");
+			})
+			
+			$(parent.document).find("#modMinInfo").removeClass("dpNone");
+			$(parent.document).find("#delMinInfo").removeClass("dpNone");
 		});
 		
 		function fnCallContrect()
 		{
 			location.href = "/project/detail/contractMin2.do?pjKey=${projectInfo.pjKey}";
+		}
+		
+		function fnSearchGuarantyBondList(pstSalesKey) {
+			//alert(pstSalesKey);
+			
+			var jsonData = {'salesKey' : pstSalesKey};
+			
+			$.ajax ({
+				  url:"/project/detail/selectGuarantyBondList.do"
+				, type:'POST'
+				, data: jsonData
+				, dataType:'json'
+				, contentType: "application/x-www-form-urlencoded; charset=UTF-8"
+				, success:function(data){	
+					fnMakeGuarantyBondList(data.guarantyBondList);
+	            	//location.href = "/project/detail/main.do?pjKey=" + $('#iph_pjKey').val();
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+			});
+		}
+		
+		function fnMakeGuarantyBondList(pltGBList) {
+			
+			$('#tbl_guarantyBondList').remove();
+			
+			
+			var html = '';
+			var litListCnt = pltGBList.length;
+			
+			html = '<table id="tbl_guarantyBondList" class="dtl3 tbl2Width">'
+			     + '<thead class="ftw400">'
+			     +     '<tr>'
+			     +        '<th scope="row">No</th>'
+			     +        '<th scope="row">보증 증권명</th>'
+			     +        '<th scope="row">발행 상태</th>'
+			     +        '<th scope="row">발행일</th>'
+			     +        '<th scope="row">보험료</th>'
+			     +        '<th scope="row"></th>'
+			     +     '</tr>'
+			     +  '</thead>'
+			     +  '<tbody>'
+			     ;
+			
+			var lstStatus;
+			var lstBtn;
+			var lstBtnImg;
+			var lstOnclick;
+		    for(var i = 0; i < litListCnt; i++)
+			{
+		    	
+		    	//보증증권 발행 상태 및 버튼
+		    	if(pltGBList[i].gbIssueStatus == 'Y')
+		    	{
+		    		lstStatus  = '발행완료';
+		    		lstBtnImg  = "/images/btn_stock_view.png";
+		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    	}
+		    	else if(pltGBList[i].gbIssueStatus == 'R')
+		    	{
+		    		lstStatus = '발행요청중';
+		    		lstBtnImg  = "/images/btn_stock_end.png";
+		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    	}	
+		    	else
+		    	{
+		    		lstStatus = '발행전';
+		    		lstBtnImg  = "/images/btn_stock_publish.png";
+		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    	}
+		    	
+		    	lstBtn     = '<img onclick="' + lstOnclick + '" src="' + lstBtnImg + '" style="cursor:hand;"/>';
+		    	
+				html += '<tr>'
+				     +     '<td class="textalignC">' + (i+1) + '</td>'
+				     +     '<td class="textalignC">' + pltGBList[i].gbKindCd + ' 이행 보증증권</td>'
+				     +     '<td class="textalignC">' + lstStatus + '</td>'
+				     +     '<td class="textalignC">' + addDateMinus(pltGBList[i].gbPublishDt) + '</td>'
+				     +     '<td class="textalignR">' + addCommas(pltGBList[i].gbAmount) + '</td>'
+				     +     '<td class="textalignC">' + lstBtn + '</td>'
+				     +  '</tr>'
+				;
+				
+			}
+			
+			html += '</tbody>'
+			     +  '</table>';    
+			     
+			$('#div_guarantyBondList').append(html);
+		}
+		
+		function fnShowStock(pstGbKey, pstGbKindCd) {
+			//alert('fnShowStockMod(' + pstGbKey + ')');
+			
+			var lstUrl;
+			
+			if(pstGbKindCd == '계약')
+			{
+				lstUrl = "/project/detail/viewStockPublishCT.do";
+			}
+			else if(pstGbKindCd == '하자')
+			{
+				lstUrl = "/project/detail/viewStockPublishHJ.do";
+			}                             
+			else
+			{
+				lstUrl = "/project/detail/viewStockPublishSK.do";
+			}
+			
+			fnViewModal(lstUrl, pstGbKey);
+		}
+		
+		function fnViewModal(pstUrl, pstGbKey){
+			
+			/* var dialogId = 'program_layer';
+			
+			var varParam = {'gbKey' : pstGbKey};
+			
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, pstUrl, varParam, button, '', 'width:648px;height:575px');  */
+			
+			var nWidth = "654";
+			var nHeight = "549";
+			  
+			var curX = window.screenLeft;
+			var curY = window.screenTop;
+			var curWidth = document.body.clientWidth;
+			var curHeight = document.body.clientHeight;
+			  
+			var nLeft = curX + (curWidth / 2) - (nWidth / 2);
+			var nTop = curY + (curHeight / 2) - (nHeight / 2 -71);
+
+			var strOption = "";
+			strOption += "left=" + nLeft + "px,";
+			strOption += "top=" + nTop + "px,";
+			strOption += "width=" + nWidth + "px,";
+			strOption += "height=" + nHeight + "px,";
+			strOption += "toolbar=no,menubar=no,location=no,";
+			strOption += "resizable=yes,status=yes";
+			
+			window.open(pstUrl + "?gbKey="+ pstGbKey,'GUARANTY_INFO', strOption);
 		}
 		
 		
@@ -274,48 +593,7 @@
 			parent.showModalPop(dialogId, "/project/write/contractInfo.do", varParam, button, '', 'width:1144px;height:708px');
 			
 		}
-		/* 
-		function fnViewModify(){
-			
-			alert('viewModify()');
-			
-			var modCh = 1;
-			if(modCh % 2 == 1) {
-				$("#selectTable").css('display','none'); 
-				$("#modTable").removeClass('dpNone');
-				$("#modInfo img").attr('src',"/images/btn_save.png");
-			} else {
-				// alert('수정되었습니다.'); 
-				 var object = {};
-	           	var formData = $("#viewForm").serializeArray();
-	           	for (var i = 0; i<formData.length; i++){
-	                
-	                object[formData[i]['name']] = formData[i]['value'];
-	             }
-	           	var data = JSON.stringify(object);
-	           
-				$.ajax ({
-					url:"/project/update/biddingInfo.do",
-					type:'post',
-					data: data,
-					dataType:'json',
-					contentType: "application/json; charset=UTF-8", 
-					success:function(data){	
-		            	alert('첨부파일 저장');
-		            	 
-		            },
-		        	error: function(request, status, error) {
-		        		if(request.status != '0') {
-		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-		        		}
-		        	} 
-				}); 
-				// location.reload(); 
-			}
-			modCh++;
-			
-		}
-		 */
+		
 	</script>
 </head>
 <body>
@@ -328,14 +606,14 @@
 			<div class="contents">
 				<div class="floatL dpBlock fxd">
 					<div id="detailForm">
-						<div class="stitle">
+						<!-- <div class="stitle">
 							<ul>
-								<li style="width: 50%;"><a class="on">계약정보</a></li> <!--  height: 35px; border-bottom: 4px solid #6a5bae" -->
+								<li style="width: 50%;"><a class="on">계약정보</a></li> 
 								<li style="width: 50%;"><a onclick="javascript:fnCallContrect();">수금계획</a></li>
 								<li></li>
 							</ul>
-						</div>
-						<div class="floatC">
+						</div>   -->
+						<div class="floatC" style="margin-top: 76px;">
 							<!-- 계약정보 표기 시작 -->
 							<table class="dtl" style="width: 100%;" id="selectTable">
 								<tr style="width: 100%;">
@@ -386,6 +664,121 @@
 							
 							</table>
 							<!-- 계약정보 수기 끝 -->
+							
+							
+							
+							<div class="stitle cg colorBlack">매출 정보</div>
+							<table class="dtl2 tblWidth" style="width: 100%;">
+								<thead class="ftw400">
+									<tr>
+										<th scope="row">선택</th>
+										<th scope="row">회차</th>
+										<th scope="row">비율/금액</th>
+										<th scope="row">계상서예상일(발행일)</th>
+										<th scope="row">수금예상일(수금일)</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="salesList" items="${salesList}" varStatus="status">
+										<tr>
+											<td class="textalignC" onclick="event.cancelBubble = true;">
+												<input type="radio" class="tCheck" name="m_gubun" id="check1_${status.count}" />
+												<label for="check1_${status.count}" class="cursorP"/>
+											</td>
+											<td class="textalignC"><c:out value="${salesList.salesTurn}"/> 회차</td>
+											<td class="textalignC">
+												<span title="" onclick="javascript:fnSearchGuarantyBondList('${salesList.salesKey}');" >
+													<c:out value="${salesList.salesCollectRate}"/>% / <c:out value="${displayUtil.commaStr(salesList.salesTurnAmount)}"/> 원
+												</span>
+											</td>
+											<td class="textalignC">
+												<c:out value="${displayUtil.displayDate(salesList.salesBillFcDt)}"/>
+												<c:if test="${not empty salesList.billIssueDt}">
+													(<c:out value="${displayUtil.displayDate(salesList.billIssueDt)}"/>)
+												</c:if>
+											</td>
+											<td class="textalignC">
+												<c:out value="${displayUtil.displayDate(salesList.salesCollectFcDt)}"/>
+												<c:if test="${not empty salesList.salesCollectFinishDt}">
+													(<c:out value="${displayUtil.displayDate(salesList.salesCollectFinishDt)}"/>)
+												</c:if>
+											</td>
+										</tr>
+									</c:forEach>
+									
+								</tbody>
+							</table>
+							
+							
+							
+							<div class="stitle cg colorBlack">보증증권 정보</div>
+							<div id="div_guarantyBondList" class="floatC">
+								<table id="tbl_guarantyBondList" class="dtl3 tbl2Width">
+									<thead class="ftw400">
+										<tr>
+											<th scope="row">No</th>
+											<th scope="row">보증 증권명</th>
+											<th scope="row">발행 상태</th>
+											<th scope="row">발행일</th>
+											<th scope="row">보험료</th>
+											<th scope="row"></th>
+										</tr>
+									</thead>
+									<tbody>
+									
+										<c:forEach var="guarantyBondList" items="${guarantyBondList}" varStatus="status">
+											<tr>
+												<td class="textalignC"><c:out value="${guarantyBondList.gbKindCd}"/> 이행 보증증권</td>
+												<td class="textalignC">
+													<c:choose>
+														<c:when test='${guarantyBondList.gbIssueYn eq "N" }'>발행전</c:when>
+														<c:when test='${guarantyBondList.gbIssueYn eq "R" }'>발행요청</c:when>
+														<c:when test='${guarantyBondList.gbIssueYn eq "Y" }'>발행완료</c:when>
+													</c:choose>
+												</td>
+													
+												<td class="textalignC"><c:out value="${displayUtil.displayDate(guarantyBondList.gbPublishDt)}" /></td>
+												<td class="textalignC"><c:out value="${displayUtil.commaStr(guarantyBondList.gbAmount)}"/></td>
+												<td class="textalignC">
+													<c:choose>
+														<c:when test='${guarantyBondList.gbIssueYn eq "N" }'>발행요청버튼</c:when>
+														<c:when test='${guarantyBondList.gbIssueYn eq "R" }'>발행완료버튼</c:when>
+														<c:when test='${guarantyBondList.gbIssueYn eq "Y" }'>증권정보수정버튼</c:when>
+													</c:choose>
+												</td>
+												
+											</tr>
+										</c:forEach>
+										<c:if test="${guarantyBondList eq null }">
+											<tr><td colspan="6" style="padding: 10px 7px;">정보가 없습니다.</td></tr>
+										</c:if>
+										<!-- 
+										<tr>
+											<td class="textalignC" onclick="event.cancelBubble = true;">
+												<input type="radio" class="tCheck" name="m_gubun2" id="check21" />
+												<label for="check21" class="cursorP"/>
+											</td>
+											<td class="textalignC">1</td>
+											<td class="textalignL"><span title="PowerEdge R640">PowerEdge R740</span></td>
+											<td class="textalignC">3</td>
+											<td class="textalignR">600,000,000</td>
+											<td class="textalignR">1,800,000,000</td>
+										</tr>
+										<tr>
+											<td class="textalignC" onclick="event.cancelBubble = true;">
+												<input type="radio" class="tCheck" name="m_gubun2" id="check22" />
+												<label for="check22" class="cursorP"/>
+											</td>
+											<td class="textalignC">2</td>
+											<td class="textalignL"><span title="PowerEdge R640">PowerEdge R740</span></td>
+											<td class="textalignC">3</td>
+											<td class="textalignR">600,000,000</td>
+											<td class="textalignR">1,800,000,000</td>
+										</tr>
+										 -->
+									</tbody>
+								</table>
+							</div>	
 						</div>
 					</div>
 				</div>

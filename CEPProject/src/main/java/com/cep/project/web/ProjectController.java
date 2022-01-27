@@ -37,6 +37,7 @@ import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
+import com.cmm.config.AuthInfo;
 import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
@@ -86,8 +87,9 @@ public class ProjectController {
 	@Value("#{comProps['fileExtn']}")
 	private String fileExtn;		// 허용 파일 확장자
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/list.do", method={RequestMethod.GET, RequestMethod.POST})
-	public String selectProject(@ModelAttribute("searchVO") ProjectVO searchVO, ModelMap model) throws Exception {
+	public String selectProject(@ModelAttribute("searchVO") ProjectVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
 		
 		String toDay = null;
 		
@@ -116,12 +118,29 @@ public class ProjectController {
 			searchVO.setSearchToDt(toDay);
 		}
 		
-		List<?> projectList = service.selectProjectList(searchVO);
-		model.addAttribute("resultList", projectList);
+		try {
+			HashMap<String, String> sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			String empAuthCd = request.getSession().getAttribute("empAuthCd").toString();
+			
+			// 최초 조회 시 자신의 건만 보이게...
+			if(!"".equals(CepStringUtil.getDefaultValue(empAuthCd, "")) && 
+					!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue())) {
+				//	"".equals(CepStringUtil.getDefaultValue(searchVO.getDeptKey(), ""))) {
+				searchVO.setPjSaleEmpKey(sessionMap.get("empKey"));
+				model.put("empKey", sessionMap.get("empKey"));
+			}
+			
+			List<?> projectList = service.selectProjectList(searchVO);
+			model.addAttribute("resultList", projectList);
+			
+			int totCnt = service.selectProjectListTotCnt(searchVO);
+			paginationInfo.setTotalRecordCount(totCnt);
+			model.addAttribute("paginationInfo", paginationInfo);
+		} catch(Exception e){
+			logger.error("{}", e);
+			throw e;
+		}
 		
-		int totCnt = service.selectProjectListTotCnt(searchVO);
-		paginationInfo.setTotalRecordCount(totCnt);
-		model.addAttribute("paginationInfo", paginationInfo);
 
 		// 검색 정보 저장.
 		model.addAttribute("searchVO", searchVO);
@@ -223,10 +242,13 @@ public class ProjectController {
 		return "project/write/project";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/write/basicInfo.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewAddBasicInfo(HttpServletRequest request, ProjectVO projectVO, ModelMap model) throws Exception {
 		FileVO fileVO = new FileVO();
 		List<?> fileResult = null;
+		
+		HashMap<String, String> sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
 		
 		String pjKey = projectVO.getPjKey();
 		model.addAttribute("pjKey", pjKey);
@@ -249,6 +271,7 @@ public class ProjectController {
 		model.addAttribute("maxFileCnt", maxFileCnt);
 		model.addAttribute("fileExtn", fileExtn);		
 		model.addAttribute("maxFileSize", maxFileSize);	
+		model.put("empKey", sessionMap.get("empKey"));
 		
 		return "project/write/basicInfo";
 	}
@@ -356,6 +379,18 @@ public class ProjectController {
 		
 		model.addAttribute("pjKey", projectContractSalesVO.getPjKey());
 		
+		Map<String, Object> map = new HashMap<String, Object>();
+		ForecastVO forecastVO = new ForecastVO();
+		List<?> projectDetail = service.selectProjectDetail(projectContractSalesVO.getPjKey());
+		for(int i = 0; i < projectDetail.size(); i++) {
+			map = (Map<String, Object>)projectDetail.get(i);
+		}
+		String spKey = map.get("spKey").toString();
+		
+		forecastVO.setSpKey(spKey);
+		forecastVO = forecastService.selectForecast(forecastVO);
+		model.addAttribute("forecastVO", forecastVO);
+		
 		ProjectContractVO contractVO = service.selectContractDetail(projectContractSalesVO.getPjKey());
 		model.addAttribute("contractVO", contractVO);
 		
@@ -387,6 +422,18 @@ public class ProjectController {
 		ProjectContractVO ctVO = service.selectContractDetail(projectVO.getPjKey());
 		List<?> salesList = service.selectSalesList(projectVO.getPjKey());
 		List<?> guarantyList = service.selectGuarantyList(projectVO.getPjKey());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		ForecastVO forecastVO = new ForecastVO();
+		List<?> projectDetail = service.selectProjectDetail(projectVO.getPjKey());
+		for(int i = 0; i < projectDetail.size(); i++) {
+			map = (Map<String, Object>)projectDetail.get(i);
+		}
+		String spKey = map.get("spKey").toString();
+		
+		forecastVO.setSpKey(spKey);
+		forecastVO = forecastService.selectForecast(forecastVO);
+		model.addAttribute("forecastVO", forecastVO);
 		
 		model.addAttribute("pjKey", projectVO.getPjKey());
 		model.addAttribute("ctVO", ctVO);
@@ -624,17 +671,30 @@ public class ProjectController {
 	@RequestMapping(value="/write/workInfo.do")
 	public String viewAddWorkInfo(HttpServletRequest request, ProjectWorkVO workVO, ModelMap model) throws Exception {
 		
+		//int workSeq = workVO.getPjWorkSeq();
 		String pjKey = workVO.getPjKey();
-		int workSeq = workVO.getPjWorkSeq();
+		
+		List<?> fileResult = null;
+		FileVO fileVO = new FileVO();
+		
+		fileVO.setFileCtKey(pjKey);
+		fileVO.setFileWorkClass(workVO.getWorkClass());
+		
+		fileResult = fileMngService.selectFileList(fileVO);
 		
 		List<?> workInfo = service.selectWorkDetail(workVO);
 		
 		model.addAttribute("pjKey", pjKey);
 		model.addAttribute("resultList", workInfo);
 		
-		model.put("displayUtil", new CepDisplayUtil());
+		model.addAttribute("displayUtil", new CepDisplayUtil());
+		model.addAttribute("fileList", fileResult);
+		model.addAttribute("maxFileCnt", maxFileCnt);
+		model.addAttribute("fileExtn", fileExtn);		
+		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		return "project/write/workInfo";
+	
 	}
 	
 	@RequestMapping(value="/insert/workInfo.do", method=RequestMethod.POST)
@@ -754,6 +814,51 @@ public class ProjectController {
 		} catch (Exception e) {
 			modelAndView.put("successYN", "N");
 			logger.error("selectFocastMappingInfo :: {}", e);
+		}
+
+		return modelAndView; 
+	}
+	
+	
+	/**
+	 * 
+	  * @Method Name : selectProjectMappingInfo
+	  * @Cdate       : 2021. 8. 02.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : Project 정보 조회(Inputbox용)
+	  * @param request
+	  * @param response
+	  * @param pjKey(PJ_MAIN_TB(ProjectTable key)
+	  * @return
+	  * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectProjectMappingInfo.do", method=RequestMethod.POST)
+	public Map<String, Object>  selectProjectMappingInfo(HttpServletRequest request , HttpServletResponse response , @RequestBody String pjKey) throws Exception {
+
+		Map<String, Object> modelAndView = new HashMap<String, Object>();
+		
+		ProjectVO searchVO = null;
+		List<?> projectVO = null;
+		try {
+			if(!"".equals(CepStringUtil.getDefaultValue(pjKey, ""))) {
+		 
+				searchVO = new ProjectVO();
+				searchVO.setPjKey(pjKey);
+				projectVO = service.selectProjectDetail(pjKey);
+				
+				modelAndView.put("projectVO", projectVO);
+				modelAndView.put("successYN", "Y");
+			 
+			} else {
+				modelAndView.put("successYN", "N");
+				logger.error("selectProjectMappingInfo :: {}", "PROJECT테이블(PJ_MAIN_TB)에  대한 관리키 parameter가 null입니다.");
+			}
+		    
+		} catch (Exception e) {
+			modelAndView.put("successYN", "N");
+			logger.error("selectProjectMappingInfo :: {}", e);
 		}
 
 		return modelAndView; 

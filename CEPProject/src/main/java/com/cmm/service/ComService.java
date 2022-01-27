@@ -5,9 +5,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.cep.main.vo.EmpVO;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cmm.config.PrimaryKeyType;
+import com.cmm.vo.DepartmentVO;
 import com.cmm.vo.MailVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
@@ -53,6 +53,19 @@ public interface ComService {
 	  * @throws Exception
 	 */
 	public List<?> selectEmployeeList() throws Exception;
+	
+	/**
+	 * 
+	  * @Method Name : selectDepartmentList
+	  * @Cdate       : 2021. 12. 10.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 부서를 조회하는 메소드
+	  * @param 
+	  * @return
+	  * @throws Exception
+	 */
+	public List<?> selectDepartmentList(DepartmentVO deptVO) throws Exception;
 	
 	/**
 	 * 

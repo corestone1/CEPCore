@@ -46,7 +46,8 @@
 			, REG_DT
 			, REG_TM
 		FROM CMM_ALARM_TB	
-		WHERE ALARM_TO = #{alarmTo}
+		WHERE ALARM_TO LIKE CONCAT('%',#{alarmTo},'%')
+		AND DELETE_YN='N'
 		ORDER BY ALARM_KEY DESC
 	</select>
 	

@@ -3,7 +3,7 @@ package com.cmm.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.cep.main.vo.EmpVO;
+import com.cmm.vo.DepartmentVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
 import com.cmm.vo.SalesVO;
@@ -49,6 +49,18 @@ public interface ComMapper {
 	* @throws Exception
 	*/
 	public List<?> selectEmployeeList() throws Exception;
+	
+	/**
+	* 부서 조회
+	* @Method Name : selectDepartmentList
+	* @Cdate       : 2021. 12. 10.
+	* @Author      : sylim
+	* @Modification: 
+	* @Method Description :
+	* @return
+	* @throws Exception
+	*/
+	public List<?> selectDepartmentList(DepartmentVO deptVO) throws Exception;
 	
 	/**
 	* 부서별 직원 조회

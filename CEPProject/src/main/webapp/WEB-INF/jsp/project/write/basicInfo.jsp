@@ -45,10 +45,7 @@
 		}
 		.popContainer .contents > div {
 			width: calc(100% - 80px);
-			margin: 10px 40px 15px 40px;
-		}
-		.popContainer .contents > div:first-child {
-			min-height: 519px;
+			margin: 10px 40px 0 40px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
@@ -130,7 +127,7 @@
 			z-index: 102 !important;
 		 }
 		 .btnSave {
-		 	width: calc(100% - 365px);
+		 	width: calc(100% - 386px);
 		 	float: left;
 		 	text-align: right;
 		 }
@@ -370,16 +367,12 @@
 			}
 		}
 		
-		/* function fn_viewPopup(){
-			window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall','PROJECT_LIST','width=1000px,height=713px,left=600'); 
-		} */
-		
 		var acDirectorList;
 		
 		$(document).ready(function() {
 			
-			$("#acNm").on("keyup", function(event){
-				fn_searchAccoutList(this, $(this).val());					
+			$("#acNm, #salesAcNm").on("keyup", function(event){
+				fn_searchAccoutList(this, $(this).val());				
 			}); 
 			
 			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
@@ -394,6 +387,16 @@
 				$(this).siblings('.uploadName').val(filename)
 			});
 			
+			
+			$("input").on("input keydown", function() {
+				if($("#spKey").val().length == 0) {
+					fn_forecastPop();
+					$(this).val('');
+				}
+			});
+			
+			$("#pjSaleEmpKey option").not(":selected").attr("disabled", "disabled");
+
 		});
 		
 		$(function() {
@@ -424,7 +427,11 @@
 		function fn_searchAccoutList(pObject, pstAccountNm) {
 			$('#m_div_accountList').remove();
 		
-			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			if(pObject.id.includes("sales")) {
+				var jsonData = {'acNm' : pstAccountNm, 'acSalesYN' : 'Y' };
+			} else {
+				var jsonData = {'acNm' : pstAccountNm };
+			}
 			
 			 $.ajax({
 		        	url :"/mngCommon/account/searchList.do",
@@ -463,15 +470,17 @@
 			     + '</div>'
 			     ;//+ '</div>';
 			//$('#m_td_account').after(html);
-			$('#m_tr_account').after(html);
+			$(pObject).parent().after(html);
 			
 			$("[id^='m_li_account']").click(function(event)
 			{
 				//alert(this.title);
 				
-				$('#acKey').val(this.title); 
-				$('#acNm').val(this.innerText);
-				fn_selectAc();
+				$(pObject).next().val(this.title); 
+				$(pObject).val(this.innerText);
+				if(!pObject.id.includes("sales")) {
+					fn_selectAc();
+				}
 				
 				$('#m_div_accountList').remove();
 			});
@@ -560,7 +569,7 @@
 		//Forecast연계
 		function fn_forecastPop() {
 			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
-			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P','FORECAST_LIST','width=1000px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P','FORECAST_LIST','width=1372px,height=713px,left=600');
 		}
 		
 		function pop_forecastCall(returnKey,returnNm) {
@@ -575,9 +584,12 @@
 	        		//xhr.setRequestHeader(header, token);
 	        	},
 	            success:function(data){
+	            	$("#spKey").val(data.forecastVO.spKey);
             		$('#pjNm').val(data.forecastVO.spBusiNm);
             		$('#acKey').val(data.forecastVO.acKey);
             		$('#acNm').val(data.forecastVO.mfAcNm);
+            		$("#salesAcNm").val(data.forecastVO.salesAcNm);
+            		$("#salesAcKey").val(data.forecastVO.salesAcKey);
             		$("#pjSaleEmpKey").val(data.forecastVO.regEmpKey);
             		
             		fn_selectAc();
@@ -602,6 +614,8 @@
         		$('#acNm').val('');
         		$('#acDirectorKey').val('');
         		$('#acDirectorInfo').val('');
+        		$("#salesAcKey").val('');
+        		$("#salesAcNm").val('');
         		
         		$("#pjSaleEmpKey option:eq(0)").prop("selected", true);
         		
@@ -630,12 +644,12 @@
 				<!-- <input type="text" id="id" style="border: 1px solid #000; width: 200px;"/>
 				<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/> -->
 				<input type="hidden" id="dialogId" />
-				<input type="hidden" id="spKey" name="spKey" />
+				<input type="hidden" id="spKey" name="spKey" value="${resultList[0].spKey }"/>
 				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 				<input type="hidden" id="workClass" name="workClass" value="프로젝트"/>
 				<input type="hidden" id="newKey" name="newKey" value="<c:out value=""/>"/>
 				<img class="dpNone" id="sp_delete_forecast" src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteForecast();" />
-				<div>  
+				<div style="min-height: 529px;">  
 					<table>
 						<tr>
 							<c:choose>
@@ -644,7 +658,7 @@
 								</c:when>
 								<c:otherwise>
 									<td>
-										<div style="width: 100px; height: 48px; line-height: 48px; font-size: 27px;"></div>
+										<div style="width: 100px; line-height: 48px; font-size: 27px;"></div>
 									</td>
 								</c:otherwise>
 							</c:choose>
@@ -671,14 +685,21 @@
 								<input type="text" class="pname"  id="acDirectorInfo" value="<c:out value="${resultList[0].acDirectorInfo }" />" readonly/>
 							</td>
 						</tr>
+						<%-- <tr>
+							<td class="tdTitle"><label>*</label>매출처</td>
+							<td class="tdContents" id="m_tr_account">
+								<input type="text" class="search" name="salesAcNm" id="salesAcNm" value="<c:out value="${resultList[0].salesAcNm}"/>" required autocomplete="off" style="width: 178px" />	
+								<input type="hidden" name="salesAcKey" id="salesAcKey" value="<c:out value="${resultList[0].salesAcKey}"/>" />	
+							</td>
+						</tr> --%>
 						<tr>
 							<td class="tdTitle"><label>*</label>영업담당자</td>
 							<td class="tdContents">
 								<select name="pjSaleEmpKey" id="pjSaleEmpKey">
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
-										<option <c:if test="${resultList[0].pjSaleEmpKey == emp.empKey }">selected</c:if> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+										<option <c:if test="${empKey == emp.empKey }">selected</c:if> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
 									</c:forEach>	
-								</select>
+								</select> 
 							</td>
 						</tr>
 						<tr>
@@ -718,14 +739,14 @@
 						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
 					<div class="floatR">
-						<button type="button" onclick="javascript:fn_next('biddingInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>
 		</div>
 	</form:form>
-	<form id="fileForm" method="post" enctype="multipart/form-data"> 
+	<%-- <form id="fileForm" method="post" enctype="multipart/form-data"> 
     	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
 		<input type="hidden" name="docTypeNm" value="프로젝트" />
 		<input type="hidden" name="fileCtKey" id="fileCtKey" value="${projectVO.pjKey}" />
@@ -746,7 +767,7 @@
 			</c:forEach>
 		</div>
 		<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
-	</form>
+	</form> --%>
 	<form:form id="viewForm" name="viewForm" method="POST">
 		<input type="hidden" name="fileKey" value=""/>
 		<input type="hidden" name="fileOrgNm" value=""/>

@@ -603,7 +603,7 @@
 				pstNm = "완료";
 			}
 			
-			if(!(statusCd).includes(pstId.substr(pstId.length-2,2))) {
+			if(!(statusCd).includes(pstId.substr(pstId.length-2,2)) && pstId.substr(pstId.length-2,2) != 'WK' && pstId.substr(pstId.length-2,2) != 'CT') {
 				if(confirm(pstNm + " 정보가 없습니다. 프로젝트 정보 등록 화면으로 이동하시겠습니까?")) {
 					var url = '/project/write/basicInfo.do';
 					var dialogId = 'program_layer';
@@ -834,8 +834,8 @@
 		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
 		<input type="hidden" value="<c:out value='${resultList}'/>" />
 		<input type="hidden" id="iph_pjKey" name="pjKey" value="${pjKey}" />
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
@@ -980,7 +980,7 @@
 						<!-- 입찰정보 버튼 시작 -->
 						<div class="btnWrap rt">
 							<div class="floatR">
-								<button type="button" value="수행일지" onclick="javascript:fnWorkInfoPopup();"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button>
+								<%-- <button type="button" value="수행일지" onclick="javascript:fnWorkInfoPopup();"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button> --%>
 								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
 								<button type="button" value="수정" id="modMinInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제" id="delMinInfo"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>

@@ -19,7 +19,7 @@
 		.popContainer .contents {
 			position: absolute;
 			width: 1122px;
-			height: 508px;
+			height: 634px;
 			top: 107px;
 			z-index: 3;
 			background-color: #f6f7fc;
@@ -48,7 +48,8 @@
     		padding: 2px 0px 2px 0px
 		} 
 		.popContainer .contents > div {
-			width: 100%;
+			width: 1074px;
+			margin: 20px 0;
 		}
 		.popContainer .contents > div:first-child {
 			width: 433px;
@@ -66,7 +67,7 @@
 		}
 		.popContainer .contents input {
 			width: 220px;
-			height: 35px;
+			height: 31px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -97,18 +98,12 @@
 			padding-left: 34px;
 		}
 		
-		.popContainer .contents tbody img {
-			width: 57px;
-    		margin-left: 10px;
-    		margin-bottom: 3px;
-		}
-		
 		/* 소타이틀(기본정보, 발주정보, 제품정보) 관련 css*/
 		.contents .stitle {
 			font-size: 18px;
 			font-weight: 500;
 			margin-bottom: 10px;
-			margin-top: 30px;
+			margin-top: 26px;
 		}
 		.director_middle table, .deposit_middle table {
 			width: 900px;
@@ -127,9 +122,9 @@
 			display: table;
 			width: 1040px;
 		}
-		.director_middle table tbody , .deposit_middle table tbody{
+		.director_middle table tbody, .deposit_middle table tbody{
 			width: 1040px;
-			height: 92px;
+			max-height: 138px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -151,33 +146,42 @@
 			padding: 2px 2px 2px 2px;
 		}
 		
+		.director_middle table tbody input {
+			width: calc(100% - 24px) !important;
+		}
+		
 		.director_middle table thead th:first-child,
 		.director_middle table tbody td:first-child {
 			width: 85px; 
 		}
 		.director_middle table thead th:nth-child(2),
 		.director_middle table tbody td:nth-child(2) {
-			width: 121px;
+			width: 117px;
 		}
 		.director_middle table thead th:nth-child(3),
 		.director_middle table tbody td:nth-child(3) {
-			width: 82px;
+			width: 77px;
 		}
 		.director_middle table thead th:nth-child(4),
-		.director_middle table tbody td:nth-child(4) {
-			width: 143px;
-		}
+		.director_middle table tbody td:nth-child(4),
 		.director_middle table thead th:nth-child(5),
 		.director_middle table tbody td:nth-child(5) {
-			width: 215px;
+			width: 143px;
 		}
 		.director_middle table thead th:nth-child(6),
 		.director_middle table tbody td:nth-child(6) {
-			width: 280px;
+			width: 202px;
 		}
 		.director_middle table thead th:nth-child(7),
 		.director_middle table tbody td:nth-child(7) {
-			width: 80px;
+			width: 248px;
+		}
+		.director_middle table thead th:nth-child(8),
+		.director_middle table tbody td:nth-child(8) {
+			width: 62px;
+		}
+		.director_middle table tbody td:nth-child(8) {
+			text-align: center;
 		}
 		.deposit_middle table thead th:first-child,
 		.deposit_middle table tbody td:first-child {
@@ -201,18 +205,27 @@
 		.deposit_middle table tbody td:nth-child(5) {
 			width: 90px;
 		}
-		.popContainer .contents .btnWrap {
-			margin : 20px 30px 15px 48px;
+		.deposit_middle table tbody td:nth-child(5) {
+			text-align: center;
 		}
 		.popContainer .contents .btnSave {
 			width: auto;
 		}
+		.hgt35 {
+			height: 35px;
+		}
+		#chkExist {
+			vertical-align: top;
+			margin-top: 1px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0) {
+			if($("#selectKey").val() != null && $("#selectKey").val() != "" && $("#selectKey").val().length != 0) {
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />');
+				$("#chkExist").css("display", "none");
+				$("#e_acKey").attr("readonly", "true");
 			}
 		});
 		
@@ -291,6 +304,9 @@
 					    		if(response.acCount == 0) {
 					    			alert('사용 가능한 사업자 번호 입니다.');
 					    			$("#e_acKey").focus();
+					    			$("#e_acKey").attr("readonly", true);
+					    			$("#chkExist img").attr("src", "/images/btn_green_mod.png");
+					    			$("#chkExist").attr("onclick", "clearExist(this);");
 					    		} else {
 					    			alert('이미 존재하는 거래처 입니다.');
 					    			$("#e_acKey").val('');
@@ -306,6 +322,14 @@
 					}); 
 				}
 			}
+		}
+		
+		function clearExist(obj) {
+			$("#e_acKey").focus();
+			$("#e_acKey").attr("readonly", false);
+			$("#chkExist img").attr("src", "/images/dup_check.png");
+			$("#chkExist").attr("onclick", "isExist(this);");
+			$("#chkExist").val(0);
 		}
 		
 		// 사업자 번호 정규식
@@ -347,25 +371,28 @@
 			var directorRow = document.getElementById("director_tbody").insertRow();
 			
 			var acDirectorNmCell = directorRow.insertCell(0);
-			acDirectorNmCell.innerHTML='<input type="text" id="acDirectorNm'+directorIndex+'" name="acDirectorNm" style="width: 60px" autocomplete="off" required/>';
+			acDirectorNmCell.innerHTML='<input type="text" id="acDirectorNm'+directorIndex+'" name="acDirectorNm" autocomplete="off" required/>';
 			
 			var acDirectorDeptNm = directorRow.insertCell(1);
-			acDirectorDeptNm.innerHTML ='<input type="text" id="acDirectorDeptNm'+directorIndex+'" name="acDirectorDeptNm" style="width: 96px" autocomplete="off"/>';
+			acDirectorDeptNm.innerHTML ='<input type="text" id="acDirectorDeptNm'+directorIndex+'" name="acDirectorDeptNm" autocomplete="off"/>';
 			
 			var acDirectorPositionNm = directorRow.insertCell(2);
-			acDirectorPositionNm.innerHTML ='<input type="text" id="acDirectorPositionNm'+directorIndex+'" name="acDirectorPositionNm" style="width: 55px" autocomplete="off"/>';
+			acDirectorPositionNm.innerHTML ='<input type="text" id="acDirectorPositionNm'+directorIndex+'" name="acDirectorPositionNm" autocomplete="off"/>';
 			
 			var acDirectorMbNum = directorRow.insertCell(3);
-			acDirectorMbNum.innerHTML ='<input type="text" class="phoneNumber" id="acDirectorTelNum'+directorIndex+'" name="acDirectorTelNum" style="width: 117px" autocomplete="off" required numberOnly/>';
+			acDirectorMbNum.innerHTML ='<input type="text" class="phoneNumber" id="acDirectorMbNum'+directorIndex+'" name="acDirectorMbNum" autocomplete="off" numberOnly/>';
 			
-			var acDirectorEmail = directorRow.insertCell(4);
-			acDirectorEmail.innerHTML ='<input type="text" id="acDirectorEmail'+directorIndex+'" name="acDirectorEmail" style="width: 193px" autocomplete="off"/>';
+			var acDirectorTelNum = directorRow.insertCell(4);
+			acDirectorTelNum.innerHTML ='<input type="text" class="phoneNumber" id="acDirectorTelNum'+directorIndex+'" name="acDirectorTelNum" autocomplete="off" required numberOnly/>';
 			
-			var acDirectorDesc = directorRow.insertCell(5);
-			acDirectorDesc.innerHTML ='<input type="text" id="acDirectorDesc'+directorIndex+'" name="acDirectorDesc" style="width: 264px" autocomplete="off"/><input type="hidden" name="acEnd" />';
+			var acDirectorEmail = directorRow.insertCell(5);
+			acDirectorEmail.innerHTML ='<input type="text" id="acDirectorEmail'+directorIndex+'" name="acDirectorEmail" autocomplete="off"/>';
 			
-			var deleteBtn = directorRow.insertCell(6);
-			deleteBtn.innerHTML ='<img src="/images/btn_del_gray.png" onclick="fn_deleteDirector(this);"/>';
+			var acDirectorDesc = directorRow.insertCell(6);
+			acDirectorDesc.innerHTML ='<input type="text" id="acDirectorDesc'+directorIndex+'" name="acDirectorDesc" autocomplete="off"/><input type="hidden" name="acEnd" />';
+			
+			var deleteBtn = directorRow.insertCell(7);
+			deleteBtn.innerHTML ='<img src="/images/icon_delete.png" onclick="fn_deleteDirector(this);"/>';
 			
 			directorIndex++;
 		}
@@ -373,6 +400,13 @@
 		//담당자 정보 삭제
 		function fn_deleteDirector(obj) {
 			if($('#director_tbody tr').length>1) {
+				if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0) {
+					if($("#deleteDirectorList").val().length == 0) {
+						$("#deleteDirectorList").val($(obj).parent().parent().find("input[name='acDirectorKey']").val());
+					} else {
+						$("#deleteDirectorList").val($("#deleteDirectorList").val() + ";" + $(obj).parent().parent().find("input[name='acDirectorKey']").val());	
+					}
+				}
 				$(obj).closest('tr').remove();
 			} else {
 				alert("담당자 정보는 한개 이상 존재해야 합니다.");
@@ -398,21 +432,34 @@
 			acRepBknoYn.innerHTML ='<input type="checkbox" class="tCheck" id="acRepBknoYn'+depoIndex+'" /><label for="acRepBknoYn'+depoIndex+'" class="cursorP"></label><input type="hidden" name="acRepBknoYn'+depoIndex+'" /><input type="hidden" name="acEnd" />';
 			
 			var deleteBtn = depositRow.insertCell(4);
-			deleteBtn.innerHTML ='<img src="/images/btn_del_gray.png" onclick="fn_deleteDeposit(this);"/>';
+			deleteBtn.innerHTML ='<img src="/images/icon_delete.png" onclick="fn_deleteDeposit(this);"/>';
 			
 			depoIndex++;
 		}
 		
+		// 계좌 정보 삭제
 		function fn_deleteDeposit(obj) {
+			
+			if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0) {
+				if($("#deleteDepositList").val().length == 0) {
+					$("#deleteDepositList").val($(obj).parent().parent().find("input[name='acAdSeq']").val());
+				} else {
+					$("#deleteDepositList").val($("#deleteDepositList").val() + ";" + $(obj).parent().parent().find("input[name='acAdSeq']").val());	
+				}
+			}
 			$(obj).closest('tr').remove();
 		}
 				
 		function fn_chkVali() {
             if ($("#basicForm")[0].checkValidity()){
                //필수값 모두 통과하여 저장 프로세스 호출.
-               if($("#chkExist").val() == 0) {
+               if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0 && $("#chkExist").val() == 0 
+            		   && $("#selectKey").val().length == 0) {
             	   alert("사업자 번호 중복체크를 해주세요.");
             	   $('.contents').scrollTop(0);
+               } else if(!$('input[name="acKind"]:checked').val()) {
+           		    alert('거래처 구분을 선택해주세요.');
+           		    $('input[name="acKind"]').focus();
                } else {
             	   if($("#accountDirectorForm")[0].checkValidity()){
             	   		if($("#accountDepositForm")[0].checkValidity()) {
@@ -460,7 +507,7 @@
 			if($('#director_tbody tr').length<1) {
 				alert('담당자 정보는 한 개 이상 존재해야 합니다.');
 			} else {
-				console.log(sendData);	 
+				//console.log(sendData);	 
 			
 				$.ajax({
 					url: "/mngCommon/account/insert/accountInfo.do",
@@ -475,7 +522,7 @@
 					},
 				    success:function(response){	
 				    	if(response!= null && response.successYN == 'Y') {
-				    		if($("#e_acKey").val() == null || $("#e_acKey").val() == "" || $("#e_acKey").val().length == 0) {
+				    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
 					    		alert("거래처 정보가 등록되었습니다.");
 				    		} else {
 				    			alert("거래처 정보가 수정되었습니다.");
@@ -488,9 +535,9 @@
 			    			}
 				   			var button = new Array;
 			    			button = [];
-			    			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:615px');
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:741px');
 				    	} else {
-				    		if($("#e_acKey").val() == null || $("#e_acKey").val() == "" || $("#e_acKey").val().length == 0) {
+				    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
 				    			alert("거래처 정보 등록이 실패하였습니다.");
 				    		} else {
 				    			alert("거래처 정보 수정이 실패하였습니다.");
@@ -502,7 +549,7 @@
 							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 						}
 					} 
-				});      
+				});        
 			}
 		}
 	</script>
@@ -517,13 +564,16 @@
 		</div>
 		<div class="contents">
 			<form action="/" id="basicForm" name="basicForm"  method="post">
-				<div id="basicForm" style="padding-top: 20px;">			
+				<input type="hidden" id="deleteDirectorList" name="deleteDirectorList" value="" />
+				<input type="hidden" id="deleteDepositList" name="deleteDepositList" value="" />
+				<input type="hidden" id="selectKey" value="${accountVO.acKey }" />
+				<div id="basicWrap" style="padding-top: 20px;">			
 					<table>
 						<tr>
 							<td class="tdTitle"><label>*</label> 사업자번호</td>
 							<td class="tdContents">
-								<input type="text" id="e_acKey" name="acKey" value="${accountVO.acKey }" required numberOnly/>
-								<button type="button" onclick="isExist(this);" value="0" id="chkExist"><img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;"/></button>
+								<input type="text" id="e_acKey" name="acKey" value="${accountVO.acKey }" required numberOnly maxlength="10">
+								<button type="button" onclick="isExist(this);" value="0" id="chkExist"><img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;"/></button>
 							</td>
 						</tr>
 						<tr>
@@ -539,11 +589,11 @@
 							</td>
 						</tr>							
 						<tr>
-							<td class="tdTitle">&nbsp;&nbsp;거래처구분</td>
+							<td class="tdTitle"><label>*</label> 거래처구분</td>
 							<td class="tdContents">
-								<input type="checkbox" class="tCheck" id="acSalesYn" <c:if test="${accountVO.acSalesYn eq 'Y'}">checked</c:if> /><label for="acSalesYn" class="cursorP"></label>&nbsp;&nbsp;매출거래처
+								<input type="checkbox" class="tCheck" id="acSalesYn" name="acKind" <c:if test="${accountVO.acSalesYn eq 'Y'}">checked</c:if> /><label for="acSalesYn" class="cursorP"></label>&nbsp;&nbsp;매출거래처
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="checkbox" class="tCheck" id="acBuyYn" <c:if test="${accountVO.acBuyYn eq 'Y'}">checked</c:if> /><label for="acBuyYn" class="cursorP"></label>&nbsp;&nbsp;매입거래처
+								<input type="checkbox" class="tCheck" id="acBuyYn" name="acKind" <c:if test="${accountVO.acBuyYn eq 'Y'}">checked</c:if> /><label for="acBuyYn" class="cursorP"></label>&nbsp;&nbsp;매입거래처
 								<input type="hidden" name="acSalesYn" />
 								<input type="hidden" name="acBuyYn" />
 							</td>
@@ -552,11 +602,12 @@
 							<td class="tdTitle"><label>*</label> 연락처</td>
 							<td class="tdContents">
 								<c:set var="tel" value="${fn:split(accountVO.acRepTel, '-')}" />
-								<select id="acRepTel1" name="acRepTel1" required>
+								<%-- <select id="acRepTel1" name="acRepTel1" required>
 									<option value="02" <c:if test="${tel[0] eq '02'}">selected</c:if>>02</option>
 									<option value="031" <c:if test="${tel[0] eq '031'}">selected</c:if>>031</option>
 									<option value="010" <c:if test="${tel[0] eq '010'}">selected</c:if>>010</option>
-								</select> -
+								</select> - --%>
+								<input type="text" id="acRepTel1" name="acRepTel1" style="width: 53px" value="${tel[0] }" required numberOnly/> -
 								<input type="text" id="acRepTel2" name="acRepTel2" style="width: 53px" value="${tel[1] }" required numberOnly/> -
 								<input type="text" id="acRepTel3" name="acRepTel3" style="width: 53px" value="${tel[2] }" required numberOnly/>
 								<input type="hidden" name="acRepTel" />
@@ -566,34 +617,30 @@
 							<td class="tdTitle">&nbsp;&nbsp;FAX</td>
 							<td class="tdContents">
 								<c:set var="fax" value="${fn:split(accountVO.acRepFax, '-')}" />
-								<select id="acRepFax1" name="acRepFax1">
+								<%-- <select id="acRepFax1" name="acRepFax1">
 									<option value="02" <c:if test="${fax[0] eq '02'}">selected</c:if>>02</option>
 									<option value="031" <c:if test="${fax[0] eq '031'}">selected</c:if>>031</option>
-								</select> -
+								</select> - --%>
+								<input type="text" id="acRepFax1" name="acRepFax1" value="${tel[0] }" style="width: 53px" numberOnly/> -
 								<input type="text" id="acRepFax2" name="acRepFax2" value="${fax[1] }" style="width: 53px" numberOnly/> -
-								<input type="text" id="acRepFax3" name="acRepFax3" value="${fax[2] }"style="width: 53px" numberOnly/>
+								<input type="text" id="acRepFax3" name="acRepFax3" value="${fax[2] }" style="width: 53px" numberOnly/>
 								<input type="hidden" name="acRepFax" />
 							</td>
 						</tr>													
 						<tr>
 							<td class="tdTitle"><label>*</label> 주소</td>
 							<td class="tdContents">
-								<input type="text" id="acAddr" name="acAddr" value="${accountVO.acAddr }" style="width: 897px" required/>
+								<input type="text" id="acAddr" name="acAddr" value="${accountVO.acAddr }" style="width: 46%" required/>
+								<input type="text" id="acAddrDetail" name="acAddrDetail" value="${accountVO.acAddrDetail }" style="width: 46%"/>
 							</td>
 						</tr>																				
-						<tr>
-							<td class="tdTitle"></td>
-							<td class="tdContents">
-								<input type="text" id="acAddrDetail" name="acAddrDetail" value="${accountVO.acAddrDetail }" style="width: 897px"/>
-							</td>
-						</tr>	
 					</table>			
 				</div>
 			</form>
 			<form action="/" id="accountDirectorForm" name="accountDirectorForm"  method="post">
 				<div id="pop_listForm">
 					<div class="stitle">
-						담당자정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addDirector()"/>
+						담당자정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add-pop.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addDirector()"/>
 					</div>
 					<div class="floatC director_middle" style="border-bottom: 2px solid #c4c4c4; width:1040px;">
 						<table class="dtl">
@@ -602,7 +649,8 @@
 									<th scope="row"><label>*</label> 이름</th>
 									<th scope="row">부서</th>
 									<th scope="row">직급</th>
-									<th scope="row"><label>*</label> 연락처<span></span></th>
+									<th scope="row">모바일연락처<span></span></th>
+									<th scope="row"><label>*</label>연락처</th>
 									<th scope="row">이메일</th>
 									<th scope="row">비고</th>
 									<th scope="row">삭제</th>
@@ -612,26 +660,30 @@
 								<c:forEach var="result" items="${acDirectorList }" varStatus="status">
 									<tr>
 										<td>
-											<input type="text" id="acDirectorNm${status.count }" name="acDirectorNm" value="${result.acDirectorNm }" style="width: 60px" autocomplete="off" required/>
+											<input type="text" id="acDirectorNm${status.count }" name="acDirectorNm" value="${result.acDirectorNm }" autocomplete="off" required/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorDeptNm${status.count }" name="acDirectorDeptNm" value="${result.acDirectorDeptNm }" style="width: 96px" autocomplete="off"/>
+											<input type="text" id="acDirectorDeptNm${status.count }" name="acDirectorDeptNm" value="${result.acDirectorDeptNm }" autocomplete="off"/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorPositionNm${status.count }" name="acDirectorPositionNm"  value="${result.acDirectorPositionNm }" style="width: 55px" autocomplete="off"/>
+											<input type="text" id="acDirectorPositionNm${status.count }" name="acDirectorPositionNm"  value="${result.acDirectorPositionNm }" autocomplete="off"/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorTelNum${status.count }" class="phoneNumber" name="acDirectorTelNum" value="${result.acDirectorMbNum }" style="width: 117px" autocomplete="off" required numberOnly/>
+											<input type="text" id="acDirectorMbNum${status.count }" class="phoneNumber" name="acDirectorMbNum" value="${result.acDirectorMbNum }" autocomplete="off" numberOnly/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorEmail${status.count }" name="acDirectorEmail" value="${result.acDirectorEmail }" style="width: 193px" autocomplete="off"/>
+											<input type="text" id="acDirectorTelNum${status.count }" class="phoneNumber" name="acDirectorTelNum" value="${result.acDirectorTelNum }" autocomplete="off" required numberOnly/>
 										</td>
 										<td>
-											<input type="text" id="acDirectorDesc${status.count }" name="acDirectorDesc" value="${result.acDirectorDesc }" style="width: 264px" autocomplete="off"/>
+											<input type="text" id="acDirectorEmail${status.count }" name="acDirectorEmail" value="${result.acDirectorEmail }" autocomplete="off"/>
+										</td>
+										<td>
+											<input type="text" id="acDirectorDesc${status.count }" name="acDirectorDesc" value="${result.acDirectorDesc }" autocomplete="off"/>
+											<input type="hidden" name="acDirectorKey" value="${result.acDirectorKey }" />
 											<input type="hidden" name="acEnd" />
 										</td>
-										<td>
-											<img src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteDirector(this);"/>
+										<td class="textalignC">
+											<img src="<c:url value='/images/icon_delete.png'/>" onclick="fn_deleteDirector(this);"/>
 										</td>
 									</tr>
 									<c:if test="${status.last}"><c:set var="direcLastIndex" value="${status.last }" /></c:if>
@@ -645,7 +697,7 @@
 			<form action="/" id="accountDepositForm" name="accountDepositForm"  method="post">
 				<div id="pop_listForm">
 					<div class="stitle">
-						계좌 정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addDeposit()"/>
+						계좌 정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add-pop.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addDeposit()"/>
 					</div>
 					<div class="floatC deposit_middle" style="border-bottom: 2px solid #c4c4c4; width:1040px;">
 						<table class="dtl">
@@ -654,7 +706,7 @@
 									<th scope="row"><label>*</label> 은행명</th>
 									<th scope="row"><label>*</label> 계좌번호<span>('-'없이 입력)</span></th>
 									<th scope="row"><label>*</label> 예금주</th>
-									<th scope="row"><label>*</label> 주거래 계좌</th>
+									<th scope="row">주거래 계좌</th>
 									<th scope="row">삭제</th>
 								</tr>
 							</thead>
@@ -663,7 +715,7 @@
 									<tr>
 										<td>
 											<input type="text" id="acBankNm${status.count }" name="acBankNm" value="${result.acBankNm }" style="width: 230px" autocomplete="off" required/>
-											<input type="hidden" id="acAdSeq${status.count }" name="acAdSeq"/>
+											<input type="hidden" id="acAdSeq${status.count }" name="acAdSeq" value="${result.acAdSeq }"/>
 										</td>
 										<td>
 											<input type="text" id="acBkno${status.count }" name="acBkno" value="${result.acBkno }" style="width: 299px" autocomplete="off" required numberOnly/>
@@ -676,11 +728,11 @@
 											<label for="acRepBknoYn${status.count }" class="cursorP"></label>
 											<input type="hidden" name="acRepBknoYn${status.count }" />
 											<input type="hidden" name="acEnd" />
-										<td>
-											<img src="/images/btn_del_gray.png" onclick="fn_deleteDeposit(this);"/>
+										<td class="textalignC">
+											<img src="/images/icon_delete.png" onclick="fn_deleteDeposit(this);"/>
 										</td>
 									</tr> 
-									<c:if test="${status.last}"><c:set var="depoLastIndex" value="${status.last }" /></c:if>
+									<c:if test="${status.last}"><c:set var="depoLastIndex" value="${status.count }" /></c:if>
 								</c:forEach>
 							</tbody>
 						</table>
@@ -688,7 +740,7 @@
 					</div>
 				</div>
 			</form>
-			<div class="btnWrap floatR">
+			<div class="btnWrap">
 				<div id="m_btn_save" class="floatR btnSave" onclick="fn_chkVali();">
 					<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 				</div>

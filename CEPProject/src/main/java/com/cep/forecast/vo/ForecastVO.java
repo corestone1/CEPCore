@@ -1,8 +1,11 @@
 package com.cep.forecast.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
+
+import com.cep.example.vo.SampleDefaultVO;
 
 /**
  * @File Name : ForecastVO.java
@@ -20,7 +23,7 @@ import org.apache.ibatis.type.Alias;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 @Alias("forecastVO")
-public class ForecastVO implements Serializable {
+public class ForecastVO extends SampleDefaultVO implements Serializable {
 
 	private static final long serialVersionUID = -6756383864911581845L;
 	
@@ -43,11 +46,18 @@ public class ForecastVO implements Serializable {
 	private String remark;        //비고(영업 진행상황)
 	private String pmDetail2;
 	
+	private String bdYn;
+	private String spStartDt;
+	private String spEndDt;
+	
 	private String fcSalesDtYr; 
 	private String fcSalesDtMt;
 
 	private String fcCollectDtYr;
 	private String fcCollectDtMt;
+	
+	private String fcBuyDtYr;
+	private String fcBuyDtMt;
 	
 	private String fcBuyPayDtYr;
 	private String fcBuyPayDtMt;
@@ -63,7 +73,13 @@ public class ForecastVO implements Serializable {
 	private String pmNm;            //제품명
 	private String pmDetailClassCd; //제품상세구분
 	private String salesAcNm;       //매출처명
-	private String buyAcNm;         //매입처명 
+	private String buyAcNm;         //매입처명
+	
+	private String salesDeleteListKeys;
+	private String pcDeleteListKeys;
+	
+	List<ForecastSalesVO> forecastSalesVOList;
+	List<ForecastPcVO> forecastPcVOList;
 	
 	/**
 	 * @return the spKey
@@ -282,6 +298,31 @@ public class ForecastVO implements Serializable {
 	public void setPmDetail2(String pmDetail2) {
 		this.pmDetail2 = pmDetail2;
 	}
+	
+	public String getBdYn() {
+		return bdYn;
+	}
+	
+	public void setBdYn(String bdYn) {
+		this.bdYn = bdYn;
+	}
+	
+	public String getSpStartDt() {
+		return spStartDt;
+	}
+	
+	public void setSpStartDt(String spStartDt) {
+		this.spStartDt = spStartDt;
+	}
+	
+	public String getSpEndDt() {
+		return spEndDt;
+	}
+	
+	public void setSpEndDt(String spEndDt) {
+		this.spEndDt = spEndDt;
+	}
+	
 	/**
 	 * @return the fcSalesDtYr
 	 */
@@ -331,6 +372,23 @@ public class ForecastVO implements Serializable {
 	public void setFcCollectDtMt(String fcCollectDtMt) {
 		this.fcCollectDtMt = fcCollectDtMt;
 	}
+	
+	public String getFcBuyDtYr() {
+		return fcBuyDtYr;
+	}
+	
+	public void setFcBuyDtYr(String fcBuyDtYr) {
+		this.fcBuyDtYr = fcBuyDtYr;
+	}
+	
+	public String getFcBuyDtMt() {
+		return fcBuyDtMt;
+	}
+	
+	public void setFcBuyDtMt(String fcBuyDtMt) {
+		this.fcBuyDtMt = fcBuyDtMt;
+	}
+	
 	/**
 	 * @return the fcBuyPayDtYr
 	 */
@@ -427,6 +485,7 @@ public class ForecastVO implements Serializable {
 	public void setModEmpKey(String modEmpKey) {
 		this.modEmpKey = modEmpKey;
 	}
+	
 	/**
 	 * @return the serialversionuid
 	 */
@@ -494,5 +553,36 @@ public class ForecastVO implements Serializable {
 		this.pmDetailClassCd = pmDetailClassCd;
 	}
 	
+	public String getSalesDeleteListKeys() {
+		return salesDeleteListKeys;
+	}
+	
+	public void setSalesDeleteListKeys(String salesDeleteListKeys) {
+		this.salesDeleteListKeys = salesDeleteListKeys;
+	}
+	
+	public String getPcDeleteListKeys() {
+		return pcDeleteListKeys;
+	}
+	
+	public void setPcDeleteListKeys(String pcDeleteListKeys) {
+		this.pcDeleteListKeys = pcDeleteListKeys;
+	}
+	
+	public List<ForecastSalesVO> getForecastSalesVOList() {
+		return forecastSalesVOList;
+	}
+	
+	public void setForecastSalesVOList(List<ForecastSalesVO> forecastSalesVOList) {
+		this.forecastSalesVOList = forecastSalesVOList;
+	}
+	
+	public List<ForecastPcVO> getForecastPcVOList() {
+		return forecastPcVOList;
+	}
+	
+	public void setForecastPcVOList(List<ForecastPcVO> forecastPcVOList) {
+		this.forecastPcVOList = forecastPcVOList;
+	}
 	
 }

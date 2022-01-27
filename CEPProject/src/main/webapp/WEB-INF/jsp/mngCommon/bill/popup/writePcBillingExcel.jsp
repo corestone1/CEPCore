@@ -184,32 +184,56 @@
 </style>
 <script type="text/javaScript">
 	$(document).ready(function(){
-	
 	});
 	
-	function fnChooseExcel(){
+	function chk_file_type(obj) {
+
+		var file_kind = obj.value.lastIndexOf('.');
+		var file_name = obj.value.substring(file_kind+1,obj.length);
+		var file_type = file_name.toLowerCase();
+		var check_file_type=new Array();
+
+		check_file_type=['xlsx'];
+
+		if(check_file_type.indexOf(file_type)==-1) {
+			alert('xlsx 형식의 파일만 지원합니다.');
+			var parent_Obj=obj.parentNode;
+			var node=parent_Obj.replaceChild(obj.cloneNode(true),obj);
+
+			document.getElementById("excelFile").value = "";    //초기화를 위한 추가 코드
+			document.getElementById("excelFile").select();        //초기화를 위한 추가 코드
+
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	function fnChooseExcel(obj){
 		
-		var formData = new FormData();
-		formData.append("excelFile", $("#excelFile")[0].files[0]);
-		
-		$.ajax({ 
-				type: "POST", 
-				enctype: 'multipart/form-data',  
-				url: '/mngCommon/bill/excelFileUpload.do', 
-				data: formData, // 필수 
-				processData: false, // 필수 
-				contentType: false, // 필수 
-				cache: false, 
-				success: function (response) { 
-					console.log(response.billingList);
-					fnExcelDataSetting(response.billingList);
-				}, 
-				error: function(request, status, error) {
-					if(request.status != '0') {
-						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		if(chk_file_type(obj)) {
+			var formData = new FormData();
+			formData.append("excelFile", $("#excelFile")[0].files[0]);
+			
+			$.ajax({ 
+					type: "POST", 
+					enctype: 'multipart/form-data',  
+					url: '/mngCommon/bill/excelFileUpload.do', 
+					data: formData, // 필수 
+					processData: false, // 필수 
+					contentType: false, // 필수 
+					cache: false, 
+					success: function (response) { 
+						console.log(response.billingList);
+						fnExcelDataSetting(response.billingList);
+					}, 
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
 					}
-				}
-		});	
+			});	
+		}
 	}
 	
 	function fnExcelDataSetting(pobjBillingList) {
@@ -344,7 +368,7 @@
 			</div>
 			<div class="floatR">
 				<form id="excelFileForm" name="excelFileForm" method="post" enctype="multipart/form-data">
-					<input type="file" name="excelFile" id="excelFile" onchange="javascript:fnChooseExcel();"/>
+					<input type="file" name="excelFile" id="excelFile" onchange="javascript:fnChooseExcel(this);"/>
 				</form> 
 			</div>
 			<!-- <div class="floatC"></div>  -->

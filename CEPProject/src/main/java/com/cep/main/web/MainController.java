@@ -33,6 +33,7 @@ public class MainController {
 		HttpSession session = request.getSession();
 		HashMap<String, String> map = new HashMap<String, String>();
 		String name = "";
+		String empAuthCd = "";
 		String prevUrl = "";
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
@@ -47,6 +48,7 @@ public class MainController {
 		try { 
 			loginIdentify = service.loginCheck(map);
 			name = service.selectName(map);
+			empAuthCd = service.selectAuthCd(map).getEmpAuthCd();
 		} catch(Exception e) { 
 			log.error(null, e);
 		}
@@ -57,6 +59,8 @@ public class MainController {
 			log.info("로그인 성공");
 			//session.setAttribute("id", id);
 			//session.setAttribute("pw", pw);
+			log.info(empAuthCd+"=====================");
+			session.setAttribute("empAuthCd", empAuthCd);
 			session.setAttribute("name", name);
 			session.setAttribute("userInfo", map);
 			
@@ -84,6 +88,7 @@ public class MainController {
 		String logoutUrl = "main";
 		session = request.getSession();
 		session.removeAttribute("userInfo");
+		session.removeAttribute("url");
 		return logoutUrl;
 	}
 	
