@@ -391,6 +391,11 @@
 				$(this).siblings('.upload-name').css('cursor','default');
 				$(this).siblings('.upload-name').css('pointer-events','none');
 			});
+			
+			if($(parent.document).find(".title ul li.on").attr("id").includes("BD")) {
+				$(parent.document).find("#modMinInfo").addClass("dpNone");
+				$(parent.document).find("#delMinInfo").addClass("dpNone");
+			}
 		});
 		
 		function fn_addView(link){
@@ -547,7 +552,8 @@
 <body>
 	<form:form id="listForm" name="listForm" method="post">
 		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${pjKey}" />
-		<input type="hidden" id="ipt_bdKey" name="bdKey" value="${biddingInfo.bdKey}" />
+		<input type="hidden" id="ipt_bdKey" name="bdKey" value="${biddingVO.bdKey}" />
+		<input type="hidden" id="ipt_bdFile" name="bdFile" value="${biddingFileList }" />
 		<div class="contentsWrap">
 			<div class="contents">
 				<!-- 입찰정보 시작 -->
@@ -564,34 +570,31 @@
 								<tr>
 									<td>입찰보증증권</td>
 									<td>
-										
-										<c:out value="${biddingInfo.bdGbYn}"/>
-										<c:if test='${biddingInfo.bdGbYn eq "Y"}'>
+									 	<c:out value="${biddingVO.bdGbYn}"/>
+										<c:if test='${biddingVO.bdGbYn eq "Y"}'>
 											&nbsp;&nbsp;
 											( 진행상태&nbsp;:&nbsp;
 											<c:choose>
-												<c:when test='${biddingInfo.bdGbFinishYn eq "N"}'>
+												<c:when test='${biddingVO.bdGbFinishYn eq "N"}'>
 													발행전 ) &nbsp;&nbsp;
 													<span style="cursor: hand;">
 														<img src="/images/btn_stock_publish.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
-												<c:when test='${biddingInfo.bdGbFinishYn eq "R"}'>
+												<c:when test='${biddingVO.bdGbFinishYn eq "R"}'>
 													발행요청 ) &nbsp;&nbsp;
 													<span style="cursor: hand;">
 														<img src="/images/btn_stock_end.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
-												<c:when test='${biddingInfo.bdGbFinishYn eq "Y"}'>
+												<c:when test='${biddingVO.bdGbFinishYn eq "Y"}'>
 													발행완료 ) &nbsp;&nbsp;
 													<span style="cursor: hand;">
 														<img src="/images/btn_stock_mod.png"     onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
 											</c:choose>
-											
-											
-										</c:if>
+										</c:if> 
 									</td>
 								</tr>
 								<tr>
@@ -600,26 +603,30 @@
 										<ul>
 											<c:forEach var="result" items="${biddingFileList}" varStatus="status">
 												<li>
-													<c:out value="${result.bdFileDocNm}"/> 
-													<c:if test='result.bdFileKindCd eq "BDFL1199"'>
-														(<c:out value="${result.bdFileDocNmEtc}"/>)
-													</c:if>
-													: <c:out value="${result.bdDocCnt}"/>
+													<c:choose>
+														<c:when test="${result.bdFileKindCd eq 'BDFL1199'}">
+															<c:out value="${result.bdFileDocNm}"/>
+														</c:when>
+														<c:otherwise>
+															<c:out value="${result.cdNm}"/> 
+														</c:otherwise>
+													</c:choose>
+													- <c:out value="${result.bdDocCnt}부"/>
 												</li>
-											</c:forEach>
+											</c:forEach> 
 										</ul>
 									</td>
 								</tr>
 								<tr>
 									<td>입찰기한</td>
-									<td><c:out value="${displayUtil.displayDate(biddingInfo.bdLimitDt)}"/>&nbsp<c:out value="${displayUtil.displayTime(biddingInfo.bdLimitTm)}"/></td>
+									<td><c:out value="${displayUtil.displayDate(biddingVO.bdLimitDt)}"/>&nbsp<c:out value="${displayUtil.displayTime(biddingVO.bdLimitTm)}"/></td>
 								</tr>
 								<tr>
 									<td>제안서</td>
 									<td>
-										<c:out value="${biddingInfo.bdProposalYn}"/>
-										<c:if test='${biddingInfo.bdProposalYn.equals("Y")}'> 
-											/ 마감기한 : <c:out value="${ displayUtil.displayDate(biddingInfo.bdProposalDueDt)}"/>&nbsp<c:out value="${ displayUtil.displayTime(biddingInfo.bdProposalDueTm)}"/>
+										<c:out value="${biddingVO.bdProposalYn}"/>
+										<c:if test='${biddingVO.bdProposalYn.equals("Y")}'> 
+											/ 마감기한 : <c:out value="${ displayUtil.displayDate(biddingVO.bdProposalDueDt)}"/>&nbsp<c:out value="${ displayUtil.displayTime(biddingVO.bdProposalDueTm)}"/>
 										</c:if>
 									</td>
 									
@@ -628,11 +635,10 @@
 								<tr>
 									<td>제안발표</td>
 									<td>
-										<!-- Y / 접수마감 2019.09.12 15:00 -->
-										<c:out value="${biddingInfo.bdProposalPresentYn}"/>
-										<c:if test='${biddingInfo.bdProposalPresentYn.equals("Y")}'> 
-											/ 발표일자 : <c:out value="${ displayUtil.displayDate(biddingInfo.bdProposalPresentDt)}"/>&nbsp<c:out value="${ displayUtil.displayTime(biddingInfo.bdProposalPresentTm)}"/>
-										</c:if>
+										<c:out value="${biddingVO.bdProposalPresentYn}"/>
+										<c:if test='${biddingVO.bdProposalPresentYn.equals("Y")}'> 
+											/ 발표일자 : <c:out value="${ displayUtil.displayDate(biddingVO.bdProposalPresentDt)}"/>&nbsp<c:out value="${ displayUtil.displayTime(biddingVO.bdProposalPresentTm)}"/>
+										</c:if> 
 									</td>
 								</tr>
 								<tr>
@@ -655,7 +661,7 @@
 									<td>입찰보증증권</td>
 									<td>
 										<c:choose>
-											<c:when test='${biddingInfo.bdGbYn eq "Y"}'>
+											<c:when test='${biddingVO.bdGbYn eq "Y"}'>
 												<c:set var="bdGbY" value="checked"/>
 											</c:when>
 											<c:otherwise>
@@ -771,7 +777,7 @@
 														<c:out value="${BDFL1130_Cnt}" />
 													</label>
 													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-												</div>
+												</div> 
 											</li>
 											<li>
 												<div class="floatL">
@@ -799,7 +805,7 @@
 														<c:out value="${BDFL1150_Cnt}" />
 													</label>
 													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-												</div>
+												</div> 
 											</li>
 											<li>
 												<div class="floatL">
@@ -813,7 +819,7 @@
 														<c:out value="${BDFL1160_Cnt}" />
 													</label>
 													<a href="#"  class="increaseQuantity"><img src="<c:url value='/images/ic_plus.png'/>"/></a>
-												</div>
+												</div> 
 											</li>
 											<li>
 												<div class="floatL">
@@ -836,49 +842,49 @@
 								<tr>
 									<td>입찰기한</td>
 									<td>
-										<input name="bdLimitDt" class="calendar" type="text" value="${displayUtil.displayDate(biddingInfo.bdLimitDt)}" />
+										<input name="bdLimitDt" class="calendar" type="text" value="${displayUtil.displayDate(biddingVO.bdLimitDt)}" />
 										<select name="bdLimitDt">
 										
-											<option <c:if test='${biddingInfo.bdLimitTm eq "0900"}'>selected</c:if>>09:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1000"}'>selected</c:if>>10:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1100"}'>selected</c:if>>11:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1200"}'>selected</c:if>>12:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1300"}'>selected</c:if>>13:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1400"}'>selected</c:if>>14:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1500"}'>selected</c:if>>15:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1600"}'>selected</c:if>>16:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1700"}'>selected</c:if>>17:00</option>
-											<option <c:if test='${biddingInfo.bdLimitTm eq "1800"}'>selected</c:if>>18:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "0900"}'>selected</c:if>>09:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1000"}'>selected</c:if>>10:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1100"}'>selected</c:if>>11:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1200"}'>selected</c:if>>12:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1300"}'>selected</c:if>>13:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1400"}'>selected</c:if>>14:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1500"}'>selected</c:if>>15:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1600"}'>selected</c:if>>16:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1700"}'>selected</c:if>>17:00</option>
+											<option <c:if test='${biddingVO.bdLimitTm eq "1800"}'>selected</c:if>>18:00</option>
 										</select>
 									</td>
 								</tr>
 								<tr>
 									<td>제안서</td>
 									<td>
-										<c:if test='${biddingInfo.bdProposalYn eq "Y"}'>
+										<c:if test='${biddingVO.bdProposalYn eq "Y"}'>
 											<c:set var="bdProposalY" value="checked"/> 
 										</c:if>
-										<c:if test='${biddingInfo.bdProposalYn eq "N"}'>
+										<c:if test='${biddingVO.bdProposalYn eq "N"}'>
 											<c:set var="bdProposalN" value="checked"/> 
 										</c:if>
 										<label class="radio"><input type="radio" name="bdProposalYn" value="Y" <c:out value="${bdProposalY}" /> /><span class="ico"></span><span class="text">Y</span></label>
 										<label class="radio"><input type="radio" name="bdProposalYn" value="N" <c:out value="${bdProposalN}" /> /><span class="ico"></span><span class="text">N</span></label>
 										
 										<span class="bizPlan">
-											<c:if test='${biddingInfo.bdProposalYn eq "Y"}'>
+											<c:if test='${biddingVO.bdProposalYn eq "Y"}'>
 												<label class="title">접수마감</label>
-												<input name="bdProposalDueDt" class="calendar" type="text" value="${displayUtil.displayDate(biddingInfo.bdProposalDueDt)}"/>
+												<input name="bdProposalDueDt" class="calendar" type="text" value="${displayUtil.displayDate(biddingVO.bdProposalDueDt)}"/>
 												<select name="bdProposalDueTm">
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "0900"}'>selected</c:if>>09:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1000"}'>selected</c:if>>10:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1100"}'>selected</c:if>>11:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1200"}'>selected</c:if>>12:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1300"}'>selected</c:if>>13:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1400"}'>selected</c:if>>14:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1500"}'>selected</c:if>>15:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1600"}'>selected</c:if>>16:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1700"}'>selected</c:if>>17:00</option>
-													<option <c:if test='${biddingInfo.bdProposalDueTm eq "1800"}'>selected</c:if>>18:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "0900"}'>selected</c:if>>09:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1000"}'>selected</c:if>>10:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1100"}'>selected</c:if>>11:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1200"}'>selected</c:if>>12:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1300"}'>selected</c:if>>13:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1400"}'>selected</c:if>>14:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1500"}'>selected</c:if>>15:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1600"}'>selected</c:if>>16:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1700"}'>selected</c:if>>17:00</option>
+													<option <c:if test='${biddingVO.bdProposalDueTm eq "1800"}'>selected</c:if>>18:00</option>
 												</select>
 											</c:if>
 										</span>
@@ -887,10 +893,10 @@
 								<tr>
 									<td>제안발표</td>
 									<td>
-										<c:if test='${biddingInfo.bdProposalPresentYn eq "Y"}'>
+										<c:if test='${biddingVO.bdProposalPresentYn eq "Y"}'>
 											<c:set var="bdProposalPresentY" value="checked"/> 
 										</c:if>
-										<c:if test='${biddingInfo.bdProposalPresentYn eq "N"}'>
+										<c:if test='${biddingVO.bdProposalPresentYn eq "N"}'>
 											<c:set var="bdProposalPresentN" value="checked"/> 
 										</c:if>
 										
@@ -898,18 +904,18 @@
 										<label class="radio"><input type="radio" name="bdProposalPresentYn" value="N" <c:out value="${bdProposalPresentN}" /> /><span class="ico"></span><span class="text">N</span></label>
 										<span class="announce">
 											<label class="title">발표시간</label>
-											<input name="bdProposalPresentDt" class="calendar" type="text" value="${displayUtil.displayDate(biddingInfo.bdProposalPresentDt)}"/>
+											<input name="bdProposalPresentDt" class="calendar" type="text" value="${displayUtil.displayDate(biddingVO.bdProposalPresentDt)}"/>
 											<select>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "0900"}'>selected</c:if>>09:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1000"}'>selected</c:if>>10:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1100"}'>selected</c:if>>11:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1200"}'>selected</c:if>>12:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1300"}'>selected</c:if>>13:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1400"}'>selected</c:if>>14:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1500"}'>selected</c:if>>15:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1600"}'>selected</c:if>>16:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1700"}'>selected</c:if>>17:00</option>
-												<option <c:if test='${biddingInfo.bdProposalPresentTm eq "1800"}'>selected</c:if>>18:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "0900"}'>selected</c:if>>09:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1000"}'>selected</c:if>>10:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1100"}'>selected</c:if>>11:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1200"}'>selected</c:if>>12:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1300"}'>selected</c:if>>13:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1400"}'>selected</c:if>>14:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1500"}'>selected</c:if>>15:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1600"}'>selected</c:if>>16:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1700"}'>selected</c:if>>17:00</option>
+												<option <c:if test='${biddingVO.bdProposalPresentTm eq "1800"}'>selected</c:if>>18:00</option>
 											</select>
 										</span>
 									</td>
@@ -917,11 +923,11 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<c:forEach var="result" items="${fileList }" varStatus="status">
+										<%-- <c:forEach var="result" items="${fileList }" varStatus="status">
 											<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
 											<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
 											<c:if test="${status.last eq false}"><br /></c:if>
-										</c:forEach>
+										</c:forEach>  --%>
 									</td>
 								</tr>
 							</table>
@@ -963,9 +969,9 @@
 	             
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">
-		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
-		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
-		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
+		<input type="hidden" name="checkedDel" value="" />
+		<input type="hidden" name="id" value=""/>
+		<input type="hidden" name="atchFileId" value=""/>
 		<input type="hidden" name="fileKey" value=""/>
 		<input type="hidden" name="fileOrgNm" value=""/>
 		<input type="hidden" name="fileType" value="cdc"/>

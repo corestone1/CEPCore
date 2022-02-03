@@ -48,10 +48,10 @@
 		}
 		.popContainer .contents > div {
 			width: calc(100% - 80px) !important;
-			margin: 10px 40px 15px 40px;
+			margin: 10px 40px 0 40px;
 		}
 		.popContainer .contents > div:first-child {
-			min-height: 519px;
+			min-height: 529px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate;
@@ -116,6 +116,15 @@
 			vertical-align: inherit;		
 			padding-right: 18px;
 		}		
+		.popContainer .contents tr.first td span {
+		    font-size: 14px;
+    		margin-right: 10px;: 
+		}
+		.popContainer .contents tr.first td:nth-child(2) {
+			padding-left: 134px;
+    		padding-right: 0;
+		}
+		
 		.popContainer .contents tr > td {
 			font-size: 14px;						
 			padding-right: 10px;
@@ -127,6 +136,13 @@
 		.popContainer .contents input[class="amount"] {
 			text-align: right;
 		} 
+		.popContainer .contents .gtlabel {
+			font-size: 13px;
+			display: block;
+			margin-bottom: 4px;
+			color: #f59348;
+		}
+		
 		/* .popContainer tr:nth-child(1) {
 			border-collapse: collapse;
 			border-bottom-color: #e5e5e5;			
@@ -219,10 +235,27 @@
 		}
 		
 		function fn_chkVali() {
+			var returnVal = true;
 			if ($("#gbListForm")[0].checkValidity()){
 	            if ($("#gbListForm")[0].checkValidity()){
-	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_save();
+	            	
+	            	/* $(".calendar").each(function () {
+	    				if($(this).val().length < 11) {
+	    					alert("올바른 날짜 형식을 입력해주세요.");
+	    					returnVal = false;
+	    					
+	    					var e = jQuery.Event("keypress");
+	    					$(this).trigger(e);
+	    					
+	    					return false;
+	    				} 
+	    			});
+	            	
+	            	if(returnVal == true) { */
+            		 	//필수값 모두 통과하여 저장 프로세스 호출.
+	 	               fn_save();
+	            /* 	}  */
+	            	
 	            } else {
 	                $("#gbListForm")[0].reportValidity();   
 	            }            
@@ -321,7 +354,15 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			}
 			else {
-				if($("input[name='ctGbKey']").val().length != 0 || $("input[name='dfGbKey']").val().length != 0 || $("input[name='ppGbKey']").val().length != 0) {
+				var isUpdate = false;
+				<c:forEach items="${salesList}" var="result">
+					if("${result.salesBillFcDt}" != "" && "${result.salesBillFcDt}" != null 
+							&& "${result.salesCollectFcDt}" != "" && "${result.salesCollectFcDt}" != null) {
+						isUpdate = true;
+					}
+				</c:forEach>
+				
+				/* if(isUpdate) { */
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
@@ -330,9 +371,9 @@
 					var button = new Array;
 					button = [];
 					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
-				} else {
+				/* } else {
 					alert('저장을 해주세요.');
-				}
+				} */
 			}
 		}
 		
@@ -376,10 +417,19 @@
 		}
 		
 		$(document).ready(function() {
-			if($("input[name='ctGbKey']").val().length != 0 || $("input[name='dfGbKey']").val().length != 0 || $("input[name='ppGbKey']").val().length != 0) {
+			var isUpdate = false;
+			<c:forEach items="${salesList}" var="result">
+				if("${result.salesBillFcDt}" != "" && "${result.salesBillFcDt}" != null 
+						&& "${result.salesCollectFcDt}" != "" && "${result.salesCollectFcDt}" != null) {
+					isUpdate = true;
+				}
+			</c:forEach>
+			
+			
+			if(isUpdate) {
 				$('.btnSave').children().eq(0).html('');
-				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
-			} 
+				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />');
+			}
 			
 			
 		});
@@ -401,6 +451,8 @@
 			</ul>
 		</div>
 		<form:form commandName="gbListForm" id="gbListForm" name="gbListForm" method="post">
+			<input type="hidden" id="spKey" value="${forecastVO.spKey }" />
+			<input type="hidden" id="salesBillFcDt" value="${result.salesBillFcDt eq null }" />
  			<div class="contents">
 				<div>
 					<div id="infoTable">
@@ -408,28 +460,33 @@
 					<c:set var="length" value="0" />
 					<c:choose>
 						<c:when test="${guarantyList eq null || fn:length(guarantyList) eq 0}">
-							<c:forEach var="result" items="${salesList }" varStatus="status">
+							<%-- <c:forEach var="result" items="${salesList }" varStatus="status"> --%>
 								<table>
 									<tr class='first'>
-										<td colspan='2' style='min-width: 96px;'><c:out value="${result.salesTurn}" />회차 일정</td>
+										<td colspan='2' style='min-width: 96px;'><%-- <c:out value="${result.salesTurn}" /> --%>일정</td>
 										<td>
-											<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' value='${displayUtil.displayDate(result.salesBillFcDt) }' required/> &nbsp;
-											<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' value='${displayUtil.displayDate(result.salesCollectFcDt) }' required/>
+											<span>계산서 예정</span>
+											<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' 
+												value='<c:choose><c:when test="${result.salesBillFcDt eq null }"><c:if test="${forecastVO.fcSalesDt ne null }">${ displayUtil.displayDate(forecastVO.fcSalesDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesBillFcDt) }</c:otherwise></c:choose>' required/> &nbsp;
+											<span style="margin-left: 13px;">수금 예상</span>
+											<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' 
+												value='<c:choose><c:when test="${result.salesCollectFcDt eq null }"><c:if test="${forecastVO.fcCollectDt ne null }">${ displayUtil.displayDate(forecastVO.fcCollectDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesCollectFcDt) }</c:otherwise></c:choose>' required/>
 											<input type='hidden' name='ctKey' id='ctKey' value='${ctVO.ctKey }' />
 											<input type='hidden' name='salesKey' value='${result.salesKey}' />
 											<input type='hidden' value='${status.count }' name='salesTurn' />
 										</td>
 										<td colspan='3'></td>
 								 	</tr>
-									 <tr class='ftw200'>
-										 <td>
+								 	<tr><td colspan='5'><label class="gtlabel ftw200">※ 프로젝트 수정 화면에서 보증 증권 발행을 신청할 수 있습니다.</label></td></tr>
+									<tr class='ftw200'>
+									 	<td>
 										 	 <input type="hidden" name="ctGbKey" id="ctGbKey${status.count }" value="" />
 											 <input type='checkbox' name='ctGuarantyCheck'  class='tCheck' id='check${ temp + 1}-1' />
 											 <%-- class='tCheck' id='check${ temp + 1}-1' onclick='check_click(${temp+1},1)'/> --%>
 											 <label for='check${ temp + 1}-1' class='cursorP'></label>
 											 <input type='hidden' name='ctGuarantyYN' value='N' />
-										 </td>						
-										 <td>계약 보증 증권 정보</td>
+										</td>						
+										<td>계약 보증 증권 정보</td>
 										 <%-- <td id='step${ temp + 1}-1' style='visibility:hidden'>
 											 <input type='text' id='from${ temp + 1}' placeholder='from' class='calendar' name='ctGuarantyStartDt' /> ~ 
 											 <input type='text' id='to${ temp + 1}' placeholder='to' class='calendar' name='ctGuarantyEndDt' />
@@ -492,22 +549,27 @@
 									</table> 
 									<c:set var="temp" value="${temp + 3}"/>
 									<c:set var="length" value="${length + 1 }" />
-								</c:forEach> 
+								<%-- </c:forEach>  --%>
 							</c:when>
 							<c:otherwise>
-								<c:forEach var="entry" items="${salesList }" varStatus="status">
+								<%-- <c:forEach var="entry" items="${salesList }" varStatus="status"> --%>
 									<table>
 										<tr class='first'>
-											<td colspan='2' style='min-width: 96px;'><c:out value="${entry.salesTurn }" />회차 일정</td>
+											<td colspan='2' style='min-width: 96px;'><%-- <c:out value="${entry.salesTurn }" />회차 --%>일정</td>
 											<td>
-												<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' value='${displayUtil.displayDate(entry.salesBillFcDt) }' required/> &nbsp;
-												<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' value='${displayUtil.displayDate(entry.salesCollectFcDt) }' required/>
+												<span>계산서 예정</span>
+												<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' 
+													value='<c:choose><c:when test="${result.salesBillFcDt eq null }"><c:if test="${forecastVO.fcSalesDt ne null }">${ displayUtil.displayDate(forecastVO.fcSalesDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesBillFcDt) }</c:otherwise></c:choose>' required/> &nbsp;
+												<span style="margin-left: 13px;">수금 예상</span>
+												<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' 
+													value='<c:choose><c:when test="${result.salesCollectFcDt eq null }"><c:if test="${forecastVO.fcCollectDt ne null }">${ displayUtil.displayDate(forecastVO.fcCollectDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesCollectFcDt) }</c:otherwise></c:choose>' required/>
 												<input type='hidden' name='salesKey' value='${entry.salesKey}' />
 												<input type='hidden' name='ctKey' id='ctKey' value='${ctVO.ctKey }' />
 												<input type='hidden' value='${entry.salesTurn }' name='salesTurn' />
 											</td>
 											<td colspan='3'></td>
 										</tr>
+										<tr><td colspan='5'><label class="gtlabel ftw200">※ 프로젝트 수정 화면에서 보증 증권 발행을 신청할 수 있습니다.</label></td></tr>
 										<c:forEach var="result" items="${guarantyList }" varStatus="status">
 											<c:if test="${entry.salesKey eq result.salesKey && result.gbKindCd eq '계약'}">
 												<script>fn_remove('nData${temp+1}');</script>
@@ -664,7 +726,7 @@
 									</table> 
 									<c:set var="temp" value="${temp + 3}"/>
 									<c:set var="length" value="${length + 1 }" />
-								</c:forEach>  
+								<%-- </c:forEach>   --%>
 							</c:otherwise>
 						</c:choose>
 					</div>

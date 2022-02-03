@@ -30,7 +30,7 @@ public class AccountVO extends SampleDefaultVO implements Serializable {
 
 	private int    rowNum;
 	private String acKey;
-	private int    acBusiNum;
+	private String acBusiNum;
 	private String acSalesYn;
 	private String acBuyYn;
 	private String acNm;
@@ -45,6 +45,8 @@ public class AccountVO extends SampleDefaultVO implements Serializable {
 	private String modDt;
 	private String modTm;
 	private String modEmpKey;
+	private String deleteDirectorList;
+	private String deleteDepositList;
 	private List<AccountDirectorVO> accountDirectorVO;
 	private List<AccountDepositVO> accountDepositVO;
 	
@@ -63,13 +65,13 @@ public class AccountVO extends SampleDefaultVO implements Serializable {
 	/**
 	 * @return the acBusiNum
 	 */
-	public int getAcBusiNum() {
+	public String getAcBusiNum() {
 		return acBusiNum;
 	}
 	/**
 	 * @param acBusiNum the acBusiNum to set
 	 */
-	public void setAcBusiNum(int acBusiNum) {
+	public void setAcBusiNum(String acBusiNum) {
 		this.acBusiNum = acBusiNum;
 	}
 	/**
@@ -260,6 +262,22 @@ public class AccountVO extends SampleDefaultVO implements Serializable {
 		return serialVersionUID;
 	}
 	
+	
+	public String getDeleteDirectorList() {
+		return deleteDirectorList;
+	}
+	
+	public void setDeleteDirectorList(String deleteDirectorList) {
+		this.deleteDirectorList = deleteDirectorList;
+	}
+	
+	public String getDeleteDepositList() {
+		return deleteDepositList;
+	}
+	
+	public void setDeleteDepositList(String deleteDepositList) {
+		this.deleteDepositList = deleteDepositList;
+	}
 	public List<AccountDirectorVO> getAccountDirectorVO() {
 		return accountDirectorVO;
 	}

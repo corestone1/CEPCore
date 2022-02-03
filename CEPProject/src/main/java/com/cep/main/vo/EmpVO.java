@@ -12,6 +12,7 @@ public class EmpVO extends ComDefaultVO implements Serializable {
 	private String empKey;
 	private String empPw;
 	private Boolean isNewPw;
+	private String empAuthCd;
 	
 	public String getEmpKey() {
 		return empKey;
@@ -30,6 +31,12 @@ public class EmpVO extends ComDefaultVO implements Serializable {
 	}
 	public void setIsNewPw(Boolean isNewPw) {
 		this.isNewPw = isNewPw;
+	}
+	public String getEmpAuthCd() {
+		return empAuthCd;
+	}
+	public void setEmpAuthCd(String empAuthCd) {
+		this.empAuthCd = empAuthCd;
 	}
 	
 }

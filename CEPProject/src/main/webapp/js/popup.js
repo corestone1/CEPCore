@@ -24,7 +24,6 @@ function showModalPop(id, url, data, button, title, args) {
 
    for(i = 0; i < mdattrs.length; i++) {
       var mdattr = mdattrs[i].split(":");
-
       var n = mdattr[0];
       var v = mdattr[1];
       

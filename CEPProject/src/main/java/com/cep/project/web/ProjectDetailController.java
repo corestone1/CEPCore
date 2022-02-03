@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cep.forecast.service.ForecastService;
+import com.cep.forecast.vo.ForecastBiddingFileVO;
+import com.cep.forecast.vo.ForecastBiddingVO;
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.project.service.ProjectDetailService;
 import com.cep.project.vo.ProjectBiddingVO;
@@ -47,6 +50,9 @@ public class ProjectDetailController {
 	
 	@Resource(name="projectDetailService")
 	private ProjectDetailService service;
+	
+	@Resource(name="forecastService")
+	private ForecastService forecastService;
 	
 	@Resource(name="comService")
 	private ComService comService;
@@ -144,7 +150,7 @@ public class ProjectDetailController {
 	@RequestMapping(value="/biddingMin.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewDetailBidding(@ModelAttribute("projectVO") ProjectVO projectVO, ModelMap model) throws Exception {
 		
-		logger.debug("== pkKey : {}", projectVO.getPjKey());
+		/*logger.debug("== pkKey : {}", projectVO.getPjKey());
 		List<?> fileResult = null;
 		FileVO fileVO = new FileVO();
 		
@@ -170,16 +176,51 @@ public class ProjectDetailController {
 			fileResult = fileMngService.selectFileList(fileVO);
 			
 			//입찰 보증증권 정보 조회
-			/*
+			
 			if(egmBidding != null && egmBidding.get("bdGbYn") != null && egmBidding.get("bdGbYn").equals("Y"))
 			{
 				model.addAttribute("biddingGbInfo", service.selectBiddingGbInfo(projectVO));
 			}
-			*/
+			
 			
 			model.addAttribute("pjKey", projectVO.getPjKey());
 			model.addAttribute("displayUtil", new CepDisplayUtil());
+			model.addAttribute("fileList", fileResult);*/
+			
+			
+		try {	
+			
+			List<?> biddingFileList = null;
+			List<?> fileResult = null;
+			FileVO fileVO = new FileVO();
+			
+			ForecastBiddingFileVO forecastBiddingFileVO = new ForecastBiddingFileVO();
+			
+			String spKey = service.selectProjectDetail(projectVO).get("spKey").toString();
+			model.addAttribute("spKey", spKey);
+			
+			forecastBiddingFileVO.setSpKey(spKey);
+			ForecastBiddingVO biddingVO = forecastService.selectBiddingDetail(forecastBiddingFileVO);
+			model.addAttribute("biddingVO", biddingVO);
+			
+			if(biddingVO != null) {
+				forecastBiddingFileVO.setBdKey(biddingVO.getBdKey());
+				biddingFileList = forecastService.selectBiddingFileList(forecastBiddingFileVO);
+			}
+			model.addAttribute("biddingFileList", biddingFileList);
+			
+			fileVO.setFileCtKey(spKey);
+			fileVO.setFileWorkClass(projectVO.getWorkClass());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
+			
+			model.addAttribute("biddingInfo", forecastService.selectForecast(forecastBiddingFileVO));
+			
+			model.put("displayUtil", new CepDisplayUtil());
 			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);
+			model.addAttribute("maxFileSize", maxFileSize);
 			
 		} catch(Exception e) {
 //			model.put("successYN", "N");
@@ -343,6 +384,7 @@ public class ProjectDetailController {
 			model.addAttribute("contractInfo", service.selectContractInfo(projectVO));
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			model.addAttribute("projectInfo", projectVO);
+			model.addAttribute("salesList", service.selectSalesDetailList(projectVO));
 			
 		}catch(Exception e){
 			logger.error("{}", e);

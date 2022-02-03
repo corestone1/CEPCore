@@ -11,4 +11,5 @@ public interface MainMapper {
 	int selectEmp(HashMap<String, String> map) throws Exception;
 	int updatePassword(EmpVO empVo) throws Exception;
 	String selectName(HashMap<String, String> map) throws Exception;
+	EmpVO selectAuthCd(HashMap<String, String> map) throws Exception;
 }

@@ -47,7 +47,7 @@
 			width: 37%;
 		}
 		.listForm .contents > div:nth-child(2) {
-			margin-top: 51px;
+			margin-top: 27px;
 		}
 		.listForm .contents > .fxd {
 			width: 60%;
@@ -346,6 +346,16 @@
 			color: red;
 			vertical-align: middle;
 		}
+		.backWrap a {
+		    color: #000;
+		    font-weight: 300;
+		    font-size: 15px;
+		    text-decoration: underline;
+		    cursor: pointer;
+		}
+		.backWrap a:hover {
+		    color: #007AAE;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -358,12 +368,20 @@
 			
 			$("iframe").attr("src", newUrl);
 		});
+		
+		function fn_detail() {
+			form = document.moveForm;
+			form.workClass.value = "입찰_첨부파일";
+			form.action = "<c:url value='/project/detail/main.do'/>";
+			
+			form.submit(); 
+		}
 	</script>
 </head>
 <body>
 	<div id="listForm" class="listForm">
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
@@ -425,6 +443,9 @@
 					</div>
 				</div>
 				<div class="floatR dpBlock fxd">
+					<div class="floatR backWrap">
+						<a onclick="fn_detail();">프로젝트 정보로 돌아가기</a>
+					</div>
 					<iframe src="" width="100%" height="740"></iframe>
 				</div>
 				<div class="floatC"></div>
@@ -434,5 +455,9 @@
 	<div class="wrap-loading dpNone">
     	<div><img src="<c:url value='/images/ajax_loader.gif'/>" /></div>
 	</div> 
+	<form id="moveForm" name="moveForm">
+		<input type="hidden" id="pjKey" name="pjKey" value="${resultList[0].pjKey }"/>
+		<input type="hidden" id="workClass" name="workClass" value=""/>
+	</form>
 </body>
 </html>

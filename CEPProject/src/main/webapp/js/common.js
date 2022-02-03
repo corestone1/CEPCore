@@ -348,5 +348,56 @@ $(window).load(function() {
 		$(this).parent().next().addClass("trcheckcolor");
 	});
 	
-
+	$("#excelExport").click(function() {
+		exportExcel($(document).find("title").text());
+	});
 });
+
+function itoStr($num) {
+	$num < 10 ? $num = '0'+$num : $num;
+	return $num.toString();
+}
+
+// Excel export
+function exportExcel(pageTitle) { 
+	var dt = new Date();
+	var year =	itoStr( dt.getFullYear() );
+	var month = itoStr( dt.getMonth() + 1 );
+	var day =	itoStr( dt.getDate() );
+	var hour =	itoStr( dt.getHours() );
+	var mins =	itoStr( dt.getMinutes() );
+
+	var postfix = year + month + day + "_" + hour + mins;
+	var fileName = pageTitle+"_"+ postfix;
+
+	var excelHandler = {
+	    getExcelFileName : function(){
+	        return fileName + '.xlsx';	//파일명
+	    },
+	    getSheetName : function(){
+	        return pageTitle;	//시트명
+	    },
+	    getExcelData : function(){
+	        return document.getElementsByClassName('excelSheet')[0]; 	//TABLE id
+	    },
+	    getWorksheet : function(){
+	        return XLSX.utils.table_to_sheet(this.getExcelData());
+	    }
+	}
+	
+	var wb = XLSX.utils.book_new();
+	var newWorksheet = excelHandler.getWorksheet();
+	
+	XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName());
+	
+	var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+	saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());
+}
+
+
+function s2ab(s) { 
+  var buf = new ArrayBuffer(s.length); 
+  var view = new Uint8Array(buf);  
+  for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+  return buf;    
+}

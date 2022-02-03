@@ -21,6 +21,7 @@ import com.cep.mngCommon.code.vo.CodeSearchVO;
 import com.cep.mngCommon.product.service.ProductService;
 import com.cep.mngCommon.product.vo.ProductSearchVO;
 import com.cep.mngCommon.product.vo.ProductVO;
+import com.cmm.util.CepDisplayUtil;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -50,6 +51,8 @@ public class ProductController {
 		logger.debug("searchVO.getProductName()     :: {}", searchVO.getProductName());
 		
 		List<ProductVO> lltProduct = service.selectProductList(searchVO);
+		
+		model.put("displayUtil", new CepDisplayUtil());
 		
 		model.put("productList", lltProduct);
 		
@@ -101,9 +104,38 @@ public class ProductController {
 		model.put("returnKey",  searchVO.getReturnKey());
 		model.put("returnNm",   searchVO.getReturnNm());
 		
+		model.put("displayUtil", new CepDisplayUtil());
+		
 		model.put("productList", lltProduct);
 		
 		return "mngCommon/product/popup/searchList";
+	}
+	
+	@RequestMapping(value="/popup/orderSearchListPopup.do")
+	public String selectPopupOrderProduct(@ModelAttribute("searchVO") ProductSearchVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
+		
+		
+		logger.debug("searchVO.getProductDivision() :: {}", searchVO.getProductDivision());
+		logger.debug("searchVO.getProductFlag()     :: {}", searchVO.getProductFlag());
+		logger.debug("searchVO.getProductMake()     :: {}", searchVO.getProductMake());
+		logger.debug("searchVO.getProductName()     :: {}", searchVO.getProductName());
+		
+		logger.debug("searchVO.getReturnType()    :: {}", searchVO.getReturnType());
+		logger.debug("searchVO.getReturnKey()     :: {}", searchVO.getReturnKey());
+		logger.debug("searchVO.getReturnNm()      :: {}", searchVO.getReturnNm());
+		
+		searchVO.setSearchKey(request.getParameter("searchKey"));
+		List<ProductVO> lltProduct = service.selectOrderProductList(searchVO);
+		
+		model.put("returnType", searchVO.getReturnType());
+		model.put("returnKey",  searchVO.getReturnKey());
+		model.put("returnNm",   searchVO.getReturnNm());
+		
+		model.put("displayUtil", new CepDisplayUtil());
+		
+		model.put("productList", lltProduct);
+		
+		return "mngCommon/product/popup/orderSearchList";
 	}
 	    
 	@RequestMapping(value="/write.do")

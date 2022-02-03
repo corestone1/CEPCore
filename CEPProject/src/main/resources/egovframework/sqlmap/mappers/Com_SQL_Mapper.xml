@@ -47,6 +47,16 @@
 		ORDER BY EMP_NM		
 	</select>
 	
+	<!-- 부서리스트 조회 -->
+	<select id="selectDepartmentList" parameterType="com.cmm.vo.DepartmentVO" resultType="egovMap">			
+		SELECT DEPT_KEY
+			, DEPT_NM
+		FROM CMM_DEPARTMENT_TB
+		<if test="deptLevel != null and deptLevel != 0">
+		WHERE DEPT_LEVEL = #{deptLevel}
+		</if>
+	</select>
+	
 	<!-- 부서별 사원리스트 조회(메일용) -->
 	<select id="selectDeptEmployeeList" parameterType="String" resultType="java.util.HashMap">			
 		SELECT EMP_KEY AS empKey

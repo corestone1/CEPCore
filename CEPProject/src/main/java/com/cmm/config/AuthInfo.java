@@ -26,9 +26,9 @@ public enum AuthInfo {
 	 * MAIL_SEND_NAME : 보내는 이 메일 이름
 	 * MAIL_SUBJECT : 메일 제목(기본)
 	 */
-	AUTH_SUPER("00000000")
-	, AUTH_USER("00000001")
-	, AUTH_ANONYMOUS("00000002")
+	AUTH_ADMIN("EMAU1001")
+	, AUTH_SUPER_USER("EMAU1002")
+	, AUTH_USER("EMAU1003")
 	;
 	
 	private String value;

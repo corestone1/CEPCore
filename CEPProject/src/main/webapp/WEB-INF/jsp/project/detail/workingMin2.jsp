@@ -209,36 +209,32 @@
 			margin: 0 auto;
 		}
 		.contents .dtl tbody tr td img {
-			width: 13px;
 			vertical-align: middle;
-			margin-bottom: 5px;
 		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			
+			$(parent.document).find("#modMinInfo").removeClass("dpNone");
+			$(parent.document).find("#delMinInfo").removeClass("dpNone");
 		});
 		
 		function fn_addView(link){
-			/* if(link == "forecastList") {
-				location.href="<c:url value='/forecastList.do'/>";
-			} else { */
-				var url = '/project/'+link+'.do';
-				var dialogId = 'program_layer';
-				var varParam = {
-		
-				}
-				var button = new Array;
-				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-			/* } */
+			var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/workInfo.do", varParam, button, '', 'width:1144px;height:708px;ifram:true;iframid:ifr_ProjectInfo');
 		}
 		
 		function fnCallContrect()
 		{
 			location.href = "/project/detail/workingMin.do?pjKey=${projectInfo.pjKey}";
 		}
-		
 		
 		
 		function fnViewModify() {
@@ -320,6 +316,7 @@
 									</tr>
 								</thead>
 								<tbody>
+									<!-- <tr onclick="fn_addView('workInfo');"><td colspan="9" style="padding: 10px 7px;"><span>등록 <img src="/images/btn_add-pop-small.png" /></span></td></tr> -->
 									<c:forEach var="workList" items="${workList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">

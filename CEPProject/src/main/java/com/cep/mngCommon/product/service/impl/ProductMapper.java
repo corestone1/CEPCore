@@ -30,6 +30,8 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 public interface ProductMapper {
 	
 	public List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception;
+	
+	public List<ProductVO> selectOrderProductList(ProductSearchVO searchVO) throws Exception;
 
 	public void insertProduct(ProductVO productVO) throws Exception;
 }

@@ -31,14 +31,20 @@
 		.title {
 			height: 50px;
 		}
-		/* 화면타이틀(유지보수작업 상세정보) 글자크기 */
+		
 		.title > label {
 			font-size: 26px;
 		}
+		
+		.mContents .back {
+			margin-top: 10px;
+		}
+		
 		/* 왼쪽기본정보 싸이즈 */
 		.mContents > div:first-child {
         	width: 37%;
       	}
+      	
 		/* 오른쪽 내용(상세정보) 싸이즈 */
 		.mContents > .fxd {
 			width: 60%;
@@ -53,11 +59,6 @@
 		/* 기본정보 색상  */
 		.mContents .cg {
 			color: #24a37e;
-		}
-		/* 발주추카 이미지 크기 및 위치조정 */
-		.mContents .stitle img {
-			width: 27px;
-			margin-left: 10px;
 		}
 		.mContents table {
 			border-collapse: collapse;
@@ -237,29 +238,6 @@
 			width: 90%;
 			margin: 0 auto;
 		}
-		/* 제품정보>제품에서 V 크기 및 위치  */
-		.dtl tbody tr td img {
-			width: 13px;
-			vertical-align: middle;
-			margin-bottom: 5px;
-		}
-		
-		/* 백계약정보 클릭했을때 나타나는 내용에서 제목(비고) */
-		.detailList li:nth-child(2n-1) {
-		    width: 82px;
-		    font-weight: 400;
-		    color: #158566;
-		}
-		/* 백계약정보 클릭했을대 나타나는 내용 */
-		.detailList li:nth-child(2n) {
-			width: 910px; 
-			height: auto;
-			overflow: hidden;
-			/* text-overflow: ellipsis; */
-			white-space: nowrap;
-			font-weight: 200;
-			color: #21a17e;
-		}
 		
 		#modBasicTable tr td:first-child {
 			width: 132px;
@@ -326,6 +304,9 @@
 			font-size: 14px;
 			margin-bottom: 4px;
 		}
+		#modDetailTable input[type="text"] {
+			width: calc(97% - 20px);
+		}
 		#modBasicTable tr td:first-child label {
 			color: red;
 			vertical-align: middle;
@@ -335,11 +316,13 @@
       	}
 	</style>
 	<script>
+		
+	
 		$(document).ready(function() {
 			
 			
 			//화면 펼치기
-			var html = '';
+			/* var html = '';
 			$('#listForm .dtl tbody tr').click(function() {
 				if($(this).attr('class') != "viewOpen trcheckcolor") {
 					html = '<div style="width:982px; height: auto; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
@@ -368,16 +351,14 @@
 					$(this).removeClass('viewOpen');
 					$(this).next().remove();
 				}
-			});
+			}); */
 
 
 		}); // end $(document).ready()
 		
-
-		
 		
 		//기본정보 수정
-		function modeBasicInfo(){
+		function modBasicInfo(){
 			
 			if($('#m_editMode').val()=="0"){
 				$('#modBasicTable').show();
@@ -386,72 +367,144 @@
 				$('#m_editMode').val(1);
 			} else {
 				//필수값 체크를 완료하면 저장 프로세스 시작.
-				if ($("#m_mtBasicForm")[0].checkValidity()){
-					if(confirm("유지보수계약 기본정보를 수정하시겠습니까?")) {
+				if ($("#m_basicForm")[0].checkValidity()){
+					if(confirm("거래처 기본정보를 수정하시겠습니까?")) {
 						saveBasicInfo();
 					}
 					
 				}  else {
 					 //Validate Form
-			        $("#m_mtBasicForm")[0].reportValidity();	
+			        $("#m_basicForm")[0].reportValidity();	
 				}
 			}
 		}
 		/*
 		* 기본정보 내용을 저장한다.
 		*/
-		function saveBasicInfo(){
+		function saveBasicInfo() {
+			
+			$("input[name='acRepTel']").val($("#m_acRepTel1").val() + "-" + $("#m_acRepTel2").val() + "-" + $("#m_acRepTel3").val());
+			if($("#m_acRepFax2").val().length != 0 && $("#m_acRepFax3").val().length != 0) {
+				$("input[name='acRepFax']").val($("#m_acRepFax1").val() + "-" + $("#m_acRepFax2").val() + "-" + $("#m_acRepFax3").val());
+			}
+			
+			var object = {};
+			var formData = $("#m_basicForm").serializeArray();
+			
+			for(var i = 0; i < formData.length; i++) {
+				object[formData[i]['name']] = formData[i]['value'];
+			}
+			
+			var sendData = JSON.stringify(object);
+			$.ajax({
+				url: "/mngCommon/account/insert/accountInfo.do",
+			    dataType: 'json', 
+			    type:"POST",  
+			    data: sendData,
+			 	contentType: "application/json; charset=UTF-8", 
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("AJAX", true);
+					//xhr.setRequestHeader(header, token);
+					
+				},
+			    success:function(response){	
+			    	if(response!= null && response.successYN == 'Y') {
+		    			alert("거래처 정보가 수정되었습니다.");
+			    	} else {
+		    			alert("거래처 정보 수정이 실패하였습니다.");
+			    	}
+			    	
+			    	location.reload();
+			    },
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					}
+				} 
+			});      
 		}
 
 		
-		//기본정보 삭제
-		function deleteBasicInfo(){			
-			if(confirm("거래처 정보를 삭제하시겠습니까?")){
+		// 삭제
+		function deleteInfo(){			
+			if(confirm("선택한 내용을 삭제하시겠습니까?")) {
 				
+				var jsonData = {'AC_KEY' : $('input[name="spKey"]').eq(litIdx).val()};
+				
+	           $.ajax({
+		        	url :"/forecast/delete.do",
+		        	type:"POST",  
+		            data: jsonData,
+					contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	   	dataType: 'json',
+		           	async : false,
+		        	success:function(data){		  
+		            	alert("삭제되었습니다.");
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		        }); 
+	           	
+	           	
+	           	
 			} else {
 				return false;
 			}
 		} // end deleteBasicInfo()
 
+		
+		function fn_addView(type){
+
+			var url = '/mngCommon/account/write.do';
+			var dialogId = 'program_layer';
+			var varParam = { acKey: $("#acKey").val() }; 
+			var button = new Array;
+			button = [];
+			
+			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:615px'); 
+		}
+		
 	</script>
 </head>
 <body>
-	
-
-
-	<div class="sfcnt"></div>
-	<div class="nav"></div>
+	<!-- <div class="sfcnt"></div>
+	<div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
 				<div class="title"><label class="ftw500">거래처 상세정보</label></div>
 				<div>
-					<div class="stitle cg">기본정보
-						<%-- <button type="button" value="수정" id="modBasicInfo" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
+					<div class="stitle cg">
+						기본정보
 					</div>
-					<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
+					<form id="m_basicForm" name="m_basicForm" method="post">
 						<input type="hidden" id="m_editMode" name="editMode"  value="0"/>
-						<div id="basicForm">
+						<div id="m_basicWrap">
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>사업자 번호</td>
-									<td>${accountList[0].acKey }</td>
+									<td>${accountList.acKey }</td>
 								</tr>
 								<tr>
 									<td>거래처명</td>
-									<td>${accountList[0].acNm }</td>
+									<td>${accountList.acNm }</td>
 								</tr>
 								<tr>
 									<td>대표자명</td>
-									<td>${accountList[0].acCeoNm }</td>
+									<td>${accountList.acCeoNm }</td>
 								</tr>
 								<tr>
 									<td>거래처구분</td>
 									<td>
 										<c:choose>
-											<c:when test="${accountList[0].acSalesYn eq 'Y'}">
+											<c:when test="${accountList.acSalesYn eq 'N' and  accountList.acBuyYn eq 'N'}">
+											</c:when>
+											<c:when test="${accountList.acSalesYn eq 'Y'}">
 												<c:choose>
-													<c:when test="${accountList[0].acBuyYn eq 'Y' }">
+													<c:when test="${accountList.acBuyYn eq 'Y' }">
 														매출거래처, 매입거래처
 													</c:when>
 													<c:otherwise>
@@ -467,124 +520,142 @@
 								</tr>
 								<tr>
 									<td>연락처</td>
-									<td>${accountList[0].acRepTel }</td>
+									<td>${accountList.acRepTel }</td>
 								</tr>
 								<tr>
 									<td>FAX</td>
-									<td>${accountList[0].acRepFax }</td>
+									<td>${accountList.acRepFax }</td>
 								</tr>
 								<tr>
 									<td>주소</td>
-									<td>${accountList[0].acAddr }</td>
+									<td>${accountList.acAddr }</td>
 								</tr>
 								<tr>
 									<td></td>
-									<td>${accountList[0].acAddrDetail }</td>
+									<td>
+										<c:choose>
+											<c:when test="${accountList.acAddrDetail eq null or accountList.acAddrDetail eq '' }">
+												<br />
+											</c:when>
+											<c:otherwise>
+												${accountList.acAddrDetail } 
+											</c:otherwise>
+										</c:choose>
+									</td>
 								</tr>
 							</table>
-							<table class="bsc" id="modBasicTable" style="display:none">
+							<table class="bsc" id="modBasicTable" style="display:none;">
 								<tr>
 									<td><label>*</label> 사업자번호</td>
 									<td>
-										<input type="text" id="acBusiNum" name="acBusiNum" required/>
-										<img src="<c:url value='/images/dup_check.png'/>" style="cursor: pointer;vertical-align: middle;width: 114px;padding-bottom: 5px;"/>
+										<input type="text" id="acKey" name="acKey" value="${accountList.acKey }" readonly style="background-color: transparent;"/>
 									</td>
 								</tr>
 								<tr>
 									<td><label>*</label> 거래처명</td>
-									<td><input type="text" id="acNm" name="acNm" required/></td>
+									<td><input type="text" id="acNm" name="acNm" value="${accountList.acNm }" required/></td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;대표자명</td>
 									<td>
-										<input type="text" id="acCeoNm" name="acCeoNm" required/>
+										<input type="text" id="acCeoNm" name="acCeoNm" value="${accountList.acCeoNm }" required/>
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;거래처구분</td>
 									<td>
-										<input type="checkbox" class="tCheck" name="acSalesYn" value="Y" id="hasVAT1" /><label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;매출거래처
+										<input type="checkbox" class="tCheck" name="acSalesYn" value="Y" id="hasVAT1" <c:if test="${accountList.acSalesYn eq 'Y'}">checked</c:if>/>
+										<label for="hasVAT1" class="cursorP"></label>&nbsp;&nbsp;매출거래처
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="checkbox" class="tCheck" name="acBuyYn" value="Y" id="hasVAT2" /><label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;매입거래처
+										<input type="checkbox" class="tCheck" name="acBuyYn" value="Y" id="hasVAT2" <c:if test="${accountList.acBuyYn eq 'Y'}">checked</c:if>/>
+										<label for="hasVAT2" class="cursorP"></label>&nbsp;&nbsp;매입거래처
 									</td>
 								</tr>
 								<tr>
 									<td><label>*</label> 연락처</td>
 									<td>
-										<select id="acRepTel1" name="acRepTel1" required>
+										<!-- <select id="acRepTel1" name="acRepTel1" required>
 											<option value="02">02</option>
 											<option value="031">031</option>
 											<option value="010">010</option>
-										</select> -
-										<input type="text" id="acRepTel2" name="acRepTel2" style="width: 53px" required/> -
-										<input type="text" id="acRepTel3" name="acRepTel3" style="width: 53px" required/>
+										</select> - -->
+										<input type="text" id="m_acRepTel1" name="acRepTel1" style="width: 53px" value="${fn:split(accountList.acRepTel,'-')[0]}" required/> -
+										<input type="text" id="m_acRepTel2" name="acRepTel2" style="width: 53px" value="${fn:split(accountList.acRepTel,'-')[1]}" required/> -
+										<input type="text" id="m_acRepTel3" name="acRepTel3" style="width: 53px" value="${fn:split(accountList.acRepTel,'-')[2]}" required/>
+										<input type="hidden" name="acRepTel" />
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;FAX</td>
 									<td>
-										<select id="acRepFax1" name="acRepFax1">
+										<!-- <select id="acRepFax1" name="acRepFax1">
 											<option value="02">02</option>
 											<option value="031">031</option>
-										</select> -
-										<input type="text" id="acRepFax2" name="acRepFax2" style="width: 53px"/> -
-										<input type="text" id="acRepFax3" name="acRepFax3" style="width: 53px"/>
+										</select> - -->
+										<input type="text" id="m_acRepFax1" name="acRepFax1" style="width: 53px" value="${fn:split(accountList.acRepFax,'-')[0]}"/> -
+										<input type="text" id="m_acRepFax2" name="acRepFax2" style="width: 53px" value="${fn:split(accountList.acRepFax,'-')[1]}"/> -
+										<input type="text" id="m_acRepFax3" name="acRepFax3" style="width: 53px" value="${fn:split(accountList.acRepFax,'-')[2]}"/>
+										<input type="hidden" name="acRepFax" />
 									</td>
 								</tr>
 								<tr>
 									<td><label>*</label> 주소</td>
 									<td>
-										<input type="text" id="acAddr" name="acAddr" style="width: 375px" required/>
+										<input type="text" id="acAddr" name="acAddr" style="width: 375px" value="${accountList.acAddr }" required/>
 									</td>
 								</tr>
 								<tr>
 									<td></td>
 									<td>
-										<input type="text" id="acAddrDetail" name="acAddrDetail" style="width: 375px"/>
+										<input type="text" id="acAddrDetail" name="acAddrDetail" style="width: 375px" value="${accountList.acAddrDetail }"/>
 									</td>
 								</tr>
 							</table>
 						</div>
 						<div class="floatL" style="margin-top: 211px">
-							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
-							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
+							<button type="button" value="수정" onclick="modBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+							<%-- <button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button> --%>
 						</div>
 					</form>
 				</div>
 			</div>
 			<div class="floatR dpBlock fxd">
-				
+				<div class="back floatR ftw300 cursorP">
+					<a href="/mngCommon/account/list.do"><img src="/images/btn_tolist.png" /></a>
+				</div>
 				<div id="listForm">
 					<div class="stitle cg colorBlack">
 						담당자정보
 					</div>
 					<div class="floatC middle" style="border-bottom: 2px solid #c4c4c4;">
-						<table class="dtl">
-							<thead class="ftw400">
-								<tr>
-									<th scope="row">No</th>
-									<th scope="row">이름</th>
-									<th scope="row">부서</th>
-									<th scope="row">직급</th>
-									<th scope="row">연락처</th>
-									<th scope="row">이메일</th>
-									<th scope="row">비고</th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach var="result" items="${acDirectorList }" varStatus="status">
+						<form id="directorForm" name="directorForm" method="post">
+							<table class="dtl" id="selectDetailTable">
+								<thead class="ftw400">
 									<tr>
-										<td>${status.count }</td>
-										<td>${result.acDirectorNm }</td>
-										<td>${result.acDirectorDeptNm }</td>
-										<td>${result.acDirectorPositionNm }</td>
-										<td>${result.acDirectorMbNum }</td>
-										<td><span title="${result.acDirectorEmail }">${result.acDirectorEmail }</span></td>
-										<td><span>${result.acDirectorDesc }</span></td>
+										<th scope="row">번호</th>
+										<th scope="row">이름</th>
+										<th scope="row">부서</th>
+										<th scope="row">직급</th>
+										<th scope="row">연락처</th>
+										<th scope="row">이메일</th>
+										<th scope="row">비고</th>
 									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									<c:forEach var="result" items="${acDirectorList }" varStatus="status">
+										<tr>
+											<td>${status.count}</td>
+											<td>${result.acDirectorNm }</td>
+											<td>${result.acDirectorDeptNm }</td>
+											<td>${result.acDirectorPositionNm }</td>
+											<td>${result.acDirectorMbNum }</td>
+											<td><span title="${result.acDirectorEmail }">${result.acDirectorEmail }</span></td>
+											<td><span>${result.acDirectorDesc }</span></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</form>
 					</div>
 					
 					<div class="stitle cg colorBlack">계좌정보</div>
@@ -609,51 +680,16 @@
 										<td class="textalignC">${result.acRepBknoYn }</td>
 									</tr>
 								</c:forEach>
-								<!-- <tr>
-									<td>1</td>
-									<td>기업은행</td>
-									<td class="textalignC">777-127624-43-126</td>
-									<td class="textalignC">홍길동</td>
-									<td class="textalignC">Y</td>
-								</tr>
-								<tr>
-									<td>2</td>
-									<td>기업은행</td>
-									<td class="textalignC">777-127624-43-126</td>
-									<td class="textalignC">홍길동</td>
-									<td class="textalignC">N</td>
-								</tr>
-								<tr>
-									<td>3</td>
-									<td>기업은행</td>
-									<td class="textalignC">777-127624-43-126</td>
-									<td class="textalignC">홍길동</td>
-									<td class="textalignC">N</td>
-								</tr>
-								<tr>
-									<td>4</td>
-									<td>기업은행</td>
-									<td class="textalignC">777-127624-43-126</td>
-									<td class="textalignC">홍길동</td>
-									<td class="textalignC">N</td>
-								</tr>
-								<tr>
-									<td>4</td>
-									<td>기업은행</td>
-									<td class="textalignC">777-127624-43-126</td>
-									<td class="textalignC">홍길동</td>
-									<td class="textalignC">N</td>
-								</tr> -->
 							</tbody>
 						</table>
 					</div>
 					<div class="bottom">
 						<div class="floatR">
-							<button type="button" value="수정" onclick="fn_addView('')"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+							<button type="button" value="수정" onclick="fn_addView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 							<button type="button" value="삭제" onclick="fn_mdeleteBackOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>
-					</div>
+					</div> 
 				</div>
 			</div>
 			<div class="floatC"></div>

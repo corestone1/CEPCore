@@ -80,6 +80,8 @@ public class SampleDefaultVO implements Serializable {
 	
 	private String modEmpKey;
 	
+	private String empNm;
+	
 	//여러개 저장하는 경우 저장되어있는 목록숫자.
 	private int saveCnt; 
 	
@@ -209,6 +211,14 @@ public class SampleDefaultVO implements Serializable {
 		this.modEmpKey = modEmpKey;
 	}
 	
+	public String getEmpNm() {
+		return empNm;
+	}
+
+	public void setEmpNm(String empNm) {
+		this.empNm = empNm;
+	}
+
 	public int getSaveCnt() {
 		return saveCnt;
 	}

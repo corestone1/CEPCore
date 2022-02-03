@@ -21,7 +21,7 @@ import java.io.Serializable;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 
-public class AccountSearchVO implements Serializable {
+public class AccountSearchVO extends AccountVO implements Serializable {
 
 	private static final long serialVersionUID = -2709806820615818683L;
 	

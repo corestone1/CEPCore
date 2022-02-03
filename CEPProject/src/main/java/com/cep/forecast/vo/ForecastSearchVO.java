@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cmm.vo.DepartmentVO;
+
 /**
  * @File Name : ForecastSearchVO.java
  * @Project   : CEPProject
@@ -23,7 +25,7 @@ import org.apache.ibatis.type.Alias;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 @Alias("forecastSearchVO")
-public class ForecastSearchVO implements Serializable {
+public class ForecastSearchVO extends DepartmentVO implements Serializable {
 	
 	private static final long serialVersionUID = -8199715870875240847L;
 	
@@ -50,6 +52,8 @@ public class ForecastSearchVO implements Serializable {
 	private String salesEmpKey;
 	private String searchFromDt;
 	private String searchToDt;
+	
+	private int fcSjConfQt;
 	
 	/**
 	 * @return the spKey
@@ -231,6 +235,14 @@ public class ForecastSearchVO implements Serializable {
 	 */
 	public void setSearchToDt(String searchToDt) {
 		this.searchToDt = searchToDt;
+	}
+	
+	public int getFcSjConfQt() {
+		return fcSjConfQt;
+	}
+	
+	public void setFcSjConfQt(int fcSjConfQt) {
+		this.fcSjConfQt = fcSjConfQt;
 	}
 	
 	

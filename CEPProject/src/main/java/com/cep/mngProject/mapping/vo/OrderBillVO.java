@@ -5,17 +5,19 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cmm.vo.DepartmentVO;
 import com.cmm.vo.OrderProductVO;
 
 @SuppressWarnings("serial")
 @Alias("orderBillVO")
-public class OrderBillVO implements Serializable {
+public class OrderBillVO extends DepartmentVO implements Serializable {
 	
 	private String pjOrderKey;
 	private String orderDt;
 	private int billMappingNum;
 	private int buyTurn;
 	private int orderAmount;
+	private String billFkPjKey;
 	private String pjNm;
 	private String pmNmCd;
 	private String orderAcNm;
@@ -38,6 +40,8 @@ public class OrderBillVO implements Serializable {
 	private String modEmpKey;
 	private List<OrderProductVO> productList;
 	private List<PurchaseBillVO> billList;
+	
+	private String mappedStatus;
 	
 	public String getPjOrderKey() {
 		return pjOrderKey;
@@ -68,6 +72,12 @@ public class OrderBillVO implements Serializable {
 	}
 	public void setOrderAmount(int orderAmount) {
 		this.orderAmount = orderAmount;
+	}
+	public String getBillFkPjKey() {
+		return billFkPjKey;
+	}
+	public void setBillFkPjKey(String billFkPjKey) {
+		this.billFkPjKey = billFkPjKey;
 	}
 	public String getPjNm() {
 		return pjNm;
@@ -201,5 +211,12 @@ public class OrderBillVO implements Serializable {
 	public void setBillList(List<PurchaseBillVO> billList) {
 		this.billList = billList;
 	}
+	public String getMappedStatus() {
+		return mappedStatus;
+	}
+	public void setMappedStatus(String mappedStatus) {
+		this.mappedStatus = mappedStatus;
+	}
+	
 	
 }

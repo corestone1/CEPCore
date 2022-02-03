@@ -74,6 +74,57 @@
 		
 	</select>
 	
+	<select id="selectOrderProductList" parameterType="com.cep.mngCommon.product.vo.ProductSearchVO" resultMap="productVO">				
+		
+		SELECT PM.PM_KEY
+		     , PM.PM_CLASS_CD
+		     , PM.PM_DETAIL_CLASS_CD
+		     , PM.PM_LINE_CD, PM_NM_CD
+		     , PM.MF_AC_KEY
+		     , PM.PM_RELEASE_DT
+		     , PM.EOL_DT
+		     , PM.EOSL_DT
+		     , PM.PM_REMARK
+		     , PM.REG_DT
+		     , PM.REG_TM
+		     , PM.REG_EMP_KEY
+		     , PM.MOD_DT
+		     , PM.MOD_TM
+		     , PM.MOD_EMP_KEY
+			 , AC.AC_NM
+		FROM PM_PRODUCT_MNG_TB PM
+			 JOIN CMM_ACCOUNT_TB AC 
+			 ON PM.MF_AC_KEY = AC.AC_KEY
+			 JOIN PJ_ORDER_PRODUCT_TB POP
+			 ON PM.PM_KEY = POP.ORDER_PM_FK_KEY
+			 JOIN PJ_ORDER_TB PO
+			 ON PO.PJ_ORDER_KEY = POP.PJ_ORDER_KEY
+		WHERE 1=1	
+			AND PO.ORDER_CT_FK_KEY = #{searchKey}
+			AND POP.DELETE_YN = 'N'
+		<if test="productDivision != null and productDivision != ''">
+			AND PM.PM_CLASS_CD = #{productDivision}
+		</if>
+		
+		<if test="productFlag != null and productFlag != ''">
+			AND 1=1
+		</if>
+		
+		<if test="productMake != null and productMake != ''">
+			<![CDATA[
+				AND AC.AC_NM LIKE CONCAT('%', CONCAT(#{productMake}, '%'))
+			]]>
+		</if>
+		
+		<if test="productName != null and productName != ''">
+			<![CDATA[
+				AND PM.PM_NM_CD LIKE CONCAT('%', CONCAT(#{productName}, '%'))
+			]]>
+		</if>
+		ORDER BY PM.REG_DT, PM.MF_AC_KEY DESC		
+		
+	</select>
+	
 	
 	<insert id="insertProduct" parameterType="com.cep.mngCommon.product.vo.ProductVO">
 		INSERT INTO PM_PRODUCT_MNG_TB (

@@ -192,6 +192,11 @@
 		JOIN PJ_PURCHASE_TB PC       
 		ON PO.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
 		WHERE PO.DELETE_YN='N'
+		
+		<if test="regEmpKey != null and regEmpKey != ''">
+			AND PO.REG_EMP_KEY = #{regEmpKey}
+		</if>
+		
 		<if test="orderEmpNm != null and orderEmpNm != ''">
 		  	AND  CE.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%')) /* 발주담당자 조건검색  */
 		</if>
@@ -207,7 +212,10 @@
 		<if test="orderAcNm != null and orderAcNm != ''">
 		  	AND  CA.AC_NM LIKE CONCAT('%', CONCAT(#{orderAcNm}, '%'))  /* 거래처상호 조건검색 */
 		</if>
-    	ORDER BY ORDER_DT
+		<if test="orderCtFkKey != null and orderCtFkKey != ''">
+		  	AND  PO.ORDER_CT_FK_KEY = #{orderCtFkKey}  /* 프로젝트키 조건검색 */
+		</if>
+    	ORDER BY ORDER_DT DESC
 		
 	</select>
 	
@@ -256,6 +264,7 @@
 		     , BILL_AC_KEY
 		     , BILL_AMOUNT 
 		     , BILL_NO 
+		     , BILL_FK_PJ_KEY
 		FROM CMM_PC_BILLING_TB PPB
 		JOIN CMM_ACCOUNT_TB CA
 		ON PPB.BILL_AC_KEY  = CA.AC_KEY
@@ -264,6 +273,19 @@
 		<if test="billDtFrom != null and billDtFrom != '' and billDtTo != null and billDtTo != ''">
 		  	AND  BILL_ISSUE_DT BETWEEN REPLACE(#{billDtFrom}, '-', '') AND REPLACE(#{billDtTo}, '-', '')
 		</if>
+		<if test='mappedStatus == "C"'>
+			AND BILL_FK_PJ_KEY = #{billFkPjKey}
+		</if>
+		<if test='mappedStatus == "IC"'>
+			AND BILL_MAPPING_YN = 'N'
+			OR PPB.BILL_AC_KEY=#{orderAcKey}
+			AND BILL_FK_PJ_KEY = #{billFkPjKey}
+		</if>
+		<if test='mappedStatus == "NL"'>
+			AND BILL_MAPPING_YN = 'N'
+		</if>
+		
+		ORDER BY BILL_FK_PJ_KEY
 	</select>
 	
 	<update id="updateOrder" parameterType="orderBillVO">

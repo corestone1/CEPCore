@@ -11,8 +11,10 @@ import com.cep.example.vo.SampleDefaultVO;
 @Alias("projectSalesVO")
 public class ProjectSalesVO extends SampleDefaultVO implements Serializable {
 	
+	private String spKey;
 	private String salesKey;
 	private String salesCtFkKey;
+	private String salesAcKey;
 	private int salesTurn;
 	private int salesCollectRate;
 	private int salesTurnAmount;
@@ -26,6 +28,13 @@ public class ProjectSalesVO extends SampleDefaultVO implements Serializable {
 	private String modEmpKey;
 	private List<ProjectGuarantyBondVO> guarantyList;
 	
+	
+	public String getSpKey() {
+		return spKey;
+	}
+	public void setSpKey(String spKey) {
+		this.spKey = spKey;
+	}
 	public String getSalesKey() {
 		return salesKey;
 	}
@@ -37,6 +46,12 @@ public class ProjectSalesVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setSalesCtFkKey(String salesCtFkKey) {
 		this.salesCtFkKey = salesCtFkKey;
+	}
+	public String getSalesAcKey() {
+		return salesAcKey;
+	}
+	public void setSalesAcKey(String salesAcKey) {
+		this.salesAcKey = salesAcKey;
 	}
 	public int getSalesTurn() {
 		return salesTurn;

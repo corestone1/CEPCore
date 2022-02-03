@@ -45,6 +45,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	public List<ProductVO> selectOrderProductList(ProductSearchVO searchVO) throws Exception {
+		return mapper.selectOrderProductList(searchVO);
+	}
+	
+	@Override
 	public void insertProduct(ProductVO productVO) throws Exception {
 		//Product Key 생성
 		productVO.setPmKey("PM000002");

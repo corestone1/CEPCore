@@ -303,6 +303,9 @@
 			});
 			
 			$(".contents .dtl tbody tr:first-child").css("background-color", "#ddf0ec");
+			
+			$(parent.document).find("#modMinInfo").removeClass("dpNone");
+			$(parent.document).find("#delMinInfo").removeClass("dpNone");
 		});
 		
 		
@@ -412,7 +415,7 @@
 				var button = new Array;
 				button = [];
 				
-				parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1144px;height:708px');
+				parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1144px;height:706px;ifram:true;iframid:ifr_ProjectInfo');
 			}
 		}
 		

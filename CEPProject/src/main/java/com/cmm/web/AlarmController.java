@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cmm.service.AlarmService;
+import com.cmm.util.CepDisplayUtil;
 import com.cmm.vo.AlarmVO;
 
 @Controller
@@ -31,6 +33,16 @@ public class AlarmController {
 		List<?> alarmList = service.selectAlarm(alarmVO, request);
 		
 		return alarmList;
+	}
+	
+	@RequestMapping(value="/list.do", method={RequestMethod.GET, RequestMethod.POST})
+	public String selectAlarmList(HttpServletRequest request, ModelMap model) throws Exception {
+		AlarmVO alarmVO = new AlarmVO();
+		
+		List<?> alarmList = service.selectAlarm(alarmVO, request);
+		model.put("alarmList", alarmList);
+		
+		return "mngPersonal/list";
 	}
 	
 	@RequestMapping(value="/add.do", method=RequestMethod.POST)

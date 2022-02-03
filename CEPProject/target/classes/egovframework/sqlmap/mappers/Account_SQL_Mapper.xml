@@ -56,10 +56,21 @@
 		</if>
 		
 		<if test="acNm != null and acNm != ''">
-			<![CDATA[
-				AND AC_NM LIKE CONCAT('%', CONCAT(#{acNm}, '%'))
-			]]> 
+			AND AC_NM LIKE CONCAT('%', #{acNm}, '%')
 		</if>
+		
+		<if test="searchCondition != null and searchCondition != ''" >
+			
+				<if test="searchCondition.equals('NM')" >
+	  				AND AC_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+	  			</if>
+			  	
+				<if test="searchCondition.equals('KY')" >
+		  			AND AC_KEY LIKE CONCAT('%', #{searchKeyword}, '%')
+		  		</if>
+		  		
+		  </if>
+		
 		AND DELETE_YN='N'
 		ORDER BY AC_NM ASC		
 		
@@ -98,6 +109,7 @@
 			 , AC_DIRECTOR_DESC
 		FROM  CMM_ACCOUNT_DIRECTOR_TB
 		WHERE AC_KEY = #{acKey}
+		AND DELETE_YN = 'N'
 		
 	</select>
 	
@@ -159,6 +171,31 @@
 		)
 	</insert>
 	
+	<update id="updateAccountInfo" parameterType="com.cep.mngCommon.account.vo.AccountVO">
+		UPDATE CMM_ACCOUNT_TB SET
+			AC_NM = #{acNm}
+			, AC_CEO_NM = #{acCeoNm}
+			<if test="acSalesYn != null and acSalesYn != ''">
+			, AC_SALES_YN = #{acSalesYn}
+			</if>
+			<if test="acBuyYn != null and acBuyYn != ''">
+			, AC_BUY_YN = #{acBuyYn}
+			</if>
+			, AC_REP_TEL = #{acRepTel}
+			<if test="acRepFax != null and acRepFax != ''">
+			, AC_REP_FAX = #{acRepFax}
+			</if>
+			, AC_ADDR = #{acAddr}
+			<if test="acAddrDetail != null and acAddrDetail != ''">
+			, AC_ADDR_DETAIL = #{acAddrDetail}
+			</if>
+			, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE AC_KEY = #{acKey}
+		AND DELETE_YN = 'N'
+	</update>
+	
 	<insert id="insertAcDirectorInfo" parameterType="java.util.Map">
 		INSERT INTO CMM_ACCOUNT_DIRECTOR_TB (
 			AC_KEY
@@ -192,6 +229,36 @@
 		</foreach>
 	</insert>
 	
+	<update id="updateAcDirectorInfo" parameterType="java.util.Map">
+		<foreach collection="accountDirectorVO" item="item" separator=";" close=";">
+			UPDATE CMM_ACCOUNT_DIRECTOR_TB SET
+				AC_DIRECTOR_NM = #{item.acDirectorNm}
+				, AC_DIRECTOR_MB_NUM = #{item.acDirectorMbNum}
+				, AC_DIRECTOR_TEL_NUM = #{item.acDirectorTelNum}
+				, AC_DIRECTOR_EMAIL = #{item.acDirectorEmail}
+				, AC_DIRECTOR_DEPT_NM = #{item.acDirectorDeptNm}
+				, AC_DIRECTOR_POSITION_NM =  #{item.acDirectorPositionNm}
+				, AC_DIRECTOR_DESC = #{item.acDirectorDesc}
+				, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE AC_KEY = #{acKey}
+			AND AC_DIRECTOR_KEY = #{item.acDirectorKey}
+		</foreach>
+	</update>
+	
+	<update id="deleteAcDirectorInfo" parameterType="java.util.Map">
+		<foreach collection="deleteDirectorList" item="item" separator=";" close=";">
+			UPDATE CMM_ACCOUNT_DIRECTOR_TB SET
+				DELETE_YN = 'Y'
+				, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE AC_KEY = #{acKey}
+			AND AC_DIRECTOR_KEY = #{item}
+		</foreach>
+	</update>
+	
 	<insert id="insertAcDepositInfo" parameterType="java.util.Map">
 		INSERT INTO CMM_ACCOUNT_DEPOSIT_TB (
 			AC_KEY
@@ -220,4 +287,65 @@
 			)
 		</foreach>
 	</insert>
+	
+	<update id="updateAcDepositInfo" parameterType="java.util.Map">
+		<foreach collection="accountDepositVO" item="item" separator=";" close=";">
+			UPDATE CMM_ACCOUNT_DEPOSIT_TB SET
+				AC_BANK_NM = #{item.acBankNm}
+				, AC_BKNO = #{item.acBkno}
+				, AC_ACHOLDER = #{item.acAcholder}
+				, AC_REP_BKNO_YN = #{item.acRepBknoYn}
+				, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d') 
+				, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE AC_KEY = #{acKey}
+			AND AC_AD_SEQ = #{item.acAdSeq}
+		</foreach>
+	</update>
+	
+	<update id="deleteAcDepositInfo" parameterType="java.util.Map">
+		<foreach collection="deleteDepositList" item="item" separator=";" close=";">
+			UPDATE CMM_ACCOUNT_DEPOSIT_TB SET
+				DELETE_YN = 'Y'
+				, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+				, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+				, MOD_EMP_KEY = #{modEmpKey}
+			WHERE AC_KEY = #{acKey}
+			AND AC_AD_SEQ = #{item}
+		</foreach>
+	</update>
+	
+	<update id="deleteAccountInfo" parameterType="com.cep.mngCommon.account.vo.AccountVO">
+	
+		UPDATE CMM_ACCOUNT_TB SET
+			DELETE_YN = 'Y'
+			, AC_KEY = CONCAT(DATE_FORMAT(NOW(), '%y%m%d'), DATE_FORMAT(NOW(), '%H%i%s'))
+			, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE AC_KEY = #{acKey}
+		
+	</update>
+	
+	<update id="deleteAcDirectorAll" parameterType="com.cep.mngCommon.account.vo.AccountVO">
+	
+		UPDATE CMM_ACCOUNT_DIRECTOR_TB SET
+			DELETE_YN = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE AC_KEY = #{acKey}
+		
+	</update>
+	
+	<update id="deleteAcDepositAll" parameterType="com.cep.mngCommon.account.vo.AccountVO">
+	
+		UPDATE CMM_ACCOUNT_DEPOSIT_TB SET
+			DELETE_YN = 'Y'
+			, MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(), '%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE AC_KEY = #{acKey}
+		
+	</update>
 </mapper>

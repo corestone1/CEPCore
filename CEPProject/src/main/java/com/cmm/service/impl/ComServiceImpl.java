@@ -24,6 +24,7 @@ import com.cmm.config.PrimaryKeyType;
 import com.cmm.service.ComService;
 import com.cmm.util.CepMailMngUtil;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.DepartmentVO;
 import com.cmm.vo.MailVO;
 import com.cmm.vo.PaymentVO;
 import com.cmm.vo.PurchaseVO;
@@ -56,6 +57,11 @@ public class ComServiceImpl implements ComService {
 	@Override
 	public List<?> selectEmployeeList() throws Exception {
 		return comMapper.selectEmployeeList();
+	}
+	
+	@Override
+	public List<?> selectDepartmentList(DepartmentVO deptVO) throws Exception {
+		return comMapper.selectDepartmentList(deptVO);
 	}
 	
 	@Override
