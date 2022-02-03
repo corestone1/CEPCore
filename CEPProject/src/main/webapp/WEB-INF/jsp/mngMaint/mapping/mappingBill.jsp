@@ -33,7 +33,7 @@
 			padding-top: 17px;	  					
 			padding-bottom: 8px;
 			margin-left: 38px;
-			padding-right: 29px;
+			padding-right: 30px;
 		}
 		.popContainer .contents {
 			width: 100%;
@@ -46,7 +46,7 @@
 		    position: absolute;
 		}
 		.popContainer .contents1 {
-			width: 100%;
+			width: 97%;
 		}		
 		.popContainer .subTitle { 
 			border-collapse: collapse;
@@ -55,6 +55,30 @@
 			padding-bottom: 8px;
 			font-size: 18px;
 			margin-left: 33px;
+		}
+		.popContainer .subTitle a {
+			font-size: 14px;
+			font-weight: 300;
+		}
+		.popContainer .subTitle a:hover {
+			text-decoration: underline;
+		}
+		.popContainer .subTitle a label {
+			display: inline-block;
+		    width: 17px;
+		    height: 17px;
+		    border-radius: 50%;
+		    vertical-align: middle;
+		    text-align: center;
+		    margin-left: 4px;
+		    box-shadow: 2px 4px 4px -2px grey;
+		    margin-bottom: 2px;
+		}
+		.popContainer .subTitle a label img {
+			transform: rotate(270deg);
+		    width: 7px;
+		    vertical-align: top;
+		    margin-top: 6px;
 		}
 		.popContainer .contents1 table {
 			width: calc(100% - 201px);
@@ -72,13 +96,13 @@
 		.popContainer table thead {
 			display: table-header-group;
 		}
-		.popContainer .contents1 table tbody {
+		.popContainer .contents table tbody {
 			width: 1067px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
 		}
-		.popContainer table tbody tr {
+		.popContainer .contents1 table thead tr, .popContainer .contents1 table tbody tr {
 			display: table;
 			width: 1066px;
 		}
@@ -86,33 +110,59 @@
 			padding: 10px 0;
 			border: 1px solid #edebef;
 		}
+		.popContainer table tbody tr td span {
+			display: inline-block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			vertical-align: middle;
+			width: 90%;
+		}
 		.popContainer .contents1 tr:first-child td { 
 			border-bottom:2px solid #e5e5e5;	
 		}	
 		.contents1 table thead th:first-child,
 		.contents1 table tbody td:first-child {
-			width: 163px;
+			width: 85px;
+			max-width: 85px;
 		}	
 		.contents1 table thead th:nth-child(2),
 		.contents1 table tbody td:nth-child(2) {
-			width: 80px;
+			width: 65px;
+			max-width: 65px;
 		}
 		.contents1 table thead th:nth-child(3),
 		.contents1 table tbody td:nth-child(3) {
-			width: 250px;
+			width: 212px;
+			max-width: 212px;
 		}
 		.contents1 table thead th:nth-child(4),
 		.contents1 table tbody td:nth-child(4) {
-			width: 160px;
+			width: 155px;			
+			max-width: 155px;
 		}
 		.contents1 table thead th:nth-child(5),
 		.contents1 table tbody td:nth-child(5) {
-			width: 164px;
+			width: 140px;
+			max-width: 140px;
 		}
 		.contents1 table thead th:nth-child(6),
 		.contents1 table tbody td:nth-child(6) {
-			width: 250px;
+			width: 101px;
+			max-width: 101px;
 		}
+		.contents1 table thead th:nth-child(7),
+		.contents1 table tbody td:nth-child(7),
+		.contents1 table thead th:nth-child(8),
+		.contents1 table tbody td:nth-child(8) {
+			width: 111px;
+			max-width: 111px;
+		}
+		/* .contents1 table thead th:nth-child(8),
+		.contents1 table tbody td:nth-child(8) {
+			width: 60px;
+			max-width: 60px;
+		} */
 		.popContainer .contents2 {
 			width: 100%;
 		}
@@ -152,61 +202,198 @@
 		.popContainer .contents2 table { 
 			border-bottom:2px solid #e5e5e5;	
 		}	
+		.popContainer .contents2 table thead tr, .popContainer .contents2 table tbody tr {
+			display: table;
+			width: 1066px;
+		}
 		.contents2 table thead th:first-child,
 		.contents2 table tbody td:first-child {
-			width: 45px;
+			width: 46px;
+			max-width: 46px;
 		}	
 		.contents2 table thead th:nth-child(2),
 		.contents2 table tbody td:nth-child(2) {
-			width: 90px;
+			width: 80px;
+			max-width: 80px;
 		}
 		.contents2 table thead th:nth-child(3),
 		.contents2 table tbody td:nth-child(3) {
 			width: 60px;
+			max-width: 60px;
 		}
 		.contents2 table thead th:nth-child(4),
 		.contents2 table tbody td:nth-child(4) {
-			width: 280px;
+			width: 110px;
+			max-width: 110px;
 		}
 		.contents2 table thead th:nth-child(5),
 		.contents2 table tbody td:nth-child(5) {
-			width: 190px;
+			width: 80px;
+			max-width: 80px;
 		}
 		.contents2 table thead th:nth-child(6),
 		.contents2 table tbody td:nth-child(6) {
-			width: 110px;
+			width: 90px;
+			max-width: 90px;
 		}
 		.contents2 table thead th:nth-child(7),
 		.contents2 table tbody td:nth-child(7) {
-			width: 103px;
+			width: 180px;
+			max-width: 180px;
 		}
-		.contents2 table thead th:nth-child(8),
+		.contents2 table thead th:nth-child(8), 
 		.contents2 table tbody td:nth-child(8) {
-			width: 105px;
+		    width: 200px;
+			max-width: 200px;
 		}
-		.contents2 table thead th:nth-child(9),
-		.contents2 table tbody td:nth-child(9) {
-			width: 80px;
-		}
-		
 		.popContainer .bottomBtn {
 			margin-top: 10px;
 			margin-right: 28px;
 		}	
+		input:read-only {
+			border: none;
+			text-align: center;
+			color: #535353;
+			font-family: "Noto Sans KR", sans-serif !important;
+			font-weight: 200;
+			background: transparent;
+			height: 15px;
+		}
+		input[class="calendar"] {
+			height: 31px;
+		}
 	</style>
 	<script>
-		$(document).ready(function() {
-					
-			$('#popMappingTable tbody tr').each(function(index, item) {
-				if(index != 0) {
-					$(this).children().eq(0).append('<input type="radio" class="tCheck" name="gubun" id="popCheck'+ index +'"/><label for="popCheck'+index+'" class="cursorP"/>');
-				}
-			});
-		});	
-		function fn_addBuildView(){
+	
+		jQuery.fn.serializeObject = function() { 
+			var obj = null; 
+			var objArry = null;
+				try { 
+					if(this[0].tagName && this[0].tagName.toUpperCase() == "FORM" ) {
+						var arr = this.serializeArray(); 
+						if(arr){ 
+							obj = {};
+							objArry = new Array();
+							jQuery.each(arr, function() {
+							
+							if(this.name=="billAmount"){
+								//숫자에서 컴마를 제거한다.
+								obj[this.name] = removeCommas(this.value); 
+							} else {
+								obj[this.name] = this.value; 
+							}
+							
+							/*
+							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
+							* 반복되는 필드값에서 아래부분만 변경사항 있음.
+							*/
+							if('billFkPjKey' == this.name){
+								objArry.push(obj);
+								obj = {};
+							}
+						}); 	              
+					} 
+				} 
+			}catch(e) { 
+				alert(e.message); 
+			}finally {} 
+			return objArry; 
 		}
 		
-		function fn_preBiddingView(){
+		function fn_popSearch() {
+			
+            var url = '/mngMaint/mapping/mappingBill.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"mtOrderKey":$('#pop_mtOrderKey').val(),
+				"mtOrderAcKey":$('#pop_mtOrderAcKey').val(),
+				"billDtFrom":$('#billDtFrom').val(),
+				"billDtTo":$('#billDtTo').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');  
+		}
+		
+		function fn_save() {
+			
+			if($("input:radio[name=isCheck]:checked").length == 0) {
+				alert("매핑할 계산서를 선택해주세요.");
+			} else {
+				/* $("#billMappingNum").val(Number($("#billMappingNum").val()) + $("input:checkbox[name=isCheck]:checked").length); */
+				var totalBillMappedAmount = 0;
+				var originBillMappedAmount = $("#billMappedAmount").val();
+				
+				var object = {};
+				var listData = $("#billListForm").serializeObject();
+				
+				var index = [];
+				for(var list in listData) {
+					if(listData[list].hasOwnProperty('isCheck') == false) {
+						index.push(listData.indexOf(listData[list]));
+					}
+				}
+				for(var i = index.length - 1; i >= 0; i--) {
+					listData.splice(index[i], 1);
+				}
+				
+				for(var i = 0; i < listData.length; i++) {
+					totalBillMappedAmount += Number(listData[i].billAmount);
+				}
+				
+				if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
+					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + originBillMappedAmount + ")");
+				} else {
+					if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
+						$("#billMappedAmount").val(totalBillMappedAmount);
+						
+						var formData = $("#orderInfoForm").serializeArray();
+						for (var i = 0; i<formData.length; i++){
+			                object[formData[i]['name']] = formData[i]['value'];
+			            }
+						
+						object["billList"]=listData;
+						
+						var sendData = JSON.stringify(object);
+						
+						var sch = location.search
+						var params = new URLSearchParams(sch);
+						var sch_keyword = params.get('paymentKey');
+						
+						$.ajax({
+							url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
+							dataType:'json',
+							type:"POST",
+							data:sendData,
+							contentType:"application/json; charset=UTF8",
+							success:function(response) {
+								if(response != null && response.successYN == 'Y') {
+									
+									alert($("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
+									
+									 var url = '/mngProject/mapping/mappingBill.do';
+									var dialogId = 'program_layer';
+									var varParam = {
+										"pjOrderKey":$("input[name='pjOrderKey']").val(),
+										"billDtFrom":$("input[name='billDtFrom']").val(),
+										"billDtTo":$("input[name='billDtTo']").val()
+									}
+									var button = new Array;
+									button = [];
+									showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+								} else {
+									alert('계산서 매핑이 실패하였습니다.');
+								}
+							},
+							error: function(request, status, error) {
+								if(request.status != '0') {
+									alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+								}
+							}
+						});  
+					}
+				}
+			}
 		}
 	</script>
 </head>
@@ -214,142 +401,132 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">계산서 -발주 매핑</div>
+				<div class="floatL ftw500">계산서 - 발주 매핑</div>
 			</div>
 		</div>
 		<div class="contents">
 			<div class="contents1">
 				<div>
-					<div class="subTitle">발주 정보</div>
+					<div class="subTitle floatL">발주 정보</div>
+					<div class="subTitle floatR"><a href="/project/request/purchase/main.do?mtIntegrateKey=${orderBillDetail.mtIntegrateKey}&mtOrderKey=${orderBillDetail.mtOrderKey }">지급 정보 보러가기<label><img src="/images/arrow_down.png" /></label></a></div>
+					<div class="floatC"></div>
 				</div>
 				<div>
 					<table class="textalignC ftw200" >
 						<thead class="ftw400">
 							<tr>
-								<th scope="row">발급일자</th>
-								<th scope="row">매핑상태</th>
-								<th scope="row">매입처</th>
-								<th scope="row">사업자번호</th>
-								<th scope="row">합계금액</th>
-								<th scope="row">승인번호</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td> 2020-12-12</td>
-								<td>N</td>
-								<td>DB Inc.</td>
-								<td>111-22-33333</td>
-								<td>144,000,000</td>
-								<td>208765112000008fsd0h0kx</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div>
-					<div class="subTitle floatL">계산서 정보</div>
-					<div class="subCalendar floatR">
-						<input type="text" placeholder="from" class="calendar" />&nbsp; ~&nbsp; 
-								<input type="text" placeholder="to" class="calendar" />
-					</div>
-				</div>
-			</div>
-			<div class="contents2">			
-				<div>
-					<table class="textalignC ftw200" id="popMappingTable">
-						<thead class="ftw400">
-							<tr>
-								<th scope="row">선택</th>
 								<th scope="row">발주일자</th>
 								<th scope="row">매핑상태</th>
-								<th scope="row">프로젝트명</th>
+								<th scope="row">유지보수명</th>
 								<th scope="row">제품</th>
-								<th scope="row">거래처</th>
+								<th scope="row">매입처명</th>
 								<th scope="row">사업자번호</th>
-								<th scope="row">합계금액</th>
+								<th scope="row">매핑합계</th>
+								<th scope="row">발주 합계</th>
 								<th scope="row">담당자</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td></td>
-								<td>2020-10-12</td>
-								<td>N</td>
-								<td>기간계 응답속도 개선을 위한 인프라 교체</td>
-								<td>POWERMAX2000 U120TB</td>
-								<td>코오롱베니트가</td>
-								<td>555-66-77777</td>
-								<td>144,000,000</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>2020-10-12</td>
-								<td>Y</td>
-								<td>기간계 응답속도 개선을 위한 인프라 교체</td>
-								<td>VMAX250F</td>
-								<td>DB Inc.</td>
-								<td>555-66-77777</td>
-								<td>144,000,000</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>2020-10-12</td>
-								<td>N</td>
-								<td>기간계 응답속도 개선을 위한 인프라 교체</td>
-								<td>VMAX250F</td>
-								<td>DB Inc.</td>
-								<td>555-66-77777</td>
-								<td>144,000,000</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>2020-10-12</td>
-								<td>N</td>
-								<td>기간계 응답속도 개선을 위한 인프라 교체</td>
-								<td>VMAX250F</td>
-								<td>DB Inc.</td>
-								<td>555-66-77777</td>
-								<td>144,000,000</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>2020-10-12</td>
-								<td>N</td>
-								<td>기간계 응답속도 개선을 위한 인프라 교체</td>
-								<td>VMAX250F</td>
-								<td>DB Inc.</td>
-								<td>555-66-77777</td>
-								<td>144,000,000</td>
-								<td>홍길동</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>2020-10-12</td>
-								<td>N</td>
-								<td>기간계 응답속도 개선을 위한 인프라 교체</td>
-								<td>VMAX250F</td>
-								<td>DB Inc.</td>
-								<td>555-66-77777</td>
-								<td>144,000,000</td>
-								<td>홍길동동</td>
+								<td>${displayUtil.displayDate(orderBillDetail.mtOrderDt) }</td>
+								<td>${orderBillDetail.mappingCompleteYn}</td>
+								<td class="textalignL"><span title="${orderBillDetail.mtNm }">${orderBillDetail.mtNm }</span></td>
+								<td class="textalignL"><span title="${orderBillDetail.mtPmNm }">${orderBillDetail.mtPmNm }</span></td>								
+								<td class="textalignL"><span title="${orderBillDetail.mtOrderAcKeyNm }">${orderBillDetail.mtOrderAcKeyNm }</span></td>
+								<td><span title="${displayUtil.makeActypeForm(orderBillDetail.mtOrderAcKey) }">${displayUtil.makeActypeForm(orderBillDetail.mtOrderAcKey) }</span></td>
+								<td class="textalignR"><span title="${displayUtil.commaStr(orderBillDetail.billMappedAmount) }">${displayUtil.commaStr(orderBillDetail.billMappedAmount) }</span></td>
+								<td class="textalignR">
+									<span title="${displayUtil.commaStr(orderBillDetail.mtOrderAmount) }">${displayUtil.commaStr(orderBillDetail.mtOrderAmount) }</span>			
+								</td>
+								<td>
+									<span>${orderBillDetail.orderEmpNm }</span>
+									<input type="hidden" id="pop_mtOrderKey" value="${orderBillDetail.mtOrderKey }"/>
+									<input type="hidden" id="pop_mtOrderAcKey" value="${orderBillDetail.mtOrderAcKey }"/>
+									<input type="hidden" id="pop_mtOrderAmount" value="${orderBillDetail.mtOrderAmount }"/>
+								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
+			</div>
+			<div class="contents2">	
+				<form:form commandName="searchVO" id="billListForm" name="billListForm" method="post">
+					<div>
+						<div class="subTitle floatL">계산서 정보</div>
+						<div class="subCalendar floatR">
+							<form:input path="billDtFrom" type="text" class="calendar" placeholder="from" value="${searchParam.billDtFrom}"/>
+							&nbsp; ~&nbsp; 
+							<form:input path="billDtTo" type="text" class="calendar" placeholder="to" value="${searchParam.billDtTo}"/>
+							<span onclick="fn_popSearch();"><img class="veralignM" style="width: 33px; height: 33px;" src="<c:url value='/images/icon_search.png'/>" /></span>
+						</div>
+					</div>	
+					<div>
+						<table class="textalignC ftw200" id="popMappingTable">
+							<thead class="ftw400">
+								<tr>
+									<th scope="row">선택</th>
+									<th scope="row">발급일자</th>
+									<th scope="row">매핑상태</th>
+									<th scope="row">매입처</th>
+									<th scope="row">사업자번호</th>
+									<th scope="row">계산서금액</th>
+									<th scope="row">계산서번호</th>
+									<th scope="row">비고</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="result" items="${mappingBillList }" varStatus="status">
+									<tr>
+										<td>
+											<input type="hidden" value="<c:out value="${result.billNo }" />" />
+											<c:choose>
+												<c:when test="${result.billMappingYn eq 'N' }">
+													<input type="radio" class="tRadio" name="isCheck" id="popCheck${status.count }"/>
+													<label for="popCheck${status.count }" class="cursorP"></label>
+												</c:when>
+												<c:otherwise>
+													<p>완료</p>
+												</c:otherwise>
+											</c:choose>
+										</td>
+										<td>${displayUtil.displayDate(result.billIssueDt) }</td>
+										<td>${result.billMappingYn }</td>
+										<td class="textalignL"><span title="${orderBillDetail.mtOrderAcKeyNm }">${orderBillDetail.mtOrderAcKeyNm }</span></td>
+										<td>${displayUtil.makeActypeForm(result.billAcKey)}</td>
+										<td class="textalignR"><span title="${displayUtil.commaStr(result.billAmount)}">${displayUtil.commaStr(result.billAmount)}</span>&nbsp;</td>
+										<td><span title="${result.billNo }">${result.billNo}</span></td>
+										<td class="textalignL"><span title="${result.remark}">${result.remark}</span></td>
+									</tr>
+									<input type="hidden" value="${orderVO.buyKey }" name="billCtFkKey"/>
+									<input type="hidden" value="${orderVO.orderCtFkKey }" name="billFkPjKey"/>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</form:form>	
 			</div>		
 			<div class="bottomBtn">		
 				<div class="btnWrap">
 					<div class="floatR">
-						<button onclick="fn_preBiddingView();"><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+						<c:if test="${orderBillDetail.mappingCompleteYn eq 'N'}">	
+							<button type="button" onclick="fn_save();"><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+						</c:if>
+						<%-- <c:choose>
+							<c:when test="${orderBillDetail.mtOrderAmount eq orderBillDetail.billMappedAmount}">
+							</c:when>
+							<c:otherwise>
+								<button type="button" onclick="fn_save();"><img src="<c:url value='/images/btn_bill_mapping.png'/>" /></button>
+							</c:otherwise>
+						</c:choose> --%>
 					</div>			
 					<div class="floatC"></div>	
 				</div>
 			</div>
 		</div>
 	</div>
+	<form id="orderInfoForm">
+		<input id="pjOrderKey" name="pjOrderKey" type="hidden" value="${orderVO.pjOrderKey }"/>
+		<input type="hidden" name="billMappedAmount" id="billMappedAmount" value="${orderVO.billMappedAmount }" />
+	</form>
 </body>
 </html>

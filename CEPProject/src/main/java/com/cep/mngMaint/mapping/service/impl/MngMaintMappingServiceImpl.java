@@ -26,16 +26,29 @@ public class MngMaintMappingServiceImpl implements MngMaintMappingService {
 		
 		return resultList;
 	}
+
+	@Override
+	public MtOrderBillVO selectMtOrderBillDetail(MtOrderBillVO orderBillVO) throws Exception {
+		MtOrderBillVO mtOrderBillVO = null;
+		try {
+			mtOrderBillVO  = mapper.selectMtOrderBillDetail(orderBillVO);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return mtOrderBillVO;
+	}
+	
 	
 	@Override
-	public List<?> selectBillList(MtOrderBillVO orderBillVO) throws Exception {
+	public List<?> selectMappingBillList(MtOrderBillVO orderBillVO) throws Exception {
 		List<?> resultList = null;
 		try {
-			resultList = mapper.selectOrderBillList(orderBillVO);
+			resultList = mapper.selectMappingBillList(orderBillVO);
 		} catch(Exception e) {
 			throw new Exception(e);
 		}
 		
 		return resultList;
 	}
+
 }
