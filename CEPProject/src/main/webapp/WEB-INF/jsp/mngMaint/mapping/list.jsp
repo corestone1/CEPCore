@@ -80,8 +80,8 @@
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
-			width: 84%;
-			margin: 0 auto;
+			width: 93%;
+			margin: auto 5px;
 		}
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
@@ -92,43 +92,55 @@
 			color: #535353;
 		}
 		.middle table thead th:first-child,
-		.middle table tbody td:first-child,
-		.middle table thead th:nth-child(3),
-		.middle table tbody td:nth-child(3) {
+		.middle table tbody td:first-child {
 			width: 50px;
 			max-width: 50px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
-			width: 100px;
-			max-width: 100px;
+			width: 85px;
+			max-width: 85px;
+		}
+		.middle table thead th:nth-child(3),
+		.middle table tbody td:nth-child(3) {
+			width: 60px;
+			max-width: 60px;
 		}
 		.middle table thead th:nth-child(4),
-		.middle table tbody td:nth-child(4) {
-			width: 200px;
-			max-width: 200px;
-		}
-		.middle table tbody tr td:nth-child(4) {
-			font-weight: 400;
+		.middle table tbody td:nth-child(4),
+		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 180px;
+			max-width: 180px;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
-			width: 150px;
-			max-width: 150px;
+			width: 330px;
+			max-width: 330px;
+		}
+		.middle table tbody tr td:nth-child(5) {
+			font-weight: 400;
 		}
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6) {
+			width: 200px;
+			max-width: 200px;
+		}
+		
+		.middle table thead th:nth-child(8),
+		.middle table tbody td:nth-child(8) {
 			width: 120px;
 			max-width: 120px;
 		}
-		.middle table thead th:nth-child(7),
-		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(7),
-		.middle table tbody td:nth-child(8),
+		
 		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9) {
-			width: 100px;
-			max-width: 100px;
+		.middle table tbody td:nth-child(9),
+		.middle table thead th:nth-child(10),
+		.middle table tbody td:nth-child(10),
+		.middle table thead th:nth-child(11),
+		.middle table tbody td:nth-child(11) {
+			width: 110px;
+			max-width: 110px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -168,25 +180,37 @@
 		input[type="text"]::placeholder {
 			color: #535353;
 		}
-		input[class="calendar"] {
+		.contentsWrap .contents input[class^="calendar"] {
+			max-width: 105px;
 		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
+		.bottom table tr td {
+			padding: 10px;
+			color: #26a07d;
+			background-color: #ecf6f4;
+			text-align: right;
+			width: 125px;
+		}
+		.bottom table {
+		    width: 100%;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
-			$('.middle table tbody tr td').attr('onclick',"fn_addView('mappingBill')");
+			//$('.middle table tbody tr td').attr('onclick',"fn_addView('mappingBill')");
 		});
 		
-		function fn_addView(link){
+		function fn_addView(mtOrderKey, mtOrderAcKey){
 			/* if(link == "forecastList") {
 				location.href="<c:url value='/forecastList.do'/>";
 			} else { */
-				var url = '/mngMaint/mapping/'+link+'.do';
+				var url = '/mngMaint/mapping/mappingBill.do';
 				var dialogId = 'program_layer';
 				var varParam = {
-		
+					"mtOrderKey":mtOrderKey
+					, "mtOrderAcKey" :mtOrderAcKey
 				}
 				var button = new Array;
 				button = [];
@@ -211,12 +235,17 @@
 						<div class="title floatL"><label class="ftw500">발주 - 계산서 매핑</label></div>
 					</div>
 					<div class="floatR">
-						<form:input path="orderDtFrom" type="text" class="calendar" placeholder="from" />
+						<form:input path="orderDtFrom" type="text" class="calendar fromDt" placeholder="발주일자" value="${searchParam.orderDtFrom}"/>
 						<label> ~ </label>
-						<form:input path="orderDtTo" type="text" class="calendar" placeholder="to"/>
-						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" />
-						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호"/>
-						<form:input path="orderAcNm" type="text" class="search" placeholder="거래처상호" title="거래처상호"/>
+						<form:input path="orderDtTo" type="text" class="calendar toDt" placeholder="발주일자" value="${searchParam.orderDtTo}"/>
+						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" style="width: 90px;"/>
+						<form:input path="mtOrderAcKey" type="text" class="search" placeholder="사업자번호" title="사업자번호"/>
+						<form:select path="searchGubun">
+							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="CU" label="고객사" />
+							<form:option value="BA" label="매입처" />
+						</form:select>
+						<form:input path="searchWord" type="text" class="search" placeholder="검색어"/>
 						<span onclick="fn_search();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>
@@ -228,46 +257,201 @@
 								<th scope="row">No</th>
 								<th scope="row">발주일자</th>
 								<th scope="row">매핑상태</th>
+								<th scope="row">고객사</th>
 								<th scope="row">프로젝트명</th>
 								<th scope="row">제품</th>
-								<th scope="row">거래처 상호</th>
+								<th scope="row">매입처명</th>
 								<th scope="row">사업자번호</th>
-								<th scope="row">제품 합계</th>
+								<th scope="row">계산서맵핑합계</th>
+								<th scope="row">지급 합계</th>
+								<th scope="row">발주 합계</th>
 								<th scope="row">담당자</th>
 							</tr>
 						</thead>
 						<tbody>
+							<c:set var = "totalAmount" value="0" />
 							<c:forEach var="result" items="${orderList}" varStatus="status">
-								<tr>
+								<c:set var = "totalAmount" value="${totalAmount + result.mtOrderAmount}" />
+								<tr onclick="fn_addView('${result.mtOrderKey}', '${result.mtOrderAcKey}')">
 									<td>${status.count }</td>
-									<td>${displayUtil.displayDate(result.orderDt) }</td>
+									<td>${displayUtil.displayDate(result.mtOrderDt) }</td>
 									<td>
 										<c:choose>
-											<c:when test="${result.billMappingNum eq result.buyTurn }">
+											<c:when test="${result.mtOrderAmount eq result.billMappedAmount }">
 												<label>Y</label>
 											</c:when>
 											<c:otherwise>
-												<label>N<c:out value="(${result.billMappingNum } / ${result.buyTurn })" /></label>
+												<label>N</label>
 											</c:otherwise>
 										</c:choose>
 									</td>
-									<td><span title="${result.pjNm }">${result.pjNm }</span></td>
-									<td>
-										<span>
-											<c:forEach var="pResult" items="${result.productList }" varStatus="pStatus">
-												${pResult.pmNmCd }<c:if test="${pStatus.last eq false}">,</c:if>
-											</c:forEach>
-										</span>
-									</td>
-									<td><span title="${result.orderAcNm }">${result.orderAcNm }</span></td>
-									<td><span>${result.acKey }</span></td>
-									<td><span title="${displayUtil.commaStr(result.orderAmount) }">${displayUtil.commaStr(result.orderAmount) }</span></td>
+									<td class="textalignL"><span title="${result.mtAcNm }">${result.mtAcNm }</span></td>
+									<td class="textalignL"><span title="${result.mtNm }">${result.mtNm }</span></td>
+									<td class="textalignL"><span title="${result.mtPmNm }">${result.mtPmNm }</span></td>
+									<td class="textalignL"><span title="${result.mtOrderAcKeyNm }">${result.mtOrderAcKeyNm }</span></td>
+									<td><span>${displayUtil.makeActypeForm(result.mtOrderAcKey) }</span></td>
+									<td class="textalignR"><span title="${displayUtil.commaStr(result.billMappedAmount) }">${displayUtil.commaStr(result.billMappedAmount) }</span></td>
+									<td class="textalignR"><span title="${displayUtil.commaStr(result.donePaymentAmount) }">${displayUtil.commaStr(result.donePaymentAmount) }</span></td>
+									<td class="textalignR"><span title="${displayUtil.commaStr(result.mtOrderAmount) }">${displayUtil.commaStr(result.mtOrderAmount) }</span></td>
 									<td><span>${result.orderEmpNm }</span></td>
 								</tr>
 							</c:forEach>
+								<!-- <tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr>
+								<tr>
+									<td onclick="fn_addView('mappingBill')">1</td>
+									<td onclick="fn_addView('mappingBill')">2021-10-28</td>
+									<td onclick="fn_addView('mappingBill')"><label>Y</label></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="미래에셋생명">미래에셋생명</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="백업시스템구축">백업시스템구축</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="Unity 35, R740">Unity 35, R740</span></td>
+									<td class="textalignL" onclick="fn_addView('mappingBill')"><span title="코오롱베니트 주식회사">코오롱베니트 주식회사</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>123-81-51422</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td class="textalignR" onclick="fn_addView('mappingBill')"><span title="1,020,000">1,020,000</span></td>
+									<td onclick="fn_addView('mappingBill')"><span>최윤창</span></td>
+								</tr> -->
+								
 						</tbody>
 					</table>
 				</div>
+				<div class="bottom">
+					<table>
+						<tbody class="ftw400">
+							<tr>								
+								<td style="width:906px;">발주합계 :</td>
+								
+								<td style="text-align: left;"><span><c:out value="${displayUtil.commaStr(totalAmount)}"/> 원</span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
 			</div>
 		</div>
 	</form:form>

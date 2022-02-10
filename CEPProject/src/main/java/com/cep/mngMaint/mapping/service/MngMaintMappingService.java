@@ -18,8 +18,21 @@ public interface MngMaintMappingService {
 	public List<?> selectOrderBillList(MtOrderBillVO orderBillVO) throws Exception;
 	
 	/**
-	  * @Method Name : selectBillList
-	  * @Cdate       : 2021. 2. 17.
+	 * 
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param orderBillVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 1. 26. 오후 2:14:25
+	 * @author aranghoo
+	 */
+	public MtOrderBillVO selectMtOrderBillDetail(MtOrderBillVO orderBillVO) throws Exception;
+	
+	/**
+	  * @Method Name : selectMappingBillList
+	  * @Cdate       : 2022. 1. 26.
 	  * @Author      : sylim
 	  * @Modification: 
 	  * @Method Description : 계산서 맵핑 정보 조회
@@ -27,5 +40,5 @@ public interface MngMaintMappingService {
 	  * @return
 	  * @throws Exception
 	  */
-	public List<?> selectBillList(MtOrderBillVO orderBillVO) throws Exception;
+	public List<?> selectMappingBillList(MtOrderBillVO orderBillVO) throws Exception;
 }
