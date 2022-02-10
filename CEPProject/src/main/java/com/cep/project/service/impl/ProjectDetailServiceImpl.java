@@ -3,6 +3,7 @@
  */
 package com.cep.project.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cep.main.service.MainService;
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.project.service.ProjectDetailService;
 import com.cep.project.vo.ProjectBiddingVO;
@@ -58,6 +60,9 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 	
 	@Resource(name="comService")
 	private ComService comService;
+	
+	@Resource(name="mainService")
+	private MainService mainService;
 	
 	@Override
 	public EgovMap selectProjectDetail(ProjectVO projectVO) throws Exception {
@@ -189,6 +194,7 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> endGuarantyBond(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception {
 		
 		int result = 0;
@@ -196,8 +202,15 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		ProjectVO projectVO = new ProjectVO();
 		String salesEmpKey = "";
+		HashMap<String, String> sessionMap = null;
+		HashMap<String, String> userMap = new HashMap<String, String>();
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		
 		try {
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			userMap.put("empKey", sessionMap.get("empKey"));
+			String name = mainService.selectName(userMap);
+			
 			projectVO.setPjKey(guarantyBondVO.getPjKey());
 			salesEmpKey = mapper.selectProjectDetail(projectVO).get("regEmpKey").toString();
 			
@@ -206,7 +219,8 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			String subject = "보증 증권 정보";
 			String content = String.join(
 					                System.getProperty("line.separator"),
-					                "프로젝트 "+guarantyBondVO.getPjKey()+"건에 보증 증권 정보가 있습니다.<br><br>");
+					                "["+guarantyBondVO.getPjKey()+"] " + guarantyBondVO.getPjKey()+" Project 건에 보증 증권 정보가 있습니다. 요청인: " + name + ",",
+					                " 완료 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);
