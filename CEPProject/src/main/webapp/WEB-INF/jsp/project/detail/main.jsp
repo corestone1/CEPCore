@@ -578,6 +578,7 @@
 			var lstPjStatusCd = '${projectVO.pjStatusCd}';
 			var statusCd = 'BD';
 			var pstNm = '';
+			var url = '';
 			
 			if(lstPjStatusCd == 'PJST1000') {
 				statusCd += '';
@@ -595,17 +596,20 @@
 				pstNm = "입찰";
 			} else if(pstId.includes("CT")) {
 				pstNm = "계약";
+				url = "contract";
 			} else if(pstId.includes("OD")) {
 				pstNm = "발주";
+				url = "order";
 			} else if(pstId.includes("WK")) {
 				pstNm = "수행";
 			} else if(pstId.includes("ED")) {
 				pstNm = "완료";
+				url = "finish";
 			}
 			
 			if(!(statusCd).includes(pstId.substr(pstId.length-2,2)) && pstId.substr(pstId.length-2,2) != 'WK' && pstId.substr(pstId.length-2,2) != 'CT') {
 				if(confirm(pstNm + " 정보가 없습니다. 프로젝트 정보 등록 화면으로 이동하시겠습니까?")) {
-					var url = '/project/write/basicInfo.do';
+					var url = '/project/write/'+url+'Info.do';
 					var dialogId = 'program_layer';
 					var varParam = {
 						"pjKey": $('#iph_pjKey').val()
@@ -652,7 +656,7 @@
 					}
 				}
 				
-				var lstUrl = lobj.attr('title') + "?pjKey=" + $('#iph_pjKey').val() + "&workClass=입찰_첨부파일";
+				var lstUrl = lobj.attr('title') + "?pjKey=" + $('#iph_pjKey').val() + "&workClass="+pstNm+"_첨부파일";
 				
 				//alert(lstUrl);
 				
@@ -981,10 +985,10 @@
 						<div class="btnWrap rt">
 							<div class="floatR">
 								<%-- <button type="button" value="수행일지" onclick="javascript:fnWorkInfoPopup();"><img class="cursorP" src="<c:url value='/images/btn_perform_record.png'/>" /></button> --%>
-								<button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button>
+								<%-- <button type="button" value="첨부파일"><img class="cursorP" src="<c:url value='/images/btn_file.png'/>" /></button> --%>
 								<button type="button" value="수정" id="modMinInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제" id="delMinInfo"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-								<button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button>
+								<%-- <button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button> --%>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
 						</div>

@@ -55,4 +55,18 @@ public interface MngProjectMappingService {
 	  * @throws Exception
 	  */
 	public Map<String, Object> updateOrderBill(HttpServletRequest request, OrderBillVO orderBillVO) throws Exception;
+	
+	
+	/**
+	  * @Method Name : deleteOrderBill
+	  * @Cdate       : 2022. 2. 01.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 발주 - 계산서 맵핑 취소
+	  * @param orderBillVO
+	  * @return
+	  * @throws Exception
+	  */
+	public Map<String, Object> deleteOrderBill(HttpServletRequest request, OrderBillVO orderBillVO) throws Exception;
+	
 }

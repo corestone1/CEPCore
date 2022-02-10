@@ -319,6 +319,7 @@ public class ProjectServiceImpl implements ProjectService {
 		List<Object> ctKeyList = new ArrayList<Object>();
 		List<Object> salesKeyList = new ArrayList<Object>();
 		
+		
 		try {
 			
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
@@ -326,6 +327,10 @@ public class ProjectServiceImpl implements ProjectService {
 			projectContractSalesVO.setModEmpKey(session.get("empKey"));
 			
 			listCnt = projectContractSalesVO.getProjectContractSalesVOList().size();
+			
+			for (int i = 0; i < listCnt; i++) {
+				projectContractSalesVO.getProjectContractSalesVOList().get(i).setSalesAcKey(projectContractSalesVO.getSalesAcKey());
+			}
 
 			if(!"".equals(CepStringUtil.getDefaultValue(projectContractSalesVO.getSelectKey(), ""))){
 				// 업데이트 대상
@@ -783,6 +788,8 @@ public class ProjectServiceImpl implements ProjectService {
 				purchaseVO.setBuyAmount(orderVO.getOrderAmount());
 				purchaseVO.setDonePaymentAmount(0);
 				purchaseVO.setYetPaymentAmount(orderVO.getOrderAmount());
+				purchaseVO.setBillPurchaseCd(orderVO.getBillPurchaseCd());
+				purchaseVO.setBillMfCd(orderVO.getBillMfCd());
 				insertPurchaseInfo(request, purchaseVO);
 				
 			} else {
@@ -826,6 +833,8 @@ public class ProjectServiceImpl implements ProjectService {
 				purchaseVO.setBuyAmount(orderVO.getOrderAmount());
 				purchaseVO.setBuyKey(orderVO.getBuyKey());
 				purchaseVO.setYetPaymentAmount(orderVO.getOrderProductVOList().get(0).getYetPaymentAmount());
+				purchaseVO.setBillPurchaseCd(orderVO.getBillPurchaseCd());
+				purchaseVO.setBillMfCd(orderVO.getBillMfCd());
 				
 				updatePurchaseInfo(request, purchaseVO);
 			}

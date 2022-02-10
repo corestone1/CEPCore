@@ -68,8 +68,11 @@
 				<if test="orderDtFrom != null and orderDtFrom != '' and orderDtTo != null and orderDtTo != ''">
 				  	AND  POT.ORDER_DT BETWEEN REPLACE(#{orderDtFrom}, '-', '') AND REPLACE(#{orderDtTo}, '-', '') /* 기간 조건 검색 */
 				</if>
-				<if test="orderEmpNm != null and orderEmpNm != ''">
-				  	AND  CET1.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%'))  /* 발주자 조건검색 */
+				<if test="salesEmpNm == null or salesEmpNm == ''">
+					AND  CET2.EMP_KEY LIKE CONCAT('%', CONCAT(#{salesEmpKey}, '%'))  /* 담당자 조건검색 */
+				</if>
+				<if test="salesEmpNm != null and salesEmpNm != ''">
+				  	AND  CET2.EMP_NM LIKE CONCAT('%', CONCAT(#{salesEmpNm}, '%'))  /* 담당자 조건검색 */
 				</if>
 			) DAT
 		ORDER BY DAT.REG_DT DESC, DAT.REG_TM DESC

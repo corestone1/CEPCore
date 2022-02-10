@@ -47,7 +47,7 @@
 			width: 37%;
 		}
 		.listForm .contents > div:nth-child(2) {
-			margin-top: 27px;
+			margin-top: 16px;
 		}
 		.listForm .contents > .fxd {
 			width: 60%;
@@ -444,7 +444,7 @@
 				</div>
 				<div class="floatR dpBlock fxd">
 					<div class="floatR backWrap">
-						<a onclick="fn_detail();">프로젝트 정보로 돌아가기</a>
+						<a onclick="fn_detail();"><img src="/images/btn_todetail.png" /></a>
 					</div>
 					<iframe src="" width="100%" height="740"></iframe>
 				</div>
@@ -458,6 +458,9 @@
 	<form id="moveForm" name="moveForm">
 		<input type="hidden" id="pjKey" name="pjKey" value="${resultList[0].pjKey }"/>
 		<input type="hidden" id="workClass" name="workClass" value=""/>
+	</form>
+	<form id="listForm" name="listForm">
+		<input type="hidden" name="pjKey" />
 	</form>
 </body>
 </html>

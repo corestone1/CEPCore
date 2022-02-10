@@ -47,9 +47,9 @@ public class MngProjectMappingController {
 			HashMap<String, String> sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			String empAuthCd = request.getSession().getAttribute("empAuthCd").toString();
 			
+			//최초 조회시 자신의 건만
 			if(!"".equals(CepStringUtil.getDefaultValue(empAuthCd, "")) && 
-				!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue()) &&
-				"".equals(CepStringUtil.getDefaultValue(searchVO.getDeptKey(), ""))) {
+				!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue())) {
 				searchVO.setRegEmpKey(sessionMap.get("empKey"));
 				model.put("empKey", sessionMap.get("empKey"));
 			}
@@ -116,6 +116,15 @@ public class MngProjectMappingController {
 	public Map<String, Object> compMapping(HttpServletRequest request, @RequestBody OrderBillVO orderBillVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap = service.updateOrderBill(request, orderBillVO);
+		
+		return returnMap;
+	}
+	
+	@RequestMapping(value="/cancelMapping.do")
+	@ResponseBody
+	public Map<String, Object> cancelMapping(HttpServletRequest request, @RequestBody OrderBillVO orderBillVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap = service.deleteOrderBill(request, orderBillVO);
 		
 		return returnMap;
 	}

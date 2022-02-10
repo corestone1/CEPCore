@@ -280,7 +280,7 @@
 			
 			var sendData = JSON.stringify(object);
 			
-			if($("#e_acKey").val().length == 0) {
+			if($("#e_acKey").val().replace(" ","").length == 0) {
 				alert('사업자 번호를 입력해주세요.');
 				$("#e_acKey").focus();
 			} else {
@@ -402,7 +402,7 @@
 		function fn_deleteDirector(obj) {
 			if($('#director_tbody tr').length>1) {
 				if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0) {
-					if($("#deleteDirectorList").val().length == 0) {
+					if($("#deleteDirectorList").val().replace(" ","").length == 0) {
 						$("#deleteDirectorList").val($(obj).parent().parent().find("input[name='acDirectorKey']").val());
 					} else {
 						$("#deleteDirectorList").val($("#deleteDirectorList").val() + ";" + $(obj).parent().parent().find("input[name='acDirectorKey']").val());	
@@ -442,7 +442,7 @@
 		function fn_deleteDeposit(obj) {
 			
 			if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0) {
-				if($("#deleteDepositList").val().length == 0) {
+				if($("#deleteDepositList").val().replace(" ","").length == 0) {
 					$("#deleteDepositList").val($(obj).parent().parent().find("input[name='acAdSeq']").val());
 				} else {
 					$("#deleteDepositList").val($("#deleteDepositList").val() + ";" + $(obj).parent().parent().find("input[name='acAdSeq']").val());	
@@ -455,7 +455,7 @@
             if ($("#basicForm")[0].checkValidity()){
                //필수값 모두 통과하여 저장 프로세스 호출.
                if($("#e_acKey").val() != null && $("#e_acKey").val() != "" && $("#e_acKey").val().length != 0 && $("#chkExist").val() == 0 
-            		   && $("#selectKey").val().length == 0) {
+            		   && $("#selectKey").val().replace(" ","").length == 0) {
             	   alert("사업자 번호 중복체크를 해주세요.");
             	   $('.contents').scrollTop(0);
                } else if(!$('input[name="acKind"]:checked').val()) {
@@ -487,7 +487,7 @@
 			});
 			
 			$("input[name='acRepTel']").val($("#acRepTel1").val() + "-" + $("#acRepTel2").val() + "-" + $("#acRepTel3").val());
-			if($("#acRepFax2").val().length != 0 && $("#acRepFax3").val().length != 0) {
+			if($("#acRepFax2").val().replace(" ","").length != 0 && $("#acRepFax3").val().replace(" ","").length != 0) {
 				$("input[name='acRepFax']").val($("#acRepFax1").val() + "-" + $("#acRepFax2").val() + "-" + $("#acRepFax3").val());
 			}
 			
@@ -510,7 +510,7 @@
 			} else { */
 				//console.log(sendData);	 
 			
-			if($("#e_acKey").val().length == 0) {
+			if($("#e_acKey").val().replace(" ", "").length == 0) {
 				if(confirm("사업자 번호가 입력되지 않았습니다. 랜덤번호로 저장하시겠습니까?")) {
 					$.ajax({
 						url: "/mngCommon/account/insert/accountInfo.do",

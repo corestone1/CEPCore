@@ -12,6 +12,7 @@
 		}
 		.btnWrap {
 			padding-bottom: 10px;
+			margin-top: 13px;
 		}
 		form .nav {
 			width: 100%;
@@ -95,8 +96,8 @@
 </head>
 <body>
 	<form id="listForm" name="listForm" method="post">
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="">
@@ -134,10 +135,10 @@
 							<table class="dtl" style="width: 100%;">
 								<thead>
 									<tr>
-										<th>계산서 일자</th>
-										<th>매출 청구 일자</th>
 										<th>매출처</th>
 										<th>매출 회차</th>
+										<th>매출구분</th>
+										<th>제조사</th>
 										<th>수금 예상 일자</th>
 										<th>수금 완료 일자</th>
 										<th>수금 비율</th>
@@ -147,10 +148,10 @@
 								<c:set var = "sSum" value = "0" />
 								<c:forEach var="result" items="${salesList}" varStatus="status">
 									<tr>
-										<td>${displayUtil.displayDate(result.billIssueDt)}</td>
-										<td>${displayUtil.displayDate(result.salesChargeDt) }</td>
 										<td>${result.acNm }</td>
 										<td>${result.salesTurn }</td>
+										<td>${pjInfo[0].billSalesCd }</td>
+										<td>${pjInfo[0].billMfCd }</td>
 										<td>${displayUtil.displayDate(result.salesCollectFcDt) }</td>
 										<td>${displayUtil.displayDate(result.salesCollectFinishDt) }</td>
 										<td>${result.salesCollectRate }%</td>
@@ -174,12 +175,11 @@
 								<thead>
 									<tr>
 										<th>계산서 매핑 여부</th>
-										<th>계산서 일자</th>
 										<th>계산서 번호</th>
 										<th>매입처</th>
-										<th>매입제품</th>
-										<th>단가</th>
-										<th>수량</th>
+										<th>매입구분</th>
+										<th>제조사</th>
+										<th>매입제품 / 단가 / 수량</th>
 										<th>합계</th>
 									</tr>
 								</thead>
@@ -187,18 +187,19 @@
 								<c:forEach var="result" items="${purchaseList}" varStatus="status">
 									<tr>
 										<td>${result.billMappingYn}</td>
-										<td>${displayUtil.displayDate(result.billIssueDt) }</td>
 										<td>${result.billNo}</td>
 										<td>${result.acNm }</td>
-										<td>${result.mfAcNm }</td>
-										<td class="textalignR">${displayUtil.commaStr(result.orderUprice) }</td>
-										<td>${result.orderQuantity}</td>
-										<td class="textalignR">${displayUtil.commaStr(result.orderAmount) }</td>
+										<td>${result.billPurchaseCd }</td>
+										<td>${result.billMfCd }</td>
+										<td>
+											${result.orderProduct }
+										</td>
+										<td class="textalignR">${displayUtil.commaStr(result.orderSum) }</td>
 									</tr>
 									<c:set var= "pSum" value="${pSum + result.orderAmount}"/>
 								</c:forEach>
 								<tr>
-									<td colspan="7" class="textalignR">매입액 합계</td>
+									<td colspan="6" class="textalignR">매입액 합계</td>
 									<td class="textalignR">${displayUtil.commaStr(pSum)}</td>
 								</tr> 
 							</table>

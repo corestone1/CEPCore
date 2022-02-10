@@ -31,6 +31,8 @@ public class ProjectPurchaseVO extends ProjectVO implements Serializable {
 	private int buyAmount;
 	private int donePaymentAmount;
 	private int yetPaymentAmount;
+	private String billPurchaseCd;
+	private String billMfCd;
 	private String regEmpKey;
 	private String modEmpKey;
 	private String deleteYn;
@@ -70,6 +72,18 @@ public class ProjectPurchaseVO extends ProjectVO implements Serializable {
 	}
 	public void setYetPaymentAmount(int yetPaymentAmount) {
 		this.yetPaymentAmount = yetPaymentAmount;
+	}
+	public String getBillPurchaseCd() {
+		return billPurchaseCd;
+	}
+	public void setBillPurchaseCd(String billPurchaseCd) {
+		this.billPurchaseCd = billPurchaseCd;
+	}
+	public String getBillMfCd() {
+		return billMfCd;
+	}
+	public void setBillMfCd(String billMfCd) {
+		this.billMfCd = billMfCd;
 	}
 	public String getRegEmpKey() {
 		return regEmpKey;

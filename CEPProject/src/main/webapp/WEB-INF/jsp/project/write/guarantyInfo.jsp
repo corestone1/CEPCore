@@ -446,8 +446,8 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-				<li class="colorWhite cursorP" onclick="fn_prevView();">금액</li>
-				<li class="colorWhite cursorP on">예상일정</li>
+				<li class="colorWhite cursorP" onclick="fn_prevView();">매출정보</li>
+				<li class="colorWhite cursorP on">보증증권</li>
 			</ul>
 		</div>
 		<form:form commandName="gbListForm" id="gbListForm" name="gbListForm" method="post">
@@ -463,14 +463,14 @@
 							<%-- <c:forEach var="result" items="${salesList }" varStatus="status"> --%>
 								<table>
 									<tr class='first'>
-										<td colspan='2' style='min-width: 96px;'><%-- <c:out value="${result.salesTurn}" /> --%>일정</td>
+										<td colspan='2' style='min-width: 96px;'><%-- <c:out value="${result.salesTurn}" /> --%>증권정보</td>
 										<td>
-											<span>계산서 예정</span>
+											<%-- <span>계산서 예정</span>
 											<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' 
 												value='<c:choose><c:when test="${result.salesBillFcDt eq null }"><c:if test="${forecastVO.fcSalesDt ne null }">${ displayUtil.displayDate(forecastVO.fcSalesDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesBillFcDt) }</c:otherwise></c:choose>' required/> &nbsp;
 											<span style="margin-left: 13px;">수금 예상</span>
 											<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' 
-												value='<c:choose><c:when test="${result.salesCollectFcDt eq null }"><c:if test="${forecastVO.fcCollectDt ne null }">${ displayUtil.displayDate(forecastVO.fcCollectDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesCollectFcDt) }</c:otherwise></c:choose>' required/>
+												value='<c:choose><c:when test="${result.salesCollectFcDt eq null }"><c:if test="${forecastVO.fcCollectDt ne null }">${ displayUtil.displayDate(forecastVO.fcCollectDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesCollectFcDt) }</c:otherwise></c:choose>' required/> --%>
 											<input type='hidden' name='ctKey' id='ctKey' value='${ctVO.ctKey }' />
 											<input type='hidden' name='salesKey' value='${result.salesKey}' />
 											<input type='hidden' value='${status.count }' name='salesTurn' />
@@ -555,14 +555,14 @@
 								<%-- <c:forEach var="entry" items="${salesList }" varStatus="status"> --%>
 									<table>
 										<tr class='first'>
-											<td colspan='2' style='min-width: 96px;'><%-- <c:out value="${entry.salesTurn }" />회차 --%>일정</td>
+											<td colspan='2' style='min-width: 96px;'><%-- <c:out value="${entry.salesTurn }" />회차 --%>증권정보</td>
 											<td>
-												<span>계산서 예정</span>
+												<%-- <span>계산서 예정</span>
 												<input type='text' title='계산서 예정' placeholder='계산서 예정' class='calendar' name='salesBillFcDt' 
 													value='<c:choose><c:when test="${result.salesBillFcDt eq null }"><c:if test="${forecastVO.fcSalesDt ne null }">${ displayUtil.displayDate(forecastVO.fcSalesDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesBillFcDt) }</c:otherwise></c:choose>' required/> &nbsp;
 												<span style="margin-left: 13px;">수금 예상</span>
 												<input type='text' title='수금 예상' placeholder='수금 예상' class='calendar' name='salesCollectFcDt' 
-													value='<c:choose><c:when test="${result.salesCollectFcDt eq null }"><c:if test="${forecastVO.fcCollectDt ne null }">${ displayUtil.displayDate(forecastVO.fcCollectDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesCollectFcDt) }</c:otherwise></c:choose>' required/>
+													value='<c:choose><c:when test="${result.salesCollectFcDt eq null }"><c:if test="${forecastVO.fcCollectDt ne null }">${ displayUtil.displayDate(forecastVO.fcCollectDt) }-01</c:if></c:when><c:otherwise>${ displayUtil.displayDate(result.salesCollectFcDt) }</c:otherwise></c:choose>' required/> --%>
 												<input type='hidden' name='salesKey' value='${entry.salesKey}' />
 												<input type='hidden' name='ctKey' id='ctKey' value='${ctVO.ctKey }' />
 												<input type='hidden' value='${entry.salesTurn }' name='salesTurn' />

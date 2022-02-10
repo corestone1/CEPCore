@@ -1,5 +1,6 @@
 package com.cep.forecast.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -432,6 +433,7 @@ public class ForecastServiceImpl implements ForecastService {
 		AlarmVO alarmVO = new AlarmVO();
 		HashMap<String, String> sessionMap = null;
 		HashMap<String, String> userMap = new HashMap<String, String>();
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 
 		try {
 			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
@@ -455,7 +457,8 @@ public class ForecastServiceImpl implements ForecastService {
 			String subject = forecastBiddingVO.getSpBusiNm() + "건 입찰 서류 요청";
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"Forecast " + forecastBiddingVO.getSpBusiNm()+" 건에 입찰 서류 요청 정보가 있습니다.<br>요청인: "+name+"<br><br>");
+									"["+forecastBiddingVO.getSpKey()+"] " + forecastBiddingVO.getSpBusiNm()+" Forecast 건에 입찰 서류 요청 정보가 있습니다.<br>요청인: "+name+",",
+									" 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);
@@ -497,6 +500,7 @@ public class ForecastServiceImpl implements ForecastService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> sessionMap = null;
 		HashMap<String, String> userMap = new HashMap<String, String>();
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		
 		try {
 			String dept = DeptInfo.DEPT_OPER_L3.getValue();
@@ -523,7 +527,8 @@ public class ForecastServiceImpl implements ForecastService {
 			String subject = forecastBiddingVO.getSpBusiNm() + " 건 입찰 보증 증권 발행 신청";
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"Forecast "+forecastBiddingVO.getSpBusiNm()+"건에 입찰 보증 증권 발행 신청 건이 있습니다.<br>요청인: "+name+"<br><br>");
+									"["+forecastBiddingVO.getSpKey()+"] " +forecastBiddingVO.getSpBusiNm()+" Forecast 건에 입찰 보증 증권 발행 신청 건이 있습니다.<br>요청인: "+name+",",
+									" 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);
@@ -582,8 +587,14 @@ public class ForecastServiceImpl implements ForecastService {
 		AlarmVO alarmVO = new AlarmVO();
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> sessionMap = null;
+		HashMap<String, String> userMap = new HashMap<String, String>();
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		
 		try {
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			userMap.put("empKey", sessionMap.get("empKey"));
+			String name = mainService.selectName(userMap);
+			
 			List<String> toList = new ArrayList<String>();
 			toList.add(mapper.selectBdGbInfo(forecastBiddingVO).get("regEmpKey").toString());
 			
@@ -598,7 +609,8 @@ public class ForecastServiceImpl implements ForecastService {
 			String subject = forecastBiddingVO.getSpBusiNm() + " 건 입찰 보증 증권 발행 완료";
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"Forecast "+forecastBiddingVO.getSpBusiNm()+"건에 보증 증권 발행이 완료되었습니다.<br><br>");
+									"["+forecastBiddingVO.getSpKey()+"] " +forecastBiddingVO.getSpBusiNm()+" Forecast 건에 보증 증권 발행이 완료되었습니다. 완료인: "+name+",",
+									" 완료 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);

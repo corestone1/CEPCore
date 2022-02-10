@@ -177,7 +177,12 @@
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/orderSearchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O&searchKey='+$("#m_pjKey").val()+'','PRODUCT_LIST','width=1000px,height=713px,left=600');
+			if($("#projectConnect").val().replace(" ","").length == 0) {
+				alert("프로젝트를 먼저 선택해 주세요.");
+				$("#projectConnect").trigger("click");
+			} else {
+				window.open('/mngCommon/product/popup/orderSearchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O&searchKey='+$("#m_pjKey").val()+'','PRODUCT_LIST','width=1000px,height=713px,left=600');				
+			}
 		}
 		
 		function fn_chkVali() {
@@ -339,12 +344,12 @@
 								&nbsp;&nbsp;&nbsp;기타
 							</td>
 						</tr>
-						<tr>
+						<%-- <tr>
 							<td class="tdTitle"><label>*</label>제품유형</td>
 							<td class="tdContents">
 								<input type="text" name="inbPmType" value="<c:out value="${resultList[0].inbPmType}"/>" required/>
 							</td>
-						</tr>
+						</tr> --%>
 						<tr>
 							<td class="tdTitle"><label>*</label>모델명</td>
 							<td class="tdContents">
@@ -359,7 +364,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>납품일</td>
+							<td class="tdTitle"><label>*</label>작업일자</td>
 							<td class="tdContents">
 								<input type="text" class="calendar" name="inbDeliveryDt" value="<c:out value="${displayUtil.displayDate(resultList[0].inbDeliveryDt)}"/>" required/>
 							</td>

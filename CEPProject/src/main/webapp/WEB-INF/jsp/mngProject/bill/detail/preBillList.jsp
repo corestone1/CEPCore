@@ -36,6 +36,7 @@
 		    font-weight: 500;
 		    margin-bottom: 10px;
 		    margin-top: 30px;
+		    width: 997px;
 		}
 		.stitle ul {
 			width: 100%;
@@ -104,17 +105,17 @@
 		}
 		.sdContent .dtl thead th:nth-child(2), 
 		.sdContent .dtl tbody td:nth-child(2) {
-		    width: 200px;
-		    max-width: 200px;
+		    width: 89px;
+		    max-width: 89px;
 		}
 		.sdContent .dtl thead th:nth-child(3), 
 		.sdContent .dtl tbody td:nth-child(3) {
-		    width: 75px;
-		    max-width: 75px;
+		    width: 153px;
+		    max-width: 153px;
 		}
 		.sdContent .dtl thead th:nth-child(4), 
 		.sdContent .dtl tbody td:nth-child(4) {
-		    width: 130px;
+		    width: 100px;
 		}
 		.sdContent .dtl tbody tr td:nth-child(4) {
 		    font-weight: 400;
@@ -128,68 +129,40 @@
 		}
 		.sdContent .dtl thead th:nth-child(5), 
 		.sdContent .dtl tbody td:nth-child(5) {
-		    width: 90px;
+		    width: 142px;
 		}
 		.sdContent .dtl thead th:nth-child(6), 
 		.sdContent .dtl tbody td:nth-child(6) {
-		    width: 105px;
+		    width: 121px;
 		}
 		.sdContent .dtl thead th:nth-child(7), 
 		.sdContent .dtl tbody td:nth-child(7) {
-		    width: 63px;
+		    width: 60px;
 		}
 		.sdContent .dtl thead th:nth-child(8), 
 		.sdContent .dtl tbody td:nth-child(8) {
-	    	width: 60px;
+	    	width: 58px;
+		}
+		
+		.sdContent .dtl tbody td span {
+			display: inline-block;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		    width: 84%;
+		    min-width: 55px;
+		    max-width: 203px;
+		    margin: 0 auto;
 		}
 		
 	</style>
 	<script>
 		$(document).ready(function() {
-			
+			$("._pjNm").each(function() {
+				$(this).val(parent.$("#pjNm").val());
+			});
 			                
 		});
-		
-		function fn_comp(key, amount) {
-			var pSum = parent.document.getElementById("buyAmount").value;
-			var pDone = parent.document.getElementById("originDonePaymentAmount").value;
-			var pYet = parent.document.getElementById("originYetPaymentAmount").value;
-			
-			var object = {};
-			
-			object['paymentKey'] = key;
-			object['paymentStatusCd'] = "PYST4000";
-			object['donePaymentAmount'] = Number(pDone) + Number(amount);
-			object['yetPaymentAmount'] = Number(pYet) - Number(amount);
-			object['buyKey'] = $('#buyKey').val();
-
-			var sendData = JSON.stringify(object);
-			 
-			$.ajax({
-				url:"/cmm/update/paymentInfo.do",
-				dataType: 'json', 
-			    type:"POST",  
-			    data: sendData,
-			    async:false, 
-			 	contentType: "application/json; charset=UTF-8", 
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader("AJAX", true);
-					//xhr.setRequestHeader(header, token);
-					
-				},
-			    success:function(response){	
-			    	if(response!= null && response.successYN == 'Y') {
-			    		alert('지급 완료 처리되었습니다.');
-			    		parent.document.location.reload()
-			    	}
-			    },
-				error: function(request, status, error) {
-					if(request.status != '0') {
-						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-					}
-				} 
-			});   
-		}
 		
 	 	function fnMoveBillForm(billTurnNo) {
 			if(billTurnNo != null) {
@@ -199,35 +172,42 @@
 			form.action = "<c:url value='/mngProject/bill/detail/billForm.do'/>";
 			form.submit();  
 		}
+	 
 	 	
-	 	function fnComplete(pstPjKey, pstBillCallKey, pstSalesKey){
+	 	function fnComplete(obj) {
+	 		var billInfo = {};
 	 		
- 			 
-			var billInfo = {'pjKey' : pstPjKey, 'billCallKey' : pstBillCallKey, 'salesKey' : pstSalesKey};
-			
-			 $.ajax({
-		        	url :"/mngProject/bill/detail/writePaymentsComplate.do",
-		        	type:"POST",  
-		            data: billInfo,
-		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-		     	    dataType: 'json',
-		            async : false,
-		        	success:function(data){		  
-		        		
-		        		if(data.successYN == "Y") {
-		        			alert("수금 완료 처리되었습니다.");
-		        			
-		        			location.reload();
-		        		} else {
-		        			alert("수금 완료 처리에 실패하였습니다.");
-		        		}
-		            },
-		        	error: function(request, status, error) {
-		        		if(request.status != '0') {
-		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-		        		}
-		        	} 
-		    });
+	 		$(obj).next().children().each(function() {
+	 			billInfo[$(this).attr('id').replace("_","")] = $(this).val();
+	 		});
+	 		
+			$.ajax({
+	        	url :"/mngProject/bill/detail/writePaymentsComplate.do",
+	        	type:"POST",  
+	            data: billInfo,
+	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+	     	    dataType: 'json',
+	            //async : false,
+	            beforeSend: function() {
+			 		parent.$(".wrap-loading").removeClass("dpNone");
+			 	}, complete: function() {
+			 		parent.$(".wrap-loading").addClass("dpNone");
+			 	}, success:function(data){		  
+	        		
+	        		if(data.successYN == "Y") {
+	        			alert("수금 완료 처리되었습니다.");
+	        			
+	        			location.reload();
+	        		} else {
+	        			alert("수금 완료 처리에 실패하였습니다.");
+	        		}
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+		    });  
 	 	}
 	 	
 	 	function fnViewBillInsert(billCtFkKey) {
@@ -258,24 +238,35 @@
 				<thead>
 					<tr>
 						<th>No</th>
-						<th>계산서 번호</th>
+						<!-- <th>계산서 번호</th> -->
 						<th>발행일자</th>
 						<th>매출처</th>
 						<th>매출처 담당자</th>
+						<th>발행 이메일</th>
 						<th>계산서 금액</th>
 						<th>발행구분</th>
-						<th>상태</th>
 						<th>진행</th>
+						<%
+							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
+						<th>완료</th>
+						<% } %>
+						<%
+							if (!session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
+						<th>수금일자</th>
+						<% } %>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="result" items="${prePaymentList }" varStatus="status">
 						<tr>
 							<td>${status.count }</td>
-							<td><span>${result.billNo }</span></td>
+							<%-- <td><span>${result.billNo }</span></td> --%>
 							<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
 							<td><a href="javascript:fnMoveBillForm('${result.billTurnNo}')"><span><c:out value="${result.billAcNm }"></c:out></span></a></td>
 							<td><span>${result.billAcDirectorName }</span></td>
+							<td><span>${result.billIssueEmail }</span></td>
 							<td class="textalignR"><span>${displayUtil.commaStr(result.billAmount) }</span></td>
 							<td>
 								<c:choose>
@@ -299,7 +290,12 @@
 										<span>매핑<br /><img src="/images/btn_cancel_mapping_green.png" onclick="javascript:fnViewBillInsert('${result.salesKey }');" /></span>
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'I' }">
-										<span>발행<br /><img src="/images/btn_cancel_bill_green.png" onclick="javascript:fnMoveBillForm('${result.billTurnNo}')" /></span>
+										<span>
+											발행<br />
+											<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
+											<img src="/images/btn_cancel_bill_green.png" onclick="javascript:fnMoveBillForm('${result.billTurnNo}')" title="발행 취소"/>
+											<% } %>
+										</span>
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'E' }">
 										<span>수금</span>
@@ -309,11 +305,14 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
+							<%
+								if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+							%>
 							<td>
 								<c:choose>
 									<c:when test="${result.billIssueStatus == 'R' }">
-										<button type="button" class="btnComp" onclick="javascript:fnViewBillInsert('${result.salesKey }');">
-											<img src="<c:url value='/images/btn_mapping_bill.png'/>" />
+										<button type="button" class="btnComp" onclick="javascript:fnMoveBillForm('${result.billTurnNo}');">
+											<img src="<c:url value='/images/btn_end_bill_gray.png'/>" />
 										</button>
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'M' }">
@@ -323,9 +322,17 @@
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'I' }">
 										<c:set var="key" value="${result.salesCollectFinishDt }" />
-										<button type="button" class="btnComp" onclick="javascript:fnComplete('${result.pjKey }', '${result.billCallKey}' ,'${result.salesKey }');">
-											<img src="<c:url value='/images/btn_end_col.png'/>" />
+										<button type="button" class="btnComp"  onclick="javascript:fnComplete(this);">
+										<%-- onclick="javascript:fnComplete('${result.pjKey }', '${result.billCallKey}' ,'${result.salesKey }');"> --%>
+											<img src='/images/btn_end_col.png' />
 										</button>
+										<div class="dpNone">
+											<input type="hidden" id="_pjKey" value="${result.pjKey }" />
+											<input type="hidden" id="_billCallKey" value="${result.billCallKey }" />
+											<input type="hidden" id="_salesKey" value="${result.salesKey }" />
+											<input type="hidden" id="_billTurnNo" value="${result.billTurnNo }" />
+											<input type="hidden" id="_pjNm" class="_pjNm" value="" />
+										</div>
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'E' }">
 										<span>${displayUtil.displayDate(result.salesCollectFinishDt) }</span>
@@ -342,6 +349,27 @@
 									</c:otherwise> --%>
 								</c:choose>
 							</td>
+							<% } %>
+							<%
+								if (!session.getAttribute("empAuthCd").equals("EMAU1001")) {
+							%>
+							<td>
+								<c:choose>
+									<c:when test="${result.billIssueStatus == 'R' }">
+										미수금
+									</c:when>
+									<c:when test="${result.billIssueStatus == 'M' }">
+										미수금
+									</c:when>
+									<c:when test="${result.billIssueStatus == 'I' }">
+										미수금
+									</c:when>
+									<c:when test="${result.billIssueStatus == 'E' }">
+										<span>${displayUtil.displayDate(result.salesCollectFinishDt) }</span>
+									</c:when>
+								</c:choose>
+							</td>
+							<% } %>
 						</tr>
 					</c:forEach>
 				</tbody>

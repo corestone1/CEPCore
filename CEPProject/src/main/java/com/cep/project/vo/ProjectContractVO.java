@@ -14,6 +14,8 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	private String ctDt;
 	private String ctPayTerms;
 	private int collectTurn;
+	private String billSalesCd;
+	private String billMfCd;
 	private List<ProjectContractVO> projectContractVOList;
 	
 	public String getCtKey() {
@@ -45,6 +47,18 @@ public class ProjectContractVO extends ProjectVO implements Serializable {
 	}
 	public void setCollectTurn(int collectTurn) {
 		this.collectTurn = collectTurn;
+	}
+	public String getBillSalesCd() {
+		return billSalesCd;
+	}
+	public void setBillSalesCd(String billSalesCd) {
+		this.billSalesCd = billSalesCd;
+	}
+	public String getBillMfCd() {
+		return billMfCd;
+	}
+	public void setBillMfCd(String billMfCd) {
+		this.billMfCd = billMfCd;
 	}
 	public List<ProjectContractVO> getProjectContractVOList() {
 		return projectContractVOList;

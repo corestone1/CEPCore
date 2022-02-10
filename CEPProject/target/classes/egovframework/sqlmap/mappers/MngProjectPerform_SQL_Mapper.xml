@@ -28,7 +28,13 @@
 		LEFT OUTER JOIN   CMM_EMPLOYEE_TB CET ON CET.EMP_KEY = PWB.REG_EMP_KEY
 		WHERE  1=1
 		<if test="pjKey != null and pjKey != ''">
-			AND PWB.PJ_KEY    = #{pjKey}
+			AND PWB.PJ_KEY  LIKE CONCAT('%', CONCAT(#{pjKey}, '%'))
+		</if>
+		<if test="pjNm != null and pjNm != ''">
+			AND PM.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))
+		</if>
+		<if test="regEmpKey != null and regEmpKey != ''">
+			AND CET.EMP_NM LIKE CONCAT('%', CONCAT(#{regEmpKey}, '%'))
 		</if>
 		<if test="performDtFrom != null and performDtFrom != '' and performDtTo != null and performDtTo != ''">
 			AND PWB.PJ_WORK_DT BETWEEN REPLACE(#{performDtFrom}, '-', '') AND REPLACE(#{performDtTo}, '-', '') /* 기간 조건 검색 */
@@ -69,6 +75,12 @@
 		WHERE 1=1  
 		<if test="pjKey != null and pjKey != ''">
 			AND PIB.PJ_KEY    = #{pjKey}
+		</if>
+		<if test="pjNm != null and pjNm != ''">
+			AND PM.PJ_NM LIKE CONCAT('%', CONCAT(#{pjNm}, '%'))
+		</if>
+		<if test="regEmpKey != null and regEmpKey != ''">
+			AND CET.EMP_NM LIKE CONCAT('%', CONCAT(#{regEmpKey}, '%'))
 		</if>
 		<if test="performDtFrom != null and performDtFrom != '' and performDtTo != null and performDtTo != ''">
 			AND PIB.INB_DELIVERY_DT BETWEEN REPLACE(#{performDtFrom}, '-', '') AND REPLACE(#{performDtTo}, '-', '') /* 기간 조건 검색 */

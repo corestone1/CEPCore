@@ -20,6 +20,8 @@
 		<result property="spKey" column="SP_KEY" />
 		<result property="searchFlag" column="SEARCH_FLAG"/>
 		<result property="searchValue"  column="SEARCH_VALUE"/>
+		<result property="totalSalesAmount" column="SALES_TURN_AMOUNT" />
+		<result property="totalBuyAmount" column="BUY_AMOUNT" />
 	</resultMap>
 
 	<select id="selectProjectList" parameterType="projectVO" resultMap="project">
@@ -33,6 +35,8 @@
 				, PJ_END_DT
 				, (SELECT c.CD_NM FROM CMM_CODE_MNG_TB c WHERE c.CD_KEY = PJ_MAIN_TB.PJ_STATUS_CD) AS pjStatusCd
 				, (SELECT e.EMP_NM FROM CMM_EMPLOYEE_TB e WHERE e.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) AS pjSaleEmpKey
+				, (SELECT SUM(SALES_TURN_AMOUNT) FROM PJ_SALES_DETAIL_TB SD WHERE PJ_MAIN_TB.PJ_KEY = SD.SALES_CT_FK_KEY) AS totalSalesAmount
+				, (SELECT SUM(BUY_AMOUNT) FROM PJ_PURCHASE_TB PP WHERE PJ_MAIN_TB.PJ_KEY = PP.BUY_FK_PJ_KEY) AS totalBuyAmount
 			FROM PJ_MAIN_TB
 			WHERE 1=1
 			<if test="searchFromDt != null and searchFromDt != ''">
@@ -107,6 +111,8 @@
 			, PJ.PJ_SJ_YN
 			, PJ.PJ_STATUS_CD
 			, PC.CT_DT
+			, PC.BILL_SALES_CD
+			, PC.BILL_MF_CD
 		FROM PJ_MAIN_TB PJ
 		LEFT OUTER JOIN CMM_ACCOUNT_TB CA 
 		ON PJ.AC_KEY = CA.AC_KEY		
@@ -452,6 +458,8 @@
 			, COLLECT_TURN
 			, CT_DT
 			, CT_PAY_TERMS
+			, BILL_SALES_CD
+			, BILL_MF_CD
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -463,6 +471,8 @@
 			, #{collectTurn}
 			, #{ctDt}
 			, #{ctPayTerms}
+			, #{billSalesCd}
+			, #{billMfCd}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{regEmpKey}
@@ -480,7 +490,8 @@
 			, SD.SALES_COLLECT_FC_DT
 			, SD.SALES_COLLECT_FINISH_DT
 			, SD.SALES_BILL_FC_DT
-			, (SELECT CA.AC_NM FROM CMM_ACCOUNT_TB CA, PJ_MAIN_TB PJ WHERE CA.AC_KEY = PJ.AC_KEY AND PJ.PJ_KEY = #{pjKey}) AS AC_NM
+			, (SELECT CA.AC_NM FROM CMM_ACCOUNT_TB CA, PJ_SALES_DETAIL_TB PJ WHERE CA.AC_KEY = PJ.SALES_AC_KEY AND PJ.SALES_CT_FK_KEY = #{pjKey}) AS AC_NM
+			, SD.SALES_AC_KEY
 			, SB.BILL_ISSUE_DT
 		FROM PJ_SALES_DETAIL_TB SD 
 		LEFT OUTER JOIN (
@@ -526,6 +537,7 @@
 			, SALES_COLLECT_FINISH_DT
 			, SALES_GB_YN
 			, SALES_STATUS_CD
+			, SALES_AC_KEY
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -544,6 +556,7 @@
 				, #{item.salesCollectFinishDt}
 				, #{item.salesGbYn}
 				, #{item.salesStatusCd}
+				, #{item.salesAcKey}
 				, DATE_FORMAT(NOW(),'%Y%m%d')
 				, DATE_FORMAT(NOW(),'%H%i%s')
 				, #{regEmpKey}
@@ -553,31 +566,64 @@
 	</insert>
 	
 	<select id="selectPurchaseList" parameterType="String" resultType="egovMap">
-		SELECT
-			OP.ORDER_UPRICE
-			, OP.ORDER_QUANTITY
-			, OD.ORDER_AMOUNT
+		<!-- SELECT
+			OD.ORDER_AMOUNT
 			, AC.AC_NM
 			, BL.BILL_MAPPING_YN
 			, BL.BILL_ISSUE_DT
 			, BL.BILL_NO
 			, PC.BUY_KEY
-			, (SELECT CC.AC_NM FROM CMM_ACCOUNT_TB CC WHERE PP.MF_AC_KEY = CC.AC_KEY) AS MF_AC_NM
+			, (SELECT 
+					OP.ORDER_UPRICE
+					, OP.ORDER_QUANTITY
+					GROUP_CONCAT(PM.PM_NM_CD SEPARATOR ', ')
+				FROM PJ_ORDER_PRODUCT_TB OP, PM_PRODUCT_MNG_TB PM 
+				WHERE 1=1 
+					AND OP.ORDER_PM_FK_KEY = PM.PM_KEY 
+                	AND OP.DELETE_YN ='N'
+           		GROUP BY PJ_ORDER_KEY)	
 		FROM PJ_ORDER_TB OD
-		JOIN PJ_ORDER_PRODUCT_TB OP
-		ON OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
 		JOIN CMM_ACCOUNT_TB AC
 		ON OD.ORDER_AC_KEY = AC.AC_KEY
 		JOIN PJ_PURCHASE_TB PC
 		ON OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
 		LEFT OUTER JOIN CMM_PC_BILLING_TB BL
-		ON PC.BUY_KEY = BL.BILL_CT_FK_KEY
-		JOIN PM_PRODUCT_MNG_TB PP
-		ON OP.ORDER_PM_FK_KEY = PP.PM_KEY
+		ON PC.BUY_KEY = BL.BILL_CT_FK_KEY AND BL.DELETE_YN ='N'
 		WHERE OD.ORDER_CT_FK_KEY=#{pjKey}
 			AND OD.DELETE_YN='N'
 			AND PC.DELETE_YN='N'
-			AND BL.BILL_CT_CLASS_CD = 'PJ'
+			AND BL.BILL_CT_CLASS_CD = 'PJ' -->
+			
+			SELECT
+				OD.ORDER_AMOUNT
+		      	, OD.PJ_ORDER_KEY
+				, AC.AC_NM 
+				, IF(OD.ORDER_AMOUNT = OD.BILL_MAPPED_AMOUNT, 'Y','N') AS BILL_MAPPING_YN
+				<!-- , BL.BILL_ISSUE_DT -->
+				, GROUP_CONCAT(DISTINCT BL.BILL_NO SEPARATOR ', ') AS BILL_NO
+				, PC.BUY_KEY
+		      	, SUM(OP.ORDER_QUANTITY * OP.ORDER_UPRICE) AS ORDER_SUM
+		      	, GROUP_CONCAT(CONCAT(PM.PM_NM_CD, ' / ', FORMAT(OP.ORDER_UPRICE, 0),' / ',OP.ORDER_QUANTITY) SEPARATOR '<![CDATA[<br>]]>' ) AS ORDER_PRODUCT
+				, PC.BILL_PURCHASE_CD
+				, PC.BILL_MF_CD
+			FROM PJ_ORDER_TB OD
+		    LEFT OUTER JOIN PJ_ORDER_PRODUCT_TB OP
+		    ON OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
+			LEFT OUTER JOIN CMM_ACCOUNT_TB AC
+			ON OD.ORDER_AC_KEY = AC.AC_KEY
+			LEFT OUTER JOIN PJ_PURCHASE_TB PC
+			ON OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
+			LEFT OUTER JOIN CMM_PC_BILLING_TB BL
+			ON PC.BUY_KEY = BL.BILL_CT_FK_KEY AND BL.DELETE_YN ='N'
+		    LEFT OUTER JOIN PM_PRODUCT_MNG_TB PM
+		    ON OP.ORDER_PM_FK_KEY = PM.PM_KEY
+			
+			WHERE OD.ORDER_CT_FK_KEY=#{pjKey}
+		      	AND OP.DELETE_YN = 'N'
+				AND OD.DELETE_YN='N'
+				AND PC.DELETE_YN='N'
+		      
+			GROUP BY OD.PJ_ORDER_KEY;
 	</select>
 	
 	<update id="updateContractInfo" parameterType="projectContractSalesVO">
@@ -587,6 +633,8 @@
 				, CT_PAY_TERMS = #{ctPayTerms}
 				, CT_DT = #{ctDt}
 				, COLLECT_TURN = #{collectTurn}
+				, BILL_SALES_CD = #{billSalesCd}
+				, BILL_MF_CD = #{billMfCd}
 				, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 				, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 				, MOD_EMP_KEY = #{modEmpKey}
@@ -621,6 +669,9 @@
 			<if test="item.salesStatusCd != null and item.salesStatusCd != ''">
 				SALES_STATUS_CD=#{item.salesStatusCd},
 			</if>
+			<if test="item.salesAcKey != null and item.salesAcKey != ''">
+				SALES_AC_KEY=#{item.salesAcKey},
+			</if>
 				MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d'),
 				MOD_TM=DATE_FORMAT(NOW(),'%H%i%s'),
 				MOD_EMP_KEY=#{modEmpKey}
@@ -636,6 +687,8 @@
 			, CT_DT AS ctDt
 			, CT_PAY_TERMS AS ctPayTerms
 			, COLLECT_TURN AS collectTurn
+			, BILL_SALES_CD		AS billSalesCd
+			, BILL_MF_CD		AS billMfCd
 		FROM PJ_CONTRACT_TB 
 		WHERE PJ_KEY=#{pjKey}
 		AND DELETE_YN='N'
@@ -859,12 +912,14 @@
 	
 	<select id="selectPurchaseDetail" parameterType="projectPurchaseVO" resultType="projectPurchaseVO">
 		SELECT 
-			BUY_KEY AS buyKey
-			, BUY_FK_PJ_KEY AS buyFkPjKey
-			, BUY_ORDER_FK_KEY AS buyOrderFkKey
-			, BUY_AMOUNT AS buyAmount
-			, DONE_PAYMENT_AMOUNT AS donePaymentAmount
-			, YET_PAYMENT_AMOUNT AS yetPaymentAmount
+			BUY_KEY 								AS buyKey
+			, BUY_FK_PJ_KEY 					AS buyFkPjKey
+			, BUY_ORDER_FK_KEY 				AS buyOrderFkKey
+			, BUY_AMOUNT 					AS buyAmount
+			, DONE_PAYMENT_AMOUNT 	AS donePaymentAmount
+			, YET_PAYMENT_AMOUNT 		AS yetPaymentAmount
+			, BILL_PURCHASE_CD				AS billPurchaseCd
+			, BILL_MF_CD						AS billMfCd
 		FROM PJ_PURCHASE_TB
 		WHERE DELETE_YN='N'
 		<if test="buyKey != null and buyKey != ''">
@@ -922,6 +977,8 @@
 			, BUY_AMOUNT
 			, DONE_PAYMENT_AMOUNT
 			, YET_PAYMENT_AMOUNT
+			, BILL_PURCHASE_CD
+			, BILL_MF_CD
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -933,6 +990,8 @@
 			, #{buyAmount}
 			, #{donePaymentAmount}
 			, #{yetPaymentAmount}
+			, #{billPurchaseCd}
+			, #{billMfCd}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
 			, #{regEmpKey}
@@ -953,6 +1012,12 @@
 			</if>
 			<if test="yetPaymentAmount != null and yetPaymentAmount != '' and yetPaymentAmount != 0">
 			, YET_PAYMENT_AMOUNT = #{yetPaymentAmount}
+			</if>
+			<if test="billPurchaseCd != null and billPurchaseCd != ''">
+			, BILL_PURCHASE_CD = #{billPurchaseCd}
+			</if>
+			<if test="billMfCd != null and billMfCd != ''">
+			, BILL_MF_CD = #{billMfCd}
 			</if>
 		WHERE BUY_KEY = #{buyKey}
 	</update>

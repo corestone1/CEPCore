@@ -6,9 +6,10 @@ import java.util.List;
 import org.apache.ibatis.type.Alias;
 
 import com.cep.mngCommon.bill.vo.MngCommonBillVO;
+import com.cep.project.vo.ProjectVO;
 
 @Alias("mngProjectBillVO")
-public class MngProjectBillVO implements Serializable {
+public class MngProjectBillVO extends ProjectVO implements Serializable {
 
 private static final long serialVersionUID = 6249212047489119229L;
 	

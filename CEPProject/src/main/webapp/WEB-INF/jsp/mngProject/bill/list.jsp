@@ -326,8 +326,8 @@
 <body>
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<input type="hidden" name="billNo" value=""/>
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">

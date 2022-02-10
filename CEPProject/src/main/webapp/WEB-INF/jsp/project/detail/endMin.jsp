@@ -17,8 +17,8 @@
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="<c:url value='/js/popup.js'/>"></script>
 	<script src="<c:url value='/js/common.js'/>"></script>
-	
-	
+	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -271,19 +271,7 @@
 			vertical-align: middle;
 			cursor: pointer;
 		}
-		form .contents .dtl#modTable .upload-name { 
-			height: 29px;
-			vertical-align: top; 
-			border: none; 
-			font-size: 16px;
-			-webkit-appearance: none; 
-			-moz-appearance: none; 
-			appearance: none; 
-			cursor: pointer;
-		}
-		form .contents .dtl#modTable .upload-name:hover {
-			text-decoration: underline;
-		}
+		
 		#modBasicTable tr td:last-child {
 			padding: 5px 20px;
 		}
@@ -306,6 +294,22 @@
 		#modBasicTable input[class="calendar"] {
 			width: 168px;
 		}
+		
+
+		#fileWrap input {
+			width: 100%;
+			margin-top: 10px;
+			border: none;
+		}
+		#fileWrap input:first-child {
+			margin-top: 0;
+		}
+		#fileWrap input:hover {
+		    color: #007AAE;
+		    text-decoration: underline;
+		}
+		
+		
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -410,12 +414,12 @@
 			
 			var dialogId = 'program_layer';
 			
-			var varParam = {'pjKey' : $('#ipt_pjKey').val()};
+			var varParam = {'pjKey' : $('#ipt_pjKey').val(), 'workClass' : $("#workClass").val()};
 			
 			var button = new Array;
 			button = [];
 			
-			parent.showModalPop(dialogId, "/project/write/finishInfo.do", varParam, button, '', 'width:1144px;height:708px');
+			parent.showModalPop(dialogId, "/project/write/finishInfo.do", varParam, button, '', 'width:1144px;height:706px');
 		}
 		
 		
@@ -467,7 +471,7 @@
 <body>
 	<form:form id="listForm" name="listForm" method="post">
 		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectInfo.pjKey}" />
-		
+		<input type="hidden" id="workClass" name="workClass" value="완료_첨부파일" />
 		<div class="contentsWrap">
 			<div class="contents">
 				<!-- 입찰정보 시작 -->
@@ -486,21 +490,22 @@
 									<td><c:out value="${displayUtil.displayDate(detailInfo.pjInspectDt)}"/></td>
 								</tr>
 								<tr>
-									<td>검수확인서</td>	
-									<td></td>
-								</tr>
-								<tr>
-									<td>기타 의견</td>
+									<td>비고</td>
 									<td>
-										<pre>
-											<c:out value="${detailInfo.finishRemark}"/>
-										</pre>
+										<pre><c:out value="${detailInfo.finishRemark}"/></pre>
 									</td>
 								</tr>
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<a style="color:#000;"><c:out value="${fileList.fileOrgNm}"/></a>
+										<div style="clear: both;" id="fileWrap">
+											<c:forEach var="result" items="${fileList }" varStatus="status">
+												<input class="upload-name cursorP veralignT" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
+												<c:if test="${status.last eq false}">
+													<br />
+												</c:if>
+											</c:forEach>
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -515,11 +520,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td>검수확인서</td>	
-									<td></td>
-								</tr>
-								<tr>
-									<td>기타 의견</td>
+									<td>비고</td>
 									<td>
 										<textarea name="finishRemark" style="width:760px; height:130px;">
 											<c:out value="${detailInfo.finishRemark}"/>
@@ -529,7 +530,14 @@
 								<tr>
 									<td>첨부파일</td>
 									<td>
-										<a style="color:#000;"><c:out value="${fileList.fileOrgNm}"/></a>
+										<div style="clear: both;" id="fileWrap">
+											<c:forEach var="result" items="${fileList }" varStatus="status">
+												<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
+												<c:if test="${status.last eq false}">
+													<br />
+												</c:if>
+											</c:forEach>
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -544,7 +552,7 @@
 		</div>
 	</form:form>
 	<script type="text/javascript">
-		var existFileNum = $('#atchFileCnt').val();        
+		/* var existFileNum = $('#atchFileCnt').val();        
 		var maxFileNum = $('#maxFileCnt').val();
 		// 첨부한 파일 갯수
 		if (existFileNum ==null || existFileNum=="") {
@@ -565,18 +573,14 @@
 	        fn_check_file('Y');
 	        /*var multi_selector = new MultiSelector(document.getElementById('egovComFileList'), maxFileNum );
 	        multi_selector.addElement(document.getElementById('fileUploader'));   */
-	    } else{
+	    /*} else{
 	    	fn_check_file('N');
-	    } 
+	    }  */
 	             
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">
-		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
-		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
-		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
-		<input type="hidden" name="fileKey" value="${fileList.fileKey}"/>
-		<input type="hidden" name="fileOrgNm" value="${fileList.fileOrgNm}"/>
-		<input type="hidden" name="fileType" value="cdc"/>
+		<input type="hidden" name="fileKey" value="" />
+		<input type="hidden" name="fileOrgNm" value="" />
 	</form:form>
 </body>
 </html>

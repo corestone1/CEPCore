@@ -206,7 +206,7 @@
 		}
 		.contents2 table thead th:nth-child(3),
 		.contents2 table tbody td:nth-child(3) {
-			width: 70px;
+			width: 68px;
 		}
 		.contents2 table thead th:nth-child(4),
 		.contents2 table tbody td:nth-child(4) {
@@ -218,7 +218,7 @@
 		}
 		.contents2 table thead th:nth-child(6),
 		.contents2 table tbody td:nth-child(6) {
-			width: 145px;
+			width: 123px;
 		}
 		.contents2 table thead th:nth-child(7),
 		.contents2 table tbody td:nth-child(7) {
@@ -226,7 +226,11 @@
 		}
 		.contents2 table thead th:nth-child(8), 
 		.contents2 table tbody td:nth-child(8) {
-		    width: 239px;
+		    width: 189px;
+		}
+		.contents2 table thead th:nth-child(9), 
+		.contents2 table tbody td:nth-child(9) {
+		    width: 73px;
 		}
 		.popContainer .bottomBtn {
 			margin-top: 10px;
@@ -239,7 +243,8 @@
 			font-family: "Noto Sans KR", sans-serif !important;
 			font-weight: 200;
 			background: transparent;
-			height: 15px;
+			height: 21px;
+			text-overflow: ellipsis;
 		}
 		input[class="calendar"] {
 			height: 31px;
@@ -295,85 +300,127 @@
 			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
 		}
 		
-		function fn_save() {
+		function fn_cancelMappingBill(obj, billNo, paymentKey) {
 			
-			if($("input:radio[name=isCheck]:checked").length == 0) {
-				alert("매핑할 계산서를 선택해주세요.");
-			} else {
-				/* $("#billMappingNum").val(Number($("#billMappingNum").val()) + $("input:checkbox[name=isCheck]:checked").length); */
-				var totalBillMappedAmount = 0;
-				var originBillMappedAmount = $("#billMappedAmount").val();
+			if(confirm("계산서 "+ $(obj).parent().prev().prev().children().val() + "을 매핑 취소 하시겠습니까?")) {
+				var object =  { "pjOrderKey" : $("#pjOrderKey").val(), "billNo" : billNo };
 				
-				var object = {};
-				var listData = $("#billListForm").serializeObject();
+				var sendData = JSON.stringify(object);
 				
-				var index = [];
-				for(var list in listData) {
-					if(listData[list].hasOwnProperty('isCheck') == false) {
-						index.push(listData.indexOf(listData[list]));
-					}
-				}
-				for(var i = index.length - 1; i >= 0; i--) {
-					listData.splice(index[i], 1);
-				}
 				
-				for(var i = 0; i < listData.length; i++) {
-					totalBillMappedAmount += Number(listData[i].billAmount);
-				}
-				
-				if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
-					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + addCommas(originBillMappedAmount) + "원)");
-				} else {
-					if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
-						$("#billMappedAmount").val(totalBillMappedAmount);
-						
-						var formData = $("#orderInfoForm").serializeArray();
-						for (var i = 0; i<formData.length; i++){
-			                object[formData[i]['name']] = formData[i]['value'];
-			            }
-						
-						object["billList"]=listData;
-						
-						var sendData = JSON.stringify(object);
-						
-						var sch = location.search
-						var params = new URLSearchParams(sch);
-						var sch_keyword = params.get('paymentKey');
-						
-						$.ajax({
-							url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
-							dataType:'json',
-							type:"POST",
-							data:sendData,
-							contentType:"application/json; charset=UTF8",
-							success:function(response) {
-								if(response != null && response.successYN == 'Y') {
-									
-									alert($("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
-									
-									 var url = '/mngProject/mapping/mappingBill.do';
-									var dialogId = 'program_layer';
-									var varParam = {
-										"pjOrderKey":$("input[name='pjOrderKey']").val(),
-										"billDtFrom":$("input[name='billDtFrom']").val(),
-										"billDtTo":$("input[name='billDtTo']").val()
-									}
-									var button = new Array;
-									button = [];
-									showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
-								} else {
-									alert('계산서 매핑이 실패하였습니다.');
-								}
-							},
-							error: function(request, status, error) {
-								if(request.status != '0') {
-									alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-								}
+				$.ajax({
+					url:"/mngProject/mapping/cancelMapping.do?paymentKey="+paymentKey,
+					dataType:'json',
+					type:"POST",
+					data:sendData,
+					contentType:"application/json; charset=UTF8",
+					success:function(response) {
+						if(response != null && response.successYN == 'Y') {
+							
+							alert($(obj).parent().prev().prev().children().val() +' 계산서와 매핑이 취소되었습니다.');
+							
+							var url = '/mngProject/mapping/mappingBill.do';
+							var dialogId = 'program_layer';
+							var varParam = {
+								"pjOrderKey":$("input[name='pjOrderKey']").val(),
+								"billDtFrom":$("input[name='billDtFrom']").val(),
+								"billDtTo":$("input[name='billDtTo']").val()
 							}
-						});  
+							var button = new Array;
+							button = [];
+							showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+						} else {
+							alert('계산서 매핑 취소에 실패하였습니다.');
+						}
+					},
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					}
+				});  
+			}
+		}
+			
+			function fn_save() {
+				
+				if($("input:radio[name=isCheck]:checked").length == 0) {
+					alert("매핑할 계산서를 선택해주세요.");
+				} else {
+					/* $("#billMappingNum").val(Number($("#billMappingNum").val()) + $("input:checkbox[name=isCheck]:checked").length); */
+					var totalBillMappedAmount = 0;
+					var originBillMappedAmount = $("#billMappedAmount").val();
+					
+					var object = {};
+					var listData = $("#billListForm").serializeObject();
+					
+					var index = [];
+					for(var list in listData) {
+						if(listData[list].hasOwnProperty('isCheck') == false) {
+							index.push(listData.indexOf(listData[list]));
+						}
+					}
+					for(var i = index.length - 1; i >= 0; i--) {
+						listData.splice(index[i], 1);
+					}
+					
+					for(var i = 0; i < listData.length; i++) {
+						totalBillMappedAmount += Number(listData[i].billAmount);
+					}
+					
+					if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
+						alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + addCommas(originBillMappedAmount) + "원)");
+					} else {
+						if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
+							$("#billMappedAmount").val(totalBillMappedAmount);
+							
+							var formData = $("#orderInfoForm").serializeArray();
+							for (var i = 0; i<formData.length; i++){
+				                object[formData[i]['name']] = formData[i]['value'];
+				            }
+							
+							object["billList"]=listData;
+							
+							var sendData = JSON.stringify(object);
+							
+							var sch = location.search
+							var params = new URLSearchParams(sch);
+							var sch_keyword = params.get('paymentKey');
+							
+							$.ajax({
+								url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
+								dataType:'json',
+								type:"POST",
+								data:sendData,
+								contentType:"application/json; charset=UTF8",
+								success:function(response) {
+									if(response != null && response.successYN == 'Y') {
+										
+										alert($("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
+										
+										 var url = '/mngProject/mapping/mappingBill.do';
+										var dialogId = 'program_layer';
+										var varParam = {
+											"pjOrderKey":$("input[name='pjOrderKey']").val(),
+											"billDtFrom":$("input[name='billDtFrom']").val(),
+											"billDtTo":$("input[name='billDtTo']").val()
+										}
+										var button = new Array;
+										button = [];
+										showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+									} else {
+										alert('계산서 매핑이 실패하였습니다.');
+									}
+								},
+								error: function(request, status, error) {
+									if(request.status != '0') {
+										alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+									}
+								}
+							});  
+						}
 					}
 				}
-			}
 		}
 	</script>
 </head>
@@ -459,6 +506,7 @@
 									<th scope="row">합계금액</th>
 									<th scope="row">계산서번호</th>
 									<th scope="row">비고</th>
+									<th scope="row">매핑 취소</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -477,12 +525,23 @@
 											</c:choose>
 										</td>
 										<td>${displayUtil.displayDate(result.billIssueDt) }</td>
-										<td><input type="text" name="billMappingYn" value="${result.billMappingYn }" readOnly style="width: 30px;"/></td>
-										<td>${result.acNm }</td>
-										<td><input type="text" name="billAcKey" value="${result.billAcKey }" readOnly style="width: 120px;"/></td>
-										<td><input type="text" name="billAmount" value="${displayUtil.commaStr(result.billAmount) }" readOnly style="width: 120px;"/></td>
-										<td><input type="text" name="billNo"  value="${result.billNo }" readOnly style="width: 120px;" /></td>
-										<td><input type="text" name="remark"  value="${result.remark }" readOnly  /></td>
+										<td><input type="text" name="billMappingYn" value="${result.billMappingYn }" title="${result.billMappingYn }" readOnly style="width: 30px;"/></td>
+										<td><input type="text" name="acNm" value="${result.acNm }" title="${result.acNm }" readOnly style="width: 138px;"/></td>
+										<td><input type="text" name="billAcKey" value="${result.billAcKey }" title="${result.billAcKey }" readOnly style="width: 108px;"/></td>
+										<td><input type="text" name="billAmount" value="${displayUtil.commaStr(result.billAmount) }" title="${displayUtil.commaStr(result.billAmount) }" readOnly style="width: 103px;"/></td>
+										<td><input type="text" name="billNo"  value="${result.billNo }" title="${result.billNo }" readOnly style="width: 120px;" /></td>
+										<td><input type="text" name="remark"  value="${result.remark }" title="${result.remark }" readOnly  /></td>
+										<td style="font-size: 13px;">
+											<c:if test="${result.billMappingYn eq 'Y' and (result.paymentStatusCd eq 'PYST1000')}">
+												<button type="button" value="매핑취소" onclick="fn_cancelMappingBill(this, '${result.billNo}', '${result.paymentKey }');">매핑취소</button>
+											</c:if>
+											<c:if test="${result.billMappingYn eq 'N'}">
+												<label>미매핑</label>
+											</c:if>
+											<c:if test="${result.paymentStatusCd eq 'PYST2000' or result.paymentStatusCd eq 'PYST3000' or result.paymentStatusCd eq 'PYST4000'}">
+												<label>지급진행중</label>
+											</c:if>
+										</td>
 									</tr>
 									<input type="hidden" value="${orderVO.buyKey }" name="billCtFkKey"/>
 									<input type="hidden" value="${orderVO.orderCtFkKey }" name="billFkPjKey"/>

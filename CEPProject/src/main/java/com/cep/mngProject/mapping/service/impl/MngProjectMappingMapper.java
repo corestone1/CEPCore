@@ -7,6 +7,7 @@ import com.cep.mngProject.mapping.vo.OrderBillVO;
 import com.cep.mngProject.mapping.vo.PurchaseBillOpVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 @Mapper("mngProjectMappingMapper")
 public interface MngProjectMappingMapper {
@@ -56,6 +57,17 @@ public interface MngProjectMappingMapper {
 	public List<?> selectBillDetail(OrderBillVO orderBillVO) throws Exception;
 	
 	/**
+	  * @Method Name : selectBillOne
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 계산서 상세 정보
+	  * @param orderBillVO
+	  * @return
+	  */
+	public EgovMap selectBillOne(OrderBillVO orderBillVO) throws Exception;
+	
+	/**
 	  * @Method Name : updateOrderBill
 	  * @Cdate       : 2021. 2. 17.
 	  * @Author      : sylim
@@ -76,6 +88,17 @@ public interface MngProjectMappingMapper {
 	  * @return
 	  */
 	public int updatePurchaseBill(Map<String, Object> param) throws Exception;
+	
+	/**
+	  * @Method Name : deleteBillMapping
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 발주 - 계산서 맵핑 취소
+	  * @param param
+	  * @return
+	  */
+	public int deleteBillMapping(Map<String, Object> param) throws Exception;
 	
 	/**
 	  * @Method Name : insertPcBillingOpInfo
@@ -100,6 +123,18 @@ public interface MngProjectMappingMapper {
 	public int updatePcBillingOpInfo(PurchaseBillOpVO purchasecBillOpVO) throws Exception;
 	
 	/**
+	  * @Method Name : deletePcBillingOpInfo
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 매입 계산서 정보 삭제(요청) 
+	  * @param param
+	  * @return
+	  */
+	public int deletePcBillingOpInfo(Map<String, Object> param) throws Exception;
+	
+	
+	/**
 	  * @Method Name : insertPaymentInfo
 	  * @Cdate       : 2021. 2. 17.
 	  * @Author      : sylim
@@ -120,5 +155,16 @@ public interface MngProjectMappingMapper {
 	  * @return
 	  */
 	public int updatePaymentInfo(Map<String, Object> param) throws Exception;
+	
+	/**
+	  * @Method Name : deletePaymentInfo
+	  * @Cdate       : 2021. 2. 17.
+	  * @Author      : sylim
+	  * @Modification: 
+	  * @Method Description : 지급 정보 삭제
+	  * @param 
+	  * @return
+	  */
+	public int deletePaymentInfo(Map<String, Object> param) throws Exception;
 	
 }

@@ -37,6 +37,10 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String searchValue;
 	private String searchAcNm;
 	
+	private String totalSalesAmount;
+	private String totalBuyAmount;
+	
+	
 	public String getPjKey() {
 		return pjKey;
 	}
@@ -191,14 +195,31 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	public void setSearchAcNm(String searchAcNm) {
 		this.searchAcNm = searchAcNm;
 	}
+	public String getTotalSalesAmount() {
+		return totalSalesAmount;
+	}
+	public void setTotalSalesAmount(String totalSalesAmount) {
+		this.totalSalesAmount = totalSalesAmount;
+	}
+	public String getTotalBuyAmount() {
+		return totalBuyAmount;
+	}
+	public void setTotalBuyAmount(String totalBuyAmount) {
+		this.totalBuyAmount = totalBuyAmount;
+	}
+	
+	
 	
 	@Override
 	public String toString() {
-		return "ProjectVO [pjKey=" + pjKey + ", acKey=" + acKey + ", acDirectorKey=" + acDirectorKey + ", pjNm=" + pjNm
-				+ ", pjStartDt=" + pjStartDt + ", pjInspectDt=" + pjInspectDt + ", pjEndDt=" + pjEndDt + ", ctDt="
-				+ ctDt + ", pjStatusCd=" + pjStatusCd + ", pjSaleEmpKey=" + pjSaleEmpKey + ", pjSupportEmpKey="
-				+ pjSupportEmpKey + ", remark=" + remark + ", finishRemark=" + finishRemark + ", deleteYn=" + deleteYn
-				+ ", spKey=" + spKey + ", pjLoseCause=" + pjLoseCause + ", pjSjYn=" + pjSjYn + "]";
+		return "ProjectVO [pjKey=" + pjKey + ", acKey=" + acKey + ", acNm=" + acNm + ", acDirectorKey=" + acDirectorKey
+				+ ", pjNm=" + pjNm + ", pjStartDt=" + pjStartDt + ", pjInspectDt=" + pjInspectDt + ", pjEndDt="
+				+ pjEndDt + ", ctDt=" + ctDt + ", pjStatusCd=" + pjStatusCd + ", pjSaleEmpKey=" + pjSaleEmpKey
+				+ ", pjSupportEmpKey=" + pjSupportEmpKey + ", remark=" + remark + ", finishRemark=" + finishRemark
+				+ ", deleteYn=" + deleteYn + ", spKey=" + spKey + ", pjLoseCause=" + pjLoseCause + ", pjSjYn=" + pjSjYn
+				+ ", bdKey=" + bdKey + ", regEmpKey=" + regEmpKey + ", searchFlag=" + searchFlag + ", searchValue="
+				+ searchValue + ", searchAcNm=" + searchAcNm + ", totalSalesAmount=" + totalSalesAmount
+				+ ", totalBuyAmount=" + totalBuyAmount + "]";
 	}
 	
 }

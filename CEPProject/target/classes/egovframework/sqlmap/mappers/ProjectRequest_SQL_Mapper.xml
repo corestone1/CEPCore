@@ -165,6 +165,12 @@
 			<if test="donePaymentAmount != null and donePaymentAmount != '' ">
 				DONE_PAYMENT_AMOUNT =#{donePaymentAmount},
 			</if>
+			<if test="billPurchaseCd != null and billPurchaseCd != '' ">
+				BILL_PURCHASE_CD =#{billPurchaseCd},
+			</if>
+			<if test="billMfCd != null and billMfCd != '' ">
+				BILL_MF_CD =#{billMfCd},
+			</if>
 			YET_PAYMENT_AMOUNT=#{yetPaymentAmount},
 			MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s')
@@ -217,9 +223,16 @@
 			, PAYMENT_AC_FK_KEY 
 			, PAYMENT_ACC_SEQ_FK_KEY 
 			, REMARK 
+			, REG_EMP_KEY
 		FROM PJ_PAYMENT_TB
-		WHERE PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey}
-			AND PAYMENT_TURN = #{paymentTurn}
+		WHERE 1=1
+			<if test="paymentKey != null and paymentKey != ''">
+				AND PAYMENT_KEY = #{paymentKey}
+			</if>  
+			<if test="paymentKey == null or paymentKey == ''">
+				AND PAYMENT_BUY_FK_KEY = #{paymentBuyFkKey} 
+				AND PAYMENT_TURN = #{paymentTurn}
+			</if>
 			AND DELETE_YN='N'
 	</select>
 	
@@ -310,6 +323,8 @@
 			AND PAYMENT_STATUS_CD IN('PYST3000', 'PYST4000')
 			AND CA.AC_KEY = BL.BILL_AC_KEY
 			AND BL.DELETE_YN='N' 
+			AND BO.DELETE_YN='N'
+			AND PM.DELETE_YN='N'
 		<!-- SELECT 
 			BL.BILL_NO
 			, BL.BILL_ISSUE_DT 

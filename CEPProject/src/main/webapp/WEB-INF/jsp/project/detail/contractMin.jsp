@@ -400,6 +400,7 @@
 			
 			$(parent.document).find("#modMinInfo").removeClass("dpNone");
 			$(parent.document).find("#delMinInfo").removeClass("dpNone");
+			
 		});
 		
 		function fnCallContrect()
@@ -456,30 +457,38 @@
 			var lstBtn;
 			var lstBtnImg;
 			var lstOnclick;
+			var lstStyle;
 		    for(var i = 0; i < litListCnt; i++)
 			{
 		    	
 		    	//보증증권 발행 상태 및 버튼
 		    	if(pltGBList[i].gbIssueStatus == 'Y')
 		    	{
-		    		lstStatus  = '발행완료';
-		    		lstBtnImg  = "/images/btn_stock_view.png";
+		    		lstStatus  = '발행 완료';
+		    		lstBtnImg  = "/images/btn_stock_detail.png";
 		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    	}
 		    	else if(pltGBList[i].gbIssueStatus == 'R')
 		    	{
-		    		lstStatus = '발행요청중';
-		    		lstBtnImg  = "/images/btn_stock_end.png";
+		    		lstStatus = '승인 중';
+		    		lstBtnImg  = "/images/btn_blue_reqInfo.png";
 		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    	}	
 		    	else
 		    	{
-		    		lstStatus = '발행전';
-		    		lstBtnImg  = "/images/btn_stock_publish.png";
-		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstStatus = '신청 전';
+	    			lstBtnImg  = "/images/btn_stock_publish.png";
+	    			
+	    			if($("#empAuthCd").val() != "EMAU1001") {
+		    			lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    			lstStyle = "cursor:hand";
+	    			} else {
+	    				lstOnclick = "";
+	    				lstStyle = "cursor:default; filter:grayscale(1);"
+	    			}
 		    	}
 		    	
-		    	lstBtn     = '<img onclick="' + lstOnclick + '" src="' + lstBtnImg + '" style="cursor:hand;"/>';
+		    	lstBtn     = '<img onclick="' + lstOnclick + '" src="' + lstBtnImg + '" style="'+lstStyle+'"/>';
 		    	
 				html += '<tr>'
 				     +     '<td class="textalignC">' + (i+1) + '</td>'
@@ -599,8 +608,9 @@
 <body>
 	<form id="listForm" name="listForm" method="post">
 		
-		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${contractInfo.pjKey}" />
+		<input type="hidden" id="ipt_pjKey" name="pjKey" value="${projectVO.pjKey}" />
 		<input type="hidden" id="ipt_CtKey" name="ctKey" value="${contractInfo.ctKey}" />
+		<input type="hidden" id="empAuthCd" value="<%=session.getAttribute("empAuthCd") %>" />
 		
 		<div class="contentsWrap">
 			<div class="contents">
@@ -674,8 +684,8 @@
 										<th scope="row">선택</th>
 										<th scope="row">회차</th>
 										<th scope="row">비율/금액</th>
-										<th scope="row">계상서예상일(발행일)</th>
-										<th scope="row">수금예상일(수금일)</th>
+										<th scope="row">발행일(계산서예상일)</th>
+										<th scope="row">수금일(수금예상일)</th>
 									</tr>
 								</thead>
 								<tbody>
