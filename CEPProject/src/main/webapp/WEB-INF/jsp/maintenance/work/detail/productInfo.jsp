@@ -405,8 +405,8 @@
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${mtWorkKey}"/>"/>
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${mtWorkKey}"/>"/>		
 		<input type="hidden" id="mtWorkSeq" name="mtWorkSeq" />		
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
@@ -641,9 +641,15 @@
 						</div>
 						<div class="bottom">
 							<div class="floatR">
+							<c:if test='${loginID eq basicWorkInfo.mtWorkEmpKey or loginID eq basicWorkInfo.regEmpKey}'>
 								<button type="button" value="수정" onclick="fn_addView();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+							</c:if>
+								
 								<%-- <button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+								
+								<input type="hidden" id="mtWorkEmpKey"  name="mtWorkEmpKey" value="${basicWorkInfo.mtWorkEmpKey}" />
+								<input type="hidden" id="regEmpKey"  name="regEmpKey" value="${basicWorkInfo.regEmpKey}" />
 							</div>
 						</div>
 					</div>

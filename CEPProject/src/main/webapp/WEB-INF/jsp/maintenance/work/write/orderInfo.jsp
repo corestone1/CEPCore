@@ -84,7 +84,6 @@
 		}
 		.popContainer .contents input[class^="calendar"] {
 			width: 130px;
-			//height: 40px;
 			height: 33px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
@@ -182,7 +181,7 @@
 			text-align: center;
 		}
 		#m_div_accountList {
-			left: 148px;
+			left: 149px;
     		margin-top: 36px;
 		}
 		input[type="text"] {
@@ -1062,7 +1061,7 @@
 					<input type="hidden" id="oldMtOrderAmount" name="oldMtOrderAmount" value="<c:out value="${mtWorkOrderVO.orderAmount}"/>"/>
 					<input type="hidden" id="yetPaymentAmount" name="yetPaymentAmount" value="<c:out value="${mtWorkOrderVO.yetPaymentAmount}"/>"/>						
 					<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${mtWorkOrderVO.callTotalAmount}"/>"/>
-					<table>
+					<table style="width:860px;">
 						<tr>
 							<td class="tdTitle" style="width:138px;"><label>*</label> 매입처</td>
 							<td class="tdContents">
@@ -1088,7 +1087,7 @@
 							</c:choose> 
 							</td>
 							<td class="tdTitle" style="width:50px; max-width:50px;"><label>*</label> 매입구분</td>
-							<td class="tdContents" id="tr_account">
+							<td class="tdContents" id="tr_account" style="width:239px;">
 								<select id="billPurchaseCd" name="billPurchaseCd" style="width:115px;" required>
 									<option value="" style="color:#bec3c9;">매입구분</option>
 									<c:forEach var="billPurchaseCode" items="${purchaseCodeList}" varStatus="status1">			
@@ -1130,7 +1129,7 @@
 								<input type="text"  id="orderTotalAmount" name="orderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="width: 163px;text-align: right;"/>	
 							</td>
 							<td class="tdTitle"><label>*</label> 발주일자</td>
-							<td class="tdContents" id="tr_account">
+							<td class="tdContents">
 								<%-- <input type="text" name="mtOrderDt" value="<c:out value="${displayUtil.displayDate(mtBackOrderVO.mtOrderDt)}"/>" class="calendar fromDt" /> --%>	
 								<input type="text" name="orderDt" value="<c:out value="${displayUtil.displayDate(mtWorkOrderVO.orderDt)}"/>" class="calendar fromDt" style="width: 105px" required/>
 							</td>

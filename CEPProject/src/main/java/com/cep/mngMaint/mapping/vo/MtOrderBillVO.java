@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cmm.vo.DepartmentVO;
 import com.cmm.vo.OrderProductVO;
 
 @SuppressWarnings("serial")
 @Alias("mtOrderBillVO")
-public class MtOrderBillVO implements Serializable {
+public class MtOrderBillVO extends DepartmentVO implements Serializable {
 	
 	private String mtIntegrateKey; //유지보수 key
 	private String mtOrderType;    //백계약(BO) , 유지보수 작업 발주(PO)

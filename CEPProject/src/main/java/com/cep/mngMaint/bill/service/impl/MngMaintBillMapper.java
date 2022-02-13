@@ -3,6 +3,7 @@
 import java.util.List;
 
 import com.cep.maintenance.contract.vo.MtBuyAmountVO;
+import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtSalesAmountVO;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
@@ -293,6 +294,8 @@ public interface MngMaintBillMapper {
 	 */
 	public List<EgovMap> selectMappingBillList(MngMaintBillSearchVO searchVO) throws Exception;
 	
+
+	
 	/**
 	 * 매입지급요청 정보 등록
 	 *  - 매입지금요청 정보 생성 후 세금계산서 매핑저보 업데이트 수행.
@@ -549,6 +552,22 @@ public interface MngMaintBillMapper {
 	public List<EgovMap> selectMtSalesBillPlanList(MngMaintBillSearchVO searchVO) throws Exception;
 	
 	/**
+	 * 판매품의서에서 사용하는 매출정보 조회
+	 * mtIntegrateKey(유지보수 관리키를 이용하여 매출정보를 조회한다.)
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtContractVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 7. 오후 4:39:50
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtSalesBillApprovalList(MtContractVO mtContractVO) throws Exception;
+	
+	
+	
+	/**
 	 * 매출/매입 세금계산서 제조사 구분 목록.
 	 * <pre>
 	 * </pre>
@@ -572,5 +591,19 @@ public interface MngMaintBillMapper {
 	 * @author aranghoo
 	 */
 	public List<EgovMap> selectMtPaymentPlanList(MngMaintBillSearchVO searchVO) throws Exception;
+	
+	/**
+	 * 판매품의서에서 사용하는 매입정보 조회
+	 * mtIntegrateKey(유지보수 관리키를 이용하여 매입정보를 조회한다.)
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtContractVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 7. 오후 5:14:21
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectMtPurchaseApprovalList(MtContractVO mtContractVO) throws Exception;
 	
 }

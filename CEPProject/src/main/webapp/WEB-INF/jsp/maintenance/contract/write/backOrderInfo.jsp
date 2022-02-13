@@ -207,7 +207,7 @@
 			text-align: center;
 		}
 		#m_div_accountList {
-			left: 147px;
+			left: 149px;
     		margin-top: 35px;
 		}
       	/* .accountList li {
@@ -219,9 +219,13 @@
 		} */
 	</style>
 	<script>
-		$(document).ready(function() {
+		//$(document).ready(function() {
+		$(function(){
 			//매입처 담당자 셋팅
-			$('#mtOrderAcDirectorKey').val("${mtBackOrderVO.mtOrderAcDirectorKey}").attr("selected", "true");
+			'<c:if test="${mtBackOrderVO.mtOrderAcDirectorKey != null }">'
+				$('#mtOrderAcDirectorKey').val("${mtBackOrderVO.mtOrderAcDirectorKey}").attr("selected", "true");
+			'</c:if>'
+			
 			
 			//부가세 포함 라이오버튼 셋팅
 			//$('#taxYn').val("${mtBackOrderVO.taxYn}").prop("checked", true);
@@ -229,7 +233,12 @@
 			
 			// 등록된 거래처 selectBox 맵핑.
 			if(parseInt('${backOrderBoxList.size()}') >0 ){
-				$('#mtSaveOrderAcKey').val("${mtBackOrderVO.mtOrderKey}").attr("selected", "true");
+				//console.log("=============>"+"${backOrderBoxList.size()}");
+				//console.log("=============>"+"${mtBackOrderVO.getMtOrderAcKeyNm()}");
+				//$('#mtSaveOrderAcKey').val("${mtBackOrderVO.mtOrderKey}").attr("selected", "true");
+				//$('#mtSaveOrderAcKey').text("${mtBackOrderVO.getMtOrderAcKeyNm()}").attr("selected", "selected");
+				
+				fn_backOrderBoxList();
 			}
 			
 			fn_calculate();
@@ -253,6 +262,25 @@
 			});
 		
 		}); //end $(document).ready()
+		
+		
+		
+		function fn_backOrderBoxList() {
+			var orderAcNm = "${mtBackOrderVO.getMtOrderAcKeyNm()}";
+			var orderBox = $('#mtSaveOrderAcKey option');
+			console.log("=============>"+"${backOrderBoxList.size()}");
+			console.log("=============>"+"${mtBackOrderVO.getMtOrderAcKeyNm()}");
+			console.log("orderAcNm=============>"+orderAcNm);
+			console.log("size=============>"+$('#mtSaveOrderAcKey option').size());
+			console.log("select=============>"+$('#mtSaveOrderAcKey option:selected').text());
+			
+			for(i=0; i<orderBox.length; i++) {
+				if(orderBox.eq(i).text() == orderAcNm) {
+					$('#mtSaveOrderAcKey option:eq('+i+')').prop("selected",true);
+				}
+			}
+			//$('#mtSaveOrderAcKey').text("Dell Technologies").attr("selected", "selected");
+		}
 		
 		//거래처 검색
 		var fnSearchAccoutList = function(pObject, pstAccountNm) {
@@ -324,7 +352,7 @@
 						return false;
 					}					
 				} else if(varUrl == "productInfoView"){
-					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수계약 매출계약정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -338,7 +366,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}					
 					
@@ -350,7 +378,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}					
 					
@@ -929,7 +957,8 @@
 			var dialogId = 'program_layer';
 			var varParam = {
 					"mtIntegrateKey":$('#mtIntegrateKey').val(),
-					"selectKey":$('#mtSaveOrderAcKey option:selected').val()
+					"selectKey":$('#mtSaveOrderAcKey option:selected').val(),
+					"mtOrderAcKeyNm":$('#mtSaveOrderAcKey option:selected').text()
 			}
 			var button = new Array;
 			button = [];
@@ -1399,7 +1428,7 @@
 		<div class="left">
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">매출계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>		
 					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>			
 					<li class="colorWhite cursorP on">백계약정보</li>
@@ -1420,7 +1449,15 @@
 								<c:if test="${backOrderBoxList.size() >0 }">
 									<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
 										<c:forEach var="order" items="${backOrderBoxList}" varStatus="status">
-											<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+											<c:choose>
+												<c:when test='${order.selectGubun == "FC"}'>
+													<option value="<c:out value="${order.mtOrderKey}"/>" style="color:blue;"><c:out value="${order.mtAcNm}"/></option>
+												</c:when>
+												<c:otherwise>
+													<option value="<c:out value="${order.mtOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+												</c:otherwise>
+											</c:choose>
+											
 										</c:forEach>							
 									</select>
 									<select id="mtSaveOrderCheck"  style="display:none">															
@@ -1476,9 +1513,22 @@
 								<td class="tdContents">
 								<c:choose>
 									<c:when test="${mtBackOrderVO.selectKey eq '' ||  mtBackOrderVO.selectKey eq 'null'||  mtBackOrderVO.selectKey eq null}">
-										<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
-											<option value="">선택</option>
-										</select>
+										<c:choose>
+											<c:when test="${empty acDirectorList}">
+												<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
+													<option value="">선택</option>
+												</select>
+											</c:when>
+											<c:otherwise>
+												<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>
+												<c:forEach var="emp" items="${acDirectorList}" varStatus="status">														
+													<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>													
+												</c:forEach>
+												</select>											
+											</c:otherwise>
+										</c:choose>
+										
+										
 									</c:when>
 									<c:otherwise>
 										<select id="mtOrderAcDirectorKey" name="mtOrderAcDirectorKey" required>

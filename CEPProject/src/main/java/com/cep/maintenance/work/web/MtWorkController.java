@@ -154,7 +154,8 @@ public class MtWorkController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/detail/basicInfo.do")
-	public String basicDetailInfo(@ModelAttribute("searchVO") MtWorkVO mtWorkVO, ModelMap model) throws Exception {
+	@SuppressWarnings("unchecked")
+	public String basicDetailInfo(HttpServletRequest request, @ModelAttribute("searchVO") MtWorkVO mtWorkVO, ModelMap model) throws Exception {
 
 		MtContractVO basicContractInfo = null;
 		MtWorkVO basicWorkInfo = null;
@@ -167,7 +168,10 @@ public class MtWorkController {
 		FileVO fileVO = null;
 		List<?> mtContractFileList = null;
 		List<?> mtWorkFileList = null;
+		HashMap<String, String> sessionMap = null;
 		try {
+			
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtWorkVO.getMtIntegrateKey(), ""))){
 				mtIntegrateKey = mtWorkVO.getMtIntegrateKey();
@@ -218,6 +222,10 @@ public class MtWorkController {
 			
 			//유지보수 작업 첨부파일
 			model.addAttribute("mtWorkFileList", mtWorkFileList);
+			
+			//로그인 USER ID
+			model.addAttribute("loginID", sessionMap.get("empKey"));
+			
 		} catch (Exception e) {
 			model.put("successYN", "N");
 			logger.error("basicDetailInfo error", e);
@@ -497,7 +505,8 @@ public class MtWorkController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/detail/productInfo.do")
-	public String productDetailInfo(MtWorkVO mtWorkVO, ModelMap model) throws Exception {
+	@SuppressWarnings("unchecked")
+	public String productDetailInfo(HttpServletRequest request, MtWorkVO mtWorkVO, ModelMap model) throws Exception {
 		MtContractVO basicContractInfo = null;
 		MtWorkVO basicWorkInfo = null;
 		List<MtWorkProductVO> mtWorkProductList = null;
@@ -506,7 +515,11 @@ public class MtWorkController {
 		FileVO fileVO = null;
 		List<?> mtContractFileList = null;
 		
+		HashMap<String, String> sessionMap = null;
+
+//		MtWorkVO basicWorkInfo = null;
 		try {
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			logger.debug("mtIntegrateKey===>"+mtWorkVO.getMtIntegrateKey());
 			logger.debug("mtWorkKey===>"+mtWorkVO.getMtWorkKey());
 			//유지보수계약 기본정보를 가져온다.
@@ -541,6 +554,9 @@ public class MtWorkController {
 			
 			//유지보수 계약 첨부파일 관련
 			model.addAttribute("fileList", mtContractFileList);
+			
+			//로그인 USER ID
+			model.addAttribute("loginID", sessionMap.get("empKey"));
 			
 		} catch (Exception e) {
 			model.put("successYN", "N");
@@ -866,7 +882,8 @@ public class MtWorkController {
 	  * @throws Exception
 	 */
 	@RequestMapping(value="/detail/orderInfo.do")
-	public String orderDetailInfo(MtOrderVO mtOrderVO, ModelMap model) throws Exception {
+	@SuppressWarnings("unchecked")
+	public String orderDetailInfo(HttpServletRequest request, MtOrderVO mtOrderVO, ModelMap model) throws Exception {
 		MtContractVO basicContractInfo = null;
 		MtWorkVO basicWorkInfo = null;
 		
@@ -879,7 +896,12 @@ public class MtWorkController {
 		FileVO fileVO = new FileVO();
 		List<?> fileResult = null;
 		int mtOrderListCnt = 0;
+		
+
+		HashMap<String, String> sessionMap = null;
 		try {
+			
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			logger.debug("basicWorkInfo.getMtIntegrateKey()=====>"+mtOrderVO.getMtIntegrateKey()+" / "+mtOrderVO.getOrderCtFkKey());
 			logger.debug("mtOrderVO.getSelectKey()=====>"+mtOrderVO.getSelectKey());
@@ -935,6 +957,9 @@ public class MtWorkController {
 			
 			//첨부파일 관련
 			model.addAttribute("fileList", fileResult);
+			
+			//로그인 USER ID
+			model.addAttribute("loginID", sessionMap.get("empKey"));
 			
 		} catch (Exception e) {
 			model.put("successYN", "N");

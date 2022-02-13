@@ -728,8 +728,8 @@
 		<input type="hidden" id="ipt_today"  value="<c:out value="${searchParam.toDay}"/>"/> <!-- 오늘날짜  -->
 	</form>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">

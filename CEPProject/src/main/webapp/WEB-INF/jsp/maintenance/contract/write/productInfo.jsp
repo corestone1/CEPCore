@@ -194,8 +194,8 @@
 		} 
 		/* 거래처 스크롤 위치지정 */
 		#m_div_accountList {
-			left: 151px;
-    		margin-top: 45px;
+			left: 155px;
+    		margin-top: 46px;
 		}
 	</style>
 	
@@ -301,13 +301,14 @@
 				$('#back_buy').hide();
 			} */
 			
-			//console.log("==================>"+$('#mtSaveOrderAcKey option:selected').val())
+			console.log("==================>"+$('#mtSaveOrderAcKey option:selected').val()+"/"+$('#mtSaveOrderAcKey option:selected').text());
 			var url = '/maintenance/contract/write/productInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
 					"mtIntegrateKey":$('#mtIntegrateKey').val(),
 					"selectKey":$('#mtSaveOrderAcKey option:selected').val(),
-					"parmMtSbCtYn":$('#parmMtSbCtYn').val()
+					"parmMtSbCtYn":$('#parmMtSbCtYn').val(),
+					"mtSalesAcNm":$('#mtSaveOrderAcKey option:selected').text()
 			}
 			var button = new Array;
 			button = [];
@@ -398,7 +399,7 @@
 						return false;
 					}					
 				} else if(varUrl == "productInfoView"){
-					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수계약 매출계약정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -413,7 +414,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}	
 					
@@ -425,7 +426,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}
 										
@@ -928,7 +929,7 @@
 					return false;
 				}
 			} else {
-				alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+				alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 				return false;
 			}
 			
@@ -1196,7 +1197,7 @@
 				var quantity = removeCommas($("#prodList-"+num+"-mtPmQuantity").val());
 				//해당 라인의 단가.
 				var pmUprice = removeCommas($("#prodList-"+num+"-mtPmUprice").val());				
-				//발주합계 금액
+				//매출합계 금액
 				var orderTotalAmount = removeCommas($('#orderTotalAmount').val())*1;
 				
 				var orderAmount = quantity*pmUprice;
@@ -1286,20 +1287,31 @@
 				fn_addInfoTable();
 				checkNum = lastNum+1;
 			}
-			console.log("mtPmUprice=======>"+mtPmUprice);
-			console.log("mtRate=======>"+mtRate);
-			console.log("setMtPmUprice=======>"+setMtPmUprice);
+			console.log("mtPmKey===="+checkNum+"===>"+mtPmKey);
+			console.log("pmNmCd==="+checkNum+"====>"+pmNmCd);
+			console.log("mtPmUprice==="+checkNum+"====>"+mtPmUprice);
+			console.log("mtRate===="+checkNum+"===>"+mtRate);
+			console.log("setMtPmUprice=="+checkNum+"=====>"+mtPmUprice);
 			
-			$("#prodList-"+checkNum+"-pmNmCd").val(pmNmCd);
+			$("#prodList-"+checkNum+"-mtPmNmCd").val(pmNmCd);
 			$("#prodList-"+checkNum+"-mtPmFkKey").val(mtPmKey);
 			$("#prodList-"+checkNum+"-mtPmQuantity").val(addCommas(mtPmQuantity));
-			$("#prodList-"+checkNum+"-mtPmUprice").val(addCommas(setMtPmUprice));
-			$("#prodList-"+checkNum+"-totalAmount").val(addCommas(mtPmQuantity*setMtPmUprice));
+			//$("#prodList-"+checkNum+"-mtPmUprice").val(addCommas(setMtPmUprice));
+			//$("#prodList-"+checkNum+"-totalAmount").val(addCommas(mtPmQuantity*setMtPmUprice));
+			$("#prodList-"+checkNum+"-mtPmUprice").val(addCommas(mtPmUprice));
+			$("#prodList-"+checkNum+"-totalAmount").val(addCommas(mtPmQuantity*mtPmUprice));
 			if(enPmDetail.length >0) {
 				var parsedWordArray = CryptoJS.enc.Base64.parse(enPmDetail);
 				var mtPmDetail = parsedWordArray.toString(CryptoJS.enc.Utf8);
+				
+				console.log("mtPmDetail=======>"+mtPmDetail);
+				$("#prodList-"+checkNum+"-mtPmDetail").val(mtPmDetail);
 			}
-			$("#prodList-"+checkNum+"-mtPmDetail").val(mtPmDetail);
+			
+			$("#prodList-"+checkNum+"-mtPmUprice").blur();
+			
+			fn_calculate();
+			console.log("fn_calculate call=======>");
 			/* prodList-3-pmNmCd
 			prodList-3-mtPmFkKey
 			prodList-3-mtPmQuantity
@@ -1422,7 +1434,7 @@
 		<div class="left">
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
-					<li class="colorWhite cursorP on">제품정보</li>
+					<li class="colorWhite cursorP on">매출계약정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>
 					<c:if test="${parmMtSbCtYn eq 'Y' }">		
@@ -1445,7 +1457,15 @@
 							<c:if test="${salesOrderSelectBox.size() >0 }">
 								<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
 									<c:forEach var="order" items="${salesOrderSelectBox}" varStatus="status">
-										<option value="<c:out value="${order.mtSalesOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+										<c:choose>
+											<c:when test='${order.selectGubun == "FC"}'> 
+												<option value="<c:out value="${order.mtSalesOrderKey}"/>" style="color:blue;"><c:out value="${order.mtAcNm}"/></option>
+											</c:when>
+											<c:otherwise> 
+												<option value="<c:out value="${order.mtSalesOrderKey}"/>"><c:out value="${order.mtAcNm}"/></option>
+											</c:otherwise>
+										</c:choose>
+										
 									</c:forEach>							
 								</select>
 								<select id="mtSaveOrderCheck"  style="display:none">															
@@ -1482,29 +1502,43 @@
 					<input type="hidden" id="callTotalAmount" name="callTotalAmount" value="<c:out value="${mtSalesOrderVO.callTotalAmount}"/>"/>
 					<table style="width: 860px;">
 						<tr>
-							<td class="tdTitle"><label>*</label> 매출처</td>
+							<td class="tdTitle" style="width:106px;"><label>*</label> 매출처</td>
 							<td class="tdContents">
 								<input type="text" id="mtSalesAcNm" name="mtSalesAcNm" class="search" style="width: 163px" autocomplete="off" value="<c:out value="${mtSalesOrderVO.mtSalesAcNm}"/>" required/>
 								<input type="hidden" id="mtSalesAcKey" name="mtSalesAcKey"  value="<c:out value="${mtSalesOrderVO.mtSalesAcKey}"/>"/>
 								
 							</td>
 							<td class="tdTitle"><label>*</label> 매출처담당</td>
-							<td class="tdContents" id="tr_account" style="width: 70px; max-width: 70px;">
+							<td class="tdContents" style="width: 70px; max-width: 70px;">
 							<c:choose>
 								<c:when test="${mtSalesOrderVO.selectKey eq '' ||  mtSalesOrderVO.selectKey eq 'null'||  mtSalesOrderVO.selectKey eq null}">
-									<select id="mtSalesAcDirectorKey" name="mtSalesAcDirectorKey" required>
-										<option value="">선택</option>
-									</select>
+									<c:choose>
+										<c:when test="${empty acDirectorList}">
+											
+											<select id="mtSalesAcDirectorKey" name="mtSalesAcDirectorKey" required>
+												<option value="">선택</option>
+											</select>
+										</c:when>
+										<c:otherwise>
+											<select id="mtSalesAcDirectorKey" name="mtSalesAcDirectorKey" required>
+											<c:forEach var="emp" items="${acDirectorList}" varStatus="status">	
+												
+												<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
+												
+											</c:forEach>
+											</select>
+										</c:otherwise>
+									</c:choose>
 								</c:when>
 								<c:otherwise>
 									<select id="mtSalesAcDirectorKey" name="mtSalesAcDirectorKey" required>
 										<c:forEach var="emp" items="${acDirectorList}" varStatus="status">		
-										<c:choose>
-											<c:when test='${mtSalesOrderVO.mtSalesAcDirectorKey == emp.acDirectorKey}'>
-												<option value="<c:out value="${emp.acDirectorKey}"/>" selected="selected"><c:out value="${emp.acDirectorNm}"/></option>
+											<c:choose>
+												<c:when test='${mtSalesOrderVO.mtSalesAcDirectorKey == emp.acDirectorKey}'>
+													<option value="<c:out value="${emp.acDirectorKey}"/>" selected="selected"><c:out value="${emp.acDirectorNm}"/></option>
 												</c:when>
 												<c:otherwise>
-												<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
+													<option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option>
 												</c:otherwise>
 											</c:choose>										
 											<%-- <option value="<c:out value="${emp.acDirectorKey}"/>"><c:out value="${emp.acDirectorNm}"/></option> --%>
@@ -1569,7 +1603,7 @@
 						</tr>
 						<tr >
 							<td class="tdTitle">비고</td>
-							<td class="tdContents" colspan="5"><textarea id="remark" name="remark" ><c:out value="${mtSalesOrderVO.remark}"/></textarea></td>
+							<td class="tdContents" colspan="5" style="padding-right: 10px"><textarea id="remark" name="remark" ><c:out value="${mtSalesOrderVO.remark}"/></textarea></td>
 						</tr>
 					</table>
 				</form>

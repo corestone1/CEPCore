@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cep.forecast.service.impl.ForecastMapper;
+import com.cep.forecast.vo.ForecastVO;
 import com.cep.maintenance.contract.service.MtContractService;
 import com.cep.maintenance.contract.vo.MtDefaultVO;
 import com.cep.maintenance.contract.vo.MtGuarantyBondVO;
@@ -43,6 +45,9 @@ public class MtContractServiceImpl implements MtContractService {
 	
 	@Resource(name="mtContractMapper")
 	private MtContractMapper mtMapper;
+	
+	@Resource(name="forecastMapper")
+	private ForecastMapper forecastMapper;
 
 	/* (non-Javadoc)
 	 * @see com.cep.maintenance.service.MaintenanceService#selectMtList(com.cep.maintenance.contract.vo.MtContractDefaultVO)
@@ -139,6 +144,7 @@ public class MtContractServiceImpl implements MtContractService {
 		String mtIntegrateKey = null;
 		String mtCtKey = null;
 //		Map<Object, Object> contractMap = null;
+		ForecastVO forecastVO = new ForecastVO();
 		try {
 			mtIntegrateKey = makePrimaryKey(PrimaryKeyType.MAINTENACE_CONTRACT_ALL);
 			mtCtKey = makePrimaryKey(PrimaryKeyType.MAINTENACE_CONTRACT); 
@@ -147,6 +153,11 @@ public class MtContractServiceImpl implements MtContractService {
 			
 //			logger.debug("mtIntegrateKey===>"+mtIntegrateKey);
 			mtMapper.writeContractBasic(writeVo);
+			
+			//Forecast 상태정보 업데이트
+			forecastVO.setSpState("S"); //계약단계로 상태정보 변경.
+		    forecastVO.setSpKey(writeVo.getMtForcastLinkVo().getMtLinkCtKey());
+		    forecastMapper.updateBasic(forecastVO);
 			
 			//유지보수계약 forcast 연계정보 등록
 			if(null != writeVo.getMtForcastLinkVo() && !"".equals(CepStringUtil.getDefaultValue(writeVo.getMtForcastLinkVo().getMtLinkCtKey(), ""))) {
@@ -324,6 +335,10 @@ public class MtContractServiceImpl implements MtContractService {
 		return mtMapper.selectSalesOrderSelectBoxList(mtIntegrateKey);
 	}
 
+	@Override
+	public List<EgovMap> selectFocastSalesSelectBoxList(String mtLinkCtKey) throws Exception {
+		return mtMapper.selectFocastSalesSelectBoxList(mtLinkCtKey);
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see com.cep.maintenance.contract.service.MtContractService#selectSalesOrderDetail(com.cep.maintenance.contract.vo.MtDefaultVO)
@@ -1086,6 +1101,15 @@ public class MtContractServiceImpl implements MtContractService {
 	@Override
 	public List<EgovMap> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception {
 		return mtMapper.selectBackOrderSelectBoxList(mtIntegrateKey);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectForecastPurchaseSelectBoxList(java.lang.String)
+	 */
+	@Override
+	public List<EgovMap> selectForecastPurchaseSelectBoxList(String mtLinkCtKey) throws Exception {
+		return mtMapper.selectForecastPurchaseSelectBoxList(mtLinkCtKey);
 	}
 
 

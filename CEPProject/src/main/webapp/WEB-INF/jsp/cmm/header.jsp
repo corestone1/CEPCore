@@ -405,10 +405,11 @@
 					<div class="">
 						<ul>
 							<li><a href="/mngMaint/order/list.do">발주목록</a></li>
-							<li><a href="/mngMaint/bill/list.do">계산서목록</a></li>
 							<li><a href="/mngMaint/mapping/list.do">발주·계산서 매핑</a></li>
 							<li><a href="/mngMaint/billSchedule/list.do">계산서 일정</a></li>
 							<li><a href="/mngMaint/fundSchedule/list.do">수금·지급 일정</a></li>
+							<li><a href="/mngMaint/billSchedule/salesBillPlanList.do">수금계획목록</a></li>
+							<li><a href="/mngMaint/billSchedule/paymentPlanList.do">지급계획목록</a></li>
 						</ul>
 					</div>
 				</li>  <!-- 2차 오픈 -->

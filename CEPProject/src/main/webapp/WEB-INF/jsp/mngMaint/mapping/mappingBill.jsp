@@ -317,70 +317,61 @@
 		
 		function fn_save() {
 			
+			//alert($('input[name="isCheck"]:checked').val());
+			
 			if($("input:radio[name=isCheck]:checked").length == 0) {
 				alert("매핑할 계산서를 선택해주세요.");
 			} else {
 				/* $("#billMappingNum").val(Number($("#billMappingNum").val()) + $("input:checkbox[name=isCheck]:checked").length); */
-				var totalBillMappedAmount = 0;
-				var originBillMappedAmount = $("#billMappedAmount").val();
+				var checkNum = $('input[name="isCheck"]:checked').val();
 				
-				var object = {};
-				var listData = $("#billListForm").serializeObject();
+				var currentBillMappedAmount = $("#pop_billMappedAmount").val(); //현재 매핑된 금액
+				var selectBillMappedAmount = $("#"+checkNum+"-billAmount").val(); //선택한 매핑금액
 				
-				var index = [];
-				for(var list in listData) {
-					if(listData[list].hasOwnProperty('isCheck') == false) {
-						index.push(listData.indexOf(listData[list]));
-					}
-				}
-				for(var i = index.length - 1; i >= 0; i--) {
-					listData.splice(index[i], 1);
-				}
+				var totalBillMappedAmount = Number(currentBillMappedAmount)+Number(selectBillMappedAmount);
 				
-				for(var i = 0; i < listData.length; i++) {
-					totalBillMappedAmount += Number(listData[i].billAmount);
-				}
+				//console.log("totalBillMappedAmount="+totalBillMappedAmount);
 				
-				if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
-					alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + originBillMappedAmount + ")");
+				//console.log("mtOrderAmount="+$("#pop_mtOrderAmount").val()+", currentBillMappedAmount="+currentBillMappedAmount+", selectBillMappedAmount="+selectBillMappedAmount);
+				
+				if(Number($("#pop_mtOrderAmount").val()) < Number(totalBillMappedAmount)) {
+					alert("총 매핑 금액이 발주금액을 초과하여 매핑을 수행할 수 없습니다.\n - 발주금액       : "+addCommas($("#pop_mtOrderAmount").val())+" \n - 현재매핑금액 : "+addCommas(currentBillMappedAmount)+" \n - 선택매핑금액 : "+addCommas(selectBillMappedAmount));
 				} else {
-					if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
-						$("#billMappedAmount").val(totalBillMappedAmount);
-						
-						var formData = $("#orderInfoForm").serializeArray();
-						for (var i = 0; i<formData.length; i++){
-			                object[formData[i]['name']] = formData[i]['value'];
-			            }
-						
-						object["billList"]=listData;
-						
-						var sendData = JSON.stringify(object);
-						
-						var sch = location.search
-						var params = new URLSearchParams(sch);
-						var sch_keyword = params.get('paymentKey');
-						
+					if(confirm("계산서 '"+$("#"+checkNum+"-billNo").val() + "' 를(을) 매핑하시겠습니까?")) {
+						var mappingBillInfo = {
+								'mtIntegrateKey':$("#pop_mtIntegrateKey").val()
+								, 'paymentBuyFkKey':$("#pop_mtOrderKey").val()
+								, 'mtOrderType':$("#pop_mtOrderType").val()
+								, 'paymentStatusCd':'M'
+								, 'callAmount':$("#"+checkNum+"-billAmount").val()
+								, 'paymentAcFkKey':$("#pop_mtOrderAcKey").val()
+								, 'billFkKey':$("#"+checkNum+"-billNo").val()
+						}
+						console.log("mappingBillInfo====>"+JSON.stringify(mappingBillInfo));
 						$.ajax({
-							url:"/mngProject/mapping/compMapping.do?paymentKey="+sch_keyword,
+							url:"/mngMaint/mapping/writePaymentBillMapping.do",
 							dataType:'json',
 							type:"POST",
-							data:sendData,
-							contentType:"application/json; charset=UTF8",
+							data:mappingBillInfo,
+							contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+				            async : false,
 							success:function(response) {
 								if(response != null && response.successYN == 'Y') {
 									
-									alert($("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
+									alert($("#"+checkNum+"-billNo").val() +' 계산서와 매핑되었습니다.');
 									
-									 var url = '/mngProject/mapping/mappingBill.do';
+									var url = '/mngMaint/mapping/mappingBill.do';
 									var dialogId = 'program_layer';
 									var varParam = {
-										"pjOrderKey":$("input[name='pjOrderKey']").val(),
-										"billDtFrom":$("input[name='billDtFrom']").val(),
-										"billDtTo":$("input[name='billDtTo']").val()
+										"mtOrderKey":$('#pop_mtOrderKey').val(),
+										"mtOrderAcKey":$('#pop_mtOrderAcKey').val(),
+										"billDtFrom":$('#billDtFrom').val(),
+										"billDtTo":$('#billDtTo').val()
 									}
 									var button = new Array;
 									button = [];
-									showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+									showModalPop(dialogId, url, varParam, button, '', 'width:1125px;height:673px');  
+									
 								} else {
 									alert('계산서 매핑이 실패하였습니다.');
 								}
@@ -390,10 +381,14 @@
 									alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 								}
 							}
-						});  
+						});
 					}
 				}
 			}
+		}
+		
+		function openPaymentDetail(mtIntegrateKey, mtOrderType, mtWorkKey, mtOrderKey) {
+			window.open("/mngMaint/payment/detail/main.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderType="+mtOrderType+"&mtWorkKey="+mtWorkKey+"&mtOrderKey="+mtOrderKey+"&iframGubun=list");
 		}
 	</script>
 </head>
@@ -408,7 +403,7 @@
 			<div class="contents1">
 				<div>
 					<div class="subTitle floatL">발주 정보</div>
-					<div class="subTitle floatR"><a href="/project/request/purchase/main.do?mtIntegrateKey=${orderBillDetail.mtIntegrateKey}&mtOrderKey=${orderBillDetail.mtOrderKey }">지급 정보 보러가기<label><img src="/images/arrow_down.png" /></label></a></div>
+					<div class="subTitle floatR"><a href="javascript:openPaymentDetail('${orderBillDetail.mtIntegrateKey}','${orderBillDetail.mtOrderType}','${orderBillDetail.mtWorkKey}','${orderBillDetail.mtOrderKey}')">지급 정보 보러가기<label><img src="/images/arrow_down.png" /></label></a></div>
 					<div class="floatC"></div>
 				</div>
 				<div>
@@ -424,6 +419,7 @@
 								<th scope="row">매핑합계</th>
 								<th scope="row">발주 합계</th>
 								<th scope="row">담당자</th>
+								<th style="max-width: 0px; display: none;">hiddenVal</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -440,9 +436,14 @@
 								</td>
 								<td>
 									<span>${orderBillDetail.orderEmpNm }</span>
+								</td>
+								<td style="max-width: 0px; display: none;">			
+									<input type="hidden" id="pop_mtIntegrateKey" value="${orderBillDetail.mtIntegrateKey}"/>					
 									<input type="hidden" id="pop_mtOrderKey" value="${orderBillDetail.mtOrderKey }"/>
+									<input type="hidden" id="pop_mtOrderType" value="${orderBillDetail.mtOrderType }"/>
 									<input type="hidden" id="pop_mtOrderAcKey" value="${orderBillDetail.mtOrderAcKey }"/>
 									<input type="hidden" id="pop_mtOrderAmount" value="${orderBillDetail.mtOrderAmount }"/>
+									<input type="hidden" id="pop_billMappedAmount" value="${orderBillDetail.billMappedAmount }"/>
 								</td>
 							</tr>
 						</tbody>
@@ -472,16 +473,17 @@
 									<th scope="row">계산서금액</th>
 									<th scope="row">계산서번호</th>
 									<th scope="row">비고</th>
+									<th style="max-width: 0px; display: none;">hiddenVal</th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:forEach var="result" items="${mappingBillList }" varStatus="status">
 									<tr>
 										<td>
-											<input type="hidden" value="<c:out value="${result.billNo }" />" />
+											
 											<c:choose>
 												<c:when test="${result.billMappingYn eq 'N' }">
-													<input type="radio" class="tRadio" name="isCheck" id="popCheck${status.count }"/>
+													<input type="radio" class="tRadio" name="isCheck" id="popCheck${status.count }" value="${status.count}"/>
 													<label for="popCheck${status.count }" class="cursorP"></label>
 												</c:when>
 												<c:otherwise>
@@ -496,9 +498,12 @@
 										<td class="textalignR"><span title="${displayUtil.commaStr(result.billAmount)}">${displayUtil.commaStr(result.billAmount)}</span>&nbsp;</td>
 										<td><span title="${result.billNo }">${result.billNo}</span></td>
 										<td class="textalignL"><span title="${result.remark}">${result.remark}</span></td>
+										<td style="max-width: 0px; display: none;">
+											<input type="hidden" id="<c:out value="${status.count}"/>-billNo" value="<c:out value="${result.billNo }" />"/>
+											<input type="hidden" id="<c:out value="${status.count}"/>-billAmount" value="<c:out value="${result.billAmount }" />"/>
+										</td>
+										
 									</tr>
-									<input type="hidden" value="${orderVO.buyKey }" name="billCtFkKey"/>
-									<input type="hidden" value="${orderVO.orderCtFkKey }" name="billFkPjKey"/>
 								</c:forEach>
 							</tbody>
 						</table>
@@ -525,8 +530,8 @@
 		</div>
 	</div>
 	<form id="orderInfoForm">
-		<input id="pjOrderKey" name="pjOrderKey" type="hidden" value="${orderVO.pjOrderKey }"/>
-		<input type="hidden" name="billMappedAmount" id="billMappedAmount" value="${orderVO.billMappedAmount }" />
+		<input id="mtOrderKey" name="mtOrderKey" type="hidden" value="${orderBillDetail.mtOrderKey }"/>
+		<input type="hidden" name="billMappedAmount" id="billMappedAmount" value="${orderBillDetail.billMappedAmount }" />
 	</form>
 </body>
 </html>

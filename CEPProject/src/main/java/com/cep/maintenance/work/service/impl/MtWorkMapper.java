@@ -56,6 +56,19 @@ public interface MtWorkMapper {
 	public MtWorkVO selectWorkDetail(String mtWorkKey) throws Exception;
 	
 	/**
+	 * 유지보수 작업 기본정보 등록자와 지원담당정보를 조회한다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtWorkKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 9. 오전 11:04:33
+	 * @author aranghoo
+	 */
+	public MtWorkVO mtWorkAuthInfo(String mtWorkKey) throws Exception;
+	
+	/**
 	 * 
 	  * @Method Name : selectMtWorkList
 	  * @Cdate       : 2020. 11. 24.

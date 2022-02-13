@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cep.mngMaint.bill.vo.MtPaymentVO;
 import com.cep.mngMaint.mapping.service.MngMaintMappingService;
 import com.cep.mngMaint.mapping.vo.MtOrderBillVO;
 import com.cep.mngMaint.order.service.MngMaintOrderService;
+import com.cmm.config.AuthInfo;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
@@ -45,13 +49,21 @@ public class MngMaintMappingController {
 	 * @cdate 2022. 1. 26. 오후 1:47:27
 	 * @author aranghoo
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/list.do")
-	public String selectMapping(@ModelAttribute("searchVO") MtOrderBillVO searchVO, ModelMap model) throws Exception {
+	public String selectMapping(@ModelAttribute("searchVO") MtOrderBillVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
 		
 		List<?> orderBillList = null;
 		String toDay = null;
 		Map<String, String> searchParam = null;
+		HashMap<String, String> sessionMap = null;
+		String empAuthCd = null;
 		try {
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			empAuthCd = request.getSession().getAttribute("empAuthCd").toString();
+			
+			logger.debug("empKey===>"+sessionMap.get("empKey"));
+			logger.debug("empAuthCd===>"+empAuthCd);
 			
 			logger.debug("searchVO.getOrderDtFrom()===>"+searchVO.getOrderDtFrom());
 			logger.debug("searchVO.getOrderDtTo()===>"+searchVO.getOrderDtTo());
@@ -60,7 +72,19 @@ public class MngMaintMappingController {
 			logger.debug("searchVO.getSearchGubun()===>"+searchVO.getSearchGubun());
 			logger.debug("searchVO.getSearchWord()===>"+searchVO.getSearchWord());
 			
+			
+			
 			toDay = CepDateUtil.getToday(null);	
+			/*
+			 * 사용자 권한 정보가 null이 아니고 관리자(EMAU1001)가 아니고, 부서 key가 null이 아닌 경우
+			 * 검색조건에 사용자 id를 이용하여 조회하도록 함.(관리자가 아닌 경우 본인것만 조회)
+			 */
+			if(!"".equals(CepStringUtil.getDefaultValue(empAuthCd, "")) && 
+					!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue()) &&
+					"".equals(CepStringUtil.getDefaultValue(searchVO.getDeptKey(), ""))) {
+					searchVO.setRegEmpKey(sessionMap.get("empKey"));
+					model.put("empKey", sessionMap.get("empKey"));
+				}
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtFrom(), ""))){
 				searchVO.setOrderDtFrom(searchVO.getOrderDtFrom().replace("-", ""));
@@ -131,8 +155,8 @@ public class MngMaintMappingController {
 				searchVO.setBillDtTo(toDay);
 			}
 			searchParam = new HashMap<>();
-			logger.debug("billDtFrom===>"+CepDateUtil.convertDisplayFormat(searchVO.getBillDtFrom(), "yyyyMMdd", "yyyy-MM-dd"));
-			logger.debug("billDtTo===>"+CepDateUtil.convertDisplayFormat(searchVO.getBillDtTo(), "yyyyMMdd", "yyyy-MM-dd"));
+//			logger.debug("billDtFrom===>"+CepDateUtil.convertDisplayFormat(searchVO.getBillDtFrom(), "yyyyMMdd", "yyyy-MM-dd"));
+//			logger.debug("billDtTo===>"+CepDateUtil.convertDisplayFormat(searchVO.getBillDtTo(), "yyyyMMdd", "yyyy-MM-dd"));
 			
 			searchParam.put("billDtFrom", CepDateUtil.convertDisplayFormat(searchVO.getBillDtFrom(), "yyyyMMdd", "yyyy-MM-dd"));
 			searchParam.put("billDtTo", CepDateUtil.convertDisplayFormat(searchVO.getBillDtTo(), "yyyyMMdd", "yyyy-MM-dd"));
@@ -147,10 +171,12 @@ public class MngMaintMappingController {
 			 */
 			if(orderBillDetail.getMtOrderAmount() == orderBillDetail.getBillMappedAmount()) {
 				orderBillDetail.setMappingCompleteYn("Y");
+				searchVO.setMappingCompleteYn("Y");
 			} else {
 				orderBillDetail.setMappingCompleteYn("N");
+				searchVO.setMappingCompleteYn("N");
 			}
-			
+			logger.debug("searchVO.getMappingCompleteYn()====>"+searchVO.getMappingCompleteYn());
 			mappingBillList = service.selectMappingBillList(searchVO);
 			
 			model.put("orderBillDetail", orderBillDetail);
@@ -162,5 +188,80 @@ public class MngMaintMappingController {
 		}
 		
 		return "mngMaint/mapping/mappingBill";
+	}
+	
+	/**
+	 * 발주-계산서 매핑에서 계산서 매핑 등록
+	 * 유지보수관리 >> 발주-계산서 매핑 >> 팝업에서 매핑.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param request
+	 * @param mtPaymentVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 4. 오전 11:19:53
+	 * @author aranghoo
+	 */
+	@RequestMapping(value="/writePaymentBillMapping.do")
+	@ResponseBody
+	public Map<String, Object> writePaymentBillMapping(HttpServletRequest request, @ModelAttribute("mtPaymentVO")  MtPaymentVO mtPaymentVO) throws Exception {
+		String paymentKey = null;
+		logger.debug("=============== writePaymentBillMapping ======================");
+
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		HashMap<String, String> sessionMap = null;
+		
+//		EgovMap paymentRequestInfo = null;
+//		String paymentStatusCdNm = null;
+		try {
+			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
+			logger.debug("mtPaymentVO.getPaymentBuyFkKey()  : {}", mtPaymentVO.getPaymentBuyFkKey()); //발주키
+			logger.debug("mtPaymentVO.getMtOrderKey()  : {}", mtPaymentVO.getMtOrderKey()); //발주키
+			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
+//			logger.debug("mtPaymentVO.getPaymentStatusCd() : {}", mtPaymentVO.getPaymentStatusCd());
+			logger.debug("mtPaymentVO.getCallAmount() : {}", mtPaymentVO.getCallAmount());
+			logger.debug("mtPaymentVO.getPaymentAcFkKey()  : {}", mtPaymentVO.getPaymentAcFkKey()); //매입사업자번호.			
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 	
+			
+						
+			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			
+			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
+			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getMtOrderType(), ""))) {
+				logger.debug("writePaymentBillMapping insert===========>");
+				//계산서 요청 관리키가 없는 경우 등록
+				paymentKey = service.writePaymentBillMapping(mtPaymentVO);
+				
+				returnMap.put("successYN", "Y");
+			} else {
+				returnMap.put("successYN", "N");
+			}
+						
+			
+			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
+			//유지보수 key
+			returnMap.put("mtIntegrateKey", mtPaymentVO.getMtIntegrateKey());
+			
+			//유지보수 작업관리키
+			returnMap.put("mtWorkKey", mtPaymentVO.getMtWorkKey());
+			//발주관리키.
+			returnMap.put("paymentBuyFkKey", mtPaymentVO.getPaymentBuyFkKey());
+			
+			//사업자번호(매입처관리키)
+			returnMap.put("paymentAcFkKey", mtPaymentVO.getPaymentAcFkKey());
+			
+			returnMap.put("paymentKey", paymentKey);
+			
+		}catch(Exception e){
+			returnMap.put("successYN", "N");
+			logger.error("{}", e);
+			//throw e;
+		}		
+		return returnMap;
 	}
 }

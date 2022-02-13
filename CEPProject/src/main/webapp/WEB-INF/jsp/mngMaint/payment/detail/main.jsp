@@ -417,8 +417,8 @@
 		<input type="hidden" id="m_totalTurn" name="totalTurn" value="<c:out value="${totalTurn}"/>"/>
 	</form>
 	<div id="listForm" class="listForm">
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">

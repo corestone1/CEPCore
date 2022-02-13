@@ -2,6 +2,7 @@ package com.cep.mngMaint.mapping.service.impl;
 
 import java.util.List;
 
+import com.cep.mngMaint.bill.vo.MtPaymentVO;
 import com.cep.mngMaint.mapping.vo.MtOrderBillVO;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -45,4 +46,17 @@ public interface MngMaintMappingMapper {
 	 * @author aranghoo
 	 */
 	public List<?> selectMappingBillList(MtOrderBillVO orderBillVO) throws Exception;
+	
+	/**
+	 * 발주-계산서 매핑에서 계산서 매핑 등록
+	 * 유지보수관리 >> 발주-계산서 매핑 >> 팝업에서 매핑.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtPaymentVO
+	 * @throws Exception
+	 * @cdate 2022. 2. 4. 오전 10:33:40
+	 * @author aranghoo
+	 */
+	public void writePaymentBillMapping(MtPaymentVO mtPaymentVO) throws Exception;
 }

@@ -1099,7 +1099,7 @@ public class MngMaintBillController {
 					
 				} else {
 					logger.debug("writePaymentComplete update===========>");
-					//계산서 요청 관리키가 있는 경우 수정
+					//계산서 요청 관리키가 있는 경우 수정 
 					service.updatePaymentRequestInfo(mtPaymentVO);
 					paymentKey = mtPaymentVO.getPaymentKey();
 									
@@ -1260,7 +1260,7 @@ public class MngMaintBillController {
 //					paymentRequestInfo = service.selectPaymentRequestInfo(mtPaymentVO);
 //					paymentStatusCdNm = (String)paymentRequestInfo.get("paymentRequestInfo");
 				} else {
-					//계산서 요청 관리키가 있는 경우 수정
+					//계산서 요청 관리키가 있는 경우 수정 
 					service.updatePaymentRequestInfo(mtPaymentVO);
 					paymentKey = mtPaymentVO.getPaymentKey();
 									

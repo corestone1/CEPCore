@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cep.mngMaint.bill.service.impl.MngMaintBillMapper;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
 import com.cep.mngMaint.billSchedule.service.MngMaintBillScheduleService;
@@ -40,6 +41,13 @@ public class MngMaintBillScheduleServiceImpl implements MngMaintBillScheduleServ
 		return mapper.selectMtSalesBillPlanList(searchVO);
 	}
 
+	
+
+	@Override
+	public List<EgovMap> selectMtSalesBillApprovalList(MtContractVO mtContractVO) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMtSalesBillApprovalList(mtContractVO);
+	}
 
 
 	@Override
@@ -55,4 +63,10 @@ public class MngMaintBillScheduleServiceImpl implements MngMaintBillScheduleServ
 		// TODO Auto-generated method stub
 		return mapper.selectMtPaymentPlanList(searchVO);
 	}
+	
+	@Override
+	public List<EgovMap> selectMtPurchaseApprovalList(MtContractVO mtContractVO) throws Exception{
+		return mapper.selectMtPurchaseApprovalList(mtContractVO);
+	}
+		
 }

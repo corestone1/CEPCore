@@ -211,7 +211,7 @@
 		/* 거래처 스크롤 위치지정 */
 		#m_div_accountList {
 			left: 166px;
-    		margin-top: -5px;
+    		margin-top: 38px;
 		}
 	</style>
 	<script>
@@ -246,11 +246,17 @@
 				//보증증권유무 셋팅
 				//$('#gbYn').val("${basicContractInfo.gbYn}").attr("selected", "true");
 				$("input:radio[name='gbYn']:radio[value='${basicContractInfo.gbYn}']").prop('checked', true);
+				
+				//유지보수를 저장하고 나면 forcast연계버튼을 hide.
+				$('#sp_forecast_btn').hide();
+				
 			'</c:if>'
 			
-			'<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
+			
+			
+			/* '<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
 				$('#sp_delete_forecast').show();
-			'</c:if>'
+			'</c:if>' */
 			
 			'<c:if test="${basicContractInfo.mtProjectLinkVo.mtLinkKey != null }">'
 				$('#pj_delete_project').show();
@@ -415,7 +421,7 @@
 					}
 					
 				} else if(varUrl == "productInfoView"){
-					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수계약 매출계약정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -430,7 +436,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}					
 					
@@ -442,7 +448,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}					
 					
@@ -529,21 +535,29 @@
 		function fn_saveBtn(){
 			//alert("upFileName====>"+$('#upFileName').val());
 			//필수값 체크를 완료하면 저장 프로세스 시작.
-			if ($("#mtBasicForm")[0].checkValidity()){
-				if($('#mtIntegrateKey').val() !=''){
-					if(confirm("유지보수계약 기본정보를 수정하시겠습니까?")) {
-						saveBasicInfo();
+			
+			if($('#sp_mtLinkCtKeyNm').val() != '') {
+				if ($("#mtBasicForm")[0].checkValidity()){
+					if($('#mtIntegrateKey').val() !=''){
+						if(confirm("유지보수계약 기본정보를 수정하시겠습니까?")) {
+							saveBasicInfo();
+						}
+					} else {
+						if(confirm("유지보수계약 기본정보를 저장하시겠습니까?")) {
+							saveBasicInfo();
+						}
 					}
-				} else {
-					if(confirm("유지보수계약 기본정보를 저장하시겠습니까?")) {
-						saveBasicInfo();
-					}
+					
+				}  else {
+					 //Validate Form
+			        $("#mtBasicForm")[0].reportValidity();	
 				}
-				
-			}  else {
-				 //Validate Form
-		        $("#mtBasicForm")[0].reportValidity();	
+			} else {				
+			
+				alert("Forecast연계가 되지 않았습니다. \nForecast에서 가져오기 버튼을 이용하여 연계하세요!!");
+				$('#sp_mtLinkCtKeyNm').focus();
 			}
+			
 		}
 		/*
 		*내용을 저장한다.
@@ -696,7 +710,7 @@
 		
 		function fn_nextBtn(){
 			if($('#mtIntegrateKey').val() !=''){
-				if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 제품정보 등록화면으로 이동하시겠습니까?")) {
+				if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출계약정보 등록화면으로 이동하시겠습니까?")) {
 					//saveBasicInfo();
 					var url = '/maintenance/contract/write/productInfoView.do';
 					var dialogId = 'program_layer';
@@ -742,10 +756,10 @@
 		//Forecast연계
 		function fn_forecastPop() {
 			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
-			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F2&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1372px,height=713px,left=600');
 		}
 		
-		function pop_forecastCall(returnKey,returnNm) {
+		function pop_forecastCall(returnKey,returnNm, salesAmount) {
 			if(returnKey !=$('#sp_mtLinkCtKey').val()){
 				//기존값이 다른경우 프로세스 진행
 		        $.ajax({
@@ -794,6 +808,8 @@
 			                }
 		            	}
 		            	
+		            	//매출금액 셋팅
+		            	$('#mtAmount').val(addCommas(salesAmount));
 		            	
 		            },
 		        	error: function(request, status, error) {
@@ -866,11 +882,11 @@
 				
 				if($('#pj_mtLinkKey').val() !='') {
 					$('#pj_linkDeleteKey').val($('#pj_mtLinkKey').val());
-					$('#id').val('');
+					$('#pj_mtLinkKey').val('');
 				}
-				$('#id').val('');
-				$('#no').val('');
-				//$('#pj_delete_project').hide();
+				$('#pj_mtLinkCtKeyNm').val('');
+				$('#pj_mtLinkCtKey').val('');
+				$('#pj_delete_project').hide();
 			} else {
 				return false;
 			}			
@@ -939,7 +955,7 @@
 		<div class="left">
 			<ul class="ftw400">
 				<li class="colorWhite cursorP on">기본정보</li>
-				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+				<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">매출계약정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('salesInfoView');">매출정보</li>
 				<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>				
 				<li id="back_order" class="colorWhite cursorP" onclick="fn_changeView('backOrderInfoView');" style="display:none">백계약정보</li>
@@ -959,20 +975,21 @@
 					<input type="hidden" id="workClass" name="workClass" value="mtContract"/>
 					<table>
 						<tr>
-							<td class="tdTitle">FORECAST명</td>
+							<td class="tdTitle"><label>*</label>FORECAST명</td>
 							<td class="tdContents">
-								<button type="button" onclick="javascript:fn_forecastPop()" style="vertical-align: middle;">
+								<button type="button" id="sp_forecast_btn" onclick="javascript:fn_forecastPop()" style="vertical-align: middle;">
 									<img src="<c:url value='/images/forecast_icon.png'/>" />
 								</button>
 								<input type="text" name="mtLinkCtKeyNm" id="sp_mtLinkCtKeyNm" class="pname" value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>" readonly="readonly"/>
 								
 								<input type="hidden" name="mtLinkCtKey" id="sp_mtLinkCtKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}"/>" />
 								<input type="hidden" name="mtLinkKey" id="sp_mtLinkKey"  value="<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkKey}"/>" />
+								
 								<img id="sp_delete_forecast" src="<c:url value='/images/popup_close.png'/>" onclick="fn_deleteForecast();" style="width: 11px;display:none"/>
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">PRJECT명</td>
+							<td class="tdTitle">&nbsp; PRJECT명</td>
 							<td class="tdContents">
 								<button type="button" onclick="javascript:fn_projectPop()" style="vertical-align: middle;">
 									<img src="<c:url value='/images/btn_project_connect.png'/>" />
@@ -1122,7 +1139,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle veralignT">비고</td>
+							<td class="tdTitle veralignT">&nbsp; 비고</td>
 							<td class="tdContents" ><textarea name="remark"><c:out value="${basicContractInfo.remark}"/></textarea></td>
 						</tr>				
 								
@@ -1137,7 +1154,7 @@
 					<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
 					<table>					
 						<tr>		
-							<td class="tdTitle veralignT">첨부파일</td>		
+							<td class="tdTitle veralignT">&nbsp; 첨부파일</td>		
 							<td>			
 								<div class="uploadContainer">
 									<input class="uploadName" id="upFileName" placeholder="파일선택" disabled="disabled" />

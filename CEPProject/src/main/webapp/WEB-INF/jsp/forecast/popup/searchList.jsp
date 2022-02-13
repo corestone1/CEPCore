@@ -168,7 +168,7 @@
 	
 	});
 	
-	function fn_ForecastSelect(id, nm)
+	function fn_ForecastSelect(id, nm, salesAmount)
 	{
 		//var returnKey = '${returnKey}';
 		//var returnNm = '${returnNm}';
@@ -181,6 +181,10 @@
 			
 			<c:if test="${returnType == 'F' }">
 			opener.${returnFunctionNm}(id,nm);
+			</c:if>
+			
+			<c:if test="${returnType == 'F2' }">
+			opener.${returnFunctionNm}(id,nm, salesAmount);
 			</c:if>
 			//alert('ID : ' + id + ', NM : ' + nm);
 			
@@ -253,7 +257,7 @@
 					<tbody>
 						<c:forEach var="result" items="${forecastList}" varStatus="status">
 	            			<tr>
-	            				<td><a href="#"    onclick="javascript:fn_ForecastSelect('${result.spKey}', '${result.spBusiNm}');" class="btn btn_gray">선택</a></td>
+	            				<td><a href="#"    onclick="javascript:fn_ForecastSelect('${result.spKey}', '${result.spBusiNm}',  '${result.fcSalesAmount}');" class="btn btn_gray">선택</a></td>
 	            				<td align="center" class="listtd">&nbsp;<span style="max-width: 121px;" title="${result.mfAcNm}"><c:out value="${result.mfAcNm}"/></span></td>
 	            				<td align="left"   class="listtd">&nbsp;<span style="max-width: 182px;" title="${result.spBusiNm}"><c:out value="${result.spBusiNm}"/></span>&nbsp;</td>
 	            				<td align="left"   class="listtd">&nbsp;<span style="max-width: 121px;" title="${result.salesAcNm}"><c:out value="${result.salesAcNm}"/></span>&nbsp;</td>

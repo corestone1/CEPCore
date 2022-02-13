@@ -196,10 +196,18 @@
 		.bottom table {
 		    width: 100%;
 		}
+		.count {
+			font-size: 15px;
+			font-weight: 200;
+		}
+		.count img {
+			border: 1px solid #7F7F7F;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
 			//$('.middle table tbody tr td').attr('onclick',"fn_addView('mappingBill')");
+			$(".top").after($(".count.textalignR"));
 		});
 		
 		function fn_addView(mtOrderKey, mtOrderAcKey){
@@ -226,8 +234,8 @@
 </head>
 <body>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -269,10 +277,11 @@
 							</tr>
 						</thead>
 						<tbody>
+							<c:set var="count" value="0" />
 							<c:set var = "totalAmount" value="0" />
 							<c:forEach var="result" items="${orderList}" varStatus="status">
 								<c:set var = "totalAmount" value="${totalAmount + result.mtOrderAmount}" />
-								<tr onclick="fn_addView('${result.mtOrderKey}', '${result.mtOrderAcKey}')">
+								<tr onclick="fn_addView('${result.mtOrderKey}', '${result.mtOrderAcKey}')" <c:if test="${result.mtOrderAmount ne result.billMappedAmount }">style="background-color:#f8f1e8;"</c:if>>
 									<td>${status.count }</td>
 									<td>${displayUtil.displayDate(result.mtOrderDt) }</td>
 									<td>
@@ -282,6 +291,7 @@
 											</c:when>
 											<c:otherwise>
 												<label>N</label>
+												<c:set var="count" value="${count + 1 }" />
 											</c:otherwise>
 										</c:choose>
 									</td>
@@ -450,6 +460,7 @@
 							</tr>
 						</tbody>
 					</table>
+					<div class="count textalignR"><img src="/images/icon_nonmapping.png" />&nbsp;&nbsp;<c:out value="매핑미완료 (${count }건)" /></div>
 				</div>
 				
 			</div>

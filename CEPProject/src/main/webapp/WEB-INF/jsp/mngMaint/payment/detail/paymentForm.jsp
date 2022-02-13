@@ -41,7 +41,7 @@
 		    text-align: center;
 		    font-size: 17px;
 		    cursor: pointer;
-		    width: 50%;
+		    width: 27%;
 		}
 		.stitle ul li a {
 		    color: #a3a3a4;
@@ -236,6 +236,13 @@
 		    font-weight: bold;
 		    border: 1px solid #C2DEE1;
 		    margin-left: 8px;
+		}
+		.btnWrap {
+			position: absolute;
+			bottom: 14px;
+		}
+		.btnWrap.rt {
+			right: 0px;
 		}
 	</style>
 	<script>
@@ -803,13 +810,23 @@
 					</tr>
 				</table>
 			</div>
-			<div class="bottom">
+			<div class="btnWrap rt">
 				<div class="floatR">
 					<c:if test='${paymentRequestInfo.paymentStatusCd eq null}'>
 					<button type="button" title="매입금 지급요청 등록" onclick="fn_saveBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" />
 					</button>
 					</c:if>
+					<c:if test='${paymentRequestInfo.paymentStatusCd == "M"}'><!--매핑상태  -->
+					<button type="button" title="계산서 맵핑삭제 삭제" onclick="fn_deleteBtn()">
+						<img class="cursorP" src="<c:url value='/images/btn_del.png'/>" />
+					</button>
+					<button type="button" title="매입금 지급요청 등록" onclick="fn_saveBtn()">
+						<img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" />
+					</button>
+					</c:if>
+					
+					
 					<c:if test='${paymentRequestInfo.paymentStatusCd == "R"}'><!--요청상태  -->
 					<button type="button" title="매입금 지급요청 삭제" onclick="fn_deleteBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_del.png'/>" />
