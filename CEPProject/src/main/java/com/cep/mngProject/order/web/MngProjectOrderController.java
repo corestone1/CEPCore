@@ -22,6 +22,7 @@ import com.cep.mngProject.order.service.MngProjectOrderService;
 import com.cep.mngProject.order.vo.MngOrderInsertVO;
 import com.cep.mngProject.order.vo.MngOrderSearchVO;
 import com.cep.mngProject.order.vo.MngProjectOrderVO;
+import com.cmm.config.AuthInfo;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
@@ -43,11 +44,14 @@ public class MngProjectOrderController {
 	
 	
 	@RequestMapping(value="/list.do")
-	public String selectOrder(@ModelAttribute("searchVO") MngOrderSearchVO searchVO, ModelMap model) throws Exception {
+	@SuppressWarnings("unchecked")
+	public String selectOrder(@ModelAttribute("searchVO") MngOrderSearchVO searchVO, ModelMap model, HttpServletRequest request) throws Exception {
 		
 		/*model.addAttribute("forecastList", service.selectList(exampleVO));*/
 		
 		String toDay = null;
+		HashMap<String, String> sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+		String empAuthCd = request.getSession().getAttribute("empAuthCd").toString();
 		
 		try
 		{
@@ -65,6 +69,12 @@ public class MngProjectOrderController {
 				searchVO.setOrderDtTo(searchVO.getOrderDtTo().replace("-", ""));
 			} else {
 				searchVO.setOrderDtTo(toDay);
+			}
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(empAuthCd, "")) && 
+					!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue())) {
+				searchVO.setSalesEmpKey(sessionMap.get("empKey"));
+				model.put("empKey", sessionMap.get("empKey"));
 			}
 			
 			model.put("orderDtFrom", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtFrom(), null, null));

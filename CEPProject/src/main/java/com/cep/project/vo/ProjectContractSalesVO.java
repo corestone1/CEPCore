@@ -33,6 +33,8 @@ public class ProjectContractSalesVO extends ProjectSalesVO implements Serializab
 	private String salesStatusCd;
 	private String statusCd;
 	private String isNew;
+	private String billSalesCd;
+	private String billMfCd;
 	private List<ProjectContractSalesVO> projectContractSalesVOList;
 	
 	public String getCtKey() {
@@ -154,6 +156,18 @@ public class ProjectContractSalesVO extends ProjectSalesVO implements Serializab
 	}
 	public void setIsNew(String isNew) {
 		this.isNew = isNew;
+	}
+	public String getBillSalesCd() {
+		return billSalesCd;
+	}
+	public void setBillSalesCd(String billSalesCd) {
+		this.billSalesCd = billSalesCd;
+	}
+	public String getBillMfCd() {
+		return billMfCd;
+	}
+	public void setBillMfCd(String billMfCd) {
+		this.billMfCd = billMfCd;
 	}
 	public List<ProjectContractSalesVO> getProjectContractSalesVOList() {
 		return projectContractSalesVOList;

@@ -104,7 +104,7 @@
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
-			width: 125px;
+			width: 90px;
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
@@ -115,17 +115,20 @@
 			width: 413px;
 		}
 		.middle table thead th:nth-child(5),
-		.middle table tbody td:nth-child(5) {
-			width: 102px;
-		}
+		.middle table tbody td:nth-child(5),
 		.middle table thead th:nth-child(6),
-		.middle table thead th:nth-child(7),
-		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(6),
-		.middle table tbody td:nth-child(7),
-		.middle table tbody td:nth-child(8) {
+		.middle table tbody td:nth-child(6) {
 			width: 102px;
 		}
+		
+		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7),
+		.middle table thead th:nth-child(8),
+		.middle table tbody td:nth-child(8) {
+			width: 138px;
+			padding: 10px 12px;
+		}
+		
 		.middle table thead th:nth-child(9),
 		.middle table tbody td:nth-child(9) {
 			width: 100px;
@@ -136,7 +139,7 @@
 		.middle table tbody td:nth-child(10),
 		.middle table tbody td:nth-child(11),
 		.middle table tbody td:nth-child(12) {
-			width: 126px;
+			width: 82px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -168,6 +171,25 @@
    			white-space: normal;
    			overflow: auto;
    			line-height: 1.5;
+		}
+		.sum table {
+		    width: 100%;
+		    margin: 0;
+		    border: none;
+		}
+		.sum table tbody {
+		    height: auto;
+		}
+		.sum table tr td {
+		    padding: 10px !important;
+		    color: #26a07d !important;
+		    background-color: #ecf6f4;
+		    text-align: right;
+		    border: none !important;
+		    font-size: 16px !important;
+		}
+		.sum table tbody tr td label {
+		    margin-left: 57px;
 		}
 		.bottom > div {
 			margin-top: 22px;
@@ -456,6 +478,8 @@
 	</script>
 </head>
 <body>
+	<c:set var="salesSum" value=""></c:set>
+	<c:set var="pcSum" value=""></c:set>
 	<form:form commandName="searchVO"  id="listForm" name="listForm" method="post" onsubmit="return false">
 		<input type="hidden" value="<c:out value="${resultCode}"/>"/>
 		<input type="hidden" name="pjKey" value=""/>
@@ -506,6 +530,8 @@
 								<th scope="row">프로젝트명</th>
 								<th scope="row">시작일</th>
 								<th scope="row">종료일</th>
+								<th scope="row">매출액</th>
+								<th scope="row">매입액</th>
 								<th scope="row">프로젝트기간</th>
 								<th scope="row">남은기간</th>
 								<th scope="row">상태</th>
@@ -530,19 +556,38 @@
 									<fmt:parseNumber value="${endPlanDate.time / (1000*60*60*24)}" integerOnly="true" var="endDate"></fmt:parseNumber>
 									<jsp:useBean id="now" class="java.util.Date" />
 									<fmt:parseNumber value="${now.time / (1000*60*60*24)}" integerOnly="true" var="nowDate"></fmt:parseNumber>
+									<td align="right" class="listtd"><c:out value="${displayUtil.commaStr(result.totalSalesAmount) }" /></td>
+									<td align="right" class="listtd"><c:out value="${displayUtil.commaStr(result.totalBuyAmount) }" /></td>
 									<td align="center" class="listtd"><c:out value="${endDate - startDate + 1}"/>일</td>
 		            				<td align="center" class="listtd"><c:out value="${endDate - nowDate + 1 > 0? endDate - nowDate + 1 : 0}"/>일</td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/></td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/></td>
 		            			</tr>
+		            			<c:set var="salesSum" value="${salesSum + result.totalSalesAmount }" />
+								<c:set var="pcSum" value="${pcSum + result.totalBuyAmount }" />
 		        			</c:forEach>
+						</tbody>
+					</table>
+				</div>
+				<div class="sum">
+					<table>
+						<tbody class="ftw400">
+							<tr>
+								<td colspan="10">
+									합계
+									<label class="colSum">매출: <c:out value="${displayUtil.commaStr(salesSum) }"/> 원</label>
+									<label class="colSum">매입: <c:out value="${displayUtil.commaStr(pcSum) }"/> 원</label>
+									<label class="colSum">매출이익: <c:out value="${displayUtil.commaStr(salesSum - pcSum) }"/> 원</label>
+									<label>(부가세별도)</label>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
 				<div class="bottom">
 					<div class="floatR">
 						<button value="수정" type="button" onclick="fn_mod();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
-						<button value="삭제" type="button" onclick="fn_delete();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+						<%-- <button value="삭제" type="button" onclick="fn_delete();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 						<button value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>

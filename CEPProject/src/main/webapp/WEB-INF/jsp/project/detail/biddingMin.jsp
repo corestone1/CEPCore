@@ -571,7 +571,7 @@
 									<td>입찰보증증권</td>
 									<td>
 									 	<c:out value="${biddingVO.bdGbYn}"/>
-										<c:if test='${biddingVO.bdGbYn eq "Y"}'>
+										<%-- <c:if test='${biddingVO.bdGbYn eq "Y"}'>
 											&nbsp;&nbsp;
 											( 진행상태&nbsp;:&nbsp;
 											<c:choose>
@@ -594,7 +594,7 @@
 													</span>
 												</c:when>
 											</c:choose>
-										</c:if> 
+										</c:if>  --%>
 									</td>
 								</tr>
 								<tr>

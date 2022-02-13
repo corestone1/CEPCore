@@ -250,7 +250,11 @@
 						<th>지급 금액</th>
 						<th>사업자번호</th>
 						<th>상호</th>
-						<th>지급완료</th>
+						<%
+							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
+						<th>완료</th>
+						<% } %>
 					</tr>
 				</thead>
 				<tbody>
@@ -263,6 +267,9 @@
 							<td><span title="${displayUtil.commaStr(result.callAmount) }">${displayUtil.commaStr(result.callAmount) }</span></td>
 							<td><span title="${result.billAcKey }">${result.billAcKey }</span></td>
 							<td><span title="${result.acNm }">${result.acNm }</span></td>
+							<%
+								if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+							%>
 							<td>
 								<c:choose>
 									<c:when test="${empty result.paymentDt }">
@@ -285,6 +292,7 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
+							<% } %>
 						</tr>
 					</c:forEach>
 				</tbody>

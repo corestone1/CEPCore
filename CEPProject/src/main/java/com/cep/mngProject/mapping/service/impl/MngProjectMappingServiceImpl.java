@@ -94,4 +94,44 @@ public class MngProjectMappingServiceImpl implements MngProjectMappingService {
 		
 		return returnMap;
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public Map<String, Object> deleteOrderBill(HttpServletRequest request, OrderBillVO orderBillVO) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> session = null;
+		Map<String, Object> param = null;
+		
+		try {
+			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
+			orderBillVO.setModEmpKey(session.get("empKey"));
+			orderBillVO.setBillMappedAmount((int)mapper.selectBillOne(orderBillVO).get("billAmount") * -1);
+			
+			// - 처리
+			mapper.updateOrder(orderBillVO);
+			
+			param = new HashMap<>();
+			param.put("regEmpKey", session.get("empKey"));
+			param.put("modEmpKey", session.get("empKey"));
+			param.put("billNo", orderBillVO.getBillNo());
+				
+			// billmappingyn = n, pjkey = null
+			mapper.deleteBillMapping(param);
+			
+			//deleteyn = y
+			mapper.deletePcBillingOpInfo(param);
+			param.put("paymentKey", request.getParameter("paymentKey"));
+			//deleteyn = y
+			mapper.deletePaymentInfo(param);
+			
+			
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			returnMap.put("successYN", "N");
+			throw new Exception(e);
+		}
+		
+		return returnMap;
+	}
 }

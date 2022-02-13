@@ -56,7 +56,7 @@
 		.popContainer .contents > div > form >table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
-	  		width: 782px;
+	  		width: 769px;
 		}
 		/* .popContainer .contents > div > table tr:first-child td {
 			margin-bottom: 100px;
@@ -73,14 +73,11 @@
 		    padding-right: 20px;
 		    width: 13%;
 		    font-weight: 400;
+		    width: 75px;
 		}
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
 		}		
-		.popContainer .contents td.tdTitle {
-			margin-top: 11px;
-			width: 96px;
-		}				
 		.popContainer .contents td.tdContents {
 			width: 691px;
 		} 	
@@ -88,7 +85,8 @@
 			padding-right: 0px !important;
 		} 				
 		#salesListForm {
-			padding-left: 116px;
+			padding-left: 94px;
+			font-size: 15px;
 		}
 		.popContainer .top div[class="subTitle"] {
 			height: 36px;
@@ -106,10 +104,10 @@
 			font-size: 14px;				
 		}
 		.popContainer .contents select {
-			width: 200px;
+			width: 130px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
-			padding: 0 36px;
+			padding: 0 10px;
 			-webkit-appearance: none;
 			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
@@ -117,10 +115,10 @@
 			font-size: 15px;	
 		}
 		.popContainer .contents select option:first-child{
-		 	color: #a4a4a4;
+		 	/* color: #a4a4a4; */
 		}
 		.popContainer .contents input {
-			width: 179px !important;
+			width: 311px !important;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -128,20 +126,38 @@
 			font-size: 14px;
 			margin-bottom: 3px;
 		}
+		.popContainer .contents input[class="calendar"] {
+			width: 108px !important;
+		}
 		.popContainer .contents .disc {
 			font-size: 14px;
 		    color: #afafaf;
 		}
 		.popContainer .contents input[class="rateInfo"] {
-			width: 90px !important;
+			width: 34px !important;
 			height: 38px;
 		}
 		.popContainer .contents input[class="amount"] {
 			text-align: right;
 		}
+		.popContainer .contents input[id^="amount"] {
+			width: 122px !important;
+		}
+		.popContainer .contents input[id^="salesBillFcDt"],
+		.popContainer .contents input[id^="salesCollectFcDt"] {
+			width: 115px !important;
+		}
+		#m_div_accountList {
+			left: 136px;
+    		margin-top: 40px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
+			
+			$("#acNm").on("keyup", function(event){
+				fn_searchAccoutList(this, $(this).val());				
+			}); 
 			
 			$('input[id^=selectKey]').each(function() {
 				if($(this).val() != "" || $(this).val().length != 0) {
@@ -160,6 +176,67 @@
 				}
 			});
 		});
+		
+		
+		function fn_searchAccoutList(pObject, pstAccountNm) {
+			$('#m_div_accountList').remove();
+		
+			var jsonData = {'acNm' : pstAccountNm, 'acSalesYN' : 'Y' };
+			
+			 $.ajax({
+		        	url :"/mngCommon/account/searchList.do",
+		        	type:"POST",  
+		            data: jsonData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		//alert(data.accountList[0].acNm);
+		        		//선택 목록 생성
+		        		fnViewAccountList(pObject, data.accountList);
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    }); 
+		}
+		
+		function fnViewAccountList(pObject, pjAccountList) {
+			
+			var html = '<div id="m_div_accountList">'
+			         + '<ul class="accountList">'
+			       ;
+			       
+	        for(var i=0; i < pjAccountList.length; i++)
+	    	{
+	    	   html += '<li id="m_li_account" title="'+ pjAccountList[i].acKey +'">' + pjAccountList[i].acNm + '</li>'
+	    	        ;
+	    	} 
+			       
+			       
+			html +=  '</ul>'
+			     + '</div>'
+			     ;//+ '</div>';
+			//$('#m_td_account').after(html);
+			$(pObject).parent().after(html);
+			
+			$("[id^='m_li_account']").click(function(event)
+			{
+				//alert(this.title);
+				
+				$(pObject).next().val(this.title); 
+				$(pObject).val(this.innerText);
+				/* if(!pObject.id.includes("sales")) {
+					fn_selectAc();
+				} */
+				
+				$('#m_div_accountList').remove();
+			});
+			
+		}
+					
 		
 		jQuery.fn.serializeObject = function() { 
 			var obj = null; 
@@ -236,7 +313,8 @@
 					rowItem += "<input type='hidden' name='isNew' value='Y' />";
 					/* rowItem += "<input type='hidden' name='ctKey' value='' />"; */
 					/* </form></td>"; */
-					/* rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type='text' id='salesChargeDt"+(beforeTurn+i+1)+"' class='calendar' name='salesChargeDt' placeholder='청구일' value='' required/></td>"; */
+					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;발행일 :&nbsp;<input type='text' id='salesbillFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesbillFcDt' placeholder='발행일' value='' required/></td>"; 
+					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;수금일 :&nbsp;<input type='text' id='salesCollectFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesCollectFcDt' placeholder='수금일' value='' required/></td>"; 
 					rowItem += "</tr>";
 					
 					$('#addRow').append(rowItem);
@@ -422,8 +500,8 @@
 		</div>
 		<div class="left">
 			<ul class="ftw400">
-				<li class="colorWhite cursorP on">금액</li>
-				<li class="colorWhite cursorP" onclick="javascript:fn_next('guarantyInfo')">예상일정</li>
+				<li class="colorWhite cursorP on">매출정보</li>
+				<li class="colorWhite cursorP" onclick="javascript:fn_next('guarantyInfo')">보증증권</li>
 			</ul>
 		</div>
 		<c:set var = "total" value = "0" />
@@ -447,14 +525,57 @@
 					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }" /> 
 					<input type="hidden" id="collectTurn" name="collectTurn" value="${contractVO.collectTurn }" /> 
 					<input type="hidden" name="statusCd" value="PJST2000" />
-					<input type="hidden" name="salesAcKey" value="${forecastVO.salesAcKey }" />
-					<div class="acNm">
+					<%-- <input type="hidden" name="salesAcKey" value="${forecastVO.salesAcKey }" /> --%>
+					<%-- <div class="acNm">
 						<c:if test="${forecastVO.salesAcNm ne null}">매출처 - ${forecastVO.salesAcNm}</c:if>
-					</div>
+					</div> --%>
 					<table>
 						<tr class="ftw200">
+							<%-- <td>
+								<input type="text" id="salesChargeDt" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(contractVO.salesChargeDt)}"/>" required/> 
+							</td> --%>
+							<td class="tdTitle">매출구분</td>
+							<td style="width: 141px;">
+								<select id="billSalesCd" name="billSalesCd" required>
+									<c:forEach var="billSalesCode" items="${salesCodeList}" varStatus="status1">			
+										<c:choose>
+											<c:when test='${contractVO.billSalesCd == billSalesCode.cdKey}'>
+												<option value="<c:out value="${billSalesCode.cdKey}"/>" selected="selected"><c:out value="${billSalesCode.cdNm}"/></option>
+											</c:when>
+											<c:otherwise>
+												<option value="<c:out value="${billSalesCode.cdKey}"/>"><c:out value="${billSalesCode.cdNm}"/></option>
+											</c:otherwise>
+										</c:choose>										
+									</c:forEach>	
+								</select>
+							</td>
+							<td class="tdTitle" style="width: 37px;">제조사</td>
+							<td>
+								<select id="billMfCd" name="billMfCd" required>
+									<c:forEach var="billMfCd" items="${manufacturerList}" varStatus="status2">										
+										<c:choose>
+											<c:when test='${contractVO.billMfCd == billMfCd.codeKey}'>
+												<option value="<c:out value="${billMfCd.codeKey}"/>" selected="selected"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:when>
+											<c:otherwise>
+												<option value="<c:out value="${billMfCd.codeKey}"/>"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>	
+								</select>	
+							</td>
+						</tr>
+						<tr class="ftw200">
+							<td class="tdTitle">매출처</td>
+							<td colspan="3">
+								<input type="text" id="acNm" class="search" 
+									value="<c:choose><c:when test="${salesList[0].salesAcKey eq null}">${forecastVO.salesAcNm}</c:when><c:otherwise>${salesList[0].acNm}</c:otherwise></c:choose>"/>
+								<input type="hidden" id="salesAcKey" name="salesAcKey" value="<c:choose><c:when test="${salesList[0].salesAcKey eq null}">${forecastVO.salesAcKey}</c:when><c:otherwise>${salesList[0].salesAcKey}</c:otherwise></c:choose>" />
+							</td>
+						</tr>
+						<tr class="ftw200">
 							<td class="tdTitle">총 계약 금액</td>
-							<td class="firstRow">
+							<td class="firstRow" colspan="3">
 								<input type="text" id="sum" name="ctAmount" placeholder="총 계약금액"  amountOnly class="amount"  
 										value="<c:choose><c:when test="${ contractVO.ctAmount eq null }">${displayUtil.commaStr(forecastVO.fcSalesAmount) }</c:when><c:otherwise>${displayUtil.commaStr(contractVO.ctAmount) }</c:otherwise></c:choose>" required/>&nbsp;원
 							</td>
@@ -464,20 +585,20 @@
 								<input type="text" id="salesChargeDt" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(contractVO.salesChargeDt)}"/>" required/> 
 							</td> --%>
 							<td class="tdTitle">결제조건</td>
-							<td>
+							<td colspan="3">
 								<input type="text" id="ctPayTerms" name="ctPayTerms" placeholder="결제조건" value="<c:out value="${contractVO.ctPayTerms}"/>" />
 								<label class="disc">&nbsp;&nbsp;&nbsp;ex. 계산서 발행 후 30일</label>
 							</td>
 						</tr>
 						<tr class="ftw200">
 							<td class="tdTitle">계약 일자</td>
-							<td>
+							<td colspan="3">
 								<input type="text" id="ctDt" class="calendar" name="ctDt" placeholder="계약 일자" title="계약 일자" value="<c:out value="${displayUtil.displayDate(contractVO.ctDt)}"/>" required/>
 							</td>
 						</tr>
 						<tr class="ftw200">
 							<td class="tdTitle">계약 금액</td>
-							<td>
+							<td colspan="3">
 								<input type="hidden" id="beforeTurn" value="${contractVO.collectTurn eq null ? 0 : contractVO.collectTurn }">
 								<c:set var="turnNo" value="${contractVO.collectTurn eq null ? 0 : contractVO.collectTurn }" />
 								<select id="turnInfo" onchange="fn_turnChange()" placeholder="계약금액">
@@ -519,7 +640,8 @@
 									<input type='hidden' name='salesTurn' value='${result.salesTurn }' />
 									<%-- <input type='hidden' name='salesTurnAmount' id="sAmount${status.count }" value='${result.salesTurnAmount }' /> --%>
 									<input type='hidden' name='isNew' value='N' />
-									<%-- &nbsp;&nbsp;&nbsp;청구일자 :&nbsp;<input type="text" id="salesChargeDt${result.salesTurn }" class="calendar" name="salesChargeDt" placeholder="청구일" value="<c:out value="${displayUtil.displayDate(result.salesChargeDt)}"/>" required/> --%>
+									&nbsp;&nbsp;&nbsp;발행일 :&nbsp;<input type="text" id="salesBillFcDt${result.salesTurn }" class="calendar" name="salesBillFcDt" placeholder="발행일" value="<c:out value="${displayUtil.displayDate(result.salesBillFcDt)}"/>" required/>
+									&nbsp;&nbsp;&nbsp;수금일 :&nbsp;<input type="text" id="salesCollectFcDt${result.salesTurn }" class="calendar" name="salesCollectFcDt" placeholder="수금일" value="<c:out value="${displayUtil.displayDate(result.salesCollectFcDt)}"/>" required/>
 								</td>
 							</tr>
 						</c:forEach>

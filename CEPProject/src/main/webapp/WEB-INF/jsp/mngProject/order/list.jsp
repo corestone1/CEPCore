@@ -363,8 +363,8 @@
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<input type="hidden" id="workClass" name="workClass" />
 		<input type="hidden" id="pjKey" name="pjKey" />
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -382,7 +382,7 @@
 						 -->
 						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="발주시작일(from)" value="${orderDtFrom }"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="발주종료일(to)" value="${orderDtTo }"/>
 						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
-						<form:input path="orderEmpNm"     type="text" placeholder="발주자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input path="salesEmpNm"     type="text" placeholder="담당자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span><img onclick="javascript:fn_searchList();" src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
@@ -401,8 +401,7 @@
 								<th scope="row">매입처</th>
 								<th scope="row">수량</th>
 								<th scope="row">합계(VAT별도)</th>
-								<th scope="row">발주자</th>
-								<th scope="row">영업담당자</th>
+								<th scope="row">담당자</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -418,7 +417,6 @@
 									<td><c:out value="${result.orderAcNm}"/></td>
 									<td><c:out value="${result.orderCount}"/></td>
 									<td><c:out value="${displayUtil.commaStr(result.orderAmount)}"/></td>
-									<td><c:out value="${result.orderEmpNm}"/></td>
 									<td><c:out value="${result.salesEmpNm}"/></td>
 								</tr>
 								<input type="hidden" name="orderKey" value="${result.orderKey}"/>
@@ -444,7 +442,7 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" id="btnModify" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<%-- <button type="button" id="btnModify" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
 						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>

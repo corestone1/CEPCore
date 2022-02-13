@@ -662,7 +662,7 @@
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        		}
 	        	} 
-	        });     
+	        });      
 		}
 		
 		//해당 거래처의 발주 내용을 삭제한다.
@@ -1015,6 +1015,38 @@
 							<td class="tdTitle"><label>*</label>결제조건<span class="help" data-tooltip-text="예) 계산서 발행 후 30일"><img src="/images/icon_help.png" /></span></td>
 							<td class="tdContents">
 								<input type="text" name="orderPayTerms" required value="<c:out value="${orderVO.orderPayTerms}"/>" /> 	
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle"><label>*</label>매입구분</td>
+							<td class="tdContents">
+								<select id="billPurchaseCd" name="billPurchaseCd" style="width:115px;" required>
+									<c:forEach var="billPurchaseCode" items="${purchaseCodeList}" varStatus="status1">			
+										<c:choose>
+											<c:when test='${purchaseVO.billPurchaseCd == billPurchaseCode.cdKey}'>
+												<option value="<c:out value="${billPurchaseCode.cdKey}"/>" selected="selected"><c:out value="${billPurchaseCode.cdNm}"/></option>
+											</c:when>
+											<c:otherwise>
+												<option value="<c:out value="${billPurchaseCode.cdKey}"/>"><c:out value="${billPurchaseCode.cdNm}"/></option>
+											</c:otherwise>
+										</c:choose>										
+									</c:forEach>	
+								</select>
+							</td>
+							<td class="tdTitle"><label>*</label>제조사</td>
+							<td class="tdContents">
+								<select id="billMfCd" name="billMfCd" style="width:120px;" required>
+									<c:forEach var="billMfCd" items="${manufacturerList}" varStatus="status2">										
+										<c:choose>
+											<c:when test='${purchaseVO.billMfCd == billMfCd.codeKey}'>
+												<option value="<c:out value="${billMfCd.codeKey}"/>" selected="selected"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:when>
+											<c:otherwise>
+												<option value="<c:out value="${billMfCd.codeKey}"/>"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>	
+								</select>	
 							</td>
 						</tr>
 					</table>

@@ -8,7 +8,7 @@
 			 , PSB.BILL_TURN_NO            AS BILL_TURN_NO            /* 계산서 회차 */
 		     , PSB.BILL_NO                 AS BILL_NO                 /* 계산서 번호, 승인번호  */
 		     , PSB.BILL_CALL_KEY           AS BILL_CALL_KEY           /* 계산서요청번호 */
-		     , PST.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일*/
+		     , PSB.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일*/
 		     , PSB.BILL_AMOUNT             AS BILL_AMOUNT             /* 공급가액 */
 		     , PSB.BILL_CT_FK_KEY				AS BILL_CT_FK_KEY			/* 매입 관리키*/
 		     <!-- , PSB.BILL_TAX_YN             AS BILL_TAX_YN             /* TAX포함 여부 */
@@ -152,7 +152,8 @@
 			 , PSO.BILL_REQUEST_DT         AS BILL_REQUEST_DT         /* 발행 요청일 */
 			 , PSO.REMARK                  AS REMARK                  /* 요청사항 */ 
 		     , PSB.BILL_NO                 AS BILL_NO                 /* 계산서 번호 */
-		     , PSB.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일 */
+		     , PSO.BILL_ISSUE_DT           AS BILL_ISSUE_DT           /* 계산서 발행일 */
+		     , PSO.REG_EMP_KEY			AS REG_EMP_KEY
 		FROM      PJ_SD_BILLING_OP_TB      PSO
 		LEFT JOIN PJ_SD_BILLING_TB         PSB ON PSO.BILL_NO              = PSB.BILL_NO 
 		LEFT JOIN CMM_ACCOUNT_TB           CAT ON PSO.BILL_AC_KEY          = CAT.AC_KEY
@@ -164,13 +165,16 @@
 	
 	<select id="selectBillDefaultInfo" parameterType="com.cep.mngProject.bill.vo.MngProjectBillSearchVO" resultType="egovMap">
 		
-		SELECT PSD.SALES_KEY           AS SALES_KEY           /* 매출 관리키 */
-		     , PSD.SALES_CT_FK_KEY     AS PJ_KEY              /* 프로젝트 키 */
-		     , PSD.SALES_TURN          AS BILL_TURN_NO        /* 회차 */
-		     , PSD.SALES_COLLECT_RATE  AS SALES_COLLECT_RATE  /* 수금비율 */
-		     , PSD.SALES_TURN_AMOUNT   AS BILL_AMOUNT         /* 발행 예상 금액 */
-		     , PSD.SALES_BILL_FC_DT    AS BILL_REQUEST_DT     /* 계산서 예상 발행일 */
+		SELECT PSD.SALES_KEY           			AS SALES_KEY           /* 매출 관리키 */
+		     , PSD.SALES_CT_FK_KEY     			AS PJ_KEY              /* 프로젝트 키 */
+		     , PSD.SALES_TURN          			AS BILL_TURN_NO        /* 회차 */
+		     , PSD.SALES_COLLECT_RATE  		AS SALES_COLLECT_RATE  /* 수금비율 */
+		     , PSD.SALES_TURN_AMOUNT   		AS BILL_AMOUNT         /* 발행 예상 금액 */
+		     , PSD.SALES_BILL_FC_DT    			AS BILL_REQUEST_DT     /* 계산서 예상 발행일 */
+		     , PSD.SALES_AC_KEY					AS BILL_AC_KEY			/* 매출처 키 */
+		     , CAT.AC_NM							AS BILL_AC_NM		/* 매출처 명 */
 		FROM   PJ_SALES_DETAIL_TB  PSD
+		LEFT JOIN CMM_ACCOUNT_TB           CAT ON PSD.SALES_AC_KEY          = CAT.AC_KEY 
 		WHERE  PSD.SALES_CT_FK_KEY = #{pjKey}
 		  AND  PSD.SALES_TURN      = #{billTurnNo}
 	
@@ -207,7 +211,7 @@
 			, #{billIssueStatus}
 			, #{billIssueType}
 			, #{billRequestDt}
-			, #{acKey}
+			, #{billAcKey}
 			, #{billAcDirectorName}
 			, #{billAcDirectorTel}
 			, #{remark}
@@ -236,6 +240,9 @@
 			</if>
 			<if test="billRequestDt != null and billRequestDt != ''">
 			BILL_REQUEST_DT       = #{billRequestDt},
+			</if>
+			<if test="billIssueDt != null and billIssueDt != ''">
+			BILL_ISSUE_DT       = #{billIssueDt},
 			</if>
 			<if test="billAcKey != null and billAcKey != ''">
 			BILL_AC_KEY				= #{billAcKey},
@@ -277,7 +284,7 @@
 		    , SALES_STATUS_CD         = #{billIssueStatus}
 		    , MOD_DT                  = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM                  = DATE_FORMAT(NOW(),'%k%i%s')
-			, MOD_EMP_KEY             = #{regEmpKey}
+			, MOD_EMP_KEY             = #{modEmpKey}
 		WHERE SALES_KEY         = #{salesKey}
 	
 	</update>
@@ -366,9 +373,12 @@
 	
 		UPDATE PJ_SD_BILLING_OP_TB
 		SET   BILL_ISSUE_STATUS     = #{billIssueStatus}
+			<if test="billIssueDt != null and billIssueDt != ''">
+			, BILL_ISSUE_DT				= #{billIssueDt}			
+			</if>
 			, MOD_DT                = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM                = DATE_FORMAT(NOW(),'%k%i%s')
-			, MOD_EMP_KEY           = #{regEmpKey}
+			, MOD_EMP_KEY           = #{modEmpKey}
 		WHERE BILL_CALL_KEY         = #{billCallKey}
 	
 	</update>

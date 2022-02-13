@@ -40,6 +40,7 @@
 		    font-weight: 500;
 		    margin-bottom: 10px;
 		    margin-top: 30px;
+		    width: 997px;
 		}
 		.stitle ul {
 			width: 100%;
@@ -86,7 +87,8 @@
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
-			height: 539px;
+			min-height: 486px;
+			max-height: 539px;
 		}
 		.dtl tbody tr {
 			border: 1px solid #ebe9ee;
@@ -147,9 +149,6 @@
 		}
 		select.nrslct {
 			width: 100px !important;
-		}
-		.listForm .contents .dtl label.title {
-			margin: 0 8px 0 20px;
 		}
 		label.radio {
 		   overflow: hidden;
@@ -218,6 +217,10 @@
 		.backgroundgray {
 			background-color: #d5d5d6;
 		}
+		#m_div_accountList {
+			margin-top: -2px;
+			margin-left: 0px;
+		}
 	</style>
 	<script>
 		
@@ -231,6 +234,7 @@
 				fn_searchAccoutList(this, $(this).val());					
 			}); 
 			
+			$("#ipt_pjNm").val(parent.$("#pjNm").val());
 		});
 			
 		/* 
@@ -246,7 +250,7 @@
 		 function fn_searchAccoutList(pObject, pstAccountNm) {
 			$('#m_div_accountList').remove();
 		
-			var jsonData = {'acNm' : pstAccountNm, 'acBuyYN' : 'Y'};
+			var jsonData = {'acNm' : pstAccountNm, 'acSalesYN' : 'Y'};
 			
 			 $.ajax({
 		        	url :"/mngCommon/account/searchList.do",
@@ -302,15 +306,22 @@
 		 
 		 
 		 function fnBillRequest(mode) {
+			var text = "";
 			 
+			switch(mode) {
+				case 'req': text = "요청";break;
+				case 'mod': text = "수정";break;
+			}
+			
+			
 			if ($("#frm_reqForm")[0].checkValidity()){
-				if ($("#frm_reqForm")[0].checkValidity()) {
+				if(confirm("계산서 정보를 " + text + "하시겠습니까?")) {
 	               	//필수값 모두 통과하여 저장 프로세스 호출.
 	               	var object = {};
 	            	var formData = $("#frm_reqForm").serializeArray();
 	            	
 					for (var i = 0; i<formData.length; i++){
-					    if("billRequestDt" == formData[i]['name']) {
+					    if("billRequestDt" == formData[i]['name'] || "billIssueDt" == formData[i]['name']) {
 		                	//날짜 - 제거
 		                	object[formData[i]['name']] = removeData(formData[i]['value'],"-");
 		                } else if("billAmount" == formData[i]['name']) {
@@ -327,17 +338,23 @@
 				     	dataType: 'json', 
 					    type:"POST",  
 					    data: sendData,
-					    async:false, 
+					   // async:false, 
 					 	contentType: "application/json; charset=UTF-8", 
-				     	success:function(data){	
+					 	beforeSend: function() {
+					 		parent.$(".wrap-loading").removeClass("dpNone");
+					 	}
+					 	, complete: function() {
+					 		parent.$(".wrap-loading").addClass("dpNone");
+					 	}
+				     	, success:function(data){	
 				     		if(data.successYN == "Y" && mode == "req") {
 				     			alert("계산서 발행 요청이 완료되었습니다.");
 				     		} else if(data.successYN == "N" && mode == "req") {
 				     			alert("계산서 발행 요청이 실패하였습니다.");
 				     		} else if(data.successYN == "Y" && mode == "mod") {
-				     			alert("계산서 발행 요청 정보가 수정되었습니다.");
+				     			alert("계산서 정보가 수정되었습니다.");
 				     		} else {
-				     			alert("계산서 발행 요청 정보가 수정이 실패하였습니다.");
+				     			alert("계산서 정보 수정이 실패하였습니다.");
 				     		}
 				     		
 				     		fnReload();
@@ -347,51 +364,106 @@
 				     			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 				     		}
 				     	} 
-				  });    
-	               
-				} else {
-	                $("#frm_reqForm")[0].reportValidity();   
-	            }            
-	            
-	         }  else {
-	             //Validate Form
-	              $("#frm_reqForm")[0].reportValidity();   
-	         }
-			 
+					});    
+				}
+			}  else {
+				//Validate Form
+				$("#frm_reqForm")[0].reportValidity();   
+			}
+			
 		 }
 		 
 		 
-		 function fnBillComplate() {
- 			
-			 var billInfo = $("#frm_reqForm").serializeArray();
-			 
-
-			 for(var i = 0; i < billInfo.length; i++)
-			 {
-				 
-				 //발행예정일
-				 if('billRequestDt' == billInfo[i]['name']){
-					 billInfo[i]['value'] = removeData(billInfo[i]['value'], '-');
+		function fnBillComplate() {
+			
+			if ($("#frm_reqForm")[0].checkValidity()) {
+				if(confirm("계산서 발행을 승인하시겠습니까?")) {
+					var billInfo = $("#frm_reqForm").serializeArray();
+					 
+		
+					for(var i = 0; i < billInfo.length; i++) {
+						 
+						 //발행예정일
+						 if('billRequestDt' == billInfo[i]['name'] || 'billIssueDt' == billInfo[i]['name']){
+							 billInfo[i]['value'] = removeData(billInfo[i]['value'], '-');
+						 }
+						 
+						 //금액
+						 if('billAmount' == billInfo[i]['name']){
+							 billInfo[i]['value'] = removeCommas(billInfo[i]['value']);
+						 }
+						
+					 }
+					 
+					 
+					$.ajax ({
+				        	url :"/mngProject/bill/detail/writeBillComplate.do",
+				        	type:"POST",  
+				            data: billInfo,
+				     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+				     	    dataType: 'json',
+				            //async : false,
+				            beforeSend: function() {
+						 		parent.$(".wrap-loading").removeClass("dpNone");
+						 	}, complete: function() {
+						 		parent.$(".wrap-loading").addClass("dpNone");
+						 	}, success:function(data){		
+						 		if(data.successYN == 'Y') {
+						 			alert("계산서 발행이 완료되었습니다.");	
+						 		} else {
+						 			alert("계산서 발행이 실패하였습니다.");
+						 		}
+				        		fnReload();
+				            },
+				        	error: function(request, status, error) {
+				        		if(request.status != '0') {
+				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				        		}
+				        	} 
+					});  
+				}
+			 } else {
+                $("#frm_reqForm")[0].reportValidity();   
+            }         
+			
+		 }
+		 
+		 function fnCancelBillComplete() {
+ 			if(confirm("계산서 발행을 취소하시겠습니까?")) {
+				 var billInfo = $("#frm_reqForm").serializeArray();
+	
+				 for(var i = 0; i < billInfo.length; i++) {
+					 
+					 //발행예정일
+					 if('billRequestDt' == billInfo[i]['name'] || 'billIssueDt' == billInfo[i]['name']){
+						 billInfo[i]['value'] = removeData(billInfo[i]['value'], '-');
+					 }
+					 
+					 //금액
+					 if('billAmount' == billInfo[i]['name']){
+						 billInfo[i]['value'] = removeCommas(billInfo[i]['value']);
+					 }
+					
 				 }
 				 
-				 //금액
-				 if('billAmount' == billInfo[i]['name']){
-					 billInfo[i]['value'] = removeCommas(billInfo[i]['value']);
-				 }
-				
-			 }
-			 
-			 console.log("========= billInfo =======\n" + billInfo);
-			 
-			 $.ajax({
-		        	url :"/mngProject/bill/detail/writeBillComplate.do",
+				 $.ajax({
+		        	url :"/mngProject/bill/detail/deleteBillComplete.do",
 		        	type:"POST",  
 		            data: billInfo,
 		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 		     	    dataType: 'json',
-		            async : false,
-		        	success:function(data){		  
-		        		alert("계산서 발행이 완료되었습니다.");
+		            //async : false,
+		            beforeSend: function() {
+				 		parent.$(".wrap-loading").removeClass("dpNone");
+				 	}, complete: function() {
+				 		parent.$(".wrap-loading").addClass("dpNone");
+				 	}, success:function(data){	
+				 		if(data.successYN == 'Y') {
+				 			alert("계산서 발행이 취소되었습니다.");	
+				 		} else {
+				 			alert("계산서 발행 취소를 실패하였습니다.");	
+				 		}
+		        		
 		        		fnReload();
 		            },
 		        	error: function(request, status, error) {
@@ -399,44 +471,8 @@
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-		    });  
-		 }
-		 
-		 function fnCancelBillComplete() {
- 			
-			 var billInfo = $("#frm_reqForm").serializeArray();
-
-			 for(var i = 0; i < billInfo.length; i++) {
-				 
-				 //발행예정일
-				 if('billRequestDt' == billInfo[i]['name']){
-					 billInfo[i]['value'] = removeData(billInfo[i]['value'], '-');
-				 }
-				 
-				 //금액
-				 if('billAmount' == billInfo[i]['name']){
-					 billInfo[i]['value'] = removeCommas(billInfo[i]['value']);
-				 }
-				
-			 }
-			 
-			 $.ajax({
-	        	url :"/mngProject/bill/detail/deleteBillComplete.do",
-	        	type:"POST",  
-	            data: billInfo,
-	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-	     	    dataType: 'json',
-	            async : false,
-	        	success:function(data){		  
-	        		alert("계산서 발행이 취소되었습니다.");
-	        		fnReload();
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-		    });  
+			    });  
+ 			}
 		 }
 		 
 		 function fnReload() {
@@ -461,8 +497,6 @@
 			 
 			 var billInfo = $("#frm_reqForm").serializeArray();
 			 
-			 console.log("========= billInfo =======\n" + billInfo);
-			 
 			 for(var i = 0; i < billInfo.length; i++)
 			 {
 				 //부가세 정보
@@ -484,7 +518,6 @@
 					 billInfo[i]['value'] = removeCommas(billInfo[i]['value']);
 				 }
 				 
-				 console.log(i+" : " + billInfo[i]['name'] + " : " + billInfo[i]['value']);
 			 }
 			 
 			 $.ajax({
@@ -542,7 +575,8 @@
 		<div class="floatC">
 		
 			<input type="hidden" id="ipt_pjKey"            name="pjKey"           value="${billInfo.pjKey}" />
-			<input type="hidden" id="ipt_acKey"            name="acKey"           value="${acKey}" />
+			<%-- <input type="hidden" id="ipt_acKey"            name="acKey"           value="${acKey}" /> --%>
+			<input type="hidden" id="ipt_pjNm"			  name="pjNm"	 />
 			<input type="hidden" id="billCallKey" name="billCallKey" value="${billInfo.billCallKey}" />
 			<input type="hidden" id="salesKey" name="salesKey" 
 				<c:choose>
@@ -557,6 +591,28 @@
 			 />
 			
 			<table class="dtl">
+				<tr>
+					<td class="backgroundpurple">상태</td>
+					<td>
+						<c:choose>
+							<c:when test="${billInfo.billIssueStatus eq null }">
+								대기(요청 전)
+							</c:when>
+							<c:when test="${billInfo.billIssueStatus eq 'M' }">
+								매핑
+							</c:when>
+							<c:when test="${billInfo.billIssueStatus eq 'R'}">
+								요청
+							</c:when>
+							<c:when test="${billInfo.billIssueStatus eq 'I'}">
+								승인
+							</c:when>
+							<c:when test="${billInfo.billIssueStatus eq 'E'}">
+								수금
+							</c:when>
+						</c:choose>
+					</td>
+				</tr>
 				<tr>
 					<td class="backgroundpurple">회차</td>
 					<td>
@@ -604,7 +660,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="backgroundpurple"><label>*</label>발행일(예정일)</td>	
+					<td class="backgroundpurple"><label>*</label>발행요청일</td>	
 					<td>
 						<input type="text" id="ipt_billRequestDt" name="billRequestDt" class="calendar" value="<c:out value="${displayUtil.displayDate(billInfo.billRequestDt)}"/>" required />
 					</td>
@@ -614,7 +670,7 @@
 					<td><textarea id="txt_remark" name="remark"><c:out value="${billInfo.remark}"/></textarea></td>
 				</tr>
 				
-				<tr>
+				<%-- <tr>
 					<td class="backgroundgray">계산서번호</td>	
 					<td>
 						<c:if test="${billInfo.billNo eq null and billInfo.billIssueStatus eq 'R'}">
@@ -626,14 +682,19 @@
 							<c:out value="${billInfo.billNo}"/>
 						</c:if>
 					</td>
-				</tr>
+				</tr> --%>
 				<tr>
-					<td class="backgroundgray">발행일자</td>	
+					<td class="backgroundgray"><% if (session.getAttribute("empAuthCd").equals("EMAU1001")) {%><label>*</label><%} %>발행일자</td>	
 					<td>
+						<%
+							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
+						<input type="text" id="ipt_billIssueDt" name="billIssueDt" class="calendar" value="<c:out value="${displayUtil.displayDate(billInfo.billIssueDt)}"/>" required />
+						<% } else { %>
 						<c:out value="${displayUtil.displayDate(billInfo.billIssueDt)}"/>
+						<% } %>
 					</td>
 				</tr>
-					
 			</table>
 			
 		</div>
@@ -644,18 +705,35 @@
 				 -->
 				 <c:choose>
 					<c:when test="${billInfo.billIssueStatus eq null }">
+						<%
+							if (!session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
 						<button type="button" id="req"   value="계산서 발행 요청" onclick="javascript:fnBillRequest('req');" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_request.png'/>" style=""/></button>
+						<% } %>
 					</c:when>
 					<c:when test="${billInfo.billIssueStatus eq 'M' }">
+						<%
+							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
 						<button type="button" id="check" value="발행완료"      onclick="javascript:fnBillComplate();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_end.png'/>"     style=""/></button>
+						<% } %>
 						<button type="button" id="req" value="수정"      onclick="javascript:fnBillRequest('mod');" style="" ><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>"     style=""/></button>
 					</c:when>
 					<c:when test="${billInfo.billIssueStatus eq 'R'}">
+						<%
+							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
+						<button type="button" id="check" value="발행완료"      onclick="javascript:fnBillComplate();" style="" ><img class="cursorP" src="<c:url value='/images/btn_bill_end.png'/>"     style=""/></button>
+						<% } %>
 						<button type="button" id="req" value="수정"      onclick="javascript:fnBillRequest('mod');" style="" ><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>"     style=""/></button>
 					</c:when>
-					<c:otherwise>
+					<c:when test="${billInfo.billIssueStatus eq 'I'}">
+						<%
+							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
+						%>
 						<button type="button" id="check" value="발행취소"      onclick="javascript:fnCancelBillComplete();" style="" ><img class="cursorP" src="<c:url value='/images/btn_cancel_bill.png'/>"     style=""/></button>
-					</c:otherwise>
+						<% } %>
+					</c:when>
 				</c:choose>
 			</div>
 		</div>

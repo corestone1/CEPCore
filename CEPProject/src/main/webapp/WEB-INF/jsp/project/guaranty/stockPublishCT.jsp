@@ -179,14 +179,14 @@
 	<script>
 				
 		$(document).ready(function() {
-			$(".altMail").mouseover(function() {
+			/* $(".altMail").mouseover(function() {
 				var html = '<div id="altBox" style="left:'+($(this).offset().left - 120)+'px">'
 							+ '관리자에게 알림 메일이 전송됩니다.</div>'
 				$(".altMail").after(html);
 			});
 			$(".altMail").mouseout(function() {
 				$("#altBox").remove();
-			});   
+			});    */
 			
 		});	
 		
@@ -464,9 +464,11 @@
 								</button>
 							</c:when>
 							<c:when test='${gbInfo.gbIssueStatus eq "R"}'>
+								<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
 								<button type="button" class="altMail" onclick="javascript:fnGbEnd();">
 									<img src="<c:url value='/images/btn_stock_end.png'/>" />
 								</button>
+								<% } %>
 								<button type="button" onclick="javascript:fnGbModify();">
 									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
 								</button>

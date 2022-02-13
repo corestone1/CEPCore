@@ -506,8 +506,17 @@ public class ProjectDetailController {
 		logger.debug("=============== viewDetailEndMin ======================");
 		logger.debug("== ProjectVO.getPjKey() : {}", projectVO.getPjKey());
 		
+		List<?> fileResult = null;
+		FileVO fileVO = new FileVO();
+		
 		try{
 			
+			fileVO.setFileCtKey(projectVO.getPjKey());
+			fileVO.setFileWorkClass(projectVO.getWorkClass());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
+			
+			model.addAttribute("fileList", fileResult);
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			model.addAttribute("detailInfo",  service.selectProjectDetail(projectVO));
 			model.addAttribute("projectInfo", projectVO);

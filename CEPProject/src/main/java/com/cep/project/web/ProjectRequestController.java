@@ -23,6 +23,7 @@ import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 import com.cmm.service.ComService;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 
 
 @Controller
@@ -143,6 +144,9 @@ public class ProjectRequestController {
 			model.addAttribute("prePaymentList", prePaymentList);
 			model.put("displayUtil", new CepDisplayUtil());
 			model.put("pmNm", request.getParameter("pmNm"));
+			
+			/*model.put("purchaseCodeList", CepStringUtil.getPurchaseCodeList());
+			model.put("manufacturerList", CepStringUtil.getManuFacturerList());*/
 		} catch(Exception e) {
 			throw new Exception(e);
 		}
@@ -309,11 +313,15 @@ public class ProjectRequestController {
 	public String viewBillInfo(HttpServletRequest request, ModelMap model) throws Exception {
 		List<?> billList = null;
 		String billNo = request.getParameter("billNo");
+		ProjectPaymentVO projectPaymentVO = new ProjectPaymentVO();
+		String paymentKey = request.getParameter("paymentKey");
 		try {
 			billList = reqService.selectPcBillInfo(billNo);
+			projectPaymentVO.setPaymentKey(paymentKey);
 		
 			model.put("displayUtil", new CepDisplayUtil());
 			model.addAttribute("billList", billList);
+			model.addAttribute("paymentVO", reqService.selectPaymentDetail(projectPaymentVO));
 		} catch(Exception e) {
 			throw new Exception(e);
 		}

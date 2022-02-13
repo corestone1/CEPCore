@@ -248,18 +248,25 @@
 		}
 		
 		function fn_chkVali() {
-			if ($("#infoForm")[0].checkValidity()){
-	            if ($("#infoForm")[0].checkValidity()){
-	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_save();
-	            } else {
-	                $("#infoForm")[0].reportValidity();   
-	            }            
+            if ($("#infoForm")[0].checkValidity()){
+               //필수값 모두 통과하여 저장 프로세스 호출.
+               if($(".uploadName").val() != null && $(".uploadName").val().length != 0) {
+            	   var maxSize = 20 * 1024 * 1024;
+            	   var fileSize = $("#exFile")[0].files[0].size;
+            	   
+            	   if(fileSize > maxSize) {
+            		   alert("첨부파일 사이즈는 20MB 이내로 등록 가능합니다.");
+            		   return false;
+            	   } else {
+            		   fn_save();
+            	   }
+               } else {
+            	   fn_save();
+               }
+            } else {
+                $("#infoForm")[0].reportValidity();   
+            }            
 	            
-	         }  else {
-	             //Validate Form
-	              $("#infoForm")[0].reportValidity();   
-	         }
 		}
 		
 		var countSave = 0;

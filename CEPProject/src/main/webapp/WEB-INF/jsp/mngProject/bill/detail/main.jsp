@@ -46,7 +46,7 @@
 			width: 37%;
 		}
 		.listForm .contents > div:nth-child(2) {
-			margin-top: 27px;
+			margin-top: 16px;
 		}
 		.listForm .contents > .fxd {
 			width: 60%;
@@ -376,8 +376,8 @@
 </head>
 <body>
 	<div id="listForm" class="listForm">
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="floatL">
@@ -385,7 +385,8 @@
 					<div>
 						<div class="stitle cg">기본정보</div>
 						<div id="basicInfoForm">
-							<form>
+							<form name="listForm">
+								<input type="hidden" name="pjKey" />
 								<table class="bsc" id="selectBasicTable">
 									<tr>
 										<td>고객사</td>
@@ -397,6 +398,7 @@
 										<td>프로젝트명</td>
 										<td>
 											<label><c:out value="${basicInfo.pjNm}"/></label>
+											<input type="hidden" id="pjNm" value="${basicInfo.pjNm } " />
 										</td>
 									</tr>
 									<tr>
@@ -438,7 +440,7 @@
 				</div>
 				<div class="floatR dpBlock fxd">
 					<div class="floatR backWrap">
-						<a onclick="fn_detail();">프로젝트 정보로 돌아가기</a>
+						<a onclick="fn_detail();"><img src="/images/btn_todetail.png" /></a>
 					</div>
 					<div class="floatC"></div>
 					<iframe src="" width="100%" height="740"></iframe>
@@ -451,5 +453,10 @@
 		<input type="hidden" id="pjKey" name="pjKey" value="${basicInfo.pjKey }"/>
 		<input type="hidden" id="workClass" name="workClass" value=""/>
 	</form>
+	<div class="wrap-loading dpNone">
+		<div>
+			<img src="<c:url value='/images/ajax_loader.gif'/>" />
+		</div>
+	</div>
 </body>
 </html>

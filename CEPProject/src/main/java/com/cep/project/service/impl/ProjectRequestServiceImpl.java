@@ -2,7 +2,6 @@ package com.cep.project.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -21,10 +20,13 @@ import com.cep.project.service.ProjectRequestService;
 import com.cep.project.vo.ProjectContractSalesVO;
 import com.cep.project.vo.ProjectPaymentVO;
 import com.cep.project.vo.ProjectPurchaseVO;
+import com.cmm.config.DeptInfo;
 import com.cmm.config.EmailInfo;
 import com.cmm.config.PrimaryKeyType;
+import com.cmm.service.AlarmService;
 import com.cmm.service.ComService;
 import com.cmm.util.CepStringUtil;
+import com.cmm.vo.AlarmVO;
 import com.cmm.vo.MailVO;
 import com.cmm.vo.SalesVO;
 
@@ -39,6 +41,9 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 	
 	@Resource(name="comService")
 	private ComService comService;
+	
+	@Resource(name="alarmService")
+	private AlarmService alarmService;
 	
 	
 	@Override
@@ -173,16 +178,19 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 		PurchaseBillOpVO purchaseBillOpVO = new PurchaseBillOpVO();
 		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		MailVO mailVO = new MailVO();
+		AlarmVO alarmVO = new AlarmVO();
 		String content = "";
 		String subject = "";
 		String url = "";
 		String name = "";
+		String dept = "";
 		int result = 0;
 		List<String> mailList = new ArrayList<String>();
 		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			name = (String)request.getSession().getAttribute("name");
+			dept = DeptInfo.DEPT_OPER_L3.getValue();
 			url = paymentVO.getLink();
 			subject = EmailInfo.MAIL_SUBJECT.getValue();
 			paymentVO.setModEmpKey(session.get("empKey"));
@@ -196,7 +204,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 		                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 요청하였습니다. <br>(요청자: " +name+",",
 		                " 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 				
-				for(Object obj : comService.selectDeptEmployeeList("OPER_101")) {
+				for(Object obj : comService.selectDeptEmployeeList(dept)) {
 					String email = obj.toString().substring(obj.toString().indexOf("=") + 1, obj.toString().length() - 1);
 					mailList.add(email);
 				}
@@ -204,31 +212,90 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 				mailVO.setContent(content);
 				mailVO.setEmpKey(StringUtils.join(mailList, ";"));
 				
+				List<String> alarmList = new ArrayList<String>(mailList);
+				alarmList.add(session.get("empKey"));
+				String amail = StringUtils.join(alarmList, ";");
+				alarmVO.setAlarmTitle(paymentVO.getPjNm());
+				alarmVO.setAlarmKind("매입금 지급 요청");
+				alarmVO.setAlarmTo(amail);
+				alarmVO.setPjMtKey(paymentVO.getPjKey());
+				
 				result = comService.sendMail(request, mailVO);
 				if(result == 0) {
-					returnMap.put("successYN", "N");
+					throw new Exception();
 				} else {
-					returnMap.put("successYN", "Y");
+					alarmService.insertAlarm(alarmVO, request);
+					
 					mapper.updatePaymentInfo(paymentVO);
+					
+					/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
+					purchaseVO.setModEmpKey(session.get("empKey"));
+					purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
+					purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
+					purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
+					purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
+					mapper.updatePurchaseInfo(purchaseVO);*/
 				}
 			} else {
 				if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST4000")) {
-					purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
-					purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
-					purchaseVO.setBuyKey(paymentVO.getBuyKey());
-					purchaseVO.setModEmpKey(session.get("empKey"));
+					mailList.add(mapper.selectPaymentDetail(paymentVO).get("regEmpKey").toString());
 					
-					mapper.updatePurchaseInfo(purchaseVO);
+					alarmVO.setAlarmTitle(paymentVO.getPjNm());
+					alarmVO.setAlarmKind("지급 완료");
+					alarmVO.setPjMtKey(paymentVO.getPjKey());
 					
-					purchaseBillOpVO.setBillNo(paymentVO.getBillFkKey());
-					purchaseBillOpVO.setModEmpKey(session.get("empKey"));
+					String tmail = StringUtils.join(mailList, ";");
+					mailVO.setEmpKey(tmail);
+					mailVO.setLink(url);
+					alarmVO.setAlarmTo(tmail);
 					
-					mngPjMapper.updatePcBillingOpInfo(purchaseBillOpVO);
+					subject = paymentVO.getPjNm() + "건 지급 완료";
+					content = String.join(
+												System.getProperty("line.separator"), 
+												"["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + "프로젝트 건에 지급이 완료되었습니다. <br> (지급인: " +name+",",
+												" 확인 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
+					
+					mailVO.setSubject(subject);
+					mailVO.setContent(content);
+					mailVO.setIsNewPw(false);
+					
+					result = comService.sendMail(request, mailVO);
+					
+					if(result != 0) {
+					
+						purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
+						purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
+						purchaseVO.setBuyKey(paymentVO.getBuyKey());
+						purchaseVO.setModEmpKey(session.get("empKey"));
+						
+						mapper.updatePurchaseInfo(purchaseVO);
+						
+						purchaseBillOpVO.setBillNo(paymentVO.getBillFkKey());
+						purchaseBillOpVO.setModEmpKey(session.get("empKey"));
+						
+						mngPjMapper.updatePcBillingOpInfo(purchaseBillOpVO);
+						
+						alarmService.insertAlarm(alarmVO, request);
+					} else {
+						throw new Exception();
+					}
 					
 				} else if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("")) {
+					mailList.add(mapper.selectPaymentDetail(paymentVO).get("regEmpKey").toString());
+					
+					alarmVO.setAlarmTitle(paymentVO.getPjNm());
+					alarmVO.setAlarmKind("매입금 지급 승인");
+					alarmVO.setPjMtKey(paymentVO.getPjKey());
+					
+					String tmail = StringUtils.join(mailList, ";");
+					mailVO.setEmpKey(tmail);
+					mailVO.setLink(url);
+					alarmVO.setAlarmTo(tmail);
+					
+					subject = paymentVO.getPjNm() + "건 매입금 지급 승인";
 					content = String.join(
 			                System.getProperty("line.separator"),
-			                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 확인하셨습니다. <br>(확인자: " +name+",",
+			                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 승인하였습니다. <br>(확인자: " +name+",",
 			                " 확인 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 					
 					mailVO.setContent(content);
@@ -238,12 +305,32 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					
 					if(result == 0) {
 						throw new Exception();
-					} 
+					} else {
+						alarmService.insertAlarm(alarmVO, request);
+						
+						/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
+						purchaseVO.setModEmpKey(session.get("empKey"));
+						purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
+						purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
+						purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
+						purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
+						mapper.updatePurchaseInfo(purchaseVO);*/
+					}
+				} else {
+					/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
+					purchaseVO.setModEmpKey(session.get("empKey"));
+					purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
+					purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
+					purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
+					purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
+					mapper.updatePurchaseInfo(purchaseVO);*/
 				}
 				
 				mapper.updatePaymentInfo(paymentVO);
-				returnMap.put("successYN", "Y");
+				
 			}
+			
+			returnMap.put("successYN", "Y");
 		} catch(Exception e) {
 			returnMap.put("successYN", "N");
 			throw new Exception(e);

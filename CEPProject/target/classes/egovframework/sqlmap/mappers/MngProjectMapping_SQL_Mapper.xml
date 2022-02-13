@@ -193,10 +193,9 @@
 		ON PO.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
 		WHERE PO.DELETE_YN='N'
 		
-		<if test="regEmpKey != null and regEmpKey != ''">
+		<if test="regEmpKey != null and regEmpKey != '' and (orderEmpNm == null or orderEmpNm == '')">
 			AND PO.REG_EMP_KEY = #{regEmpKey}
 		</if>
-		
 		<if test="orderEmpNm != null and orderEmpNm != ''">
 		  	AND  CE.EMP_NM LIKE CONCAT('%', CONCAT(#{orderEmpNm}, '%')) /* 발주담당자 조건검색  */
 		</if>
@@ -258,6 +257,43 @@
 	
 	<select id="selectBillDetail" parameterType="orderBillVO" resultType="egovMap">
 		SELECT 
+			PPB.BILL_ISSUE_DT 
+		     , PPB.BILL_MAPPING_YN 
+		     , CA.AC_NM 
+		     , PPB.BILL_AC_KEY
+		     , PPB.BILL_AMOUNT 
+		     , PPB.BILL_NO 
+		     , PPB.BILL_FK_PJ_KEY
+		     , PPB.REMARK
+		     , PM.PAYMENT_KEY
+		     , PM.PAYMENT_STATUS_CD
+		FROM CMM_PC_BILLING_TB PPB
+		LEFT OUTER JOIN PJ_PAYMENT_TB PM
+		ON PM.BILL_FK_KEY = PPB.BILL_NO AND PM.DELETE_YN = 'N'
+		JOIN CMM_ACCOUNT_TB CA
+		ON PPB.BILL_AC_KEY  = CA.AC_KEY
+		WHERE PPB.DELETE_YN='N'
+		AND PPB.BILL_AC_KEY=#{orderAcKey}
+		<if test="billDtFrom != null and billDtFrom != '' and billDtTo != null and billDtTo != ''">
+		  	AND  PPB.BILL_ISSUE_DT BETWEEN REPLACE(#{billDtFrom}, '-', '') AND REPLACE(#{billDtTo}, '-', '')
+		</if>
+		<if test='mappedStatus == "C"'>
+			AND PPB.BILL_FK_PJ_KEY = #{billFkPjKey}
+		</if>
+		<if test='mappedStatus == "IC"'>
+			AND PPB.BILL_MAPPING_YN = 'N'
+			OR PPB.BILL_AC_KEY=#{orderAcKey}
+			AND PPB.BILL_FK_PJ_KEY = #{billFkPjKey}
+		</if>
+		<if test='mappedStatus == "NL"'>
+			AND PPB.BILL_MAPPING_YN = 'N'
+		</if>
+		
+		ORDER BY PPB.BILL_FK_PJ_KEY
+	</select>
+	
+	<select id="selectBillOne" parameterType="orderBillVO" resultType="egovMap">
+		SELECT 
 			BILL_ISSUE_DT 
 		     , BILL_MAPPING_YN 
 		     , CA.AC_NM 
@@ -265,27 +301,12 @@
 		     , BILL_AMOUNT 
 		     , BILL_NO 
 		     , BILL_FK_PJ_KEY
+		     , REMARK
 		FROM CMM_PC_BILLING_TB PPB
 		JOIN CMM_ACCOUNT_TB CA
 		ON PPB.BILL_AC_KEY  = CA.AC_KEY
 		WHERE PPB.DELETE_YN='N'
-		AND PPB.BILL_AC_KEY=#{orderAcKey}
-		<if test="billDtFrom != null and billDtFrom != '' and billDtTo != null and billDtTo != ''">
-		  	AND  BILL_ISSUE_DT BETWEEN REPLACE(#{billDtFrom}, '-', '') AND REPLACE(#{billDtTo}, '-', '')
-		</if>
-		<if test='mappedStatus == "C"'>
-			AND BILL_FK_PJ_KEY = #{billFkPjKey}
-		</if>
-		<if test='mappedStatus == "IC"'>
-			AND BILL_MAPPING_YN = 'N'
-			OR PPB.BILL_AC_KEY=#{orderAcKey}
-			AND BILL_FK_PJ_KEY = #{billFkPjKey}
-		</if>
-		<if test='mappedStatus == "NL"'>
-			AND BILL_MAPPING_YN = 'N'
-		</if>
-		
-		ORDER BY BILL_FK_PJ_KEY
+		AND PPB.BILL_NO=#{billNo}
 	</select>
 	
 	<update id="updateOrder" parameterType="orderBillVO">
@@ -313,6 +334,20 @@
 			WHERE BILL_NO=#{item.billNo}
 			AND DELETE_YN='N'
 		</foreach>
+	</update>
+	
+	<update id="deleteBillMapping" parameterType="java.util.HashMap">
+		UPDATE CMM_PC_BILLING_TB 
+		SET
+			BILL_MAPPING_YN='N'
+			, BILL_CT_FK_KEY = null
+			, BILL_FK_PJ_KEY= null
+			, MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM=DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY=#{modEmpKey}
+			, BILL_CT_CLASS_CD = null
+		WHERE BILL_NO=#{billNo}
+		AND DELETE_YN='N'
 	</update>
 	
 	<insert id="insertPcBillingOpInfo" parameterType="java.util.HashMap">
@@ -373,6 +408,17 @@
 				AND BILL_NO = #{billNo}
 			</if>
 	</update>
+	
+	<update id="deletePcBillingOpInfo" parameterType="java.util.HashMap">
+	
+		UPDATE CMM_PC_BILLING_OP_TB SET 
+			MOD_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s') 
+			, MOD_EMP_KEY = #{modEmpKey}
+			, DELETE_YN = 'Y'
+		WHERE BILL_NO = #{billNo}
+		
+	</update>
 
 	<insert id="insertPaymentInfo" parameterType="java.util.HashMap">
 		INSERT INTO PJ_PAYMENT_TB (
@@ -425,5 +471,17 @@
 			WHERE PAYMENT_KEY = #{paymentKey}
 				AND DELETE_YN = 'N'
 		</foreach>	
+	</update>
+	
+	<update id="deletePaymentInfo" parameterType="java.util.HashMap">
+	
+		UPDATE PJ_PAYMENT_TB SET
+			MOD_DT=DATE_FORMAT(NOW(),'%Y%m%d'),
+			MOD_TM=DATE_FORMAT(NOW(),'%H%i%s'),
+			MOD_EMP_KEY=#{modEmpKey},
+			DELETE_YN='Y'
+		WHERE PAYMENT_KEY = #{paymentKey}
+			AND DELETE_YN = 'N'
+			
 	</update>
 </mapper>

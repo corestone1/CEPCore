@@ -6,6 +6,21 @@
 <head>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/popup.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/datepicker.min.css'/>"/>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+	<script src="<c:url value='/js/popup.js'/>"></script>
+	<script src="<c:url value='/js/common.js'/>"></script>
+	<script src="<c:url value='/js/file.js'/>"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
+	<!-- Sheet JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+	<!--FileSaver savaAs 이용 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
 	<style>
 		body {
 			margin: 0;
@@ -116,7 +131,45 @@
 			},
 			buttons: button
 		}); */
+		function fn_cancelMappingBill() {
+			var p_sch = opener.location.search;
+			var p_params = new URLSearchParams(p_sch);
+			var orderKey = p_params.get("orderKey");
 			
+			var sch = location.search;
+			var params = new URLSearchParams(sch);
+			var paymentKey = params.get("paymentKey")
+			
+			
+			if(confirm("계산서 "+ $("#billNo").val() + "을 매핑 취소 하시겠습니까?")) {
+				var object =  { "pjOrderKey" : orderKey, "billNo" : $("#billNo").val() };
+				
+				var sendData = JSON.stringify(object);
+				
+				$.ajax({
+					url:"/mngProject/mapping/cancelMapping.do?paymentKey="+paymentKey,
+					dataType:'json',
+					type:"POST",
+					data:sendData,
+					contentType:"application/json; charset=UTF8",
+					success:function(response) {
+						if(response != null && response.successYN == 'Y') {
+							
+							alert($("#billNo").val() +' 계산서와 매핑이 취소되었습니다.');
+							
+							window.close();
+						} else {
+							alert('계산서 매핑 취소에 실패하였습니다.');
+						}
+					},
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					}
+				});  
+			}
+		}
 	</script>
 </head>
 <body>
@@ -158,6 +211,11 @@
 							</td>
 						</tr>
 					</table>
+				</div>
+				<div>
+					<c:if test="${paymentVO.paymentStatusCd eq 'PYST1000' }">
+						<button type="button" value="매핑 취소" onclick="fn_cancelMappingBill();">매핑 취소</button>
+					</c:if>
 				</div>
 			</div>
 		</div>

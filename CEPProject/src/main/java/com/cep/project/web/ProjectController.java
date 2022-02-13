@@ -403,6 +403,8 @@ public class ProjectController {
 		model.addAttribute("sdBillList", sdBillList);
 		
 		model.put("displayUtil", new CepDisplayUtil());
+		model.put("salesCodeList", CepStringUtil.getSalesCodeList());
+		model.put("manufacturerList", CepStringUtil.getManuFacturerList());
 		
 		return "project/write/contractInfo";
 	}
@@ -508,6 +510,9 @@ public class ProjectController {
 		model.put("purchaseVO", purchaseVO);
 		model.put("listCount", listCount);
 		model.put("acDirectorList", acDirectorList);
+		
+		model.put("purchaseCodeList", CepStringUtil.getPurchaseCodeList());
+		model.put("manufacturerList", CepStringUtil.getManuFacturerList());
 		
 		return "project/write/orderInfo";
 	}
@@ -712,10 +717,23 @@ public class ProjectController {
 		List<?> finishInfo = service.selectProjectDetail(projectVO.getPjKey());
 		model.addAttribute("resultList", finishInfo);
 		
+		List<?> fileResult = null;
+		FileVO fileVO = new FileVO();
+		
+		fileVO.setFileCtKey(projectVO.getPjKey());
+		fileVO.setFileWorkClass(projectVO.getWorkClass());
+		
+		fileResult = fileMngService.selectFileList(fileVO);
+		
 		model.addAttribute("pjKey", projectVO.getPjKey());
-		model.put("displayUtil", new CepDisplayUtil());
+		model.addAttribute("displayUtil", new CepDisplayUtil());
+		model.addAttribute("fileList", fileResult);
+		model.addAttribute("maxFileCnt", maxFileCnt);
+		model.addAttribute("fileExtn", fileExtn);		
+		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		return "project/write/finishInfo";
+		
 	}
 	
 	@RequestMapping(value="/write/loseInfo.do")

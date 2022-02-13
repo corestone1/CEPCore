@@ -156,7 +156,7 @@ public class MngProjectBillController {
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
 			
-			returnMap = service.insertBillRequest(mngProjectBillVO);
+			returnMap = service.insertBillRequest(request, mngProjectBillVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -421,7 +421,7 @@ public class MngProjectBillController {
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
 			mngProjectBillVO.setBillIssueStatus("I");
 			
-			service.updateBillComplate(mngProjectBillVO);
+			returnMap = service.updateBillComplate(request, mngProjectBillVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -458,8 +458,8 @@ public class MngProjectBillController {
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
 			
-			mngProjectBillVO.setBillIssueStatus("M");
-			service.updateBillComplate(mngProjectBillVO);
+			mngProjectBillVO.setBillIssueStatus("R");
+			returnMap = service.updateBillComplate(request, mngProjectBillVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -492,7 +492,7 @@ public class MngProjectBillController {
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
 			mngProjectBillVO.setBillIssueStatus("E");
 			
-			returnMap = service.updatePaymentsComplate(mngProjectBillVO);
+			returnMap = service.updatePaymentsComplate(request, mngProjectBillVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);

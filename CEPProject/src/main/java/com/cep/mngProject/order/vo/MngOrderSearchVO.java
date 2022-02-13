@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 import org.apache.ibatis.type.Alias;
 
+import com.cep.project.vo.ProjectVO;
+
 /**
  * @File Name : MngOrderSearchVO.java
  * @Project   : CEPProject
@@ -23,7 +25,7 @@ import org.apache.ibatis.type.Alias;
  *  Copyright (C) by CORESTONE All right reserved.
  */
 @Alias("mngOrderSearchVO")
-public class MngOrderSearchVO implements Serializable {
+public class MngOrderSearchVO extends ProjectVO implements Serializable {
 
 	private static final long serialVersionUID = -3046214326120107255L;
 	
@@ -33,6 +35,8 @@ public class MngOrderSearchVO implements Serializable {
 	private String pjNm;
 	private String orderDtFrom;
 	private String orderDtTo;
+	private String salesEmpNm;
+	private String salesEmpKey;
 	private String orderEmpNm;
 	
 	private String regEmpKey;
@@ -109,6 +113,18 @@ public class MngOrderSearchVO implements Serializable {
 	 */
 	public void setOrderDtTo(String orderDtTo) {
 		this.orderDtTo = orderDtTo;
+	}
+	public String getSalesEmpNm() {
+		return salesEmpNm;
+	}
+	public void setSalesEmpNm(String salesEmpNm) {
+		this.salesEmpNm = salesEmpNm;
+	}
+	public String getSalesEmpKey() {
+		return salesEmpKey;
+	}
+	public void setSalesEmpKey(String salesEmpKey) {
+		this.salesEmpKey = salesEmpKey;
 	}
 	/**
 	 * @return the orderEmpNm
