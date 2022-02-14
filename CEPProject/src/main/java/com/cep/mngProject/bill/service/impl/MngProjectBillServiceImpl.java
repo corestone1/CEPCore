@@ -1,5 +1,6 @@
 package com.cep.mngProject.bill.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +122,8 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 		HashMap<String, String> sessionMap = null;
 		HashMap<String, String> userMap = new HashMap<String, String>();
 		int result = 0;
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		
 		
 		try {
 			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
@@ -146,7 +149,8 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				String subject = mngProjectBillVO.getPjNm() + "건 계산서 발행 요청";
 				String content = String.join(
 										System.getProperty("line.separator"), 
-										"Project " + mngProjectBillVO.getPjNm() + "건에 계산서 발행 요청 정보가 있습니다.<br>요청인: " + name + "<br><br>");
+										"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 계산서 발행 요청 정보가 있습니다.<br>요청인: " + name + ",",
+										" 요청 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>"); 
 				
 				mailVO.setSubject(subject);
 				mailVO.setContent(content);
@@ -214,10 +218,16 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 		MailVO mailVO = new MailVO();
 		AlarmVO alarmVO = new AlarmVO();
 		HashMap<String, String> sessionMap = null;
+		HashMap<String, String> userMap = new HashMap<String, String>();
 		MngProjectBillSearchVO mngProjectBillSearchVO = new MngProjectBillSearchVO();
 		BeanUtils.copyProperties(mngProjectBillVO, mngProjectBillSearchVO);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			userMap.put("empKey", sessionMap.get("empKey"));
+			String name = mainService.selectName(userMap);
+			
 			List<String> toList = new ArrayList<String>();
 			toList.add(mapper.selectBillDetailInfo(mngProjectBillSearchVO).get("regEmpKey").toString());
 			
@@ -231,8 +241,9 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			alarmVO.setAlarmTo(tmail);
 			String subject = mngProjectBillVO.getPjNm() + "건 수금 완료";
 			String content = String.join(
-										System.getProperty("line.separator"), 
-										"Project " + mngProjectBillVO.getPjNm() + "건에 수금이 완료되었습니다.<br><br>");
+									System.getProperty("line.separator"), 
+									"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 수금이 완료되었습니다.<br>완료자: " + name + ",",
+									" 완료 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);
@@ -274,11 +285,16 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 		MailVO mailVO = new MailVO();
 		AlarmVO alarmVO = new AlarmVO();
 		HashMap<String, String> sessionMap = null;
+		HashMap<String, String> userMap = new HashMap<String, String>();
 		MngProjectBillSearchVO mngProjectBillSearchVO = new MngProjectBillSearchVO();
 		BeanUtils.copyProperties(mngProjectBillVO, mngProjectBillSearchVO);
 		String status = "";
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			userMap.put("empKey", sessionMap.get("empKey"));
+			String name = mainService.selectName(userMap);
 			List<String> toList = new ArrayList<String>();
 			toList.add(mapper.selectBillDetailInfo(mngProjectBillSearchVO).get("regEmpKey").toString());
 			
@@ -298,7 +314,8 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			String subject = mngProjectBillVO.getPjNm() + "건 계산서 발행 " + status;
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"Project " + mngProjectBillVO.getPjNm() + "건에 계산서 발행이 " + status + "되었습니다.<br><br>");
+									"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 계산서 발행이 " + status + "되었습니다.<br>" + status + "자: " + name + ",",
+									" " + status + "일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);

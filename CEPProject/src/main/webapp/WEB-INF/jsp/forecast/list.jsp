@@ -810,7 +810,7 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" id='btn_windeal' value="계약완료"><img class="cursorP" src="<c:url value='/images/toProject.png'/>" /></button>
+						<%-- <button type="button" id='btn_windeal' value="계약완료"><img class="cursorP" src="<c:url value='/images/toProject.png'/>" /></button> --%>
 						<button type="button" id='btn_delete' value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 						<button type="button" id='btn_loss' value="실주등록"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button>
 						<button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
