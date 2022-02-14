@@ -1051,7 +1051,7 @@
 				*/
 				//필수값 체크를 완료하면 저장 프로세스 시작.
 				if ($("#mtBasicForm")[0].checkValidity()){
-					alert(111111);
+					//alert(111111);
 					if ($("#mtListForm")[0].checkValidity()){
 						
 						checkDate = $("#mtListForm").checkPmDate();

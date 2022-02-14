@@ -44,7 +44,7 @@
 		    text-align: center;
 		    font-size: 17px;
 		    cursor: pointer;
-		    width: 50%;
+		    width: 27%;
 		}
 		.stitle ul li a {
 		    color: #a3a3a4;
