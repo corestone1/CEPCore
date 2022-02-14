@@ -34,6 +34,9 @@
 				, CMM_ACCOUNT_TB CA2
 				, CMM_EMPLOYEE_TB CE
 			WHERE MB.PAYMENT_BUY_FK_KEY=MO1.MT_ORDER_KEY
+			<if test="regEmpKey != null and regEmpKey != ''">
+				AND MO1.REG_EMP_KEY = #{regEmpKey}
+			</if>
 			<if test="orderDtFrom != null and orderDtFrom != ''">
 				AND MO1.ORDER_DT >= #{orderDtFrom} /* 발주일자검색 FROM */
 			</if>
@@ -80,6 +83,10 @@
  						, GROUP_CONCAT(PM.PM_NM_CD SEPARATOR ', ') AS MT_PM_NM
 				FROM MT_ORDER_PRODUCT_TB OP, PM_PRODUCT_MNG_TB PM, MT_ORDER_TB MO2
 				WHERE 1=1
+				
+				<if test="regEmpKey != null and regEmpKey != ''">
+					AND MO2.REG_EMP_KEY = #{regEmpKey}
+				</if>
 				<if test="orderDtFrom != null and orderDtFrom != ''">
 					AND MO2.ORDER_DT >= #{orderDtFrom} /* 발주일자검색 FROM */
 				</if>
@@ -97,6 +104,10 @@
 				GROUP BY MT_ORDER_KEY
  				) MPM
 		WHERE 1=1	
+		
+		<if test="regEmpKey != null and regEmpKey != ''">
+			AND MO.REG_EMP_KEY = #{regEmpKey}
+		</if>
 		<if test="orderDtFrom != null and orderDtFrom != ''">
 			AND MO.ORDER_DT >= #{orderDtFrom} /* 발주일자검색 FROM */
 		</if>
@@ -139,6 +150,7 @@
 		SELECT 		
 			MO.MT_INTEGRATE_KEY        AS mtIntegrateKey    /* 유지보수 관리키 */
 			, MO.ORDER_CT_FK_KEY       AS mtWorkKey         /* 유지보수 작업관리키(MT_WORK_TB.MT_WORK_KEY) */
+			, 'PO'                     AS mtOrderType       /* 백계약(BO) , 유지보수 작업 발주(PO) */
 			, MO.MT_ORDER_KEY          AS mtOrderKey        /* 발주 관리키 */
 			, MC.MT_AC_KEY             AS mtAcKey           /* 유지보수 고객사관리키 */
 			, CA1.AC_NM                AS mtAcNm            /* 유지보수 고객사명 */
@@ -207,7 +219,6 @@
 			]]>		
 				AND CPB.DELETE_YN = 'N'			
 				AND CPB.BILL_MAPPING_YN = 'N'
-				AND CPB.BILL_CT_CLASS_CD='MT'
 			</if>
 			UNION ALL
 		</if>	
@@ -222,6 +233,9 @@
 			, MT_PC_BILLING_OP_TB MPB
 			WHERE CPB.BILL_AC_KEY= #{mtOrderAcKey}
 				AND MPB.PAYMENT_BUY_FK_KEY = #{mtOrderKey}
+<!-- 		
+			완료된건은 날짜와 상관없이 해당 발주번호에 해당하는것을 다 조회한다	
+			2022-02-03 날짜 검색 제거.
 			<if test="billDtFrom != null and billDtFrom != ''">
 				AND CPB.BILL_ISSUE_DT >= REPLACE(#{billDtFrom}, '-', '') /* 계산서일자 검색 FROM */
 			</if>
@@ -229,12 +243,44 @@
 			<![CDATA[
 				AND CPB.BILL_ISSUE_DT <= REPLACE(#{billDtTo}, '-', '') /* 계산서일자 검색 TO */
 			]]>		
-			</if>		
+			</if> -->		
 				AND CPB.DELETE_YN = 'N'		
 				AND CPB.BILL_MAPPING_YN = 'Y'
 				AND CPB.BILL_CT_CLASS_CD='MT'
 				AND CPB.BILL_CT_FK_KEY = MPB.PAYMENT_KEY
 			ORDER BY BILL_MAPPING_YN , BILL_ISSUE_DT DESC
 	</select>
+	
+	
+	<!-- 1.1 지급정보요청(세금계산서 매핑)  -->
+	<insert id="writePaymentBillMapping" parameterType="com.cep.mngMaint.bill.vo.MtPaymentVO">
+		INSERT INTO MT_PC_BILLING_OP_TB (  
+			PAYMENT_KEY           /*지급 관리키 */
+			, PAYMENT_BUY_FK_KEY  /*매입 관리키(발주키) */
+			, MT_ORDER_TYPE       /*유지보수 발주구분(BO:백계약, PO:작업발주) */
+			, PAYMENT_STATUS_CD   /*상태코드 (M) 매핑상태 */
+			, PAYMENT_TURN        /*지급 회차 */
+			, CALL_AMOUNT         /*지급 금액 */
+			, PAYMENT_AC_FK_KEY   /*지급 거래처 FK 관리키 */
+			, BILL_FK_KEY         /*계산서 FK 관리키(계산서번호) */
+		    , DELETE_YN 
+		    , REG_DT 
+		    , REG_TM 
+		    , REG_EMP_KEY
+		) VALUES (
+			#{paymentKey}
+			, #{paymentBuyFkKey}
+			, #{mtOrderType}
+			, 'M'
+			, (SELECT IFNULL(MAX(a.PAYMENT_TURN) + 1, 1) FROM MT_PC_BILLING_OP_TB a WHERE a.PAYMENT_BUY_FK_KEY=#{paymentBuyFkKey} AND DELETE_YN='N')
+			, #{callAmount}
+			, #{paymentAcFkKey}
+			, #{billFkKey}
+		    , 'N' 
+		    , DATE_FORMAT(NOW(),'%Y%m%d')
+		    , DATE_FORMAT(NOW(),'%H%i%s')
+		    , #{regEmpKey} 
+		)
+	</insert>	
 	
 </mapper>

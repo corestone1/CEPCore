@@ -35,6 +35,7 @@ import com.cep.maintenance.contract.vo.MtSalesOrderVO;
 import com.cep.mngCommon.code.service.CodeService;
 import com.cep.mngCommon.code.vo.CodeSearchVO;
 import com.cep.mngCommon.code.vo.CodeVO;
+import com.cep.mngMaint.billSchedule.service.MngMaintBillScheduleService;
 import com.cep.project.vo.ProjectBiddingVO;
 import com.cep.project.vo.ProjectSalesVO;
 import com.cep.project.vo.ProjectVO;
@@ -70,6 +71,10 @@ public class MtContractController {
 	
 	@Resource(name="forecastService")
 	private ForecastService forecastService;
+	
+
+	@Resource(name="mngMaintBillScheduleService")
+	private MngMaintBillScheduleService billSchedulService;
 	
 	@Resource(name="codeService")
 	private CodeService codeService;
@@ -158,6 +163,56 @@ public class MtContractController {
 		}
 		
 		return "maintenance/contract/contractList";
+	}
+	
+	
+	@RequestMapping(value="/viewApproval.do")
+	public String selectApproval(@ModelAttribute("mtContractVO") MtContractVO mtContractVO, ModelMap model) throws Exception {
+		
+		MtContractVO basicContractInfo = null;
+		List<EgovMap> salesApprovalList = null;
+		List<EgovMap> purchaseApprovalList = null;
+		try {			
+			logger.debug("mtContractVO.getMtIntegrateKey()===>"+mtContractVO.getMtIntegrateKey());
+			
+			if(!"".equals(CepStringUtil.getDefaultValue(mtContractVO.getMtIntegrateKey(), ""))) {
+
+//				기본정보
+				basicContractInfo = service.selectContractBasicDetail(mtContractVO.getMtIntegrateKey());
+				if(null != basicContractInfo) {
+
+//					매출정보
+					logger.debug("매출정보 조회===>"+mtContractVO.getMtIntegrateKey());
+					salesApprovalList = billSchedulService.selectMtSalesBillApprovalList(mtContractVO);
+//					매입정보
+					logger.debug("매입정보 조회===>"+mtContractVO.getMtIntegrateKey());
+					purchaseApprovalList = billSchedulService.selectMtPurchaseApprovalList(mtContractVO);
+//					보증보험정보
+					
+//					이익정보
+					
+					
+					
+					
+					model.put("successYN", "Y");
+				}
+				
+			} else {
+				model.put("successYN", "N");
+				logger.error("MtIntegrateKey is null so can't select approval list....!!!!");
+			}
+			model.put("basicContractInfo", basicContractInfo); //기본정보
+			model.put("salesApprovalList", salesApprovalList); //매출정보
+			model.put("purchaseApprovalList", purchaseApprovalList); //매입정보
+			
+			model.put("mtIntegrateKey", mtContractVO.getMtIntegrateKey());
+			model.put("displayUtil", new CepDisplayUtil());
+		} catch (Exception e) {
+			model.put("successYN", "N");
+			logger.error("mtContractList error", e);
+		}
+		
+		return "maintenance/contract/viewApproval";
 	}
 	
 	/**
@@ -543,8 +598,13 @@ public class MtContractController {
 		int listCount = 0;
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 		MtContractVO basicContractInfo = null; //유지보수 기본정보
-		List<EgovMap> salesOrderSelectBox = null;
+		List<EgovMap> salesOrderSelectBox = null; 
+		List<EgovMap> forecastSalesSelectBox = null; //forecast에서 등록한 매출처정보
 		EgovMap map = null;
+		
+		EgovMap salesOrderMap = null;
+		EgovMap forecastSalesMap = null;
+		
 		List < ? > acDirectorList = null;
 		MtSalesOrderVO mtSalesOrderVO = null;
 		
@@ -552,6 +612,8 @@ public class MtContractController {
 		CodeSearchVO codeSearchVO = null;
 		List<CodeVO> salesCodeList = null;
 		List<EgovMap> manufacturerList = null;
+		
+		List<String> deleteIndex = new ArrayList<>();
 		try {
 			//테스트
 //			productVO.setMtIntegrateKey("MA200024");
@@ -565,6 +627,7 @@ public class MtContractController {
 			logger.debug("parmMtSbCtYn===>"+salesOrderVO.getParmMtSbCtYn());
 			logger.debug("getBtnOption===>"+salesOrderVO.getBtnOption());
 			
+			logger.debug("getMtSalesAcNm===>"+salesOrderVO.getMtSalesAcNm());
 			if(!"".equals(CepStringUtil.getDefaultValue(salesOrderVO.getMtIntegrateKey(), ""))) {
 				//기본정보 조회
 				basicContractInfo = service.selectContractBasicDetail(salesOrderVO.getMtIntegrateKey());
@@ -575,7 +638,11 @@ public class MtContractController {
 					 */
 					mtContractCountInfo = service.selectMtContractCount(salesOrderVO.getMtIntegrateKey());
 					
-					//매출등록 매출거래처 목록을 가져온다.
+					logger.debug("basicContractInfo.getMtForcastLinkVo().getMtLinkCtKey()====>"+basicContractInfo.getMtForcastLinkVo().getMtLinkCtKey());
+					
+					//forecast에서 등록한 매출처정보 조회.
+					forecastSalesSelectBox =  service.selectFocastSalesSelectBoxList(basicContractInfo.getMtForcastLinkVo().getMtLinkCtKey());	
+					//등록된 매출등록 매출거래처 목록을 가져온다.
 					salesOrderSelectBox = service.selectSalesOrderSelectBoxList(salesOrderVO.getMtIntegrateKey());	
 					
 					if(null !=salesOrderSelectBox && salesOrderSelectBox.size()>0){
@@ -583,6 +650,8 @@ public class MtContractController {
 						
 						if("newOrder".equals(CepStringUtil.getDefaultValue(salesOrderVO.getBtnOption(), ""))){
 							mtSalesOrderVO = salesOrderVO;
+							
+							
 						} else {
 							
 							searchVO = new MtDefaultVO();
@@ -595,13 +664,31 @@ public class MtContractController {
 								mtSalesOrderVO =  service.selectSalesOrderDetail(searchVO);
 								
 							} else {
+								if(!"".equals(CepStringUtil.getDefaultValue(salesOrderVO.getMtSalesAcNm(), ""))) {
+									
+									//forecast 미등록된 매출처를 선책한 경우.
+									mtSalesOrderVO = salesOrderVO;
+									for (int i = 0; i < forecastSalesSelectBox.size(); i++) {
+										map = forecastSalesSelectBox.get(i);
+										if(salesOrderVO.getMtSalesAcNm().equals((String)map.get("mtAcNm"))) {
+											mtSalesOrderVO.setMtSalesAcKey((String)map.get("mtSalesAcKey"));
+											mtSalesOrderVO.setMtSalesAcNm((String)map.get("mtAcNm"));
+											
+											logger.debug("mtSalesOrderVO.getMtSalesAcKe(0)====>"+mtSalesOrderVO.getMtSalesAcKey());
+											logger.debug("mtSalesOrderVO.getMtSalesAcNm(o)====>"+mtSalesOrderVO.getMtSalesAcNm());
+											
+//											acDirectorList =service.selectAcDirectorList(mtSalesOrderVO.getMtSalesAcKey());
+										}
+									}
+								} else {
+									//선택되지 않고 처음 로딩하는 경우 처음 매출거래처의 목록을 조회한다.
+									map = salesOrderSelectBox.get(0);
+									searchVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
+									//logger.debug("getSelectMtSalesOrderKey1===============>"+searchVO.getSelectMtSalesOrderKey());
+									mtSalesOrderVO = service.selectSalesOrderDetail(searchVO);
+									salesOrderVO.setSelectKey((String)map.get("mtSalesOrderKey"));
+								}
 								
-								//선택되지 않고 처음 로딩하는 경우 처음 매출거래처의 목록을 조회한다.
-								map = salesOrderSelectBox.get(0);
-								searchVO.setSelectMtSalesOrderKey((String)map.get("mtSalesOrderKey"));
-								//logger.debug("getSelectMtSalesOrderKey1===============>"+searchVO.getSelectMtSalesOrderKey());
-								mtSalesOrderVO = service.selectSalesOrderDetail(searchVO);
-								salesOrderVO.setSelectKey((String)map.get("mtSalesOrderKey"));
 							}
 
 							if(null != mtSalesOrderVO){
@@ -615,9 +702,75 @@ public class MtContractController {
 							}
 						}
 						
+
+						/*
+						 * DB에 저장된 salesOrderSelectBox와 
+						 * forecastSalesSelectBox의 내용을 합친다.
+						 */
+						for (int i = 0; i < forecastSalesSelectBox.size(); i++) {
+							forecastSalesMap = forecastSalesSelectBox.get(i);
+							for (int k = 0; k < salesOrderSelectBox.size(); k++) {
+								salesOrderMap = salesOrderSelectBox.get(k);
+								logger.debug("mtAcNm====>"+forecastSalesMap.get("mtAcNm")+"/"+salesOrderMap.get("mtAcNm"));
+								
+								if(((String)forecastSalesMap.get("mtAcNm")).equals((String)salesOrderMap.get("mtAcNm"))) {
+									
+									salesOrderMap.replace("selectGubun", forecastSalesMap.get("selectGubun"));
+									
+//									forecastSalesSelectBox.remove(i);
+									deleteIndex.add(String.valueOf(i));
+								}
+							}
+						}
 						
+						for (int i = deleteIndex.size()-1; i > -1; i--) {
+							forecastSalesSelectBox.remove(Integer.parseInt(deleteIndex.get(i)));
+						}
+						
+						if(forecastSalesSelectBox.size()>0) {
+							salesOrderSelectBox.addAll(forecastSalesSelectBox);
+						}
 					} else {
+						/* 매출계약정보가 아직 저장되지 않았으며 Forecast에서 매출처 정보가 있는 경우
+						 * Forecast매출처 정보를 선택한 기준으로 정보를 보여준다. 
+						 */
 						mtSalesOrderVO = salesOrderVO;
+						
+						logger.debug("forecastSalesSelectBox.size()====>"+forecastSalesSelectBox.size());
+						
+						//forecast정보로 변경
+						if(null !=forecastSalesSelectBox && forecastSalesSelectBox.size()>0){
+							salesOrderSelectBox = forecastSalesSelectBox;
+							//매출 정보가 아직 등록되지 않았으며 처음으로 로딩될때.
+							if("".equals(CepStringUtil.getDefaultValue(salesOrderVO.getMtSalesAcNm(), ""))) {
+								map = salesOrderSelectBox.get(0);
+								mtSalesOrderVO.setMtSalesAcKey((String)map.get("mtSalesAcKey"));
+								mtSalesOrderVO.setMtSalesAcNm((String)map.get("mtAcNm"));
+								
+								acDirectorList =service.selectAcDirectorList(mtSalesOrderVO.getMtSalesAcKey());								
+								
+							} else {
+								//forecast 미등록된 매출처를 선책한 경우.
+								for (int i = 0; i < salesOrderSelectBox.size(); i++) {
+									map = salesOrderSelectBox.get(i);
+									if(salesOrderVO.getMtSalesAcNm().equals((String)map.get("mtAcNm"))) {
+										mtSalesOrderVO.setMtSalesAcKey((String)map.get("mtSalesAcKey"));
+										mtSalesOrderVO.setMtSalesAcNm((String)map.get("mtAcNm"));
+										
+										logger.debug("mtSalesOrderVO.getMtSalesAcKey(2)====>"+mtSalesOrderVO.getMtSalesAcKey());
+										logger.debug("mtSalesOrderVO.getMtSalesAcNm(2)====>"+mtSalesOrderVO.getMtSalesAcNm());
+										
+										acDirectorList =service.selectAcDirectorList(mtSalesOrderVO.getMtSalesAcKey());
+									}
+								}
+								
+								
+								
+								logger.debug("acDirectorList====>"+acDirectorList.size());
+							}
+							
+						}
+						
 					}
 					
 					
@@ -2207,6 +2360,7 @@ public class MtContractController {
 	public String writeBackOrderInfoView(MtBackOrderVO mtBackOrderVO, ModelMap model) throws Exception {
 
 		List<EgovMap> backOrderSelectBox = null;
+		
 		EgovMap map = null;
 		MtBackOrderVO returnVo = null;
 		List < ? > acDirectorList = null;
@@ -2214,6 +2368,16 @@ public class MtContractController {
 		int listCount = 1;
 		Map<String, Object> mtContractCountInfo = null; // 유지보수계약 단계별 등록 갯수 조회.
 //		MtContractVO basicContractInfo = null; //유지보수 기본정보
+		
+		List<EgovMap> forecastPurchaseSelectBox = null; //forecast에서 등록한 매입처정보
+		EgovMap backOrderMap = null;
+		EgovMap forecastPurchaseMap = null;
+		
+
+		List<MtContractLinkVO> contractLinkList = null;
+		MtContractLinkVO mtContractLinkVO = null;
+		
+		List<String> deleteIndex = new ArrayList<>();
 		try {		
 			
 //			model.put("toDay", CepDateUtil.getToday("yyyy-MM-dd"));
@@ -2222,6 +2386,7 @@ public class MtContractController {
 			logger.debug("mtBackOrderVO.getMtIntegrateKey()===>"+mtBackOrderVO.getMtIntegrateKey());
 			logger.debug("mtBackOrderVO.getSelectKey()===>"+mtBackOrderVO.getSelectKey());
 			logger.debug("mtBackOrderVO.getBtnOption()===>"+mtBackOrderVO.getBtnOption());
+			logger.debug("mtBackOrderVO.getMtOrderAcKeyNm()===>"+mtBackOrderVO.getMtOrderAcKeyNm());
 //			if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtIntegrateKey(), ""))){
 //				mtBackOrderVO.setMtIntegrateKey("MA200024");//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
 //			}
@@ -2295,6 +2460,15 @@ public class MtContractController {
 			
 			mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
 //			logger.debug("mtContractCountInfo.mtSalesAmountCnt==>"+mtContractCountInfo.get("mtSalesAmountCnt"));
+			
+			mtContractLinkVO = new MtContractLinkVO();
+			mtContractLinkVO.setMtIntegrateKey(mtBackOrderVO.getMtIntegrateKey());
+			mtContractLinkVO.setMtLinkCtClassCd("S");
+			contractLinkList = service.selectMtContractLinkList(mtContractLinkVO);
+			
+			//forecast에서 등록한 매출처정보 조회.
+			forecastPurchaseSelectBox =  service.selectForecastPurchaseSelectBoxList(contractLinkList.get(0).getMtLinkCtKey());	
+			
 			//백계약 등록  거래처 목록을 가져온다.
 			backOrderSelectBox = service.selectBackOrderSelectBoxList(mtBackOrderVO.getMtIntegrateKey());			
 			if(null !=backOrderSelectBox && backOrderSelectBox.size()>0){
@@ -2308,9 +2482,29 @@ public class MtContractController {
 						returnVo = service.selectBackOrderDetail(mtBackOrderVO.getSelectKey());
 						
 					} else {
-						map = backOrderSelectBox.get(0);
-						returnVo = service.selectBackOrderDetail((String)map.get("mtOrderKey"));
-						mtBackOrderVO.setSelectKey((String)map.get("mtOrderKey"));
+						
+						if(!"".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtOrderAcKeyNm(), ""))) {
+							//등록되지 않은 forecast매입처를 클릭했을경우
+							returnVo = mtBackOrderVO;
+							for (int i = 0; i < forecastPurchaseSelectBox.size(); i++) {
+								map = forecastPurchaseSelectBox.get(i);
+								if(mtBackOrderVO.getMtOrderAcKeyNm().equals((String)map.get("mtAcNm"))) {
+									returnVo.setMtOrderAcKey((String)map.get("mtOrderAcKey"));
+									returnVo.setMtOrderAcKeyNm((String)map.get("mtAcNm"));
+									
+									logger.debug("returnVo.getMtOrderAcKey(0)====>"+returnVo.getMtOrderAcKey());
+									logger.debug("returnVo.getMtOrderAcKeyNm(0)====>"+returnVo.getMtOrderAcKeyNm());
+									
+//									acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
+								}
+							}
+						} else {
+							map = backOrderSelectBox.get(0);
+							returnVo = service.selectBackOrderDetail((String)map.get("mtOrderKey"));
+							mtBackOrderVO.setSelectKey((String)map.get("mtOrderKey"));
+						}
+						
+						
 					}
 					if(null != returnVo){
 //						returnVo.setUpdateYn(mtBackOrderVO.getUpdateYn());
@@ -2327,8 +2521,81 @@ public class MtContractController {
 				}
 //				mtBackOrderVO.setMtSaveCnt(backOrderSelectBox.size());//파라메터로 받아서 처리하는것으로 추후 바꿔야함.
 				
+				/*
+				 * DB에 저장된 salesOrderSelectBox와 
+				 * forecastSalesSelectBox의 내용을 합친다.
+				 */
+				for (int i = 0; i < forecastPurchaseSelectBox.size(); i++) {
+					forecastPurchaseMap = forecastPurchaseSelectBox.get(i);
+					for (int k = 0; k < backOrderSelectBox.size(); k++) {
+						backOrderMap = backOrderSelectBox.get(k);
+						//logger.debug("mtAcNm====>"+forecastPurchaseMap.get("mtAcNm")+"/"+backOrderMap.get("mtAcNm"));
+						
+						if(((String)forecastPurchaseMap.get("mtAcNm")).equals((String)backOrderMap.get("mtAcNm"))) {
+							
+							backOrderMap.replace("selectGubun", forecastPurchaseMap.get("selectGubun"));
+							
+//							forecastPurchaseSelectBox.remove(i);
+//							forecastPurchaseSelectBox.remove(forecastPurchaseMap);
+							deleteIndex.add(String.valueOf(i));
+							logger.debug("deleteIndex====>"+i);
+							break;
+						}
+					}
+				}
+//				logger.debug("forecastPurchaseSelectBox.size(1)====>"+forecastPurchaseSelectBox.size());
+//				logger.debug("deleteIndex.size()====>"+deleteIndex.size());
+				for (int i = deleteIndex.size()-1; i > -1; i--) {
+//					logger.debug("deleteIndex===+++++++++++++++++++=>"+i);
+					forecastPurchaseSelectBox.remove(Integer.parseInt(deleteIndex.get(i)));
+					
+				}
+//				logger.debug("forecastPurchaseSelectBox.size(2)====>"+forecastPurchaseSelectBox.size());
+				
+				if(forecastPurchaseSelectBox.size()>0) {
+					backOrderSelectBox.addAll(forecastPurchaseSelectBox);
+				}
+				
 			} else {
 				returnVo = mtBackOrderVO;
+				
+//				logger.debug("forecastPurchaseSelectBox.size()====>"+forecastPurchaseSelectBox.size());
+				
+				//forecast정보로 변경
+				if(null !=forecastPurchaseSelectBox && forecastPurchaseSelectBox.size()>0){
+					backOrderSelectBox = forecastPurchaseSelectBox;
+					
+					//백계약 정보가 아직 등록되지 않았으며 처음으로 로딩될때.
+					if("".equals(CepStringUtil.getDefaultValue(mtBackOrderVO.getMtOrderAcKeyNm(), ""))) {
+						map = backOrderSelectBox.get(0);
+						returnVo.setMtOrderAcKey((String)map.get("mtOrderAcKey"));
+						returnVo.setMtOrderAcKeyNm((String)map.get("mtAcNm"));
+						
+						
+						
+						acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());								
+						logger.debug("acDirectorList====>"+acDirectorList.size()+"/"+returnVo.getMtOrderAcKey());
+					} else {
+						//forecast 미등록된 매입처를 선책한 경우.
+						for (int i = 0; i < backOrderSelectBox.size(); i++) {
+							map = backOrderSelectBox.get(i);
+							if(mtBackOrderVO.getMtOrderAcKeyNm().equals((String)map.get("mtAcNm"))) {
+								returnVo.setMtOrderAcKey((String)map.get("mtOrderAcKey"));
+								returnVo.setMtOrderAcKeyNm((String)map.get("mtAcNm"));
+								
+								logger.debug("returnVo.getMtOrderAcKey(2)====>"+returnVo.getMtOrderAcKey());
+								logger.debug("returnVo.getMtOrderAcKeyNm(2)====>"+returnVo.getMtOrderAcKeyNm());
+								
+								acDirectorList =service.selectAcDirectorList(returnVo.getMtOrderAcKey());
+							}
+						}
+						
+						
+						
+						logger.debug("acDirectorList====>"+acDirectorList.size());
+					}
+					
+				}
 			}
 			
 			logger.debug("mtBackOrderVO.getMtOrderAcKeyNm()====>"+returnVo.getMtOrderAcKeyNm());

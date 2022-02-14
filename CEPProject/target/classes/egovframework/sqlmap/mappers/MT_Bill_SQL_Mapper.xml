@@ -987,6 +987,7 @@
 			AND DELETE_YN='N' 
 		ORDER BY BILL_MAPPING_YN, BILL_ISSUE_DT	
 	</select>
+
 	
 	<!-- 
 		1.1 지급정보요청(세금계산서 매핑) 
@@ -1056,6 +1057,7 @@
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d') 
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
+			, PAYMENT_STATUS_CD='R'
 		WHERE PAYMENT_KEY = #{paymentKey}
 	</update>	
 	
@@ -2921,7 +2923,7 @@
 			, SB.BILL_CALL_KEY
 		FROM MT_SALES_DETAIL_TB SD, MT_CONTRACT_TB MC
 			, CMM_ACCOUNT_TB CA, CMM_EMPLOYEE_TB CE
-			, MT_SD_BILLING_OP_TB SB, CMM_ACCOUNT_TB CAT
+			, MT_SD_BILLING_OP_TB SB
 			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA2
 		WHERE 1=1
 		<if test="fromDate != null and fromDate != ''">
@@ -2951,7 +2953,6 @@
 			AND MC.MT_AC_KEY = CA.AC_KEY 
 			AND MC.MT_SALE_EMP_KEY = CE.EMP_KEY
 			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
-			AND SB.BILL_AC_KEY    = CAT.AC_KEY
 			AND SD.SALES_STATUS_CD IS NOT NULL
 			AND SD.DELETE_YN='N'
 			AND MC.DELETE_YN='N'
@@ -2960,6 +2961,72 @@
 			AND SO.MT_SALES_AC_KEY = CA2.AC_KEY
 		ORDER BY SALES_BILL_FC_DT DESC	
 	</select>	
+	
+	<!-- 판매품의서에서 사용하는 매출정보. -->
+	<select id="selectMtSalesBillApprovalList" parameterType="com.cep.maintenance.contract.vo.MtContractVO" resultType="egovMap">
+		SELECT 
+			SD.SALES_KEY                /* 수금계획 관리키 */
+			, SD.SALES_CT_FK_KEY        /* 유지보수 관리키 */
+			, SO.MT_SALES_ORDER_KEY     /* 유지보수 매출계약 관리키 */
+			, SD.SALES_YEAR_MONTH       /* 수금계획 년월 */
+			, SD.SALES_TURN             /* 수금계획 회차 */
+			, SD.SALES_COLLECT_RATE     /* 수금계획 수금비율 */
+			, SD.SALES_TURN_AMOUNT      /* 수금계획 회차금액 */
+			, SD.SALES_CHARGE_DT        /* 수금계획 매출청구일자 */
+			, SD.SALES_BILL_FC_DT       /* 수금계획 계산서예상일자 */
+			, SD.SALES_COLLECT_FC_DT    /* 수금계획 일자 */
+			, SD.SALES_STATUS_CD        /* 수금계획 상태 */
+			, SO.BILL_ISSUE_TYPE AS BILL_ISSUE_TYPE  /* 계산서 구분(Y:정발행, N:역발행) */
+			, SO.MT_SALES_AC_KEY AS BILL_AC_KEY      /* 수금 매출처 관리키 */
+			, CA.AC_NM AS BILL_AC_NM        	     /* 수금 매출처 명 */  
+			, SO.BILL_SALES_CD AS BILL_SALES_CD      /* 계산서 매출구분 */
+			, SO.BILL_MF_CD AS BILL_MF_CD            /* 계산서 제조사구분 */  
+			, NULL AS BILL_ISSUE_DT                  /* 매출세금계산서 발행일자 */
+			, NULL AS SALES_COLLECT_FINISH_DT        /* 수금완료일자 */
+			, NULL AS BILL_CALL_KEY                  /* 매출계산서 요청 관리키 */
+		FROM MT_SALES_DETAIL_TB SD, MT_SALES_ORDER_TB SO
+			, CMM_ACCOUNT_TB CA
+		WHERE 1=1
+			AND SD.SALES_CT_FK_KEY= #{mtIntegrateKey}	
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+		  	AND SO.MT_SALES_AC_KEY = CA.AC_KEY
+			AND SD.SALES_STATUS_CD IS NULL
+			AND SD.DELETE_YN='N'
+			AND SO.DELETE_YN='N'	
+		UNION ALL
+		SELECT 
+			SD.SALES_KEY
+			, SD.SALES_CT_FK_KEY
+			, SO.MT_SALES_ORDER_KEY
+			, SD.SALES_YEAR_MONTH
+			, SD.SALES_TURN
+			, SD.SALES_COLLECT_RATE
+			, SD.SALES_TURN_AMOUNT
+			, SD.SALES_CHARGE_DT
+			, SD.SALES_BILL_FC_DT
+			, SD.SALES_COLLECT_FC_DT
+			, SD.SALES_STATUS_CD
+			, SO.BILL_ISSUE_TYPE AS BILL_ISSUE_TYPE
+			, SO.MT_SALES_AC_KEY AS BILL_AC_KEY 
+			, CA.AC_NM AS BILL_AC_NM
+			, SO.BILL_SALES_CD AS BILL_SALES_CD     
+			, SO.BILL_MF_CD AS BILL_MF_CD     
+			, SB.BILL_ISSUE_DT
+			, SB.SALES_COLLECT_FINISH_DT
+			, SB.BILL_CALL_KEY
+		FROM MT_SALES_DETAIL_TB SD, MT_SD_BILLING_OP_TB SB	
+			, MT_SALES_ORDER_TB SO, CMM_ACCOUNT_TB CA
+		WHERE 1=1
+			AND SD.SALES_CT_FK_KEY= #{mtIntegrateKey}	
+			AND SD.MT_SALES_ORDER_KEY = SO.MT_SALES_ORDER_KEY
+			AND SD.SALES_KEY = SB.BILL_CT_FK_KEY
+			AND SD.SALES_STATUS_CD IS NOT NULL
+			AND SD.DELETE_YN='N'
+			AND SB.DELETE_YN = 'N'
+			AND SO.DELETE_YN = 'N'
+			AND SO.MT_SALES_AC_KEY = CA.AC_KEY  
+		ORDER BY BILL_AC_NM, SALES_TURN 	
+	</select>		
 	<!-- <select id="selectMtSalesBillPlanList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
 		SELECT 
 			SD.SALES_KEY                /* 수금계획 관리키 */
@@ -3269,6 +3336,7 @@
 			AND MP.MT_ORDER_TYPE='PO' 				
 		ORDER BY PAYMENT_FC_DT DESC
 	</select>	
+	
 	<!-- <select id="selectMtPaymentPlanList" parameterType="com.cep.mngMaint.bill.vo.MngMaintBillSearchVO" resultType="egovMap">
 		SELECT 
 			PD.PAYMENT_KEY AS PAYMENT_DT_KEY  /* 지급계획 관리키 */
@@ -3384,6 +3452,112 @@
 		ORDER BY PAYMENT_FC_DT DESC
 	</select>	 -->
 	
+	<!-- 판매품의서 매입정보 목록조회.  -->
+	<select id="selectMtPurchaseApprovalList" parameterType="com.cep.maintenance.contract.vo.MtContractVO" resultType="egovMap">
+		SELECT 
+			'BO' AS MT_ORDER_TYPE             /* 유지보수 발주구분(BO:백계약, PO:작업발주)*/
+			, PD.PAYMENT_KEY AS PAYMENT_DT_KEY  /* 지급계획 관리키 */
+			, PD.MT_INTEGRATE_KEY             /* 유지보수 관리키 */
+			, BO.MT_ORDER_KEY                 /* 유지보수 백계약 관리키 */
+			, NULL            AS MT_WORK_KEY  /* 유지보수작업 관리키 */
+			, PD.PAYMENT_YEAR_MONTH           /* 지급계획 년월 */
+			, PD.PAYMENT_TURN                 /* 지급계획 회차 */
+			, PD.PAYMENT_RATE                 /* 지급계획 지급비율 */
+			, PD.PAYMENT_TURN_AMOUNT          /* 지급계획 회차금액 */
+			, PD.PAYMENT_FC_DT                /* 지급계획 지급예상일자 */
+			, PD.PAYMENT_STATUS_CD            /* 지급계획 상태 */
+			, MC.MT_NM                        /* 유지보수명 */
+			, BO.MT_ORDER_AC_KEY AS BILL_AC_KEY /* 지급 매입처 관리키 */
+			, CA2.AC_NM AS BILL_AC_NM         /* 지급 매입처 명 */  
+			, BO.BILL_PURCHASE_CD             /* 지급 매입구분 */
+			, BO.BILL_MF_CD                   /* 매입 제조사구분 */  
+			, NULL AS PAYMENT_DT              /* 지급완료일자 */
+			, NULL AS PAYMENT_CALL_KEY        /* 지급 요청 관리키 */
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, CMM_ACCOUNT_TB CA2
+		WHERE 1=1
+      AND MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY = BO.MT_ORDER_KEY
+			AND PD.PAYMENT_STATUS_CD IS NULL
+			AND PD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND BO.DELETE_YN='N'
+			AND BO.MT_ORDER_AC_KEY = CA2.AC_KEY			
+		UNION ALL
+		SELECT 
+			'BO' AS MT_ORDER_TYPE             
+			, PD.PAYMENT_KEY AS PAYMENT_DT_KEY
+			, PD.MT_INTEGRATE_KEY
+			, BO.MT_ORDER_KEY
+			, NULL  AS MT_WORK_KEY  /* 유지보수작업 관리키 */
+			, PD.PAYMENT_YEAR_MONTH 
+			, PD.PAYMENT_TURN 
+			, PD.PAYMENT_RATE
+			, PD.PAYMENT_TURN_AMOUNT
+			, PD.PAYMENT_FC_DT
+			, PD.PAYMENT_STATUS_CD
+			, MC.MT_NM
+			, BO.MT_ORDER_AC_KEY AS BILL_AC_KEY
+			, CA2.AC_NM AS BILL_AC_NM
+			, BO.BILL_PURCHASE_CD  
+			, BO.BILL_MF_CD
+			, PB.PAYMENT_DT AS PAYMENT_DT
+			, PB.PAYMENT_KEY AS PAYMENT_CALL_KEY
+		FROM MT_PAYMENT_DETAIL_TB PD, MT_CONTRACT_TB MC
+			, MT_BACK_ORDER_TB BO, MT_PC_BILLING_OP_TB PB
+			, CMM_ACCOUNT_TB CA2			
+		WHERE 1=1
+      AND MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+			AND MC.MT_INTEGRATE_KEY = PD.MT_INTEGRATE_KEY
+			AND PD.MT_ORDER_KEY = BO.MT_ORDER_KEY			
+			AND PD.PAYMENT_KEY = PB.PAYMENT_DT_FK_KEY			
+			AND PD.PAYMENT_STATUS_CD IS NOT NULL
+			AND PD.DELETE_YN='N'
+			AND MC.DELETE_YN='N'
+			AND PB.DELETE_YN = 'N'
+			AND BO.DELETE_YN = 'N'
+			AND PB.MT_ORDER_TYPE='BO' 	
+			AND BO.MT_ORDER_AC_KEY = CA2.AC_KEY	
+		UNION ALL
+		SELECT
+			'PO' AS MT_ORDER_TYPE            
+			, NULL                          AS PAYMENT_DT_KEY
+			, MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
+			, MO.MT_ORDER_KEY               AS MT_ORDER_KEY     /* 발주키*/
+			, MO.ORDER_CT_FK_KEY            AS MT_WORK_KEY      /* 유지보수작업 관리키 */
+			, SUBSTRING(MP.PAYMENT_CALL_DT, 1, 6) AS PAYMENT_YEAR_MONTH 
+			, 1                             AS PAYMENT_TURN 
+			, 100                           AS PAYMENT_RATE
+			, MB.BILL_AMOUNT                AS PAYMENT_TURN_AMOUNT
+			, MP.PAYMENT_CALL_DT            AS PAYMENT_FC_DT
+			, MP.PAYMENT_STATUS_CD          AS PAYMENT_STATUS_CD
+			, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
+			, MO.ORDER_AC_KEY               AS BILL_AC_KEY      /* 지급 매입처 관리키 */
+			, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
+			, MO.BILL_PURCHASE_CD           AS BILL_PURCHASE_CD /* 지급 매입구분 */
+			, MO.BILL_MF_CD                 AS BILL_MF_CD       /* 매입 제조사구분 */  
+			, MP.PAYMENT_DT                 AS PAYMENT_DT       /* 지급완료일*/
+			, MP.PAYMENT_KEY                AS PAYMENT_CALL_KEY /* 지급 요청 관리키*/			
+		FROM CMM_PC_BILLING_TB MB  /*매입세금계산서테이블*/ 
+			, MT_PC_BILLING_OP_TB MP     /*지급요청테이블*/ 
+			, MT_CONTRACT_TB MC    /*유지보수기본정보테이블*/ 
+			, CMM_ACCOUNT_TB CAT1  /*매출거래처정보테이블*/ 
+			, MT_ORDER_TB MO       /*유지보수작업발주테이블*/
+		WHERE 1=1
+      AND MC.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+			AND MB.BILL_FK_PJ_KEY = MC.MT_INTEGRATE_KEY
+			AND MP.PAYMENT_BUY_FK_KEY = MO.MT_ORDER_KEY
+			AND MB.BILL_NO = MP.BILL_FK_KEY
+			AND MP.PAYMENT_AC_FK_KEY = CAT1.AC_KEY
+			AND MO.DELETE_YN = 'N'
+			AND MC.DELETE_YN = 'N'
+			AND MP.DELETE_YN = 'N'
+			AND MB.BILL_MAPPING_YN='Y' /*맵핑이 되어있는 데이타만 조회함.*/
+			AND MB.DELETE_YN = 'N'
+			AND MP.MT_ORDER_TYPE='PO' 				
+		ORDER BY BILL_AC_NM,  PAYMENT_TURN
+	</select>
 	<!-- 매출/매입 세금계산서 제조사 구분 목록. -->
 	<select id="selectManufacturerList"  resultType="egovMap">
 		SELECT 

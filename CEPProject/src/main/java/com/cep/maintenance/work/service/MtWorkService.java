@@ -69,6 +69,19 @@ public interface MtWorkService {
 	
 	
 	/**
+	 * 유지보수 작업 기본정보 등록자와 지원담당정보를 조회한다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtWorkKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 9. 오전 11:04:33
+	 * @author aranghoo
+	 */
+	MtWorkVO mtWorkAuthInfo(String mtWorkKey) throws Exception;
+	
+	/**
 	 * 
 	  * @Method Name : deleteMtWork
 	  * @Cdate       : 2020. 11. 10.

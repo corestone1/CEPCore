@@ -111,6 +111,17 @@ public class MtWorkServiceImpl implements MtWorkService {
 		// TODO Auto-generated method stub
 		return mtwMapper.selectWorkDetail(mtWorkKey);
 	}
+	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.work.service.MtWorkService#mtWorkAuthInfo(java.lang.String)
+	 */
+	@Override
+	public MtWorkVO mtWorkAuthInfo(String mtWorkKey) throws Exception {
+		// TODO Auto-generated method stub
+		return mtwMapper.mtWorkAuthInfo(mtWorkKey);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.cep.maintenance.work.service.MtWorkService#updateWorkBasic(com.cep.maintenance.work.vo.MtWorkVO)

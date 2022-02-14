@@ -432,7 +432,8 @@
 		<!-- 유지보수계약별 매출계약 등록 리스트회 -->
 	<select id="selectSalesOrderSelectBoxList" parameterType="String" resultType="egovMap">			
 		SELECT 
-			SO.MT_SALES_ORDER_KEY
+			'MT' AS SELECT_GUBUN
+			, SO.MT_SALES_ORDER_KEY
 			, SO.MT_SALES_AC_KEY
 			, SO.BILL_ISSUE_RULE
 			, CA.AC_NM AS MT_AC_NM
@@ -440,6 +441,20 @@
 		WHERE SO.MT_INTEGRATE_KEY=#{mtIntegrateKey}
 			AND SO.DELETE_YN='N'	
 			AND SO.MT_SALES_AC_KEY = CA.AC_KEY				
+	</select>
+	
+	<!-- Forecast에서 매출거래처 정보 조회.  -->
+	<select id="selectFocastSalesSelectBoxList" parameterType="String" resultType="egovMap">			
+		SELECT 
+			'FC' AS SELECT_GUBUN
+			, NULL AS MT_SALES_ORDER_KEY
+			, ST.SALES_AC_KEY AS MT_SALES_AC_KEY
+			, NULL AS BILL_ISSUE_RULE
+			, CA.AC_NM AS MT_AC_NM
+		FROM SP_SALES_TB ST, CMM_ACCOUNT_TB CA
+		WHERE ST.SALES_SP_FK_KEY =#{mtLinkCtKey}
+			AND ST.DELETE_YN = 'N'
+			AND ST.SALES_AC_KEY = CA.AC_KEY					
 	</select>
 	
 	<!-- 유지보수계약별 매출계약 등록 메인상세 -->
@@ -651,6 +666,7 @@
 		FROM PJ_ORDER_TB PO, PJ_ORDER_PRODUCT_TB OP , PM_PRODUCT_MNG_TB PM
 		WHERE PO.ORDER_CT_FK_KEY = #{selectIntegrateKey}
 			AND PO.DELETE_YN = 'N'
+			AND OP.DELETE_YN = 'N'
 		<if test="searchPmNmCd != null and searchPmNmCd != ''">
 			AND PM.PM_NM_CD LIKE CONCAT('%', #{searchPmNmCd}, '%')
 		</if>	
@@ -1155,13 +1171,28 @@
 	<!-- 유지보수계약별 백계약 등록 리스트회 -->
 	<select id="selectBackOrderSelectBoxList" parameterType="String" resultType="egovMap">			
 		SELECT 
-		  MB.MT_ORDER_KEY
-		  , MB.MT_ORDER_AC_KEY
-		  , CA.AC_NM AS MT_AC_NM
+			'MT' AS SELECT_GUBUN
+			, MB.MT_ORDER_KEY
+			, MB.MT_ORDER_AC_KEY
+			, CA.AC_NM AS MT_AC_NM
 		FROM MT_BACK_ORDER_TB MB , CMM_ACCOUNT_TB CA
 		WHERE MB.MT_INTEGRATE_KEY=#{mtIntegrateKey}
 			AND MB.DELETE_YN='N'	
 			AND MB.MT_ORDER_AC_KEY = CA.AC_KEY	
+	</select>
+	
+	
+	<!-- Forecast에서 매입거래처 정보 조회.  -->
+	<select id="selectForecastPurchaseSelectBoxList" parameterType="String" resultType="egovMap">			
+		SELECT 
+			'FC' AS SELECT_GUBUN
+			, NULL AS MT_ORDER_KEY
+			, SP.BUY_AC_KEY AS MT_ORDER_AC_KEY
+			, CA.AC_NM AS MT_AC_NM
+		FROM SP_PURCHASE_TB SP , CMM_ACCOUNT_TB CA
+		WHERE SP.BUY_SP_FK_KEY = #{mtLinkCtKey}
+			AND SP.DELETE_YN='N'	
+			AND SP.BUY_AC_KEY = CA.AC_KEY
 	</select>
 	
 	<!-- 유지보수계약별 백계약 메인상세 -->

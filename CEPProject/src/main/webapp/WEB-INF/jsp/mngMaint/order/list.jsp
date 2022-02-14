@@ -253,8 +253,8 @@
 		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey"/>
 		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey"/>
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">

@@ -404,7 +404,7 @@
 	           	document.detailForm.submit();
 				*/
 				if(this.title == "productInfo"){
-					if(confirm("유지보수계약 제품정보 상세화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수계약 매출계약정보 상세화면으로 이동하시겠습니까?")){
 						document.m_mtMoveForm.action = "/maintenance/contract/detail/productInfo.do";
 			           	document.m_mtMoveForm.submit();
 					}
@@ -417,7 +417,7 @@
 				           	document.m_mtMoveForm.submit();
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 					}
 					
 					
@@ -429,7 +429,7 @@
 				           	document.m_mtMoveForm.submit();
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 					}
 					
 					
@@ -976,11 +976,16 @@
 			
 		}
 		
+		//판매품의서 오픈
+		function fnViewApproval(mtIntegrateKey) {
+			window.open("/maintenance/contract/viewApproval.do?mtIntegrateKey="+mtIntegrateKey);
+		}
+		
 	</script>
 </head>
 <body>
-	<div class="sfcnt"></div>
-	<!-- <div class="nav"></div> -->
+	<!-- <div class="sfcnt"></div>
+	<div class="nav"></div> -->
 	<div class="mContentsWrap">
 		<div class="mContents mgauto">
 			<div class="floatL">
@@ -1264,8 +1269,8 @@
 						</div>
 						<div class="floatL" style="margin-top: 22px">
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
-							<button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button>
-							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
+							<%-- <button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button> --%>
+							<button type="button" title="판매 품의서"  onclick="fnViewApproval('${basicContractInfo.mtIntegrateKey}')"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></button>
 						</div>
 					</form>
 				</div>
@@ -1273,7 +1278,7 @@
 			<div class="floatR dpBlock fxd">
 				<div class="title">
 					<ul>
-						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">제품정보</label></li>
+						<li id="LI_TOPBar_PD" title="productInfo"><label style="cursor: pointer;">매출계약정보</label></li>
 						<li id="LI_TOPBar_SL" class="on" title="salesAmountInfo"><label style="cursor: pointer;">매출정보</label></li>
 						<li id="LI_TOPBar_SL" title="salesPlanInfo" ><label style="cursor: pointer;">계산서계획</label></li>
 						<c:choose>

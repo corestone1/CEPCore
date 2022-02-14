@@ -124,6 +124,7 @@
 		  	, MW.MT_WORK_END_DT
 		  	, MW.MT_WORK_TYPE_CD
 		  	, MW.MT_WORK_RESULT_CD
+		  	, MW.MT_WORK_ORDER_YN
 		  FROM MT_WORK_TB MW
 		    , MT_CONTRACT_TB MC
 		    , CMM_ACCOUNT_TB CA
@@ -184,6 +185,8 @@
         	, MW.MT_WORK_ORDER_YN
 		  	, MW.MT_WORK_CONT
 		  	, MW.REMARK
+		  	, MW.MT_WORK_EMP_KEY
+		  	, MW.REG_EMP_KEY
 		  FROM MT_WORK_TB MW
 		    , MT_CONTRACT_TB MC
 		    , CMM_ACCOUNT_TB CA
@@ -196,6 +199,15 @@
 		    AND MW.MT_WORK_EMP_KEY = CE.EMP_KEY
 		    AND MW.MT_WORK_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
 		  ORDER BY MT_WORK_START_DT DESC, AC_NM 
+	</select>
+	
+	<select id="mtWorkAuthInfo" parameterType="String" resultMap="mtWorkVO">	
+		SELECT
+		  	MW.MT_WORK_EMP_KEY
+		  	, MW.REG_EMP_KEY
+		  FROM MT_WORK_TB MW
+		  WHERE MW.MT_WORK_KEY=#{mtWorkKey}						
+			AND MW.DELETE_YN='N'
 	</select>
 		
 		<!-- 

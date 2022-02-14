@@ -140,14 +140,19 @@
 		.middle table thead th:nth-child(7),
 		.middle table thead th:nth-child(8),
 		.middle table thead th:nth-child(9),
-		.middle table thead th:nth-child(10),
-		.middle table thead th:nth-child(11),
+		.middle table thead th:nth-child(12),
 		.middle table tbody td:nth-child(7),
 		.middle table tbody td:nth-child(8),
-		.middle table tbody td:nth-child(9),
+		.middle table tbody td:nth-child(9),		
+		.middle table tbody td:nth-child(12) {
+			width: 90px;
+		}
+		
+		.middle table thead th:nth-child(10),
 		.middle table tbody td:nth-child(10),
-		.middle table tbody td:nth-child(11) {
-			width: 100px;
+		.middle table thead th:nth-child(11),
+		.middle table tbody td:nth-child(11){
+			width: 65px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -191,7 +196,7 @@
 				 /*console.log("selectIntegrateKey====>"+$(this).children().eq(11).text().trim());
 				console.log("mtWorkKey====>"+$('#check'+$(this).children().eq(1).text()).val());*/
 				
-				$("input[name=selectIntegrateKey]").val($(this).children().eq(11).text().trim());
+				$("input[name=selectIntegrateKey]").val($(this).children().eq(12).text().trim());
 				$("input[name=selectWorkKey]").val($('#check'+$(this).children().eq(1).text()).val());
 				
 
@@ -313,8 +318,8 @@
 		<input type="hidden" name="btnOption" />
 		<input type="hidden" id="selectIntegrateKey" name="selectIntegrateKey"/>
 		<input type="hidden" id="selectWorkKey" name="selectWorkKey"/>
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -367,6 +372,7 @@
 								<th scope="row">작업종료일</th>
 								<th scope="row">작업유형</th>
 								<th scope="row">조치결과</th>
+								<th scope="row">발주여부</th>
 								<th scope="row">지원담당자</th>
 								<th style="max-width: 0px; display: none;"></th>
 							</tr>
@@ -386,6 +392,7 @@
 								<td><c:out value="${result.viewWorkEndDt}"/></td>
 								<td><c:out value="${result.mtWorkTypeCd}"/></td>
 								<td><c:out value="${result.mtWorkResultCd}"/></td>
+								<td><c:out value="${result.mtWorkOrderYn}"/></td>
 								<td><c:out value="${result.mtWorkEmpNm}"/></td>
 								<td style="max-width: 0px; display: none;">
 									<c:out value="${result.mtIntegrateKey}"/>

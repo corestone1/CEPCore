@@ -403,7 +403,7 @@
 						return false;
 					}					
 				} else if(varUrl == "productInfoView"){
-					if(confirm("유지보수계약 제품정보 화면으로 이동하시겠습니까?")){
+					if(confirm("유지보수계약 매출계약정보 화면으로 이동하시겠습니까?")){
 						url = '/maintenance/contract/write/'+varUrl+'.do';
 					} else {
 						return false;
@@ -417,7 +417,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}					
 					
@@ -429,7 +429,7 @@
 							return false;
 						}
 					} else {
-						alert(" 유지보수계약 제품정보가 등록되지 않았습니다.\n 유지보수계약 제품정보를 먼저 등록하세요.");
+						alert(" 유지보수계약 매출계약정보가 등록되지 않았습니다.\n 유지보수계약 매출계약정보를 먼저 등록하세요.");
 						return false;
 					}					
 					
@@ -681,7 +681,7 @@
 		
 		//이전화면으로 이동
 		function fn_prevBtn(){
-			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 제품정보 등록화면으로 이동하시겠습니까?")) {
+			if(confirm("수정된 내용이 있으면 먼저 저장 버튼을 클릭한 후 이동하세요!! \n유지보수계약 매출계약정보 등록화면으로 이동하시겠습니까?")) {
 				var url = '/maintenance/contract/write/productInfoView.do';
 				var dialogId = 'program_layer';
 				var varParam = {
@@ -905,7 +905,7 @@
 		<div class="left">
 			<ul class="ftw400">
 					<li class="colorWhite cursorP" onclick="fn_changeView('basicInfoView');">기본정보</li>
-					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">제품정보</li>
+					<li class="colorWhite cursorP" onclick="fn_changeView('productInfoView');">매출계약정보</li>
 					<li class="colorWhite cursorP on">매출정보</li>
 					<li class="colorWhite cursorP" onclick="fn_changeView('writeSalesPlanView');">계산서계획정보</li>
 					<c:if test="${parmMtSbCtYn eq 'Y' }">		

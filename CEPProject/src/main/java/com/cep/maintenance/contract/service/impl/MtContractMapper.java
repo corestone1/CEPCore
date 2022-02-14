@@ -112,6 +112,20 @@ public interface MtContractMapper {
 	public List<EgovMap> selectSalesOrderSelectBoxList(String mtIntegrateKey) throws Exception;
 	
 	/**
+	 * Forecast에서 매출거래처 정보 조회.
+	 * 매출정보 등록시 Forecast에서 등록한 매출거래처 정보를 가져온다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtLinkCtKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 10. 오후 3:23:43
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectFocastSalesSelectBoxList(String mtLinkCtKey) throws Exception;
+	
+	/**
 	 * 유지보수 계약별 매출 메인 상세조회.
 	 * <pre>
 	 * </pre>
@@ -439,6 +453,20 @@ public interface MtContractMapper {
 	  * @throws Exception
 	 */
 	public List<EgovMap> selectBackOrderSelectBoxList(String mtIntegrateKey) throws Exception;
+	
+	/**
+	 * Forecast에서 매입거래처 정보 조회.
+	 * 매입정보 등록시 Forecast에서 등록한 매입거래처 정보를 가져온다.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtLinkCtKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 11. 오후 6:03:58
+	 * @author aranghoo
+	 */
+	public List<EgovMap> selectForecastPurchaseSelectBoxList(String mtLinkCtKey) throws Exception;
 	
 	
 	/**

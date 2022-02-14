@@ -581,8 +581,8 @@
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>		
 		<input type="hidden" id="selectMtOrderAcKeyNm"  value="<c:out value="${selectMtOrderAcKeyNm}"/>"/>
 		<input type="hidden" id="selectKey" name="selectKey" value="<c:out value="${selectKey}"/>"/>
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="mContentsWrap">
 			<div class="mContents mgauto">
 				<div class="floatL">
@@ -859,10 +859,14 @@
 						</div>
 						<div class="bottom">
 							<div class="floatR">
+							<c:if test='${loginID eq basicWorkInfo.mtWorkEmpKey or loginID eq basicWorkInfo.regEmpKey}'>
 								<button type="button" title="매입금 지급요청" class="blueBtnStyle" onclick="fnMovePaymentDetail();">매입금 지급요청</button>
 								<button type="button" value="수정" onclick="fn_addView('');"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<%-- <button type="button" value="삭제" onclick="fn_mdeleteWorkOrderBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
+							</c:if>
+								<input type="hidden" id="mtWorkEmpKey"  name="mtWorkEmpKey" value="${basicWorkInfo.mtWorkEmpKey}" />
+								<input type="hidden" id="regEmpKey"  name="regEmpKey" value="${basicWorkInfo.regEmpKey}" />
 							</div>
 						</div>
 					</div>

@@ -237,7 +237,7 @@
 	            					<c:out value="${result.pjKey}"/>
 	            					<input type="hidden" value="<c:out value="${result.pjKey}"/>" />
 	            				</td>
-	            				<td align="left" class="listtd"><span title="${result.acKey }"><c:out value="${result.acKey}"/></span></td>
+	            				<td align="left" class="listtd"><span title="${result.acNm }"><c:out value="${result.acNm}"/></span></td>
 	            				<td align="left" class="listtd"><span title="${result.pjNm }"><c:out value="${result.pjNm}"/></span></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjStartDt)}"/></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjEndDt)}"/></td>

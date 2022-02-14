@@ -288,8 +288,8 @@
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey"/>
 		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
 		<input type="hidden" id="iframGubun" name="iframGubun" value="list"/>
-		<div class="sfcnt"></div>
-		<!-- <div class="nav"></div> -->
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
