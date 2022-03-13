@@ -415,6 +415,8 @@
 		<input type="hidden" id="m_paymentKey" name="paymentKey"/>
 		<input type="hidden" id="m_proceedTurn" name="proceedTurn" value="<c:out value="${proceedTurn}"/>"/>
 		<input type="hidden" id="m_totalTurn" name="totalTurn" value="<c:out value="${totalTurn}"/>"/>
+		<input type="hidden" id="m_mtNm"  value="<c:out value="${basicInfo.mtNm}"/>"/>
+		<input type="hidden" id="m_orderAcKeyNm"  value="<c:out value="${basicInfo.orderAcKeyNm}"/>"/>
 	</form>
 	<div id="listForm" class="listForm">
 		<!-- <div class="sfcnt"></div>

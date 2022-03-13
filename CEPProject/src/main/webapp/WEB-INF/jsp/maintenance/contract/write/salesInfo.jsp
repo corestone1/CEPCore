@@ -56,6 +56,7 @@
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 		.popContainer .contents > div {
 			margin: 10px 47px 0 37px;
@@ -240,7 +241,9 @@
 		}
 		.popContainer .contents1 table tbody tr td {
 			padding: 0px 0;
-			border: 1px solid #edebef;
+			text-align: left;
+			font-size: 15px;
+			/* border: 1px solid #edebef; */
 		}
 		.popContainer .contents tr:nth-child(1) td {
 			border: 0px;
@@ -252,7 +255,7 @@
 		.contents1 table thead th:first-child,
 		.contents1 table tbody td:first-child {
 			width: 207px;
-			border: 1px solid #edebef;
+			/* border: 1px solid #edebef; */
 		}	
 		.contents1 table thead th:nth-child(2),
 		.contents1 table tbody td:nth-child(2) {
@@ -273,6 +276,7 @@
 			outline: none;
 			padding : 0px;
 			background-color: #f6f7fc;
+			padding-bottom: 2px;
 		}
 		.calculate {
 			text-align: right !important;
@@ -951,7 +955,7 @@
 					<table class="textalignC ftw200" >
 						<tr>
 							<td>유지보수기간 : <input type="text" id="mtStartDt" class="pname" readonly/> ~ <input type="text" id="mtEndDt" class="pname" readonly/></td>
-							<td>총계약금액 : <input type="text" id="mtAmount" class="pname" style="width:120px;text-align: right" readonly/></td>
+							<td>총계약금액 : <input type="text" id="mtAmount" class="pname" style="width:120px;text-align: left" readonly/></td>
 						</tr>
 						<%-- <thead class="ftw400">
 							<tr>
@@ -986,7 +990,7 @@
 								</td>
 								<td style="width:136px; text-align:right; color: #32bc94; font-size: 15px">
 									매출 총금액 : 
-									<input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
+									<input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right; color:#32bc94;" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
 								</td>
 								<%-- <td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('sales');"/></td> --%>
 							</tr>

@@ -35,7 +35,7 @@
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
-			height: 38px;
+			height: 40px;
 			width: 112px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -167,7 +167,7 @@
 			margin-left: 70px;
 		}
 		input[type="text"] {
-		    height: 36px;
+		    height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -189,7 +189,7 @@
 		
 		.contentsWrap .contents input[class^="calendar"] {
 			width: 95px;
-			height: 36px;
+			height: 38px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
@@ -260,14 +260,14 @@
 							<form:option value="NE" label="미완료" />
 							<form:option value="E" label="완료" />
 						</form:select>
-						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>						
+						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;">~</label><form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>						
 						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 70px"/>
 						<form:select path="searchGubun">
 							<form:option value="PJ" label="프로젝트명" />
 							<form:option value="CU" label="고객사" />
 							<form:option value="BA" label="거래처" />
 						</form:select>						
-						<form:input path="searchWord" type="text" placeholder="검색어"/>
+						<form:input path="searchWord" type="text" placeholder="검색어" style="width: 188px;"/>
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>

@@ -298,6 +298,7 @@
 		    padding-bottom: 2px;
 		    vertical-align: top;
 		    cursor: default;
+		    /* -webkit-filter: grayscale(100%); */
 		}
 	</style>
 	<script>
@@ -335,7 +336,7 @@
 			} else {
 				tempPaymentFinishDt = $('#pp_today').val();
 			}
-			console.log("tempPaymentFinishDt========>"+tempPaymentFinishDt);
+			//console.log("tempPaymentFinishDt========>"+tempPaymentFinishDt);
 			/* var paymentConfirmInfo1 = {
 					'mtIntegrateKey' : $('#'+rowNum+'-mtIntegrateKey').val()
 					, 'paymentStatusCd' : 'E'
@@ -376,9 +377,11 @@
 							, 'callAmount' : $('#'+rowNum+'-paymentTurnAmount').val()
 							, 'paymentAcFkKey' : $('#'+rowNum+'-billAcKey').val()
 							, 'paymentYearMonth' : $('#'+rowNum+'-paymentYearMonth').val()
+							, 'mtNm' : $('#'+rowNum+'-mtNm').val()
+							, 'paymentBillAcNm' : $('#'+rowNum+'-billAcNm').val()
 					}
-					console.log("paymentTurn========>"+$('#'+rowNum+'-paymentTurn').val());
-					console.log("paymentConfirmInfo====>"+JSON.stringify(paymentConfirmInfo));
+					//console.log("paymentTurn========>"+$('#'+rowNum+'-paymentTurn').val());
+					//console.log("paymentConfirmInfo====>"+JSON.stringify(paymentConfirmInfo));
 					$.ajax({
 				        	url :"/mngMaint/payment/detail/writePaymentComplete.do",
 				        	type:"POST",  
@@ -387,8 +390,22 @@
 				     	    dataType: 'json',
 				            async : false,
 				        	success:function(data){	
+				        		var mailList = "";
+						    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
+						    		mailList = "";
+						    	} else {
+						    		mailList = "\n메일 수신인: " + data.mailList.join("\n");
+						    	}
+						    	
 				        		if(data.successYN=='Y') {
-				        			alert(confirmTitle+" 대한 지급완료처리를 성공했습니다.");
+				        			
+				        			if(data.mailSuccessYN=='Y') {
+				        				alert(confirmTitle+" 대한 지급완료처리를 성공했습니다."+ mailList);
+				        			} else {
+				        				alert(confirmTitle+" 대한 지급완료처리를 성공했습니다.(메일전송은 실패 !!)");
+				        			}
+				        			
+				        			
 				        			
 				        			form = document.listForm;
 				    				form.action = "/mngMaint/billSchedule/paymentPlanList.do";
@@ -412,15 +429,20 @@
 							, 'paymentStatusCd' : 'E'
 							, 'currentStatus' : $('#'+rowNum+'-currentStatus').val()
 							, 'requestStatus' : 'E'
+							, 'paymentTurn' : $('#'+rowNum+'-paymentTurn').val()
 							, 'mtOrderType' : mtOrderType
 							, 'paymentKey' :$('#'+rowNum+'-paymentCallKey').val()
 							, 'paymentBuyFkKey' :$('#'+rowNum+'-mtOrderKey').val()
 							, 'callAmount' : $('#'+rowNum+'-paymentTurnAmount').val()
 							, 'paymentDt' : tempPaymentFinishDt
+							, 'mtNm' : $('#'+rowNum+'-mtNm').val()
+							, 'paymentBillAcNm' : $('#'+rowNum+'-billAcNm').val()
+							, 'mtWorkKey' : $('#'+rowNum+'-mtWorkKey').val()
+							, 'paymentAcFkKey' : $('#'+rowNum+'-billAcKey').val()
 					}
-					console.log("paymentTurn========>"+$('#'+rowNum+'-paymentTurn').val());
-					console.log("paymentConfirmInfo====>"+JSON.stringify(paymentConfirmInfo));
-					console.log("step 2====>");
+					//console.log("paymentTurn========>"+$('#'+rowNum+'-paymentTurn').val());
+					//console.log("paymentConfirmInfo====>"+JSON.stringify(paymentConfirmInfo));
+					//console.log("step 2====>");
 					$.ajax({
 				        	url :"/mngMaint/payment/detail/updatePaymentRequestStatus2.do",
 				        	type:"POST",  
@@ -429,9 +451,20 @@
 				     	    dataType: 'json',
 				            async : false,
 				        	success:function(data){	
+				        		var mailList = "";
+						    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
+						    		mailList = "";
+						    	} else {
+						    		mailList = "\n메일 수신인: " + data.mailList.join("\n");
+						    	}
+						    	
 				        		if(data.successYN=='Y') {
-				        			alert(confirmTitle+" 대한 지급완료처리를 성공했습니다.");
-				        			
+				        			if(data.mailSuccessYN=='Y') {
+				        				alert(confirmTitle+" 대한 지급완료처리를 성공했습니다."+ mailList);
+				        			} else {
+				        				alert(confirmTitle+" 대한 지급완료처리를 성공했습니다.(메일전송은 실패 !!)");
+				        			}
+				        							        			
 				        			form = document.listForm;
 				    				form.action = "/mngMaint/billSchedule/paymentPlanList.do";
 				    				form.submit();
@@ -556,18 +589,24 @@
 		}
 		
 		function moveBackOrderDetail(mtIntegrateKey,mtOrderKey, mtWorkKey, mtOrderType ) {
-			/* $('#mtIntegrateKey').val(mtIntegrateKey);
+			$('#mtIntegrateKey').val(mtIntegrateKey);
 			$('#mtOrderKey').val(mtOrderKey);
-			document.mtMoveForm.action = "/maintenance/contract/detail/backOrderInfo.do";
-           	document.mtMoveForm.submit();  */
+			
+           	
            	//window.open("/maintenance/contract/detail/backOrderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey);
-           	if("BO"==mtOrderType) {
+           	/* if("BO"==mtOrderType) {
            		window.open("/maintenance/contract/detail/paymentPlanInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey);
            	} else if("PO"==mtOrderType) {
            		//window.open("/maintenance/work/detail/orderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&orderCtFkKey="+mtWorkKey+"&selectKey="+mtOrderKey);
            		window.open("/maintenance/work/detail/orderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&orderCtFkKey="+mtWorkKey);
+           	} */
+           	
+           	if("BO"==mtOrderType) {
+           		document.mtMoveForm.action = "/maintenance/contract/detail/paymentPlanInfo.do";
+           	} else if("PO"==mtOrderType) {
+           		document.mtMoveForm.action = "/maintenance/work/detail/orderInfo.do";
            	}
-			
+           	document.mtMoveForm.submit();
 		}
 	</script>
 </head>
@@ -604,7 +643,7 @@
 					</div>
 					<div class="floatR">
 						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 100px"/>
-						<form:input path="fromDate" type="text" class="calendar fromDt" placeholder="계산서일정" style="height: 36px" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" class="calendar toDt" placeholder="계산서일정" style="height: 36px" value="${searchParam.toDate}"/>
+						<form:input path="fromDate" type="text" class="calendar fromDt" placeholder="계산서일정" style="height: 36px" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" class="calendar toDt" placeholder="계산서일정" style="height: 36px" value="${searchParam.toDate}"/>
 						<form:select path="searchGubun">
 							<form:option value="PJ" label="프로젝트명" />
 							<form:option value="CU" label="고객사" />
@@ -713,6 +752,7 @@
 								<td><c:out value="${list.saleEmpNm}"/></td>
 								<td class="textalignL">&nbsp;
 									<span title="${list.billAcNm}" ><c:out value="${list.billAcNm}" /></span>
+									<input type="hidden" name="billAcNm" id="<c:out value="${status.index}"/>-billAcNm"  value="<c:out value="${list.billAcNm}"/>" />
 									<input type="hidden" name="billAcKey" id="<c:out value="${status.index}"/>-billAcKey"  value="<c:out value="${list.billAcKey}"/>" />	
 								</td>
 								<td><span title="${list.billPurchaseCd}"><c:out value="${list.billPurchaseCd}"/></span></td>
@@ -759,6 +799,7 @@
 								<td style="max-width: 0px; display: none;"><c:out value="${status.index}"/></td>
 								<td style="max-width: 0px; display: none;">
 									<input type="hidden" id="<c:out value="${status.index}"/>-paymentCallKey" value="<c:out value="${list.paymentCallKey}"/>"/>
+									<input type="hidden" id="<c:out value="${status.index}"/>-mtWorkKey" value="<c:out value="${list.mtWorkKey}"/>"/>
 								</td>
 							</tr>
 						</c:forEach>

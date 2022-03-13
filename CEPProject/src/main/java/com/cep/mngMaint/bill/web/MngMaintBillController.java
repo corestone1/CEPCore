@@ -1,5 +1,6 @@
 package com.cep.mngMaint.bill.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cep.main.service.MainService;
 import com.cep.maintenance.amount.service.MtAmountService;
 import com.cep.maintenance.contract.service.MtContractService;
+import com.cep.maintenance.contract.vo.MtContractVO;
 import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngMaint.bill.service.MngMaintBillService;
 import com.cep.mngMaint.bill.vo.MngMaintBillSearchVO;
@@ -31,12 +35,15 @@ import com.cep.mngProject.bill.vo.MngProjectBillVO;
 import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
+import com.cmm.config.DeptInfo;
+import com.cmm.config.EmailInfo;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
+import com.cmm.vo.MailVO;
 import com.cmm.vo.PaymentVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -69,6 +76,10 @@ public class MngMaintBillController {
 	
 	@Resource(name="comService")
 	private ComService comService;
+
+	
+	@Resource(name="mainService")
+	private MainService mainService; //메일서비스
 	
 	//첨부파일 관련.
 	@Resource(name="fileMngService")
@@ -405,12 +416,12 @@ public class MngMaintBillController {
 	public Map<String, Object> writeBillIssue(@ModelAttribute("mngMaintBillVO") MngMaintBillVO mngMaintBillVO, HttpServletRequest request, HttpServletResponse respons) throws Exception {
 		String billCallKey = null;
 		logger.debug("=============== writeBillIssue write ======================");
-//		logger.debug("=== mngMaintBillVO.getPjKey()             = {}", mngMaintBillVO.getPjKey());
+		logger.debug("=== mngMaintBillVO.getPjKey()             = {}", mngMaintBillVO.getPjKey());
 //		logger.debug("=== mngMaintBillVO.getBillCtFkKey()       = {}", mngMaintBillVO.getBillCtFkKey());
 //		logger.debug("=== mngMaintBillVO.getBillAcKey()         = {}", mngMaintBillVO.getBillAcKey());
 //		logger.debug("=== mngMaintBillVO.getBillCallKey()       = {}", mngMaintBillVO.getBillCallKey());
 //		logger.debug("=== mngMaintBillVO.getBillIssueType()     = {}", mngMaintBillVO.getBillIssueType());
-//		logger.debug("=== mngMaintBillVO.getBillTurnNo()        = {}", mngMaintBillVO.getBillTurnNo());
+		logger.debug("=== mngMaintBillVO.getBillTurnNo()        = {}", mngMaintBillVO.getBillTurnNo());
 //		logger.debug("=== mngMaintBillVO.getBillAmount()        = {}", mngMaintBillVO.getBillAmount());
 //		logger.debug("=== mngMaintBillVO.getBillTaxYn()         = {}", mngMaintBillVO.getBillTaxYn());
 //		logger.debug("=== mngMaintBillVO.getBillAcDirectorKey() = {}", mngMaintBillVO.getBillAcDirectorKey());
@@ -418,17 +429,37 @@ public class MngMaintBillController {
 //		logger.debug("=== mngMaintBillVO.getBillRequestDt()     = {}", mngMaintBillVO.getBillRequestDt());
 //		logger.debug("=== mngMaintBillVO.getRemark()            = {}", mngMaintBillVO.getRemark());
 		
+		logger.debug("=== mngMaintBillVO.getMtNm()            = {}", mngMaintBillVO.getMtNm());
+		logger.debug("=== mngMaintBillVO.getMtSalesOrderKey() = {}", mngMaintBillVO.getMtSalesOrderKey());
+		
+		
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		HashMap<String, String> sessionMap = null;
 		
+		//메일관련 변수
+		MailVO mailVO = null;
+//		String dept = null;
+		List<String> toList = null;
+//		String email = null;
+		String tmail = null;
+		String subject = null;
+		String content = null;
+		int result = 0;
+		String grantorName = null; //처리완료자(승인자)
+		HashMap<String, String> userMap = null;
+		StringBuffer msg = null;
+		
+		MtContractVO mtContractVO = null;
 		try {
 						 
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngMaintBillVO.setRegEmpKey(sessionMap.get("empKey"));
 			mngMaintBillVO.setModEmpKey(sessionMap.get("empKey"));
+			
+			
 			
 			if("".equals(CepStringUtil.getDefaultValue(mngMaintBillVO.getBillTaxYn(), ""))) {
 				mngMaintBillVO.setBillTaxYn("N");
@@ -445,12 +476,81 @@ public class MngMaintBillController {
 			}
 			logger.debug("=== billCallKey            = {}", billCallKey);
 			
-			
+			returnMap.put("successYN", "Y");
 			returnMap.put("billCallKey", billCallKey);
 			returnMap.put("billIssueStatus", "I");
-			returnMap.put("successYN", "Y");
+			
+			
+			/*
+			 * 메일전송
+			 * 유지보수 등록 담당자에게 메일을 전송한다.
+			 */
+			userMap = new HashMap<String, String>();
+			userMap.put("empKey", sessionMap.get("empKey"));
+			grantorName = mainService.selectName(userMap);
+			
+			subject = "(유지보수) "+mngMaintBillVO.getMtNm()+"["+mngMaintBillVO.getPjKey()+"]에 대한 매출 계산서 발급완료 정보";
+			
+			msg = new StringBuffer();
+			msg.append("(유지보수) ");
+			msg.append(mngMaintBillVO.getMtNm());
+			msg.append("[");
+			msg.append(mngMaintBillVO.getPjKey());
+			msg.append("]건의 ");
+			msg.append(mngMaintBillVO.getBillTurnNo());
+			msg.append(" 회차 건에 대한 매출 계산서 발급완료 정보가 있습니다.");
+			msg.append("<br><br>");
+			msg.append(" - 처리자 :");
+			msg.append(grantorName);
+			msg.append("(");
+			msg.append(sessionMap.get("empKey"));
+			msg.append(")");
+			msg.append("<br>");
+			msg.append(" - 처리일자 :");
+			msg.append(CepDateUtil.getToday("yyyy-MM-dd HH:mm"));
+			msg.append("<br><br>");
+			
+			content = String.join(System.getProperty("line.separator"), msg.toString());
+			
+			mtContractVO = mtContractService.selectContractBasicDetail(mngMaintBillVO.getPjKey());
+			
+			mailVO = new MailVO();
+			/*
+			 * 등록자와 영업담당이 같은 경우 한사람에게만 보내고
+			 * 다른 경우 등록자와 영업담당자 보두에게 처리내용을 보낸다.
+			 */
+			toList = new ArrayList<String>();
+			if(mtContractVO.getRegEmpKey().equals(mtContractVO.getMtSaleEmpKey())) {
+				toList.add(mtContractVO.getRegEmpKey());
+			} else {
+				toList.add(mtContractVO.getRegEmpKey());
+				toList.add(mtContractVO.getMtSaleEmpKey());
+			}
+//			System.out.println("tmail=====>"+StringUtils.join(toList, ";"));
+			
+			tmail = StringUtils.join(toList, ";");
+//			tmail = "ycchoi@corestone.co.kr";
+			
+			mailVO.setEmpKey(tmail);
+			//http://192.168.1.137:8080/maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey=MA210016&mtSalesOrderKey=SO210009
+			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+//			mailVO.setLink("http://192.168.1.137:8080/" + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+
+			mailVO.setSubject(subject);
+			mailVO.setContent(content);
+			mailVO.setIsNewPw(false);
+			result = comService.sendMail(request, mailVO);
+			if(result != 0) {
+				returnMap.put("mailSuccessYN", "Y");
+				returnMap.put("mailList", toList);
+			} else {
+				returnMap.put("mailSuccessYN", "N");
+			}
+			
+			
 		}catch(Exception e){
 			returnMap.put("successYN", "N");
+			returnMap.put("mailSuccessYN", "N");
 			logger.error("{}", e);
 			//throw e;
 		}		
@@ -718,10 +818,26 @@ public class MngMaintBillController {
 		logger.debug("=== mngMaintBillVO.getSalesKey()          = {}", mngMaintBillVO.getSalesKey());
 		logger.debug("=== mngMaintBillVO.getBillIssueStatus()   = {}", mngMaintBillVO.getBillIssueStatus());
 		
+		logger.debug("=== mngMaintBillVO.getMtNm()            = {}", mngMaintBillVO.getMtNm());
+		logger.debug("=== mngMaintBillVO.getMtSalesOrderKey() = {}", mngMaintBillVO.getMtSalesOrderKey());
+		logger.debug("=== mngMaintBillVO.getBillTurnNo() = {}", mngMaintBillVO.getBillTurnNo());
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		HashMap<String, String> sessionMap = null;
+		
+		//메일관련 변수
+		MailVO mailVO = null;
+		List<String> toList = null;
+		String tmail = null;
+		String subject = null;
+		String content = null;
+		int result = 0;
+		String grantorName = null; //처리완료자(승인자)
+		HashMap<String, String> userMap = null;
+		StringBuffer msg = null;
+		
+		MtContractVO mtContractVO = null;
 		
 		try {
 									
@@ -732,8 +848,82 @@ public class MngMaintBillController {
 			service.updateSdCollectStatus(mngMaintBillVO);
 			
 			returnMap.put("successYN", "Y");
+			
+			//수금완료 처리인 경우 메일전송.
+			if("E".equals(mngMaintBillVO.getBillIssueStatus())) {
+				mtContractVO = mtContractService.selectContractBasicDetail(mngMaintBillVO.getPjKey());
+				/*
+				 * 메일전송
+				 * 유지보수 등록 담당자에게 메일을 전송한다.
+				 */
+				userMap = new HashMap<String, String>();
+				userMap.put("empKey", sessionMap.get("empKey"));
+				grantorName = mainService.selectName(userMap);
+				
+				subject = "(유지보수) "+mngMaintBillVO.getMtNm()+"["+mngMaintBillVO.getPjKey()+"]에 대한 매출수금완료 정보";
+				
+				msg = new StringBuffer();
+				msg.append("(유지보수) ");
+				msg.append(mtContractVO.getMtNm());
+				msg.append("[");
+				msg.append(mngMaintBillVO.getPjKey());
+				msg.append("]건의 ");
+				msg.append(mngMaintBillVO.getBillTurnNo());
+				msg.append(" 회차 건에 대한 매출 수금완료 정보가 있습니다.");
+				msg.append("<br><br>");
+				msg.append(" - 처리자 :");
+				msg.append(grantorName);
+				msg.append("(");
+				msg.append(sessionMap.get("empKey"));
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리일자 :");
+				msg.append(CepDateUtil.getToday("yyyy-MM-dd HH:mm"));
+				msg.append("<br><br>");
+				
+				content = String.join(System.getProperty("line.separator"), msg.toString());
+				
+				
+				
+				mailVO = new MailVO();
+				/*
+				 * 등록자와 영업담당이 같은 경우 한사람에게만 보내고
+				 * 다른 경우 등록자와 영업담당자 보두에게 처리내용을 보낸다.
+				 */
+				toList = new ArrayList<String>();
+				if(mtContractVO.getRegEmpKey().equals(mtContractVO.getMtSaleEmpKey())) {
+					toList.add(mtContractVO.getRegEmpKey());
+				} else {
+					toList.add(mtContractVO.getRegEmpKey());
+					toList.add(mtContractVO.getMtSaleEmpKey());
+				}
+//				logger.debug("tmail=====>"+StringUtils.join(toList, ";"));
+				
+				tmail = StringUtils.join(toList, ";");
+//				tmail = "ycchoi@corestone.co.kr";
+				
+				mailVO.setEmpKey(tmail);
+				//http://192.168.1.137:8080/maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey=MA210016&mtSalesOrderKey=SO210009
+				mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+//				mailVO.setLink("http://192.168.1.137:8080/" + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+
+				mailVO.setSubject(subject);
+				mailVO.setContent(content);
+				mailVO.setIsNewPw(false);
+				result = comService.sendMail(request, mailVO);
+				if(result != 0) {
+					returnMap.put("mailSuccessYN", "Y");
+					returnMap.put("mailList", toList);
+				} else {
+					returnMap.put("mailSuccessYN", "N");
+				}
+			}
+			
+			
+			
 		}catch(Exception e){
 			returnMap.put("successYN", "N");
+			returnMap.put("mailSuccessYN", "N");
 			logger.error("{}", e);
 			throw e;
 		}		
@@ -1064,6 +1254,19 @@ public class MngMaintBillController {
 		
 //		EgovMap paymentRequestInfo = null;
 //		String paymentStatusCdNm = null;
+		
+		//메일관련 변수
+		MailVO mailVO = null;
+		List<String> toList = null;
+		String tmail = null;
+		String subject = null;
+		String content = null;
+		int result = 0;
+		String grantorName = null; //처리완료자(승인자)
+		HashMap<String, String> userMap = null;
+		StringBuffer msg = null;
+		
+		MtContractVO mtContractVO = null;
 		try {
 			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
@@ -1082,6 +1285,10 @@ public class MngMaintBillController {
 			
 			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 			
 			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
+			
+			
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getMtNm()); 			
+			logger.debug("mtPaymentVO.getPaymentBillAcNm() : {}", mtPaymentVO.getPaymentBillAcNm()); 	//매입처명
 			
 			
 						
@@ -1108,6 +1315,84 @@ public class MngMaintBillController {
 			} else {
 				returnMap.put("successYN", "N");
 			}
+			
+
+			//지급완료 처리인 경우 메일전송.
+			if("E".equals(mtPaymentVO.getPaymentStatusCd())) {
+				mtContractVO = mtContractService.selectContractBasicDetail(mtPaymentVO.getMtIntegrateKey());
+				/*
+				 * 메일전송
+				 * 유지보수 등록 담당자에게 메일을 전송한다.
+				 */
+				userMap = new HashMap<String, String>();
+				userMap.put("empKey", sessionMap.get("empKey"));
+				grantorName = mainService.selectName(userMap);
+				
+				subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 백계약 지급완료 정보";
+				
+				msg = new StringBuffer();
+				msg.append("(유지보수) ");
+				msg.append(mtContractVO.getMtNm());
+				msg.append("[");
+				msg.append(mtPaymentVO.getMtIntegrateKey());
+				msg.append("]건의 ");
+				msg.append(mtPaymentVO.getPaymentTurn());
+				msg.append(" 회차 건에 대한 백계약 지급완료 정보가 있습니다.");
+				msg.append("<br><br>");
+				msg.append(" - 매입처정보 :");
+				msg.append(mtPaymentVO.getPaymentBillAcNm());
+				msg.append("(");
+				msg.append(mtPaymentVO.getPaymentAcFkKey());
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리자 :");
+				msg.append(grantorName);
+				msg.append("(");
+				msg.append(sessionMap.get("empKey"));
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리일자 :");
+				msg.append(CepDateUtil.getToday("yyyy-MM-dd HH:mm"));
+				msg.append("<br><br>");
+				
+				content = String.join(System.getProperty("line.separator"), msg.toString());
+				
+				
+				
+				mailVO = new MailVO();
+				/*
+				 * 등록자와 영업담당이 같은 경우 한사람에게만 보내고
+				 * 다른 경우 등록자와 영업담당자 보두에게 처리내용을 보낸다.
+				 */
+				toList = new ArrayList<String>();
+				if(mtContractVO.getRegEmpKey().equals(mtContractVO.getMtSaleEmpKey())) {
+					toList.add(mtContractVO.getRegEmpKey());
+				} else {
+					toList.add(mtContractVO.getRegEmpKey());
+					toList.add(mtContractVO.getMtSaleEmpKey());
+				}
+//				logger.debug("tmail=====>"+StringUtils.join(toList, ";"));
+				
+				tmail = StringUtils.join(toList, ";");
+//				tmail = "ycchoi@corestone.co.kr";
+				
+				mailVO.setEmpKey(tmail);
+				//http://192.168.1.137:8080/maintenance/contract/detail/paymentPlanInfo.do?mtIntegrateKey=MA220001&mtOrderKey=MB220002
+				mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "maintenance/contract/detail/paymentPlanInfo.do?mtIntegrateKey="+mtPaymentVO.getMtIntegrateKey()+"&mtOrderKey="+mtPaymentVO.getPaymentBuyFkKey());
+//				mailVO.setLink("http://192.168.1.137:8080/" + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+
+				mailVO.setSubject(subject);
+				mailVO.setContent(content);
+				mailVO.setIsNewPw(false);
+				result = comService.sendMail(request, mailVO);
+				if(result != 0) {
+					returnMap.put("mailSuccessYN", "Y");
+					returnMap.put("mailList", toList);
+				} else {
+					returnMap.put("mailSuccessYN", "N");
+				}
+			}
+			
 						
 			
 			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
@@ -1209,6 +1494,7 @@ public class MngMaintBillController {
 	
 	/**
 	 * 매입지급요청 등록.
+	 * 매입지급요청 메일 전송.
 	 * <pre>
 	 * </pre>
 	 * 
@@ -1230,46 +1516,159 @@ public class MngMaintBillController {
 		
 		HashMap<String, String> sessionMap = null;
 		
+		String successYN = null;
 //		EgovMap paymentRequestInfo = null;
 //		String paymentStatusCdNm = null;
+		//메일관련
+		MailVO mailVO = null;
+		String dept = null;
+		List<String> toList = null;
+		String email = null;
+		String tmail = null;
+		String subject = null;
+		String content = null;
+		int result = 0;
+		StringBuffer msg = null;
+		boolean isWritePaymentRequest = false;
 		try {
 			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
-			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getBillFkKey()); 
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getBillFkKey()); 
 			
-			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
+			
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
 			logger.debug("mtPaymentVO.getMtWorkKey() : {}", mtPaymentVO.getMtWorkKey()); //유지보수 작업에만 존재함(mtOrderType:PO)
-			logger.debug("mtPaymentVO.getMtOrderKey()  : {}", mtPaymentVO.getMtOrderKey()); //발주키
-			logger.debug("mtPaymentVO.getPaymentBuyFkKey()  : {}", mtPaymentVO.getPaymentBuyFkKey()); //발주키
 			logger.debug("mtPaymentVO.getBillAcKey()  : {}", mtPaymentVO.getBillAcKey()); //매입사업자번호.
 			logger.debug("mtPaymentVO.getPaymentAcFkKey()  : {}", mtPaymentVO.getPaymentAcFkKey()); //매입사업자번호.
 			logger.debug("mtPaymentVO.getPaymentKey()  : {}", mtPaymentVO.getPaymentKey()); //지급관리키.
+			
+			
+			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
+			
+			logger.debug("mtPaymentVO.getMtOrderKey()  : {}", mtPaymentVO.getMtOrderKey()); //발주키
+			logger.debug("mtPaymentVO.getPaymentBuyFkKey()  : {}", mtPaymentVO.getPaymentBuyFkKey()); //발주키
+			
+			logger.debug("mtPaymentVO.getMtNm()  : {}", mtPaymentVO.getMtNm()); //프로젝트명.
+			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
+			logger.debug("mtPaymentVO.getPaymentTurn() : {}", mtPaymentVO.getPaymentTurn());
+			logger.debug("mtPaymentVO.getLogInEmpNm()  : {}", mtPaymentVO.getLogInEmpNm()); //로그인 유저명.
 						
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
 			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
 			
+			
+			logger.debug("url  : {}", "mngMaint/payment/detail/main.do?mtIntegrateKey="
+					+mtPaymentVO.getMtIntegrateKey()+"&mtWorkKey="
+					+mtPaymentVO.getMtWorkKey()+"&mtOrderKey="
+					+mtPaymentVO.getPaymentBuyFkKey()+"&proceedTurn="
+					+mtPaymentVO.getPaymentTurn()
+					+"&iframGubun=detail&mtOrderType="+mtPaymentVO.getMtOrderType()); //url.
+			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getMtOrderType(), ""))) {
 				if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
 					//계산서 요청 관리키가 없는 경우 등록
 					paymentKey = service.writePaymentRequestInfo(mtPaymentVO);
-					
-//					mtPaymentVO.setPaymentKey(paymentKey);
-//					paymentRequestInfo = service.selectPaymentRequestInfo(mtPaymentVO);
-//					paymentStatusCdNm = (String)paymentRequestInfo.get("paymentRequestInfo");
+										
+					isWritePaymentRequest = true;
 				} else {
 					//계산서 요청 관리키가 있는 경우 수정 
 					service.updatePaymentRequestInfo(mtPaymentVO);
 					paymentKey = mtPaymentVO.getPaymentKey();
 									
 				}
+				
+				successYN = "Y";
 				returnMap.put("successYN", "Y");
+				
+				
 			} else {
+				successYN = "N";
 				returnMap.put("successYN", "N");
 			}
 						
+			//등록인 경우에만 메일을 전송한다. 수정은 전송안함.
+			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getMtOrderType(), "")) 
+					&& isWritePaymentRequest
+					&& "Y".equals(CepStringUtil.getDefaultValue(successYN, "N"))) {
+				//신규 지급요청인 경우 메일전송.
+				
+				dept = DeptInfo.DEPT_OPER_L2.getValue();
+				toList = new ArrayList<String>();
+				
+				for(Object obj : comService.selectDeptEmployeeList(dept)) {
+					email = obj.toString().substring(obj.toString().indexOf("=") + 1, obj.toString().length() - 1);
+					toList.add(email);
+					
+//					logger.debug("email111=====>"+email);
+				}
+//				toList.add("ycchoi@corestone.co.kr");
+				
+				if(toList.size()>0) {
+					//메일전송할 대상이 있는 경우에만 전송한다.
+					tmail = StringUtils.join(toList, ";");
+					
+//					tmail = "ycchoi@corestone.co.kr";
+					
+					subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 매입 지급요청 정보";
+					
+					msg = new StringBuffer();
+					msg.append("(유지보수) ");
+					msg.append(mtPaymentVO.getMtNm());
+					msg.append("[");
+					msg.append(mtPaymentVO.getMtIntegrateKey());
+					msg.append("]건의 ");
+					msg.append(mtPaymentVO.getPaymentTurn());
+					msg.append(" 회차 건의 발주에 대한 지급요청 정보가 있습니다.");
+					msg.append("<br><br>");
+					msg.append(" - 매입처정보 :");
+					msg.append(mtPaymentVO.getPaymentBillAcNm());
+					msg.append("(");
+					msg.append(mtPaymentVO.getPaymentAcFkKey());
+					msg.append(")");
+					msg.append("<br>");
+					msg.append(" - 요청자 :");
+					msg.append(mtPaymentVO.getLogInEmpNm());
+					msg.append("(");
+					msg.append(sessionMap.get("empKey"));
+					msg.append(")");
+					msg.append("<br>");
+					msg.append(" - 작성일자 :");
+					msg.append(CepDateUtil.getToday("yyyy-MM-dd HH:mm"));
+					msg.append("<br><br>");
+					
+					mailVO = new MailVO();
+					mailVO.setEmpKey(tmail);
+					
+					mailVO.setLink(EmailInfo.PAGE_URL.getValue() 
+							+ "mngMaint/payment/detail/main.do?mtIntegrateKey="
+							+mtPaymentVO.getMtIntegrateKey()+"&mtWorkKey="
+							+mtPaymentVO.getMtWorkKey()+"&mtOrderKey="
+							+mtPaymentVO.getPaymentBuyFkKey()+"&proceedTurn="
+							+mtPaymentVO.getPaymentTurn()
+							+"&iframGubun=detail&mtOrderType="+mtPaymentVO.getMtOrderType()
+							);
+					
+					
+										
+					mailVO.setSubject(subject);
+					mailVO.setContent(msg.toString());
+					mailVO.setIsNewPw(false);
+					
+					result = comService.sendMail(request, mailVO);
+					if(result != 0) {
+						returnMap.put("mailSuccessYN", "Y");
+					} else {
+						returnMap.put("mailSuccessYN", "N");
+					}
+					
+					returnMap.put("mailList", toList);
+				} else {
+					returnMap.put("mailSuccessYN", "N");
+				}
+				
+			}
 			
 			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
 			//유지보수 key
@@ -1474,6 +1873,21 @@ public class MngMaintBillController {
 //		EgovMap paymentRequestInfo = null;
 //		String paymentStatusCdNm = null;
 		String successYN = "N";
+		
+
+		
+		//메일관련 변수
+		MailVO mailVO = null;
+		List<String> toList = null;
+		String tmail = null;
+		String subject = null;
+		String content = null;
+		int result = 0;
+		String grantorName = null; //처리완료자(승인자)
+		HashMap<String, String> userMap = null;
+		StringBuffer msg = null;
+		
+		MtContractVO mtContractVO = null;
 		try {
 			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
@@ -1490,6 +1904,14 @@ public class MngMaintBillController {
 			
 			logger.debug("mtPaymentVO.getCurrentStatus()  : {}", mtPaymentVO.getCurrentStatus()); //현재 요청상태
 			logger.debug("mtPaymentVO.getRequestStatus()  : {}", mtPaymentVO.getRequestStatus()); //변경할 요청상태.
+			
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getMtNm()); 			
+			logger.debug("mtPaymentVO.getPaymentBillAcNm() : {}", mtPaymentVO.getPaymentBillAcNm()); 	//매입처명
+			logger.debug("mtPaymentVO.getPaymentTurn() : {}", mtPaymentVO.getPaymentTurn()); 	//회차
+			logger.debug("mtPaymentVO.getPaymentTurn() : {}", mtPaymentVO.getLogInEmpNm()); 	//로그인 사용자명
+			
+			
+			
 						
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
@@ -1498,7 +1920,92 @@ public class MngMaintBillController {
 			
 			
 			successYN = updatePaymentRequestStatusCode(mtPaymentVO);
+			
+			successYN = "Y";
 			returnMap.put("successYN", successYN);
+
+			//지급완료 처리인 경우 메일전송.(작업발주이면서 완료처리인 경우)
+			if("E".equals(mtPaymentVO.getRequestStatus()) && "Y".equals(successYN)) {
+				mtContractVO = mtContractService.selectContractBasicDetail(mtPaymentVO.getMtIntegrateKey());
+				/*
+				 * 메일전송
+				 * 유지보수 등록 담당자에게 메일을 전송한다.
+				 */
+//				userMap = new HashMap<String, String>();
+//				userMap.put("empKey", sessionMap.get("empKey"));
+//				grantorName = mainService.selectName(userMap);
+				
+				subject = "(유지보수) "+mtContractVO.getMtNm()+"["+mtContractVO.getMtIntegrateKey()+"]에 대한 매입 지급완료 정보";
+				
+				msg = new StringBuffer();
+				msg.append("(유지보수) ");
+				msg.append(mtContractVO.getMtNm());
+				msg.append("[");
+				msg.append(mtContractVO.getMtIntegrateKey());
+				msg.append("]건의 ");
+				msg.append(mtPaymentVO.getPaymentTurn());
+				msg.append(" 회차 건의 발주에 대한 지급완료 정보가 있습니다.");
+				msg.append("<br><br>");
+				msg.append(" - 매입처정보 :");
+				msg.append(mtPaymentVO.getPaymentBillAcNm());
+				msg.append("(");
+				msg.append(mtPaymentVO.getPaymentAcFkKey());
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리자 :");
+				msg.append(mtPaymentVO.getLogInEmpNm());
+				msg.append("(");
+				msg.append(sessionMap.get("empKey"));
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리일자 :");
+				msg.append(CepDateUtil.getToday("yyyy-MM-dd HH:mm"));
+				msg.append("<br><br>");
+				
+				content = String.join(System.getProperty("line.separator"), msg.toString());
+				
+				
+				
+				mailVO = new MailVO();
+				/*
+				 * 등록자와 영업담당이 같은 경우 한사람에게만 보내고
+				 * 다른 경우 등록자와 영업담당자 보두에게 처리내용을 보낸다.
+				 */
+				toList = new ArrayList<String>();
+				if(mtContractVO.getRegEmpKey().equals(mtContractVO.getMtSaleEmpKey())) {
+					toList.add(mtContractVO.getRegEmpKey());
+				} else {
+					toList.add(mtContractVO.getRegEmpKey());
+//					toList.add(mtContractVO.getMtSaleEmpKey());
+				}
+//				logger.debug("tmail=====>"+StringUtils.join(toList, ";"));
+				
+				tmail = StringUtils.join(toList, ";");
+				//tmail = "ycchoi@corestone.co.kr";
+				
+				mailVO.setEmpKey(tmail);
+				//http://192.168.1.137:8080/mngMaint/payment/detail/main.do?mtIntegrateKey=MA220001&mtWorkKey=MW220001&mtOrderKey=MO220001&iframGubun=detail&mtOrderType=PO&proceedTurn=1
+				mailVO.setLink(EmailInfo.PAGE_URL.getValue() 
+						+ "mngMaint/payment/detail/main.do?mtIntegrateKey="
+						+mtPaymentVO.getMtIntegrateKey()+"&mtWorkKey="
+						+mtPaymentVO.getMtWorkKey()+"&mtOrderKey="
+						+mtPaymentVO.getPaymentBuyFkKey()+"&proceedTurn="
+						+mtPaymentVO.getPaymentTurn()
+						+"&iframGubun=detail&mtOrderType="+mtPaymentVO.getMtOrderType()
+						);
+//				mailVO.setLink("http://192.168.1.137:8080/" + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+
+				mailVO.setSubject(subject);
+				mailVO.setContent(content);
+				mailVO.setIsNewPw(false);
+				result = comService.sendMail(request, mailVO);
+				if(result != 0) {
+					returnMap.put("mailSuccessYN", "Y");
+					returnMap.put("mailList", toList);
+				} else {
+					returnMap.put("mailSuccessYN", "N");
+				}
+			}
 			
 //			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
 //				if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))
@@ -1559,7 +2066,18 @@ public class MngMaintBillController {
 		return returnMap;
 	}
 	
-	
+	/**
+	 * 유지보수관리 >> 지급계획목록 >> 작업발주 완료 처리.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param request
+	 * @param mtPaymentVO
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 2. 26. 오전 12:03:46
+	 * @author aranghoo
+	 */
 	@RequestMapping(value="/mngMaint/payment/detail/updatePaymentRequestStatus2.do")
 	@ResponseBody
 	public Map<String, Object> updatePaymentRequestStatus2(HttpServletRequest request, @ModelAttribute("mtPaymentVO") MtPaymentVO mtPaymentVO) throws Exception {
@@ -1574,6 +2092,21 @@ public class MngMaintBillController {
 //		EgovMap paymentRequestInfo = null;
 //		String paymentStatusCdNm = null;
 		String successYN = "N";
+		
+
+		
+		//메일관련 변수
+		MailVO mailVO = null;
+		List<String> toList = null;
+		String tmail = null;
+		String subject = null;
+		String content = null;
+		int result = 0;
+		String grantorName = null; //처리완료자(승인자)
+		HashMap<String, String> userMap = null;
+		StringBuffer msg = null;
+		
+		MtContractVO mtContractVO = null;
 		try {
 			logger.debug("mtPaymentVO.getPaymentKey() : {}", mtPaymentVO.getPaymentKey());
 			logger.debug("mtPaymentVO.getMtIntegrateKey() : {}", mtPaymentVO.getMtIntegrateKey());
@@ -1589,6 +2122,11 @@ public class MngMaintBillController {
 			logger.debug("mtPaymentVO.getPaymentKey()  : {}", mtPaymentVO.getPaymentKey()); //지급관리키.			
 			logger.debug("mtPaymentVO.getCurrentStatus()  : {}", mtPaymentVO.getCurrentStatus()); //현재 요청상태
 			logger.debug("mtPaymentVO.getRequestStatus()  : {}", mtPaymentVO.getRequestStatus()); //변경할 요청상태.
+			
+
+			logger.debug("mtPaymentVO.getBillFkKey() : {}", mtPaymentVO.getMtNm()); 			
+			logger.debug("mtPaymentVO.getPaymentBillAcNm() : {}", mtPaymentVO.getPaymentBillAcNm()); 	//매입처명
+			logger.debug("mtPaymentVO.getPaymentTurn() : {}", mtPaymentVO.getPaymentTurn()); 	//회차
 						
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
@@ -1597,6 +2135,91 @@ public class MngMaintBillController {
 			
 			successYN = updatePaymentRequestStatusCode(mtPaymentVO);
 			returnMap.put("successYN", successYN);
+//			successYN = "Y";
+//			returnMap.put("successYN", "Y");
+
+			//지급완료 처리인 경우 메일전송.
+			if("E".equals(mtPaymentVO.getPaymentStatusCd())  && "Y".equals(successYN)) {
+				mtContractVO = mtContractService.selectContractBasicDetail(mtPaymentVO.getMtIntegrateKey());
+				/*
+				 * 메일전송
+				 * 유지보수 등록 담당자에게 메일을 전송한다.
+				 */
+				userMap = new HashMap<String, String>();
+				userMap.put("empKey", sessionMap.get("empKey"));
+				grantorName = mainService.selectName(userMap);
+				
+				subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 매입 지급완료 정보";
+				
+				msg = new StringBuffer();
+				msg.append("(유지보수) ");
+				msg.append(mtContractVO.getMtNm());
+				msg.append("[");
+				msg.append(mtPaymentVO.getMtIntegrateKey());
+				msg.append("]건의 ");
+				msg.append(mtPaymentVO.getPaymentTurn());
+				msg.append(" 회차 건의 발주에 대한 지급완료 정보가 있습니다.");
+				msg.append("<br><br>");
+				msg.append(" - 매입처정보 :");
+				msg.append(mtPaymentVO.getPaymentBillAcNm());
+				msg.append("(");
+				msg.append(mtPaymentVO.getPaymentAcFkKey());
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리자 :");
+				msg.append(grantorName);
+				msg.append("(");
+				msg.append(sessionMap.get("empKey"));
+				msg.append(")");
+				msg.append("<br>");
+				msg.append(" - 처리일자 :");
+				msg.append(CepDateUtil.getToday("yyyy-MM-dd HH:mm"));
+				msg.append("<br><br>");
+				
+				content = String.join(System.getProperty("line.separator"), msg.toString());
+				
+				
+				
+				mailVO = new MailVO();
+				/*
+				 * 등록자와 영업담당이 같은 경우 한사람에게만 보내고
+				 * 다른 경우 등록자와 영업담당자 보두에게 처리내용을 보낸다.
+				 */
+				toList = new ArrayList<String>();
+				if(mtContractVO.getRegEmpKey().equals(mtContractVO.getMtSaleEmpKey())) {
+					toList.add(mtContractVO.getRegEmpKey());
+				} else {
+					toList.add(mtContractVO.getRegEmpKey());
+					toList.add(mtContractVO.getMtSaleEmpKey());
+				}
+//				logger.debug("tmail=====>"+StringUtils.join(toList, ";"));
+				
+				tmail = StringUtils.join(toList, ";");
+				//tmail = "ycchoi@corestone.co.kr";
+				
+				mailVO.setEmpKey(tmail);
+				//http://192.168.1.137:8080/mngMaint/payment/detail/main.do?mtIntegrateKey=MA220001&mtWorkKey=MW220001&mtOrderKey=MO220001&iframGubun=detail&mtOrderType=PO&proceedTurn=1
+				mailVO.setLink(EmailInfo.PAGE_URL.getValue() 
+						+ "mngMaint/payment/detail/main.do?mtIntegrateKey="
+						+mtPaymentVO.getMtIntegrateKey()+"&mtWorkKey="
+						+mtPaymentVO.getMtWorkKey()+"&mtOrderKey="
+						+mtPaymentVO.getPaymentBuyFkKey()+"&proceedTurn="
+						+mtPaymentVO.getPaymentTurn()
+						+"&iframGubun=detail&mtOrderType="+mtPaymentVO.getMtOrderType()
+						);
+//				mailVO.setLink("http://192.168.1.137:8080/" + "maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mngMaintBillVO.getPjKey()+"&mtSalesOrderKey="+mngMaintBillVO.getMtSalesOrderKey());
+
+				mailVO.setSubject(subject);
+				mailVO.setContent(content);
+				mailVO.setIsNewPw(false);
+				result = comService.sendMail(request, mailVO);
+				if(result != 0) {
+					returnMap.put("mailSuccessYN", "Y");
+					returnMap.put("mailList", toList);
+				} else {
+					returnMap.put("mailSuccessYN", "N");
+				}
+			}
 			
 //			if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentKey(), ""))) {
 //				if(!"".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))
@@ -1634,7 +2257,8 @@ public class MngMaintBillController {
 //			} else {
 //				returnMap.put("successYN", "N");
 //			}
-						
+
+			
 			
 			returnMap.put("mtOrderType", mtPaymentVO.getMtOrderType());
 			

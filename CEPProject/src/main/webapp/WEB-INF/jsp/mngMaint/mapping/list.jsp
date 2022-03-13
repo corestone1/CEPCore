@@ -266,7 +266,7 @@
 								<th scope="row">발주일자</th>
 								<th scope="row">매핑상태</th>
 								<th scope="row">고객사</th>
-								<th scope="row">프로젝트명</th>
+								<th scope="row">유지보수명</th>
 								<th scope="row">제품</th>
 								<th scope="row">매입처명</th>
 								<th scope="row">사업자번호</th>

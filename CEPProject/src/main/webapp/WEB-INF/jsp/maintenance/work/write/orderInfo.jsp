@@ -253,11 +253,16 @@
 			'</c:if>'
 			
 			//거래처 검색
-			$("#orderAcKeyNm").on("keydown", function(event){
+			/* $("#orderAcKeyNm").on("keydown", function(event){
 				
 				if(event.keyCode == 13) {						
 					fnSearchAccoutList(this, $(this).val());
 				}
+					
+			}); */
+			$("#orderAcKeyNm").on("keyup", function(event){
+				
+				fnSearchAccoutList(this, $(this).val());
 					
 			});
 		}); //end $(document).ready()
@@ -1031,7 +1036,7 @@
 							<label class="ftw500">발주등록</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<!-- </td>
 						<td class="subTitle" colspan="5"  style="border-top: none;"> -->
-						<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewOrder();"  style="vertical-align: middle;cursor: pointer;"/>				
+						<img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addNewOrder();"  style="vertical-align: middle;cursor: pointer;"/>				
 							
 						<c:if test="${workOrderSelectBox.size() >0 }">
 							<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
@@ -1147,7 +1152,7 @@
 								<label class="ftw500">제품정보</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<!-- </td>
 							<td class="subTitle" colspan="5"  style="border-top: none;"> -->
-								<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="vertical-align: middle;cursor: pointer;"/>
+								<img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addInfoTable();" style="vertical-align: middle;cursor: pointer;"/>
 							</td>
 						</tr>
 					</table>

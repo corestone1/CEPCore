@@ -47,7 +47,7 @@
 			overflow-y: auto;
 		}
 		.popContainer .contents > div {
-			width: calc(100% - 80px);
+			width: calc(100% - 96px);
 			/* margin: 10px 40px 15px 40px; */
 			margin: 10px 40px 15px 45px;
 		}
@@ -106,13 +106,13 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 43px);
-			height: 114px;
+			height: 60px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			resize: vertical;
 		}
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
@@ -123,7 +123,7 @@
 			color: #525252;
 			padding-right: 20px;
 			width: 99px;
-		    height: 38px;
+		    height: 42px;
 		}					
 		.popContainer .contents td.tdSubTitle {
 		    margin-top: 11px;
@@ -168,10 +168,10 @@
 			z-index: 99;
 		}
 		#fileForm .exFileLabel {
-			background-image: url('/images/btn_file.png');
+			background-image: url('/images/btn_file_upload.png');
 			background-repeat: no-repeat;
-			width: 110px;
-			height: 26px;
+			width: 119px;
+			height: 31px;
 			cursor: pointer;
 			float: left;
 			margin-top: 1px;
@@ -185,7 +185,7 @@
 			vertical-align: middle; 
 			border: 1px solid #ebebeb; 
 			width: 184px;
-			height: 26px;
+			height: 30px;
 		}
 		#fileForm .exFile {
 			position: absolute;
@@ -263,13 +263,18 @@
 			'</c:if>'
 			
 			//거래처 검색
-			$("#mtAcNm").on("keydown", function(event){
+			/* $("#mtAcNm").on("keydown", function(event){
 				
 				if(event.keyCode == 13) {		
 					
 					fnSearchAccoutList(this, $(this).val());
 				}						
-			});
+			}); */
+			
+			$("#mtAcNm").on("keyup", function(event){
+				
+				fnSearchAccoutList(this, $(this).val());					
+			}); 
 			
 			//파일 업로드
 			var fileTarget = $(".exFile");
@@ -989,7 +994,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">&nbsp; PRJECT명</td>
+							<td class="tdTitle">&nbsp; PROJECT명</td>
 							<td class="tdContents">
 								<button type="button" onclick="javascript:fn_projectPop()" style="vertical-align: middle;">
 									<img src="<c:url value='/images/btn_project_connect.png'/>" />
@@ -1016,9 +1021,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label> 고객사담당자</td>
+							<td class="tdTitle">&nbsp;  고객사담당자</td>
 							<td class="tdContents">
-								<select id="mtAcDirectorKey" name="mtAcDirectorKey" required>									
+								<select id="mtAcDirectorKey" name="mtAcDirectorKey" >									
 									<c:forEach var="item" items="${acDirectorList}" varStatus="status">										
 									<option value="<c:out value="${item.acDirectorKey}"/>"><c:out value="${item.acDirectorNm}"/></option>
 									</c:forEach>									
@@ -1198,12 +1203,12 @@
 				</div>
 				<c:choose>
 					<c:when test="${basicContractInfo !=null}">
-				<div class="floatR"  style="margin-right: 22px;">
+				<div class="floatR"  style="margin-right: -22px;">
 					<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
 				</div>
 					</c:when>
 					<c:otherwise>
-				<div class="floatR"  style="margin-right: 22px;">
+				<div class="floatR"  style="margin-right: -22px;">
 					<img src="<c:url value='/images/btn_non_next.png'/>"/>
 				</div>						
 					</c:otherwise>

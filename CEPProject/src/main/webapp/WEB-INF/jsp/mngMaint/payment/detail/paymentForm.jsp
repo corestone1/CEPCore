@@ -350,6 +350,17 @@
 	            }
 	           	object['currentStatus'] = currentStatus;
 	           	object['requestStatus'] = requestStatus;
+	           	
+	        	//로그인 사용자명 추가
+	           	object['logInEmpNm'] = $('#nameVal',parent.document).val();
+	           	//object.logInEmpNm = $('#nameVal').val();
+	           	//프로젝트명 추가.
+	          	object['mtNm'] = $('#m_mtNm',parent.document).val();
+	           	//object.mtNm = $('#m_mtNm').val();
+	           	
+	           	//매입처 추가
+	           	object['paymentBillAcNm'] = $('#m_orderAcKeyNm',parent.document).val();
+	           	
 	           	var sendData = JSON.stringify(object);
 	           	//console.log("sendData======>"+sendData);
 	           	 $.ajax({
@@ -367,11 +378,23 @@
 
 		            	var paramData = JSON.parse(data);
 		            	
+		            	var mailList = "";
+				    	if(paramData.mailList == "undefined" || paramData.mailList == null || paramData.mailList == "") {
+				    		mailList = "";
+				    	} else {
+				    		mailList = "\n메일 수신인: " + paramData.mailList.join("\n");
+				    	}
+				    	
 		            	if("Y" == paramData.successYN){
 		            		
 		            		var varParam = JSON.parse(data);
 		            		
-		            		alert(title+" 성공하였습니다.");
+		            		if(paramData.mailSuccessYN=='Y') {
+		            			alert(title+" 성공하였습니다."+ mailList);
+		            		}  else {
+		            			alert(title+" 성공하였습니다.");
+		            		}
+		            		
 		            		
 		            		if(parentReloadYN=="Y") {
 		            			//window.parent.location.reload();
@@ -492,6 +515,8 @@
 			//필수값 체크를 완료하면 저장 프로세스 시작.
 			if ($("#paymentReqForm")[0].checkValidity()){
 				if($('#billFkKey').val() !=''){
+					
+					
 					if($('#m0_paymentKey').val() !=''){
 						if(confirm("유지보수 매입금 지급요청을 수정하시겠습니까?")) {
 							savePaymentReqInfo();
@@ -530,80 +555,107 @@
                 	object[formData[i]['name']] = removeData(formData[i]['value'], ",");
                 } else {
                 	object[formData[i]['name']] = formData[i]['value'];
+                	console.log("sendData======>"+sendData);
                 }      
             }
+           	//로그인 사용자명 추가
+           	object['logInEmpNm'] = $('#nameVal',parent.document).val();
+           	//object.logInEmpNm = $('#nameVal').val();
+           	//프로젝트명 추가.
+          	object['mtNm'] = $('#m_mtNm',parent.document).val();
+           	//object.mtNm = $('#m_mtNm').val();
+           	
+           	//매입처 추가
+           	object['paymentBillAcNm'] = $('#m_orderAcKeyNm',parent.document).val();
+           	
            	var sendData = JSON.stringify(object);
            	//console.log("sendData======>"+sendData);
-           	 $.ajax({
-	        	url:"/mngMaint/payment/detail/writePaymentRequestInfo.do",
-	            dataType: 'text', 
-	            type:"post",  
-	            data: sendData,
-	            
-	     	   	contentType: "application/json; charset=UTF-8", 
-	     	  	beforeSend: function(xhr) {
-	        		xhr.setRequestHeader("AJAX", true);
-	        		
-	        	},
-	            success:function(data){	
+          	 $.ajax({
+ 	        	url:"/mngMaint/payment/detail/writePaymentRequestInfo.do",
+ 	            dataType: 'text', 
+ 	            type:"post",  
+ 	            data: sendData,
+ 	            
+ 	     	   	contentType: "application/json; charset=UTF-8", 
+ 	     	  	beforeSend: function(xhr) {
+ 	        		xhr.setRequestHeader("AJAX", true);
+ 	        		
+ 	        	},
+ 	            success:function(data){	
 
-	            	var paramData = JSON.parse(data);
-	            	
-	            	if("Y" == paramData.successYN){
-	            		
-	            		var varParam = JSON.parse(data);
-	            		
-	            		//업로드 파일을 선택하지 않은 경우
-            			if($('#m0_paymentKey').val() !=''){
-	            			alert("유지보수 매입금 지급요청 수정을 성공하였습니다.");
-	            			/*
-	            			form = document.paymentReqForm;
-			    			form.action = "/mngMaint/payment/detail/paymentForm.do";
-			    			form.submit(); 
-			    			*/
-	            			window.parent.document.getElementById("m_iframGubun").value="detail";
-	             			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
-	             			
-	             			window.parent.changeIframeUrl();
-	            		} else {
-	            			alert("유지보수 매입금 지급요청 등록을 성공하였습니다.");
-	            			// 관리키를 셋팅한다.
-	            			$('#m0_paymentKey').val(paramData.paymentKey)
-	            			
-	            			window.parent.document.getElementById("m_iframGubun").value="detail";
-	            			//window.parent.document.getElementById("m_paymentKey").value=paramData.paymentKey;
-	            			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
-	            			
-	            			window.parent.changeIframeUrl();
-	            			
-	            		}
-            			
+ 	            	var paramData = JSON.parse(data);
+ 	            	
+ 	            	var mailList = "";
+			    	if(paramData.mailList == "undefined" || paramData.mailList == null || paramData.mailList == "") {
+			    		mailList = "1";
+			    	} else {
+			    		mailList = "\n메일 수신인: " + paramData.mailList.join("\n");
+			    	}
+ 	            	
+ 	            	if("Y" == paramData.successYN){
+ 	            		
+ 	            		var varParam = JSON.parse(data);
+ 	            		//console.log("varParam====>"+varParam);
+ 	            		//console.log("paramData.successYN====>"+paramData.successYN);
+ 	            		//console.log("paramData.mailSuccessYN====>"+paramData.mailSuccessYN);
+ 	            		//console.log("paramData.mailList====>"+paramData.mailList);
+ 	            		//console.log("data.mailList====>"+data.mailList);
+ 	            		//업로드 파일을 선택하지 않은 경우
+             			if($('#m0_paymentKey').val() !=''){
+ 	            			alert("유지보수 매입금 지급요청 수정을 성공하였습니다.");
+ 	            			/*
+ 	            			form = document.paymentReqForm;
+ 			    			form.action = "/mngMaint/payment/detail/paymentForm.do";
+ 			    			form.submit(); 
+ 			    			*/
+ 	            			window.parent.document.getElementById("m_iframGubun").value="detail";
+ 	             			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
+ 	             			
+ 	             			window.parent.changeIframeUrl();
+ 	            		} else {
+ 	            			if(paramData.mailSuccessYN=='Y') {
+ 	            				alert("유지보수 매입금 지급요청 등록을 성공하였습니다.."+ mailList);
+ 	            			} else {
+ 	            				alert("유지보수 매입금 지급요청 등록을 성공하였습니다.(메일전송은 실패 !!)");
+ 	            			}
+ 	            			
+ 	            			// 관리키를 셋팅한다.
+ 	            			$('#m0_paymentKey').val(paramData.paymentKey)
+ 	            			
+ 	            			window.parent.document.getElementById("m_iframGubun").value="detail";
+ 	            			//window.parent.document.getElementById("m_paymentKey").value=paramData.paymentKey;
+ 	            			window.parent.document.getElementById("m_proceedTurn").value=$('#slt_paymentTurn').val();
+ 	            			
+ 	            			window.parent.changeIframeUrl();
+ 	            			
+ 	            		}
+             			
 
-		            	/* var url = '/mngMaint/payment/detail/paymentForm.do';
-		    			var dialogId = 'program_layer';
-		    			
-		    			var button = new Array;
-		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');    */       
-		    				            		
-		    			
-	            		
-	            	} else {
-	            		if($('#m0_paymentKey').val() !=''){
-	            			alert("유지보수 매입금 지급요청 수정을 실패하였습니다.");
-	            		} else {
-	            			alert("유지보수 매입금 지급요청 등록을 실패하였습니다.");
-	            		}
-	            		
-	            	}
-	            	 
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	        });  
+ 		            	/* var url = '/mngMaint/payment/detail/paymentForm.do';
+ 		    			var dialogId = 'program_layer';
+ 		    			
+ 		    			var button = new Array;
+ 		    			button = [];
+ 		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');    */       
+ 		    				            		
+ 		    			
+ 	            		
+ 	            	} else {
+ 	            		if($('#m0_paymentKey').val() !=''){
+ 	            			alert("유지보수 매입금 지급요청 수정을 실패하였습니다.");
+ 	            		} else {
+ 	            			alert("유지보수 매입금 지급요청 등록을 실패하였습니다.");
+ 	            		}
+ 	            		
+ 	            	}
+ 	            	 
+ 	            },
+ 	        	error: function(request, status, error) {
+ 	        		if(request.status != '0') {
+ 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+ 	        		}
+ 	        	} 
+ 	        });  
 		}
 		
 		
@@ -720,6 +772,7 @@
 			<input type="hidden" id="m0_proceedTurn" name="proceedTurn" value="${proceedTurn}" />
 			<input type="hidden" id="m0_proceedTurn" name="paymentStatusCd" value="R" />
 			<input type="hidden" id="m0_paymentYearMonth" name="paymentYearMonth" value="<c:out value="${paymentRequestInfo.paymentYearMonth}"/>"/>	
+	
 			<div class="pmWrap">
 				<table class="dtl" id="info0">
 					<tr>
@@ -818,9 +871,12 @@
 					</button>
 					</c:if>
 					<c:if test='${paymentRequestInfo.paymentStatusCd == "M"}'><!--매핑상태  -->
-					<button type="button" title="계산서 맵핑삭제 삭제" onclick="fn_deleteBtn()">
+					<c:if test='${sessionScope.userInfo.empKey == paymentRequestInfo.regEmpKey}'>
+						<button type="button" title="계산서 맵핑삭제 삭제" onclick="fn_deleteBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_del.png'/>" />
-					</button>
+						</button>
+					</c:if>
+					
 					<button type="button" title="매입금 지급요청 등록" onclick="fn_saveBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_req_purchase.png'/>" />
 					</button>
@@ -828,25 +884,37 @@
 					
 					
 					<c:if test='${paymentRequestInfo.paymentStatusCd == "R"}'><!--요청상태  -->
-					<button type="button" title="매입금 지급요청 삭제" onclick="fn_deleteBtn()">
+					<c:if test='${sessionScope.userInfo.empKey == paymentRequestInfo.regEmpKey}'>
+						<button type="button" title="매입금 지급요청 삭제" onclick="fn_deleteBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_del.png'/>" />
-					</button>
+						</button>
+					</c:if>
+					
 					<button type="button" title="매입금 지급요청 수정" onclick="fn_saveBtn()">
 						<img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" />
 					</button>
-					<button type="button" title="매입금 지급요청확인" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'C')">
+					<c:if test='${sessionScope.empAuthCd == "EMAU1001"}'>
+						<button type="button" title="매입금 지급요청확인" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'C')">
 						<img class="cursorP" src="<c:url value='/images/btn_ack_pay.png'/>" />
-					</button>
+						</button>
+					</c:if>
+					
 					</c:if>
 					
 					<c:if test='${paymentRequestInfo.paymentStatusCd == "C"}'><!--확인상태  -->
-					<button type="button" title="매입금 지급요청 확인취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'R')">확인취소</button>
-					<button type="button" title="매입금 지급요청 지급완료" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'E')">지급완료</button>
+						<c:if test='${sessionScope.empAuthCd == "EMAU1001"}'>
+						<button type="button" title="매입금 지급요청 확인취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'R')">확인취소</button>
+						<button type="button" title="매입금 지급요청 지급완료" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'E')">지급완료</button>
+						
+						</c:if>
 					
 					</c:if>
 					
 					<c:if test='${paymentRequestInfo.paymentStatusCd == "E"}'><!--완료상태  -->
-					<button type="button" title="매입금 지급요청 지급취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'C')">지급완료취소</button>					
+						<c:if test='${sessionScope.empAuthCd == "EMAU1001"}'>
+						<button type="button" title="매입금 지급요청 지급취소" class="rqPmInfo" onclick="fn_updateStatus('${paymentRequestInfo.paymentStatusCd}', 'C')">지급완료취소</button>					
+						</c:if>
+					
 					</c:if>
 					
 				</div>

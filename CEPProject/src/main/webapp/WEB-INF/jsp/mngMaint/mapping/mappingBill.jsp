@@ -403,7 +403,7 @@
 			<div class="contents1">
 				<div>
 					<div class="subTitle floatL">발주 정보</div>
-					<div class="subTitle floatR"><a href="javascript:openPaymentDetail('${orderBillDetail.mtIntegrateKey}','${orderBillDetail.mtOrderType}','${orderBillDetail.mtWorkKey}','${orderBillDetail.mtOrderKey}')">지급 정보 보러가기<label><img src="/images/arrow_down.png" /></label></a></div>
+					<div class="subTitle floatR"><a href="javascript:openPaymentDetail('${orderBillDetail.mtIntegrateKey}','${orderBillDetail.mtOrderType}','${orderBillDetail.mtWorkKey}','${orderBillDetail.mtOrderKey}')" target="_self"><img src="/images/payment_go.png" /></a></div>
 					<div class="floatC"></div>
 				</div>
 				<div>

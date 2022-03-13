@@ -43,6 +43,8 @@ public class MngMaintBillVO implements Serializable {
 	private String modTm;
 	private String modEmpKey;
 	
+	private String mtNm;//유지보수명.
+	
 	
 	private String salesCollectFinishDt; // 수금완료일자
 	
@@ -494,6 +496,14 @@ public class MngMaintBillVO implements Serializable {
 
 	public void setMtSalesOrderKey(String mtSalesOrderKey) {
 		this.mtSalesOrderKey = mtSalesOrderKey;
+	}
+
+	public String getMtNm() {
+		return mtNm;
+	}
+
+	public void setMtNm(String mtNm) {
+		this.mtNm = mtNm;
 	}
 
 }

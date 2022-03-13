@@ -100,7 +100,7 @@ public class MtWorkController {
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
 			} else {
-				searchVO.setToDate(toDay);
+//				searchVO.setToDate(toDay);
 			}
 			
 //			if("".equals(CepStringUtil.getDefaultValue(searchVO.getFromDate(), "")) && "".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
@@ -128,7 +128,10 @@ public class MtWorkController {
 			
 			searchParam = new HashMap<>();
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
-			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+				searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			}
+			
 			
 //			empList = mtcService.selectEmployeeList();
 			model.put("resultList", mtList);

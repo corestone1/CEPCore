@@ -80,6 +80,9 @@ public class MtGuarantyBondVO  extends MtDefaultVO implements Serializable{
 	private String mtEndDt;//유지보수 종료일자
 	private String taxYn; //부가세포함여부
 	private long mtAmount; //유지보수 금액
+	
+	private String contractRegEmpKey; //기본정보 등록자 관리키.
+	private String contractSalesEmpKey; //유지보수 영업담당 관리키.
 	/**
 	 * @return String - the gbKey
 	 */
@@ -367,6 +370,18 @@ public class MtGuarantyBondVO  extends MtDefaultVO implements Serializable{
 	 */
 	public void setMtAmount(long mtAmount) {
 		this.mtAmount = mtAmount;
+	}
+	public String getContractRegEmpKey() {
+		return contractRegEmpKey;
+	}
+	public void setContractRegEmpKey(String contractRegEmpKey) {
+		this.contractRegEmpKey = contractRegEmpKey;
+	}
+	public String getContractSalesEmpKey() {
+		return contractSalesEmpKey;
+	}
+	public void setContractSalesEmpKey(String contractSalesEmpKey) {
+		this.contractSalesEmpKey = contractSalesEmpKey;
 	}
    	
    

@@ -861,6 +861,7 @@
 			, MP.PAYMENT_AC_FK_KEY AS PAYMENT_AC_FK_KEY           /*매입처 관리키 */
 			, MP.PAYMENT_ACC_SEQ_FK_KEY AS PAYMENT_ACC_SEQ_FK_KEY /*지급계좌 관리키 */
 			, MP.REMARK AS REMARK                                 /*요청사항 */
+			, MP.REG_EMP_KEY
 		FROM MT_PC_BILLING_OP_TB MP
 		WHERE PAYMENT_BUY_FK_KEY = #{mtOrderKey} 
 			AND MP.PAYMENT_TURN = #{proceedTurn}
@@ -1237,6 +1238,7 @@
 				'SD'                      AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
 				, SD.SALES_CT_FK_KEY      AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
 				, SD.SALES_KEY            AS PLAN_DETAIL_KEY  /* 수금계획 관리키 */
+				, SD.MT_SALES_ORDER_KEY   AS MT_SALES_ORDER_KEY /*매출주문관리키 */
 				, CA.AC_NM                AS MT_AC_NM         /* 유지보수 고객사 */
 				, MC.MT_NM                AS MT_NM            /* 유지보수명 */
 				, CA2.AC_NM               AS BILL_AC_NM       /* 거래처(매출) 명 */  
@@ -1285,7 +1287,8 @@
 			SELECT 
 				'SD'                         AS BILL_TYPE
 				, SD.SALES_CT_FK_KEY         AS MT_INTEGRATE_KEY	
-				, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+				, SD.SALES_KEY               AS PLAN_DETAIL_KEY			
+				, SD.MT_SALES_ORDER_KEY      AS MT_SALES_ORDER_KEY /*매출주문관리키 */	
 				, CA.AC_NM                   AS MT_AC_NM
 				, MC.MT_NM                   AS MT_NM
 				, CA2.AC_NM                  AS BILL_AC_NM
@@ -1340,7 +1343,8 @@
 			SELECT 
 				'SD'                         AS BILL_TYPE
 				, SD.SALES_CT_FK_KEY         AS MT_INTEGRATE_KEY	
-				, SD.SALES_KEY               AS PLAN_DETAIL_KEY				
+				, SD.SALES_KEY               AS PLAN_DETAIL_KEY			
+				, SD.MT_SALES_ORDER_KEY      AS MT_SALES_ORDER_KEY /*매출주문관리키 */	
 				, CA.AC_NM                   AS MT_AC_NM
 				, MC.MT_NM                   AS MT_NM
 				, CA2.AC_NM                  AS BILL_AC_NM
@@ -1416,6 +1420,7 @@
 					'PC'                      AS BILL_TYPE         /* 매입(PC), 매출(SD) 구분 */
 					, PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY  /* 유지보수 관리키 */
 					, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   /* 백계약지급계획 관리키 */
+				    , NULL                    AS MT_SALES_ORDER_KEY /*매출주문관리키 */
 					, CA.AC_NM                AS MT_AC_NM          /* 유지보수 고객사 */
 					, MC.MT_NM                AS MT_NM             /* 유지보수명 */
 					, CA2.AC_NM               AS BILL_AC_NM        /* 지급 매입처 명 */ 
@@ -1462,6 +1467,7 @@
 					'PC'                      AS BILL_TYPE        
 					, PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
 					, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+				    , NULL                    AS MT_SALES_ORDER_KEY /*매출주문관리키 */
 					, CA.AC_NM                AS MT_AC_NM
 					, MC.MT_NM                AS MT_NM
 					, CA2.AC_NM               AS BILL_AC_NM
@@ -1512,6 +1518,7 @@
 					'PC'                            AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
 					, MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
 					, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+				    , NULL                          AS MT_SALES_ORDER_KEY /*매출주문관리키 */
 					, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
 					, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
 					, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */
@@ -1570,6 +1577,7 @@
 					'PC'                      AS BILL_TYPE        
 					, PD.MT_INTEGRATE_KEY     AS MT_INTEGRATE_KEY
 					, PD.PAYMENT_KEY          AS PLAN_DETAIL_KEY   
+				    , NULL                    AS MT_SALES_ORDER_KEY /*매출주문관리키 */
 					, CA.AC_NM                AS MT_AC_NM
 					, MC.MT_NM                AS MT_NM
 					, CA2.AC_NM               AS BILL_AC_NM
@@ -1633,6 +1641,7 @@
 					'PC'                            AS BILL_TYPE        /* 매입(PC), 매출(SD) 구분 */
 					, MC.MT_INTEGRATE_KEY           AS MT_INTEGRATE_KEY /* 유지보수 관리키 */
 					, NULL                          AS PLAN_DETAIL_KEY  /* MT_ORDER_TYPE='BO'에서만 사용 */
+				    , NULL                          AS MT_SALES_ORDER_KEY /*매출주문관리키 */
 					, CAT2.AC_NM                    AS MT_AC_NM         /* 고객사명 */
 					, MC.MT_NM                      AS MT_NM            /* 유지보수 제목 */
 					, CAT1.AC_NM                    AS BILL_AC_NM       /* 거래처(매입) 명 */

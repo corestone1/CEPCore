@@ -88,6 +88,7 @@
 		} 
 		.mContents .bsc tr td:last-child {
 			width: 400px;
+			max-width: 430px;
 			font-weight: 200;
 			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
@@ -144,10 +145,28 @@
     		width: 100%;
     		/* cursor: pointer; */
 		}
-		.mContents > .fxd .title ul li.on,
+		/* .mContents > .fxd .title ul li.on,
 		.mContents > .fxd .title ul li:hover  {
 			color: #fff  !important;
 			background-color: #4c3d92;
+		} */
+		.mContents > .fxd .title ul li.on  {
+			color: #fff  !important;
+			background-color: #4c3d92 !important;
+		}
+		
+		.mContents > .fxd .title ul li:hover  {
+			color: #777777 ;
+			background-color: #b9b9b9;
+		}
+		
+		.mContents > .fxd .title ul li.on:after {
+			display: none;
+			background-repeat: no-repeat;
+		}
+		
+		.liAfterNone:after {
+			display: none !important;
 		}
 		.mContents .dtl, .mContents .dtl2 {
 			width: 997px;
@@ -193,12 +212,21 @@
 		.mContents .dtl tbody tr td, .mContents .dtl2 tbody tr td {
 			font-weight: 200;
 		}
+		
 		.mContents .dtl tbody tr td > span, .mContents .dtl2 tbody tr td > span {
 			display: inline-block;
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
 			width: 90%;
+			margin: 0 auto;
+		}
+		.mContents .bsc tbody tr td > span {
+			display: list-item;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 99%;
 			margin: 0 auto;
 		}
 		.mContents .dtl tbody tr td img, .mContents .dtl2 tbody tr td img {
@@ -1023,7 +1051,7 @@
 			
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:575px');
+			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:650px');
 		}
 		//계산서 발생요청
 		function fnMoveBillDetail() {
@@ -1146,6 +1174,7 @@
 					<form id="m_mtMoveForm" name="m_mtMoveForm" method="post">
 						<input type="hidden" id="m1_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
 						
+		<input type="hidden" id="empAuthCd" value="<c:out value="${mtGuarantyBondInfo.gbIssueYn}"/>" />
 					</form>
 					<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
 						<input type="hidden" id="m2_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
@@ -1157,15 +1186,15 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>PROJECT명</td>
-									<td><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>유지보수명</td>
-									<td><c:out value="${basicContractInfo.mtNm}"/></td>
+									<td><span title="${basicContractInfo.mtNm}"><c:out value="${basicContractInfo.mtNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>고객사</td>
@@ -1204,10 +1233,6 @@
 									<td><c:out value="${basicContractInfo.mtRgInspectCnt}"/> 회</td>
 								</tr>
 								<tr>
-									<td>백계약 유무</td>
-									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
-								</tr>
-								<tr>
 									<td>보증증권 유무</td>
 									<td>
 										<c:out value="${basicContractInfo.gbYn}"/>
@@ -1216,26 +1241,41 @@
 											( 진행상태&nbsp;:&nbsp;
 											<c:choose>
 												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "N"}'>
-													발행전 ) &nbsp;&nbsp;
-													<span style="cursor: hand;">
-														<img src="/images/btn_stock_publish.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
-													</span>
+													신청 전 ) &nbsp;&nbsp;
+													<c:choose>
+														<c:when test='${sessionScope.empAuthCd == "EMAU1001"}'>
+															<span style="cursor: hand;display: contents;">
+																<img src="/images/btn_stock_publish.png" style="vertical-align: middle;cursor:default; filter:grayscale(1);"/>
+															</span>
+														</c:when>
+														<c:otherwise>
+															<span style="cursor: hand;display: contents;">
+																<img src="/images/btn_stock_publish.png" onclick="javascript:fnShowStock();"  style="vertical-align: middle;"/>
+															</span>
+														</c:otherwise>
+													</c:choose>
+													
+													
 												</c:when>
 												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "R"}'>
-													발행요청 ) &nbsp;&nbsp;
-													<span style="cursor: hand;">
-														<img src="/images/btn_stock_end.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													승인중 ) &nbsp;&nbsp;
+													<span style="cursor: hand;display: contents;">
+														<img src="/images/btn_blue_reqInfo.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
 												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "Y"}'>
 													발행완료 ) &nbsp;&nbsp;
-													<span style="cursor: hand;">
-														<img src="/images/btn_stock_mod.png"     onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													<span style="cursor: hand;display: contents;">
+														<img src="/images/btn_stock_detail.png"     onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
 											</c:choose>											
 										</c:if>
 									</td>
+								</tr>
+								<tr>
+									<td>백계약 유무</td>
+									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
 								</tr>
 								<tr>
 									<td>지원담당자</td>
@@ -1424,7 +1464,10 @@
 							</table>
 						</div>
 						<div class="floatL" style="margin-top: 22px">
+							<c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
 							<button type="button" title="기본정보수정" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+							</c:if>
+							
 							<%-- <button type="button" title="기본정보삭제" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button> --%>
 							<button type="button" title="판매 품의서"  onclick="fnViewApproval('${basicContractInfo.mtIntegrateKey}')"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></button>
 							
@@ -1456,9 +1499,13 @@
 				</div>
 				<div id="prodList">
 					<div class="stitle cg colorBlack">
-						매출계약정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView('newOrder')"/>
+						매출계약정보
+						<%-- <c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
+						<img class="veralignT" src="<c:url value='/images/btn_add-pop.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addView('newOrder')"/>
+						</c:if> --%>
+						
 					</div>
-					<div class="floatC middle" style="border-bottom: 2px solid #c4c4c4;">
+					<div class="floatC middle">
 						<table class="dtl">
 							<thead class="ftw400">
 								<tr>
@@ -1471,11 +1518,11 @@
 									<th scope="row">발행구분</th>
 									<th scope="row">매출구분</th> 
 									<th scope="row">제조사</th>
-									<th scope="row">결제조건</th>
+									<th scope="row">결재조건</th>
 									<th style="max-width: 0px; display: none;"></th>
 								</tr>
 							</thead>
-							<tbody style="height: 98px;">
+							<tbody style="height: 100px;">
 							<c:forEach var="list" items="${mtSalesOrderList}" varStatus="status">
 							<c:choose>
 								<c:when test="${status.count==1}">
@@ -1631,8 +1678,11 @@
 					<div class="bottom">
 						
 						<div class="floatR">
+							<c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
 							<button type="button" title="계산서 발행 요청" value="계산서 발행 요청" onclick="fnMoveBillDetail()"><img class="cursorP" src="<c:url value='/images/btn_req_bill.png'/>" /></button>
 							<button type="button" value="수정" onclick="fn_editView()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+							</c:if>
+							
 							<%-- <button type="button" value="삭제" onclick="fn_deleteMtPmBtn()"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 							<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 						</div>

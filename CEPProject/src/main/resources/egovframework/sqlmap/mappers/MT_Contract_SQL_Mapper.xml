@@ -339,7 +339,7 @@
 	</select>
 	
 	<!-- 기본정보 상세보기 -->
-	<select id="selectMtBasicDetail" parameterType="String" resultMap="mtContractVO">		
+	<!-- <select id="selectMtBasicDetail" parameterType="String" resultMap="mtContractVO">		
 		SELECT MC.MT_CT_KEY
 			, MC.MT_INTEGRATE_KEY
 			, MC.MT_AC_KEY
@@ -369,6 +369,38 @@
 		  	AND MC.MT_AC_KEY = CA.AC_KEY		
 		  	AND MC.MT_AC_KEY = AD.AC_KEY			
 		  	AND MC.MT_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+		  	AND MC.DELETE_YN='N';
+	</select> -->
+	<select id="selectMtBasicDetail" parameterType="String" resultMap="mtContractVO">		
+		SELECT MC.MT_CT_KEY
+			, MC.MT_INTEGRATE_KEY
+			, MC.MT_AC_KEY
+			, CA.AC_NM AS MT_AC_NM
+      		, MC.MT_AC_DIRECTOR_KEY
+      		, AC_DIRECTOR_NM AS MT_AC_DIRECTOR_NM
+			, CONCAT(AC_DIRECTOR_POSITION_NM , ' / ' , AC_DIRECTOR_MB_NUM , ' / ' , AC_DIRECTOR_EMAIL) AS AC_DIRECTOR_INFO
+			, MC.MT_NM
+			, MC.MT_CT_DT
+			, MC.MT_START_DT
+			, MC.MT_END_DT
+			, MC.MT_RG_INSPECT_CNT
+			, MC.MT_IM_CD
+			, MC.MT_SB_CT_YN
+			, MC.GB_YN
+			, MC.MT_AMOUNT
+			, MC.MT_PAY_TERMS
+			, MC.REMARK
+			, MC.MT_SALE_EMP_KEY
+			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SALE_EMP_KEY) AS SALE_EMP_NM
+			, MC.MT_MNG_EMP_KEY
+			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_MNG_EMP_KEY) AS MNG_EMP_NM
+			, MC.MT_SUPPORT_EMP_KEY
+			, (SELECT EMP_NM FROM CMM_EMPLOYEE_TB WHERE EMP_KEY= MC.MT_SUPPORT_EMP_KEY) AS SUPPORT_EMP_NM
+            , MC.REG_EMP_KEY
+		FROM MT_CONTRACT_TB MC LEFT OUTER JOIN  CMM_ACCOUNT_DIRECTOR_TB AD ON  MC.MT_AC_KEY = AD.AC_KEY AND MC.MT_AC_DIRECTOR_KEY = AD.AC_DIRECTOR_KEY
+      		, CMM_ACCOUNT_TB CA 
+		WHERE MC.MT_INTEGRATE_KEY=#{mtIntegrateKey}			
+		  	AND MC.MT_AC_KEY = CA.AC_KEY	
 		  	AND MC.DELETE_YN='N';
 	</select>
 	
@@ -1811,8 +1843,14 @@
 			, GB_KIND_CD
 			, GB_START_DT
 			, GB_END_DT
-			, GB_ISSUE_YN
+			, GB_ISSUE_YN			
 			, GB_RATE
+		 <if test="gbPublishDt != null and gbPublishDt != ''">			
+		 	, GB_PUBLISH_DT
+		 </if>
+		 <if test="gbAmount > 0">
+		 	, GB_AMOUNT
+		 </if>			
 			, REMARK
 			, REG_DT
 			, REG_TM
@@ -1825,6 +1863,12 @@
 			, #{gbEndDt}
 			, 'R'
 			, #{gbRate}
+		 <if test="gbPublishDt != null and gbPublishDt != ''">			
+		 	, #{gbPublishDt}
+		 </if>
+		 <if test="gbAmount > 0">
+		 	, #{gbAmount}
+		 </if>				
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%H%i%s')
@@ -1836,6 +1880,9 @@
 	<update id="endMtGuarantyBond" parameterType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">
 		UPDATE MT_GUARANTY_BOND_TB SET
 			GB_PUBLISH_DT = #{gbPublishDt}
+			, GB_START_DT = #{gbStartDt}
+			, GB_END_DT   = #{gbEndDt}
+		    , GB_RATE     = #{gbRate}
 			, GB_AMOUNT   = #{gbAmount}
 			, GB_ISSUE_YN = 'Y'
 		    , REMARK      = #{remark}
@@ -1874,7 +1921,7 @@
 	
 	</update>	
 	
-	<!-- 유지보수 보증증권 상세보기  -->
+	<!-- 유지보수 보증증권 상세보기   -->
 	<select id="selectMtGuarantyBondInfo" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">	
 		SELECT MGT.MT_INTEGRATE_KEY       AS mtIntegrateKey
 			, MCT.MT_NM         AS mtNm
@@ -1891,6 +1938,7 @@
 			, MGT.GB_RATE       AS gbRate
 			, MGT.GB_PUBLISH_DT AS gbPublishDt
 			, MGT.REMARK        AS remark
+			, MGT.GB_KIND_CD    AS gbKindCd
 		FROM MT_CONTRACT_TB MCT
 			JOIN MT_GUARANTY_BOND_TB MGT ON MCT.MT_INTEGRATE_KEY = MGT.MT_INTEGRATE_KEY 
 			JOIN CMM_ACCOUNT_TB CAT ON MCT.MT_AC_KEY = CAT.AC_KEY

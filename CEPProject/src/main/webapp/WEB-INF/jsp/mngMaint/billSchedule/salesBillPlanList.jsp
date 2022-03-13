@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>매출계획목록</title>
+	<title>수금계획목록</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -292,17 +292,18 @@
 		    padding-bottom: 2px;
 		    vertical-align: top;
 		}		
-		/* 보라버튼이미지  */
+		/* 회색버튼이미지  */
 		.grayBtnStyle {
-			width: 60px;
+			/* width: 60px;
 		    height: 26px;
 		    background-color: #bec3c9;
 		    color: #ffffff;
 		    font-weight: bold;
 		    border: 1px solid #a392f2;
 		    padding-bottom: 2px;
-		    vertical-align: top;
+		    vertical-align: top; */
 		    cursor: default;
+		    -webkit-filter: grayscale(100%);
 		}
 	</style>
 	<script>
@@ -476,6 +477,8 @@
 			$('#ipt_billRequestDt').val($('#'+rowNum+'-billIssueDt').val()); //발행일
 			$('#ipt_billIssueDt').val($('#'+rowNum+'-billIssueDt').val()); //발행일
 			
+			//메일때문에 추가되는 부분.
+			$('#ipt_mtNm').val($('#'+rowNum+'-mtNm').val()); //유지보수명
 			
 						
 			if($('#'+rowNum+'-billIssueDt').val()==null || $('#'+rowNum+'-billIssueDt').val()=='' || $('#'+rowNum+'-billIssueDt').val().length!=10){
@@ -523,12 +526,24 @@
 		            async : false,
 		        	success:function(data){		  
 		        		var paramData = JSON.parse(data);
+		        		var mailList = "";
+				    	if(paramData.mailList == "undefined" || paramData.mailList == null || paramData.mailList == "") {
+				    		mailList = "";
+				    	} else {
+				    		mailList = "\n메일 수신인: " + paramData.mailList.join("\n");
+				    	}
 		        		if(paramData.successYN=='Y') {
 		        			
 		        			$("#ipt_billCallKey").val(paramData.billCallKey);
 		        			$("#ipt_billIssueStatus").val(paramData.billIssueStatus);
-		        					
-		        			alert("계산서 발행 완료처리 되었습니다.!")
+		        			
+		        			
+		        			if(paramData.mailSuccessYN =='Y') {
+		        				alert("계산서 발행 완료처리 되었습니다.!"+ mailList);
+		        			} else {
+		        				alert("계산서 발행 완료처리 되었습니다.!(메일전송은 실패 !!)");
+		        			}
+		        			
 		        			
 		        			form = document.listForm;
 		    				form.action = "/mngMaint/billSchedule/salesBillPlanList.do";
@@ -605,12 +620,12 @@
 			
 			
 			if($('#'+rowNum+'-salesCollectFinishDt').val() !='' && $('#'+rowNum+'-salesCollectFinishDt').val().length ==10) {
-				console.log("length========>"+$('#'+rowNum+'-salesCollectFinishDt').val().length);
+				//console.log("length========>"+$('#'+rowNum+'-salesCollectFinishDt').val().length);
 				tempCollectFinishDt = removeData($('#'+rowNum+'-salesCollectFinishDt').val(),'-');
 			} else {
 				tempCollectFinishDt = $('#ipt_today').val();
 			}
-			console.log("tempCollectFinishDt========>"+tempCollectFinishDt);
+			//console.log("tempCollectFinishDt========>"+tempCollectFinishDt);
 			if(confirm(confirmTitle+" 대한 수금완료처리를 하시겠습니까?")) {
 					/* 수금완료시 시  billIssueStatus 상태값을  E 로 변경한다. */
 					var billInfo = {
@@ -620,6 +635,8 @@
 							, 'salesKey' : $('#'+rowNum+'-salesKey').val()
 							, 'billIssueStatus' : 'E'
 							, 'salesCollectFinishDt' :removeData($('#'+rowNum+'-salesCollectFinishDt').val(),'-')
+							, 'mtNm' : $('#'+rowNum+'-mtNm').val()
+							, 'billTurnNo' : $('#'+rowNum+'-salesTurn').val()
 					}
 					//console.log("salesCollectFinishDt====>"+$('#'+rowNum+'-salesCollectFinishDt').val()+"/"+removeData($('#'+rowNum+'-salesCollectFinishDt').val(),'-'));
 					$.ajax({
@@ -630,8 +647,22 @@
 				     	    dataType: 'json',
 				            async : false,
 				        	success:function(data){	
+				        		
+				        		var mailList = "";
+						    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
+						    		mailList = "";
+						    	} else {
+						    		mailList = "\n메일 수신인: " + data.mailList.join("\n");
+						    	}
+						    	
 				        		if(data.successYN=='Y') {
-				        			alert(confirmTitle+" 대한 수금완료처리를 성공했습니다.");
+				        			
+				        			if(data.mailSuccessYN=='Y') {
+				        				alert(confirmTitle+" 대한 수금완료처리를 성공했습니다."+ mailList);
+				        			}else {
+				        				alert(confirmTitle+" 대한 수금완료처리를 성공했습니다.(메일전송은 실패 !!)");
+				        			}
+				        			
 				        			
 				        			form = document.listForm;
 				    				form.action = "/mngMaint/billSchedule/salesBillPlanList.do";
@@ -706,11 +737,20 @@
 		
 		
 		function moveSalesPlan(mtIntegrateKey,  mtSalesOrderKey) {
-			window.open("/maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtSalesOrderKey="+mtSalesOrderKey);
+			//window.open("/maintenance/contract/detail/salesPlanInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtSalesOrderKey="+mtSalesOrderKey);
+		
+			$('#mtIntegrateKey').val(mtIntegrateKey);
+			$('#mtSalesOrderKey').val(mtSalesOrderKey);
+			document.mtMoveForm.action = "/maintenance/contract/detail/salesPlanInfo.do";
+			document.mtMoveForm.submit();
 		}
 	</script>
 </head>
 <body>
+	<form action="/" id="mtMoveForm" name="mtMoveForm" method="post">
+		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey"/>
+		<input type="hidden" id="mtSalesOrderKey" name="mtSalesOrderKey"/>
+	</form>
 	<form action="/" id="mtWriteForm" name="mtWriteForm" method="post">
 		<input type="hidden" id="ipt_pjKey" name="pjKey"/><!--mtIntegrateKey == pjKey  -->
 		<input type="hidden" id="ipt_mtSalesOrderKey" name="mtSalesOrderKey"/><!--매출계약관리키(MT_SALES_ORDER_TB.MT_SALES_ORDER_KEY) -->
@@ -725,7 +765,11 @@
 		<input type="hidden" id="ipt_billMfCd" name="billMfCd" /> <!-- 제조사  -->	
 		<input type="hidden" id="ipt_billRequestDt" name="billRequestDt" /> <!-- 발행예정일  -->
 		<input type="hidden" id="ipt_billIssueDt" name="billIssueDt" /> <!-- 계산서발행일자  -->
+		<input type="hidden" id="ipt_mtNm" name="mtNm" /> <!-- 유지보수명  -->
 		<input type="hidden" id="ipt_today"  value="<c:out value="${searchParam.toDay}"/>"/> <!-- 오늘날짜  -->
+		
+		
+		<input type="hidden" id="ipt_mtNm" name="mtNm" /> <!-- 유지보수명  -->
 	</form>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<!-- <div class="sfcnt"></div>
@@ -734,12 +778,12 @@
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
-						<div class="title floatL"><label class="ftw500">매출계획정보목록</label></div>
+						<div class="title floatL"><label class="ftw500">수금계획정보목록</label></div>
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
 						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 100px"/>
-						<form:input path="fromDate" type="text" class="calendar fromDt" placeholder="계산서일정" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" class="calendar toDt" placeholder="계산서일정" value="${searchParam.toDate}"/>
+						<form:input path="fromDate" type="text" class="calendar fromDt" placeholder="계산서일정" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" class="calendar toDt" placeholder="계산서일정" value="${searchParam.toDate}"/>
 						<form:select path="searchGubun">
 							<form:option value="PJ" label="프로젝트명" />
 							<form:option value="CU" label="고객사" />
@@ -840,7 +884,7 @@
 											<span>정발행</span>
 										</c:when>
 										<c:when test="${list.billIssueType eq 'N'}">
-											<span style="color:red;">역발행</span>
+											<span style="color:#26a07d;font-weight: bold;">역발행</span>
 										</c:when>
 										<c:otherwise>
 											<span>${list.billIssueType}</span>
@@ -853,19 +897,19 @@
 								<td>									
 									<c:choose>
 										<c:when test="${list.salesStatusCd eq 'R'}">
-											<button type="button" title="발급완료" class="blueBtnStyle" onclick="javascript:fnBillIssue(<c:out value="${status.index}"/>)">발급완료</button>
+											<button type="button" title="발급완료" onclick="javascript:fnBillIssue(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/issue_comp.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'I'}">
-											<button type="button" title="발급취소" class="purpleBtnStyle" onclick="javascript:fnBillIssueCancel(<c:out value="${status.index}"/>)">발급취소</button>
+											<button type="button" title="발급취소" onclick="javascript:fnBillIssueCancel(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/issue_cancel.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'M'}">
-											<button type="button" title="발급취소" class="purpleBtnStyle" onclick="javascript:fnBillIssueCancel(<c:out value="${status.index}"/>)">발급취소</button>
+											<button type="button" title="발급취소"  onclick="javascript:fnBillIssueCancel(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/issue_cancel.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'E'}">
-											<button type="button" title="발급완료" class="grayBtnStyle">발급완료</button>
+											<button type="button" title="발급완료" class="grayBtnStyle" ><img src="<c:url value='/images/issue_comp.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd == null }">
-											<button type="button" title="발급완료" class="blueBtnStyle" onclick="javascript:fnBillIssue(<c:out value="${status.index}"/>)">발급완료</button>
+											<button type="button" title="발급완료"  onclick="javascript:fnBillIssue(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/issue_comp.png'/>" /></button>
 										</c:when>
 										<c:otherwise>
 											<span>${list.salesStatusCd}</span>
@@ -880,20 +924,20 @@
 								<td>									
 									<c:choose>
 										<c:when test="${list.salesStatusCd eq 'R'}">
-											<button type="button" title="수금대기" class="grayBtnStyle">수금대기</button>
+											<button type="button" title="수금대기" class="grayBtnStyle"><img src="<c:url value='/images/collect_wait.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'I'}">
-											<button type="button" title="수금완료" class="blueBtnStyle" onclick="javascript:fnCollectionComplete(<c:out value="${status.index}"/>)">수금완료</button>
+											<button type="button" title="수금완료" onclick="javascript:fnCollectionComplete(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/collect_comp.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'M'}">
-											<button type="button" title="수금완료" class="blueBtnStyle" onclick="javascript:fnCollectionComplete(<c:out value="${status.index}"/>)">수금완료</button>
+											<button type="button" title="수금완료" onclick="javascript:fnCollectionComplete(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/collect_comp.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'E'}">
 											<%-- <button type="button" title="수금취소" class="purpleBtnStyle" onclick="javascript:fnCollectionCompleteCancel(<c:out value="${status.index}"/>)">수금취소</button> --%>
-											<button type="button" title="수금완료" class="grayBtnStyle">수금완료</button>
+											<button type="button" title="수금완료" class="grayBtnStyle"><img src="<c:url value='/images/collect_comp.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd == null }">
-											<button type="button" title="수금대기" class="grayBtnStyle">수금대기</button>
+											<button type="button" title="수금대기" class="grayBtnStyle"><img src="<c:url value='/images/collect_wait.png'/>" /></button>
 										</c:when>
 										<c:otherwise>
 											<span>${list.salesStatusCd}</span>

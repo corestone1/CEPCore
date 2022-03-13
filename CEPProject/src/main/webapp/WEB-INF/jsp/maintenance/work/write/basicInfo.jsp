@@ -45,6 +45,7 @@
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 		.popContainer .contents > div {
 			width: calc(100% - 80px);
@@ -158,10 +159,10 @@
 			z-index: 99;
 		}
 		#fileForm .exFileLabel {
-			background-image: url('/images/btn_file.png');
+			background-image: url('/images/btn_file_upload.png');
 			background-repeat: no-repeat;
-			width: 110px;
-			height: 26px;
+			width: 119px;
+			height: 31px;
 			cursor: pointer;
 			float: left;
 			margin-top: 1px;
@@ -175,7 +176,7 @@
 			vertical-align: middle; 
 			border: 1px solid #ebebeb; 
 			width: 184px;
-			height: 26px;
+			height: 30px;
 		}
 		#fileForm .exFile {
 			position: absolute;
@@ -202,9 +203,10 @@
 	<script>
 		$(document).ready(function() {
 			'<c:if test="${basicWorkInfo != null }">'
+			
 				//고객사 담당자 셋팅
 				$('#mtWorkAcDirectorKey').val("${basicWorkInfo.mtWorkAcDirectorKey}").attr("selected", "true");
-			
+				
 				//지원담당자정보 셋팅
 				$('#mtWorkEmpKey').val("${basicWorkInfo.mtWorkEmpKey}").attr("selected", "true");
 				

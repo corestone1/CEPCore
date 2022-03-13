@@ -78,6 +78,7 @@
 		/* 기본정보 내용 글자 굵기 */
 		.mContents .bsc tr td:last-child {
 			width: 470px;
+			max-width: 430px;
 			font-weight: 200;
 			box-shadow: inset 7px 0 6px -4px #d0e2de;
 		}
@@ -172,11 +173,20 @@
     		width: 100%;
     		/* cursor: pointer; */
 		}
-		.mContents > .fxd .title ul li.on,
+		/* .mContents > .fxd .title ul li.on,
 		.mContents > .fxd .title ul li:hover  {
 			color: #fff  !important;
 			background-color: #4c3d92;
-		}		
+		} */
+		.mContents > .fxd .title ul li.on  {
+			color: #fff  !important;
+			background-color: #4c3d92 !important;
+		}
+		
+		.mContents > .fxd .title ul li:hover  {
+			color: #777777 ;
+			background-color: #b9b9b9;
+		}
 		
 		.mContents .dtl2 tbody tr:hover {
 			background-color: #ddf0ec
@@ -267,7 +277,7 @@
 		    -webkit-appearance: none;
 		    background: url(/images/arrow_down.png) no-repeat 91% 50%;
 		    background-color: #fff;
-		    color: #0e8a67;
+		    /* color: #0e8a67; */
 		}
 		#modBasicTable input[class^="calendar"] {
 			width: 140px !important;
@@ -359,7 +369,15 @@
 			-webkit-appearance: none;
 			background: url(/images/arrow_down.png) no-repeat 91% 50%;
 			background-color: #fff;
-			color: #0e8a67;
+			/* color: #0e8a67; */
+		}
+		.mContents .bsc tbody tr td > span {
+			display: list-item;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 99%;
+			margin: 0 auto;
 		}
 	</style>
 	<script>
@@ -606,7 +624,7 @@
 										+ '	<td>'+(i+1)+'</td>'
 										+ '	<td class="textalignC">'+data.paymentPlanList[i].paymentTurn+' 회차</td>'
 										+ '	<td class="textalignC">'+makeDateForm(data.paymentPlanList[i].paymentYearMonth)+'</td>'
-										+ '	<td class="textalignR">'+addCommas(data.paymentPlanList[i].paymentRate)+'</td>'
+										+ '	<td class="textalignR">'+addCommas(data.paymentPlanList[i].paymentRate)+' %</td>'
 										+ '	<td class="textalignR">'+addCommas(data.paymentPlanList[i].paymentTurnAmount)+'</td>'
 										+ '	<td>'+addDateMinus(data.paymentPlanList[i].paymentFcDt)+'</td>'
 										+ '	<td class="textalignC"><span>'+paymentStatusCdNm+'</span></td>'
@@ -948,11 +966,15 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></span></td>
+								</tr>
+								<tr>
+									<td>PROJECT명</td>
+									<td><span title="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>유지보수명</td>
-									<td><c:out value="${basicContractInfo.mtNm}"/></td>
+									<td><span title="${basicContractInfo.mtNm}"><c:out value="${basicContractInfo.mtNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>고객사</td>
@@ -971,7 +993,7 @@
 									<td><c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/> ~ <c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/></td>
 								</tr>
 								<tr>
-									<td>유지보수 금액</td>
+									<td>총계약금액</td>
 									<td><c:out value="${displayUtil.commaStr(basicContractInfo.mtAmount)}"/></td>
 								</tr>
 								<%-- <tr>
@@ -991,10 +1013,6 @@
 									<td><c:out value="${basicContractInfo.mtRgInspectCnt}"/> 회</td>
 								</tr>
 								<tr>
-									<td>백계약 유무</td>
-									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
-								</tr>
-								<tr>
 									<td>보증증권 유무</td>
 									<td>
 										<c:out value="${basicContractInfo.gbYn}"/>
@@ -1003,26 +1021,41 @@
 											( 진행상태&nbsp;:&nbsp;
 											<c:choose>
 												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "N"}'>
-													발행전 ) &nbsp;&nbsp;
-													<span style="cursor: hand;">
-														<img src="/images/btn_stock_publish.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
-													</span>
+													신청 전 ) &nbsp;&nbsp;
+													<c:choose>
+														<c:when test='${sessionScope.empAuthCd == "EMAU1001"}'>
+															<span style="cursor: hand;display: contents;">
+																<img src="/images/btn_stock_publish.png" style="vertical-align: middle;cursor:default; filter:grayscale(1);"/>
+															</span>
+														</c:when>
+														<c:otherwise>
+															<span style="cursor: hand;display: contents;">
+																<img src="/images/btn_stock_publish.png" onclick="javascript:fnShowStock();"  style="vertical-align: middle;"/>
+															</span>
+														</c:otherwise>
+													</c:choose>
+													
+													
 												</c:when>
 												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "R"}'>
-													발행요청 ) &nbsp;&nbsp;
-													<span style="cursor: hand;">
-														<img src="/images/btn_stock_end.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													승인중 ) &nbsp;&nbsp;
+													<span style="cursor: hand;display: contents;">
+														<img src="/images/btn_blue_reqInfo.png" onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
 												<c:when test='${mtGuarantyBondInfo.gbIssueYn eq "Y"}'>
 													발행완료 ) &nbsp;&nbsp;
-													<span style="cursor: hand;">
-														<img src="/images/btn_stock_mod.png"     onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
+													<span style="cursor: hand;display: contents;">
+														<img src="/images/btn_stock_detail.png"     onclick="javascript:fnShowStock();" style="vertical-align: middle;"/>
 													</span>
 												</c:when>
 											</c:choose>											
 										</c:if>
 									</td>
+								</tr>
+								<tr>
+									<td>백계약 유무</td>
+									<td><c:out value="${basicContractInfo.mtSbCtYn}"/></td>
 								</tr>
 								<tr>
 									<td>지원담당자</td>
@@ -1211,7 +1244,10 @@
 							</table>
 						</div>
 						<div class="floatL" style="margin-top: 22px">
+							<c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
 							<button type="button" value="수정" onclick="modeBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button>
+							</c:if>
+							
 							<%-- <button type="button" value="삭제" onclick="deleteBasicInfo()"><img class="cursorP" src="<c:url value='/images/btn_basic_del.png'/>" /></button> --%>
 							<button type="button" title="판매 품의서"  onclick="fnViewApproval('${basicContractInfo.mtIntegrateKey}')"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></button>
 						</div>
@@ -1327,7 +1363,10 @@
 					</table>
 					<div class="bottom">
 						<div class="floatR">
+							<c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
 							<button type="button" value="수정" onclick="fn_editMtPanymentPlanBtn()"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+							</c:if>
+							
 						</div>
 					</div>
 				</div>

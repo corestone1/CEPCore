@@ -65,12 +65,15 @@ public class MngMaintOrderController {
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtTo(), ""))){
 				searchVO.setOrderDtTo(searchVO.getOrderDtTo().replace("-", ""));
 			} else {
-				searchVO.setOrderDtTo(toDay); 
+//				searchVO.setOrderDtTo(toDay); 
 			}
 			searchParam = new HashMap<>();
 //			searchParam.put("orderDtFrom", CepDateUtil.displayDate(searchVO.getOrderDtFrom()));
 			searchParam.put("orderDtFrom", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtFrom(), null, null));
-			searchParam.put("orderDtTo", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtTo(), null, null));
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getOrderDtTo(), ""))){
+				searchParam.put("orderDtTo", CepDateUtil.convertDisplayFormat(searchVO.getOrderDtTo(), null, null));
+			}
+			
 			model.put("searchParam", searchParam);
 			model.put("orderList", service.selectMtOrdertList(searchVO));
 			model.put("displayUtil", new CepDisplayUtil());

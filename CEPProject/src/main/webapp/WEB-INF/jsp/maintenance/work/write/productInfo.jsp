@@ -584,7 +584,7 @@
 							<td class="subTitle" style="border-top: none;">
 								<label class="ftw400">장비별작업정보</label>
 							</td>
-							<td class="subBtn" style="border-top: none;cursor: pointer;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"/></td>
+							<td class="subBtn" style="vertical-align: middle;cursor: pointer;"><img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addInfoTable();"/></td>
 							
 						</tr>
 					</table>

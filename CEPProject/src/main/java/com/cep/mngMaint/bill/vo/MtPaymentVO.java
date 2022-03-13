@@ -36,6 +36,12 @@ public class MtPaymentVO extends MngMaintBillSearchVO implements Serializable{
 	private String requestStatus; //변경할 요청상태.
 	private String paymentYearMonth;
 	
+	private String mtNm;//유지보수명.
+	
+	private String paymentBillAcNm; //매입처명
+	
+	private String logInEmpNm; //로그인 사용
+	
 	public String getPaymentKey() {
 		return paymentKey;
 	}
@@ -179,5 +185,23 @@ public class MtPaymentVO extends MngMaintBillSearchVO implements Serializable{
 	}
 	public void setPaymentYearMonth(String paymentYearMonth) {
 		this.paymentYearMonth = paymentYearMonth;
+	}
+	public String getMtNm() {
+		return mtNm;
+	}
+	public void setMtNm(String mtNm) {
+		this.mtNm = mtNm;
+	}
+	public String getPaymentBillAcNm() {
+		return paymentBillAcNm;
+	}
+	public void setPaymentBillAcNm(String paymentBillAcNm) {
+		this.paymentBillAcNm = paymentBillAcNm;
+	}
+	public String getLogInEmpNm() {
+		return logInEmpNm;
+	}
+	public void setLogInEmpNm(String logInEmpNm) {
+		this.logInEmpNm = logInEmpNm;
 	}
 }

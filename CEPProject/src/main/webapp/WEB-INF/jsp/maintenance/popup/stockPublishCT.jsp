@@ -19,7 +19,7 @@
 		.popContainer .contents {
 			position: absolute;
 			width: 648px;
-			height: 472px;
+			height: 573px;
 			top: 107px;
 			z-index: 3;
 			background-color: #f6f7fc;
@@ -76,31 +76,32 @@
 			background-color: #f6f7fc;
 		}
 		.popContainer .contents input[class^="calendar"] {
-			width: 146px;
+			width: 115px;
 			height: 38px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 		}
 		.popContainer .contents input[class^="tdRate"] {
-			width: 56px;
+			width: 115px;
 			height: 38px;
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
+			text-align: right;
 		}
 		.popContainer .contents input[class^="readOnly"] {
 			background-color: #f6f7fc; 
 			border-color: #f6f7fc;
 		}
 		.popContainer .contents input[class^="readOnlyDt"] {
-			width: 146px;
+			width: 87px;
 			height: 38px;
 			background-color: #f6f7fc; 
 			border-color: #f6f7fc;
 		}
 		
 		
-		.popContainer .contents textarea {
+		/* .popContainer .contents textarea {
 			width: 433px;
 			height: 48px;
 			border: 1px solid #e9e9e9;
@@ -109,7 +110,7 @@
 			font-size: 14px;
 			margin-bottom: 0px;
 			resize: none;
-		}
+		} */
 		.popContainer .contents td.tdContents {
 			font-size: 14px;
 			width : 301px
@@ -137,7 +138,11 @@
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			resize: none;
+			resize: vertical;
+		}
+		
+		.popContainer td.tdTitle label {
+			color: red;
 		}
 		
 	</style>
@@ -154,48 +159,71 @@
 		/* 보증증권 발행요청 */
 		function fnGbPublish() {
 			
-			var formData = $("#m_frm_gb").serializeArray();
-			
-			for(var i = 0; i < formData.length; i++)
-			{
-				//보증기간, 발행일
-				if('gbStartDt'   == formData[i]['name']
-				|| 'gbEndDt'     == formData[i]['name']
-				|| 'gbPublishDt' == formData[i]['name']){
-					formData[i]['value'] = removeData(formData[i]['value'], '-');
-				}
-				 
-				//금액
-				if('gbAmount' == formData[i]['name']){
-					formData[i]['value'] = removeCommas(formData[i]['value']);
+			if ($("#m_frm_gb")[0].checkValidity()){
+				var formData = $("#m_frm_gb").serializeArray();
+				
+				for(var i = 0; i < formData.length; i++)
+				{
+					//보증기간, 발행일
+					if('gbStartDt'   == formData[i]['name']
+					|| 'gbEndDt'     == formData[i]['name']
+					|| 'gbPublishDt' == formData[i]['name']){
+						formData[i]['value'] = removeData(formData[i]['value'], '-');
+					}
+					 
+					//금액
+					if('gbAmount' == formData[i]['name']){
+						formData[i]['value'] = removeCommas(formData[i]['value']);
+					}
+					
+					console.log(i+" : " + formData[i]['name'] + " : " + formData[i]['value']);
 				}
 				
-				console.log(i+" : " + formData[i]['name'] + " : " + formData[i]['value']);
+				$.ajax({
+		        	url :"/maintenance/contract/detail/requestGuarantyBond.do",
+		        	type:"POST",  
+		            data: formData,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            async : false,
+		        	success:function(data){		  
+		        		/* if(data.gbKey !='' && data.gbKey.length >0) {
+		        			alert("보증증권 발행이 요청되었습니다.!");
+		        			//발행요청이 성공한 경우 발행증권 리턴받은 key값을 해당 필드에 입력한다.
+		        			$("#m_ipt_gbKey").val(data.gbKey);
+		        		} else {
+		        			alert("보증증권 발행요청이 실패하였습니다.!");
+		        		} */
+		        		
+		        		var mailList = "";
+				    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
+				    		mailList = "";
+				    	} else {
+				    		mailList = "\n메일 수신인: " + data.mailList.join("\n");
+				    	}
+				    	 
+				    	if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'Y') {
+				    		alert("보증 증권 발행이 요청되었습니다." + mailList);
+				    	} else if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'N') {
+			    			alert("메일 전송이 실패했습니다.(발행 요청 정보 저장은 완료)");
+				    	} else {
+			    			alert("보증 증권 발행이 실패하였습니다.");
+				    	}
+				    	
+				    	location.reload();
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+		    	});
+			} else {
+				//Validate Form
+	              $("#m_frm_gb")[0].reportValidity();   
 			}
 			
-			$.ajax({
-	        	url :"/maintenance/contract/detail/requestGuarantyBond.do",
-	        	type:"POST",  
-	            data: formData,
-	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-	     	    dataType: 'json',
-	            async : false,
-	        	success:function(data){		  
-	        		if(data.gbKey !='' && data.gbKey.length >0) {
-	        			alert("보증증권 발행이 요청되었습니다.!");
-	        			//발행요청이 성공한 경우 발행증권 리턴받은 key값을 해당 필드에 입력한다.
-	        			$("#m_ipt_gbKey").val(data.gbKey);
-	        		} else {
-	        			alert("보증증권 발행요청이 실패하였습니다.!");
-	        		}
-	        		
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-	    	});
+			
 			
 		}
 		
@@ -289,13 +317,28 @@
 	     	    dataType: 'json',
 	            async : false,
 	        	success:function(data){		  
-	        		console.log("data.successYN==>"+data.successYN);
+	        		/* console.log("data.successYN==>"+data.successYN);
 	        		if("Y" == data.successYN){
 	        			alert("발행이  완료 처리되었습니다.!");
 	        		} else {
 	        			alert("발행이  실패 하였습니다.!");
-	        		}
-	        		
+	        		} */
+	        		var mailList = "";
+			    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
+			    		mailList = "";
+			    	} else {
+			    		mailList = "\n메일 수신인: " + data.mailList.join("\n");
+			    	}
+			    	 
+			    	if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'Y') {
+			    		alert("보증 증권 발행이 완료처리 되었습니다." + mailList);
+			    	} else if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'N') {
+		    			alert("메일 전송이 실패했습니다.(발행완료 처리 정보 저장은 완료)");
+			    	} else {
+		    			alert("보증 증권 완료 처리가 실패하였습니다.");
+			    	}
+			    	
+			    	location.reload();
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -331,6 +374,9 @@
 							<td class="tdTitle">사업명</td>
 							<td id="m_td_account" class="tdContents">
 								<input type="text" class="readOnly" value="${gbInfo.mtNm}" disabled/> 
+								<input type="hidden" name="mtNm" value="${gbInfo.mtNm}" /> 
+								<input type="hidden" name="contractRegEmpKey" value="${mtContractVO.regEmpKey}" />
+								<input type="hidden" name="contractSalesEmpKey" value="${mtContractVO.mtSaleEmpKey}" />
 							</td>
 						</tr>
 					
@@ -338,7 +384,7 @@
 						<tr id="m_tr_account" >
 							<td class="tdTitle">계약금액</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"  class="readOnly" value="${displayUtil.commaStr(gbInfo.mtAmount)}(부가세포함여부/${gbInfo.taxYn})" disabled/> 
+								<input type="text"  class="readOnly" value="${displayUtil.commaStr(gbInfo.mtAmount)}" disabled/> 
 							</td>
 						</tr>
 						
@@ -352,11 +398,11 @@
 						</tr>
 					
 						<tr>
-							<td class="tdTitle">보증기간</td>
+							<td class="tdTitle"><label>*</label>보증기간</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_gbStartDt" name="gbStartDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbStartDt)}"/>
+								<input type="text" id="m_ipt_gbStartDt" name="gbStartDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbStartDt)}" required/>
 								&nbsp~&nbsp
-								<input type="text" id="m_ipt_gbEndDt" name="gbEndDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbEndDt)}"/>
+								<input type="text" id="m_ipt_gbEndDt" name="gbEndDt" class="calendar toDt" value="${displayUtil.displayDate(gbInfo.gbEndDt)}" required/>
 							</td>
 						</tr>
 						
@@ -367,7 +413,7 @@
 								
 							</td>
 						</tr>
-					<c:choose>
+					<%-- <c:choose>
 						<c:when test='${gbInfo.gbIssueYn ne "N"}'>
 							<tr id="m_tr_account" <c:if test='${gbInfo.gbIssueYn eq "N"}'>style="display: none;" </c:if>>
 								<td class="tdTitle">발행일</td>
@@ -383,7 +429,23 @@
 								</td>
 							</tr>
 						</c:when>
-					</c:choose>
+					</c:choose> --%>
+					<c:if test='${gbInfo.gbIssueYn ne "N" and sessionScope.empAuthCd == "EMAU1001"}'>
+						<tr id="m_tr_account">
+							<td class="tdTitle"><label>*</label>발행일</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text" id="m_ipt_gbPublishDt" name="gbPublishDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbPublishDt)}" required/>
+							</td>
+						</tr>
+						
+						<tr id="m_tr_account">
+							<td class="tdTitle"><label>*</label>증권금액</td>
+							<td id="m_td_account" class="tdContents">
+								<%-- <input type="text" id="m_ipt_gbAmount" name="gbAmount" value="${displayUtil.commaStr(gbInfo.gbAmount)}" amountOnly required style="width: 115px;text-align: right;"/> --%>
+								<input type="text" id="m_ipt_gbAmount" name="gbAmount" <c:if test="${gbInfo.gbAmount eq 0}">value=""</c:if><c:if test="${gbInfo.gbAmount ne 0 }">value="${displayUtil.commaStr(gbInfo.gbAmount) }"</c:if> amountonly required style="width: 115px;text-align: right;"/>
+							</td>
+						</tr>
+					</c:if>						
 						
 						<tr id="m_tr_account" >
 							<td class="tdTitle">발급요청사항</td>
@@ -402,18 +464,20 @@
 								</button>
 							</c:when>
 							<c:when test='${gbInfo.gbIssueYn eq "R"}'>
-								<button type="button" onclick="javascript:fnGbEnd();">
-									<img src="<c:url value='/images/btn_stock_end.png'/>" />
-								</button>
+								<c:if test='${sessionScope.empAuthCd == "EMAU1001"}'>
+									<button type="button" onclick="javascript:fnGbEnd();">
+										<img src="<c:url value='/images/btn_stock_end.png'/>" />
+									</button>
+								</c:if>
 								<button type="button" onclick="javascript:fnGbModify();">
 									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
 								</button>
 							</c:when>
-							<c:otherwise>
+							<%-- <c:otherwise>
 								<button type="button" onclick="javascript:fnGbModify();">
 									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
 								</button>
-							</c:otherwise>
+							</c:otherwise> --%>
 						</c:choose>
 						
 					</div>

@@ -94,7 +94,8 @@
 			text-overflow:ellipsis; 
 			white-space:nowrap;
 			margin-left: 15px;
-			vertical-align: middle;
+			vertical-align: middle;			
+    		width: 94%;
 		}
 		/* 리스트에 마우스 올려 놓았을 경우 해당 라인 색깔 변하게 하는것 */
 		.middle table tbody tr:hover {
@@ -330,7 +331,7 @@
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
-						<form:input path="fromDate" type="text" placeholder="작업시작일자(from)" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" placeholder="작업시작일자(to)" class="calendar toDt" value="${searchParam.toDate}"/>
+						<form:input path="fromDate" type="text" placeholder="작업시작일자" class="calendar fromDt" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" placeholder="작업시작일자" class="calendar toDt" value="${searchParam.toDate}"/>
 						<!-- <select name="searchSaleEmpKey"> -->
 						<form:input path="searchWorkEmpNm" type="text" placeholder="지원담당" style="width: 100px"/>
 						<%-- <form:select path="searchWorkEmpKey">
@@ -406,7 +407,7 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<%-- <button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
 						<%-- <button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" onclick="fn_excelBtn();"/></button>
 					</div>

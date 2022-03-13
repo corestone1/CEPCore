@@ -205,15 +205,15 @@
 				$('#orderCtFkKey').val($(this).children().eq(13).text());
 				if('BO' == $(this).children().eq(10).text()){					
 					//백계약 상세
-					//document.listForm.action = '/maintenance/contract/detail/backOrderInfo.do';
-					window.open("/maintenance/contract/detail/backOrderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey+"&orderCtFkKey="+orderCtFkKey);
+					document.listForm.action = '/maintenance/contract/detail/backOrderInfo.do';
+					//window.open("/maintenance/contract/detail/backOrderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey+"&orderCtFkKey="+orderCtFkKey);
 				} else if('PO' == $(this).children().eq(10).text()){
 					//작업발주.
-					//document.listForm.action = '/maintenance/work/detail/orderInfo.do';
-					window.open("/maintenance/work/detail/orderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey+"&orderCtFkKey="+orderCtFkKey);
+					document.listForm.action = '/maintenance/work/detail/orderInfo.do';
+					//window.open("/maintenance/work/detail/orderInfo.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderKey="+mtOrderKey+"&orderCtFkKey="+orderCtFkKey);
 				}
 
-				//document.listForm.submit(); 
+				document.listForm.submit(); 
 				
 				//alert("===>"+mtOrderType+"/"+mtIntegrateKey+"/"+mtOrderKey+"/"+mtWorkKey);
 			});
@@ -274,7 +274,7 @@
 							<option value="PO">작업발주</option>
 						</select> -->
 						<form:input path="searchOderAcKeyNm" type="text" placeholder="매입처명"/>
-						<form:input path="orderDtFrom" type="text" placeholder="발주일자(from)" class="calendar fromDt" value="${searchParam.orderDtFrom}"/> ~ <form:input path="orderDtTo" type="text" placeholder="발주일자(to)" class="calendar toDt" value="${searchParam.orderDtTo}"/>
+						<form:input path="orderDtFrom" type="text" placeholder="발주일자(from)" class="calendar fromDt" value="${searchParam.orderDtFrom}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="orderDtTo" type="text" placeholder="발주일자(to)" class="calendar toDt" value="${searchParam.orderDtTo}"/>
 						<form:select path="searchGubun">
 							<form:option value="PJ" label="프로젝트명" />
 							<form:option value="CU" label="고객사" />
@@ -291,7 +291,7 @@
 								<th scope="row">No</th>
 								<th scope="row">발주구분</th>
 								<th scope="row">고객사</th>
-								<th scope="row">프로젝트명</th>
+								<th scope="row">유지보수명</th>
 								<th scope="row">발주처</th>
 								<th scope="row">발주처담당</th>
 								<th scope="row">발주일자</th>

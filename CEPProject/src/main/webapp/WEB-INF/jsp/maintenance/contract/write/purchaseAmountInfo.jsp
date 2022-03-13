@@ -54,6 +54,7 @@
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 		.popContainer .contents > div {
 			margin: 10px 47px 0 37px;

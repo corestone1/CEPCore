@@ -70,8 +70,8 @@
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
-			width: 84%;
-			margin: 0 auto;
+			width: 85%;
+			margin: 0 3px;
 		}
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
@@ -221,18 +221,19 @@
 				var mtWorkKey = $(this).children().eq(14).text();
 				var mtOrderKey = $(this).children().eq(15).text();
 				var billType = $(this).children().eq(16).text();
-				console.log("==========");
-				console.log("mtIntegrateKey=========="+mtIntegrateKey);
-				console.log("mtOrderType=========="+mtOrderType);
-				console.log("mtWorkKey=========="+mtWorkKey);
-				console.log("mtOrderKey=========="+mtOrderKey);
-				console.log("billType=========="+billType);
+				//console.log("==========");
+				//console.log("mtIntegrateKey=========="+mtIntegrateKey);
+				//console.log("mtOrderType=========="+mtOrderType);
+				//console.log("mtWorkKey=========="+mtWorkKey);
+				//console.log("mtOrderKey=========="+mtOrderKey);
+				//console.log("billType=========="+billType);
 				
 				$('#mtIntegrateKey').val($(this).children().eq(12).text());
 				$('#pjKey').val($(this).children().eq(12).text());
 				$('#mtOrderType').val($(this).children().eq(13).text());
 				$('#mtWorkKey').val($(this).children().eq(14).text());
 				$('#mtOrderKey').val($(this).children().eq(15).text());
+				$('#mtSalesOrderKey').val($(this).children().eq(17).text());
 				
 				
 				
@@ -246,14 +247,14 @@
 					}
 				} else if('PC' == $(this).children().eq(16).text()){
 					//발주 ==> 매입  ==> 지급요청화면으로 이동
-					window.open("/mngMaint/payment/detail/main.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderType="+mtOrderType+"&mtWorkKey="+mtWorkKey+"&mtOrderKey="+mtOrderKey+"&iframGubun=list");
+					//window.open("/mngMaint/payment/detail/main.do?mtIntegrateKey="+mtIntegrateKey+"&mtOrderType="+mtOrderType+"&mtWorkKey="+mtWorkKey+"&mtOrderKey="+mtOrderKey+"&iframGubun=list");
 					
-					/* if(confirm('"'+$(this).children().eq(4).text()+' 매입금 지급요청 화면으로 이동하시겠습니까?')){
+					if(confirm('"'+$(this).children().eq(4).text()+' 매입금 지급요청 화면으로 이동하시겠습니까?')){
 						document.listForm.action = "/mngMaint/payment/detail/main.do";
 			           	document.listForm.submit();
 					} else {
 						return false;
-					} */
+					}
 					
 					
 				}
@@ -288,6 +289,7 @@
 		<input type="hidden" id="mtWorkKey" name="mtWorkKey"/>
 		<input type="hidden" id="mtOrderKey" name="mtOrderKey"/>
 		<input type="hidden" id="iframGubun" name="iframGubun" value="list"/>
+		<input type="hidden" id="mtSalesOrderKey" name="mtSalesOrderKey"/>
 		<!-- <div class="sfcnt"></div>
 		<div class="nav"></div> -->
 		<div class="contentsWrap">
@@ -306,7 +308,7 @@
 							<form:option value="BR" label="요청일" />
 							<form:option value="BI" label="계산서발행일" />
 						</form:select>
-						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>
+						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>
 						<form:select path="searchGubun">
 							<form:option value="PJ" label="프로젝트명" />
 							<form:option value="CU" label="거래처" />
@@ -358,11 +360,11 @@
 								</c:otherwise>
 							</c:choose>	
 								</td>
-								<td><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
-								<td><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
-								<td><span title="${list.billAcNm}"><c:out value="${list.billAcNm}"/></span></td>
+								<td class="textalignL"><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
+								<td class="textalignL"><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
+								<td class="textalignL"><span title="${list.billAcNm}"><c:out value="${list.billAcNm}"/></span></td>
 								<td><span title="${list.billNo}"><c:out value="${list.billNo}"/></span></td>								
-								<td><span title="${displayUtil.commaStr(list.billAmount)}"><c:out value="${displayUtil.commaStr(list.billAmount)}"/></span></td>
+								<td class="textalignR"><span title="${displayUtil.commaStr(list.billAmount)}"><c:out value="${displayUtil.commaStr(list.billAmount)}"/></span></td>
 								<td><c:out value="${displayUtil.displayDate(list.billRequestDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(list.billIssueDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(list.billFinishDt)}"/></td>
@@ -395,6 +397,9 @@
 								<c:when test="${list.billStatusCd eq 'E' && list.billType eq 'PC'}">
 									<span>지급완료</span>
 								</c:when>
+								<c:when test="${list.billStatusCd eq null || list.billStatusCd eq ''}">
+									<span>대기</span>
+								</c:when>
 								<c:otherwise>
 									<span>${list.billStatusCd}</span>
 								</c:otherwise>
@@ -406,6 +411,7 @@
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtWorkKey}"/></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.mtOrderKey}"/></td>
 								<td style="max-width: 0px; display: none;"><c:out value="${list.billType}"/></td>
+								<td style="max-width: 0px; display: none;"><c:out value="${list.mtSalesOrderKey}"/></td>
 							</tr>
 						</c:forEach>
 						</tbody>

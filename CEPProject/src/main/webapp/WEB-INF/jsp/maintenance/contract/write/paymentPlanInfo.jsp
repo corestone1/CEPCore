@@ -55,6 +55,7 @@
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: hidden;
+			overflow-x: hidden;
 		}
 		.popContainer .contents1 > div {
 			/* margin: 10px 47px 0 37px;
@@ -250,6 +251,7 @@
 			overflow-x: hidden;
 			float: left;
 			font-size: 14px;
+			background: #ffffff;
 		}
 		.popContainer .contents1 table tbody tr {
 			display: table;
@@ -313,7 +315,9 @@
 			padding-left: 20px;
 			width: 101px;
 			text-align: left;
-			background-color: #e1dff5;
+			/* background-color: #e1dff5; */
+			background: transparent;
+    		border: none;
 		}	
 		.popContainer .contents td.tdContents {
 			width: 160px;
@@ -781,13 +785,13 @@
 							</td>
 							<td style="width:136px; border: none; text-align:right; color: #32bc94; font-size: 15px;padding-top: 20px">
 								매입 총금액 : 
-								<input type="text" id="mtPurchaseTotalAmount" style="width:120px;text-align: right" class="pname" value="<c:out value="${displayUtil.commaStr(mtPurchaseTotalAmount)}"/>" readonly/>
+								<input type="text" id="mtPurchaseTotalAmount" style="width:120px;text-align: right;color: #32bc94;" class="pname" value="<c:out value="${displayUtil.commaStr(mtPurchaseTotalAmount)}"/>" readonly/>
 							</td>
 						</tr>
 					</table>
 					<table class="textalignC" >
 						<tr>							
-							<td class="tdTitle">매입거래처</td>
+							<td class="tdTitle" style="width:69px;">매입거래처</td>
 							<td class="tdContents" >
 								<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 210px;">																		
 									<c:forEach var="order" items="${backOrderSelectBox}" varStatus="status">

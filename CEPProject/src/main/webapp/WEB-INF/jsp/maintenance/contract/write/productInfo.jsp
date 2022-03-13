@@ -55,6 +55,7 @@
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 		
 		.popContainer .contents #prodWrap {
@@ -66,8 +67,8 @@
 			left: 201px;	 		
 			z-index: 3;*/
 			background-color: #f6f7fc;
-			overflow-x: hidden;
-			overflow-y: auto;
+			/* overflow-x: hidden;
+			overflow-y: auto; */
 		}
 		.popContainer .contents > div {
 			margin: 10px 54px 0 45px;
@@ -226,12 +227,18 @@
 			
 
 			//거래처 검색
-			$("#mtSalesAcNm").on("keydown", function(event){
+			/* $("#mtSalesAcNm").on("keydown", function(event){
 				
 				if(event.keyCode == 13) {		
 					
 					fnSearchAccoutList(this, $(this).val());
 				}						
+			}); */
+			
+
+			$("#mtSalesAcNm").on("keyup", function(event){
+				fnSearchAccoutList(this, $(this).val());
+									
 			});
 		});
 		
@@ -1450,9 +1457,12 @@
 			<div>
 				<table class="subject1">						
 					<tr>      
-						<td class="subTitle" style="border-top: none;" colspan="6">
+						<td class="subTitle" style="border-top: none;padding-right: 27px;" >
 							<label class="ftw400">매출등록</label>&nbsp;&nbsp;&nbsp;	
-							<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addNewSalesOrder();" style="vertical-align: middle;cursor: pointer;width: 30px;"/>
+							<%-- <img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addNewSalesOrder();" style="vertical-align: middle;cursor: pointer;"/> --%>
+							
+						</td>     
+						<td class="subTitle" style="border-top: none;" colspan="5">
 							
 							<c:if test="${salesOrderSelectBox.size() >0 }">
 								<select id="mtSaveOrderAcKey" name="mtSaveOrderAcKey" style="width: 200px; height: 30px;">															
@@ -1590,9 +1600,9 @@
 							</td>
 							<td class="tdTitle"><label>*</label> 발행구분</td>
 							<td class="tdContents" style="width:112px;">
-								<select id="billIssueType" name="billIssueType" style="<c:if test='${mtSalesOrderVO.billIssueType == "N"}'>color:red;</c:if>" >
+								<select id="billIssueType" name="billIssueType" >
 									<option value="Y" <c:if test='${mtSalesOrderVO.billIssueType == "Y"}'>selected </c:if> style="color:black;">정발행</option>
-									<option value="N" <c:if test='${mtSalesOrderVO.billIssueType == "N"}'>selected </c:if> style="color:red;">역발행</option>
+									<option value="N" <c:if test='${mtSalesOrderVO.billIssueType == "N"}'>selected </c:if> style="color:black;">역발행</option>
 								</select>
 							</td>
 							<td class="tdTitle" style="width: 70px"><label>*</label> 결제조건</td>
@@ -1612,12 +1622,12 @@
 			<form action="/" id="mtListForm" name="mtListForm" method="post">
 				
 					<div class="subjectContainer">
-						<table class="subject" style="padding-top: 15px;">
+						<table class="subject" style="padding-top: 25px;">
 							<tr>		
 								<td class="subTitle" style="border-top: none;">
 									<label class="ftw400">제품정보</label>
 								</td>
-								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();" style="cursor: pointer;width: 30px;"/></td>
+								<td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addInfoTable();" style="cursor: pointer;vertical-align: middle;"/></td>
 								<td class="subBtn" colspan="5"  style="border-top: none;text-align: center;vertical-align: middle;">
 									<%-- <c:if test="${listCount>0}">
 									유지보수 매출금액 업데이트여부 :

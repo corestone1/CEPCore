@@ -166,11 +166,23 @@
     		width: 100%;
     		/* cursor: pointer; */
 		}
-		form .contents > .fxd .title ul li.on,
+		/* form .contents > .fxd .title ul li.on,
 		form .contents > .fxd .title ul li:hover  {
 			color: #fff  !important;
 			background-color: #4c3d92;
+		} */
+		
+		form .contents > .fxd .title ul li.on {
+			color: #fff  !important;
+			background-color: #4c3d92 !important;
 		}
+		
+		
+		form .contents > .fxd .title ul li:hover  {
+			color: #777777 ;
+			background-color: #b9b9b9;
+		}
+		
 		form .contents .dtl, form .contents .dtl2 {
 			border-top: 4px solid #6a5baf;
 			overflow: hidden;
@@ -250,6 +262,14 @@
 			width: 261px;		
 			line-height: 2;
 		}
+		.contents .bsc tbody tr td > span {
+			display: list-item;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 99%;
+			margin: 0 auto;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -267,10 +287,10 @@
 			</c:forEach>
 			//고객담당자 정보 셋팅
 			 if(acDirectorList.length>0){
-				$('#mtWorkAcDirectorKey').val("${basicWorkInfo.mtWorkAcDirectorKey}").attr("selected", "true");
+				$('#m_mtWorkAcDirectorKey').val("${basicWorkInfo.mtWorkAcDirectorKey}").attr("selected", "true");
 				for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {					
 					if("${basicWorkInfo.mtWorkAcDirectorKey}" == acDirectorList[idx].acDirectorKey ){
-						$('#acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
+						$('#m_acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
 						
 						break;
 					}
@@ -411,14 +431,14 @@
 			}); */
 			
 			/* 고객담당자 선택하면 고객담당자 정보 변경하기  */			
-			$('#mtWorkAcDirectorKey').change(function(){
-				var checkVal = $('#mtWorkAcDirectorKey option:selected').val();
+			$('#m_mtWorkAcDirectorKey').change(function(){
+				var checkVal = $('#m_mtWorkAcDirectorKey option:selected').val();
 				//console.log("checkVal===>"+acDirectorList.length);
 				if(acDirectorList.length>0){
 					for ( var idx = 0 ; idx < acDirectorList.length ; idx++ ) {
 						//console.log("acDirectorList[idx].acDirectorKey===>"+acDirectorList[idx].acDirectorKey);
 						if(checkVal == acDirectorList[idx].acDirectorKey ){
-							$('#acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
+							$('#m_acDirectorInfo').val(acDirectorList[idx].acDirectorInfo);
 							break;
 						}
 					}					
@@ -521,15 +541,15 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>PROJECT명</td>
-									<td><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>유지보수명</td>
-									<td><c:out value="${basicContractInfo.mtNm}"/></td>
+									<td><span title="${basicContractInfo.mtNm}"><c:out value="${basicContractInfo.mtNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>고객사</td>
@@ -678,13 +698,13 @@
 								<tr>
 									<td>고객담당자</td>
 									<td>
-										<select id="mtWorkAcDirectorKey" name="mtWorkAcDirectorKey" >
+										<select id="m_mtWorkAcDirectorKey" name="mtWorkAcDirectorKey" >
 										<!-- <option value="">선택</option> -->
 										<c:forEach var="director" items="${acDirectorList}" varStatus="status">										
 										<option value="<c:out value="${director.acDirectorKey}"/>"><c:out value="${director.acDirectorNm}"/></option>
 										</c:forEach>									
 										</select>	
-										<input type="text" id="acDirectorInfo" class="pname" readonly/>
+										<input type="text" id="m_acDirectorInfo" class="pname" readonly/>
 									</td>
 								</tr>
 								<tr>

@@ -169,12 +169,21 @@
     		width: 100%;
     		/* cursor: pointer; */
 		}
-		form .contents > .fxd .title ul li.on,
+		/* form .contents > .fxd .title ul li.on,
 		form .contents > .fxd .title ul li:hover  {
 			color: #fff  !important;
 			background-color: #4c3d92;
-		}	
+		} */	
+		form .contents > .fxd .title ul li.on  {
+			color: #fff  !important;
+			background-color: #4c3d92 !important;
+		}
 		
+
+		form .contents > .fxd .title ul li:hover  {
+			color: #777777 ;
+			background-color: #b9b9b9;
+		}
 				
 		/* 리스트 위에 마우스 올리면 색변경 */
 		form .contents .dtl tbody tr:hover {
@@ -248,6 +257,14 @@
 			white-space: nowrap;
 			font-weight: 200;
 			color: #21a17e;
+		}
+		.contents .bsc tbody tr td > span {
+			display: list-item;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			width: 99%;
+			margin: 0 auto;
 		}
 	</style>
 	<script>
@@ -417,15 +434,15 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>PROJECT명</td>
-									<td><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></td>
+									<td><span title="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>유지보수명</td>
-									<td><c:out value="${basicContractInfo.mtNm}"/></td>
+									<td><span title="${basicContractInfo.mtNm}"><c:out value="${basicContractInfo.mtNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>고객사</td>
@@ -514,7 +531,11 @@
 						</ul>
 					</div>
 					<div id="detailForm">
-						<div class="stitle cg colorBlack">장비별작업정보&nbsp;<img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/></div>
+						<div class="stitle cg colorBlack">장비별작업정보&nbsp;
+						<c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
+						<img class="veralignT" src="<c:url value='/images/btn_add-pop.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addView()"/>
+						</c:if>
+						</div>
 						<div class="floatC middle">
 							<table class="dtl">
 								<thead class="ftw400">

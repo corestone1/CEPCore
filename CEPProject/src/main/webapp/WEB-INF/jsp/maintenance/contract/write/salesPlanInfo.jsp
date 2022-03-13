@@ -55,16 +55,17 @@
 			z-index: 3;
 			background-color: #f6f7fc;
 			overflow-y: hidden;
+			overflow-x: hidden;
 		}
 		.popContainer .contents1 > div {
 			/* margin: 10px 47px 0 37px;
 			overflow-y: auto;		 */
 			margin-left: 38px;				
-			width: calc(100% - 70px);
+			width: calc(100% - 80px);
 		}
 		.popContainer .contents .subject2 {
 			width: 863px;
-			border-bottom: 2px solid #e5e5e5;
+			/* border-bottom: 2px solid #e5e5e5; */
 			padding-bottom: 9px;
 		}
 		.popContainer input {
@@ -251,6 +252,7 @@
 			overflow-x: hidden;
 			float: left;
 			font-size: 14px;
+			background: #ffffff;
 		}
 		.popContainer .contents1 table tbody tr {
 			display: table;
@@ -316,7 +318,9 @@
 			padding-left: 20px;
 			width: 75px;
 			text-align: left;
-			background-color: #e1dff5;
+			/* background-color: #e1dff5; */
+			background: transparent;
+    		border: none;
 		}	
 		.popContainer .contents td.tdContents {
 			width: 160px;
@@ -366,7 +370,7 @@
 			word-wrap: break-word;
 			z-index: 9999;
 		}
-		.popContainer .contents .subject2 select{
+		.popContainer .contents select{
 			width: 205px;
 			height: 30px;
 			border: 1px solid #e9e9e9;
@@ -821,7 +825,7 @@
 							</td>
 							<td style="width:136px; border: none; text-align:right; color: #32bc94; font-size: 15px;padding-top: 20px">
 								매출 총금액 : 
-								<input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
+								<input type="text" id="mtSaleTotalAmount" style="width:120px;text-align: right;color: #32bc94;" class="pname" value="<c:out value="${displayUtil.commaStr(mtSalesTotalAmount)}"/>" readonly/>
 							</td>
 							<%-- <td class="subBtn" style="border-top: none;"><img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable('sales');"/></td> --%>
 						</tr>
@@ -830,7 +834,7 @@
 						<tr>							
 							<td class="tdTitle" style="width:86px">계산서일자 일괄등록</td>
 							<td class="tdContents" style="text-align:left;width:145px;">
-								<select id="billDay" style="width:75px;height:27px;">
+								<select id="billDay" style="width:147px;height:27px;">
 								<c:forEach var="day" begin="1" end="31">
 									<c:if test='${day <9}'>
 									<option value="0<c:out value="${day}" />">0<c:out value="${day}" />일</option>

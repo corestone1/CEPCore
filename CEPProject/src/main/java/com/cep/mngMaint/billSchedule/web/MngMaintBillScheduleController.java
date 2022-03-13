@@ -59,7 +59,7 @@ public class MngMaintBillScheduleController {
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
 			} else {
-				searchVO.setToDate(toDay);
+//				searchVO.setToDate(toDay);
 			}
 			
 			//처음조회시 계산서요청일 기준으로 데이타 조회.
@@ -74,7 +74,10 @@ public class MngMaintBillScheduleController {
 			searchParam = new HashMap<>();
 			
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
-			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+				searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			}
+			
 			
 			
 			billRequestList = service.selectMtBillRequestList(searchVO);
@@ -118,7 +121,7 @@ public class MngMaintBillScheduleController {
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
 			} else {
-				searchVO.setToDate(toDay);
+				//searchVO.setToDate(toDay);
 			}
 			
 			codeSearchVO = new CodeSearchVO();
@@ -129,7 +132,10 @@ public class MngMaintBillScheduleController {
 			searchParam = new HashMap<>();
 			
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
-			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+				searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			}
+			
 			searchParam.put("toDay", toDay);
 			model.put("searchParam", searchParam);
 			model.put("salesCodeList", lltCodeList);
@@ -175,7 +181,7 @@ public class MngMaintBillScheduleController {
 			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
 				searchVO.setToDate(searchVO.getToDate().replace("-", ""));
 			} else {
-				searchVO.setToDate(toDay);
+//				searchVO.setToDate(toDay);
 			}
 			
 //			codeSearchVO = new CodeSearchVO();
@@ -186,7 +192,10 @@ public class MngMaintBillScheduleController {
 			searchParam = new HashMap<>();
 			
 			searchParam.put("fromDate", CepDateUtil.convertDisplayFormat(searchVO.getFromDate(), null, null));
-			searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getToDate(), ""))){
+				searchParam.put("toDate", CepDateUtil.convertDisplayFormat(searchVO.getToDate(), null, null));
+			}
+			
 			searchParam.put("toDay", toDay);
 			model.put("searchParam", searchParam);
 //			model.put("salesCodeList", lltCodeList);

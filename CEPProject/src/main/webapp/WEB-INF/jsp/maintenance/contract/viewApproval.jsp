@@ -476,9 +476,9 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="btnWrap rt floatR">
-					<div>
+					<%-- <div>
 						<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
-					</div>
+					</div> --%>
 				</div>
 			</div>
 		</div>	

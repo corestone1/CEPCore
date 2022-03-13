@@ -96,6 +96,8 @@
 			white-space:nowrap;
 			margin-left: 15px;
 			vertical-align: middle;
+    		width: 97%;
+    		margin: 0 auto;
 		}
 		/* 리스트에 마우스 올려 놓았을 경우 해당 라인 색깔 변하게 하는것 */
 		.middle table tbody tr:hover {
@@ -226,7 +228,7 @@
 			        console.log("배열에 담긴 값 : "+tdArr); */
 
 				//$("input[name=selectKey]").val($('#check'+$(this).children().eq(1).text()).val());			
-				document.listForm.mtIntegrateKey.value=$('#check'+$(this).children().eq(1).text()).val();
+				document.listForm.m_mtIntegrateKey.value=$('#check'+$(this).children().eq(1).text()).val();
 				/* location.href = "/maintenance/detail/prodInfo.do"; */
 				document.listForm.action = "/maintenance/contract/detail/productInfo.do";
 	           	document.listForm.submit();  
@@ -381,7 +383,7 @@
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 		<input type="hidden" name="btnOption" />
 		<!-- <input type="hidden" id="selectKey" name="selectKey"/> -->
-		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey"/>
+		<input type="hidden" id="m_mtIntegrateKey" name="mtIntegrateKey"/>
 		<!-- <div class="sfcnt"></div>
 		<div class="nav"></div> -->
 		<div class="contentsWrap">
@@ -396,7 +398,7 @@
 					</div>
 					<div class="floatR">
 						<!-- <input type="text" name="fromDate" placeholder="from" class="calendar" /> ~ <input type="text" name="toDate" placeholder="to" class="calendar" /> -->
-						<form:input path="fromDate" type="text" placeholder="계약일자(from)" class="calendar fromDt" value="${searchParam.fromDate}"/> ~ <form:input path="toDate" type="text" placeholder="계약일자(to)" class="calendar toDt" value="${searchParam.toDate}"/>
+						<form:input path="fromDate" type="text" placeholder="계약일자(from)" class="calendar fromDt" value="${searchParam.fromDate}"/> <label style="vertical-align: -webkit-baseline-middle;"> ~ </label> <form:input path="toDate" type="text" placeholder="계약일자(to)" class="calendar toDt" value="${searchParam.toDate}"/>
 						<!-- <select name="searchSaleEmpKey"> -->
 						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 100px"/>
 						<form:select path="searchGubun">
@@ -447,8 +449,8 @@
 								</td>
 								<td><c:out value="${result.rowNum}"/></td>
 								<td><c:out value="${result.mtIntegrateKey}"/></td>
-								<td align="left"><span title="${result.mtAcNm}"><c:out value="${result.mtAcNm}"/></span></td>
-								<td align="left" class="listtd"><span title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
+								<td align="left">&nbsp;<span title="${result.mtAcNm}"><c:out value="${result.mtAcNm}"/></span></td>
+								<td align="left" class="listtd">&nbsp;<span title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtStartDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtEndDt)}"/></td>
@@ -456,8 +458,8 @@
 								<td><c:out value="${result.mtImCd}"/></td>
 								<td><c:out value="${result.mtSbCtYn}"/></td>
 								<td><c:out value="${result.saleEmpNm}"/></td>
-								<td><c:out value="${displayUtil.commaStr(result.mtAmount)}"/></td>
-								<td><c:out value="${displayUtil.commaStr(result.mtOrderAmount)}"/></td>
+								<td align="right"><c:out value="${displayUtil.commaStr(result.mtAmount)}"/>&nbsp;</td>
+								<td align="right" ><c:out value="${displayUtil.commaStr(result.mtOrderAmount)}"/>&nbsp;</td>
 							</tr>						
 						</c:forEach>
 							
@@ -474,7 +476,7 @@
 					</table>
 				<div class="bottom">
 					<div class="floatR">
-						<button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
+						<%-- <button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
 						<%-- <button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 						<button type="button" value="엑셀 다운로드" onclick="fn_excelBtn();"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>"/></button>
 					</div>
