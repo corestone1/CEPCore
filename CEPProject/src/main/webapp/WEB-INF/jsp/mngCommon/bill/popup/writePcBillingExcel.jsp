@@ -100,62 +100,62 @@
 	
 	.popContainer .middle table thead th:first-child, 
 	.popContainer .middle table tbody td:first-child {
-		width: 60px;
+		width: 43px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2) {
-		width: 55px;
+		width: 60px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 55px;
+		width: 60px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
-		width: 80px;
+		width: 86px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 95px;
+		width: 98px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
-		width: 335px;
+		width: 235px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(7), 
 	.popContainer .middle table tbody td:nth-child(7) {
-		width: 100px;
+		width: 80px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(8), 
 	.popContainer .middle table tbody td:nth-child(8) {
-		width: 120px;
+		width: 110px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(9), 
 	.popContainer .middle table tbody td:nth-child(9) {
-		width: 120px;
+		width: 112px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(10), 
 	.popContainer .middle table tbody td:nth-child(10) {
-		width: 120px;
+		width: 109px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(11), 
 	.popContainer .middle table tbody td:nth-child(11) {
-		width: 80px;
+		width: 85px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(12), 
 	.popContainer .middle table tbody td:nth-child(12) {
-		width: 300px;
+		width: 233px;
 	}
 	
 	

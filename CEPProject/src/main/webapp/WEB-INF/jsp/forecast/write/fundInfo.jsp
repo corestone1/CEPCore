@@ -134,7 +134,7 @@
 			margin-top: 18px;
 		}
 		#m_div_accountList {
-			left: 144.5px;
+			left: 161.5px;
 		}
 		.move {
 			display: inline-block;
@@ -758,8 +758,8 @@
 							<input type="hidden" name="saleslastNum" id="saleslastNum" value="0" />
 							<table class="salesTable">
 								<tr>
-									<td class="tdTitle" style="width: 85px;">
-										매출처
+									<td class="tdTitle">
+										매출처&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="hidden" id="salesList-0-salesKey" name="salesKey" value="" />
 									</td>
 									<td class="tdContents">
@@ -829,8 +829,8 @@
 								<input type="hidden" name="saleslastNum" id="saleslastNum" value="<c:out value="${status.index}"/>" />
 								<table class="salesTable">
 									<tr>
-										<td class="tdTitle" style="width: 85px;">
-											매출처
+										<td class="tdTitle">
+											매출처&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											<input type="hidden" id="salesList-<c:out value="${status.index}"/>-salesKey" name="salesKey" value="<c:out value="${result.salesKey}"/>" />
 										</td>
 										<td class="tdContents">
@@ -910,7 +910,7 @@
 							<table class="pcTable">
 								<tr id="m_tr_account">
 									<td class="tdTitle">
-										매입처
+										매입처&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="hidden" name="buyKey" id="pcList-0-buyKey" value="" />
 									</td>
 									<td class="tdContents d2">
@@ -982,7 +982,7 @@
 								<table class="pcTable">
 									<tr id="m_tr_account">
 										<td class="tdTitle">
-											매입처
+											매입처&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											<input type="hidden" name="buyKey" id="pcList-<c:out value="${status.index}"/>-buyKey" value="<c:out value="${result.buyKey}"/>" />
 										</td>
 										<td class="tdContents d2">
