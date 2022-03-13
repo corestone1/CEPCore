@@ -299,21 +299,25 @@ $(window).load(function() {
 	}); */
 	
    $("body").delegate(".calendar", "focusin", function() {
-      $(this).removeClass('hasDatepicker').datepicker({
-         dateFormat: 'yy-mm-dd',
-         changeMonth: true,
-         changeYear: true,
-         monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-         numberOfMonths: 1,
-         onSelect: function( selectedDate ) {
-            //$( ".fromDt" ).datepicker( "option", "maxDate", selectedDate );
-            $(this).datepicker();
-         }
+	  $(this).attr("autocomplete", "off");
+      $(this).datepicker({
+    	  changeMonth: true, 
+    	  changeYear: true, 
+    	  minDate: '-50y', 
+    	  nextText: '다음 달', 
+    	  prevText: '이전 달', 
+    	  yearRange: 'c-10:c+10', 
+    	  showButtonPanel: true, 
+    	  currentText: '오늘 날짜', 
+    	  closeText: '닫기', 
+    	  dateFormat: "yy-mm-dd", 
+    	  showMonthAfterYear: true, 
+    	  dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'], 
+    	  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
        });
-      $(this).attr('onkeyup','fn_date_format(event, this)');
-      $(this).attr('onkeypress','fn_date_format(event, this)');
 	      
    	});
+	
 	
 	/* 리스트 클릭하면 색깔 칠하기.*/
 	$('.middle table tbody tr').children().click(function() {
@@ -351,16 +355,29 @@ $(window).load(function() {
 	$("#excelExport").click(function() {
 		exportExcel($(document).find("title").text());
 	});
+	
 });
+
+
 
 function itoStr($num) {
 	$num < 10 ? $num = '0'+$num : $num;
 	return $num.toString();
 }
 
+function s2ab(s) {
+	var buf = new ArrayBugger(s.length);
+	var view = new Uint8Array(buf);
+	for(var i = 0; i < s.length; i++) {
+		view[i] = s.charCodeAt(i) & 0xFF;
+	}
+	
+	return buf;
+}
+
 // Excel export
 function exportExcel(pageTitle) { 
-	var dt = new Date();
+	/*var dt = new Date();
 	var year =	itoStr( dt.getFullYear() );
 	var month = itoStr( dt.getMonth() + 1 );
 	var day =	itoStr( dt.getDate() );
@@ -378,9 +395,14 @@ function exportExcel(pageTitle) {
 	        return pageTitle;	//시트명
 	    },
 	    getExcelData : function(){
-	        return document.getElementsByClassName('excelSheet')[0]; 	//TABLE id
+	    	if(document.getElementsByTagName("iframe").length == 0) {
+	    		return document.getElementsByClassName('excelSheet')[0]; 	//TABLE id
+	    	} else {
+	    		return document.getElementsByTagName("iframe")[0].contentWindow.document.body.getElementsByClassName("excelSheet");
+	    	}
 	    },
 	    getWorksheet : function(){
+	    	console.log(this.getExcelData());
 	        return XLSX.utils.table_to_sheet(this.getExcelData());
 	    }
 	}
@@ -391,7 +413,59 @@ function exportExcel(pageTitle) {
 	XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName());
 	
 	var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
-	saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());
+	saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());*/
+	
+	
+	var dt = new Date();
+	var year =	itoStr( dt.getFullYear() );
+	var month = itoStr( dt.getMonth() + 1 );
+	var day =	itoStr( dt.getDate() );
+	var hour =	itoStr( dt.getHours() );
+	var mins =	itoStr( dt.getMinutes() );
+
+	var postfix = year + month + day + "_" + hour + mins;
+	var fileName = pageTitle+"_"+ postfix;
+	
+	var excelHandler = {
+			getExcelFileName : function(){
+		        return fileName + '.xlsx';	//파일명
+		    },
+		    getSheetName : function(){
+		        return pageTitle;	//시트명
+		    },
+		    getExcelData : function(){
+		    	if(document.getElementsByTagName("iframe").length == 0) {
+		    		return document.getElementsByClassName('excelSheet')[0]; 	//TABLE id
+		    	} else {
+		    		return document.getElementsByTagName("iframe")[0].contentWindow.document.body.getElementsByClassName("excelSheet");
+		    	}
+		    },
+		    getWorksheet : function(data){
+		        return XLSX.utils.table_to_sheet(data);
+		    }
+	}
+	
+	var tables = [];
+	var wb = XLSX.utils.book_new();
+	
+	if(document.getElementsByTagName("iframe").length == 0) {
+		tables = document.getElementsByClassName('excelSheet'); 	//TABLE id
+	} else {
+		tables = document.getElementsByTagName("iframe")[0].contentWindow.document.body.getElementsByClassName("excelSheet");
+	}
+	
+	for(var i = 0; i < tables.length; i++) {
+		var newWorksheet =  excelHandler.getWorksheet(tables[i]);
+		XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName() + "_0" + i);
+	}
+	
+	var wbout = XLSX.write(wb, {booktype:'xlsx', type:'binary'});
+	
+	saveAs(new Blob([s2ab(wbout)], {type:"application/octet-stream"}), excelHandler.getExcelFileName());
+	
+	
+	
+	
 }
 
 

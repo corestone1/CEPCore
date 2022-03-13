@@ -1494,15 +1494,15 @@
 			</div>
 			<div class="btnWrap floatL">
 				<div class="floatL btnPrev">
-					<button type="button" onclick="javascript:fnMoveTab('progress');"
-						class="move">
+					<button type="button" onclick="javascript:fnMoveTab('progress');" class="move">
 						<img src="<c:url value='/images/btn_prev.png'/>" /> <span
-							class="moveSpan right">저장/수정하지 않은 정보는 반영되지 않습니다.</span>
+							class="moveSpan right">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
 					</button>
 				</div>
 				<c:set var="systemName" value='<%=session.getAttribute("name")%>' />
 				<c:set var="mngName" value="${forecast.empNm }" />
-				<c:if test="${systemName eq mngName }">
+				<c:set var="empAuth" value='<%=session.getAttribute("empAuthCd").equals("EMAU1001") %>' />
+				<c:if test="${(systemName eq mngName or empAuth eq true) and forecast.spState ne 'S' }">
 					<div class="floatL btnSave">
 						<button type="button" onclick="javascript:fn_chkVali()">
 							<img src="<c:url value='/images/btn_save.png'/>" />

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -76,17 +77,16 @@ public class MngCommonBillController {
 		return "mngCommon/bill/list";
 	}
 	
-	@RequestMapping(name="/delete.do")
+	@RequestMapping(value="/delete.do")
 	@ResponseBody
-	public Map<String, Object> deleteBill(@ModelAttribute("searchVO") MngCommonBillSearchVO searchVO, HttpServletRequest request) throws Exception {
+	public Map<String, Object> deleteBill(@RequestBody MngCommonBillSearchVO searchVO, HttpServletRequest request) throws Exception {
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		try{
 			logger.debug("================================= deleteBill ===========================");
-			searchVO.setBillNo(request.getParameter("billNo"));
 			
-			service.deleteBill(searchVO);
+			returnMap = service.deleteBill(searchVO);
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -561,9 +561,21 @@ public class MngCommonBillController {
                 logger.debug("{} :  5 = {}", i, xlsxRow.getCell(5).toString());
                 logger.debug("{} :  6 = {}", i, xlsxRow.getCell(6).toString());
                 logger.debug("{} :  7 = {}", i, xlsxRow.getCell(7).toString());
-                logger.debug("{} :  8 = {}", i, xlsxRow.getCell(8).getNumericCellValue());
-                logger.debug("{} :  9 = {}", i, xlsxRow.getCell(9).getNumericCellValue());
-                logger.debug("{} : 10 = {}", i, xlsxRow.getCell(10).getNumericCellValue());
+                if(xlsxRow.getCell(8).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+                	logger.debug("{} :  8 = {}", i, xlsxRow.getCell(8).getNumericCellValue());
+				} else {
+					logger.debug("{} :  8 = {}", i, xlsxRow.getCell(8).getStringCellValue());
+				}
+            	if(xlsxRow.getCell(9).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+            		logger.debug("{} :  9 = {}", i, xlsxRow.getCell(9).getNumericCellValue());
+				} else {
+					logger.debug("{} :  9 = {}", i, xlsxRow.getCell(9).getStringCellValue());
+				}
+            	if(xlsxRow.getCell(10).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+            		logger.debug("{} :  10 = {}", i, xlsxRow.getCell(10).getNumericCellValue());
+				} else {
+					logger.debug("{} :  10 = {}", i, xlsxRow.getCell(10).getStringCellValue());
+				}
                 logger.debug("{} : 11 = {}", i, xlsxRow.getCell(11).toString());
                 logger.debug("{} : 12 = {}", i, xlsxRow.getCell(12).toString());
                 logger.debug("{} : 13 = {}", i, xlsxRow.getCell(13).toString());
@@ -576,9 +588,21 @@ public class MngCommonBillController {
             	lemRow.put("subAcKey",    xlsxRow.getCell(5).toString());
             	lemRow.put("acNm",        xlsxRow.getCell(6).toString());
             	lemRow.put("ceoNm",       xlsxRow.getCell(7).toString());
-            	lemRow.put("billAmount",  xlsxRow.getCell(8).getNumericCellValue());
-            	lemRow.put("billTaxAmount",     xlsxRow.getCell(9).getNumericCellValue());
-            	lemRow.put("billTotalAmount", xlsxRow.getCell(10).getNumericCellValue());
+            	if(xlsxRow.getCell(8).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+					lemRow.put("billAmount",  xlsxRow.getCell(8).getNumericCellValue());
+				} else {
+					lemRow.put("billAmount",  xlsxRow.getCell(8).getStringCellValue());
+				}
+            	if(xlsxRow.getCell(9).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+					lemRow.put("billTaxAmount",  xlsxRow.getCell(9).getNumericCellValue());
+				} else {
+					lemRow.put("billTaxAmount",  xlsxRow.getCell(9).getStringCellValue());
+				}
+            	if(xlsxRow.getCell(10).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+					lemRow.put("billTotalAmount",  xlsxRow.getCell(10).getNumericCellValue());
+				} else {
+					lemRow.put("billTotalAmount",  xlsxRow.getCell(10).getStringCellValue());
+				}
             	lemRow.put("remark",      xlsxRow.getCell(11).toString());
             	lemRow.put("billNo",      xlsxRow.getCell(12).toString());
             	lemRow.put("billIssueDt", xlsxRow.getCell(13).toString());
@@ -601,6 +625,27 @@ public class MngCommonBillController {
 		}
 		
 		return returnMap;
+		
+	}
+	
+	@RequestMapping(value="/isExistBill.do", method=RequestMethod.POST)
+	@ResponseBody
+	public int selectExist(HttpServletRequest request, @RequestBody MngCommonBillVO billVO ) throws Exception {
+		
+		int result = 0;
+		try {
+			
+			logger.debug("======================= selectExistBill =========================");
+			logger.debug("billVO.size() : {}", billVO.getMngBillInsertVOList().size());
+			
+			result = service.selectExistBill(billVO);
+			
+		} catch(Exception e) {
+			logger.error("{}", e);
+			throw e;
+		}
+		
+		return result;
 		
 	}
 

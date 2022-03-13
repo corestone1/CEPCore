@@ -69,7 +69,9 @@
 			  , REMARK             = #{remark}
 			  , MOD_DT             = DATE_FORMAT(NOW(),'%Y%m%d')
 			  , MOD_TM             = DATE_FORMAT(NOW(),'%H%i%s')
+			  <if test="spKey != null and spKey != ''">
 			  , SP_KEY             = #{spKey}
+			  </if>
 		WHERE  PJ_KEY = #{pjKey}
 	
 	</update>
@@ -393,7 +395,7 @@
 			 , IFNULL(PGB.GB_AMOUNT, '-')      AS GB_AMOUNT
 		FROM   PJ_GUARANTY_BOND_TB   PGB
 		WHERE  PGB.DELETE_YN = 'N'
-		  AND  PGB.SALES_KEY = #{salesKey}
+		  AND  PGB.CT_KEY = #{ctKey}
 	
 	</select>
 	
@@ -423,11 +425,12 @@
 		     , PGB.GB_ISSUE_STATUS    AS GB_ISSUE_STATUS
 		     , PGB.GB_INSPECT_DT  AS GB_INSPECT_DT
 		     , PGB.GB_SK_AMOUNT   AS GB_SK_AMOUNT
+		     , PGB.GB_REQ_DT			AS GB_REQ_DT			/* 제출 예정일 */
 		FROM   PJ_GUARANTY_BOND_TB  PGB
-		JOIN   PJ_SALES_DETAIL_TB   PSD  ON PGB.SALES_KEY       = PSD.SALES_KEY AND PSD.DELETE_YN = 'N'
-		JOIN   PJ_CONTRACT_TB       PCT  ON PSD.SALES_CT_FK_KEY = PCT.PJ_KEY    AND PCT.DELETE_YN = 'N'
-		JOIN   PJ_MAIN_TB           PMT  ON PCT.PJ_KEY          = PMT.PJ_KEY    AND PMT.DELETE_YN = 'N'
-		JOIN   CMM_ACCOUNT_TB       CAT  ON PMT.AC_KEY          = CAT.AC_KEY
+		<!-- LEFT OUTER JOIN   PJ_SALES_DETAIL_TB   PSD  ON PGB.SALES_KEY       = PSD.SALES_KEY AND PSD.DELETE_YN = 'N' -->
+		LEFT OUTER JOIN   PJ_CONTRACT_TB       PCT  ON PGB.CT_KEY = PCT.CT_KEY    AND PCT.DELETE_YN = 'N'
+		LEFT OUTER JOIN   PJ_MAIN_TB           PMT  ON PCT.PJ_KEY          = PMT.PJ_KEY    AND PMT.DELETE_YN = 'N'
+		LEFT OUTER JOIN   CMM_ACCOUNT_TB       CAT  ON PMT.AC_KEY          = CAT.AC_KEY
 		WHERE  PGB.DELETE_YN = 'N'
 		  AND  PGB.GB_KEY = #{gbKey}
 	</select>
@@ -473,13 +476,14 @@
 		     , GB_INSPECT_DT = #{gbInspectDt} 
 		     , GB_ISSUE_STATUS   = 'R'
 		     , GB_RATE       = #{gbRate}
-		     <if test="gbSkAmount > 0">
+		     <if test="gbSkAmount != null and gbSkAmount != ''">
 		     , GB_SK_AMOUNT     = #{gbSkAmount}
 		     </if>
 		     <if test="gbPublishDt != null and gbPublishDt != ''">
 		     , GB_PUBLISH_DT     = #{gbPublishDt}
 		     </if>
-		     <if test="gbAmount > 0">
+		     , GB_REQ_DT = #{gbReqDt}
+		     <if test="gbAmount != null and gbAmount != ''">
 		     , GB_AMOUNT     = #{gbAmount}
 		     </if>
 		WHERE GB_KEY = #{gbKey}
@@ -503,14 +507,15 @@
 		SET    GB_START_DT   = #{gbStartDt}
 		     , GB_END_DT     = #{gbEndDt}
 		     , GB_RATE       = #{gbRate}
+		     <if test="gbPublishDt != null and gbPublishDt != ''">
 		     , GB_PUBLISH_DT = #{gbPublishDt}
+		     </if>
 		     , GB_INSPECT_DT = #{gbInspectDt}
-		     <if test="gbAmount > 0">
+		     , GB_REQ_DT = #{gbReqDt}
+		     <if test="gbAmount != null and gbAmount != ''">
 		     , GB_AMOUNT     = #{gbAmount}
 		     </if>
-		     <if test="gbSkAmount > 0">
 		     , GB_SK_AMOUNT     = #{gbSkAmount}
-		     </if>
 		WHERE GB_KEY = #{gbKey}
 		
 	</update>

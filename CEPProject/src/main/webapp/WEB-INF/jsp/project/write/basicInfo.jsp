@@ -99,7 +99,7 @@
 			width: calc(100% - 20px);
 			height: 113px;
 			border: 1px solid #e9e9e9;
-			padding: 0 10px;
+			padding: 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
@@ -135,14 +135,14 @@
 			position: absolute;
 			left: 241px;
 			z-index: 99;
-			top: 602px;
-			width: 314px;
+			top: 625px;
+			width: 330px;
 		}
 		#fileForm .exFileLabel {
-			background-image: url('/images/btn_file.png');
+			background-image: url('/images/btn_file_upload.png');
 			background-repeat: no-repeat;
-			width: 110px;
-			height: 26px;
+			width: 119px;
+			height: 31px;
 			cursor: pointer;
 			float: left;
 			margin-top: 1px;
@@ -176,11 +176,14 @@
 		    height: 17px;
 		    text-overflow: ellipsis;
 		}
+		#fileForm .upload-name:hover {
+			text-decoration: underline;
+		}
 		#fileForm .close {
 			vertical-align: middle;
 		}
 		#fileWrap {
-			height: 62px;
+			height: 41px;
 			overflow-y: auto;
 		}
 		#fileWrap::-webkit-scrollbar-button {
@@ -208,16 +211,55 @@
 		    right: 40px;
 		    top: 20px;
 		}
+		.move {
+			display: inline-block;
+		}
+		.move:hover .moveSpan {
+			 visibility: visible;
+		}
+		.move .moveSpan {
+		    visibility: hidden;
+		    width: 230px;
+		    height: 42px;
+		    background-color: #404040;
+		    color: #ffffff;
+		    text-align: center;
+		    border-radius: 6px;
+		    padding: 5px 0;
+		    position: absolute;
+		    z-index: 9999;
+		    bottom: 57px;
+		    right: 15px;
+		    font-size: 14px;
+		}
+		.move .moveSpan::after {
+		    content: "";
+		    position: absolute;
+		    top: 100%;
+		    left: 82%;
+		    margin-left: -5px;
+		    border-width: 5px;
+		    border-style: solid;
+		    border-color: #404040 transparent transparent transparent;
+		}
 	</style>
 	<script>
 		function fn_chkVali() {
 			if ($("#infoForm")[0].checkValidity()){
-	            if ($("#infoForm")[0].checkValidity()){
-	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_save();
-	            } else {
-	                $("#infoForm")[0].reportValidity();   
-	            }            
+	           //필수값 모두 통과하여 저장 프로세스 호출.
+               if($(".uploadName").val() != null && $(".uploadName").val().length != 0) {
+            	   var maxSize = 20 * 1024 * 1024;
+            	   var fileSize = $("#exFile")[0].files[0].size;
+            	   
+            	   if(fileSize > maxSize) {
+            		   alert("첨부파일 사이즈는 20MB 이내로 등록 가능합니다.");
+            		   return false;
+            	   } else {
+            		   fn_save();
+            	   }
+               } else {
+            	   fn_save();
+               }
 	            
 	         }  else {
 	             //Validate Form
@@ -362,7 +404,7 @@
 					button = [];
 					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
 				} else {
-					alert('저장을 해주세요.');
+					alert('기본정보는 필수 입력값입니다. 정보 입력 후 저장을 해주세요.');
 				}
 			}
 		}
@@ -370,6 +412,17 @@
 		var acDirectorList;
 		
 		$(document).ready(function() {
+			
+			$('#remarkCnt').html("("+$("#remark").val().length+" / 500)");
+			
+			$('#remark').on('keyup', function() {
+				$('#remarkCnt').html("("+$(this).val().length+" / 500)");
+				
+				if($(this).val().length > 500) {
+					$(this).val($(this).val().substring(0, 500));
+					$('#remarkCnt').html("(500 / 500)");
+				}
+			});
 			
 			$("#acNm, #salesAcNm").on("keyup", function(event){
 				fn_searchAccoutList(this, $(this).val());				
@@ -675,7 +728,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>고객사담당자</td>
+							<td class="tdTitle">고객사담당자</td>
 							<td class="tdContents">
 								<select name="acDirectorKey" id="acDirectorKey">
 									<%-- <c:forEach var="emp" items="${empList}" varStatus="status">
@@ -697,9 +750,10 @@
 							<td class="tdContents">
 								<select name="pjSaleEmpKey" id="pjSaleEmpKey">
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
-										<option <c:if test="${empKey == emp.empKey }">selected</c:if> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+										<option <c:choose><c:when test="${resultList[0].pjSaleEmpKey eq null }"><c:if test="${empKey == emp.empKey }">selected</c:if></c:when> <c:otherwise><c:if test="${resultList[0].pjSaleEmpKey == emp.empKey}">selected</c:if></c:otherwise></c:choose> value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+										<%-- <c:if test="${empKey == emp.empKey }">selected</c:if> --%>
 									</c:forEach>	
-								</select> 
+								</select>  
 							</td>
 						</tr>
 						<tr>
@@ -715,7 +769,8 @@
 						<tr>
 							<td class="tdTitle"><label>*</label>사업기간</td>
 							<td class="tdContents">
-								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjStartDt)}"/>" required/> ~
+								<input type="text" placeholder="from" class="calendar fromDt" name="pjStartDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjStartDt)}"/>" required/> 
+								&nbsp;<img class="veralignM" src="/images/icon_fromTo.png" />&nbsp;
 								<input type="text" placeholder="to" class="calendar toDt" name="pjEndDt" value="<c:out value="${displayUtil.displayDate(resultList[0].pjEndDt)}"/>" required/>
 							</td>
 						</tr>
@@ -730,23 +785,42 @@
 						</tr> --%>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
-							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}" /></textarea></td>
+							<td class="tdContents">
+								<textarea name="remark" id="remark"><c:out value="${resultList[0].remark}" /></textarea>
+								<div id="remarkCnt" class="ftw200">(0 / 500)</div>
+							</td>
 						</tr>
 					</table>
 				</div>
 				<div class="btnWrap floatR">
-					<div class="floatL btnSave">
-						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					</div>
+					<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
+					<c:set var="mngName" value="${resultList[0].empNm }" />
+					<c:choose>
+						<c:when test="${pjKey eq null}">
+							<div class="floatL btnSave">
+								<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<c:if test="${systemName eq mngName }">
+								<div class="floatL btnSave">
+									<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+								</div>
+							</c:if>
+						</c:otherwise>
+					</c:choose>
 					<div class="floatR">
-						<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" class="move" onclick="javascript:fn_next('contractInfo')" data-tooltip-text="저장/수정하지 않은 정보는<br>반영되지 않습니다.">
+							<img src="<c:url value='/images/btn_next.png'/>" />
+							<span class="moveSpan">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
+						</button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>
 			</div>
 		</div>
 	</form:form>
-	<%-- <form id="fileForm" method="post" enctype="multipart/form-data"> 
+	<form id="fileForm" method="post" enctype="multipart/form-data"> 
     	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
 		<input type="hidden" name="docTypeNm" value="프로젝트" />
 		<input type="hidden" name="fileCtKey" id="fileCtKey" value="${projectVO.pjKey}" />
@@ -761,13 +835,13 @@
 		</div>
 		<div style="width: 307px; clear:both;" id="fileWrap">
 			<c:forEach var="result" items="${fileList }" varStatus="status">
-				<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+				<input class="upload-name cursorP ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
 				<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
 				<c:if test="${status.last eq false}"><br /></c:if>
 			</c:forEach>
 		</div>
 		<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
-	</form> --%>
+	</form>
 	<form:form id="viewForm" name="viewForm" method="POST">
 		<input type="hidden" name="fileKey" value=""/>
 		<input type="hidden" name="fileOrgNm" value=""/>

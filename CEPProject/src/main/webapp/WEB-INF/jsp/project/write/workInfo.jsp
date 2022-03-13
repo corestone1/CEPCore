@@ -173,6 +173,10 @@
 			text-overflow: ellipsis;
 		}
 		
+		#fileForm .upload-name:hover {
+			text-decoration: underline;
+		}
+		
 		#fileForm .close {
 			vertical-align: middle;
 		}
@@ -272,6 +276,12 @@
 		var countSave = 0;
 		
 		function fn_save() {
+			$(".timeInfo").each(function() {
+				if($(this).val().length < 2) {
+					$(this).val("0" + $(this).val());
+				}
+			});
+			
 			$("#pjWorkTakeTm").val($("#pjWorkTakeTm1").val() + $("#pjWorkTakeTm2").val());
 			$("#pjWorkTm").val($("#pjWorkTm1").val()+"00");
 			
@@ -375,7 +385,7 @@
 							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 						}
 					} 
-				});   
+				});    
 			}
 		}
 	
@@ -439,7 +449,7 @@
 			</div>
 		</div>
 		<div class="left">
-			<ul class="ftw300">
+			<ul class="ftw400">
 				<li class="colorWhite cursorP on">수행일지</li>
 			</ul>
 		</div>
@@ -524,7 +534,7 @@
 					</div>
 					<div style="width: 307px; clear: both;" id="fileWrap">
 						<c:forEach var="result" items="${fileList }" varStatus="status">
-							<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
+							<input class="upload-name cursorP ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
 							<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')">
 								<img src="/images/btn_close.png" />
 							</a>

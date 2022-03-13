@@ -16,6 +16,7 @@
 		body {
 			width: 100%;
 			background-color: #f6f7fc;
+			overflow: hidden !important;
 		}
 		.btnWrap {
 			position: absolute;
@@ -232,7 +233,7 @@
 <body>
 	<div class="stitle">
 		<ul id="infoList">
-			<li><a class="on" id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">기 지급 목록</a></li>
+			<li><a class="on" id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">지급 승인 목록</a></li>
 			<li><a id="A_TOPMenu_FORM" title="/project/request/purchase/paymentForm.do">미 지급 목록</a></li>
 			<li></li>
 		</ul>
@@ -254,6 +255,8 @@
 							if (session.getAttribute("empAuthCd").equals("EMAU1001")) {
 						%>
 						<th>완료</th>
+						<% } else { %>
+						<th>상태</th>
 						<% } %>
 					</tr>
 				</thead>
@@ -291,6 +294,15 @@
 										<span>${displayUtil.displayDate(result.paymentDt) }</span>
 									</c:otherwise>
 								</c:choose>
+							</td>
+							<% } else { %>
+							<td>
+								<c:if test="${result.paymentStatusCd eq 'PYST3000' }">
+									승인
+								</c:if>
+								<c:if test="${result.paymentStatusCd eq 'PYST4000' }">
+									지급 완료
+								</c:if>
 							</td>
 							<% } %>
 						</tr>

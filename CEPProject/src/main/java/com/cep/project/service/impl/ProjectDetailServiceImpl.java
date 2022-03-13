@@ -147,40 +147,56 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> requestGuarantyBond(HttpServletRequest request, ProjectGuarantyBondVO guarantyBondVO) throws Exception {
 		int result = 0;
 		MailVO mailVO = new MailVO();
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
+		HashMap<String, String> userMap = new HashMap<String, String>();
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		String pjNm = "";
 		
 		try {
-			String dept = DeptInfo.DEPT_OPER_L2.getValue();
+			ProjectVO projectVO = new ProjectVO();
+			projectVO.setPjKey(guarantyBondVO.getPjKey());
+			pjNm = mapper.selectProjectDetail(projectVO).get("pjNm").toString();
+			
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			userMap.put("empKey", sessionMap.get("empKey"));
+			String name = mainService.selectName(userMap);
+			
+			String dept = DeptInfo.DEPT_OPER_L3.getValue();
 			List<String> toList = new ArrayList<String>();
 			
 			for(Object obj : comService.selectDeptEmployeeList(dept)) {
 				String email = obj.toString().substring(obj.toString().indexOf("=") + 1, obj.toString().length() - 1);
 				toList.add(email);
-			}
+			} 
 			
 			String tmail = StringUtils.join(toList, ";");
 			mailVO.setEmpKey(tmail);
 			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
-			String subject = "보증 증권 정보";
+			String subject = pjNm + "건 보증 증권 요청";
 			String content = String.join(
 					                System.getProperty("line.separator"),
-					                "프로젝트 "+guarantyBondVO.getPjKey()+"건에 보증 증권 정보가 있습니다.<br><br>");
+					                "["+guarantyBondVO.getPjKey()+"] " + pjNm +" 프로젝트 건에 보증 증권 요청 정보가 있습니다. <br>(요청자: " + name + ",",
+					                " 요청 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
 			
 			mailVO.setSubject(subject);
 			mailVO.setContent(content);
 			mailVO.setIsNewPw(false);
 			
 			result = comService.sendMail(request, mailVO);
-			if(result != 0) {
+			
+			/* 테스트 서버 운영 종료 후 주석 해제*/
+			/*if(result != 0) { */
 				returnMap.put("mailSuccessYN", "Y");
 				returnMap.put("successYN", "Y");
 				mapper.requestGuarantyBond(guarantyBondVO);
-			} else {
-				returnMap.put("mailSuccessYN", "N");
-			}
+			/*} else {
+				throw new Exception();
+			}*/
 			
 			returnMap.put("mailList", toList);
 			
@@ -205,6 +221,7 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 		HashMap<String, String> sessionMap = null;
 		HashMap<String, String> userMap = new HashMap<String, String>();
 		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		String pjNm = "";
 		
 		try {
 			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
@@ -213,13 +230,14 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			
 			projectVO.setPjKey(guarantyBondVO.getPjKey());
 			salesEmpKey = mapper.selectProjectDetail(projectVO).get("regEmpKey").toString();
-			
+			pjNm = mapper.selectProjectDetail(projectVO).get("pjNm").toString();
+					
 			mailVO.setEmpKey(salesEmpKey);
 			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
-			String subject = "보증 증권 정보";
+			String subject = pjNm + "건 보증 증권 발행 완료";
 			String content = String.join(
 					                System.getProperty("line.separator"),
-					                "["+guarantyBondVO.getPjKey()+"] " + guarantyBondVO.getPjKey()+" Project 건에 보증 증권 정보가 있습니다. 요청인: " + name + ",",
+					                "["+guarantyBondVO.getPjKey()+"] " + pjNm +" 프로젝트 건에 보증 증권 발행이 완료되었습니다. <br>(완료자: " + name + ",",
 					                " 완료 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
 			
 			mailVO.setSubject(subject);
@@ -227,13 +245,15 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			mailVO.setIsNewPw(false);
 			
 			result = comService.sendMail(request, mailVO);
-			if(result != 0) {
+			
+			/* 테스트 서버 운영 종료 후 주석 해제*/
+			/*if(result != 0) {*/
 				returnMap.put("mailSuccessYN", "Y");
 				returnMap.put("successYN", "Y");
 				mapper.endGuarantyBond(guarantyBondVO);
-			} else {
-				returnMap.put("mailSuccessYN", "N");
-			}
+			/*} else {
+				throw new Exception();
+			}*/
 			
 			returnMap.put("mailList", salesEmpKey);
 			

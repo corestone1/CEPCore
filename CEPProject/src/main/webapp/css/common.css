@@ -18,9 +18,10 @@ body {
 	height: 100%;
 	margin: 0 auto !important;
 	background-color: #f6f7fc;
-	overflow: hidden;
+	overflow: scroll;
 }
 body * {
+	font-family: "Noto Sans KR", sans-serif !important;
 	white-space: -moz-pre-wrap;
    	white-space: -pre-wrap;
    	white-space: -o-pre-wrap;
@@ -256,6 +257,7 @@ input[class="tRadio"] {
 }
 #m_div_accountList {
 	width: 362px; 
+	max-height: 123px;
 	padding: 10px; 
 	overflow-y: auto; 
 	background-color: #EAECF6; 

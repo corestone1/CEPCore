@@ -282,7 +282,7 @@
 				<table>
 					<tr>
 						<td class="tdTitle">
-							<span class="wds">제품 상세</span>
+							<span class="wds ftw400">제품 상세</span>
 						</td>
 						<td class="tdContents">
 							<textarea id="m_tta_pmDetail2" name="pmDetail2" rows="5" cols="45"><c:out value="${forecast.pmDetail2}"></c:out></textarea>
@@ -291,7 +291,7 @@
 					</tr>
 					<tr>
 						<td class="tdTitle">
-							<span class="wds">진행사항</span>
+							<span class="wds ftw400">진행사항</span>
 						</td>
 						<td class="tdContents">
 							<textarea id="m_tta_remark" name="remark" rows="5" cols="45"><c:out value="${forecast.remark }"></c:out></textarea>
@@ -304,14 +304,14 @@
 				<!-- Left -->
 				<div class="floatL btnPrev">
 					<button type="button" onclick="javascript:fnMoveTab('fundInfo')" class="move"><img src="<c:url value='/images/btn_prev.png'/>" />
-						<span class="moveSpan right">저장/수정하지 않은 정보는 반영되지 않습니다.</span>
+						<span class="moveSpan right">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
 					</button>
 				</div>
 				
 				<!-- middle -->
 				<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
 				<c:set var="mngName" value="${forecast.empNm }" />
-				
+				<c:set var="empAuth" value='<%=session.getAttribute("empAuthCd").equals("EMAU1001") %>' />
 				<%--<c:choose>
 					<c:when test="${forecast.pmDetail2 eq null and forecast.remark eq null}">
 						<div class="floatL btnSave">
@@ -319,7 +319,7 @@
 						</div>
 					</c:when>
 					<c:otherwise> --%>
-						<c:if test="${systemName eq mngName }">
+						<c:if test="${(systemName eq mngName or empAuth eq true) and forecast.spState ne 'S' }">
 							<div class="floatL btnSave">
 								<button type="button" onclick="javascript:fnWriteProgress();"><img src="<c:url value='/images/btn_save.png'/>" /></button>	
 							</div>
@@ -331,7 +331,7 @@
 				<c:if test="${forecast.bdYn eq 'Y'}">
 					<div class="floatR" >
 						<button type="button" onclick="javascript:fnMoveTab('biddingInfo');" class="move"><img src="<c:url value='/images/btn_next.png'/>" />
-							<span class="moveSpan">저장/수정하지 않은 정보는 반영되지 않습니다.</span>
+							<span class="moveSpan">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
 						</button>
 					</div>	
 				</c:if>

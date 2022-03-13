@@ -31,7 +31,7 @@
 		}
 		.contentsWrap .contents .top div:nth-child(2) > label {
 			line-height: 34px;
-			margin: 5px;
+			margin-left: 3px;
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
@@ -43,7 +43,7 @@
 			background: url('/images/arrow_down_18dp.png') no-repeat 96% 50%;
 			background-size: 30px;
 			font-size: 26px;
-			font-weight: 600;
+			font-weight: 500;
 		}
 		.contentsWrap .contents .top select option {
 			font-size: 15px;
@@ -68,7 +68,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 545px;
+			height: 600px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -350,8 +350,8 @@
 					<div class="floatL">
 						<div class="title floatL">
 							<select id="perform_kind">
-								<option value="work">수행 일지 목록</option>
 								<option value="installbase" selected>Installbase 목록</option>
+								<option value="work">수행 일지 목록</option>
 							</select>
 						</div>
 						<!-- <div class="title floatL"><label class="ftw500">작업 목록</label></div>
@@ -359,7 +359,7 @@
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView()"><img src="<c:url value='/images/btn_add.png'/>" /></div>
 					</div>
 					<div class="floatR">
-						<form:input path="performDtFrom"    type="text" class="calendar" placeholder="from" value="${performDtFrom }"/><label> ~ </label>
+						<form:input path="performDtFrom"    type="text" class="calendar" placeholder="from" value="${performDtFrom }"/><label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
 						<form:input path="performDtTo" type="text" class="calendar" placeholder="to" value="${performDtTo }"/>
 						<form:input path="pjNm" type="text" placeholder="프로젝트명" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<form:input path="regEmpKey"     type="text" placeholder="작성자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
@@ -388,7 +388,7 @@
 						<tbody>
 						
 							<c:forEach var="result" items="${installbaseList}" varStatus="status">
-								<tr>
+								<tr onclick="javascript:fn_detailPop('${result.pjKey}', '${result.inbSeq }')">
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
 									<td>

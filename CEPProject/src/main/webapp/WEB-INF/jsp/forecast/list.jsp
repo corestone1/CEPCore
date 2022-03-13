@@ -114,7 +114,6 @@
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
 			width: 282px;
-			font-weight: 400;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
@@ -191,7 +190,7 @@
 		.sum table tr td {
 		    padding: 10px !important;
 		    color: #26a07d !important;
-		    background-color: #ecf6f4;
+		    background-color: #ccf4d7;
 		    text-align: right;
 		    border: none !important;
 		    font-size: 16px !important;
@@ -611,7 +610,7 @@
 							<form:option value="B">B</form:option>
 							<form:option value="C">C</form:option>
 							<form:option value="D">D</form:option>
-							<%-- <form:option value="S">계약</form:option> --%>
+							<form:option value="S">계약</form:option>
 							<form:option value="F">실주</form:option>
 							<%-- <form:option value="S">S</form:option> --%>
 						</form:select>
@@ -675,7 +674,7 @@
 								<th scope="row">담당자</th>
 								<th scope="row">
 									상태
-									<span class="help" data-tooltip-text="A: 30% 미만/ B: 30%~80%미만 / C: 80%~ 100% 미만 / D: 수주 이후 계약 미체결 or 미발주 / 계약: 수주 이후 계약 체결"><img src="/images/icon_help.png" /></span>
+									<span class="help" data-tooltip-text="A: 수주 이후 계약 미체결 or 미발주 / B: 80%~ 100% 미만 / C: 30%~80%미만 / D: 30% 미만"><img src="/images/icon_help.png" /></span>
 								</th>
 							</tr>
 						</thead>
@@ -694,7 +693,7 @@
 									</c:choose>
 								</td>
 								<td class="textalignL"><span title="${result.mfAcNm}"><c:out value="${result.mfAcNm}"/></span></td>
-								<td class="textalignL"><span class="spBusiNm" title="${result.spKey }"><c:out value="${result.spBusiNm}"/></span></td>
+								<td class="textalignL"><span class="spBusiNm ftw400" title="${result.spKey }"><c:out value="${result.spBusiNm}"/></span></td>
 								<td>
 									<c:choose>
 										<c:when test="${result.pmKey eq  'ST'}">

@@ -20,6 +20,9 @@
 	<script src="<c:url value='/js/file.js'/>"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
+		body {
+			overflow: hidden !important;
+		}
 		.sfcnt {
 			height: 91px;
 		}
@@ -130,7 +133,7 @@
 			border-bottom: 4px solid #6a5bae;
 		}
 		form .contents .dtl {
-			border-top: 4px solid #c3c3c3;;
+			border-top: 4px solid #6a5bae;
 			overflow: hidden;
 		}
 		form .contents .dtl tbody {
@@ -138,6 +141,7 @@
 			overflow-x: hidden;
 			height: auto;
 			float: left;
+			border-bottom: 2px solid #c4c4c4;
 		}
 		form .contents .dtl tbody tr {
 			border: 1px solid #ebe9ee;
@@ -492,7 +496,7 @@
 								<tr>
 									<td>비고</td>
 									<td>
-										<pre><c:out value="${detailInfo.finishRemark}"/></pre>
+										<pre style="width: 781px; max-height: 250px; overflow-y: auto;"><c:out value="${detailInfo.finishRemark}"/></pre>
 									</td>
 								</tr>
 								<tr>
@@ -500,7 +504,7 @@
 									<td>
 										<div style="clear: both;" id="fileWrap">
 											<c:forEach var="result" items="${fileList }" varStatus="status">
-												<input class="upload-name cursorP veralignT" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
+												<input class="upload-name cursorP veralignT ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
 												<c:if test="${status.last eq false}">
 													<br />
 												</c:if>

@@ -24,6 +24,7 @@
 	<style>
 		body {
 			margin: 0;
+			overflow: hidden;
 		}
 		.ui-dialog {
 			top: -473px !important;
@@ -176,8 +177,11 @@
 	<form:form commandName="infoForm" id="infoForm" name="infoForm" method="post">
 		<div class="popContainer">
 			<div class="top">
-				<div>
-					<div class="floatL ftw500">계산서 정보</div>
+				<div class="floatL ftw500">
+					계산서 정보
+					<c:if test="${paymentVO.paymentStatusCd eq 'PYST1000' }">
+						<button type="button" value="매핑 취소" onclick="fn_cancelMappingBill();"><img src="/images/btn_cancel_mapping_green.png" /></button>
+					</c:if>
 				</div>
 			</div>
 			<div class="contents">
@@ -212,11 +216,11 @@
 						</tr>
 					</table>
 				</div>
-				<div>
+				<%-- <div>
 					<c:if test="${paymentVO.paymentStatusCd eq 'PYST1000' }">
-						<button type="button" value="매핑 취소" onclick="fn_cancelMappingBill();">매핑 취소</button>
+						<button type="button" value="매핑 취소" onclick="fn_cancelMappingBill();"><img src="/images/btn_cancel_mapping_green.png" /></button>
 					</c:if>
-				</div>
+				</div> --%>
 			</div>
 		</div>
 	</form:form>

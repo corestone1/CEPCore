@@ -129,7 +129,7 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			userMap.put("empKey", sessionMap.get("empKey"));
 			String name = mainService.selectName(userMap);
-			String dept = DeptInfo.DEPT_OPER_L3.getValue();
+			String dept = DeptInfo.DEPT_OPER_L2.getValue();
 			List<String> toList = new ArrayList<String>();
 			
 			//billCallKey가 있으면 Update 없으면 Insert
@@ -164,15 +164,16 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				String amail = StringUtils.join(alarmList, ";");
 				alarmVO.setAlarmTo(amail);
 				
-				if(result != 0) {
+				/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+				/*if(result != 0) {*/
 					alarmService.insertAlarm(alarmVO, request);
 					
 					mngProjectBillVO.setBillIssueStatus("R");
 					mapper.insertBillRequest(mngProjectBillVO);
 					
-				} else {
+				/*} else {
 					throw new Exception();
-				}
+				}*/
 			} else {
 				//수정
 				mapper.updateBillRequest(mngProjectBillVO);
@@ -251,7 +252,8 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			
 			result = comService.sendMail(request, mailVO);
 			
-			if(result != 0) {
+			/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+			/*if(result != 0) {*/
 				sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
 				
 				mngProjectBillVO.setModEmpKey(sessionMap.get("empKey"));
@@ -262,9 +264,9 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				mapper.updateSalesDetailPayments(mngProjectBillVO);
 				
 				alarmService.insertAlarm(alarmVO, request);
-			} else {
+			/*} else {
 				throw new Exception();
-			}
+			}*/
 			returnMap.put("successYN", "Y");
 			returnMap.put("mailList", tmail);
 		} catch(Exception e) {
@@ -323,7 +325,8 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			
 			result = comService.sendMail(request, mailVO);
 			
-			if(result != 0) {
+			/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+			/*if(result != 0) {*/
 				sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
 				
 				mngProjectBillVO.setModEmpKey(sessionMap.get("empKey"));
@@ -332,9 +335,9 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				
 				alarmService.insertAlarm(alarmVO, request);
 				
-			} else {
+			/*} else {
 				throw new Exception();
-			}
+			}*/
 			
 			returnMap.put("successYN", "Y");
 			returnMap.put("mailList", tmail);

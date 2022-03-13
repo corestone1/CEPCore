@@ -8,7 +8,8 @@
 	<title>프로젝트</title>
 	<style>
 		.middle tbody a {
-			color: #000;
+			color: #535353;
+			font-weight: 400;
 		}
 		.sfcnt {
 			height: 91px;
@@ -90,8 +91,7 @@
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
 		}
-		.middle table tbody tr td:nth-child(4),
-		.middle table tbody tr td:nth-child(9) {
+		.middle table tbody tr td:nth-child(4) {
 			font-weight: 400;
 		}
 		.middle table thead th, .middle table tbody tr td {
@@ -183,7 +183,7 @@
 		.sum table tr td {
 		    padding: 10px !important;
 		    color: #26a07d !important;
-		    background-color: #ecf6f4;
+		    background-color: #ccf4d7;
 		    text-align: right;
 		    border: none !important;
 		    font-size: 16px !important;
@@ -195,7 +195,7 @@
 			margin-top: 22px;
 		}
 		input[class^="calendar"] {
-			width: 150px !Important;
+			width: 174px !Important;
 		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
@@ -210,14 +210,14 @@
 					$(this).children().eq(0).append('<input type="radio" class="tRadio" name="index" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 					$(this).children().eq(0).children().eq(0).val($(this).children().eq(1).children().eq(0).val());
 				}
-				switch($(this).children().eq(8).children().eq(0).val()) {
+				/* switch($(this).children().eq(8).children().eq(0).val()) {
 					case 'PF': $(this).children().eq(8).css('color','#32bc94');break;
 					case 'CT': $(this).children().eq(8).css('color','#4f4f4f');break;
 					case 'BD': $(this).children().eq(8).css('color','#915be2');break;
 					case 'CP': $(this).children().eq(8).css('color','#8093f2');break;
 					case 'OD': $(this).children().eq(8).css('color','#e1cb15');break;
 					default: $(this).children().eq(8).css('color','#000');break;
-				} 
+				}  */
 			});
 		});
 		
@@ -505,7 +505,7 @@
 					</div>
 					<div class="floatR">
 						<form:input path="searchFromDt" type="text" placeholder="프로젝트시작일(from)" class="calendar fromDt" value="${searchFromDt}"/> 
-						<label> ~ </label>
+						<img class="veralignM" src="/images/icon_fromTo.png" />
 						<form:input path="searchToDt" type="text" placeholder="프로젝트종료일(to)" class="calendar toDt" value="${searchToDt}"/>
 						<%-- <input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value="${searchFromDt }"/>
 						<input type="text" class="calendar toDt" placeholder="to" id="searchToDt" name="searchToDt" value="${searchToDt }"/> --%>
@@ -540,14 +540,14 @@
 						</thead>
 						<tbody>
 							<c:forEach var="result" items="${resultList}" varStatus="status">
-		            			<tr>
+		            			<tr onclick="javascript:fn_detail('${result.pjKey}')">
 		            				<td onclick="event.cancelBubble = true;"></td>
 		            				<td align="center" class="listtd">
 		            					<c:out value="${result.pjKey}"/>
 		            					<input type="hidden" value="<c:out value="${result.pjKey}"/>" />
 		            				</td>
-		            				<td align="left" class="listtd"><span><c:out value="${result.acNm}"/></span></td>
-		            				<td align="left" class="listtd"><span><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
+		            				<td align="left" class="listtd"><span style="max-width: 162px;"><c:out value="${result.acNm}"/></span></td>
+		            				<td align="left" class="listtd"><span style="max-width: 397px;"><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
 		            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjStartDt)}"/></td>
 		            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjEndDt)}"/></td>
 		            				<fmt:parseDate value="${displayUtil.displayDate(result.pjStartDt)}" var="startPlanDate" pattern="yyyy-MM-dd"/>

@@ -44,6 +44,8 @@ public interface MngCommonBillMapper {
 	
 //	public void insertSdBillingXml(MngCommonBillVO mngCommonBillVO) throws Exception;
 	
+	public int selectExistBill(MngCommonBillVO mngCommonBillVO) throws Exception;
+	
 	public void insertPcBillInfo(MngCommonBillVO mngCommonBillVO) throws Exception;
 	
 	public void insertPcBillOpInfo(MngCommonBillVO mngCommonBillVO) throws Exception;

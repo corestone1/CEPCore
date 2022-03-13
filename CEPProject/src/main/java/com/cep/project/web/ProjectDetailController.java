@@ -32,9 +32,11 @@ import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
+import com.cmm.config.WorkClassInfo;
 import com.cmm.service.ComService;
 import com.cmm.service.FileMngService;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
 import com.cmm.vo.GuarantyBondVO;
 
@@ -75,8 +77,14 @@ public class ProjectDetailController {
 	@RequestMapping(value="/main.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String viewDetailMain(@ModelAttribute("searchVO") ProjectVO projectVO, ModelMap model) throws Exception {
 		logger.debug("== pkKey : {}", projectVO.getPjKey());
+		List<?> fileResult = null;
+		FileVO fileVO = new FileVO();
+		
 		try
 		{
+			fileVO.setFileCtKey(projectVO.getPjKey());
+			fileVO.setFileWorkClass(WorkClassInfo.PROJECT.getValue().toString());
+			
 			model.put("pjKey", projectVO.getPjKey());
 			
 			EgovMap emProject = service.selectProjectDetail(projectVO);
@@ -92,6 +100,9 @@ public class ProjectDetailController {
 			//추후 EmployeeService로 이관
 			logger.debug("== employee : {}", service.selectEmployeeList());
 			model.put("employeeList", service.selectEmployeeList());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
+			model.addAttribute("fileList", fileResult);
 			
 			model.put("displayUtil", new CepDisplayUtil());
 		}catch(Exception e)
@@ -193,10 +204,14 @@ public class ProjectDetailController {
 			List<?> biddingFileList = null;
 			List<?> fileResult = null;
 			FileVO fileVO = new FileVO();
+			String spKey = "";
 			
 			ForecastBiddingFileVO forecastBiddingFileVO = new ForecastBiddingFileVO();
 			
-			String spKey = service.selectProjectDetail(projectVO).get("spKey").toString();
+			if(!CepStringUtil.getDefaultValue(service.selectProjectDetail(projectVO).get("spKey").toString(), "").equals("")) {
+				spKey = service.selectProjectDetail(projectVO).get("spKey").toString();
+			}
+			
 			model.addAttribute("spKey", spKey);
 			
 			forecastBiddingFileVO.setSpKey(spKey);

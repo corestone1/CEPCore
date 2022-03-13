@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cep.forecast.service.ForecastService;
+import com.cep.forecast.vo.ForecastBiddingVO;
 import com.cep.forecast.vo.ForecastVO;
 import com.cep.main.service.MainService;
 import com.cep.mngProject.bill.service.MngProjectBillService;
@@ -106,16 +107,25 @@ public class ProjectController {
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
 		toDay = CepDateUtil.getToday(null);		
-		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchFromDt(), ""))){
+		/*if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchFromDt(), ""))){
 			searchVO.setSearchFromDt(searchVO.getSearchFromDt().replace("-", ""));
-		} else {
-			searchVO.setSearchFromDt(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,-6));
 		}
 		
 		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchToDt(), ""))){
 			searchVO.setSearchToDt(searchVO.getSearchToDt().replace("-", ""));
 		} else {
-			searchVO.setSearchToDt(toDay);
+			searchVO.setSearchFromDt(CepDateUtil.calculatorDate(toDay, "yyyyMMdd",  CepDateUtil.MONTH_GUBUN,12));
+		}
+		*/
+		
+		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchFromDt(), ""))){
+			searchVO.setSearchFromDt(searchVO.getSearchFromDt().replace("-", ""));
+			model.put("searchFromDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchFromDt(), null, null));
+		}
+		
+		if(!"".equals(CepStringUtil.getDefaultValue(searchVO.getSearchToDt(), ""))){
+			searchVO.setSearchToDt(searchVO.getSearchToDt().replace("-", ""));
+			model.put("searchToDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchToDt(), null, null));
 		}
 		
 		try {
@@ -145,9 +155,6 @@ public class ProjectController {
 		// 검색 정보 저장.
 		model.addAttribute("searchVO", searchVO);
 				
-		model.put("searchFromDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchFromDt(), null, null));
-		model.put("searchToDt", CepDateUtil.convertDisplayFormat(searchVO.getSearchToDt(), null, null));
-		
 		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "project/list";
@@ -385,6 +392,7 @@ public class ProjectController {
 		for(int i = 0; i < projectDetail.size(); i++) {
 			map = (Map<String, Object>)projectDetail.get(i);
 		}
+		
 		String spKey = map.get("spKey").toString();
 		
 		forecastVO.setSpKey(spKey);
@@ -405,6 +413,7 @@ public class ProjectController {
 		model.put("displayUtil", new CepDisplayUtil());
 		model.put("salesCodeList", CepStringUtil.getSalesCodeList());
 		model.put("manufacturerList", CepStringUtil.getManuFacturerList());
+		model.put("pjVO", projectDetail);
 		
 		return "project/write/contractInfo";
 	}
@@ -441,6 +450,7 @@ public class ProjectController {
 		model.addAttribute("ctVO", ctVO);
 		model.addAttribute("salesList", salesList);
 		model.addAttribute("guarantyList", guarantyList);
+		model.addAttribute("pjVO", projectDetail);
 		
 		model.put("displayUtil", new CepDisplayUtil());
 		
@@ -504,6 +514,7 @@ public class ProjectController {
 		}
 		
 		model.put("pjKey", orderVO.getPjKey());
+		model.put("pjVO", service.selectProjectDetail(orderVO.getPjKey()));
 		model.put("orderSelectBoxList", orderSelectBox);
 		model.put("displayUtil", new CepDisplayUtil());
 		model.put("orderVO", returnVO);
@@ -766,6 +777,8 @@ public class ProjectController {
 		List<?> salesList = service.selectSalesList(projectVO.getPjKey());
 		model.addAttribute("salesList", salesList);
 		
+		model.addAttribute("contractVO", service.selectContractDetail(projectVO.getPjKey()));
+		
 		List<?> purchaseList = service.selectPurchaseList(projectVO.getPjKey());
 		model.addAttribute("purchaseList", purchaseList);
 		
@@ -776,7 +789,14 @@ public class ProjectController {
 		biddingVO.setPjKey(projectVO.getPjKey());
 		
 		biddingVO = service.selectBiddingDetail(biddingVO);
-		model.addAttribute("biddingVO", biddingVO);
+		ForecastBiddingVO forecastBiddingVO = new ForecastBiddingVO();
+		Map<String, Object> map = new HashMap<String, Object>();
+		for(int i = 0; i < pjInfo.size(); i++) {
+			map = (Map<String, Object>)pjInfo.get(i);
+		}
+		String spKey = map.get("spKey").toString();
+		forecastBiddingVO.setSpKey(spKey);
+		model.addAttribute("biddingVO", forecastService.selectBiddingDetail(forecastBiddingVO));
 				
 		model.put("displayUtil", new CepDisplayUtil());
 		

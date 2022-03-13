@@ -1078,9 +1078,22 @@
 				<div class="floatL btnPrev">
 					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 				</div>
-				<div class="floatL btnSave">
-					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-				</div>
+				<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
+				<c:set var="mngName" value="${biddingVO.empNm }" />
+				<c:choose>
+					<c:when test="${pjKey eq null}">
+						<div class="floatL btnSave">
+							<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<c:if test="${systemName eq mngName }">
+							<div class="floatL btnSave">
+								<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+							</div>
+						</c:if>
+					</c:otherwise>
+				</c:choose>
 				<div class="floatR">
 					<button type="button" onclick="javascript:fn_next('contractInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
 				</div>

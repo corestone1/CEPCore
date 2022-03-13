@@ -146,7 +146,7 @@
 			font-size: 18px;
 			padding-right: 20px;
 			max-width: 16px;
-			padding-top: 20px;
+			padding-top: 5px;
 			padding-bottom: 5px;
 		}	
 		.popContainer .contents textarea {
@@ -178,8 +178,8 @@
 			/* position: fixed; */
 		} 
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 15px 3px;			
-			width : calc(100% - 84px);
+			margin : 10px 40px 0 40px;			
+			width : calc(100% - 80px);
 			position: relative;
 			bottom: 0;
 		}
@@ -223,8 +223,42 @@
 		    left: 146px;
     		margin-top: -4px;
 		}
-		.btnSave {
-			width: auto;
+		.move {
+			display: inline-block;
+		}
+		.move:hover .moveSpan {
+			 visibility: visible;
+		}
+		.move .moveSpan {
+		    visibility: hidden;
+		    width: 230px;
+		    height: 42px;
+		    background-color: #404040;
+		    color: #ffffff;
+		    text-align: center;
+		    border-radius: 6px;
+		    padding: 5px 0;
+		    position: absolute;
+		    z-index: 9999;
+		    bottom: 36px;
+		    right: -24px;
+		    font-size: 14px;
+		}
+		.move .moveSpan.right {
+			left: -23px;
+		}
+		.move .moveSpan::after {
+		    content: "";
+		    position: absolute;
+		    top: 100%;
+		    left: 82%;
+		    margin-left: -5px;
+		    border-width: 5px;
+		    border-style: solid;
+		    border-color: #404040 transparent transparent transparent;
+		}
+		.move .moveSpan.right::after {
+			left: 18%;
 		}
 	</style>
 	<script>
@@ -872,7 +906,8 @@
 				var dialogId = 'program_layer';
 
 				var varParam = {
-						"pjKey": $("#pjKey").val()
+					"pjKey": $("#pjKey").val(),
+					"workClass":"완료_첨부파일"
 				}
 				var button = new Array;
 				button = [];
@@ -883,7 +918,8 @@
 						var url = '/project/write/'+link+'.do';
 						var dialogId = 'program_layer';
 						var varParam = {
-								"pjKey": $("#pjKey").val()
+								"pjKey": $("#pjKey").val(),
+								"workClass":"완료_첨부파일"
 						}
 						var button = new Array;
 						button = [];
@@ -901,7 +937,8 @@
 					var dialogId = 'program_layer';
 
 					var varParam = {
-							"pjKey": $("#pjKey").val()
+							"pjKey": $("#pjKey").val(),
+							"workClass":"완료_첨부파일"
 					}
 					var button = new Array;
 					button = [];
@@ -936,7 +973,7 @@
 			</ul>
 		</div>
 			<div class="contents">
-				<div>
+				<div style="min-height: 529px;">
 					<table class="subject">						
 						<tr>      
 							<td class="subTitle" style="border-top: none;" colspan="6">
@@ -1055,7 +1092,7 @@
 						<div id="prodWrap">
 							<table class="subject">
 								<tr> 
-									<td class="subTitle" style="border-top: none;"  colspan="6">
+									<td class="subTitle" style="border-top: none; padding-top: 15px;"  colspan="6">
 										<label class="ftw400">제품정보</label>&nbsp;
 										<img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
 									</td>
@@ -1106,7 +1143,8 @@
 										<tr class="dpTbRow">
 											<td class="tdTitle">무상유지보수</td>
 											<td class="tdContents" colspan="5">
-												<input type="text" id="prodList-0-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" /> ~ 
+												<input type="text" id="prodList-0-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" /> 
+												&nbsp;<img class="veralignM" src="/images/icon_fromTo.png" />&nbsp; 
 												<input type="text" id="prodList-0-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" />
 											</td>		
 										</tr>
@@ -1155,7 +1193,8 @@
 												<tr class="dpTbRow">
 													<td class="tdTitle">무상유지보수</td>
 													<td class="tdContents" colspan="5">
-														<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" /> ~ 
+														<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtStartDt" name="freeMtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(list.freeMtStartDt)}"/>" />
+														&nbsp;<img class="veralignM" src="/images/icon_fromTo.png" />&nbsp;
 														<input type="text" id="prodList-<c:out value="${status.index}"/>-freeMtEndDt" name="freeMtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(list.freeMtEndDt)}"/>" />
 													</td>		
 												</tr>
@@ -1167,28 +1206,43 @@
 						</div>
 					</form>		
 				</div>
-				<div class="btnWrap floatR">
+				<%-- <div class="btnWrap floatR">
 					<div class="floatL btnSave" onclick="fn_saveBtn();">
 						<button type="button"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 					</div>
-					<%-- <c:if test="${not empty orderVO.selectKey}"> --%>
+					<c:if test="${not empty orderVO.selectKey}">
 					<div class="floatR" onclick="fn_deleteOrderBtn();">
 						<button type="button"><img src="<c:url value='/images/btn_del.png'/>" /></button>
 					</div>
-					<%-- </c:if> --%>
-					<%-- <c:if test="${updateYn eq 'N' }">					
+					</c:if>
+					<c:if test="${updateYn eq 'N' }">					
 					<div class="floatR" onclick="fn_saveNextBtn();">
 						<button type="button"><img src="<c:url value='/images/btn_del.png'/>" /></button>
 					</div>
-					</c:if> --%>
+					</c:if>
 					<div class="floatN floatC"></div>
-				</div>
+				</div> --%>
 				<div class="btnWrap floatR">
 					<div class="floatL btnPrev">
-						<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+						<button type="button" class="move" onclick="fn_prevView();">
+							<img src="<c:url value='/images/btn_prev.png'/>" />
+							<span class="moveSpan right">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
+						</button>
 					</div>
+					<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
+					<c:set var="mngName" value="${pjVO[0].empNm }" />
+					<c:if test="${systemName eq mngName }">
+						<div class="floatL btnSave">
+							<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+							<button type="button"onclick="fn_deleteOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>
+						</div>
+					</c:if>
+					<%-- <c:if test="${not empty orderVO.selectKey}"> --%>
 					<div class="floatR">
-						<button type="button" onclick="javascript:fn_next('finishInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+						<button type="button" class="move" onclick="javascript:fn_next('finishInfo')">
+							<img src="<c:url value='/images/btn_next.png'/>" />
+							<span class="moveSpan">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
+						</button>
 					</div>
 					<div class="floatN floatC"></div>
 				</div>

@@ -29,7 +29,7 @@
 			    background-position: left, left;
 			}
 			header > div {
-				position: fixed;
+				position: absolute;
 			    max-width: 1660px;
 			    width: 100%;
 			    z-index: 1;
@@ -58,7 +58,8 @@
 			    width: 67px;
 			}
 			header ul {
-				width: 857px;
+				width: 857px; 
+				/* width: 293px */
 			}
 			header ul li {
 				padding: 0 26px;
@@ -383,14 +384,14 @@
 					<div class="">
 						<ul>
 							<li><a href="/mngProject/order/list.do">발주목록</a></li>
-							<li><a href="/mngProject/perform/list.do">작업일지</a></li>
+							<li><a href="/mngProject/perform/installbase/list.do">작업일지</a></li>
 							<!-- <li><a href="/mngProject/bill/list.do">계산서목록</a></li> -->
 							<li><a href="/mngProject/mapping/list.do">발주·계산서 매핑</a></li>
 							<li><a href="/mngProject/billSchedule/list.do">계산서 일정</a></li>
 							<li><a href="/mngProject/fundSchedule/list.do">수금·지급 일정</a></li>
 						</ul>
 					</div>
-				</li>  
+				</li>   
 				<li class="floatL textalignC cursorP">
 					<a href="/maintenance/contract/contractList.do">유지보수</a>
 					<div class="">
@@ -405,7 +406,7 @@
 					<div class="">
 						<ul>
 							<li><a href="/mngMaint/order/list.do">발주목록</a></li>
-							<!-- <li><a href="/mngMaint/bill/list.do">계산서목록</a></li> -->
+							<li><a href="/mngMaint/bill/list.do">계산서목록</a></li>
 							<li><a href="/mngMaint/mapping/list.do">발주·계산서 매핑</a></li>
 							<li><a href="/mngMaint/billSchedule/list.do">계산서 일정</a></li>
 							<li><a href="/mngMaint/fundSchedule/list.do">수금·지급 일정</a></li>
@@ -413,15 +414,15 @@
 							<li><a href="/mngMaint/billSchedule/paymentPlanList.do">지급계획목록</a></li>
 						</ul>
 					</div>
-				</li>  <!-- 2차 오픈 -->
+				</li> <!-- 2차 오픈 -->
 				<li class="floatL textalignC cursorP">
 					<a href="#">공통관리</a>
 					<div class="">
 						<ul>
 							<li><a href="/mngCommon/bill/list.do">계산서관리</a></li>
 							<li><a href="/mngCommon/account/list.do">거래처관리</a></li>
-							<!-- <li><a href="/mngCommon/product/list.do">제품관리</a></li>
-							<li><a href="/mngCommon/employee/list.do">사용자관리</a></li>  --> <!-- 2차 오픈 -->
+							<!-- <li><a href="/mngCommon/product/list.do">제품관리</a></li> -->
+							<!-- <li><a href="/mngCommon/employee/list.do">사용자관리</a></li>  --> <!-- 2차 오픈 -->
 						</ul>
 					</div>
 				</li>			

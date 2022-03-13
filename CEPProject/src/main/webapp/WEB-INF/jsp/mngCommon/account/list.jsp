@@ -69,7 +69,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 590px;
+			height: 600px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;

@@ -23,6 +23,7 @@
 		body {
 			width: 100%;
 			background-color: #f6f7fc;
+			overflow: hidden !important;
 		}
 		.sfcnt {
 			height: 91px;

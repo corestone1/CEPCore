@@ -40,7 +40,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -182,7 +182,7 @@
 		}
 		input[class="calendar"] {
 			width: 150px;
-		    background-image: url('http://172.10.122.10:8888/images/calendar_icon.png');
+		    background-image: url('/images/calendar_icon.png');
 		    background-repeat: no-repeat;
 		    background-position: 95% 50%;
 		}
