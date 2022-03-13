@@ -32,7 +32,7 @@ public enum EmailInfo {
 	, MAIL_SEND_NAME("corestone1602")
 	, MAIL_SEND_PW("hihlljocnbncuicm")
 	, MAIL_SUBJECT("업무 협조 요청")
-	, PAGE_URL("http://172.10.200.103:8080/");
+	, PAGE_URL("http://172.10.122.10:8888/");
 	
 	private String value;
 	

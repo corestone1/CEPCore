@@ -134,7 +134,7 @@
 			margin-top: 18px;
 		}
 		#m_div_accountList {
-			left: 156.5px;
+			left: 144.5px;
 		}
 		.move {
 			display: inline-block;
@@ -758,7 +758,7 @@
 							<input type="hidden" name="saleslastNum" id="saleslastNum" value="0" />
 							<table class="salesTable">
 								<tr>
-									<td class="tdTitle">
+									<td class="tdTitle" style="width: 85px;">
 										매출처
 										<input type="hidden" id="salesList-0-salesKey" name="salesKey" value="" />
 									</td>
@@ -829,7 +829,7 @@
 								<input type="hidden" name="saleslastNum" id="saleslastNum" value="<c:out value="${status.index}"/>" />
 								<table class="salesTable">
 									<tr>
-										<td class="tdTitle">
+										<td class="tdTitle" style="width: 85px;">
 											매출처
 											<input type="hidden" id="salesList-<c:out value="${status.index}"/>-salesKey" name="salesKey" value="<c:out value="${result.salesKey}"/>" />
 										</td>
