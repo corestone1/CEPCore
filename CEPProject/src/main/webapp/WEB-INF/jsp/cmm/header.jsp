@@ -410,8 +410,11 @@
 							<li><a href="/mngMaint/mapping/list.do">발주·계산서 매핑</a></li>
 							<li><a href="/mngMaint/billSchedule/list.do">계산서 일정</a></li>
 							<li><a href="/mngMaint/fundSchedule/list.do">수금·지급 일정</a></li>
+							<c:if test='${sessionScope.empAuthCd == "EMAU1001"}'>
+							<!-- 관리자만 사용할 수 있는 메뉴  -->
 							<li><a href="/mngMaint/billSchedule/salesBillPlanList.do">수금계획목록</a></li>
 							<li><a href="/mngMaint/billSchedule/paymentPlanList.do">지급계획목록</a></li>
+							</c:if>
 						</ul>
 					</div>
 				</li> <!-- 2차 오픈 -->
