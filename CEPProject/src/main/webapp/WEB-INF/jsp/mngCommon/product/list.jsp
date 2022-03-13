@@ -204,7 +204,7 @@
 					}
 					
 				} else {
-					alert("삭제할 대상을 선택하세요 !!");
+					alert("삭제할 대상을 선택하세요.");
 					
 					return false;
 				}				
@@ -231,28 +231,27 @@
 			}); */
 			
 			
-			$('.middle table tbody tr').click(function() {
-				
-				if($(this).attr('class') != "viewOpen") {
+			$('.middle table tbody').on('click', 'tr td:not(:first-child)', function () {
+				if(!$(this).parent().attr('class').includes("viewOpen")) {
 					html = '<div style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">'
 					       + '<div style="margin: 5px 71px;">'
 					       + '<ul class="detailList">'
 					       + '<li>비고</li>'
-					       + '<li title="">' + this.getAttribute("title") + '</li>' 
+					       + '<li title="">' + this.parentNode.getAttribute("title") + '</li>' 
 					       + '</ul>'
 					       + '</div>'
 					       + '</div>';
-					$(this).after(html);
-					$(this).attr('class', 'viewOpen');
+					$(this).parent().after(html);
+					$(this).parent().attr('class', 'viewOpen');
 				} else {
-					$(this).removeClass('viewOpen');
-					$(this).next().remove();
+					$(this).parent().removeClass('viewOpen');
+					$(this).parent().next().remove();
 				}
 			});
 			
 			$('#fl tr.kkoser').each(function(index, item) {
 				//if(index != 0) {
-					$(this).children().eq(0).append('<input type="checkbox" class="tCheck" name="gubun" value="'+ index +'" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
+					$(this).children().eq(0).append('<input type="radio" class="tRadio" name="gubun" value="'+ $(this).children().children().eq(0).val() +'" id="check'+ index +'"/><label for="check'+index+'" class="cursorP"/>');
 				//}
 			});
 		});
@@ -265,7 +264,7 @@
 			
 			var button = new Array;
 			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:548px;height:615px'); 
+			showModalPop(dialogId, url, varParam, button, '', 'width:698px;height:670px'); 
 		}
 		
 		
@@ -275,20 +274,30 @@
 			window.open('/mngCommon/product/popup/searchListPopup.do?pmKeyDomId=docIdPmkey&pmNmDomId=docIdPmNm','PRODUCT_LIST','width=1000px,height=713px,left=600');
 		}
 		
+		function fn_modDetail() {
+			var url = '/mngCommon/product/writePopup.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				"pmKey":$('input[name=gubun]:checked').val()
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:698px;height:670px'); 
+		}
 
 	</script>
 </head>
 <body>
 	<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
-		<div class="sfcnt"></div>
-		<div class="nav"></div>
+		<!-- <div class="sfcnt"></div>
+		<div class="nav"></div> -->
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
 						<div class="title floatL"><label class="ftw500">제품 목록</label></div>
 						<div class="addBtn floatL cursorP" onclick="javascript:fn_addView()"><img src="/images/btn_add.png" /></div>
-						<div class="addBtn floatL cursorP" onclick="javascript:fn_searchList()"><img src="/images/btn_add.png" /></div>
+						<!-- <div class="addBtn floatL cursorP" onclick="javascript:fn_searchList()"><img src="/images/btn_add.png" /></div> -->
 					</div>
 					<div class="floatR">
 						<form:select path="productDivision">
@@ -331,7 +340,7 @@
 						<tbody>
 						<c:forEach var="result" items="${productList}" varStatus="status">
 							<tr title='<c:out value="${result.pmRemark}"/>' class='kkoser'>
-								<td></td>
+								<td><input type="hidden" value="${result.pmKey }" /></td>
 								<td><c:out value="${status.count}"/></td>
 								<td><c:out value="${result.pmClassCd}"/></td>
 								<td><c:out value="${result.pmDetailClassCd}"/></td>
@@ -357,7 +366,7 @@
 				</div>
 				<div class="bottom">
 					<div class="floatR">
-						<button value="수정"><img class="cursorP" src="/images/btn_mod.png" /></button>
+						<button value="수정" type="button" onclick="fn_modDetail();"><img class="cursorP" src="/images/btn_mod.png" /></button>
 						<button id="btn_delete" value="삭제"><img class="cursorP" src="/images/btn_del.png" /></button>
 						<button value="엑셀 다운로드"><img class="cursorP" src="/images/btn_excel.png" /></button>
 					</div>

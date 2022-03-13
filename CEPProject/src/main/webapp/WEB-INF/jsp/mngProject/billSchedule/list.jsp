@@ -31,7 +31,6 @@
 		}
 		.contentsWrap .contents .top div:nth-child(2) > label {
 			line-height: 34px;
-			margin: 5px;
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
@@ -153,7 +152,7 @@
 		.bottom table tr td {
 			padding: 10px;
 			color: #26a07d;
-			background-color: #ecf6f4;
+			background-color: #ccf4d7;
 			text-align: right;
 			width: 119px;
 		}
@@ -223,7 +222,7 @@
 							<option value="4">4분기</option>
 						</form:select>
 						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from" value="${searchParam.searchFromDt}"/>
-						<label> ~ </label>
+						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
 						<form:input type="text" path="searchToDt" class="calendar" placeholder="to" value="${searchParam.searchToDt}"/>
 						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<form:input type="text" path="searchPjNm" class="search" style="width: 250px;" placeholder="프로젝트명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
@@ -291,9 +290,9 @@
 						<tbody class="ftw400">
 							<tr>
 								<td></td><td></td><td></td>
-								<td>합계</td>
-								<td><span><c:out value="${displayUtil.commaStr(totalAmount) }"/></span></td>
-								<td><span><c:out value="${displayUtil.commaStr(totalTax) }"/></span></td>
+								<td  class="ftw400">합계</td>
+								<td><span class="ftw400"><c:out value="${displayUtil.commaStr(totalAmount) }"/></span></td>
+								<td><span class="ftw400"><c:out value="${displayUtil.commaStr(totalTax) }"/></span></td>
 								<td></td>
 								<td></td>
 							</tr>

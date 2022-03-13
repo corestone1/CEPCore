@@ -185,14 +185,14 @@ public class ForecastController {
 				//수정으로 판단하고 기존 등록된 내용을 조회하여 화면에 전달
 				ForecastVO lvoForecast = service.selectForecast(forecastVO);
 				
-				logger.debug("111 acKey : {}", lvoForecast.getAcKey() );
+				//logger.debug("111 acKey : {}", lvoForecast.getAcKey() );
 				
-				if(lvoForecast.getAcKey() != null || !lvoForecast.getAcKey().equals(""))
-				{
+				/*if(!CepStringUtil.getDefaultValue(lvoForecast.getAcKey(), "").equals(""))
+				{*/
 					model.addAttribute("forecast", lvoForecast);
 					model.addAttribute("salesList", service.selectSalesInfo(forecastVO));
 					model.addAttribute("pcList", service.selectSalesInfo(forecastVO));
-				}
+				/*}*/
 			}
 			
 			model.put("displayUtil", new CepDisplayUtil());

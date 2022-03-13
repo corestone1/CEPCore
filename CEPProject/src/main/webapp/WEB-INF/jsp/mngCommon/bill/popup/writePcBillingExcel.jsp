@@ -11,6 +11,9 @@
 <script src="<c:url value='/js/popup.js'/>"></script>
 <script src="<c:url value='/js/common.js'/>"></script>
 <style>
+	body {
+		overflow: hidden;
+	}
 	fieldset {
 		border: none;
 		marign: 0;
@@ -216,23 +219,23 @@
 			formData.append("excelFile", $("#excelFile")[0].files[0]);
 			
 			$.ajax({ 
-					type: "POST", 
-					enctype: 'multipart/form-data',  
-					url: '/mngCommon/bill/excelFileUpload.do', 
-					data: formData, // 필수 
-					processData: false, // 필수 
-					contentType: false, // 필수 
-					cache: false, 
-					success: function (response) { 
-						console.log(response.billingList);
-						fnExcelDataSetting(response.billingList);
-					}, 
-					error: function(request, status, error) {
-						if(request.status != '0') {
-							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-						}
+				type: "POST", 
+				enctype: 'multipart/form-data',  
+				url: '/mngCommon/bill/excelFileUpload.do', 
+				data: formData, // 필수 
+				processData: false, // 필수 
+				contentType: false, // 필수 
+				cache: false, 
+				success: function (response) { 
+					//console.log(response.billingList);
+					fnExcelDataSetting(response.billingList);
+				}, 
+				error: function(request, status, error) {
+					if(request.status != '0') {
+						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 					}
-			});	
+				}
+			});	 
 		}
 	}
 	
@@ -277,39 +280,76 @@
 		var billingInfo  = $("#billingForm").serializeObject();
 		
 		
-		console.log("------------------------------------------------------------");
-		console.log('======= billingInfo =======\n' + billingInfo)
+		//console.log("------------------------------------------------------------");
+		//console.log('======= billingInfo =======\n' + billingInfo)
 		
 			
         object["mngBillInsertVOList"] = billingInfo;
 		
-		console.log(object);
+		//console.log(object);
 		
 		var sendData = JSON.stringify(object);
 		
+		if(fnCheckExist(sendData) == true) {
+			$.ajax({
+	        	url:"/mngCommon/bill/saveExcelBilling.do",
+	            dataType: 'text', 
+	            type:"post",  
+				data: sendData,
+				traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
+	            contentType: "application/json; charset=UTF-8", 
+	     	  	beforeSend: function(xhr) {
+	     	  		xhr.setRequestHeader("AJAX", true);	        		
+	        	},
+	            success:function(data){	
+	            	//console.log("data==>"+data);
+	            	alert('저장되었습니다.');
+	            	close();
+	            },
+	        	error: function(request, status, error) {
+	        		if(request.status != '0') {
+	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	        		}
+	        	} 
+	        });
+		} else if(fnCheckExist(sendData) == false){
+			alert("이미 등록된 계산서입니다.(계산서 승인번호 중복)");
+		} else {
+			alert("계산서 중복 체크에 실패하였습니다.")
+		}
+		
+		
+	}
+	
+	
+	function fnCheckExist(sendData) {
+		var returnValue;
 		$.ajax({
-        	url:"/mngCommon/bill/saveExcelBilling.do",
+        	url:"/mngCommon/bill/isExistBill.do",
             dataType: 'text', 
             type:"post",  
 			data: sendData,
 			traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
+			async: false,
             contentType: "application/json; charset=UTF-8", 
      	  	beforeSend: function(xhr) {
      	  		xhr.setRequestHeader("AJAX", true);	        		
         	},
             success:function(data){	
-            	//console.log("data==>"+data);
-            	alert('저장되었습니다.');
-            	close();
+            	if(data == 0) {
+            		returnValue = true;
+            	} else {
+            		returnValue = false;
+            	}
             },
         	error: function(request, status, error) {
-        		if(request.status != '0') {
-        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-        		}
+        		returnValue = 'error';
         	} 
         });
+		
+		return returnValue;
+		
 	}
-	
 	
 	jQuery.fn.serializeObject = function() {
 		var obj = null; 
@@ -318,13 +358,13 @@
 				if(this[0].tagName.toUpperCase() == "FORM" ) { 
 					var arr = this.serializeArray();
 					
-					console.log('arr : ' + arr);
+					//console.log('arr : ' + arr);
 					
 					if(arr){ 
 						obj = {};
 						objArry = new Array();
 						jQuery.each(arr, function() {
-							console.log(this.name);
+							//console.log(this.name);
 							
 							if(this.name.indexOf("billAmount") > 0 
 							|| this.name.indexOf("billTaxAmount") > 0
@@ -356,6 +396,7 @@
 			//}finally {} 
 		return objArry; 
 	}
+	
 	
 	
 </script>	

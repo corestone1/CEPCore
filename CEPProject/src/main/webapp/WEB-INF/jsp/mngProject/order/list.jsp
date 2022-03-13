@@ -31,7 +31,7 @@
 		}
 		.contentsWrap .contents .top div:nth-child(2) > label {
 			line-height: 34px;
-			margin: 5px;
+			margin: 3px;
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
@@ -40,7 +40,7 @@
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			-webkit-appearance: none;
-			background: url('http://172.10.122.10:8888/images/arrow_down.png') no-repeat 91% 50%;
+			background: url('/images/arrow_down.png') no-repeat 91% 50%;
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
@@ -65,7 +65,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 545px;
+			height: 600px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -92,18 +92,30 @@
 		
 		.middle table tbody tr td a{
 			color: #535353;
+			display: inline-block;
+		    width: 366px;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		}
+		.middle table tbody tr td span{
+			display: inline-block;
+		    width: 190px;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
 		}
 		
 		.middle table thead th
 		, .middle table tbody tr td {
-			padding: 10px 0;
+			padding: 10px;
 			border: 1px solid #edebef;
 			color: #535353;
 		}
 		.middle table thead th:first-child,
 		.middle table tbody td:first-child {
-			width: 50px;
-			max-width: 50px;
+			width: 30px;
+			max-width: 30px;
 		}
 		
 		.middle table thead th:nth-child(2),
@@ -380,7 +392,7 @@
 							<form:option value="M">유지보수</form:option>
 						</form:select>
 						 -->
-						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="발주시작일(from)" value="${orderDtFrom }"/><label> ~ </label><form:input path="orderDtTo" type="text" class="calendar" placeholder="발주종료일(to)" value="${orderDtTo }"/>
+						<form:input path="orderDtFrom"    type="text" class="calendar" placeholder="발주시작일(from)" value="${orderDtFrom }"/><label><img class="veralignM" src="/images/icon_fromTo.png" /></label><form:input path="orderDtTo" type="text" class="calendar" placeholder="발주종료일(to)" value="${orderDtTo }"/>
 						<form:input path="orderKeySearch" type="text" placeholder="발주번호" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<form:input path="salesEmpNm"     type="text" placeholder="담당자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<form:input path="pjNm"           type="text" class="search" placeholder="프로젝트명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
@@ -407,16 +419,16 @@
 						<tbody>
 						
 							<c:forEach var="result" items="${orderList}" varStatus="status">
-								<tr>
+								<tr onclick="javascript:fn_viewDetail('${result.pjKey}')">
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
-									<td><c:out value="${result.acNm}"/></td>
-									<td><input type="hidden" value="${result.pjKey }" /><a href="javascript:fn_viewDetail('${result.pjKey}')"><c:out value="${result.pjNm}"/></a></td>
+									<td class="textalignL"><span title="${result.acNm }"><c:out value="${result.acNm}"/></span></td>
+									<td class="textalignL"><input type="hidden" value="${result.pjKey }" /><a href="javascript:fn_viewDetail('${result.pjKey}')" title="${result.pjNm }"><c:out value="${result.pjNm}"/></a></td>
 									<td><c:out value="${displayUtil.displayDate(result.orderDt)}"/></td>
 									<td><c:out value="${result.orderKey}"/></td>
-									<td><c:out value="${result.orderAcNm}"/></td>
+									<td class="textalignL"><span title="${result.orderAcNm }"><c:out value="${result.orderAcNm}"/></span></td>
 									<td><c:out value="${result.orderCount}"/></td>
-									<td><c:out value="${displayUtil.commaStr(result.orderAmount)}"/></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(result.orderAmount)}"/></td>
 									<td><c:out value="${result.salesEmpNm}"/></td>
 								</tr>
 								<input type="hidden" name="orderKey" value="${result.orderKey}"/>

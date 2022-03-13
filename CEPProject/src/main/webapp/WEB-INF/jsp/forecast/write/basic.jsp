@@ -452,20 +452,27 @@
 					<input type="hidden" id="remark" value="${forecast.remark }" />
 					<table>
 						<tr>
-							<td class="tdTitle"><label>*</label>구분/진행단계&nbsp;<span class="help" data-tooltip-text="A: 30% 미만/ B: 30%~80%미만 / C: 80%~ 100% 미만 / D: 수주 이후 계약 미체결 or 미발주 / 계약: 수주 이후 계약 체결"><img src="/images/icon_help.png"></span></td>
+							<td class="tdTitle"><label>*</label>구분/진행단계&nbsp;<span class="help" data-tooltip-text="A: 수주 이후 계약 미체결 or 미발주 / B: 80%~ 100% 미만 / C: 30%~80%미만 / D: 30% 미만"><img src="/images/icon_help.png"></span></td>
 							<td class="tdContents">
 								<select name="salesCtClass" id="m_slt_salesCtClass">
 									<option value="P" <c:if test="${forecast.salesCtClass eq 'P'}">selected</c:if>>상품/서비스</option>
 									<option value="M" <c:if test="${forecast.salesCtClass eq 'M'}">selected</c:if>>유지보수</option>
 								</select>
+								<c:if test="${forecast.spState ne 'S'}">
 								<select name="spState" id="m_slt_spState" class="wdts">
 									<option value="A" <c:if test="${forecast.spState eq 'A'}">selected</c:if>>A</option>
 									<option value="B" <c:if test="${forecast.spState eq 'B'}">selected</c:if>>B</option>
 									<option value="C" <c:if test="${forecast.spState eq 'C'}">selected</c:if>>C</option>
 									<option value="D" <c:if test="${forecast.spState eq 'D'}">selected</c:if>>D</option>
-									<option value="Z" <c:if test="${forecast.spState eq 'Z'}">selected</c:if>>계약</option>
+									<%-- <option value="Z" <c:if test="${forecast.spState eq 'Z'}">selected</c:if>>계약</option> --%>
 									<option value="F" <c:if test="${forecast.spState eq 'F'}">selected</c:if>>실주</option>
 								</select>
+								</c:if>
+								<c:if test="${forecast.spState eq 'S'}">
+								<select name="spState" id="m_slt_spState" class="wdts">
+									<option value="S">계약</option>
+								</select>
+								</c:if>
 							</td>
 						</tr>
 						<tr>	
@@ -547,24 +554,27 @@
 					<!-- middle -->
 					<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
 					<c:set var="mngName" value="${forecast.empNm }" />
+					<c:set var="empAuth" value='<%=session.getAttribute("empAuthCd").equals("EMAU1001") %>' />
+					<c:if test="${forecast.spState ne 'S' }">
 					<c:choose>
 						<c:when test="${spKey eq null}">
 							<div class="floatL btnSave">
-								<button type="button" class="move" onclick="javascript:fn_chkVali()" data-tooltip-text="저장/수정하지 않은 정보는 반영되지 않습니다."><img src="<c:url value='/images/btn_save.png'/>" /></button>	
+								<button type="button" class="move" onclick="javascript:fn_chkVali()" data-tooltip-text="저장/수정하지 않은 정보는<br>반영되지 않습니다."><img src="<c:url value='/images/btn_save.png'/>" /></button>	
 							</div>
 						</c:when>
 						<c:otherwise>
-							<c:if test="${systemName eq mngName }">
+							<c:if test="${systemName eq mngName or empAuth eq true}">
 								<div class="floatL btnSave">
-									<button type="button" class="move" onclick="javascript:fn_chkVali()" data-tooltip-text="저장/수정하지 않은 정보는 반영되지 않습니다."><img src="<c:url value='/images/btn_save.png'/>" /></button>	
+									<button type="button" class="move" onclick="javascript:fn_chkVali()" data-tooltip-text="저장/수정하지 않은 정보는<br>반영되지 않습니다."><img src="<c:url value='/images/btn_save.png'/>" /></button>	
 								</div>
 							</c:if>
 						</c:otherwise>
 					</c:choose>
+					</c:if>
 					<!-- right -->
 					<div class="floatR">
 						<button type="button" class="move" onclick="javascript:fnMoveTab('fundInfo');"><img src="<c:url value='/images/btn_next.png'/>" />
-							<span class="moveSpan">저장/수정하지 않은 정보는 반영되지 않습니다.</span>
+							<span class="moveSpan">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
 						</button>
 					</div>	
 				</div>

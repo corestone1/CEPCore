@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>수금/지급 현황</title>
+	<title>수금/지급 일정</title>
 	<style>
 		.sfcnt {
 			height: 91px;
@@ -31,7 +31,7 @@
 		}
 		.contentsWrap .contents .top div:nth-child(2) > label {
 			line-height: 34px;
-			margin: 5px;
+			margin: 3px;
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
@@ -44,6 +44,9 @@
 			background-color: #fff;
 			color: #535353;
 			font-size: 15px;
+		}
+		.middle .subject {
+			font-size: 20px;
 		}
 		.middle table {
 			width: 816px;
@@ -151,7 +154,7 @@
 		.bottom table tr td {
 			padding: 10px !important;
 			color: #26a07d !important;
-			background-color: #ecf6f4;
+			background-color: #ccf4d7;
 			text-align: center;
 			border: none !important;
 			font-size: 16px !important;
@@ -203,7 +206,7 @@
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
-						<div class="title floatL"><label class="ftw500">수금/지급 현황</label></div>
+						<div class="title floatL"><label class="ftw500">수금/지급 일정</label></div>
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
@@ -212,7 +215,7 @@
 							<form:option value="NE">미완료</form:option>
 							<form:option value="E">완료</form:option>
 						</form:select>
-						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from"/><label> ~ </label><form:input type="text" path="searchToDt" class="calendar" placeholder="to"/>
+						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from"/><label><img class="veralignM" src="/images/icon_fromTo.png" /></label><form:input type="text" path="searchToDt" class="calendar" placeholder="to"/>
 						<form:input type="text" path="searchAcNm" class="search" placeholder="거래처명" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
@@ -220,6 +223,7 @@
 				</div>
 				<div class="middle">
 					<div class="floatL">
+						<div class="subject">수금</div>
 						<table class="textalignC ftw200" id="fl">
 							<thead class="ftw400">
 								<tr>
@@ -268,6 +272,7 @@
 						</div>
 					</div>
 					<div class="floatR">
+						<div class="subject">지급</div>
 						<table class="textalignC ftw200" id="fl">
 							<thead class="ftw400">
 								<tr>

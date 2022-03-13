@@ -21,8 +21,6 @@
 		form .contentsWrap {
 			background-color: #f6f7fc;
 			box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);
-			max-height: 830px;
-			overflow-y: scroll;
 			overflow-x: hidden;
 		}
 		form .contentsWrap .contents {
@@ -64,6 +62,19 @@
 			width: 374px;
 			font-weight: 200;
 		}
+		form .contents .bsc tr td .oftext {
+		    width: 400px;
+		    overflow: hidden;
+		    height: 39px;
+		    text-overflow: ellipsis;
+		    white-space: normal;
+		    line-height: 1.4;
+		    text-align: left;
+		    word-wrap: break-word;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 2;
+		    -webkit-box-orient: vertical;
+		}
 		form .contents .dtl tbody tr:last-child td {
 			background-color: #ecf6f4;
 			font-weight: 400;
@@ -92,6 +103,13 @@
 		}
 	</style>
 	<script>
+		function fn_detail() {
+			form = document.moveForm;
+			form.workClass.value = "입찰_첨부파일";
+			form.action = "<c:url value='/project/detail/main.do'/>";
+			
+			form.submit(); 
+		}
 	</script>
 </head>
 <body>
@@ -101,14 +119,21 @@
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="">
-					<div class="title"><label class="ftw500">판매품의서</label></div>
+					<div class="title floatL"><label class="ftw500">판매품의서</label></div>
+					<div class="floatR dpBlock fxd">
+						<div class="floatR backWrap cursorP">
+							<a onclick="fn_detail();"><img src="/images/btn_todetail.png" /></a>
+						</div>
+						<div class="floatC"></div>
+					</div>
+					<div class="floatC"></div>
 					<div>
 						<div class="stitle cg">기본정보</div>
 						<div id="basicForm">
 							<table class="bsc" style="width: 100%;">
 								<tr>
 									<td>프로젝트명</td>
-									<td>${pjInfo[0].pjNm }</td>
+									<td><span class="oftext">${pjInfo[0].pjNm }</span></td>
 									<td>계약일자</td>
 									<td>${displayUtil.displayDate(pjInfo[0].ctDt) }</td>
 									<td>영업담당자</td>
@@ -150,8 +175,8 @@
 									<tr>
 										<td>${result.acNm }</td>
 										<td>${result.salesTurn }</td>
-										<td>${pjInfo[0].billSalesCd }</td>
-										<td>${pjInfo[0].billMfCd }</td>
+										<td>${contractVO.billSalesCd }</td>
+										<td>${contractVO.billMfCd }</td>
 										<td>${displayUtil.displayDate(result.salesCollectFcDt) }</td>
 										<td>${displayUtil.displayDate(result.salesCollectFinishDt) }</td>
 										<td>${result.salesCollectRate }%</td>
@@ -258,8 +283,8 @@
 											</c:choose>
 										</td>
 										<td>${displayUtil.displayDate(biddingVO.bdGbFinishDt)}</td>
-										<td class="textalignR">${displayUtil.commaStr(biddingVO.bdGbAmount) }</td>
-										<c:set var= "gSum" value="${gSum + biddingVO.bdGbAmount}"/>
+										<td class="textalignR">${displayUtil.commaStr(biddingVO.bdGbBdAmount) }</td>
+										<c:set var= "gSum" value="${gSum + biddingVO.bdGbBdAmount}"/>
 									</tr>
 								</c:if> 
 								<tr></tr>
@@ -290,13 +315,17 @@
 					</div>
 					<div class="floatC"></div>
 				</div>
-				<div class="btnWrap rt floatR">
+				<%-- <div class="btnWrap rt floatR">
 					<div>
 						<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
-				</div>
+				</div> --%>
 			</div>
 		</div>	
+	</form>
+	<form id="moveForm" name="moveForm">
+		<input type="hidden" id="pjKey" name="pjKey" value="${pjInfo[0].pjKey }"/>
+		<input type="hidden" id="workClass" name="workClass" value=""/>
 	</form>
 </body>
 </html>

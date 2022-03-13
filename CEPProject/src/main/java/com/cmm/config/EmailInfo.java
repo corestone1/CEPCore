@@ -27,12 +27,12 @@ public enum EmailInfo {
 	 * MAIL_SUBJECT : 메일 제목(기본)
 	 */
 	MAIL_SERVER("smtp.gmail.com")
-	, MAIL_PORT("465")
+	, MAIL_PORT("587")
 	, MAIL_FROM("corestone1602@gmail.com")
 	, MAIL_SEND_NAME("corestone1602")
 	, MAIL_SEND_PW("hihlljocnbncuicm")
 	, MAIL_SUBJECT("업무 협조 요청")
-	, PAGE_URL("http://172.10.122.10:8888/");
+	, PAGE_URL("http://172.10.200.103:8080/");
 	
 	private String value;
 	

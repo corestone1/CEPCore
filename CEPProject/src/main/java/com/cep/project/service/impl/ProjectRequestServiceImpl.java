@@ -190,9 +190,9 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			name = (String)request.getSession().getAttribute("name");
-			dept = DeptInfo.DEPT_OPER_L3.getValue();
+			dept = DeptInfo.DEPT_OPER_L2.getValue();
 			url = paymentVO.getLink();
-			subject = EmailInfo.MAIL_SUBJECT.getValue();
+			subject = paymentVO.getPjNm() + "건 매입금 지급 요청";
 			paymentVO.setModEmpKey(session.get("empKey"));
 			
 			mailVO.setSubject(subject);
@@ -221,9 +221,10 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 				alarmVO.setPjMtKey(paymentVO.getPjKey());
 				
 				result = comService.sendMail(request, mailVO);
-				if(result == 0) {
+				/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+				/*if(result == 0) {
 					throw new Exception();
-				} else {
+				} else {*/
 					alarmService.insertAlarm(alarmVO, request);
 					
 					mapper.updatePaymentInfo(paymentVO);
@@ -235,7 +236,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
 					purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
 					mapper.updatePurchaseInfo(purchaseVO);*/
-				}
+				/*}*/
 			} else {
 				if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST4000")) {
 					mailList.add(mapper.selectPaymentDetail(paymentVO).get("regEmpKey").toString());
@@ -249,7 +250,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					mailVO.setLink(url);
 					alarmVO.setAlarmTo(tmail);
 					
-					subject = paymentVO.getPjNm() + "건 지급 완료";
+					subject = paymentVO.getPjNm() + "건 매입금 지급 완료";
 					content = String.join(
 												System.getProperty("line.separator"), 
 												"["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + "프로젝트 건에 지급이 완료되었습니다. <br> (지급인: " +name+",",
@@ -261,7 +262,8 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					
 					result = comService.sendMail(request, mailVO);
 					
-					if(result != 0) {
+					/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+					/*if(result != 0) {*/
 					
 						purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
 						purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
@@ -276,9 +278,9 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 						mngPjMapper.updatePcBillingOpInfo(purchaseBillOpVO);
 						
 						alarmService.insertAlarm(alarmVO, request);
-					} else {
+					/*} else {
 						throw new Exception();
-					}
+					}*/
 					
 				} else if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("")) {
 					mailList.add(mapper.selectPaymentDetail(paymentVO).get("regEmpKey").toString());
@@ -303,9 +305,10 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					
 					result = comService.sendMail(request, mailVO);
 					
-					if(result == 0) {
+					/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+					/*if(result == 0) {
 						throw new Exception();
-					} else {
+					} else {*/
 						alarmService.insertAlarm(alarmVO, request);
 						
 						/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
@@ -315,7 +318,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 						purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
 						purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
 						mapper.updatePurchaseInfo(purchaseVO);*/
-					}
+					/*}*/
 				} else {
 					/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
 					purchaseVO.setModEmpKey(session.get("empKey"));

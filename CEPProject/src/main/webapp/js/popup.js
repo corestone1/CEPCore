@@ -61,7 +61,8 @@ function showModalPop(id, url, data, button, title, args) {
       title: title,
       open: function() {
          $('.ui-widget-overlay').addClass('custom-overlay');
-      },
+         
+      }, 
       close: function(event) {
          //alert(id+"/args==>"+args+"/ifram==>"+ifram+"/iframId==>"+iframId+"/reload==>"+reload);
     	  if(reload == true) {
@@ -99,6 +100,7 @@ function showModalPop(id, url, data, button, title, args) {
       top: top,
       left: left
    });
+   
 }
 
 function modal_layer_add(div_id) {

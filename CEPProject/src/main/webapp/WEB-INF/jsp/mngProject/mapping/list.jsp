@@ -31,7 +31,6 @@
 		}
 		.contentsWrap .contents .top div:nth-child(2) > label {
 			line-height: 34px;
-			margin: 5px;
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
@@ -65,7 +64,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 545px;
+			height: 600px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -220,7 +219,7 @@
 					</div>
 					<div class="floatR">
 						<form:input path="orderDtFrom" type="text" class="calendar" placeholder="from" value="${orderDtFrom }"/>
-						<label> ~ </label>
+						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
 						<form:input path="orderDtTo" type="text" class="calendar" placeholder="to" value="${orderDtTo }"/>
 						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호" onKeyPress="if(event.keyCode==13){fn_search();}"/>

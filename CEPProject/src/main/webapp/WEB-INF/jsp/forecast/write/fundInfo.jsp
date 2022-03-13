@@ -134,7 +134,7 @@
 			margin-top: 18px;
 		}
 		#m_div_accountList {
-			margin-left: 112px;
+			left: 156.5px;
 		}
 		.move {
 			display: inline-block;
@@ -451,7 +451,7 @@
 	        		alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 	        	}
 	        } 
-	    });    
+	    });     
 	}
 	
 	function fn_addInfoTable(tableType) {
@@ -991,7 +991,7 @@
 										</td>
 										<td class="tdTitle d3">매입액</td>
 										<td class="tdContents d4">
-											<input type="text" name="fcBuyAmount"  id="pcList-<c:out value="${status.index}"/>-fcBuyAmount" placeholder="매입액" value="${displayUtil.commaStr(result.fcBuyAmount)}" amountonly/>
+											<input type="text" name="fcBuyAmount"  id="pcList-<c:out value="${status.index}"/>-fcBuyAmount" placeholder="매입액" <c:if test="${result.fcBuyAmount ne 0 }">value="${displayUtil.commaStr(result.fcBuyAmount)}"</c:if> amountonly/>
 										</td>
 										<td><img class="cursorP" id="pcList-<c:out value="${status.index}"/>-delete" src="/images/popup_close.png" onclick="fn_delete(this, 'pc');" style="width: 11px;vertical-align: top;"></td>
 									</tr>
@@ -1055,15 +1055,15 @@
 				<!-- Left -->
 				<div class="floatL btnPrev">
 					<button type="button" onclick="javascript:fnMoveTab('basic');" class="move"><img src="<c:url value='/images/btn_prev.png'/>" />
-						<span class="moveSpan right">저장/수정하지 않은 정보는 반영되지 않습니다.</span>
+						<span class="moveSpan right">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
 					</button>
 				</div>
 				
 				<!-- middle -->
 				<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
 				<c:set var="mngName" value="${forecast.empNm }" />
-				
-				<c:if test="${systemName eq mngName }">
+				<c:set var="empAuth" value='<%=session.getAttribute("empAuthCd").equals("EMAU1001") %>' />
+				<c:if test="${(systemName eq mngName or empAuth eq true) and forecast.spState ne 'S'}">
 					<div class="floatL btnSave">
 						<button type="button" onclick="javascript:fn_chkVali();"><img src="<c:url value='/images/btn_save.png'/>" /></button>	
 					</div>
@@ -1072,7 +1072,7 @@
 				<!-- right -->
 				<div class="floatR">
 					<button type="button" onclick="javascript:fnMoveTab('progress');" class="move"><img src="<c:url value='/images/btn_next.png'/>" />
-						<span class="moveSpan">저장/수정하지 않은 정보는 반영되지 않습니다.</span>
+						<span class="moveSpan">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
 					</button>
 				</div>
 			</div>

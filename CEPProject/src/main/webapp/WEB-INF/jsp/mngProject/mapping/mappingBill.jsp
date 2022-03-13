@@ -435,7 +435,7 @@
 			<div class="contents1">
 				<div>
 					<div class="subTitle floatL">발주 정보</div>
-					<div class="subTitle floatR"><a href="/project/request/purchase/main.do?mainKey=${orderVO.orderCtFkKey}&orderKey=${orderVO.pjOrderKey }">지급 정보 보러가기<label><img src="/images/arrow_down.png" /></label></a></div>
+					<div class="subTitle floatR"><a href="/project/request/purchase/main.do?mainKey=${orderVO.orderCtFkKey}&orderKey=${orderVO.pjOrderKey }"><img src="/images/btn_to_payment.png" /></a></div>
 					<div class="floatC"></div>
 				</div>
 				<div>
@@ -489,7 +489,7 @@
 						<div class="subTitle floatL">계산서 정보</div>
 						<div class="subCalendar floatR">
 							<form:input path="billDtFrom" type="text" class="calendar" placeholder="from" />
-							&nbsp; ~&nbsp; 
+							<img class="veralignM" src="/images/icon_fromTo.png" />
 							<form:input path="billDtTo" type="text" class="calendar" placeholder="to"/>
 							<span onclick="fn_popSearch();"><img class="veralignM" style="width: 33px; height: 33px;" src="<c:url value='/images/icon_search.png'/>" /></span>
 						</div>
@@ -533,7 +533,7 @@
 										<td><input type="text" name="remark"  value="${result.remark }" title="${result.remark }" readOnly  /></td>
 										<td style="font-size: 13px;">
 											<c:if test="${result.billMappingYn eq 'Y' and (result.paymentStatusCd eq 'PYST1000')}">
-												<button type="button" value="매핑취소" onclick="fn_cancelMappingBill(this, '${result.billNo}', '${result.paymentKey }');">매핑취소</button>
+												<button type="button" value="매핑취소" onclick="fn_cancelMappingBill(this, '${result.billNo}', '${result.paymentKey }');"><img src="/images/btn_cancel_mapping_green.png" /></button>
 											</c:if>
 											<c:if test="${result.billMappingYn eq 'N'}">
 												<label>미매핑</label>

@@ -177,6 +177,10 @@
 			text-overflow: ellipsis;
 		}
 		
+		#fileForm .upload-name:hover {
+			text-decoration: underline;
+		}
+		
 		#fileForm .close {
 			vertical-align: middle;
 		}
@@ -204,6 +208,43 @@
 		#fileWrap::-webkit-scrollbar {
 			width: 6px;
 			height: 31px;
+		}
+		.move {
+			display: inline-block;
+		}
+		.move:hover .moveSpan {
+			 visibility: visible;
+		}
+		.move .moveSpan {
+		    visibility: hidden;
+		    width: 230px;
+		    height: 42px;
+		    background-color: #404040;
+		    color: #ffffff;
+		    text-align: center;
+		    border-radius: 6px;
+		    padding: 5px 0;
+		    position: absolute;
+		    z-index: 9999;
+		    bottom: 57px;
+		    right: 15px;
+		    font-size: 14px;
+		}
+		.move .moveSpan::after {
+		    content: "";
+		    position: absolute;
+		    top: 100%;
+		    left: 82%;
+		    margin-left: -5px;
+		    border-width: 5px;
+		    border-style: solid;
+		    border-color: #404040 transparent transparent transparent;
+		}
+		.move .moveSpan.right {
+		    left: 15px;
+		}
+		.move .moveSpan.right::after {
+			left: 18%;
 		}
 	</style>
 	<script>	
@@ -482,7 +523,7 @@
 					</div>
 					<div style="width: 307px; clear: both;" id="fileWrap">
 						<c:forEach var="result" items="${fileList }" varStatus="status">
-							<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
+							<input class="upload-name cursorP ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly />
 							<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')">
 								<img src="/images/btn_close.png" />
 							</a>
@@ -499,11 +540,18 @@
 			</div>
 			<div class="btnWrap floatR">
 				<div class="floatL btnPrev">
-					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					<button type="button" class="move" onclick="fn_prevView();">
+						<img src="<c:url value='/images/btn_prev.png'/>" />
+						<span class="moveSpan right">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
+					</button>
 				</div>
-				<div class="floatL btnSave">
-					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-				</div>
+				<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
+				<c:set var="mngName" value="${resultList[0].empNm }" />
+				<c:if test="${systemName eq mngName }">
+					<div class="floatL btnSave">
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>
+				</c:if>
 				<div class="floatN floatC"></div>
 			</div>
 		</div>

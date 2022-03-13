@@ -16,7 +16,6 @@ import com.cep.mngCommon.bill.service.MngCommonBillService;
 import com.cep.mngCommon.bill.vo.MngCommonBillSearchVO;
 import com.cep.mngCommon.bill.vo.MngCommonBillVO;
 import com.cep.mngProject.order.service.impl.MngProjectOrderServiceImpl;
-import com.cmm.util.CepDateUtil;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -37,9 +36,19 @@ public class MngCommonBillServiceImpl implements MngCommonBillService {
 	}
 	
 	@Override
-	public void deleteBill(MngCommonBillSearchVO searchVO ) throws Exception
+	public Map<String, Object> deleteBill(MngCommonBillSearchVO searchVO ) throws Exception
 	{
-		mapper.deleteBill(searchVO);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			mapper.deleteBill(searchVO);
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
 	}
 	
 	/*@Override
@@ -161,6 +170,25 @@ public class MngCommonBillServiceImpl implements MngCommonBillService {
 		//PJ_SD_BILLING_OP_TB Update
 		mapper.updateBillMapping(mngCommonBillVO);
 	}*/
+	
+	@Override
+	@Transactional
+	public int selectExistBill(MngCommonBillVO mngCommonBillVO) throws Exception {
+		List<MngCommonBillVO> lltBillVO = mngCommonBillVO.getMngBillInsertVOList();
+		int litListSize = lltBillVO.size();
+		int result = 0;
+		
+		MngCommonBillVO billVO;
+		for(int i = 0; i < litListSize; i++) {
+			billVO = lltBillVO.get(i);
+			result = mapper.selectExistBill(billVO);
+			if(result != 0) {
+				break;
+			}
+		}
+		
+		return result;
+	}
 	
 	
 	@Override

@@ -93,6 +93,8 @@ public class CepMailMngUtil {
 		properties.put("mail.smtp.starttls.enable", "true");
 		properties.put("mail.smtp.ssl.enable", "true");
 		properties.put("mail.smtp.ssl.trust", mailServer);
+		properties.put("mail.smtp.socketFactory.port", port);
+		properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		session = Session.getDefaultInstance(properties);
 		message = new MimeMessage(session);
 	}

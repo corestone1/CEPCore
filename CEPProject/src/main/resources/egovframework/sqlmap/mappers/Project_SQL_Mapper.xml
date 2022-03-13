@@ -137,7 +137,9 @@
 		INSERT INTO PJ_MAIN_TB (
 			PJ_KEY
 			, AC_KEY
+			<if test="acDirectorKey != null and acDirectorKey != ''">
 			, AC_DIRECTOR_KEY
+			</if>
 			, PJ_NM
 			, PJ_START_DT
 			, PJ_END_DT
@@ -153,7 +155,9 @@
 		) VALUES (
 			#{pjKey}
 			, #{acKey}
+			<if test="acDirectorKey != null and acDirectorKey != ''">
 			, #{acDirectorKey}
+			</if>
 			, #{pjNm}
 			, #{pjStartDt}
 			, #{pjEndDt}
@@ -264,9 +268,12 @@
 			, PB.BD_PROPOSAL_PRESENT_YN AS bdProposalPresentYn
 			, PB.BD_PROPOSAL_PRESENT_DT AS bdProposalPresentDt
 			, PB.BD_PROPOSAL_PRESENT_TM AS bdProposalPresentTm
+			, CE.EMP_NM	AS empNm
 		FROM PJ_BIDDING_TB  PB
 		JOIN PJ_MAIN_TB  PM
 		ON PB.PJ_KEY = PM.PJ_KEY
+		LEFT JOIN CMM_EMPLOYEE_TB CE
+		ON PB.REG_EMP_KEY = CE.EMP_KEY
 		WHERE PB.PJ_KEY = #{pjKey}
 		AND PB.DELETE_YN = 'N'
 	</select>
@@ -490,7 +497,7 @@
 			, SD.SALES_COLLECT_FC_DT
 			, SD.SALES_COLLECT_FINISH_DT
 			, SD.SALES_BILL_FC_DT
-			, (SELECT CA.AC_NM FROM CMM_ACCOUNT_TB CA, PJ_SALES_DETAIL_TB PJ WHERE CA.AC_KEY = PJ.SALES_AC_KEY AND PJ.SALES_CT_FK_KEY = #{pjKey}) AS AC_NM
+			, CA.AC_NM
 			, SD.SALES_AC_KEY
 			, SB.BILL_ISSUE_DT
 		FROM PJ_SALES_DETAIL_TB SD 
@@ -500,6 +507,8 @@
 			WHERE DELETE_YN='N'
 			GROUP BY BILL_CT_FK_KEY
 		) AS SB ON (SD.SALES_KEY = SB.BILL_CT_FK_KEY )
+		LEFT OUTER JOIN CMM_ACCOUNT_TB CA
+		ON SD.SALES_AC_KEY = CA.AC_KEY
 		WHERE SD.SALES_CT_FK_KEY=#{pjKey}
 		AND SD.DELETE_YN='N';
 	</select>
@@ -682,16 +691,21 @@
 	
 	<select id="selectContractDetail" parameterType="String" resultType="projectContractVO">
 		SELECT 
-			CT_KEY AS ctKey
-			, CT_AMOUNT AS ctAmount
-			, CT_DT AS ctDt
-			, CT_PAY_TERMS AS ctPayTerms
-			, COLLECT_TURN AS collectTurn
-			, BILL_SALES_CD		AS billSalesCd
-			, BILL_MF_CD		AS billMfCd
-		FROM PJ_CONTRACT_TB 
-		WHERE PJ_KEY=#{pjKey}
-		AND DELETE_YN='N'
+			PC.CT_KEY AS ctKey
+			, PC.CT_AMOUNT AS ctAmount
+			, PC.CT_DT AS ctDt
+			, PC.CT_PAY_TERMS AS ctPayTerms
+			, PC.COLLECT_TURN AS collectTurn
+			, PC.BILL_SALES_CD		AS billSalesCd
+			, PC.BILL_MF_CD		AS billMfCd
+			, CE.EMP_NM		AS empNm
+			, PC.BILL_SALES_CD		AS billSalesCd
+			, PC.BILL_MF_CD		AS billMfCd
+		FROM PJ_CONTRACT_TB PC
+		LEFT OUTER JOIN CMM_EMPLOYEE_TB CE
+		ON PC.REG_EMP_KEY = CE.EMP_KEY
+		WHERE PC.PJ_KEY=#{pjKey}
+		AND PC.DELETE_YN='N'
 	</select>
 	
 	<select id="selectGuarantyList" parameterType="String" resultType="egovMap">
@@ -704,20 +718,23 @@
 			, GB.SALES_KEY
 			, GB.GB_START_DT
 			, GB.GB_END_DT
-			, SD.SALES_TURN
+			<!-- , SD.SALES_TURN -->
 		FROM PJ_GUARANTY_BOND_TB GB
-		JOIN PJ_SALES_DETAIL_TB  SD
-		ON GB.SALES_KEY = SD.SALES_KEY
-		WHERE SD.SALES_CT_FK_KEY=#{pjKey}
+		<!-- JOIN PJ_SALES_DETAIL_TB  SD 
+		ON GB.SALES_KEY = SD.SALES_KEY -->
+		LEFT OUTER JOIN PJ_CONTRACT_TB CT
+		ON GB.CT_KEY = CT.CT_KEY
+		<!-- WHERE SD.SALES_CT_FK_KEY=#{pjKey} -->
+		WHERE CT.PJ_KEY=#{pjKey}
 		AND GB.DELETE_YN='N'
-		ORDER BY SALES_KEY ASC, GB_KIND_CD ASC
+		<!-- ORDER BY SALES_KEY ASC, GB_KIND_CD ASC -->
 	</select>
 	
 	<insert id="insertGuarantyInfo" parameterType="guarantyBondVO">
 		INSERT INTO PJ_GUARANTY_BOND_TB (
 			GB_KEY
 			, CT_KEY
-			, SALES_KEY
+			<!-- , SALES_KEY -->
 			, GB_KIND_CD
 			, GB_START_DT
 			, GB_END_DT
@@ -728,7 +745,7 @@
 		) VALUES (
 			#{gbKey}
 			, #{ctKey}
-			, #{salesKey}
+			<!-- , #{salesKey} -->
 			, #{gbKindCd} 
 			, #{gbStartDt}
 			, #{gbEndDt}
@@ -894,20 +911,23 @@
 	
 	<select id="selectOrderDetail" parameterType="String" resultType="projectOrderVO">
 		SELECT
-			PJ_ORDER_KEY AS pjOrderKey
-			, ORDER_DT AS orderDt
-			, ORDER_AC_KEY AS orderAcKey
+			PO.PJ_ORDER_KEY AS pjOrderKey
+			, PO.ORDER_DT AS orderDt
+			, PO.ORDER_AC_KEY AS orderAcKey
 			, (SELECT A.AC_NM FROM CMM_ACCOUNT_TB A WHERE A.AC_KEY = PO.ORDER_AC_KEY ) AS orderAcNm
-			, ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
+			, PO.ORDER_AC_DIRECTOR_KEY AS orderAcDirectorKey
 			, (SELECT AD.AC_DIRECTOR_NM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = PO.ORDER_AC_DIRECTOR_KEY ) AS orderAcDirectorNm
 			, (SELECT AD.AC_DIRECTOR_MB_NUM FROM CMM_ACCOUNT_DIRECTOR_TB AD WHERE AD.AC_DIRECTOR_KEY = PO.ORDER_AC_DIRECTOR_KEY) AS orderAcDirectorMbNum
 			, (SELECT PJ.PJ_NM  FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS pjNm
 			, (SELECT CA.AC_NM FROM PJ_MAIN_TB PJ, PJ_ORDER_TB PO, CMM_ACCOUNT_TB CA WHERE PJ.PJ_KEY=PO.ORDER_CT_FK_KEY AND PJ.AC_KEY = CA.AC_KEY AND PO.PJ_ORDER_KEY=#{orderKey}) AS acNm
-			, ORDER_PAY_TERMS AS orderPayTerms
-			, ORDER_AMOUNT AS orderAmount
+			, PO.ORDER_PAY_TERMS AS orderPayTerms
+			, PO.ORDER_AMOUNT AS orderAmount
+			, CE.EMP_NM		AS empNm
 		FROM PJ_ORDER_TB PO
-		WHERE PJ_ORDER_KEY = #{orderKey}
-			AND DELETE_YN='N'
+		LEFT OUTER JOIN CMM_EMPLOYEE_TB CE
+		ON PO.REG_EMP_KEY = CE.EMP_KEY
+		WHERE PO.PJ_ORDER_KEY = #{orderKey}
+			AND PO.DELETE_YN='N'
 	</select>
 	
 	<select id="selectPurchaseDetail" parameterType="projectPurchaseVO" resultType="projectPurchaseVO">

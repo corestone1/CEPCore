@@ -131,8 +131,18 @@ public class ForecastServiceImpl implements ForecastService {
 			if(!forecastVO.getForecastSalesVOList().isEmpty()) {
 				for(int i = 0; i < forecastVO.getForecastSalesVOList().size(); i++) {
 					
-					forecastVO.getForecastSalesVOList().get(i).setFcSalesDt(forecastVO.getForecastSalesVOList().get(i).getFcSalesDtYr() + forecastVO.getForecastSalesVOList().get(i).getFcSalesDtMt());
-					forecastVO.getForecastSalesVOList().get(i).setFcCollectDt(forecastVO.getForecastSalesVOList().get(i).getFcCollectDtYr() + forecastVO.getForecastSalesVOList().get(i).getFcCollectDtMt());
+					if(!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastSalesVOList().get(i).getFcSalesDtYr(), "")) && 
+							!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastSalesVOList().get(i).getFcSalesDtMt(), ""))) {
+						forecastVO.getForecastSalesVOList().get(i).setFcSalesDt(forecastVO.getForecastSalesVOList().get(i).getFcSalesDtYr() + forecastVO.getForecastSalesVOList().get(i).getFcSalesDtMt());
+					} 
+					
+					if(!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastSalesVOList().get(i).getFcCollectDtYr(), "")) &&
+							!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastSalesVOList().get(i).getFcCollectDtMt(), ""))) {
+						forecastVO.getForecastSalesVOList().get(i).setFcCollectDt(forecastVO.getForecastSalesVOList().get(i).getFcCollectDtYr() + forecastVO.getForecastSalesVOList().get(i).getFcCollectDtMt());
+					} 
+					
+					/*forecastVO.getForecastSalesVOList().get(i).setFcSalesDt(forecastVO.getForecastSalesVOList().get(i).getFcSalesDtYr() + forecastVO.getForecastSalesVOList().get(i).getFcSalesDtMt());
+					forecastVO.getForecastSalesVOList().get(i).setFcCollectDt(forecastVO.getForecastSalesVOList().get(i).getFcCollectDtYr() + forecastVO.getForecastSalesVOList().get(i).getFcCollectDtMt());*/
 					
 					if("".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastSalesVOList().get(i).getSalesKey(), ""))) {
 						insertList.add(forecastVO.getForecastSalesVOList().get(i));
@@ -156,11 +166,21 @@ public class ForecastServiceImpl implements ForecastService {
 			insertList = new ArrayList<ForecastVO>();
 			updateList = new ArrayList<ForecastVO>();
 			
-			if(!forecastVO.getForecastSalesVOList().isEmpty()) {
+			if(!forecastVO.getForecastPcVOList().isEmpty()) {
 				for(int i = 0; i < forecastVO.getForecastPcVOList().size(); i++) {
 					
-					forecastVO.getForecastPcVOList().get(i).setFcBuyDt(forecastVO.getForecastPcVOList().get(i).getFcBuyDtYr() + forecastVO.getForecastPcVOList().get(i).getFcBuyDtMt());
-					forecastVO.getForecastPcVOList().get(i).setFcBuyPayDt(forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtYr() + forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtMt());
+					if(!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastPcVOList().get(i).getFcBuyDtYr(), "")) && 
+							!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastPcVOList().get(i).getFcBuyDtMt(), ""))) {
+						forecastVO.getForecastPcVOList().get(i).setFcBuyDt(forecastVO.getForecastPcVOList().get(i).getFcBuyDtYr() + forecastVO.getForecastPcVOList().get(i).getFcBuyDtMt());
+					}
+					
+					if(!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtYr(), "")) && 
+							!"".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtMt(), ""))) {
+						forecastVO.getForecastPcVOList().get(i).setFcBuyPayDt(forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtYr() + forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtMt());
+					}
+					
+					/*forecastVO.getForecastPcVOList().get(i).setFcBuyDt(forecastVO.getForecastPcVOList().get(i).getFcBuyDtYr() + forecastVO.getForecastPcVOList().get(i).getFcBuyDtMt());
+					forecastVO.getForecastPcVOList().get(i).setFcBuyPayDt(forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtYr() + forecastVO.getForecastPcVOList().get(i).getFcBuyPayDtMt());*/
 					
 					if("".equals(CepStringUtil.getDefaultValue(forecastVO.getForecastPcVOList().get(i).getBuyKey(), ""))) {
 						insertList.add(forecastVO.getForecastPcVOList().get(i));
@@ -457,7 +477,7 @@ public class ForecastServiceImpl implements ForecastService {
 			String subject = forecastBiddingVO.getSpBusiNm() + "건 입찰 서류 요청";
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"["+forecastBiddingVO.getSpKey()+"] " + forecastBiddingVO.getSpBusiNm()+" Forecast 건에 입찰 서류 요청 정보가 있습니다.<br>요청인: "+name+",",
+									"["+forecastBiddingVO.getSpKey()+"] " + forecastBiddingVO.getSpBusiNm()+" Forecast 건에 입찰 서류 요청 정보가 있습니다.<br>(요청자: "+name+",",
 									" 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 			
 			mailVO.setSubject(subject);
@@ -527,7 +547,7 @@ public class ForecastServiceImpl implements ForecastService {
 			String subject = forecastBiddingVO.getSpBusiNm() + " 건 입찰 보증 증권 발행 신청";
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"["+forecastBiddingVO.getSpKey()+"] " +forecastBiddingVO.getSpBusiNm()+" Forecast 건에 입찰 보증 증권 발행 신청 건이 있습니다.<br>요청인: "+name+",",
+									"["+forecastBiddingVO.getSpKey()+"] " +forecastBiddingVO.getSpBusiNm()+" Forecast 건에 입찰 보증 증권 발행 신청 건이 있습니다.<br>(요청자: "+name+",",
 									" 요청 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 			
 			mailVO.setSubject(subject);

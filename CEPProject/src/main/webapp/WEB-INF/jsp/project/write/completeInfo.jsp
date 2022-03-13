@@ -199,7 +199,8 @@
 					<tr>
 						<td class="tdTitle">사업기간</td>
 						<td class="tdContents">
-							<input type="text" placeholder="from" class="calendar" /> ~ 
+							<input type="text" placeholder="from" class="calendar" /> 
+							&nbsp;<img class="veralignM" src="/images/icon_fromTo.png" />&nbsp; 
 							<input type="text" placeholder="to" class="calendar" />
 						</td>
 					</tr>

@@ -20,6 +20,9 @@
 	
 	
 	<style>
+		body {
+			overflow: hidden !important;
+		}
 		.sfcnt {
 			height: 91px;
 		}
@@ -64,8 +67,8 @@
 		form .contents .stitle {
 			font-size: 18px;
 			font-weight: 500;
-			margin-bottom: 10px;
 			margin-top: 30px;
+			margin-bottom: 10px;
 		}
 		form .contents .cg {
 			color: #24a37e;
@@ -75,7 +78,7 @@
 			font-size: 15px;
 		} 
 		form .contents > div > div > div > table tr td {
-			padding: 13px 20px;
+			padding: 12px 20px;
 		}
 		form .contents > div > div > div > table tr td:first-child {
 			width: 140px;
@@ -134,7 +137,6 @@
 		}
 		form .contents .dtl {
 			overflow: hidden;
-			margin-top: -10px;
 			border-top: 4px solid #6a5bae;
 		}
 		form .contents .dtl tbody {
@@ -143,6 +145,7 @@
 			height: auto;
 			float: left;
 			background-color: #fff;
+			border-bottom: 2px solid #c4c4c4;
 		}
 		form .contents .dtl tbody tr {
 			border: 1px solid #ebe9ee;
@@ -165,7 +168,6 @@
 		    border-collapse: collapse;
 		    font-weight: 300;
 		    overflow: hidden;
-		    margin-top: -10px;
 	        border-top: 4px solid #6a5baf;
 		}
 		form .contents .dtl2 thead {
@@ -184,6 +186,7 @@
 		    overflow-x: hidden;
 		    float: left;
 		    border-bottom: 2px solid #c4c4c4;
+		    height: 73px;
 		}
 		form .contents .dtl2 tbody tr {
 		    display: table;
@@ -247,11 +250,12 @@
 		}
 		form .contents .dtl3 tbody {
 			width: 997px;
-			/* height: 532px; */
+			height: 101px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
 			border-bottom: 2px solid #c4c4c4;
+			height: 76px;
 		}
 		form .contents .dtl3 tbody tr {
 			display: table;
@@ -269,6 +273,9 @@
 			padding: 10px 7px;
 			border: 1px solid #edebef;
 			text-align: center;
+		}
+		form .contents .dtl3 tbody tr td:last-child {
+			padding: 0 7px;
 		}
 		form .contents .dtl3 tbody tr td {
 			font-weight: 200;
@@ -386,8 +393,7 @@
 				}
 			});
 			
-			if("${salesList[0].salesKey}" != null && "${salesList[0].salesKey}" != "")
-				fnSearchGuarantyBondList("${salesList[0].salesKey}");
+			fnSearchGuarantyBondList($("#ipt_CtKey").val());
 			
 			//$(".contents .dtl tbody tr:first-child").css("background-color", "#ddf0ec");
 			
@@ -408,10 +414,10 @@
 			location.href = "/project/detail/contractMin2.do?pjKey=${projectInfo.pjKey}";
 		}
 		
-		function fnSearchGuarantyBondList(pstSalesKey) {
+		function fnSearchGuarantyBondList(ctKey) {
 			//alert(pstSalesKey);
 			
-			var jsonData = {'salesKey' : pstSalesKey};
+			var jsonData = {'ctKey' : ctKey};
 			
 			$.ajax ({
 				  url:"/project/detail/selectGuarantyBondList.do"
@@ -439,7 +445,7 @@
 			var html = '';
 			var litListCnt = pltGBList.length;
 			
-			html = '<table id="tbl_guarantyBondList" class="dtl3 tbl2Width">'
+			html = '<table id="tbl_guarantyBondList" class="dtl3 tbl2Width excelSheet">'
 			     + '<thead class="ftw400">'
 			     +     '<tr>'
 			     +        '<th scope="row">No</th>'
@@ -467,12 +473,14 @@
 		    		lstStatus  = '발행 완료';
 		    		lstBtnImg  = "/images/btn_stock_detail.png";
 		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstStyle='';
 		    	}
 		    	else if(pltGBList[i].gbIssueStatus == 'R')
 		    	{
 		    		lstStatus = '승인 중';
 		    		lstBtnImg  = "/images/btn_blue_reqInfo.png";
 		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstStyle='';
 		    	}	
 		    	else
 		    	{
@@ -540,7 +548,7 @@
 			showModalPop(dialogId, pstUrl, varParam, button, '', 'width:648px;height:575px');  */
 			
 			var nWidth = "654";
-			var nHeight = "549";
+			var nHeight = "600";
 			  
 			var curX = window.screenLeft;
 			var curY = window.screenTop;
@@ -616,16 +624,10 @@
 			<div class="contents">
 				<div class="floatL dpBlock fxd">
 					<div id="detailForm">
-						<!-- <div class="stitle">
-							<ul>
-								<li style="width: 50%;"><a class="on">계약정보</a></li> 
-								<li style="width: 50%;"><a onclick="javascript:fnCallContrect();">수금계획</a></li>
-								<li></li>
-							</ul>
-						</div>   -->
-						<div class="floatC" style="margin-top: 76px;">
+						<div class="stitle">계약정보</div>   
+						<div class="floatC">
 							<!-- 계약정보 표기 시작 -->
-							<table class="dtl" style="width: 100%;" id="selectTable">
+							<table class="dtl excelSheet" style="width: 100%;" id="selectTable">
 								<tr style="width: 100%;">
 									<td>계약금액</td>
 									<td><c:out value="${displayUtil.commaStr(contractInfo.ctAmount)}" /> 원</td>
@@ -678,7 +680,7 @@
 							
 							
 							<div class="stitle cg colorBlack">매출 정보</div>
-							<table class="dtl2 tblWidth" style="width: 100%;">
+							<table class="dtl2 tblWidth excelSheet" style="width: 100%;">
 								<thead class="ftw400">
 									<tr>
 										<th scope="row">선택</th>
@@ -723,7 +725,7 @@
 							
 							<div class="stitle cg colorBlack">보증증권 정보</div>
 							<div id="div_guarantyBondList" class="floatC">
-								<table id="tbl_guarantyBondList" class="dtl3 tbl2Width">
+								<table id="tbl_guarantyBondList" class="dtl3 tbl2Width excelSheet">
 									<thead class="ftw400">
 										<tr>
 											<th scope="row">No</th>

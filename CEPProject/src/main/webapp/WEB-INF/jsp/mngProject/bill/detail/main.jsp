@@ -33,7 +33,7 @@
 			height: 830px;
 		}
 		.listForm .contentsWrap .contents {
-			padding: 38px 71px; 
+			padding: 38px 71px 0 71px; 
 			width: 1662px;
 		}
 		.listForm .title {
@@ -76,6 +76,19 @@
 		.listForm .contents > div > div > div > form > table tr td:last-child {
 			width: 400px;
 			font-weight: 200;
+		}
+		.listForm .contents form > table tr td .oftext {
+			width: 400px;
+		    overflow: hidden;
+		    height: 39px;
+		    text-overflow: ellipsis;
+		    white-space: normal;
+		    line-height: 1.4;
+		    text-align: left;
+		    word-wrap: break-word;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 2;
+		    -webkit-box-orient: vertical;
 		}
 		.listForm .contents .bsc {
 			border-top: 4px solid #32bc94 !important;
@@ -397,7 +410,7 @@
 									<tr>
 										<td>프로젝트명</td>
 										<td>
-											<label><c:out value="${basicInfo.pjNm}"/></label>
+											<label class="oftext"><c:out value="${basicInfo.pjNm}"/></label>
 											<input type="hidden" id="pjNm" value="${basicInfo.pjNm } " />
 										</td>
 									</tr>

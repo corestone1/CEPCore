@@ -45,6 +45,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	public ProductVO selectProductDetail(ProductVO productVO) throws Exception {
+		return mapper.selectProductDetail(productVO);
+	}
+	
+	@Override
 	public List<ProductVO> selectOrderProductList(ProductSearchVO searchVO) throws Exception {
 		return mapper.selectOrderProductList(searchVO);
 	}

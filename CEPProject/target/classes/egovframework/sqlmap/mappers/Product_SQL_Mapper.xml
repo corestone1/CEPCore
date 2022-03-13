@@ -74,6 +74,31 @@
 		
 	</select>
 	
+	<select id="selectProductDetail" parameterType="com.cep.mngCommon.product.vo.ProductVO" resultMap="productVO">				
+		
+		SELECT PM.PM_KEY
+		     , PM.PM_CLASS_CD
+		     , PM.PM_DETAIL_CLASS_CD
+		     , PM.PM_LINE_CD, PM_NM_CD
+		     , PM.MF_AC_KEY
+		     , PM.PM_RELEASE_DT
+		     , PM.EOL_DT
+		     , PM.EOSL_DT
+		     , PM.PM_REMARK
+		     , PM.REG_DT
+		     , PM.REG_TM
+		     , PM.REG_EMP_KEY
+		     , PM.MOD_DT
+		     , PM.MOD_TM
+		     , PM.MOD_EMP_KEY
+			 , AC.AC_NM
+		FROM PM_PRODUCT_MNG_TB PM
+			 JOIN CMM_ACCOUNT_TB AC 
+			 ON PM.MF_AC_KEY = AC.AC_KEY
+		WHERE PM.PM_KEY = #{pmKey}
+		
+	</select>
+	
 	<select id="selectOrderProductList" parameterType="com.cep.mngCommon.product.vo.ProductSearchVO" resultMap="productVO">				
 		
 		SELECT PM.PM_KEY

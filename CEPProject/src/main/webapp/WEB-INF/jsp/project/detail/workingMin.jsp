@@ -20,6 +20,9 @@
 	
 	
 	<style>
+		body {
+			overflow: hidden !important;
+		}
 		.sfcnt {
 			height: 91px;
 		}

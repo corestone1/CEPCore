@@ -25,6 +25,7 @@
 			background-color: #f6f7fc;
 			height: 663px;
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 		.sfcnt {
 			height: 91px;
@@ -614,7 +615,7 @@
 <body>
 	<div class="stitle">
 		<ul id="infoList">
-			<li><a id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">기 지급 목록</a></li>
+			<li><a id="A_TOPMenu_PAY" title="/project/request/purchase/prePaymentList.do">지급 승인 목록</a></li>
 			<li><a class="on" id="A_TOPMenu_FORM" title="/project/request/purchase/paymentForm.do">미 지급 목록</a></li>
 			<li></li>
 		</ul>

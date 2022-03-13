@@ -20,6 +20,9 @@
 	
 	
 	<style>
+		body {
+			overflow: hidden !important;
+		}
 		.sfcnt {
 			height: 91px;
 		}
@@ -283,9 +286,10 @@
 			margin: 0 auto;
 		}
 		.contents .dtl tbody tr td img {
-			width: 13px;
 			vertical-align: middle;
-			margin-bottom: 5px;
+		}
+		input[class="tRadio"]+ label {
+			line-height: 2.4 !important;
 		}
 	</style>
 	<script>
@@ -354,7 +358,7 @@
 			<tbody>
 			 */
 			
-			html = '<table id="tbl_productList" class="dtl tbl2Width">'
+			html = '<table id="tbl_productList" class="dtl tbl2Width excelSheet">'
 			     + '<thead class="ftw400">'
 			     +     '<tr>'
 			     +        '<th scope="row">No</th>'
@@ -478,7 +482,7 @@
 							발주목록
 						</div>
 						<div class="floatC">
-							<table class="dtl tblWidth" style="width: 100%;">
+							<table class="dtl tblWidth excelSheet" style="width: 100%;">
 								<thead class="ftw400">
 									<tr>
 										<th scope="row">선택</th>
@@ -490,14 +494,14 @@
 										<th scope="row">수량</th>
 										<th scope="row">합계</th>
 										<th scope="row">발주자</th>
-										<th scope="row">매입금 지급 요청</th>
+										<th scope="row">매입금 지급 정보</th>
 									</tr>
 								</thead>
 								<tbody>
 									<c:forEach var="orderList" items="${orderList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">
-												<input type="radio" class="tCheck" name="m_gubun" id="check${status.count}" value="${orderList.pjOrderKey}"/>
+												<input type="radio" class="tRadio" name="m_gubun" id="check${status.count}" value="${orderList.pjOrderKey}"/>
 												<label for="check${status.count}" class="cursorP"/>
 											</td>
 											<td class="textalignC"><c:out value="${status.count}"/></td>
@@ -508,7 +512,7 @@
 											<td class="textalignR"><c:out value="${orderList.orderProductCnt}"/></td>
 											<td class="textalignC"><c:out value="${displayUtil.commaStr(orderList.orderAmount)}"/></td>
 											<td class="textalignC"><c:out value="${orderList.orderEmpNm}"/></td>
-											<td><button type="button" onclick="javascript:fnRequestPurchase('${projectInfo.pjKey}','${orderList.pjOrderKey}' )">바로가기</button></td>
+											<td><button type="button" onclick="javascript:fnRequestPurchase('${projectInfo.pjKey}','${orderList.pjOrderKey}' )"><img src="/images/btn_to.png" /></button></td>
 										</tr>
 										<input type="hidden" name="pjOrderKey" value="${orderList.pjOrderKey}" />
 									</c:forEach>
@@ -534,8 +538,8 @@
 					</div>
 					
 					<div class="stitle cg colorBlack">제품정보</div>
-					<div id="div_productList" class="floatC" style="border-bottom: 2px solid #c4c4c4;">
-						<table id="tbl_productList" class="dtl tbl2Width">
+					<div id="div_productList" class="floatC">
+						<table id="tbl_productList" class="dtl tbl2Width excelSheet">
 							<thead class="ftw400">
 								<tr>
 									<th scope="row">No</th>

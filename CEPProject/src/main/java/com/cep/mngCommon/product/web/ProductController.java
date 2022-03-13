@@ -72,7 +72,7 @@ public class ProductController {
 	
 	
 	@RequestMapping(value="/writePopup.do")
-	public String writePopup(HttpServletRequest request, ModelMap model) throws Exception {
+	public String writePopup(@ModelAttribute("searchVO") ProductVO productVO, ModelMap model) throws Exception {
 		
 		logger.debug("=============== writePopup ======================");
 	
@@ -80,6 +80,7 @@ public class ProductController {
 		codeSearchVO.setCdUpCd("PRODUCT");
 		
 		model.put("PM_CLASS", codeService.selectCodeList(codeSearchVO));
+		model.put("productVO", service.selectProductDetail(productVO));
 		
 		return "mngCommon/product/write";
 	}

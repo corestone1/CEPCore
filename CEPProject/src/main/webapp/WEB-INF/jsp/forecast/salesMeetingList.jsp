@@ -547,7 +547,7 @@
 							<form:option value="E">E</form:option>
 						</form:select>
 						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from" value="${searchParam.searchFromDt}"/>
-						<label> ~ </label><form:input type="text" path="searchToDt" class="calendar" placeholder="to" value="${searchParam.searchToDt}"/>
+						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label><form:input type="text" path="searchToDt" class="calendar" placeholder="to" value="${searchParam.searchToDt}"/>
 						<span id="span_search" class="veralignT" onclick="javascript:fn_searchList()"><img src="/images/icon_search.png" /></span>
 					</div>
 					<div class="floatC"></div>

@@ -21,14 +21,7 @@
 			border: 0;
 		}
 		.btnWrap {
-			position: absolute;
-			bottom: 31px;
-		}
-		.btnWrap.lt {
-			left: 127px;
-		}
-		.btnWrap.rt {
-			right: 127px;
+			margin-top: 50px;
 		}
 		form .nav {
 			width: 100%;
@@ -86,9 +79,23 @@
 		}
 		form .contents .bsc tr td {
 			color: #0e8a67;
+		    word-break: break-all;
 		}
 		form .contents .bsc tr td:first-child {
 			box-shadow: inset -7px 0 9px -4px #d0e2de;
+		}
+		form .contents .bsc tr td .span {
+		    width: 400px;
+		    overflow: hidden;
+		    height: 44px;
+		    text-overflow: ellipsis;
+		    white-space: normal;
+		    line-height: 1.4;
+		    text-align: left;
+		    word-wrap: break-word;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 2;
+		    -webkit-box-orient: vertical;
 		}
 		form .contents > .fxd .title ul li,
 		form .contents > .fxd .stitle ul li {
@@ -228,7 +235,7 @@
 		}
 		textarea {
 			border: 1px solid #e6e6e6;
-			padding: 0 10px;
+			padding: 10px;
 		}
 		select.nrslct {
 			width: 100px !important;
@@ -343,6 +350,9 @@
 		}
 		#modBasicTable textarea {
 			color: #0e8a67;
+			resize: none;
+    		height: 214px;
+    		font-size: 15px;
 		}
 		#modBasicTable select {
 			font-size: 14px;
@@ -355,6 +365,39 @@
 		#modBasicTable input[class="calendar"] {
 			width: 168px;
 		}
+		#ipt_fileWrap {
+			height: 31px;
+			overflow-y: auto;
+			max-width: 323px;
+		}
+		#ipt_fileWrap::-webkit-scrollbar-button {
+		    width: 0;
+		    height: 0;
+		}
+		#ipt_fileWrap::-webkit-scrollbar-thumb {
+		    border-radius: 3px;
+		    background-color: #7F7F7F;
+		    height: 3px;
+		}
+		#ipt_fileWrap::-webkit-scrollbar-track {
+		    background-color: transparent;
+		}
+		#ipt_fileWrap::-webkit-scrollbar {
+		    width: 6px;
+		    height: 31px;
+		}
+		#ipt_fileWrap .upload-name {
+		    border: none;
+		    font-weight: 300;
+		    background-color: transparent;
+		    color: #0e8a67;
+		    width: 305px;
+		    text-overflow: ellipsis;
+		}
+		#ipt_fileWrap .upload-name:hover {
+		    color: #13B487;
+		    text-decoration: underline;
+		}
 	</style>
 	<script>
 		function getParameterByName(name) { 
@@ -366,6 +409,17 @@
 
 		$(document).ready(function() {
 			
+			$('#ipt_remarkCnt').html("("+$("#ipt_remark").val().length+" / 500)");
+			
+			$('#ipt_remark').on('keyup', function() {
+				$('#ipt_remarkCnt').html("("+$(this).val().length+" / 500)");
+				
+				if($(this).val().length > 500) {
+					$(this).val($(this).val().substring(0, 500));
+					$('#ipt_remarkCnt').html("(500 / 500)");
+				}
+			});
+			
 			var index = $('form .contents > .fxd .title ul li.on').index() + 2;
 			var length = $('form .contents > .fxd .title ul li').length;
 			$('form .contents > .fxd .title ul li:nth-child(' + index + ')').toggleClass("liArrow");
@@ -373,9 +427,11 @@
 			for(var i = 0; i < length; i++) {
 				if(i < index) {
 					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("color","#b1a5ec");
 					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
 				} else {
 					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').removeClass('liAfterNone');
+					$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("color","#777");
 				}
 			}
 			
@@ -437,7 +493,7 @@
 			
 			var modCh = 1;
 			$('#modBasicInfo').click(function() {
-				if(modCh % 2 == 1) {
+				/* if(modCh % 2 == 1) {
 					$("#selectTable").css('display','none'); 
 					$("#modTable").removeClass('dpNone');
 					$("#selectBasicTable").css('display','none'); 
@@ -448,18 +504,8 @@
 					$('#ipt_pjEndDt').css("calendar");
 					
 				} else {
-					/* alert('수정되었습니다.'); */
-					//var object = {};
 					var formData = $("#listForm").serializeArray();
 					
-					/* 
-					var formData = $("#viewForm").serializeArray();
-		           	for (var i = 0; i<formData.length; i++){
-		                
-		                object[formData[i]['name']] = formData[i]['value'];
-		             }
-		           	var data = JSON.stringify(object);
-		            */
 					$.ajax ({
 						url:"/project/detail/updateBasicInfo.do",
 						type:'POST',
@@ -476,9 +522,19 @@
 			        		}
 			        	} 
 					});
-					/* location.reload(); */
 				}
-				modCh++;
+				modCh++; */
+				
+				
+				var url = '/project/write/basicInfo.do';
+				var dialogId = 'program_layer';
+				var varParam = {
+					"pjKey":$("input[name='pjKey']").val(),
+					"workClass":"프로젝트"
+				}
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
 			});
 		
 			$('.decreaseQuantity').click(function(e){
@@ -530,15 +586,9 @@
 				$(this).siblings('.upload-name').css('pointer-events','none');
 			});
 			
-			
 			$("#ipt_acNm").on("keyup", function(event){
-				if(event.keyCode == 13)
-				{
-					//alert("검색 : " + this.value);
-					fnSearchAccoutList(this, $(this).val());
-				}
-					
-			});
+				fnSearchAccoutList(this, $(this).val());				
+			}); 
 			
 			//select Box 선택
 			$('#slt_pjSaleEmpKey').val('${projectVO.pjSaleEmpKey}');
@@ -647,11 +697,13 @@
 				//	debugger;
 					if(i < index) {
 						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#4c3d92");
+						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("color","#b1a5ec");
 						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').addClass('liAfterNone');
 					}
 					else
 					{
 						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("background-color","#d3d3d3");
+						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').css("color","#777");
 						$('form .contents > .fxd .title ul li:nth-child(' + i + ')').removeClass('liAfterNone');
 					}
 				}
@@ -694,7 +746,7 @@
 		}
 		
 		function fnViewAccountList(pObject, pjAccountList){
-			var html = '<div id="m_div_accountList" style="width:362px; margin-left: 190px; padding-top: 15px; padding-bottom: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1); position: absolute;">'
+			var html = '<div id="m_div_accountList" style="width:380px; margin-left: 190px; padding-top: 15px; padding-bottom: 15px; overflow-y: auto; position: absolute;">'
 			         + '<ul class="accountList">'
 			       ;//+ '<div style="margin: 5px;">';
 			       
@@ -795,10 +847,10 @@
 		}
 		
 		function fn_downFile(fileKey, fileOrgNm) {
-			var form = document.viewForm;
+			var form = document.ipt_viewForm;
 			form.fileKey.value = fileKey;
 			form.fileOrgNm.value = fileOrgNm;
-			var data = $('#viewForm').serialize();
+			var data = $('#ipt_viewForm').serialize();
 			fileDownload("<c:url value='/file/download.do'/>", data); 
 		}
 		
@@ -828,7 +880,7 @@
 			form.action = "<c:url value='/project/viewApproval.do'/>";
 			form.submit();
 		}
-
+		
 	</script>
 </head>
 <body>
@@ -852,7 +904,7 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>프로젝트명</td>
-									<td><c:out value="${projectVO.pjNm}"/></td>
+									<td><span class="span"><c:out value="${projectVO.pjNm}"/></span></td>
 								</tr>
 								<tr>
 									<td>프로젝트 번호</td>
@@ -877,7 +929,18 @@
 								<tr>
 									<td>비고</td>
 									<td>
-										<pre style="width:390px; height:201px;"><c:out value="${projectVO.remark}"/></pre>
+										<pre style="width:390px; height:147px; overflow-y: auto;"><c:out value="${projectVO.remark}"/></pre>
+									</td>
+								</tr>
+								<tr>
+									<td>첨부파일</td>
+									<td>
+										<div style="clear:both;" id="ipt_fileWrap">
+											<c:forEach var="result" items="${fileList }" varStatus="status">
+												<input class="upload-name cursorP veralignT ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+												<c:if test="${status.last eq false}"><br /></c:if>
+											</c:forEach>
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -889,7 +952,7 @@
 								<tr>
 									<td>프로젝트명</td>
 									<td>
-										<input type="text"   name="pjNm"  value="${projectVO.pjNm}" />
+										<input type="text" name="pjNm"  value="${projectVO.pjNm}" />
 									</td>
 								</tr>
 								<tr id="m_tr_account">
@@ -937,10 +1000,13 @@
 								<tr>
 									<td>비고</td>
 									<td>
-										<textarea id="ipt_remark" name="remark" rows="8" cols="40" style="resize: none;">
-											<c:out value="${projectVO.remark}"/>
-										</textarea>
+										<textarea id="ipt_remark" name="remark" cols="40"><c:out value="${projectVO.remark}"/></textarea>
+										<div id="ipt_remarkCnt">(0 / 500)</div>
 									</td>
+								</tr>
+								<tr>
+									<td>첨부파일</td>
+									<td></td>
 								</tr>
 							</table>
 						
@@ -957,6 +1023,7 @@
 								</c:if>
 								<a title="판매 품의서" onclick="javasript:fnViewApproval();"><img class="cursorP" src="<c:url value='/images/btn_approval.png'/>" /></a>
 							</div>
+							<div class="floatC"></div>
 						</div>
 						<!-- 기본정보 버튼 끝 -->
 					</div>
@@ -980,7 +1047,7 @@
 					
 					<!-- 입찰정보 시작 -->
 					<div id="detailForm">
-						<iframe id="ifr_ProjectInfo" name="ifr_ProjectInfo" height="625px;" width="1027px;" style="border:0;"src="/project/detail/biddingMin.do?pjKey=${pjKey}&workClass=입찰_첨부파일"></iframe>
+						<iframe id="ifr_ProjectInfo" name="ifr_ProjectInfo" height="639px" width="1027px;" style="border:0;"src="/project/detail/biddingMin.do?pjKey=${pjKey}&workClass=입찰_첨부파일"></iframe>
 						<!-- 입찰정보 버튼 시작 -->
 						<div class="btnWrap rt">
 							<div class="floatR">
@@ -989,8 +1056,9 @@
 								<button type="button" value="수정" id="modMinInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제" id="delMinInfo"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<%-- <button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button> --%>
-								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+								<button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 							</div>
+							<div class="floatC"></div>
 						</div>
 						<!-- 입찰정보 버튼 끝 -->
 					</div>
@@ -1029,13 +1097,31 @@
 	    }
 	             
 	</script>
-	<form:form id="viewForm" name="viewForm" method="POST">
-		<input type="hidden" name="checkedDel" value="<c:out value='${driverInfoVO.driverId}'/>" />
-		<input type="hidden" name="driverId" value="<c:out value='${driverInfoVO.driverId }'/>"/>
-		<input type="hidden" name="atchFileId" value="<c:out value='${driverInfoVO.atchFileId }'/>"/>
-		<input type="hidden" name="fileKey" value="${fileList.fileKey}"/>
-		<input type="hidden" name="fileOrgNm" value="${fileList.fileOrgNm}"/>
-		<input type="hidden" name="fileType" value="cdc"/>
+	<form:form id="ipt_viewForm" name="ipt_viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
 	</form:form>
+	<%-- <form id="fileForm" method="post" enctype="multipart/form-data"> 
+    	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
+		<input type="hidden" name="docTypeNm" value="프로젝트" />
+		<input type="hidden" name="fileCtKey" id="fileCtKey" value="${projectVO.pjKey}" />
+		<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${resultList[0].pjNm}"/>"/> 
+		<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+		<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+		<div class="floatL uploadContainer">
+			<input class="uploadName" placeholder="파일선택" disabled="disabled" />
+			<label for="exFile" class="exFileLabel"></label>
+			<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+		</div>
+		<div style="width: 307px; clear:both;" id="fileWrap">
+			<c:forEach var="result" items="${fileList }" varStatus="status">
+				<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+				<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+				<c:if test="${status.last eq false}"><br /></c:if>
+			</c:forEach>
+		</div>
+		<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
+	</form> --%>
 </body>
 </html>

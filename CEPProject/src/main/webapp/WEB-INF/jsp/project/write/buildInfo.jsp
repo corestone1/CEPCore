@@ -307,8 +307,7 @@
 	<div class="popContainer">
 		<div class="top">
 			<div>
-				<div class="floatL ftw500">프로젝트 등록</div>
-				<div class="subTitle">수행</div>
+				<div class="floatL ftw500">Installbase 등록</div>
 			</div>
 		</div>
 		<div class="left">

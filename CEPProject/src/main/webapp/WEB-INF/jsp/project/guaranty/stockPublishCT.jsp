@@ -18,6 +18,9 @@
 	<script src="<c:url value='/js/file.js'/>"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
+		body {
+			overflow: hidden;
+		}
 		.popContainer .top {
 			width: calc(100% - 1px);
 			height: 71px;
@@ -34,7 +37,7 @@
 		.popContainer .contents {
 			position: absolute;
 			width: 653px;
-			height: 472px;
+			height: 486px;
 			top: 75px;
 		    left: 0;
 			z-index: 3;
@@ -106,16 +109,12 @@
 		}
 		.popContainer .contents input[class^="readOnly"] {
 			background-color: #f6f7fc; 
-			border-color: #f6f7fc;
+			border-color: 1px solid #ddd;
 		}
 		.popContainer .contents input[class^="readOnlyDt"] {
 			width: 146px;
 			height: 38px;
-			background-color: #f6f7fc; 
-			border-color: #f6f7fc;
 		}
-		
-		
 		.popContainer .contents textarea {
 			width: 433px;
 			height: 48px;
@@ -211,28 +210,22 @@
 			
 				var formData = $("#m_frm_gb").serializeArray();
 				
-				for(var i = 0; i < formData.length; i++)
-				{
-					//보증기간, 발행일
-					if('gbStartDt'   == formData[i]['name']
-					|| 'gbEndDt'     == formData[i]['name']
-					|| 'gbPublishDt' == formData[i]['name']){
-						formData[i]['value'] = removeData(formData[i]['value'], '-');
-					}
-					 
-					//금액
-					if('gbAmount' == formData[i]['name']){
-						formData[i]['value'] = removeCommas(formData[i]['value']);
-					}
-				}
+				var sendData = fnCreateJsonData(formData);
+				
 				
 				$.ajax({
 		        	url :"/project/detail/requestGuarantyBond.do",
 		        	type:"POST",  
-		            data: formData,
+		            data: sendData,
 		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 		     	    dataType: 'json',
-		            async : false,
+		            beforeSend:function(){
+				        $('.wrap-loading').removeClass('dpNone');
+				    }
+
+				   	,complete:function(){
+				        $('.wrap-loading').addClass('dpNone');
+				    },
 		        	success:function(data){		
 		        		var mailList = "";
 				    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
@@ -256,7 +249,7 @@
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-		    	});
+		    	}); 
 			}
 		}
 		
@@ -265,37 +258,12 @@
 			if(fn_chkVali()) {
 				var formData = $("#m_frm_gb").serializeArray();
 				
-				var jsonDate = {}; 
-					
-				for(var i = 0; i < formData.length; i++)
-				{
-					console.log(i+" : " + formData[i]['name'] + " : " + formData[i]['value']);
-					//보증기간, 발행일
-					if('gbStartDt'   == formData[i]['name']
-					|| 'gbEndDt'     == formData[i]['name']
-					|| 'gbPublishDt' == formData[i]['name']){
-						
-						jsonDate[formData[i]['name']]  = removeData(formData[i]['value'], '-');
-					}
-					else if('gbAmount' == formData[i]['name']){ //금액
-						if(formData[i]['value'] == '') {
-							//제거
-						}
-						else {
-							jsonDate[formData[i]['name']]  = removeCommas(formData[i]['value']);
-						}
-							
-					}
-					else {                     
-						jsonDate[formData[i]['name']]  = formData[i]['value'];
-					}
-						
-				}
+				var sendData = fnCreateJsonData(formData);
 				
 				$.ajax({
 		        	url :"/project/detail/modifyGuarantyBond.do",
 		        	type:"POST",  
-		            data: jsonDate,
+		            data: sendData,
 		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 		     	    dataType: 'json',
 		            async : false,
@@ -323,29 +291,21 @@
 			
 				var formData = $("#m_frm_gb").serializeArray();
 				
-				for(var i = 0; i < formData.length; i++)
-				{
-					//보증기간, 발행일
-					if('gbStartDt'   == formData[i]['name']
-					|| 'gbEndDt'     == formData[i]['name']
-					|| 'gbPublishDt' == formData[i]['name']){
-						formData[i]['value'] = removeData(formData[i]['value'], '-');
-					}
-					 
-					//금액
-					if('gbAmount' == formData[i]['name']){
-						formData[i]['value'] = removeCommas(formData[i]['value']);
-					}
-					
-				}
+				var sendData = fnCreateJsonData(formData);
 				
 				$.ajax({
 		        	url :"/project/detail/endGuarantyBond.do",
 		        	type:"POST",  
-		            data: formData,
+		            data: sendData,
 		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 		     	    dataType: 'json',
-		            async : false,
+		     	   	beforeSend:function(){
+				        $('.wrap-loading').removeClass('dpNone');
+				    }
+
+				   	,complete:function(){
+				        $('.wrap-loading').addClass('dpNone');
+				    },
 		        	success:function(data){		
 		        		var mailList = "";
 				    	if(data.mailList == "undefined" || data.mailList == null || data.mailList == "") {
@@ -354,11 +314,11 @@
 				    		mailList = "\n메일 수신인:" + data.mailList + "\n";
 				    	}
 				    	if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'Y') {
-				    		alert("보증 증권 발행이 요청되었습니다." + mailList);
+				    		alert("보증 증권 발행이 완료 처리되었습니다." + mailList);
 				    	} else if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'N') {
-			    			alert("메일 전송이 실패했습니다.(발행 요청 정보 저장은 완료)");
+				    		alert("메일 전송이 실패했습니다.(발행 완료 정보 저장은 완료)");
 				    	} else {
-			    			alert("보증 증권 발행이 실패하였습니다.");
+				    		alert("보증 증권 발행 완료 처리에 실패하였습니다.");
 				    	}
 				    	
 				    	location.reload();
@@ -370,6 +330,43 @@
 		        	} 
 		    	});
 			}
+		}
+		
+		
+		function fnCreateJsonData(formData) {
+			var jsonData ={};
+			
+			for(var i = 0; i < formData.length; i++)
+			{
+				//보증기간, 발행일
+				if('gbStartDt'   == formData[i]['name']
+				|| 'gbEndDt'     == formData[i]['name']
+				|| 'gbPublishDt' == formData[i]['name']
+				|| 'gbReqDt' == formData[i]['name']){
+					
+					jsonData[formData[i]['name']]  = removeData(formData[i]['value'], '-');
+				}
+				// 금액
+				else if('gbAmount' == formData[i]['name']){
+					jsonData[formData[i]['name']]  = removeCommas(formData[i]['value']);
+				}
+				
+				else if('gbRate' == formData[i]['name']){
+					if(formData[i]['value'] == '') {
+						jsonData[formData[i]['name']] = 0;
+					} else {
+						jsonData[formData[i]['name']]  = formData[i]['value'];
+					}
+				}  
+				
+				else {                     
+					jsonData[formData[i]['name']]  = formData[i]['value'];
+				}
+					
+			}
+			
+			return jsonData;
+			
 		}
 		
 		window.onunload = function() {
@@ -417,7 +414,7 @@
 							<td class="tdTitle">계약기간</td>
 							<td class="tdContents">
 								<input type="text" class="readOnlyDt" value="${displayUtil.displayDate(gbInfo.pjStartDt)}" disabled/>
-								&nbsp~&nbsp
+								&nbsp<img class="veralignM" src="/images/icon_fromTo.png" />&nbsp
 								<input type="text" class="readOnlyDt" value="${displayUtil.displayDate(gbInfo.pjEndDt)}" disabled/>
 							</td>
 						</tr>
@@ -426,7 +423,7 @@
 							<td class="tdTitle"><label>*</label>보증기간</td>
 							<td class="tdContents">
 								<input type="text" id="m_ipt_gbStartDt" name="gbStartDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbStartDt)}" required/>
-								&nbsp~&nbsp
+								&nbsp<img class="veralignM" src="/images/icon_fromTo.png" />&nbsp
 								<input type="text" id="m_ipt_gbEndDt" name="gbEndDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbEndDt)}" required/>
 							</td>
 						</tr>
@@ -434,43 +431,71 @@
 						<tr id="m_tr_account" >
 							<td class="tdTitle">요율</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"   id="m_ipt_gbRate"    name="gbRate" class="tdRate" value="${gbInfo.gbRate}"/>&nbsp% 
+								<input type="text"   id="m_ipt_gbRate"    name="gbRate" class="tdRate" <c:if test="${gbInfo.gbRate eq 0 }">value="" </c:if> <c:if test="${gbInfo.gbRate ne 0 }">value="${gbInfo.gbRate}"</c:if>/>&nbsp;% 
 								
 							</td>
 						</tr>
+						<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
 						<tr id="m_tr_account">
-							<td class="tdTitle"><label>*</label>발행일</td>
+							<td class="tdTitle">제출 예정일</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text" id="m_ipt_gbPublishDt" name="gbPublishDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbPublishDt)}" required/>
+								<input type="text"  class="readOnlyDt" name="gbReqDt" value="${displayUtil.displayDate(gbInfo.gbReqDt)}" readonly/> 
 							</td>
 						</tr>
 						<tr id="m_tr_account">
-							<td class="tdTitle"><label>*</label>증권금액</td>
+							<td class="tdTitle">발행 일자</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text" id="m_ipt_gbPublishDt" name="gbPublishDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbPublishDt)}"/>
+							</td>
+						</tr>
+						<tr id="m_tr_account">
+							<td class="tdTitle"><label>*</label>보험료</td>
 							<td id="m_td_account" class="tdContents">
 								<input type="text" id="m_ipt_gbAmount" name="gbAmount" <c:if test="${gbInfo.gbAmount eq 0}">value=""</c:if><c:if test="${gbInfo.gbAmount ne 0 }">value="${displayUtil.commaStr(gbInfo.gbAmount) }"</c:if> amountonly required/>
 							</td>
 						</tr>
+						<% } %>
+						<% if(!session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
+						<tr id="m_tr_account">
+							<td class="tdTitle">제출 예정일</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text" id="m_ipt_gbPublishDt" name="gbReqDt" class="calendar fromDt" value="${displayUtil.displayDate(gbInfo.gbReqDt)}"/>
+							</td>
+						</tr>
+						<tr id="m_tr_account">
+							<td class="tdTitle">발행 일자</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text"  class="readOnlyDt" value="${displayUtil.commaStr(gbInfo.gbPublishDt)}" disabled/> 
+							</td>
+						</tr>
+						<tr id="m_tr_account">
+							<td class="tdTitle">보험료</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text"  class="readOnly" <c:if test="${gbInfo.gbAmount eq 0}">value=""</c:if><c:if test="${gbInfo.gbAmount ne 0 }">value="${displayUtil.commaStr(gbInfo.gbAmount) }"</c:if> disabled/> 
+							</td>
+						</tr>
+						<% } %>
 					</table>
 				</div>
 				<div class="btnWrap floatR">
 					<div id="m_btn_save" class="floatR" style="">
 						<c:choose>
 							<c:when test='${gbInfo.gbIssueStatus eq "I"}'>
-								<button type="button" class="altMail" onclick="javascript:fnGbPublish();">
-									<img src="<c:url value='/images/btn_stock_publish.png'/>" />
+								<button type="button" class="altMail veralignB" onclick="javascript:fnGbPublish();">
+									<img src="<c:url value='/images/pop_btn_req.png'/>" />
 								</button>
-								<button type="button" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
+								<button type="button" class="veralignB" onclick="javascript:fnGbModify();">
+									<img src="<c:url value='/images/pop_btn_mod.png'/>" />
 								</button>
 							</c:when>
 							<c:when test='${gbInfo.gbIssueStatus eq "R"}'>
 								<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
-								<button type="button" class="altMail" onclick="javascript:fnGbEnd();">
-									<img src="<c:url value='/images/btn_stock_end.png'/>" />
+								<button type="button" class="altMail veralignB" onclick="javascript:fnGbEnd();">
+									<img src="<c:url value='/images/pop_btn_fin.png'/>" />
 								</button>
 								<% } %>
-								<button type="button" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
+								<button type="button" class="veralignB" onclick="javascript:fnGbModify();">
+									<img src="<c:url value='/images/pop_btn_mod.png'/>" />
 								</button>
 							</c:when>
 						</c:choose>
@@ -480,6 +505,10 @@
 			</div>
 		</div>	
 	</form>
-	
+	<div class="wrap-loading dpNone">
+		<div>
+			<img src="<c:url value='/images/ajax_loader.gif'/>" />
+		</div>
+	</div>
 </body>
 </html>

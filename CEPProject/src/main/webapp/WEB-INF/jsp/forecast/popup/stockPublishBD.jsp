@@ -18,6 +18,9 @@
 	<script src="<c:url value='/js/file.js'/>"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
+		body {
+			overflow:hidden;
+		}
 		.popContainer .top {
 			width: calc(100% - 1px);
 			height: 71px;

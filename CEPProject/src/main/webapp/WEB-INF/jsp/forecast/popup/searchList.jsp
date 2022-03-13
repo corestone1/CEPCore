@@ -13,6 +13,7 @@
 <style>
 	body {
 		background-image: none;
+		overflow: hidden;
 	}
 	fieldset {
 		border: none;
@@ -87,6 +88,7 @@
 		overflow-y: auto;
 		overflow-x: hidden;
 		float: left;
+		background-color: #fff;
 	}
 	.middle table tbody tr {
 		display: table;

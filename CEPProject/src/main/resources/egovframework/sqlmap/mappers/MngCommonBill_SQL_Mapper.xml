@@ -66,7 +66,7 @@
 					AND CBT.BILL_FK_PJ_KEY = #{pjKey}
 				</if>
       
-			UNION      
+			<!-- UNION      
 				SELECT 
 	        		PST.BILL_NO                 AS BILL_NO
 					, PST.BILL_FK_PJ_KEY          AS BILL_FK_PJ_KEY
@@ -93,7 +93,7 @@
 		    		JOIN       PJ_SALES_DETAIL_TB      PSD  ON PSB.BILL_FK_PJ_KEY       = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN
 		    		LEFT JOIN  PJ_SD_BILLING_TB        PST  ON PSB.BILL_NO              = PST.BILL_NO
 		    		JOIN       CMM_ACCOUNT_TB          CAT  ON PSB.BILL_AC_KEY          = CAT.AC_KEY
-		    	<!-- 	JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY -->
+		    		JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY
 		    		JOIN       CMM_EMPLOYEE_TB         CET  ON PSB.REG_EMP_KEY          = CET.EMP_KEY
 		    		WHERE  PSB.DELETE_YN      = 'N'
 		        	<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
@@ -106,7 +106,7 @@
 					
 					<if test="pjKey != null and pjKey != ''">
 						AND CBT.BILL_FK_PJ_KEY = #{pjKey}
-					</if>
+					</if> -->
 		</if>
 		<if test="(searchClassCd == '' or searchClassCd == null) and searchCtClassCd == 'MT'">
 		/* 유지보수 전체선택(매입+매출) */
@@ -148,7 +148,7 @@
 					AND CBT.BILL_FK_PJ_KEY = #{pjKey}
 				</if>
       
-			UNION      
+			<!-- UNION      
 				SELECT 
 	        		PST.BILL_NO                 AS BILL_NO
 					, PST.BILL_FK_MT_KEY          AS BILL_FK_PJ_KEY
@@ -187,7 +187,7 @@
 					
 					<if test="pjKey != null and pjKey != ''">
 						AND CBT.BILL_FK_MT_KEY = #{pjKey}
-					</if>
+					</if> -->
 		</if>
 		<if test="searchClassCd == 'PC' and (searchCtClassCd == '' or searchCtClassCd == null)">
 		/* 매입 전체(CMM) */
@@ -232,7 +232,7 @@
 					AND CBT.BILL_CT_CLASS_CD = #{searchCtClassCd}
 				</if>
 		</if>
-		<if test="searchClassCd == 'SD' and (searchCtClassCd == '' or searchCtClassCd == null)">
+		<!-- <if test="searchClassCd == 'SD' and (searchCtClassCd == '' or searchCtClassCd == null)">
 		/* 매출 전체(프로젝트 + 유지보수) */
 		SELECT
 			PST.BILL_NO                 AS BILL_NO
@@ -260,7 +260,7 @@
     		JOIN       PJ_SALES_DETAIL_TB      PSD  ON PSB.BILL_FK_PJ_KEY       = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN
     		LEFT JOIN  PJ_SD_BILLING_TB        PST  ON PSB.BILL_NO              = PST.BILL_NO
     		JOIN       CMM_ACCOUNT_TB          CAT  ON PSB.BILL_AC_KEY          = CAT.AC_KEY
-    		<!-- JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY -->
+    		JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY
     		JOIN       CMM_EMPLOYEE_TB         CET  ON PSB.REG_EMP_KEY          = CET.EMP_KEY
     		WHERE  PSB.DELETE_YN      = 'N'
         	<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
@@ -315,8 +315,8 @@
 				<if test="pjKey != null and pjKey != ''">
 					AND CBT.BILL_FK_MT_KEY = #{pjKey}
 				</if>
-		</if>
-		<if test="searchClassCd == 'SD' and searchCtClassCd == 'PJ'">
+		</if> -->
+		<!-- <if test="searchClassCd == 'SD' and searchCtClassCd == 'PJ'">
 		/* 프로젝트 매출 */
 		SELECT
 			PST.BILL_NO                 AS BILL_NO
@@ -344,7 +344,7 @@
     		JOIN       PJ_SALES_DETAIL_TB      PSD  ON PSB.BILL_FK_PJ_KEY       = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN
     		LEFT JOIN  PJ_SD_BILLING_TB        PST  ON PSB.BILL_NO              = PST.BILL_NO
     		JOIN       CMM_ACCOUNT_TB          CAT  ON PSB.BILL_AC_KEY          = CAT.AC_KEY
-    	<!-- 	JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY -->
+    		JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY
     		JOIN       CMM_EMPLOYEE_TB         CET  ON PSB.REG_EMP_KEY          = CET.EMP_KEY
     		WHERE  PSB.DELETE_YN      = 'N'
         	<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
@@ -358,8 +358,8 @@
 			<if test="pjKey != null and pjKey != ''">
 				AND CBT.BILL_FK_PJ_KEY = #{pjKey}
 			</if>
-		</if>
-		<if test="searchClassCd == 'SD' and searchCtClassCd == 'MT'">
+		</if> -->
+		<!-- <if test="searchClassCd == 'SD' and searchCtClassCd == 'MT'">
 		/* 유지보수 매출 */
 		SELECT 
        		PST.BILL_NO                 AS BILL_NO
@@ -400,7 +400,7 @@
 			<if test="pjKey != null and pjKey != ''">
 				AND CBT.BILL_FK_MT_KEY = #{pjKey}
 			</if>
-		</if> 
+		</if>  -->
 		<if test="(searchClassCd == '' or searchClassCd == null) and (searchCtClassCd == '' or searchCtClassCd == null)">
 		/* 프로젝트 + 유지보수 매입+매출 */
 		SELECT 
@@ -440,7 +440,7 @@
 					AND CBT.BILL_FK_PJ_KEY = #{pjKey}
 				</if> 
       
-			UNION      
+			<!-- UNION      
 				SELECT 
 	        		PST.BILL_NO                 AS BILL_NO
 					, PST.BILL_FK_PJ_KEY          AS BILL_FK_PJ_KEY
@@ -467,7 +467,7 @@
 		    		JOIN       PJ_SALES_DETAIL_TB      PSD  ON PSB.BILL_FK_PJ_KEY       = PSD.SALES_CT_FK_KEY AND PSB.BILL_TURN_NO = PSD.SALES_TURN
 		    		LEFT JOIN  PJ_SD_BILLING_TB        PST  ON PSB.BILL_NO              = PST.BILL_NO
 		    		JOIN       CMM_ACCOUNT_TB          CAT  ON PSB.BILL_AC_KEY          = CAT.AC_KEY
-		    		<!-- JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY -->
+		    		JOIN       CMM_ACCOUNT_DIRECTOR_TB CAD  ON PSB.BILL_AC_DIRECTOR_KEY = CAD.AC_DIRECTOR_KEY
 		    		JOIN       CMM_EMPLOYEE_TB         CET  ON PSB.REG_EMP_KEY          = CET.EMP_KEY
 		    		WHERE  PSB.DELETE_YN      = 'N'
 		        	<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
@@ -480,9 +480,9 @@
 					
 					<if test="pjKey != null and pjKey != ''">
 						AND CBT.BILL_FK_PJ_KEY = #{pjKey}
-					</if>
+					</if> -->
 
-			UNION      
+			<!-- UNION      
 				SELECT 
 	        		PST.BILL_NO                 AS BILL_NO
 					, PST.BILL_FK_MT_KEY          AS BILL_FK_PJ_KEY
@@ -521,7 +521,7 @@
 					
 					<if test="pjKey != null and pjKey != ''">
 						AND CBT.BILL_FK_MT_KEY = #{pjKey}
-					</if> 
+					</if>  -->
 		</if>
 		) BILL_TB
 		ORDER BY BILL_ISSUE_DT DESC
@@ -576,8 +576,9 @@
 	
 	<update id="deleteBill" parameterType="com.cep.mngCommon.bill.vo.MngCommonBillSearchVO">
 	
-		UPDATE CMM_BILLING_TB
-		SET    DELETE_YN = 'Y'
+		UPDATE CMM_PC_BILLING_TB
+		SET    DELETE_YN = 'Y',
+				BILL_NO = DATE_FORMAT(NOW(),'%Y%m%d%k%i%s')
 		WHERE  BILL_NO = #{billNo}
 	
 	</update>
@@ -871,6 +872,13 @@
 		)	
 	
 	</insert> -->
+	
+	<select id="selectExistBill" parameterType="com.cep.mngCommon.bill.vo.MngCommonBillVO" resultType="int">
+		SELECT COUNT(*)
+		FROM CMM_PC_BILLING_TB
+		WHERE BILL_NO = #{billNo}
+		AND DELETE_YN = 'N'
+	</select>
 	
 	<insert id="insertPcBillInfo" parameterType="com.cep.mngCommon.bill.vo.MngCommonBillVO">
 		

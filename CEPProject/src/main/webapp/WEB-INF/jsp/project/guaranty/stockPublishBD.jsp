@@ -18,6 +18,9 @@
 	<script src="<c:url value='/js/file.js'/>"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js'/>"></script>
 	<style>
+		body {
+			overflow: hidden;
+		}
 		.popContainer .top {
 			width: calc(100% - 1px);
 			height: 71px;
@@ -206,7 +209,13 @@
 	            data: formData,
 	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 	     	    dataType: 'json',
-	            async : false,
+	     	  	beforeSend:function(){
+			        $('.wrap-loading').removeClass('dpNone');
+			    }
+
+			   	,complete:function(){
+			        $('.wrap-loading').addClass('dpNone');
+			    },
 	        	success:function(data){	
 	        		if(data.successYN == "Y") {
 	        			alert("발행 요청되었습니다.");
@@ -313,7 +322,13 @@
 		            data: formData,
 		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 		     	    dataType: 'json',
-		            async : false,
+		     	   	beforeSend:function(){
+				        $('.wrap-loading').removeClass('dpNone');
+				    }
+
+				   	,complete:function(){
+				        $('.wrap-loading').addClass('dpNone');
+				    },
 		        	success:function(data){		  
 		        		if(data.successYN == "Y") {
 		        			alert("발행이 완료 처리되었습니다.");
@@ -417,20 +432,20 @@
 						<c:choose>
 							<c:when test='${gbInfo.bdGbFinishYn eq "N"}'>
 								<button type="button" onclick="javascript:fnGbPublish();">
-									<img src="<c:url value='/images/btn_stock_publish.png'/>" />
+									<img src="<c:url value='/images/pop_btn_req.png'/>" />
 								</button>
 							</c:when>
 							<c:when test='${gbInfo.bdGbFinishYn eq "R"}'>
 								<button type="button" onclick="javascript:fnGbEnd();">
-									<img src="<c:url value='/images/btn_stock_end.png'/>" />
+									<img src="<c:url value='/images/pop_btn_fin.png'/>" />
 								</button>
 								<button type="button" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
+									<img src="<c:url value='/images/pop_btn_mod.png'/>" />
 								</button>
 							</c:when>
 							<c:otherwise>
 								<button type="button" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
+									<img src="<c:url value='/images/pop_btn_mod.png'/>" />
 								</button>
 							</c:otherwise>
 						</c:choose>
@@ -441,6 +456,10 @@
 			</div>
 		</div>	
 	</form>
-	
+	<div class="wrap-loading dpNone">
+		<div>
+			<img src="<c:url value='/images/ajax_loader.gif'/>" />
+		</div>
+	</div>
 </body>
 </html>

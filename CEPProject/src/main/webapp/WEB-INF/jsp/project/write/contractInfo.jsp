@@ -118,16 +118,13 @@
 		 	/* color: #a4a4a4; */
 		}
 		.popContainer .contents input {
-			width: 311px !important;
+			width: 311px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 3px;
-		}
-		.popContainer .contents input[class="calendar"] {
-			width: 108px !important;
 		}
 		.popContainer .contents .disc {
 			font-size: 14px;
@@ -150,6 +147,43 @@
 		#m_div_accountList {
 			left: 136px;
     		margin-top: 40px;
+		}
+		.move {
+			display: inline-block;
+		}
+		.move:hover .moveSpan {
+			 visibility: visible;
+		}
+		.move .moveSpan {
+		    visibility: hidden;
+		    width: 230px;
+		    height: 42px;
+		    background-color: #404040;
+		    color: #ffffff;
+		    text-align: center;
+		    border-radius: 6px;
+		    padding: 5px 0;
+		    position: absolute;
+		    z-index: 9999;
+		    bottom: 57px;
+		    right: 15px;
+		    font-size: 14px;
+		}
+		.move .moveSpan::after {
+		    content: "";
+		    position: absolute;
+		    top: 100%;
+		    left: 82%;
+		    margin-left: -5px;
+		    border-width: 5px;
+		    border-style: solid;
+		    border-color: #404040 transparent transparent transparent;
+		}
+		.move .moveSpan.right {
+		    left: 15px;
+		}
+		.move .moveSpan.right::after {
+			left: 18%;
 		}
 	</style>
 	<script>
@@ -252,7 +286,7 @@
 							if(this.name=="salesTurnAmount") {
 								//숫자에서 컴마를 제거한다.
 								obj[this.name] = removeCommas(this.value); 
-							} else if(this.name=="salesChargeDt") {
+							} else if(this.name=="salesBillFcDt" || this.name == "salesCollectFcDt") {
 								//날짜에서 -를 제거한다.
 								obj[this.name] =  removeData(this.value,"-"); 
 							} else {
@@ -263,7 +297,7 @@
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if('isNew' == this.name){
+							if('salesCollectFcDt' == this.name){
 								objArry.push(obj);
 								obj = {};
 							}
@@ -313,7 +347,7 @@
 					rowItem += "<input type='hidden' name='isNew' value='Y' />";
 					/* rowItem += "<input type='hidden' name='ctKey' value='' />"; */
 					/* </form></td>"; */
-					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;발행일 :&nbsp;<input type='text' id='salesbillFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesbillFcDt' placeholder='발행일' value='' required/></td>"; 
+					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;발행일 :&nbsp;<input type='text' id='salesBillFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesBillFcDt' placeholder='발행일' value='' required/>"; 
 					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;수금일 :&nbsp;<input type='text' id='salesCollectFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesCollectFcDt' placeholder='수금일' value='' required/></td>"; 
 					rowItem += "</tr>";
 					
@@ -385,7 +419,6 @@
 				object["projectContractSalesVOList"]=listData;
 				
 				var sendData = JSON.stringify(object);
-				/* console.log(sendData); */
 			 	$.ajax({
 					url:"/project/insert/contractInfo.do",
 					dataType: 'json', 
@@ -434,7 +467,7 @@
 							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 						}
 					} 
-				});       
+				});        
 			}
 		}
 		
@@ -482,7 +515,8 @@
 			var url = '/project/write/basicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val()
+				"pjKey" : $('#pjKey').val(),
+				"workClass":"프로젝트"
 			}
 			var button = new Array;
 			button = [];
@@ -650,13 +684,23 @@
 			</div>
 			<div class="btnWrap floatR">
 				<div class="floatL btnPrev">
-					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+					<button type="button" class="move" onclick="fn_prevView();">
+						<img src="<c:url value='/images/btn_prev.png'/>" />
+						<span class="moveSpan right">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
+					</button>
 				</div>
-				<div class="floatL btnSave">
-					<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-				</div>
+				<c:set var="systemName" value='<%=session.getAttribute("name") %>'/>
+				<c:set var="mngName" value="${pjVO[0].empNm }" />
+				<c:if test="${systemName eq mngName }">
+					<div class="floatL btnSave">
+						<button type="button" onclick="javascript:fn_chkVali()"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					</div>
+				</c:if>
 				<div class="floatR">
-					<button type="button" onclick="javascript:fn_next('guarantyInfo')"><img src="<c:url value='/images/btn_next.png'/>" /></button>
+					<button type="button" class="move" onclick="javascript:fn_next('guarantyInfo')">
+						<img src="<c:url value='/images/btn_next.png'/>" />
+						<span class="moveSpan">저장/수정하지 않은 정보는<br>반영되지 않습니다.</span>
+					</button>
 				</div>
 				<div class="floatN floatC"></div>
 			</div>

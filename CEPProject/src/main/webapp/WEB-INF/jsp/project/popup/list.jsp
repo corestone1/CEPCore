@@ -11,6 +11,9 @@
 <script src="<c:url value='/js/popup.js'/>"></script>
 <script src="<c:url value='/js/common.js'/>"></script>
 <style>
+	body {
+		overflow: hidden;
+	}
 	fieldset {
 		border: none;
 		marign: 0;

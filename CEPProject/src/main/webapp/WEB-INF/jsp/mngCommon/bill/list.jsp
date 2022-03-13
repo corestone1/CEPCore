@@ -31,7 +31,6 @@
 		}
 		.contentsWrap .contents .top div:nth-child(2) > label {
 			line-height: 34px;
-			margin: 5px;
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
@@ -65,7 +64,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 545px;
+			height: 600px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -229,39 +228,44 @@
 				//alert('btnDelete');
 				
 				if($('input[name="gubun"]').is(':checked')) {
-					if(confirm("선택한 내용을 삭제하시겠습니까?")) {
-						
-						var litIdx = parseInt($('input[name="gubun"]:checked').val());
-						
-						//alert(litIdx + ":" + $('input[name="billNo"]').eq(litIdx).val());
-						
-						var jsonData = {'billNo' : $('input[name="billNo"]').eq(litIdx).val()};
-						
-						//alert($('input[name="orderKey"]').eq(litIdx).val() + "\n" + litIdx);
-						
-			           $.ajax({
-				        	url :"/mngProject/bill/delete.do",
-				        	type:"POST",  
-				            data: jsonData,
-				     	   contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-				     	   dataType: 'json',
-				           async : false,
-				        	success:function(data){		  
-				            	alert("삭제되었습니다.");
-				            	//현재 화면 새로고침
-				            	location.reload();
-				            },
-				        	error: function(request, status, error) {
-				        		if(request.status != '0') {
-				        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-				        		}
-				        	} 
-				        }); 
-			           	
-			           	
+					var litIdx = parseInt($('input[name="gubun"]:checked').val()) - 1;
+					
+					if($('input[name="billMappingYn"]').eq(litIdx).val() == 'Y') {
+						alert("이미 매핑된 계산서는 삭제할 수 없습니다.");
 					} else {
-						return false;
-					}
+						if(confirm("선택한 내용을 삭제하시겠습니까?")) {
+						
+							var jsonData = {'billNo' : $('input[name="billNo"]').eq(litIdx).val()};
+							var sendData = JSON.stringify(jsonData);
+							
+							//alert($('input[name="orderKey"]').eq(litIdx).val() + "\n" + litIdx);
+							
+				           $.ajax({
+					        	url :"/mngCommon/bill/delete.do",
+					        	type:"POST",  
+					            data: sendData,
+					     	   	contentType: "application/json; charset=UTF-8",
+					     	   	dataType: 'json',
+					           	async : false,
+					        	success:function(data){		  
+					        		if(data.successYN == 'Y') {
+					            		alert("삭제되었습니다.");
+					            		//현재 화면 새로고침
+						            	//location.reload();
+					        		} else {
+					        			alert("삭제가 실패되었습니다.");
+					        		}
+					            },
+					        	error: function(request, status, error) {
+					        		if(request.status != '0') {
+					        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+					        		}
+					        	} 
+					        }); 
+						} else {
+							return false;
+						}
+					} 
 					
 				} else {
 					alert("삭제할 대상을 선택하세요.");
@@ -329,7 +333,7 @@
 </head>
 <body>
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
-		<input type="hidden" name="billNo" value=""/>
+		<!-- <input type="hidden" name="billNo" value=""/> -->
 		<input type="hidden" name="pjKey" value=""/>
 		<!-- <div class="sfcnt"></div>
 		<div class="nav"></div> -->
@@ -341,19 +345,19 @@
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
-						<form:select path="searchClassCd">
+						<%-- <form:select path="searchClassCd">
 							<form:option value="">구분</form:option>
 							<form:option value="PC">매입</form:option>
 							<form:option value="SD">매출</form:option>
-						</form:select>
+						</form:select> --%>
 						<form:select path="searchCtClassCd">
 							<form:option value="">유형</form:option>
 							<form:option value="PJ">프로젝트</form:option>
 							<form:option value="MT">유지보수</form:option>
 						</form:select>
-						<form:input path="searchFromDate" type="text" class="calendar" placeholder="from"/>
-						<label> ~ </label>
-						<form:input path="searchToDate" type="text" class="calendar" placeholder="to"/>
+						<form:input path="searchFromDate" type="text" class="calendar" placeholder="등록일자(from)"/>
+						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
+						<form:input path="searchToDate" type="text" class="calendar" placeholder="등록일자(to)"/>
 						<form:input path="searchAcNm" type="text" class="search" placeholder="상호명" />
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
@@ -397,9 +401,9 @@
 									<td><span><c:out value="${displayUtil.commaStr(result.billTaxAmount)}"/></span></td>
 									<td><span><c:out value="${displayUtil.commaStr(result.billTotalAmount)}"/></span></td>
 									<td><span title="${result.remark}"><c:out value="${result.remark}"/></span></td>
-									<td><span title="${result.billNo}"><c:out value="${result.billNo}"/></span></td>
+									<td><span title="${result.billNo}"><c:out value="${result.billNo}"/></span><input type="hidden" name="billNo" value="${result.billNo }" /></td>
 									<td><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></td>
-									<td><c:out value="${result.billCtClassCd }" /></td>
+									<td><c:out value="${result.billCtClassCd }" /><input type="hidden" name="billMappingYn" value=${result.billMappingYn } /></td>
 								</tr>
 							</c:forEach>
 							<!-- 
