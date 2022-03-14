@@ -610,15 +610,15 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><span title="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></span></td>
+									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
 								</tr>
 								<tr>
 									<td>PROJECT명</td>
-									<td><span title="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></span></td>
+									<td><c:out value="${basicContractInfo.mtProjectLinkVo.mtLinkCtKeyNm}"/></td>
 								</tr>
 								<tr>
 									<td>유지보수명</td>
-									<td><span title="${basicContractInfo.mtNm}"><c:out value="${basicContractInfo.mtNm}"/></span></td>
+									<td><c:out value="${basicContractInfo.mtNm}"/></td>
 								</tr>
 								<tr>
 									<td>고객사</td>
