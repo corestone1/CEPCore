@@ -78,7 +78,7 @@
 		}
 		.middle table tbody {
 			width: 1662px;
-			height: 545px;
+			height: 555px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -360,7 +360,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="pl">
+					<table class="textalignC ftw200 excelSheet" id="pl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>
@@ -409,7 +409,7 @@
 					<div class="floatR">
 						<%-- <button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
 						<%-- <button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
-						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" onclick="fn_excelBtn();"/></button>
+						<button type="button" value="엑셀 다운로드" id="excelExport" ><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" onclick="fn_excelBtn();"/></button>
 					</div>
 				</div>
 			</div>

@@ -156,7 +156,7 @@
 		.bottom table tr td {
 			padding: 10px;
 			color: #26a07d;
-			background-color: #ecf6f4;
+			background-color: #ccf4d7;
 			text-align: right;
 			width: 121px;
 		}

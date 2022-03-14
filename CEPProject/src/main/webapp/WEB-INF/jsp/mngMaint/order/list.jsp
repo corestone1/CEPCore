@@ -184,7 +184,7 @@
 		.bottom table tr td {
 			padding: 10px;
 			color: #26a07d;
-			background-color: #ecf6f4;
+			background-color: #ccf4d7;
 			text-align: right;
 			width: 121px;
 		}
@@ -285,7 +285,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="fl">
+					<table class="textalignC ftw200 excelSheet" id="fl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">No</th>
@@ -534,7 +534,9 @@
 							</tr>
 						</tbody>
 					</table>
-					
+					<div class="floatR">
+						<button type="button" value="엑셀 다운로드" id="excelExport" ><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>"/></button>
+					</div>
 				</div>
 			</div>
 		</div>

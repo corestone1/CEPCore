@@ -79,7 +79,7 @@
 		.middle table tbody {
 			width: 1662px;
 			/* height: 550px; */
-			height: 500px;
+			height: 550px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;
@@ -418,7 +418,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="pl">
+					<table class="textalignC ftw200 excelSheet" id="pl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>
@@ -472,13 +472,14 @@
 							<td class="textalignR" style="width:1200px; padding-right: 25px;"></td>
 							<td style="width:230px;">매출합계 : <c:out value="${displayUtil.commaStr(totalMtAmount)}"/></td>
 							<td style="width:230px;">매입합계 : <c:out value="${displayUtil.commaStr(totalMtOrderAmount)}"/></td>
+							<td style="width:230px;">이익합계 : <c:out value="${displayUtil.commaStr(totalMtAmount-totalMtOrderAmount)}"/></td>
 						</tr>
 					</table>
 				<div class="bottom">
 					<div class="floatR">
 						<%-- <button type="button" value="수정" onclick="fn_modifyBtn();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
 						<%-- <button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
-						<button type="button" value="엑셀 다운로드" onclick="fn_excelBtn();"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>"/></button>
+						<button type="button" value="엑셀 다운로드" id="excelExport" ><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>"/></button>
 					</div>
 				</div>
 			</div>

@@ -116,7 +116,7 @@
 		.bottom table tr td {
 			padding: 10px;
 			color: #26a07d;
-			background-color: #ecf6f4;
+			background-color: #ccf4d7;
 			text-align: right;
 			width: 121px;
 		}
@@ -795,7 +795,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="fl">
+					<table class="textalignC ftw200 excelSheet" id="fl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">No</th>
@@ -812,9 +812,9 @@
 								<th scope="row">제조사</th>
 								<th scope="row">발행구분</th>
 								<th scope="row">발급완료일</th>
-								<th scope="row">발급버튼</th>
+								<th scope="row">발급</th>
 								<th scope="row">수금완료일</th>
-								<th scope="row">수금버튼</th>
+								<th scope="row">수금</th>
 								<th style="max-width: 0px; display: none;">mtIntegrateKey</th>
 								<th style="max-width: 0px; display: none;">billCtFkKey</th>
 								<th style="max-width: 0px; display: none;">billAcKey</th>
@@ -964,12 +964,15 @@
 					<table>
 						<tbody class="ftw400">
 							<tr>								
-								<td style="width:50px;">합계 :</td>
+								<td style="width:50px;">합계 </td>
 								
 								<td style="text-align: left;"><span><c:out value="${displayUtil.commaStr(totalAmount)}"/> 원</span></td>
 							</tr>
 						</tbody>
 					</table>
+					<div class="floatR">
+						<button type="button" value="엑셀 다운로드" id="excelExport" style="margin-top: 22px;"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>"/></button>
+					</div>
 				</div>
 			</div>
 		</div>
