@@ -749,42 +749,6 @@
 									<input type="hidden" value="${result.spState }" id="resultSpState" />
 								</td>
 							</tr>
-							<tr class="dpNone" style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">
-								<td colspan="12" style="margin: 5px 71px;">
-									<ul class="detailList">
-										<li>고객사</li>
-										<li>
-											<c:choose>
-												<c:when test="${result.mfAcNm eq null}">&nbsp;</c:when>
-												<c:otherwise><c:out value="${result.mfAcNm}"/></c:otherwise>
-											</c:choose>
-										</li>
-										<li>매입처</li>
-										<li>
-											<c:choose>
-												<c:when test="${result.buyAcNm eq null}">&nbsp;</c:when>
-												<c:otherwise><c:out value="${result.buyAcNm}"/></c:otherwise>
-											</c:choose>
-										</li>
-										<li>수주확률</li>
-										<li>
-											<c:choose>
-												<c:when test="${result.spState eq null}">&nbsp;</c:when>
-												<c:otherwise><c:out value="${result.spState}"/></c:otherwise>
-											</c:choose>
-										</li>
-										<li>제품상세</li>
-										<li>
-											<c:choose>
-												<c:when test="${result.pmDetail2 eq null}">&nbsp;</c:when>
-												<c:otherwise><c:out value="${result.pmDetail2}"/></c:otherwise>
-											</c:choose>
-										</li>
-										<li>진행사항</li>
-										<li><c:out value="${result.remark}"/></li>
-									</ul>
-								</td>
-							</tr>
 							<input type='hidden' name='spKey' value='<c:out value="${result.spKey}"/>' />
 							<c:set var="salesSum" value="${salesSum + result.fcSalesAmount }" />
 							<c:set var="pcSum" value="${pcSum + result.fcBuyAmount }" />
@@ -817,6 +781,42 @@
 				</div>
 			</div>
 		</div>
+		<%-- <tr class="dpNone" style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);" class="view">
+			<td colspan="12" style="margin: 5px 71px;">
+				<ul class="detailList">
+					<li>고객사</li>
+					<li>
+						<c:choose>
+							<c:when test="${result.mfAcNm eq null}">&nbsp;</c:when>
+							<c:otherwise><c:out value="${result.mfAcNm}"/></c:otherwise>
+						</c:choose>
+					</li>
+					<li>매입처</li>
+					<li>
+						<c:choose>
+							<c:when test="${result.buyAcNm eq null}">&nbsp;</c:when>
+							<c:otherwise><c:out value="${result.buyAcNm}"/></c:otherwise>
+						</c:choose>
+					</li>
+					<li>수주확률</li>
+					<li>
+						<c:choose>
+							<c:when test="${result.spState eq null}">&nbsp;</c:when>
+							<c:otherwise><c:out value="${result.spState}"/></c:otherwise>
+						</c:choose>
+					</li>
+					<li>제품상세</li>
+					<li>
+						<c:choose>
+							<c:when test="${result.pmDetail2 eq null}">&nbsp;</c:when>
+							<c:otherwise><c:out value="${result.pmDetail2}"/></c:otherwise>
+						</c:choose>
+					</li>
+					<li>진행사항</li>
+					<li><c:out value="${result.remark}"/></li>
+				</ul>
+			</td>
+		</tr> --%>
 	</form:form>
 </body>
 </html>

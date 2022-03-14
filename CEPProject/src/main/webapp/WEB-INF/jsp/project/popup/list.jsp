@@ -118,7 +118,7 @@
 		width: 89px;
 	}
 	.popContainer .middle table tbody td:nth-child(4) span {
-		width: 268px;
+		width: 256px;
 	}
 	.middle table tbody tr {
 		display: table;
@@ -142,7 +142,7 @@
 	}
 	.popContainer .middle table thead th:nth-child(4),
 	.popContainer .middle table tbody td:nth-child(4) {
-		width: 296px;
+		width: 283px;
 	}
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5),

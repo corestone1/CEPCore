@@ -175,7 +175,7 @@
 		.contents .dtl tbody {
 			width: 997px;
 			/* height: 532px; */
-			height: 176px;
+			height: 194px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			float: left;

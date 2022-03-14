@@ -217,7 +217,7 @@
 			}
 			
 			$("#projectConnect").click(function() {
-				window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall&pjFlag=P', 'PROJECT_LIST', 'width=972px,height=713px,left=600');
+				window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall&pjFlag=P', 'PROJECT_LIST', 'width=750px,height=600px,left=600');
 			});
 			
 			var fileTarget = $(".exFile");

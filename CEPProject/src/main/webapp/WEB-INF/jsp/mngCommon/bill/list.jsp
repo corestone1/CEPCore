@@ -309,7 +309,7 @@
 		} */
 
 		function fnViewBillbatchInsertPop(){
-			window.open('/mngCommon/bill/popup/viewWritePcBillingExcel.do','BILLING_EXCEL','width=1600px,height=713px,left=600');
+			window.open('/mngCommon/bill/popup/viewWritePcBillingExcel.do','BILLING_EXCEL','width=1400px,height=550px,left=600');
 			
 		}
 		

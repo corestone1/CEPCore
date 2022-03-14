@@ -356,7 +356,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200 work" id="fl">
+					<table class="textalignC ftw200 work excelSheet" id="fl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>
@@ -401,7 +401,7 @@
 					<div class="floatR">
 						<button type="button" id="btnModify" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>
 			</div>
