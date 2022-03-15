@@ -149,7 +149,7 @@
 			}
 			
 			$("#projectConnect").click(function() {
-				window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall&pjFlag=P', 'PROJECT_LIST', 'width=750px,height=600px,left=600');
+				window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall&pjFlag=P', 'PROJECT_LIST', 'width=1000px,height=750px,left=600');
 			});
 		});
 		
@@ -181,7 +181,7 @@
 				alert("프로젝트를 먼저 선택해 주세요.");
 				$("#projectConnect").trigger("click");
 			} else {
-				window.open('/mngCommon/product/popup/orderSearchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O&searchKey='+$("#m_pjKey").val()+'','PRODUCT_LIST','width=750px,height=600px,left=600');				
+				window.open('/mngCommon/product/popup/orderSearchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O&searchKey='+$("#m_pjKey").val()+'','PRODUCT_LIST','width=1000px,height=750px,left=600');				
 			}
 		}
 		

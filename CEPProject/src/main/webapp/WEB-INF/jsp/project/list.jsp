@@ -588,7 +588,7 @@
 					<div class="floatR">
 						<button value="수정" type="button" onclick="fn_mod();"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 						<button value="삭제" type="button" onclick="fn_delete();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button value="엑셀 다운로드" id="excelExport" type="button"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>
 			</div>

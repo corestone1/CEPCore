@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.cep.mngCommon.product.service.ProductService;
 import com.cep.mngCommon.product.vo.ProductSearchVO;
 import com.cep.mngCommon.product.vo.ProductVO;
+import com.cmm.config.PrimaryKeyType;
+import com.cmm.service.ComService;
 import com.cmm.util.CepStringUtil;
 
 /**
@@ -42,6 +44,9 @@ public class ProductServiceImpl implements ProductService {
 	@Resource(name="productMapper")
 	private ProductMapper mapper;
 	
+	@Resource(name="comService")
+	private ComService comService;
+	
 	@Override
 	public List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception {
 		return mapper.selectProductList(searchVO);
@@ -62,13 +67,19 @@ public class ProductServiceImpl implements ProductService {
 	public Map<String, Object> insertProduct(ProductVO productVO) throws Exception {
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		String pmKey = "";
 		
 		try {
 			if(CepStringUtil.getDefaultValue(productVO.getPmKey(), "").equals("")) {
+				pmKey = comService.makePrimaryKey(PrimaryKeyType.PRODUCT);
+				productVO.setPmKey(pmKey);
+				
 				mapper.insertProduct(productVO);
 			} else {
 				mapper.updateProduct(productVO);
 			}
+			
+			returnMap.put("pmKey", productVO.getPmKey());
 			returnMap.put("successYN", "Y");
 		} catch(Exception e) {
 			e.printStackTrace();

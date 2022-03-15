@@ -123,6 +123,11 @@
 	<script>
 				
 		$(document).ready(function() {
+			if($("#ipt_pmKey").val().replace(" ","").length != 0) {
+				$('#m_btn_save').children().eq(0).html('');
+				$('#m_btn_save').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />');
+			}
+			
 			
 			var fnChangePmDetailClass = function(pstPmClassCd){
 				//alert("pstPmClassCd : " + pstPmClassCd);
@@ -281,16 +286,24 @@
 	            async : false,
 	        	success:function(data){		  
 	        		if(data.successYN=='Y') {
-   						if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
-				    		alert('프로젝트 기본 정보가 저장되었습니다.');
-				    		countSave++;
-				    		
+   						if($("#ipt_pmKey").val() == null || $("#ipt_pmKey").val() == "" || $("#ipt_pmKey").val().length == 0) {
+				    		alert('제품 정보가 저장되었습니다.');
+				    		$("#ipt_pmKey").val(data.pmKey);
 			    		} else {
-			    			alert('프로젝트 기본 정보가 수정되었습니다.');
+			    			alert('제품 정보가 수정되었습니다.');
 			    		}
    					} else {
-   						alert("첨부파일 저장이 실패하였습니다.(프로젝트 기본 정보는 저장은 완료)");
+   						alert('제품 정보 저장이 실패하였습니다.');
    					}
+	        		
+	        		var url = '/mngCommon/product/writePopup.do';
+	    			var dialogId = 'program_layer';
+	    			var varParam = {
+	    				"pmKey":$("#ipt_pmKey").val()
+	    			}
+	    			var button = new Array;
+	    			button = [];
+	    			showModalPop(dialogId, url, varParam, button, '', 'width:698px;height:670px');
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -315,8 +328,9 @@
 			</div>
 			<div class="contents">
 				<div>
+					<input type="hidden" value="${productVO.pmKey }" id="ipt_pmKey" name="pmKey" />
 					<table>
-						<tr>
+ 						<tr>
 							<td class="tdTitle"><label>*</label>구분</td>
 							<td class="tdContents">
 								<select name="pmClassCd" id="m_slt_pmClassCd" required>
@@ -343,7 +357,7 @@
 								<!--
 								<input type="text" id="m_ipt_mfAcKey" name="mfAcKey" class="search" placeholder="제조사" />
 								 -->
-								<input type="text"   id="m_ipt_acNm"    name="acNm" class="search" placeholder="제조사"  value="${productVO.acNm}" required/> 
+								<input type="text"   id="m_ipt_acNm"    name="acNm" class="search" placeholder="제조사"  value="${productVO.acNm}" autocomplete="off" required/> 
 								<input type="hidden" id="m_ipt_mfAcKey" name="mfAcKey" value="${ productVO.mfAcKey }"/>
 								
 							</td>
@@ -373,9 +387,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle">EOSS</td>
+							<td class="tdTitle">EOSL</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_eossDt" name="eossDt" placeholder="EOSS" value="${ displayUtil.displayDate(productVO.eossDt) }" class="calendar fromDt" />
+								<input type="text" id="m_ipt_eoslDt" name="eoslDt" placeholder="EOSL" value="${ displayUtil.displayDate(productVO.eoslDt) }" class="calendar fromDt" />
 							</td>
 						</tr>
 						<tr>

@@ -87,24 +87,29 @@
 	.middle table tbody tr {
 		display: table;
 		width: 926px;
+		background-color: #fff;
 	}
 	.popContainer .middle table thead th, .middle table tbody td {
 		width: 79px;
-		padding: 10px 0;
+		padding: 10px;
     	border: 1px solid #edebef;
 	}
 	.popContainer .middle table thead th:first-child, 
 	.popContainer .middle table tbody td:first-child {
+		width: 42px;
+	}
+	.popContainer .middle table thead th:nth-child(2), 
+	.popContainer .middle table tbody td:nth-child(2) {
 		width: 50px;
 	}
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 141px;
+		width: 100px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
-	    width: 125px;
+	    width: 135px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(5),
@@ -114,7 +119,7 @@
 	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
-		width: 80px;
+		width: 156px;
 	}
 	
 	.popContainer .middle table tbody tr td span {
@@ -122,9 +127,7 @@
 		overflow:hidden; 
 		text-overflow:ellipsis; 
 		white-space:nowrap;
-		margin-left: 15px;
 		vertical-align: middle;
-		width: 82%;
 	}
 	
 	.popContainer .top .floatR select {
@@ -140,14 +143,11 @@
 	}
 	
 	.popContainer .top .floatR input[type="text"] {
-		width: 260px;
+		width: 170px;
 		height: 40px;
 		border: 1px solid #e9e9e9;
 		padding: 0 10px;
 		background-color: #fff;
-		background-image: url('/images/search_icon.png');
-		background-repeat: no-repeat;
-		background-position: 95% 50%;
 		font-size: 15px;
 	}
 		
@@ -228,21 +228,19 @@
 			<div class="floatR">
 				<form:select path="productDivision">
 					<form:option value="">구분</form:option>
-					<form:option value="HW">H/W</form:option>
-					<form:option value="SW">S/W</form:option>
-					<form:option value="SV">용역</form:option>
-					<form:option value="ET">기타</form:option>
+					<form:option value="PROD1000">H/W</form:option>
+					<form:option value="PROD2000">S/W</form:option>
+					<form:option value="PROD3000">용역</form:option>
+					<form:option value="PROD4000">기타</form:option>
 				</form:select>
 				<form:select path="productFlag">
-					<option value="">상태</option>
-					<option value="SALE">판매중</option>
-					<option value="EOL">EOL</option>
-					<option value="EOSS">EOSS</option>
+					<form:option value="">상태</form:option>
+					<form:option value="SALE">판매중</form:option>
+					<form:option value="EOL">EOL</form:option>
+					<form:option value="EOSL">EOSL</form:option>
 				</form:select>
-				<form:select path="productMake">
-					<option value="">제조사</option>
-				</form:select>
-				<form:input path="productName" type="text" placeholder="모델명" class="veralignB"/>
+				<form:input path="productMake" type="text" placeholder="제조사" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+				<form:input path="productName" type="text" placeholder="모델명" class="veralignB" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 				<span id="span_search" class="veralignB" onclick="javascript:fn_searchList()"><img src="/images/icon_search.png" /></span>
 			</div>
 			<!-- <div class="floatC"></div>  -->
@@ -253,6 +251,7 @@
 					<thead class="ftw400">
 						<tr>
 							<th scope="row">선택</th>
+							<th scope="row">구분</th>
 							<th scope="row">상세구분</th>
 							<th scope="row">제조사</th>
 							<th scope="row">모델명</th>
@@ -264,10 +263,31 @@
 						<c:forEach var="result" items="${productList}" varStatus="status">
 	            			<tr>
 	            				<td><a href="#"    onclick="javascript:fn_ProductSelect('${result.pmKey}', '${result.pmNmCd}');" class="btn btn_gray">선택</a></td>
-	            				<td align="center" class="listtd"><c:out value="${result.pmDetailClassCd}"/></td>
-	            				<td align="left"   class="listtd"><span style="max-width: 126px;"><c:out value="${result.acNm}"/></span></td>
-	            				<td align="left"   class="listtd"><span style="max-width: 110px;"><c:out value="${result.pmLineCd}"/></span></td>
-	            				<td align="left"   class="listtd"><span style="max-width: 164px;"><c:out value="${result.pmNmCd}"/></span></td>
+	            				<td align="center" class="listtd">
+	            					<c:choose>
+										<c:when test="${result.pmClassCd eq 'PROD1000'}">H/W</c:when>
+										<c:when test="${result.pmClassCd eq 'PROD2000'}">S/W</c:when>
+										<c:when test="${result.pmClassCd eq 'PROD3000'}">용역</c:when>
+										<c:when test="${result.pmClassCd eq 'PROD4000'}">기타</c:when>
+									</c:choose>
+								</td>
+	            				<td align="center" class="listtd">
+	            					<c:choose>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1001'}">스토리지</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1002'}">서버</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1003'}">네트워크</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1099'}">기타</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD2001'}">FCore 제품</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD2099'}">기타</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD3001'}">기술지원</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD3002'}">인력파견</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD3099'}">기타</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD4099'}">기타</c:when>
+									</c:choose>
+	            				</td>
+	            				<td align="center"   class="listtd"><span style="max-width: 126px;" title="${result.acNm }"><c:out value="${result.acNm}"/></span></td>
+	            				<td align="left"   class="listtd"><span style="max-width: 179px;" title="${result.pmLineCd }"><c:out value="${result.pmLineCd}"/></span></td>
+	            				<td align="left"   class="listtd"><span style="max-width: 156px;" title="${result.pmNmCd }"><c:out value="${result.pmNmCd}"/></span></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pmReleaseDt)}"/>&nbsp;</td>
 	            			</tr>
 	        			</c:forEach>						

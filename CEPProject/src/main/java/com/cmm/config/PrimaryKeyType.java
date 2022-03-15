@@ -49,7 +49,8 @@ public enum PrimaryKeyType {
 	, FORECAST_PURCHASE("FP")
 	, PROJECT_PURCHASE("PP")
 	, PROJECT_BIDDING("BD")
-	, ACCOUNT("999");
+	, ACCOUNT("999")
+	, PRODUCT("PM");
 	
 	private String value;
 	

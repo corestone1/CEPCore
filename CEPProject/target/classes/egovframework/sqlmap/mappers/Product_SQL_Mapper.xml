@@ -14,7 +14,7 @@
 		<result property="mfAcKey"         column="MF_AC_KEY"/>
 		<result property="pmReleaseDt"     column="PM_RELEASE_DT"/>
 		<result property="eolDt"           column="EOL_DT"/>
-		<result property="eossDt"          column="EOSS_DT"/>
+		<result property="eoslDt"          column="EOSL_DT"/>
 		<result property="pmRemark"        column="PM_REMARK"/>
 		<result property="regDt"           column="REG_DT"/>
 		<result property="regTm"           column="REG_TM"/>
@@ -56,7 +56,18 @@
 		</if>
 		
 		<if test="productFlag != null and productFlag != ''">
-			AND 1=1
+			<if test="productFlag == 'SALE'">
+				AND (PM.EOL_DT IS NULL OR PM.EOL_DT = "")
+				AND (PM.EOSL_DT IS NULL OR PM.EOSL_DT = "")
+			</if>
+			<if test="productFlag == 'EOL'">
+				AND PM.EOL_DT IS NOT NULL
+				AND PM.EOL_DT != ""
+			</if>
+			<if test="productFlag == 'EOSL'">
+				AND PM.EOSL_DT IS NOT NULL
+				AND PM.EOSL_DT != ""
+			</if>
 		</if>
 		
 		<if test="productMake != null and productMake != ''">
@@ -70,6 +81,7 @@
 				AND PM.PM_NM_CD LIKE CONCAT('%', CONCAT(#{productName}, '%'))
 			]]>
 		</if>
+		AND PM.DELETE_YN = 'N'
 		ORDER BY PM.REG_DT, PM.MF_AC_KEY DESC		
 		
 	</select>
@@ -97,6 +109,7 @@
 			 JOIN CMM_ACCOUNT_TB AC 
 			 ON PM.MF_AC_KEY = AC.AC_KEY
 		WHERE PM.PM_KEY = #{pmKey}
+		AND PM.DELETE_YN = 'N'
 		
 	</select>
 	
@@ -133,7 +146,18 @@
 		</if>
 		
 		<if test="productFlag != null and productFlag != ''">
-			AND 1=1
+			<if test="productFlag == 'SALE'">
+				AND (PM.EOL_DT IS NULL OR PM.EOL_DT = "")
+				AND (PM.EOSL_DT IS NULL OR PM.EOSL_DT = "")
+			</if>
+			<if test="productFlag == 'EOL'">
+				AND PM.EOL_DT IS NOT NULL
+				AND PM.EOL_DT != ""
+			</if>
+			<if test="productFlag == 'EOSL'">
+				AND PM.EOSL_DT IS NOT NULL
+				AND PM.EOSL_DT != ""
+			</if>
 		</if>
 		
 		<if test="productMake != null and productMake != ''">
@@ -147,6 +171,7 @@
 				AND PM.PM_NM_CD LIKE CONCAT('%', CONCAT(#{productName}, '%'))
 			]]>
 		</if>
+		AND PM.DELETE_YN = 'N'
 		ORDER BY PM.REG_DT, PM.MF_AC_KEY DESC		
 		
 	</select>
@@ -167,10 +192,11 @@
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
+			, DELETE_YN
 		)
 		VALUES
 		(
-			  make_key('PM')
+			  #{pmKey}
 			, #{pmClassCd}
 			, #{pmDetailClassCd}
 			, #{pmLineCd}
@@ -178,11 +204,12 @@
 			, #{mfAcKey}
 			, #{pmReleaseDt}
 			, #{eolDt}
-			, #{eossDt}
+			, #{eoslDt}
 			, #{pmRemark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%k%i%s')
 			, #{regEmpKey}
+			,'N'
 		)
 		
 	</insert>
@@ -193,7 +220,7 @@
 		SET
 			 PM_CLASS_CD = #{pmClassCd}
 			, PM_DETAIL_CLASS_CD = #{pmDetailClassCd}
-			, PM_LINE_CD = #{pmLindCd}
+			, PM_LINE_CD = #{pmLineCd}
 			, PM_NM_CD = #{pmNmCd}
 			, MF_AC_KEY = #{mfAcKey}
 			<if test="pmReleaseDt != null and pmReleaseDt != ''">
@@ -202,8 +229,8 @@
 			<if test="eolDt != null and eolDt != ''">
 				, EOL_DT = #{eolDt}
 			</if>
-			<if test="eossDt != null and eossDt != ''">
-				, EOSL_DT = #{eossDt}
+			<if test="eoslDt != null and eoslDt != ''">
+				, EOSL_DT = #{eoslDt}
 			</if>
 			<if test="pmRemark != null and pmRemark != ''">
 				, PM_REMARK = #{pmRemark}
@@ -212,6 +239,7 @@
 			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}
 		WHERE PM_KEY = #{pmKey}
+		AND DELETE_YN = 'N'
 		
 	</update>
 	
