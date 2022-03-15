@@ -280,7 +280,17 @@
 	     	    dataType: 'json',
 	            async : false,
 	        	success:function(data){		  
-	        		fnSaveEnd();
+	        		if(data.successYN=='Y') {
+   						if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+				    		alert('프로젝트 기본 정보가 저장되었습니다.');
+				    		countSave++;
+				    		
+			    		} else {
+			    			alert('프로젝트 기본 정보가 수정되었습니다.');
+			    		}
+   					} else {
+   						alert("첨부파일 저장이 실패하였습니다.(프로젝트 기본 정보는 저장은 완료)");
+   					}
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
@@ -291,9 +301,6 @@
 			
 		};
 		
-		var fnSaveEnd = function(){
-			//완료 처리
-		};
 		
 		
 	</script>
@@ -336,44 +343,44 @@
 								<!--
 								<input type="text" id="m_ipt_mfAcKey" name="mfAcKey" class="search" placeholder="제조사" />
 								 -->
-								<input type="text"   id="m_ipt_acNm"    name="acNm" class="search" placeholder="제조사"  value="" required/> 
-								<input type="hidden" id="m_ipt_mfAcKey" name="mfAcKey"/>
+								<input type="text"   id="m_ipt_acNm"    name="acNm" class="search" placeholder="제조사"  value="${productVO.acNm}" required/> 
+								<input type="hidden" id="m_ipt_mfAcKey" name="mfAcKey" value="${ productVO.mfAcKey }"/>
 								
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>모델명</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_pmLineCd" name="pmLineCd" placeholder="모델명" required/>
+								<input type="text" id="m_ipt_pmLineCd" name="pmLineCd" placeholder="모델명" value="${ productVO.pmLineCd }" required/>
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle"><label>*</label>세부모델명</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_pmNmCd" name="pmNmCd" placeholder="세부모델명" required/>
+								<input type="text" id="m_ipt_pmNmCd" name="pmNmCd" placeholder="세부모델명" value="${ productVO.pmNmCd }" required/>
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle">출시일</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_pmReleaseDt" name="pmReleaseDt" placeholder="출시일" class="calendar fromDt" />
+								<input type="text" id="m_ipt_pmReleaseDt" name="pmReleaseDt" placeholder="출시일" value="${ displayUtil.displayDate(productVO.pmReleaseDt) }" class="calendar fromDt" />
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle">EOL</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_eolDt" name="eolDt" placeholder="EOL" class="calendar fromDt" />
+								<input type="text" id="m_ipt_eolDt" name="eolDt" placeholder="EOL" value="${ displayUtil.displayDate(productVO.eolDt) }" class="calendar fromDt" />
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle">EOSS</td>
 							<td class="tdContents">
-								<input type="text" id="m_ipt_eossDt" name="eossDt" placeholder="EOSS" class="calendar fromDt" />
+								<input type="text" id="m_ipt_eossDt" name="eossDt" placeholder="EOSS" value="${ displayUtil.displayDate(productVO.eossDt) }" class="calendar fromDt" />
 							</td>
 						</tr>
 						<tr>
 							<td class="tdTitle">비고</td>
-							<td class="tdContents"><textarea id="m_txa_pmRemark" name="pmRemark" placeholder="비고"></textarea></td>
+							<td class="tdContents"><textarea id="m_txa_pmRemark" name="pmRemark" placeholder="비고">${productVO.pmRemark }</textarea></td>
 						</tr>
 					</table>
 				</div>

@@ -4,6 +4,7 @@
 package com.cep.mngCommon.product.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cep.mngCommon.product.vo.ProductSearchVO;
 import com.cep.mngCommon.product.vo.ProductVO;
@@ -73,5 +74,5 @@ public interface ProductService {
 	  * @param productVO
 	  * @throws Exception
 	  */
-	void insertProduct(ProductVO productVO) throws Exception;
+	Map<String, Object> insertProduct(ProductVO productVO) throws Exception;
 }

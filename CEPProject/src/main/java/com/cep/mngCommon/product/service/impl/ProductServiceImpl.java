@@ -3,11 +3,13 @@
  */
 package com.cep.mngCommon.product.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.cep.mngCommon.product.service.ProductService;
 import com.cep.mngCommon.product.vo.ProductSearchVO;
 import com.cep.mngCommon.product.vo.ProductVO;
+import com.cmm.util.CepStringUtil;
 
 /**
  * @File Name : ProductServiceImpl.java
@@ -55,11 +58,24 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void insertProduct(ProductVO productVO) throws Exception {
-		//Product Key 생성
-		productVO.setPmKey("PM000002");
+	@Transactional
+	public Map<String, Object> insertProduct(ProductVO productVO) throws Exception {
 		
-		mapper.insertProduct(productVO);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try {
+			if(CepStringUtil.getDefaultValue(productVO.getPmKey(), "").equals("")) {
+				mapper.insertProduct(productVO);
+			} else {
+				mapper.updateProduct(productVO);
+			}
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
 	}
 
 }

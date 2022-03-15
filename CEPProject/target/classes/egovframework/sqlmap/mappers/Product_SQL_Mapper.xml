@@ -79,7 +79,8 @@
 		SELECT PM.PM_KEY
 		     , PM.PM_CLASS_CD
 		     , PM.PM_DETAIL_CLASS_CD
-		     , PM.PM_LINE_CD, PM_NM_CD
+		     , PM.PM_LINE_CD
+		     , PM_NM_CD
 		     , PM.MF_AC_KEY
 		     , PM.PM_RELEASE_DT
 		     , PM.EOL_DT
@@ -185,5 +186,33 @@
 		)
 		
 	</insert>
+	
+	<update id="updateProduct" parameterType="com.cep.mngCommon.product.vo.ProductVO">
+		
+		UPDATE PM_PRODUCT_MNG_TB
+		SET
+			 PM_CLASS_CD = #{pmClassCd}
+			, PM_DETAIL_CLASS_CD = #{pmDetailClassCd}
+			, PM_LINE_CD = #{pmLindCd}
+			, PM_NM_CD = #{pmNmCd}
+			, MF_AC_KEY = #{mfAcKey}
+			<if test="pmReleaseDt != null and pmReleaseDt != ''">
+				, PM_RELEASE_DT = #{pmReleaseDt}
+			</if>
+			<if test="eolDt != null and eolDt != ''">
+				, EOL_DT = #{eolDt}
+			</if>
+			<if test="eossDt != null and eossDt != ''">
+				, EOSL_DT = #{eossDt}
+			</if>
+			<if test="pmRemark != null and pmRemark != ''">
+				, PM_REMARK = #{pmRemark}
+			</if>
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%k%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PM_KEY = #{pmKey}
+		
+	</update>
 	
 </mapper>

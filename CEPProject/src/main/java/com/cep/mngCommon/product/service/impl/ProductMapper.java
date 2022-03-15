@@ -36,4 +36,6 @@ public interface ProductMapper {
 	public List<ProductVO> selectOrderProductList(ProductSearchVO searchVO) throws Exception;
 
 	public void insertProduct(ProductVO productVO) throws Exception;
+	
+	public void updateProduct(ProductVO productVO) throws Exception;
 }
