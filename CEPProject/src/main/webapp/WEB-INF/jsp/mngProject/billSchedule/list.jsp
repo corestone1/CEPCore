@@ -80,14 +80,14 @@
 			overflow:hidden; 
 			text-overflow:ellipsis; 
 			white-space:nowrap;
-			width: 84%;
+			width: 100%;
 			margin: 0 auto;
 		}
 		.middle table tbody tr:hover {
 			background-color: #ddf0ec
 		}
 		.middle table thead th, .middle table tbody tr td {
-			padding: 10px 0;
+			padding: 10px;
 			border: 1px solid #edebef;
 			color: #535353;
 		}
@@ -99,8 +99,8 @@
 		.middle table tbody td:nth-child(6),
 		.middle table thead th:nth-child(7),
 		.middle table tbody td:nth-child(7) {
-			width: 120px;
-			max-width: 120px;
+			width: 112px;
+			max-width: 112px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2){
@@ -120,8 +120,8 @@
 		}
 		.middle table thead th:nth-child(8),
 		.middle table tbody td:nth-child(8) {
-			width: 120px;
-			max-width: 120px;
+			width: 68px;
+			max-width: 68px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -250,8 +250,8 @@
 							<c:forEach var="result" items="${billList}" varStatus="status">
 								<tr>
 									<td><c:out value="${displayUtil.displayDate(result.regDt)}" /></td>
-									<td><span class="textalignL"><c:out value="${result.pjNm}" /></span></td>
-									<td><span><c:out value="${result.acNm}" /></span></td>
+									<td align="left"><span class="textalignL" title="${result.pjNm }" style="max-width: 320px;"><c:out value="${result.pjNm}" /></span></td>
+									<td><span title="${result.acNm }" style="max-width: 200px;"><c:out value="${result.acNm}" /></span></td>
 									<td>
 										<c:choose>
 											<c:when test="${result.kind eq 'SD' }">

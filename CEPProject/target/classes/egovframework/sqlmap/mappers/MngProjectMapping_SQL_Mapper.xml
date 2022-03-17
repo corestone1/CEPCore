@@ -252,7 +252,7 @@
 		JOIN PM_PRODUCT_MNG_TB PM
 		ON OP.ORDER_PM_FK_KEY = PM.PM_KEY
 		WHERE PJ_ORDER_KEY = #{orderKey}
-		AND DELETE_YN='N'
+		AND OP.DELETE_YN='N'
 	</select>
 	
 	<select id="selectBillDetail" parameterType="orderBillVO" resultType="egovMap">

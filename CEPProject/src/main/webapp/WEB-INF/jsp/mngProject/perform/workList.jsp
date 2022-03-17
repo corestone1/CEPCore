@@ -349,8 +349,8 @@
 					<div class="floatR">
 						<form:input path="performDtFrom"    type="text" class="calendar" placeholder="from" value="${performDtFrom }"/><label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
 						<form:input path="performDtTo" type="text" class="calendar" placeholder="to" value="${performDtTo }"/>
-						<form:input path="pjNm" type="text" placeholder="프로젝트명" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<form:input path="regEmpKey"     type="text" placeholder="작성자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+						<form:input path="pjNm" type="text" placeholder="프로젝트명" style="width: 170px;" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span><img onclick="javascript:fn_searchList();" src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>

@@ -86,21 +86,24 @@
 			background-color: #ddf0ec
 		}
 		.middle table thead th, .middle table tbody tr td {
-			padding: 10px 0;
+			padding: 10px;
 			border: 1px solid #edebef;
 			color: #535353;
 		}
 		.middle table thead th:first-child,
-		.middle table tbody td:first-child,
-		.middle table thead th:nth-child(3),
-		.middle table tbody td:nth-child(3) {
-			width: 50px;
-			max-width: 50px;
+		.middle table tbody td:first-child {
+			width: 30px;
+			max-width: 30px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
 			width: 100px;
 			max-width: 100px;
+		}
+		.middle table thead th:nth-child(3),
+		.middle table tbody td:nth-child(3) {
+			width: 34px;
+			max-width: 34px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
@@ -123,11 +126,14 @@
 		.middle table thead th:nth-child(7),
 		.middle table thead th:nth-child(8),
 		.middle table tbody td:nth-child(7),
-		.middle table tbody td:nth-child(8),
-		.middle table thead th:nth-child(9),
-		.middle table tbody td:nth-child(9) {
+		.middle table tbody td:nth-child(8) {
 			width: 100px;
 			max-width: 100px;
+		}
+		.middle table thead th:nth-child(9),
+		.middle table tbody td:nth-child(9) {
+			width: 50px;
+			max-width: 50px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -221,7 +227,7 @@
 						<form:input path="orderDtFrom" type="text" class="calendar" placeholder="from" value="${orderDtFrom }"/>
 						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
 						<form:input path="orderDtTo" type="text" class="calendar" placeholder="to" value="${orderDtTo }"/>
-						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" onKeyPress="if(event.keyCode==13){fn_search();}"/>
+						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" style="width: 80px;" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<form:input path="acKey" type="text" class="search" placeholder="사업자번호" title="사업자번호" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<form:input path="orderAcNm" type="text" class="search" placeholder="거래처상호" title="거래처상호" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<form:input path="pjNm" type="text" class="search" placeholder="프로젝트명" title="프로젝트명" onKeyPress="if(event.keyCode==13){fn_search();}"/>
@@ -261,7 +267,7 @@
 											</c:otherwise>
 										</c:choose>
 									</td>
-									<td><span title="${result.pjNm }">${result.pjNm }</span></td>
+									<td align="left"><span title="${result.pjNm }">${result.pjNm }</span></td>
 									<td>
 										<span>
 											<c:forEach var="pResult" items="${result.productList }" varStatus="pStatus">
@@ -271,7 +277,7 @@
 									</td>
 									<td><span title="${result.orderAcNm }">${result.orderAcNm }</span></td>
 									<td><span>${result.orderAcKey }</span></td>
-									<td><span title="${displayUtil.commaStr(result.orderAmount) }">${displayUtil.commaStr(result.orderAmount) }</span></td>
+									<td align="right"><span title="${displayUtil.commaStr(result.orderAmount) }">${displayUtil.commaStr(result.orderAmount) }</span></td>
 									<td><span>${result.orderEmpNm }</span></td>
 								</tr>
 							</c:forEach>

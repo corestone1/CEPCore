@@ -465,7 +465,7 @@
 										</c:otherwise>
 									</c:choose>
 								</td>
-								<td><span title="${orderVO.pjNm }">${orderVO.pjNm }</span></td>
+								<td><span class="textalignL" title="${orderVO.pjNm }">${orderVO.pjNm }</span></td>
 								<td>
 									<c:forEach var="pResult" items="${orderVO.productList }" varStatus="pStatus">
 										${pResult.pmNmCd }<c:if test="${pStatus.last eq false}">,</c:if>
@@ -474,7 +474,7 @@
 								<td><span title="${orderVO.orderAcNm }">${orderVO.orderAcNm }</span></td>
 								<td><span title="${orderVO.orderAcKey }">${orderVO.orderAcKey }</span></td>
 								<td>
-									<span title="${displayUtil.commaStr(orderVO.orderAmount) }">${displayUtil.commaStr(orderVO.orderAmount) }</span>
+									<span class="textalignR" title="${displayUtil.commaStr(orderVO.orderAmount) }">${displayUtil.commaStr(orderVO.orderAmount) }</span>
 									<input type="hidden" id="orderAmount" value="${orderVO.orderAmount }"/>
 								</td>
 								<td><span>${orderVO.orderEmpNm }</span></td>

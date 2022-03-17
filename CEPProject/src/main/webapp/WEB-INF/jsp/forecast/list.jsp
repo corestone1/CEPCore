@@ -88,8 +88,8 @@
 	        overflow:hidden; 
 	        text-overflow:ellipsis; 
 	        white-space:nowrap;
-	        width: 84%;
-	        max-width: 203px;
+	        width: 100%;
+	        max-width: 236px;
 	        margin: 0 auto;
 		}
 		.middle table tbody tr:hover {
@@ -685,31 +685,31 @@
 								<td>
 									<c:choose>
 										<c:when test="${result.salesCtClass eq 'P' }">
-											<span title="상품/서비스">상품/서비스</span>
+											상품/서비스
 										</c:when>
 										<c:otherwise>
-											<span title="유지보수">유지보수</span>
+											유지보수
 										</c:otherwise>
 									</c:choose>
 								</td>
 								<td class="textalignL"><span title="${result.mfAcNm}"><c:out value="${result.mfAcNm}"/></span></td>
-								<td class="textalignL"><span class="spBusiNm ftw400" title="${result.spKey }"><c:out value="${result.spBusiNm}"/></span></td>
+								<td class="textalignL"><span class="spBusiNm ftw400" title="${result.spKey }" style="max-width: 282px;"><c:out value="${result.spBusiNm}"/></span></td>
 								<td>
 									<c:choose>
 										<c:when test="${result.pmKey eq  'ST'}">
-											<span title="Storage">Storage</span>
+											Storage
 										</c:when>
 										<c:when test="${result.pmKey eq  'SV'}">
-											<span title="Server">Server</span>
+											Server
 										</c:when>
 										<c:when test="${result.pmKey eq  'BK'}">
-											<span title="Backup">Backup</span>
+											Backup
 										</c:when>
 										<c:when test="${result.pmKey eq  'SW'}">
-											<span title="S/W">S/W</span>
+											S/W
 										</c:when>
 										<c:when test="${result.pmKey eq  'ET'}">
-											<span title="기타">기타</span>
+											기타
 										</c:when>
 									</c:choose>
 								</td>
@@ -733,7 +733,7 @@
 										<c:if test="${result.fcSalesProfit ne null }"><c:out value="${displayUtil.commaStr(result.fcSalesProfit)}"/></c:if>
 									</label>
 								</td>
-								<td><span title="${result.empNm}"><label id="empNm"><c:out value="${result.empNm}"/></label></span></td>
+								<td><label id="empNm"><c:out value="${result.empNm}"/></label></td>
 								<td>
 									<c:choose>
 										<c:when test="${result.spState eq 'S' }">
