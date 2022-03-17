@@ -276,7 +276,7 @@
 						<form:input path="searchOderAcKeyNm" type="text" placeholder="매입처명"/>
 						<form:input path="orderDtFrom" type="text" placeholder="발주일자(from)" class="calendar fromDt" value="${searchParam.orderDtFrom}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="orderDtTo" type="text" placeholder="발주일자(to)" class="calendar toDt" value="${searchParam.orderDtTo}"/>
 						<form:select path="searchGubun">
-							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="PJ" label="유지보수명" />
 							<form:option value="CU" label="고객사" />
 						</form:select>
 						<form:input path="searchWord" type="text" placeholder="검색어"/>
