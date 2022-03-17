@@ -590,7 +590,7 @@
 		
 		//제품 찾기 클릭
 		function fn_findProduct(obj) {
-			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=750px,height=613px,left=600'); 
+			window.open('/mngCommon/product/popup/searchListPopup.do?pmNmDomId='+obj.id+'&pmKeyDomId='+obj.nextElementSibling.id+'&returnType=O','PRODUCT_LIST','width=1000px,height=713px,left=600'); 
 		}
 		
 		function fn_saveBtn(){

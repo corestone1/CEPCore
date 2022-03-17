@@ -69,6 +69,8 @@
 				AND PJ_SALE_EMP_KEY = #{pjSaleEmpKey}
 			</if>
 			
+			AND DELETE_YN = 'N'
+			
 		  ORDER BY PJ_KEY DESC
 	</select>
 

@@ -358,7 +358,7 @@
 						<form:input path="searchFromDate" type="text" class="calendar" placeholder="등록일자(from)"/>
 						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
 						<form:input path="searchToDate" type="text" class="calendar" placeholder="등록일자(to)"/>
-						<form:input path="searchAcNm" type="text" class="search" placeholder="상호명" />
+						<form:input path="searchAcNm" type="text" class="search" placeholder="상호명" onKeyPress="if(event.keyCode==13){fn_searchList();}" />
 						<span onclick="javascript:fn_searchList();"><img src="<c:url value='/images/icon_search.png'/>" /></span>
 					</div>
 					<div class="floatC"></div>

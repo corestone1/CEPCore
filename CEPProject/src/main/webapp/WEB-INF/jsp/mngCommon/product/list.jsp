@@ -38,14 +38,11 @@
 			font-size: 15px;
 		}
 		.contentsWrap .contents .top input[type="text"] {
-			width: 260px;
+			width: 170px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
-			background-image: url('/images/search_icon.png');
-			background-repeat: no-repeat;
-			background-position: 95% 50%;
 			font-size: 15px;
 			margin-bottom: 3px;
 		}
@@ -86,33 +83,35 @@
 			font-weight: 400;
 		}
 		.middle table thead th, .middle table tbody tr td {
-			padding: 10px 0;
+			padding: 10px;
 			border: 1px solid #edebef;
 		}
 		.middle table thead th:first-child,
 		.middle table tbody td:first-child {
-			width: 51px;
+			width: 31px;
 		}
 		.middle table thead th:nth-child(2),
-		.middle table tbody td:nth-child(2),
+		.middle table tbody td:nth-child(2) {
+			width: 50px;
+		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
 			width: 96px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 122px;
+			width: 96px;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
-			width: 226px;
+			width: 204px;
 		} 
 		
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6),
 		.middle table thead th:nth-child(7),
 		.middle table tbody td:nth-child(7) {
-			width: 323px;
+			width: 311px;
 		}
 		
 		.middle table tbody td:nth-child(8),
@@ -121,9 +120,19 @@
 		.middle table thead th:nth-child(9),
 		.middle table tbody td:nth-child(10), 
 		.middle table thead th:nth-child(10) {
-			width: 120px;
+			width: 118px;
 		}
-		.middle table tbody tr td > img {
+		
+		.middle table tbody tr td span {
+			display: block;
+			overflow:hidden; 
+			text-overflow:ellipsis; 
+			white-space:nowrap;
+			vertical-align: middle;
+			width: 100%;
+		}
+		
+		.middle table tbody tr td img {
 			width: 25px;
 			vertical-align: middle;
 		}
@@ -160,11 +169,6 @@
 	</style>
 	<script>
 		$(document).ready(function() {
-			
-			$('#span_search').click(function() {
-				document.listForm.action = "/mngCommon/product/list.do";
-	           	document.listForm.submit(); 
-			});
 			
 			$('#btn_delete').click(function() {
 				if($('input[name="gubun"]').is(':checked')){
@@ -241,9 +245,11 @@
 					       + '</ul>'
 					       + '</div>'
 					       + '</div>';
+					$(this).find("img").attr("style","transform:rotateX(180deg)");
 					$(this).parent().after(html);
 					$(this).parent().attr('class', 'viewOpen');
 				} else {
+					$(this).find("img").attr("style","transform:rotateX(360deg)");
 					$(this).parent().removeClass('viewOpen');
 					$(this).parent().next().remove();
 				}
@@ -255,6 +261,11 @@
 				//}
 			});
 		});
+		
+		function fn_search() {
+			document.listForm.action = "/mngCommon/product/list.do";
+           	document.listForm.submit(); 
+		}
 
 		function fn_addView(){
 			var url = '/mngCommon/product/writePopup.do';
@@ -302,27 +313,25 @@
 					<div class="floatR">
 						<form:select path="productDivision">
 							<form:option value="">구분</form:option>
-							<form:option value="HW">H/W</form:option>
-							<form:option value="SW">S/W</form:option>
-							<form:option value="SV">용역</form:option>
-							<form:option value="ET">기타</form:option>
+							<form:option value="PROD1000">H/W</form:option>
+							<form:option value="PROD2000">S/W</form:option>
+							<form:option value="PROD3000">용역</form:option>
+							<form:option value="PROD4000">기타</form:option>
 						</form:select>
 						<form:select path="productFlag">
-							<option value="">상태</option>
-							<option value="SALE">판매중</option>
-							<option value="EOL">EOL</option>
-							<option value="EOSS">EOSS</option>
+							<form:option value="">상태</form:option>
+							<form:option value="SALE">판매중</form:option>
+							<form:option value="EOL">EOL</form:option>
+							<form:option value="EOSL">EOSL</form:option>
 						</form:select>
-						<form:select path="productMake">
-							<option value="">제조사</option>
-						</form:select>
-						<form:input path="productName" type="text" placeholder="모델명"/>
-						<span id="span_search" class="veralignT"><img src="/images/icon_search.png" /></span>
+						<form:input path="productMake" type="text" placeholder="제조사" onKeyPress="if(event.keyCode==13){fn_search();}"/>
+						<form:input path="productName" type="text" placeholder="모델명" onKeyPress="if(event.keyCode==13){fn_search();}"/>
+						<span id="span_search" class="veralignT" onclick="javascript:fn_search()"><img src="/images/icon_search.png" /></span>
 					</div>
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="fl">
+					<table class="textalignC ftw200 excelSheet" id="fl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>
@@ -334,7 +343,7 @@
 								<th scope="row">세부모델명</th>
 								<th scope="row">출시일</th>
 								<th scope="row">EOL</th>
-								<th scope="row">EOSS</th>
+								<th scope="row">EOSL</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -342,14 +351,34 @@
 							<tr title='<c:out value="${result.pmRemark}"/>' class='kkoser'>
 								<td><input type="hidden" value="${result.pmKey }" /></td>
 								<td><c:out value="${status.count}"/></td>
-								<td><c:out value="${result.pmClassCd}"/></td>
-								<td><c:out value="${result.pmDetailClassCd}"/></td>
-								<td><c:out value="${result.acNm}"/></td>
-								<td><c:out value="${result.pmLineCd}"/></td>
-								<td><c:out value="${result.pmNmCd}"/>  <img class="cursorP" src="/images/arrow_down_18dp.png" /></td>
-								<td><c:out value="${result.pmReleaseDt}"/></td>
+								<td>
+									<c:choose>
+										<c:when test="${result.pmClassCd eq 'PROD1000'}">H/W</c:when>
+										<c:when test="${result.pmClassCd eq 'PROD2000'}">S/W</c:when>
+										<c:when test="${result.pmClassCd eq 'PROD3000'}">용역</c:when>
+										<c:when test="${result.pmClassCd eq 'PROD4000'}">기타</c:when>
+									</c:choose>
+								</td>
+								<td>
+									<c:choose>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1001'}">스토리지</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1002'}">서버</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1003'}">네트워크</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD1099'}">기타</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD2001'}">FCore 제품</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD2099'}">기타</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD3001'}">기술지원</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD3002'}">인력파견</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD3099'}">기타</c:when>
+										<c:when test="${result.pmDetailClassCd eq 'PROD4099'}">기타</c:when>
+									</c:choose>
+								</td>
+								<td align="center" ><span style="max-width: 187px;" title="${result.acNm }"><c:out value="${result.acNm}"/></span></td>
+								<td align="left" ><span style="max-width: 311px;" title="${result.pmLineCd }"><c:out value="${result.pmLineCd}"/></span></td>
+								<td align="left"><span class="floatL" style="max-width: 282px;" title="${result.pmNmCd }"><c:out value="${result.pmNmCd}"/></span><img class="cursorP" src="/images/arrow_down_18dp.png" /></td>
+								<td><c:out value="${displayUtil.displayDate(result.pmReleaseDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.eolDt)}"/></td>
-								<td><c:out value="${result.eossDt}"/></td>
+								<td><c:out value="${displayUtil.displayDate(result.eoslDt)}"/></td>
 								<input type='hidden' name='pmKey' value='<c:out value="${result.pmKey}"/>' />
 							</tr>
 							<tr class="dpNone" style="width:1662px; height: 100px; padding-top: 15px; overflow-y: auto; background-color:#bee2da; box-shadow: inset 0 7px 9px -3px rgba(0,0,0,0.1);">
@@ -367,8 +396,8 @@
 				<div class="bottom">
 					<div class="floatR">
 						<button value="수정" type="button" onclick="fn_modDetail();"><img class="cursorP" src="/images/btn_mod.png" /></button>
-						<button id="btn_delete" value="삭제"><img class="cursorP" src="/images/btn_del.png" /></button>
-						<button value="엑셀 다운로드"><img class="cursorP" src="/images/btn_excel.png" /></button>
+						<button id="btn_delete" value="삭제" type="button"><img class="cursorP" src="/images/btn_del.png" /></button>
+						<button value="엑셀 다운로드" id="excelExport" type="button"><img class="cursorP" src="/images/btn_excel.png" /></button>
 					</div>
 				</div>
 			</div>

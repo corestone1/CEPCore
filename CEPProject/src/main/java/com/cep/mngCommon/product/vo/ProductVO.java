@@ -33,7 +33,7 @@ public class ProductVO implements Serializable{
 	private String mfAcKey;
 	private String pmReleaseDt;
 	private String eolDt;
-	private String eossDt;
+	private String eoslDt;
 	private String pmRemark;
 	private String regDt;
 	private String regTm;
@@ -99,11 +99,11 @@ public class ProductVO implements Serializable{
 	public void setEolDt(String eolDt) {
 		this.eolDt = eolDt.replaceAll("-", "");
 	}
-	public String getEossDt() {
-		return eossDt;
+	public String getEoslDt() {
+		return eoslDt;
 	}
-	public void setEossDt(String eossDt) {
-		this.eossDt = eossDt.replaceAll("-", "");
+	public void setEoslDt(String eoslDt) {
+		this.eoslDt = eoslDt.replaceAll("-", "");
 	}
 	public String getPmRemark() {
 		return pmRemark;

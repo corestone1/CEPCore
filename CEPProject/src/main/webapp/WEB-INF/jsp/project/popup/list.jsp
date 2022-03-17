@@ -122,7 +122,8 @@
 	}
 	.middle table tbody tr {
 		display: table;
-	   width: 918px;
+	   	width: 918px;
+	   	background-color: #fff;
 	}
 	.popContainer .middle table thead th, .middle table tbody tr td {
 		padding: 10px 0;
@@ -211,7 +212,7 @@
 					<form:option value="AC">고객사</form:option>
 					<form:option value="NM">프로젝트명</form:option>
 				</form:select>
-				<form:input path="searchValue" type="text" placeholder="검색값"/>
+				<form:input path="searchKeyword" type="text" placeholder="검색값" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 				<span id="span_search" class="veralignB" onclick="javascript:fn_searchList();"><img src="/images/icon_search.png" /></span>
 			</div>
 		</div>

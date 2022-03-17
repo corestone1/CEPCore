@@ -81,6 +81,7 @@ public class ProductController {
 		
 		model.put("PM_CLASS", codeService.selectCodeList(codeSearchVO));
 		model.put("productVO", service.selectProductDetail(productVO));
+		model.put("displayUtil", new CepDisplayUtil());
 		
 		return "mngCommon/product/write";
 	}
@@ -139,9 +140,13 @@ public class ProductController {
 		return "mngCommon/product/popup/orderSearchList";
 	}
 	    
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/write.do")
 	@ResponseBody
-	public Map<String, Object> insert(@ModelAttribute("producntVO") ProductVO productVO, HttpServletResponse respons) throws Exception {
+	public Map<String, Object> insert(@ModelAttribute("producntVO") ProductVO productVO, HttpServletRequest request) throws Exception {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		HashMap<String, String> sessionMap = null;
 		
 		logger.debug("=============== writePopup ======================");
 		logger.debug("=== productVO.getPmDetailClassCd() = {}", productVO.getPmDetailClassCd());
@@ -151,10 +156,14 @@ public class ProductController {
 		logger.debug("=== productVO.getPmRemark()        = {}", productVO.getPmRemark());
 		logger.debug("=== productVO.getMfAcKey()         = {}", productVO.getMfAcKey());
 		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		productVO.setRegEmpKey("ynk@corestone.co.kr");
-		
-		service.insertProduct(productVO);
+		try {
+			sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
+			productVO.setRegEmpKey(sessionMap.get("empKey"));
+			
+			returnMap = service.insertProduct(productVO);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 		return returnMap;
 	}

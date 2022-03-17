@@ -3,11 +3,13 @@
  */
 package com.cep.mngCommon.product.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Service;
 import com.cep.mngCommon.product.service.ProductService;
 import com.cep.mngCommon.product.vo.ProductSearchVO;
 import com.cep.mngCommon.product.vo.ProductVO;
+import com.cmm.config.PrimaryKeyType;
+import com.cmm.service.ComService;
+import com.cmm.util.CepStringUtil;
 
 /**
  * @File Name : ProductServiceImpl.java
@@ -39,6 +44,9 @@ public class ProductServiceImpl implements ProductService {
 	@Resource(name="productMapper")
 	private ProductMapper mapper;
 	
+	@Resource(name="comService")
+	private ComService comService;
+	
 	@Override
 	public List<ProductVO> selectProductList(ProductSearchVO searchVO) throws Exception {
 		return mapper.selectProductList(searchVO);
@@ -55,11 +63,30 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void insertProduct(ProductVO productVO) throws Exception {
-		//Product Key 생성
-		productVO.setPmKey("PM000002");
+	@Transactional
+	public Map<String, Object> insertProduct(ProductVO productVO) throws Exception {
 		
-		mapper.insertProduct(productVO);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		String pmKey = "";
+		
+		try {
+			if(CepStringUtil.getDefaultValue(productVO.getPmKey(), "").equals("")) {
+				pmKey = comService.makePrimaryKey(PrimaryKeyType.PRODUCT);
+				productVO.setPmKey(pmKey);
+				
+				mapper.insertProduct(productVO);
+			} else {
+				mapper.updateProduct(productVO);
+			}
+			
+			returnMap.put("pmKey", productVO.getPmKey());
+			returnMap.put("successYN", "Y");
+		} catch(Exception e) {
+			e.printStackTrace();
+			returnMap.put("successYN", "N");
+		}
+		
+		return returnMap;
 	}
 
 }

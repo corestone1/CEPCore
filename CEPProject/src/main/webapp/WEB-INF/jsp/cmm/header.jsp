@@ -424,7 +424,7 @@
 						<ul>
 							<li><a href="/mngCommon/bill/list.do">계산서관리</a></li>
 							<li><a href="/mngCommon/account/list.do">거래처관리</a></li>
-							<!-- <li><a href="/mngCommon/product/list.do">제품관리</a></li> -->
+							<li><a href="/mngCommon/product/list.do">제품관리</a></li>
 							<!-- <li><a href="/mngCommon/employee/list.do">사용자관리</a></li>  --> <!-- 2차 오픈 -->
 						</ul>
 					</div>

@@ -651,7 +651,7 @@
 							<form:option value="AC">고객명</form:option>
 							<form:option value="BN">사업명</form:option>
 						</form:select>
-						<form:input type="text" path="searchValue"/>
+						<form:input type="text" path="searchValue" placeholder="검색어" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 						<span id="span_search" class="veralignT" onclick="javascript:fn_searchList()"><img src="/images/icon_search.png" /></span>
 					</div>
 					<div class="floatC"></div>
