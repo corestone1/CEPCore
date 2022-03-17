@@ -425,7 +425,7 @@
 								<th scope="row">No</th>
 								<th scope="row">계약번호</th>
 								<th scope="row">고객사</th>
-								<th scope="row">프로젝트명</th>
+								<th scope="row">유지보수명</th>
 								<th scope="row">계약일자</th>
 								<th scope="row">시작일</th>
 								<th scope="row">종료일</th>
@@ -450,7 +450,7 @@
 								<td><c:out value="${result.rowNum}"/></td>
 								<td><c:out value="${result.mtIntegrateKey}"/></td>
 								<td align="left">&nbsp;<span title="${result.mtAcNm}"><c:out value="${result.mtAcNm}"/></span></td>
-								<td align="left" class="listtd">&nbsp;<span title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
+								<td align="left" class="listtd">&nbsp;<span class="spBusiNm ftw400" title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtStartDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtEndDt)}"/></td>

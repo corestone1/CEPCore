@@ -412,11 +412,11 @@
 		}
 		/* 버튼이미지  */
 		.blueBtnStyle {
-			width: 115px;
+			width: 145px;
 		    height: 27px;
 		    background-color: #91a6f2;
 		    color: #ffffff;
-		    font-weight: bold;
+		    /* font-weight: bold; */
 		    border: 1px solid #91a6f2;
 		    padding-bottom: 2px;
 		    vertical-align: top;

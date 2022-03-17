@@ -114,7 +114,7 @@
 		}
 		input[type="text"] {
 		 	width: 191px;
-		    height: 32px;
+		    height: 30px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -192,7 +192,7 @@
 		}
 		textarea {
 			width: calc(100% - 20px);
-			height: 279px;
+			height: 286px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -792,7 +792,7 @@
 					<tr>
 						<td><label>*</label>계산서정보</td>
 						<td>
-							<input type="text" id="billFkKey" name="billFkKey" value="${paymentRequestInfo.billFkKey }" readOnly required/>
+							<input type="text" id="billFkKey" name="billFkKey" value="${paymentRequestInfo.billFkKey }" readOnly required style="background-color: #e9e9e9"/>
 							<c:choose>
 								<c:when test="${paymentRequestInfo.billFkKey eq null }">
 									<button type="button" onclick="fn_mappingBill('${paymentRequestInfo.paymentKey}');" style="vertical-align: middle;"><img src="<c:url value='/images/btn_mapping_bill.png'/>" /></button>

@@ -388,7 +388,7 @@
 								<td><c:out value="${result.mtWorkKey}"/></td>
 								<td align="left"><span title="${result.mtAcNm}"><c:out value="${result.mtAcNm}"/></span></td>
 								<td align="left"><span title="${result.acDirectorInfo}"><c:out value="${result.acDirectorNm}"/> / <c:out value="${result.acDirectorInfo}"/></span></td>
-								<td align="left"><span title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
+								<td align="left"><span class="spBusiNm ftw400" title="${result.mtNm}"><c:out value="${result.mtNm}"/></span></td>
 								<td><c:out value="${result.viewWorkStartDt}"/></td>
 								<td><c:out value="${result.viewWorkEndDt}"/></td>
 								<td><c:out value="${result.mtWorkTypeCd}"/></td>

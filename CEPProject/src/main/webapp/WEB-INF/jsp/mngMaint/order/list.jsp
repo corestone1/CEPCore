@@ -35,7 +35,7 @@
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
-			height: 38px;
+			height: 42px;
 			width: 115px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -161,7 +161,7 @@
 			margin-top: 22px;
 		}
 		.contentsWrap .contents .top input[type="text"] {
-		    height: 36px;
+		    height: 39px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -324,7 +324,7 @@
 							</c:choose>	
 								</td>
 								<td class="textalignL"><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
-								<td class="textalignL"><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
+								<td class="textalignL"><span class="spBusiNm ftw400" title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
 								<td class="textalignL"><span title="${list.mtOrderAcKeyNm}"><c:out value="${list.mtOrderAcKeyNm}"/></span></td>
 								<td><c:out value="${list.mtAcDirectorNm}"/></td>
 								<td><c:out value="${displayUtil.displayDate(list.mtOrderDt)}"/></td>

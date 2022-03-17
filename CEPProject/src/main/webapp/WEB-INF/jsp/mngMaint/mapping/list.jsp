@@ -35,7 +35,7 @@
 			font-weight: 300;
 		}
 		.contentsWrap .contents .top select {
-			height: 38px;
+			height: 42px;
 			width: 130px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -169,7 +169,7 @@
 			margin-top: 22px;
 		}
 		input[type="text"] {
-		    height: 36px;
+		    height: 40px;
 		    width: 150px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -296,7 +296,7 @@
 										</c:choose>
 									</td>
 									<td class="textalignL"><span title="${result.mtAcNm }">${result.mtAcNm }</span></td>
-									<td class="textalignL"><span title="${result.mtNm }">${result.mtNm }</span></td>
+									<td class="textalignL"><span class="spBusiNm ftw400" title="${result.mtNm }">${result.mtNm }</span></td>
 									<td class="textalignL"><span title="${result.mtPmNm }">${result.mtPmNm }</span></td>
 									<td class="textalignL"><span title="${result.mtOrderAcKeyNm }">${result.mtOrderAcKeyNm }</span></td>
 									<td><span>${displayUtil.makeActypeForm(result.mtOrderAcKey) }</span></td>

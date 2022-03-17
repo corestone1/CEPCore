@@ -129,7 +129,7 @@
 			max-width: 134px;
 		}
 		input[type="text"] {
-		    height: 36px;
+		    height: 39px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -157,14 +157,14 @@
 		
 		.contentsWrap .contents input[class^="calendar"] {
 			width: 110px;
-			height: 29.6px;
+			height: 39px;
 			background-image: url('/images/calendar_icon.png');
 			background-repeat: no-repeat;
 			background-position: 95% 50%;
 			font-size: 15px;
 		}
 		.contentsWrap .contents select {
-			height: 40px;
+			height: 41px;
 			width: 126px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -643,7 +643,7 @@
 					</div>
 					<div class="floatR">
 						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 100px"/>
-						<form:input path="fromDate" type="text" class="calendar fromDt" placeholder="계산서일정" style="height: 36px" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" class="calendar toDt" placeholder="계산서일정" style="height: 36px" value="${searchParam.toDate}"/>
+						<form:input path="fromDate" type="text" class="calendar fromDt" placeholder="계산서일정"  value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" class="calendar toDt" placeholder="계산서일정" value="${searchParam.toDate}"/>
 						<form:select path="searchGubun">
 							<form:option value="PJ" label="유지보수명" />
 							<form:option value="CU" label="고객사" />
@@ -703,7 +703,7 @@
 								</td>
 								<td class="textalignL" style="cursor:pointer;" onclick="javascript:moveBackOrderDetail('<c:out value="${list.mtIntegrateKey}"/>','<c:out value="${list.mtOrderKey}"/>','<c:out value="${list.mtWorkKey}"/>','<c:out value="${list.mtOrderType}"/>')"><span title="${list.mtAcNm}">&nbsp;<c:out value="${list.mtAcNm}"/></span></td>
 								<td class="textalignL" style="cursor:pointer;" onclick="javascript:moveBackOrderDetail('<c:out value="${list.mtIntegrateKey}"/>','<c:out value="${list.mtOrderKey}"/>','<c:out value="${list.mtWorkKey}"/>','<c:out value="${list.mtOrderType}"/>')">&nbsp;
-									<span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span>
+									<span class="spBusiNm ftw400" title="${list.mtNm}"><c:out value="${list.mtNm}"/></span>
 									<input type="hidden" id="<c:out value="${status.index}"/>-mtNm"  value="<c:out value="${list.mtNm}"/>" />
 								</td>
 								<td>
@@ -759,7 +759,7 @@
 								<td><span title="${list.billMfCd}"><c:out value="${list.billMfCd}"/></span></td>
 								
 								<td>
-									<input type="text" id="<c:out value="${status.index}"/>-paymentDt" name="paymentDt" class="calendar" value="<c:out value="${displayUtil.displayDate(list.paymentDt)}"/>" />
+									<input type="text" id="<c:out value="${status.index}"/>-paymentDt" name="paymentDt" class="calendar" value="<c:out value="${displayUtil.displayDate(list.paymentDt)}"/>" style="height:29.6px;"/>
 								</td>
 								<td>									
 									<c:choose>

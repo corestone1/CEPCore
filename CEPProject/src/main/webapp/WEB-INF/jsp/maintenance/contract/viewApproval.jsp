@@ -61,6 +61,7 @@
 		}
 		form .contents .bsc tr td:nth-child(2n) {
 			width: 374px;
+			max-width: 374px;
 			font-weight: 200;
 		}
 		/* form .contents .dtl tbody tr:last-child td {

@@ -61,7 +61,7 @@
 		.popContainer .contents #prodWrap {
 			margin: 0px 47px 0 45px;
 			width: 870px;			
-			height: 255px;
+			/* height: 255px; */
 			/* 
 			top: 107px;
 			left: 201px;	 		
@@ -1411,6 +1411,7 @@
 		function fn_editTotalAmount() {
 			//console.log('--1111111111111111');
 			document.getElementById('orderTotalAmount').readOnly = false;
+			$('#orderTotalAmount').css('background-color',"#fff");
 			alert("매출합계 금액 읽기전용을 해제하여 금액수정이 가능합니다.!!");
 			//console.log('11222222222222');
 			
@@ -1595,7 +1596,7 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 매출합계<button type="button" onclick="fn_editTotalAmount();"><img src="<c:url value='/images/edit_icon.png'/>" style="width: 19px;vertical-align: middle;margin-bottom: 1px;margin-left: 4px;"/></button></td>
 							<td class="tdContents">
-								<input type="text"  id="orderTotalAmount" name="mtSalesAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtSalesOrderVO.mtSalesAmount)}"/>" style="width: 163px;text-align: right;"/>	
+								<input type="text"  id="orderTotalAmount" name="mtSalesAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtSalesOrderVO.mtSalesAmount)}"/>" style="width: 163px;text-align: right;background-color: #e9e9e9;"/>	
 								<input type="hidden"  id="beforeOrderTotalAmount" value="<c:out value="${displayUtil.commaStr(mtSalesOrderVO.mtSalesAmount)}"/>"/>
 							</td>
 							<td class="tdTitle"><label>*</label> 발행구분</td>
@@ -1762,36 +1763,36 @@
 					
 				</div>
 				<div class="btnWrap floatL">
-				<div class="floatL">
-					<button type="button"><img src="<c:url value='/images/btn_prev.png'/>" onclick="fn_prevBtn();"/></button>
+					<div class="floatL">
+						<button type="button"><img src="<c:url value='/images/btn_prev.png'/>" onclick="fn_prevBtn();"/></button>
+					</div>
+					<div class="floatL btnCenter">
+						<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					<c:if test="${not empty mtSalesOrderVO.mtSalesOrderKey}">						
+						<button type="button" onclick="fn_deleteSalesOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
+					</c:if>
+					</div>
+					
+					<c:choose>
+						<c:when test="${mtContractCountInfo.mtProductCnt>0}">
+					<div class="floatR" >
+						<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
+					</div>
+						</c:when>
+						<c:otherwise>
+					<div class="floatR" >
+						<img src="<c:url value='/images/btn_non_next.png'/>"/>
+					</div>						
+						</c:otherwise>
+					</c:choose>
+					<%-- <c:if test="${mtContractCountInfo.mtProductCnt>0}">
+					<div class="floatR" >
+						<button type="button"><img src="<c:url value='/images/btn_next.png'/>" onclick="fn_nextBtn();"/></button>
+					</div>
+					</c:if> --%>
+					
+					<div class="floatN floatC"></div>
 				</div>
-				<div class="floatL btnCenter">
-					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-				<c:if test="${not empty mtSalesOrderVO.mtSalesOrderKey}">						
-					<button type="button" onclick="fn_deleteSalesOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
-				</c:if>
-				</div>
-				
-				<c:choose>
-					<c:when test="${mtContractCountInfo.mtProductCnt>0}">
-				<div class="floatR" >
-					<button type="button" onclick="fn_nextBtn();"><img src="<c:url value='/images/btn_next.png'/>"/></button>
-				</div>
-					</c:when>
-					<c:otherwise>
-				<div class="floatR" >
-					<img src="<c:url value='/images/btn_non_next.png'/>"/>
-				</div>						
-					</c:otherwise>
-				</c:choose>
-				<%-- <c:if test="${mtContractCountInfo.mtProductCnt>0}">
-				<div class="floatR" >
-					<button type="button"><img src="<c:url value='/images/btn_next.png'/>" onclick="fn_nextBtn();"/></button>
-				</div>
-				</c:if> --%>
-				
-				<div class="floatN floatC"></div>
-			</div>
 			</form>
 		</div>		
 		

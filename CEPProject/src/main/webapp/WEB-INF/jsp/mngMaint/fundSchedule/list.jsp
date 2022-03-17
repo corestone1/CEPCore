@@ -293,7 +293,7 @@
 									<c:set var = "callTotalAmount" value="${callTotalAmount + result.billAmount}" />
 									<tr>
 										<td class="textalignL"><span title="${result.mtAcNm}">&nbsp;<c:out value="${result.mtAcNm}" /></span></td>
-										<td class="textalignL"><span title="${result.mtNm}" >&nbsp;<c:out value="${result.mtNm}" /></span></td>
+										<td class="textalignL"><span class="spBusiNm ftw400" title="${result.mtNm}" >&nbsp;<c:out value="${result.mtNm}" /></span></td>
 										<td class="textalignL"><span title="${result.billAcNm}">&nbsp;<c:out value="${result.billAcNm}" /></span></td>
 										<td class="textalignR"><span title="${displayUtil.commaStr(result.billAmount)}"><c:out value="${displayUtil.commaStr(result.billAmount)}" />&nbsp;</span></td>
 										<td><c:out value="${result.saleEmpNm}" /></td>
@@ -367,7 +367,7 @@
 									<c:set var = "paymentTotalAmount" value="${paymentTotalAmount + result.billAmount}" />
 									<tr>
 										<td class="textalignL"><span title="${result.mtAcNm}">&nbsp;<c:out value="${result.mtAcNm}" /></span></td>
-										<td class="textalignL"><span title="${result.mtNm}" >&nbsp;<c:out value="${result.mtNm}" /></span></td>
+										<td class="textalignL"><span class="spBusiNm ftw400" title="${result.mtNm}" >&nbsp;<c:out value="${result.mtNm}" /></span></td>
 										<td class="textalignL"><span title="${result.billAcNm}">&nbsp;<c:out value="${result.billAcNm}" /></span></td>
 										<td class="textalignR"><span title="${displayUtil.commaStr(result.billAmount)}"><c:out value="${displayUtil.commaStr(result.billAmount)}" />&nbsp;</span></td>
 										<td><c:out value="${result.saleEmpNm}" /></td>

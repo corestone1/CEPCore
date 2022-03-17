@@ -160,7 +160,7 @@
 			padding-bottom: 0px;
 		}
 		.popContainer .contents .btnWrap {
-			margin : 20px 0px -14px 49px;			
+			margin : 20px 0px -14px -1px;			
 			width : 842px;
 			height : 32px;
 		}
@@ -177,7 +177,7 @@
 			table-layout: fixed;
 		}
 		.btnCenter {
-			width : calc(100% - 64px);
+			width : calc(100% - 34px);
 			text-align: center;
 		}
 		#m_div_accountList {
@@ -194,15 +194,17 @@
 		.popContainer .contents {
 			position: absolute;
 			width: calc(100% - 201px);
-			height: 533px;
+			height: 601px;
 			top: 107px;
 			left: 201px;			
 			z-index: 3;
 			background-color: #f6f7fc;
+			overflow-y: auto;
+			overflow-x: hidden;
 			
 		}
 		#prodWrap {
-			height: 307px;
+			/* height: 307px; */
 			width: 870px;
 			overflow-y: auto;
 		}
@@ -1005,6 +1007,7 @@
 		function fn_editTotalAmount() {
 			//console.log('--1111111111111111');
 			document.getElementById('orderTotalAmount').readOnly = false;
+			$('#orderTotalAmount').css('background-color',"#fff");
 			alert("발주합계 금액 읽기전용을 해제하여 금액수정이 가능합니다.!!");
 			//console.log('11222222222222');
 			
@@ -1131,7 +1134,7 @@
 							</td> -->
 							<td class="tdTitle"><label>*</label> 발주합계<button type="button" onclick="fn_editTotalAmount();"><img src="<c:url value='/images/edit_icon.png'/>" style="width: 19px;vertical-align: middle;margin-bottom: 1px;margin-left: 4px;"/></button></td>
 							<td class="tdContents">
-								<input type="text"  id="orderTotalAmount" name="orderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="width: 163px;text-align: right;"/>	
+								<input type="text"  id="orderTotalAmount" name="orderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtWorkOrderVO.orderAmount)}"/>" style="width: 163px;text-align: right;background-color: #e9e9e9;"/>	
 							</td>
 							<td class="tdTitle"><label>*</label> 발주일자</td>
 							<td class="tdContents">
@@ -1267,19 +1270,19 @@
 			</form>
 			</div>
 			
-		</div>
 		<div class="btnWrap floatL">
-				<div class="floatL">
-					<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
-				</div>
-				<div class="floatL btnCenter">
-					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-					<c:if test="${not empty mtWorkOrderVO.selectKey}">						
-					<button type="button" onclick="fn_deleteWorkOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
-					</c:if>
-				</div>
-				<div class="floatN floatC"></div>
+			<div class="floatL">
+				<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
 			</div>
+			<div class="floatL btnCenter">
+				<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+				<c:if test="${not empty mtWorkOrderVO.selectKey}">						
+				<button type="button" onclick="fn_deleteWorkOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
+				</c:if>
+			</div>
+			<div class="floatN floatC"></div>
+		</div>
+		</div>
 	</div>
 </body>
 </html>

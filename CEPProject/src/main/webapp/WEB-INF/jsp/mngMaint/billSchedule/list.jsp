@@ -169,7 +169,7 @@
 			max-width: 134px;
 		}
 		input[type="text"] {
-		    height: 36px;
+		    height: 39px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -197,7 +197,7 @@
 			background-position: 95% 50%;
 		}
 		.contentsWrap .contents .top select {
-			height: 40px;
+			height: 41px;
 			width: 126px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -361,7 +361,7 @@
 							</c:choose>	
 								</td>
 								<td class="textalignL"><span title="${list.mtAcNm}"><c:out value="${list.mtAcNm}"/></span></td>
-								<td class="textalignL"><span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
+								<td class="textalignL"><span class="spBusiNm ftw400" title="${list.mtNm}"><c:out value="${list.mtNm}"/></span></td>
 								<td class="textalignL"><span title="${list.billAcNm}"><c:out value="${list.billAcNm}"/></span></td>
 								<td><span title="${list.billNo}"><c:out value="${list.billNo}"/></span></td>								
 								<td class="textalignR"><span title="${displayUtil.commaStr(list.billAmount)}"><c:out value="${displayUtil.commaStr(list.billAmount)}"/></span></td>

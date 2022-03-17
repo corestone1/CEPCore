@@ -168,11 +168,11 @@
 			width: 90%;
 		}
 		.rqPmInfo {
-		    width: 115px;
+		    width: 125px;
 		    height: 27px;
 		    background-color: #D6EAEA;
 		    color: #2C8A91;
-		    font-weight: bold;
+		    /* font-weight: bold; */
 		    border: 1px solid #C2DEE1;
 		    margin-left: 8px;
 		}

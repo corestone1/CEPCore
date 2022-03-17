@@ -49,13 +49,13 @@
 			left: 201px;			
 			z-index: 3;
 			background-color: #f6f7fc;
-			/* overflow-y: auto; */
+			overflow-y: auto;
 		}
 		
 		.popContainer .contents #prodWrap {
 			margin: 0px 47px 0 45px;
 			width: 870px;			
-			height: 254px;
+			/* height: 254px; */
 			/* 
 			top: 107px;
 			left: 201px;	 		
@@ -1309,6 +1309,7 @@
 		function fn_editTotalAmount() {
 			//console.log('--1111111111111111');
 			document.getElementById('orderTotalAmount').readOnly = false;
+			$('#orderTotalAmount').css('background-color',"#fff");
 			alert("발주합계 금액 읽기전용을 해제하여 금액수정이 가능합니다.!!");
 			//console.log('11222222222222');
 			
@@ -1587,7 +1588,7 @@
 								</td> -->
 								<td class="tdTitle"><label>*</label> 발주합계<button type="button" onclick="fn_editTotalAmount();"><img src="<c:url value='/images/edit_icon.png'/>" style="width: 19px;vertical-align: middle;margin-bottom: 1px;margin-left: 4px;"/></button></td>
 								<td class="tdContents">
-									<input type="text"  id="orderTotalAmount" name="mtOrderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="width: 163px;text-align: right;"/>	
+									<input type="text"  id="orderTotalAmount" name="mtOrderAmount" readOnly amountOnly required value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>" style="width: 163px;text-align: right;background-color: #e9e9e9"/>	
 									<input type="hidden"  id="beforeOrderTotalAmount" value="<c:out value="${displayUtil.commaStr(mtBackOrderVO.mtOrderAmount)}"/>"/>
 								</td>
 								<td class="tdTitle"><label>*</label> 발주일자</td>

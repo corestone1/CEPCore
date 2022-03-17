@@ -129,7 +129,7 @@
 			max-width: 134px;
 		}
 		input[type="text"] {
-		    height: 36px;
+		    height: 39px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -163,7 +163,7 @@
 			background-position: 95% 50%;
 		}
 		.contentsWrap .contents select {
-			height: 40px;
+			height: 41px;
 			width: 126px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -830,7 +830,7 @@
 								<td><c:out value="${status.count}"/></td>
 								<td class="textalignL" style="cursor:pointer;" onclick="javascript:moveSalesPlan('<c:out value="${list.salesCtFkKey}"/>','<c:out value="${list.mtSalesOrderKey}"/>')"><span title="${list.mtAcNm}">&nbsp;<c:out value="${list.mtAcNm}"/></span></td>
 								<td class="textalignL" style="cursor:pointer;" onclick="javascript:moveSalesPlan('<c:out value="${list.salesCtFkKey}"/>','<c:out value="${list.mtSalesOrderKey}"/>')">&nbsp;
-									<span title="${list.mtNm}"><c:out value="${list.mtNm}"/></span>
+									<span class="spBusiNm ftw400" title="${list.mtNm}"><c:out value="${list.mtNm}"/></span>
 									<input type="hidden" id="<c:out value="${status.index}"/>-mtNm"  value="<c:out value="${list.mtNm}"/>" />
 								</td>
 								<td>

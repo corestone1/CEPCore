@@ -84,7 +84,7 @@
 		}
 		.listForm .contents .bsc tbody {
 			border-bottom: 2px solid #bfe3db;
-			height: 580px;
+			/* height: 580px; */
 		}
 		.listForm .contents .bsc tr td {
 			color: #0e8a67;
@@ -348,11 +348,11 @@
 		}
 		/* 버튼이미지  */
 		.blueBtnStyle {
-			width: 115px;
+			width: 140px;
 		    height: 26px;
 		    background-color: #91a6f2;
 		    color: #ffffff;
-		    font-weight: bold;
+		    /* font-weight: bold; */
 		    border: 1px solid #91a6f2;
 		    padding-bottom: 2px;
 		    vertical-align: top;
@@ -470,7 +470,7 @@
 							</form>
 						</div>
 					</div>
-					<div class="floatL" style="margin-top: 21px">
+					<div class="floatL" style="margin-top: 183px">
 						<button type="button" title="유지보수상세이동" class="blueBtnStyle" onclick="goDetailInfo('<c:out value="${basicInfo.mtKey}"/>')">유지보수상세이동</button>
 						<%-- <button type="button" title="기본정보수정" value="수정" onclick="goDetailInfo('<c:out value="${basicInfo.mtKey}"/>')"><img class="cursorP" src="<c:url value='/images/btn_basic_mod.png'/>" /></button> --%>
 					</div>
