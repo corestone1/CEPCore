@@ -249,7 +249,7 @@
 						<form:input path="orderEmpNm" type="text" name="" placeholder="담당자" title="담당자" style="width: 90px;"/>
 						<form:input path="mtOrderAcKey" type="text" class="search" placeholder="사업자번호" title="사업자번호"/>
 						<form:select path="searchGubun">
-							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="PJ" label="유지보수명" />
 							<form:option value="CU" label="고객사" />
 							<form:option value="BA" label="매입처" />
 						</form:select>

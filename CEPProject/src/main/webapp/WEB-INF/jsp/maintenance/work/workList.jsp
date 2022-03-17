@@ -368,7 +368,7 @@
 								<th scope="row">작업번호</th>
 								<th scope="row">고객사</th>
 								<th scope="row">고객담당자</th>
-								<th scope="row">프로젝트명</th>
+								<th scope="row">유지보수명</th>
 								<th scope="row">작업시작일</th>
 								<th scope="row">작업종료일</th>
 								<th scope="row">작업유형</th>

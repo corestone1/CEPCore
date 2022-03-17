@@ -251,7 +251,7 @@
 			<div class="contents mgauto">
 				<div class="top">
 					<div class="floatL">
-						<div class="title floatL"><label class="ftw500">수금/지급 현황</label></div>
+						<div class="title floatL"><label class="ftw500">수금/지급 일정</label></div>
 						<%-- <div class="addBtn floatL cursorP" onclick="javascript:fn_addView('writeBasic')"><img src="<c:url value='/images/btn_add.png'/>" /></div> --%>
 					</div>
 					<div class="floatR">
@@ -263,7 +263,7 @@
 						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;">~</label><form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>						
 						<form:input path="searchSaleEmpNm" type="text" placeholder="영업담당" style="width: 70px"/>
 						<form:select path="searchGubun">
-							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="PJ" label="유지보수명" />
 							<form:option value="CU" label="고객사" />
 							<form:option value="BA" label="거래처" />
 						</form:select>						

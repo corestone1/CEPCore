@@ -799,7 +799,7 @@
 				<input type="hidden" id="workClass" name="workClass" value="mtWork"/>		
 				<table>
 					<tr>
-						<td class="tdTitle"><label>*</label>프로젝트명</td>
+						<td class="tdTitle"><label>*</label>유지보수명</td>
 						<td class="tdContents" colspan="5">
 							<input type="text" id="mtNm" name="mtNm" value="<c:out value="${basicWorkInfo.mtNm}"/>" class="search" onclick="fn_searchListPop()" onkeypress="return false;" autocomplete="off" required/>
 							<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicWorkInfo.mtIntegrateKey}"/>"/>

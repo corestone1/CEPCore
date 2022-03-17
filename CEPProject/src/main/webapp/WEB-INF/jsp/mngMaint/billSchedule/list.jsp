@@ -310,7 +310,7 @@
 						</form:select>
 						<form:input path="fromDate" type="text" class="calendar fromDt" value="${searchParam.fromDate}"/><label style="vertical-align: -webkit-baseline-middle;"> ~ </label><form:input path="toDate" type="text" class="calendar toDt" value="${searchParam.toDate}"/>
 						<form:select path="searchGubun">
-							<form:option value="PJ" label="프로젝트명" />
+							<form:option value="PJ" label="유지보수명" />
 							<form:option value="CU" label="거래처" />
 						</form:select>
 						<form:input path="searchWord" type="text" placeholder="검색어"/>

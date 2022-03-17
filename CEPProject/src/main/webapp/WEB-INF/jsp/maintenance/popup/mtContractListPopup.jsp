@@ -11,6 +11,9 @@
 <script src="<c:url value='/js/popup.js'/>"></script>
 <script src="<c:url value='/js/common.js'/>"></script>
 <style>
+	body {
+		overflow: hidden !important;
+	}
 	fieldset {
 		border: none;
 		marign: 0;
@@ -100,10 +103,12 @@
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2) {
 		width: 158px;
+		max-width: 158px;
 	}
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
 		width: 388px;
+		max-width: 388px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(4),
@@ -111,6 +116,7 @@
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
 		width: 107px;
+		max-width: 107px;
 	}
 	
 	.popContainer .top .floatR select {
@@ -153,6 +159,16 @@
 		background-color: #ddf0ec;
 	}	
 	
+	.middle table tbody tr td span {
+		display: inline-block;
+		overflow:hidden; 
+		text-overflow:ellipsis; 
+		white-space:nowrap;
+		margin-left: 15px;
+		vertical-align: middle;
+   		width: 97%;
+   		margin: 0 auto;
+	}
 </style>
 <script type="text/javaScript">
 	$(document).ready(function(){
@@ -212,8 +228,8 @@
 						<c:forEach var="result" items="${resultList}" varStatus="status">
 	            			<tr>
 	            				<td><a href="#" onclick="javascript:fn_selectItem('${result.mtIntegrateKey}', '${result.mtNm}');" class="btn btn_gray">선택</a></td>
-								<td><c:out value="${result.mtAcNm}"/></td>
-								<td><c:out value="${result.mtNm}"/></td>
+								<td class="textalignL"><span title="${result.mtAcNm}">&nbsp;<c:out value="${result.mtAcNm}"/></span></td>
+								<td class="textalignL"><span title="${result.mtNm}">&nbsp;<c:out value="${result.mtNm}"/></span></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtCtDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtStartDt)}"/></td>
 								<td><c:out value="${displayUtil.displayDate(result.mtEndDt)}"/></td>

@@ -667,7 +667,7 @@
 							</c:if>
 								
 								<%-- <button type="button" value="삭제" onclick="fn_deleteWorkPmBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
-								<button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+								<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 								
 								<input type="hidden" id="mtWorkEmpKey"  name="mtWorkEmpKey" value="${basicWorkInfo.mtWorkEmpKey}" />
 								<input type="hidden" id="regEmpKey"  name="regEmpKey" value="${basicWorkInfo.regEmpKey}" />
