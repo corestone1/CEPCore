@@ -730,7 +730,7 @@
 								<td class="textalignR">
 									<label id="profitAmount">
 										<c:if test="${result.fcSalesProfit eq null }">0</c:if>
-										<c:if test="${result.fcSalesProfit ne null }"><c:out value="${displayUtil.commaStr(result.fcSalesProfit)}"/></c:if>
+										<c:if test="${result.fcSalesProfit ne null }"><c:out value="${displayUtil.commaStr(result.fcSalesAmount - result.fcBuyAmount)}"/></c:if>
 									</label>
 								</td>
 								<td><label id="empNm"><c:out value="${result.empNm}"/></label></td>

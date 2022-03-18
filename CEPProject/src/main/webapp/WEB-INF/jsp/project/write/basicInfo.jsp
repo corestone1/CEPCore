@@ -622,7 +622,7 @@
 		//Forecast연계
 		function fn_forecastPop() {
 			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
-			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P','FORECAST_LIST','width=1372px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P&spState=S','FORECAST_LIST','width=1372px,height=713px,left=600');
 		}
 		
 		function pop_forecastCall(returnKey,returnNm) {
