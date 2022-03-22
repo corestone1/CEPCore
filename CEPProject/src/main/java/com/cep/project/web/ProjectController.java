@@ -302,13 +302,14 @@ public class ProjectController {
 	}
 	
 	@RequestMapping(value="/deleteProject.do", method=RequestMethod.POST)
-	public String deleteProject(HttpServletRequest request, @ModelAttribute("searchVO") ProjectVO searchVO, ModelMap model) throws Exception {
+	@ResponseBody
+	public Map<String, Object> deleteProject(HttpServletRequest request, @RequestBody ProjectVO searchVO, ModelMap model) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap = service.deleteProject(request, searchVO);
 		
 		model.put("resultMap", returnMap);
 		
-		return "project/list";
+		return returnMap;
 	}
 	
 	@RequestMapping(value="/write/biddingInfo.do", method={RequestMethod.GET, RequestMethod.POST})

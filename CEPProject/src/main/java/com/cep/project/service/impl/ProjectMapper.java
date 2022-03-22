@@ -87,7 +87,15 @@ public interface ProjectMapper {
 	 * @return 
 	 * @exception
 	 */
-	public Map<String, Object> deleteProject(ProjectVO projectVO);
+	public int deleteProject(ProjectVO projectVO);
+	
+	/**
+	 * 프로젝트 계약 정보를 삭제한다.
+	 * @param projectVO - 삭제할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public int deleteContract(ProjectVO projectVO);
 	
 	/**
 	 * 프로젝트 입찰 상세정보를 조회한다.

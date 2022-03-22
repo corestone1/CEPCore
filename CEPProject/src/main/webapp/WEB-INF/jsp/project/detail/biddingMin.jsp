@@ -399,7 +399,7 @@
 			if($(parent.document).find(".title ul li.on").attr("id").includes("BD")) {
 				$(parent.document).find("#modMinInfo").addClass("dpNone");
 				$(parent.document).find("#delMinInfo").addClass("dpNone");
-			}
+			} 
 		});
 		
 		function fn_addView(link){

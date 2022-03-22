@@ -202,7 +202,7 @@
 	
 	function fn_searchList()
 	{
-		document.forecastForm.action = "/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P&spState=S";
+		document.forecastForm.action = "/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P";
        	document.forecastForm.submit(); 
 	}
 	

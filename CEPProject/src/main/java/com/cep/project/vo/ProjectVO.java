@@ -20,6 +20,7 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String pjInspectDt;
 	private String pjEndDt;
 	private String ctDt;
+	private String pjStatusCdNm;
 	private String pjStatusCd;
 	private String pjSaleEmpKey;
 	private String pjSupportEmpKey;
@@ -100,6 +101,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setPjStatusCd(String pjStatusCd) {
 		this.pjStatusCd = pjStatusCd;
+	}
+	public String getPjStatusCdNm() {
+		return pjStatusCdNm;
+	}
+	public void setPjStatusCdNm(String pjStatusCdNm) {
+		this.pjStatusCdNm = pjStatusCdNm;
 	}
 	public String getPjSaleEmpKey() {
 		return pjSaleEmpKey;

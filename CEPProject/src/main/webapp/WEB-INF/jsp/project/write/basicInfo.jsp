@@ -300,7 +300,7 @@
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
 			    		if($(".uploadName").val() != null && $(".uploadName").val() != "" && $(".uploadName").length != 0) {
-			    			if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			    			if($("#ipt_pjKey").val() == null || $("#ipt_pjKey").val() == "" || $("#ipt_pjKey").val().length == 0) {
 				    			$("#fileCtKey").val(response.pjKey);
 				    			$("#filePjNm").val($("#pjNm").val());
 				    		}
@@ -317,7 +317,7 @@
 			       				cache: false, 
 			       				success: function (data) { 
 			       					if(data.successYN=='Y') {
-			       						if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			       						if($("#ipt_pjKey").val() == null || $("#ipt_pjKey").val() == "" || $("#ipt_pjKey").val().length == 0) {
 			    				    		alert('프로젝트 기본 정보가 저장되었습니다.');
 			    				    		countSave++;
 			    				    		
@@ -346,7 +346,7 @@
 			       				} 
 			       			});
 			    		} else {
-			    			if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			    			if($("#ipt_pjKey").val() == null || $("#ipt_pjKey").val() == "" || $("#ipt_pjKey").val().length == 0) {
 				    			alert("프로젝트 기본 정보가 저장되었습니다.");
 				    		} else {
 				    			alert("프로젝트 기본 정보가 수정되었습니다.");
@@ -365,7 +365,7 @@
 			    		
 			    		
 			    	} else {
-			    		if($("#pjKey").val() == null || $("#pjKey").val() == "" || $("#pjKey").val().length == 0) {
+			    		if($("#ipt_pjKey").val() == null || $("#ipt_pjKey").val() == "" || $("#ipt_pjKey").val().length == 0) {
 			    			alert("프로젝트 기본 정보 저장이 실패하였습니다.");
 			    		} else {
 			    			alert("프로젝트 기본 정보 수정이 실패하였습니다.");
@@ -393,11 +393,11 @@
 				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
 			}
 			else {
-				if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+				if($('#ipt_pjKey').val() != "" || $('#ipt_pjKey').val().length != 0) {
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey": $("#pjKey").val(),
+							"pjKey": $("#ipt_pjKey").val(),
 							"workClass":"입찰_첨부파일"
 					}
 					var button = new Array;
@@ -428,7 +428,7 @@
 				fn_searchAccoutList(this, $(this).val());				
 			}); 
 			
-			if($('#pjKey').val() != "" || $('#pjKey').val().length != 0) {
+			if($('#ipt_pjKey').val() != "" || $('#ipt_pjKey').val().length != 0) {
 				$('.btnSave').children().eq(0).html('');
 				$('.btnSave').children().eq(0).html('<img src="<c:url value='/images/btn_mod.png'/>" />'); 
 			}
@@ -622,7 +622,7 @@
 		//Forecast연계
 		function fn_forecastPop() {
 			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
-			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P&spState=S','FORECAST_LIST','width=1372px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P','FORECAST_LIST','width=1372px,height=713px,left=600');
 		}
 		
 		function pop_forecastCall(returnKey,returnNm) {
@@ -698,7 +698,7 @@
 				<input type="text" id="no" style="border: 1px solid #000; width: 200px;"/> -->
 				<input type="hidden" id="dialogId" />
 				<input type="hidden" id="spKey" name="spKey" value="${resultList[0].spKey }"/>
-				<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
+				<input type="hidden" id="ipt_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 				<input type="hidden" id="workClass" name="workClass" value="프로젝트"/>
 				<input type="hidden" id="newKey" name="newKey" value="<c:out value=""/>"/>
 				<img class="dpNone" id="sp_delete_forecast" src="<c:url value='/images/btn_del_gray.png'/>" onclick="fn_deleteForecast();" />

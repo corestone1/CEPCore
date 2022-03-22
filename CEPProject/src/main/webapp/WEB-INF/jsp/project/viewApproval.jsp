@@ -130,7 +130,7 @@
 					<div>
 						<div class="stitle cg">기본정보</div>
 						<div id="basicForm">
-							<table class="bsc" style="width: 100%;">
+							<table class="bsc excelSheet" style="width: 100%;">
 								<tr>
 									<td>프로젝트명</td>
 									<td><span class="oftext">${pjInfo[0].pjNm }</span></td>
@@ -157,7 +157,7 @@
 							매출 정보
 						</div>
 						<div class="">
-							<table class="dtl" style="width: 100%;">
+							<table class="dtl excelSheet" style="width: 100%;">
 								<thead>
 									<tr>
 										<th>매출처</th>
@@ -196,7 +196,7 @@
 							매입 정보
 						</div>
 						<div class="">
-							<table class="dtl" style="width: 100%;">
+							<table class="dtl excelSheet" style="width: 100%;">
 								<thead>
 									<tr>
 										<th>계산서 매핑 여부</th>
@@ -235,7 +235,7 @@
 							보증 보험 정보
 						</div>
 						<div class="">
-							<table class="dtl" style="width: 983px;">
+							<table class="dtl excelSheet" style="width: 983px;">
 								<thead>
 									<tr>
 										<th>보증보험</th>
@@ -296,7 +296,7 @@
 							이익
 						</div>
 						<div class="">
-							<table class="dtl" style="width: 637px;">
+							<table class="dtl excelSheet" style="width: 637px;">
 								<thead>
 									<tr>
 										<th>영업이익</th>
@@ -305,9 +305,9 @@
 									</tr>
 								</thead>
 								<tr>
-									<td class="textalignR"><input type="text" value="${displayUtil.commaStr(sSum - pSum - gSum) }" readonly /></td>
-									<td class="textalignR"><input type="text" value="${displayUtil.commaStr(sSum - pSum) }" readonly /></td>
-									<td><input type="text" value="${(sSum-pSum) / sSum * 100 }%" readonly /></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(sSum - pSum - gSum) }"  /></td>
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(sSum - pSum) }" /></td>
+									<td><c:out value="${(sSum-pSum) / sSum * 100 }%" /></td>
 								</tr>
 								<tr></tr>
 							</table>
@@ -315,11 +315,11 @@
 					</div>
 					<div class="floatC"></div>
 				</div>
-				<%-- <div class="btnWrap rt floatR">
+				<div class="btnWrap rt floatR">
 					<div>
-						<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
-				</div> --%>
+				</div> 
 			</div>
 		</div>	
 	</form>

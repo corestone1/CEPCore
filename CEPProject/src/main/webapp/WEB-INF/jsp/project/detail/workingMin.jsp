@@ -222,6 +222,9 @@
 		.contents .dtl tbody tr td img {
 			vertical-align: middle;
 		}
+		input[class="tRadio"]:checked+label:before {
+			line-height: 23px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -289,7 +292,12 @@
 		        	success:function(data){		  
 		        		//alert(data.accountList[0].acNm);
 		        		//선택 목록 생성
-		        		alert("삭제 되었습니다.!");
+		        		if(data.successYN == 'Y') {
+		        			alert("삭제 되었습니다.");
+		        		} else {
+		        			alert("삭제를 실패하였습니다.");
+		        		}
+		        		
 		        		location.reload();
 		            },
 		        	error: function(request, status, error) {
@@ -337,7 +345,7 @@
 									<c:forEach var="installList" items="${insertBaseList}" varStatus="status">
 										<tr>
 											<td class="textalignC" onclick="event.cancelBubble = true;">
-												<input type="radio" class="tCheck" name="m_gubun" id="check1${status.count}"  value="${status.count}" />
+												<input type="radio" class="tRadio" name="m_gubun" id="check1${status.count}"  value="${status.count}" />
 												<label for="check1${status.count}" class="cursorP"/>
 											</td>
 											<td class="textalignC"><c:out value="${status.count}"/></td>

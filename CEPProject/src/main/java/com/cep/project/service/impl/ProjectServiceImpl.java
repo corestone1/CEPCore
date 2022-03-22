@@ -37,6 +37,7 @@ import com.cmm.service.FileMngService;
 import com.cmm.service.impl.ComMapper;
 import com.cmm.util.CepStringUtil;
 import com.cmm.vo.FileVO;
+import com.cmm.vo.PurchaseVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -46,6 +47,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Resource(name="projectMapper")
 	private ProjectMapper mapper;
+	
+	@Resource(name="projectDetailMapper")
+	private ProjectDetailMapper detailMapper;
 	
 	@Resource(name="forecastMapper")
 	private ForecastMapper forecastMapper;
@@ -170,11 +174,13 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> deleteProject(HttpServletRequest request, ProjectVO projectVO) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		HashMap<String, String> session = null;
 		ProjectVO deleteVo = null;
+		ForecastVO forecastVO = new ForecastVO();
 		
 		try {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
@@ -184,7 +190,16 @@ public class ProjectServiceImpl implements ProjectService {
 			deleteVo.setPjKey(projectVO.getPjKey());
 			
 			mapper.deleteProject(deleteVo);
-		    
+			
+			mapper.deleteContract(deleteVo);
+			
+			String spKey = detailMapper.selectProjectDetail(deleteVo).get("spKey").toString();
+			forecastVO.setSpKey(spKey);
+			forecastVO.setSpState("A");
+			forecastVO.setRegEmpKey(session.get("empKey"));
+			
+			forecastMapper.updateBasic(forecastVO);
+			
 	    	returnMap.put("successYN", "Y");
 			
 		} catch(Exception e) {

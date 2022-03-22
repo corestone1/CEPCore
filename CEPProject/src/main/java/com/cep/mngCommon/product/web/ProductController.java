@@ -22,6 +22,7 @@ import com.cep.mngCommon.product.service.ProductService;
 import com.cep.mngCommon.product.vo.ProductSearchVO;
 import com.cep.mngCommon.product.vo.ProductVO;
 import com.cmm.util.CepDisplayUtil;
+import com.cmm.util.CepStringUtil;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -82,6 +83,7 @@ public class ProductController {
 		model.put("PM_CLASS", codeService.selectCodeList(codeSearchVO));
 		model.put("productVO", service.selectProductDetail(productVO));
 		model.put("displayUtil", new CepDisplayUtil());
+		model.put("manufacturerList", CepStringUtil.getManuFacturerList());
 		
 		return "mngCommon/product/write";
 	}

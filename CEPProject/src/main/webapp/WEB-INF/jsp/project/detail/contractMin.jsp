@@ -405,7 +405,10 @@
 			})
 			
 			$(parent.document).find("#modMinInfo").removeClass("dpNone");
-			$(parent.document).find("#delMinInfo").removeClass("dpNone");
+			
+			if($(parent.document).find(".title ul li.on").attr("id").includes("CT")) {
+				$(parent.document).find("#delMinInfo").addClass("dpNone");
+			}
 			
 		});
 		
