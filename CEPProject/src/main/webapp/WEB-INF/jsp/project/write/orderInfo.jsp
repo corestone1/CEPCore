@@ -93,6 +93,11 @@
 			font-size: 14px;
 			margin-bottom: 3px;
 		}
+		.popContainer input[id="productSum"]:read-only {
+		    background-color: transparent;
+		    border: none;
+		    padding: 0 3px;
+		}
 		.popContainer input[class="search"] {
 			/* height: 38px; */
 			height: 32px;
@@ -552,12 +557,15 @@
 					updateSum += removeCommas($(this).val()) * 1;
 				});
 				
+				
 				if(orderTotalAmount >= updateSum) {
 					
 				} else {
 					//발주합계 금액 계산
 					$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
 				}
+				
+				$("#productSum").val(addCommas(updateSum));
 			});
 			
 		}
@@ -784,6 +792,19 @@
 			if(parseInt('${orderSelectBoxList.size()}') >0 ){
 				$('#saveOrderAcKey').val("${orderVO.pjOrderKey}").attr("selected", "true");
 			}
+			
+			var totalOrderUprice = 0;
+			$("input[name='orderUprice']").each(function() {
+				var id = $(this).attr('id').replace(/[^0-9]/g,'');
+				totalOrderUprice += Number(removeCommas($(this).val())) * Number($("#prodList-" + id + "-orderQuantity").val());
+			});
+			
+			if(totalOrderUprice == 0) {
+				
+			} else {
+				$("#productSumWrap").html("<label style='font-size:14px; color:#f59348'>&nbsp;&nbsp;※ 제품합계 : </label><input type='text' id='productSum' value='" + addCommas(totalOrderUprice) + "' readonly />");
+			}
+			
 			
 			fn_calculate();
 			
@@ -1093,8 +1114,9 @@
 							<table class="subject">
 								<tr> 
 									<td class="subTitle" style="border-top: none; padding-top: 15px;"  colspan="6">
-										<label class="ftw400">제품정보</label>&nbsp;
+										<label class="ftw400">제품정보</label>&nbsp; 
 										<img src="<c:url value='/images/btn_add-pop.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>
+										<span id="productSumWrap"></span>
 									</td>
 									<%-- <td colspan="5" class="floatL">
 										<img src="<c:url value='/images/btn_add.png'/>" onclick="fn_addInfoTable();"  style="vertical-align: middle"/>

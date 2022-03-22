@@ -142,7 +142,7 @@
 		}
 		.popContainer .contents input[id^="salesBillFcDt"],
 		.popContainer .contents input[id^="salesCollectFcDt"] {
-			width: 115px !important;
+			width: 107px !important;
 		}
 		#m_div_accountList {
 			left: 136px;
@@ -347,8 +347,8 @@
 					rowItem += "<input type='hidden' name='isNew' value='Y' />";
 					/* rowItem += "<input type='hidden' name='ctKey' value='' />"; */
 					/* </form></td>"; */
-					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;발행일 :&nbsp;<input type='text' id='salesBillFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesBillFcDt' placeholder='발행일' value='' required/>"; 
-					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;수금일 :&nbsp;<input type='text' id='salesCollectFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesCollectFcDt' placeholder='수금일' value='' required/></td>"; 
+					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;발행예정일 :&nbsp;<input type='text' id='salesBillFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesBillFcDt' placeholder='발행예정일' value='' required/>"; 
+					rowItem += "&nbsp;&nbsp;&nbsp;&nbsp;수금예정일 :&nbsp;<input type='text' id='salesCollectFcDt"+(beforeTurn+i+1)+"' class='calendar' name='salesCollectFcDt' placeholder='수금예정일' value='' required/></td>"; 
 					rowItem += "</tr>";
 					
 					$('#addRow').append(rowItem);
@@ -674,8 +674,8 @@
 									<input type='hidden' name='salesTurn' value='${result.salesTurn }' />
 									<%-- <input type='hidden' name='salesTurnAmount' id="sAmount${status.count }" value='${result.salesTurnAmount }' /> --%>
 									<input type='hidden' name='isNew' value='N' />
-									&nbsp;&nbsp;&nbsp;발행일 :&nbsp;<input type="text" id="salesBillFcDt${result.salesTurn }" class="calendar" name="salesBillFcDt" placeholder="발행일" value="<c:out value="${displayUtil.displayDate(result.salesBillFcDt)}"/>" required/>
-									&nbsp;&nbsp;&nbsp;수금일 :&nbsp;<input type="text" id="salesCollectFcDt${result.salesTurn }" class="calendar" name="salesCollectFcDt" placeholder="수금일" value="<c:out value="${displayUtil.displayDate(result.salesCollectFcDt)}"/>" required/>
+									&nbsp;&nbsp;&nbsp;발행예정일 :&nbsp;<input type="text" id="salesBillFcDt${result.salesTurn }" class="calendar" name="salesBillFcDt" placeholder="발행예정일" value="<c:out value="${displayUtil.displayDate(result.salesBillFcDt)}"/>" required/>
+									&nbsp;&nbsp;&nbsp;수금예정일 :&nbsp;<input type="text" id="salesCollectFcDt${result.salesTurn }" class="calendar" name="salesCollectFcDt" placeholder="수금예정일" value="<c:out value="${displayUtil.displayDate(result.salesCollectFcDt)}"/>" required/>
 								</td>
 							</tr>
 						</c:forEach>

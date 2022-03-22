@@ -20,6 +20,7 @@
 		<result property="spKey" column="SP_KEY" />
 		<result property="searchFlag" column="SEARCH_FLAG"/>
 		<result property="searchValue"  column="SEARCH_VALUE"/>
+		<result property="searchEmpNm"  column="SEARCH_EMP_NM"/>
 		<result property="totalSalesAmount" column="SALES_TURN_AMOUNT" />
 		<result property="totalBuyAmount" column="BUY_AMOUNT" />
 	</resultMap>
@@ -66,6 +67,10 @@
 				</if>
 			</if>
 		  
+		  	<if test="searchEmpNm != null and searchEmpNm != ''">
+				AND (SELECT CE.EMP_NM FROM CMM_EMPLOYEE_TB CE WHERE CE.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) LIKE CONCAT('%', #{searchEmpNm}, '%')
+			</if>
+			
 			<if test="pjSaleEmpKey != null and pjSaleEmpKey != ''">
 				AND PJ_SALE_EMP_KEY = #{pjSaleEmpKey}
 			</if>

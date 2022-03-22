@@ -134,7 +134,7 @@ public class ProjectController {
 			
 			// 최초 조회 시 자신의 건만 보이게...
 			if(!"".equals(CepStringUtil.getDefaultValue(empAuthCd, "")) && 
-					!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue())) {
+					!empAuthCd.equals(AuthInfo.AUTH_ADMIN.getValue()) && CepStringUtil.getDefaultValue(searchVO.getSearchEmpNm(), "").equals("")) {
 				//	"".equals(CepStringUtil.getDefaultValue(searchVO.getDeptKey(), ""))) {
 				searchVO.setPjSaleEmpKey(sessionMap.get("empKey"));
 				model.put("empKey", sessionMap.get("empKey"));
