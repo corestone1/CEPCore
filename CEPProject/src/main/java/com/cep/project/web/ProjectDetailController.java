@@ -334,7 +334,7 @@ public class ProjectDetailController {
 	}
 	
 	
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/installBaseDelete.do")
 	@ResponseBody
 	public Map<String, Object> deleteInstallBase(@ModelAttribute("projectBuildVO") ProjectBuildVO projectBuildVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
@@ -352,15 +352,17 @@ public class ProjectDetailController {
 				
 			service.deleteInstallBase(projectBuildVO);
 		
-			
+			returnMap.put("successYN","Y");
 		} catch(Exception e) {
+			returnMap.put("successYN","N");
 			logger.error("{}", e);
 			throw e ;
 		}
 		
 		return returnMap;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/workDelete.do")
 	@ResponseBody
 	public Map<String, Object> deleteWork(@ModelAttribute("projectWorkVO") ProjectWorkVO projectWorkVO, HttpServletRequest request, HttpServletResponse respone) throws Exception {
@@ -378,8 +380,9 @@ public class ProjectDetailController {
 				
 			service.deleteWork(projectWorkVO);
 		
-			
+			returnMap.put("successYN","Y");
 		} catch(Exception e) {
+			returnMap.put("successYN","N");
 			logger.error("{}", e);
 			throw e ;
 		}

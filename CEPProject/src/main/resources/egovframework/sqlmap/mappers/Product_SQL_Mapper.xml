@@ -46,10 +46,7 @@
 		     , PM.MOD_DT
 		     , PM.MOD_TM
 		     , PM.MOD_EMP_KEY
-			 , AC.AC_NM
 		FROM PM_PRODUCT_MNG_TB PM
-			 JOIN CMM_ACCOUNT_TB AC 
-			 ON PM.MF_AC_KEY = AC.AC_KEY
 		WHERE 1=1	
 		<if test="productDivision != null and productDivision != ''">
 			AND PM.PM_CLASS_CD = #{productDivision}
@@ -72,7 +69,7 @@
 		
 		<if test="productMake != null and productMake != ''">
 			<![CDATA[
-				AND AC.AC_NM LIKE CONCAT('%', CONCAT(#{productMake}, '%'))
+				AND PM.MF_AC_KEY LIKE CONCAT('%', CONCAT(#{productMake}, '%'))
 			]]>
 		</if>
 		
@@ -104,10 +101,7 @@
 		     , PM.MOD_DT
 		     , PM.MOD_TM
 		     , PM.MOD_EMP_KEY
-			 , AC.AC_NM
 		FROM PM_PRODUCT_MNG_TB PM
-			 JOIN CMM_ACCOUNT_TB AC 
-			 ON PM.MF_AC_KEY = AC.AC_KEY
 		WHERE PM.PM_KEY = #{pmKey}
 		AND PM.DELETE_YN = 'N'
 		

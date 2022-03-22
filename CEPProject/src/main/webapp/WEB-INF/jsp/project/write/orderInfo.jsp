@@ -220,7 +220,7 @@
 			z-index: 9999;
 		}
 		#m_div_accountList {
-		    left: 146px;
+		    left: 151px;
     		margin-top: -4px;
 		}
 		.move {
@@ -477,7 +477,7 @@
 					var url = '/project/write/orderInfo.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey":$('#pjKey').val(),
+							"pjKey":$('#ipt_pjKey').val(),
 							"selectKey":selectKey
 					}
 					var button = new Array;
@@ -567,7 +567,7 @@
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-					"pjKey":$('#pjKey').val(),
+					"pjKey":$('#ipt_pjKey').val(),
 					"selectKey":$('#saveOrderAcKey option:selected').val()
 			}
 			var button = new Array;
@@ -581,7 +581,7 @@
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-					"pjKey":$('#pjKey').val()
+					"pjKey":$('#ipt_pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -671,7 +671,7 @@
 	            			alert("발주 정보를 등록하였습니다.");
 	            		}
 	            			var varParam = {
-	            					"pjKey":$('#pjKey').val(),
+	            					"pjKey":$('#ipt_pjKey').val(),
 	            					"selectKey":$('#saveOrderAcKey option:selected').val()
 	            			}
 	            			
@@ -729,7 +729,7 @@
 			            		            			
 				    			var dialogId = 'program_layer';
 				    			var varParam = {
-		            					"pjKey":$('#pjKey').val(),
+		            					"pjKey":$('#ipt_pjKey').val(),
 										"selectKey":$('#saveOrderAcKey option:selected').val()
 		            			}
 				    			var button = new Array;
@@ -906,7 +906,7 @@
 				var dialogId = 'program_layer';
 
 				var varParam = {
-					"pjKey": $("#pjKey").val(),
+					"pjKey": $("#ipt_pjKey").val(),
 					"workClass":"완료_첨부파일"
 				}
 				var button = new Array;
@@ -918,7 +918,7 @@
 						var url = '/project/write/'+link+'.do';
 						var dialogId = 'program_layer';
 						var varParam = {
-								"pjKey": $("#pjKey").val(),
+								"pjKey": $("#ipt_pjKey").val(),
 								"workClass":"완료_첨부파일"
 						}
 						var button = new Array;
@@ -937,7 +937,7 @@
 					var dialogId = 'program_layer';
 
 					var varParam = {
-							"pjKey": $("#pjKey").val(),
+							"pjKey": $("#ipt_pjKey").val(),
 							"workClass":"완료_첨부파일"
 					}
 					var button = new Array;
@@ -951,7 +951,7 @@
 			var url = '/project/write/guarantyInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val()
+				"pjKey" : $('#ipt_pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -1005,7 +1005,7 @@
 						</c:choose> 
 						<input type="hidden" id="pjOrderKey" name="pjOrderKey" value="<c:out value="${orderVO.pjOrderKey}"/>" />
 						<input type="hidden" id="buyKey" name="buyKey" value="<c:out value="${purchaseVO.buyKey }"/>" />
-						<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
+						<input type="hidden" id="ipt_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 						<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${pjKey}"/>"/>
 						<input type="hidden" name="orderCtClass" value="P"/>
 						<input type="hidden" id="deleteListKeys" name="deleteListKeys" />

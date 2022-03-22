@@ -1056,7 +1056,7 @@
 								<button type="button" value="수정" id="modMinInfo"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button>
 								<button type="button" value="삭제" id="delMinInfo"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
 								<%-- <button type="button" value="실주등록"  onclick="javascript:fn_addView('writeLoseInfo')"><img class="cursorP" src="<c:url value='/images/btn_loss.png'/>" /></button> --%>
-								<button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+								<%-- <button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 							</div>
 							<div class="floatC"></div>
 						</div>

@@ -376,7 +376,10 @@
 			});
 			
 			$(parent.document).find("#modMinInfo").removeClass("dpNone");
-			$(parent.document).find("#delMinInfo").css("dpNone");
+			
+			if($(parent.document).find(".title ul li.on").attr("id").includes("ED")) {
+				$(parent.document).find("#delMinInfo").addClass("dpNone");
+			}
 		});
 		
 		function fn_addView(link){

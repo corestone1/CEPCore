@@ -406,6 +406,19 @@
 		}
 		
 		
+		function fnViewAdd() {
+			
+			var dialogId = 'program_layer';
+			
+			var varParam = {'pjKey' : $('#ipt_pjKey').val() };
+			
+			var button = new Array;
+			button = [];
+			
+			parent.showModalPop(dialogId, "/project/write/orderInfo.do", varParam, button, '', 'width:1144px;height:706px;ifram:true;iframid:ifr_ProjectInfo');
+		}
+		
+		
 		function fnViewModify() {
 			
 			if($('input[name="m_gubun"]:checked').val() == undefined) {
@@ -429,10 +442,9 @@
 				
 				var litIdx = parseInt($('input[name="m_gubun"]:checked').val()) - 1;
 				
-				var jsonData = {'pjKey' : $('#ipt_pjKey').val(), "pjOrderKey" :  $('input[name="pjOrderKey"]').eq(litIdx).val()};
+				var jsonData = {'pjKey' : $('#ipt_pjKey').val(), "pjOrderKey" :  $('input[name="m_gubun"]:checked').val()};
 				
 				//alert(litIdx + "\n" + $('input[name="pjOrderKey"]').eq(litIdx).val());
-				
 				
 				$.ajax({
 		        	url :"/project/detail/orderDelete.do",
@@ -460,7 +472,7 @@
 		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 		        		}
 		        	} 
-		    	});
+		    	}); 
 			}
 		}
 		
@@ -479,7 +491,7 @@
 				<div class="floatL dpBlock fxd">
 					<div id="detailForm">
 						<div class="stitle">
-							발주목록
+							발주목록 <button type="button" onclick="fnViewAdd();" style="vertical-align: text-bottom;"><img src="/images/btn_add-pop.png" /></button>
 						</div>
 						<div class="floatC">
 							<table class="dtl tblWidth excelSheet" style="width: 100%;">

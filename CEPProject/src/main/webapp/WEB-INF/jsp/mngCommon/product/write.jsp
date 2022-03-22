@@ -357,9 +357,20 @@
 								<!--
 								<input type="text" id="m_ipt_mfAcKey" name="mfAcKey" class="search" placeholder="제조사" />
 								 -->
-								<input type="text"   id="m_ipt_acNm"    name="acNm" class="search" placeholder="제조사"  value="${productVO.acNm}" autocomplete="off" required/> 
-								<input type="hidden" id="m_ipt_mfAcKey" name="mfAcKey" value="${ productVO.mfAcKey }"/>
-								
+								<%-- <input type="text"   id="m_ipt_acNm"    name="acNm" class="search" placeholder="제조사"  value="${productVO.acNm}" autocomplete="off" required/> 
+								<input type="hidden" id="m_ipt_mfAcKey" name="mfAcKey" value="${ productVO.mfAcKey }"/> --%>
+								<select id="billMfCd" name="mfAcKey" style="width:120px;" required>
+									<c:forEach var="billMfCd" items="${manufacturerList}" varStatus="status2">										
+										<c:choose>
+											<c:when test='${productVO.mfAcKey == billMfCd.codeKey}'>
+												<option value="<c:out value="${billMfCd.codeKey}"/>" selected="selected"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:when>
+											<c:otherwise>
+												<option value="<c:out value="${billMfCd.codeKey}"/>"><c:out value="${billMfCd.codeNm}"/></option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>	
+								</select>	
 							</td>
 						</tr>
 						<tr>

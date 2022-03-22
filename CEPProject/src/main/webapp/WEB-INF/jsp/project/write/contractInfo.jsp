@@ -449,7 +449,7 @@
 				    		var url='/project/write/contractInfo.do';
 			    			var dialogId = 'program_layer';
 			    			var varParam = {
-								"pjKey":$("#pjKey").val()
+								"pjKey":$("#ipt_pjKey").val()
 			    			}
 			    			var button = new Array;
 			    			button = [];
@@ -477,7 +477,7 @@
 				var dialogId = 'program_layer';
 
 				var varParam = {
-						"pjKey": $("#pjKey").val()/* ,
+						"pjKey": $("#ipt_pjKey").val()/* ,
 						"turnNo": $("#beforeTurn").val(),
 						"ctKey": ctKeyList,
 						"salesKey": salesKeyList  */
@@ -497,7 +497,7 @@
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey": $("#pjKey").val()/* ,
+							"pjKey": $("#ipt_pjKey").val()/* ,
 						 	"turnNo": $("#beforeTurn").val(),
 							"ctKey":ctKey,
 							"salesKey":salesKey  */
@@ -515,7 +515,7 @@
 			var url = '/project/write/basicInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val(),
+				"pjKey" : $('#ipt_pjKey').val(),
 				"workClass":"프로젝트"
 			}
 			var button = new Array;
@@ -556,7 +556,7 @@
 					</c:forEach> 
 					<input type="hidden" id="selectKey" name="selectKey" value="${contractVO.ctKey }" />
 					<input type="hidden" id="ctKey" name="ctKey" value="${contractVO.ctKey }" />
-					<input type="hidden" id="pjKey" name="pjKey" value="${pjKey }" /> 
+					<input type="hidden" id="ipt_pjKey" name="pjKey" value="${pjKey }" /> 
 					<input type="hidden" id="collectTurn" name="collectTurn" value="${contractVO.collectTurn }" /> 
 					<input type="hidden" name="statusCd" value="PJST2000" />
 					<%-- <input type="hidden" name="salesAcKey" value="${forecastVO.salesAcKey }" /> --%>

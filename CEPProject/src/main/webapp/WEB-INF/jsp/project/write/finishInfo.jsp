@@ -325,7 +325,7 @@
 			    					}
 					    			
 					    			var varParam = {
-										"pjKey":$("#pjKey").val(),
+										"pjKey":$("#ipt_pjKey").val(),
 										"workClass":$("#workClass").val()
 					    			}
 					    			
@@ -341,7 +341,7 @@
 				    		}
 			    			
 			    			var varParam = {
-								"pjKey":$("#pjKey").val(),
+								"pjKey":$("#ipt_pjKey").val(),
 								"workClass":$("#workClass").val()
 			    			}
 			    			
@@ -379,7 +379,7 @@
 			var url = '/project/write/orderInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val()
+				"pjKey" : $('#ipt_pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -468,7 +468,7 @@
 		<div class="contents">
 			<div>
 				<form id="infoForm" name="infoForm" method="post">
-					<input type="hidden" id="pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
+					<input type="hidden" id="ipt_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="PJST5000" />
 					<input type="hidden" id="workClass" name="workClass" value="완료_첨부파일" />
 					<input type="hidden" id="pjInspectDt" value="${resultList[0].pjInspectDt}" />

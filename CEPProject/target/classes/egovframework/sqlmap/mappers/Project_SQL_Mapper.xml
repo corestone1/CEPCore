@@ -33,10 +33,11 @@
 				, PJ_NM
 				, PJ_START_DT
 				, PJ_END_DT
-				, (SELECT c.CD_NM FROM CMM_CODE_MNG_TB c WHERE c.CD_KEY = PJ_MAIN_TB.PJ_STATUS_CD) AS pjStatusCd
+				, (SELECT c.CD_NM FROM CMM_CODE_MNG_TB c WHERE c.CD_KEY = PJ_MAIN_TB.PJ_STATUS_CD) AS pjStatusCdNm
+				, PJ_STATUS_CD
 				, (SELECT e.EMP_NM FROM CMM_EMPLOYEE_TB e WHERE e.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) AS pjSaleEmpKey
 				, (SELECT SUM(SALES_TURN_AMOUNT) FROM PJ_SALES_DETAIL_TB SD WHERE PJ_MAIN_TB.PJ_KEY = SD.SALES_CT_FK_KEY) AS totalSalesAmount
-				, (SELECT SUM(BUY_AMOUNT) FROM PJ_PURCHASE_TB PP WHERE PJ_MAIN_TB.PJ_KEY = PP.BUY_FK_PJ_KEY) AS totalBuyAmount
+				, (SELECT SUM(BUY_AMOUNT) FROM PJ_PURCHASE_TB PP WHERE PJ_MAIN_TB.PJ_KEY = PP.BUY_FK_PJ_KEY AND PP.DELETE_YN='N') AS totalBuyAmount
 			FROM PJ_MAIN_TB
 			WHERE 1=1
 			<if test="searchFromDt != null and searchFromDt != ''">
@@ -228,8 +229,25 @@
 	</update>
 	
 	<update id="deleteProject" parameterType="projectVO">
-		
+		UPDATE PJ_MAIN_TB 
+		SET 
+			DELETE_YN = 'Y' 
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PJ_KEY = #{pjKey}
 	</update>
+	
+	<update id="deleteContract" parameterType="projectVO">
+		UPDATE PJ_CONTRACT_TB 
+		SET 
+			DELETE_YN = 'Y' 
+			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
+			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			, MOD_EMP_KEY = #{modEmpKey}
+		WHERE PJ_KEY = #{pjKey}
+	</update>
+	
 	
 	<!-- <select id="selectBiddingDetail" parameterType="projectVO" resultType="com.cmm.mybatis.CamelCaseMap">
 		SELECT 

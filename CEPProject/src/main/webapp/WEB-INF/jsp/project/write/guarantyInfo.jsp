@@ -365,7 +365,7 @@
 			    	var url='/project/write/guarantyInfo.do';
 	    			var dialogId = 'program_layer';
 	    			var varParam = {
-						"pjKey":$("#pjKey").val()
+						"pjKey":$("#ipt_pjKey").val()
 	    			}
 	    			var button = new Array;
 	    			button = [];
@@ -384,7 +384,7 @@
 				var url = '/project/write/'+link+'.do';
 				var dialogId = 'program_layer';
 				var varParam = {
-						"pjKey": $("#pjKey").val()
+						"pjKey": $("#ipt_pjKey").val()
 				}
 				var button = new Array;
 				button = [];
@@ -403,7 +403,7 @@
 					var url = '/project/write/'+link+'.do';
 					var dialogId = 'program_layer';
 					var varParam = {
-							"pjKey": $("#pjKey").val()
+							"pjKey": $("#ipt_pjKey").val()
 					}
 					var button = new Array;
 					button = [];
@@ -418,7 +418,7 @@
 			var url = '/project/write/contractInfo.do';
 			var dialogId = 'program_layer';
 			var varParam = {
-				"pjKey" : $('#pjKey').val()
+				"pjKey" : $('#ipt_pjKey').val()
 			}
 			var button = new Array;
 			button = [];
@@ -792,7 +792,7 @@
 			</div>
 		</form:form>
 		<form id="infoForm" name="infoForm">
-			<input type="hidden" name="pjKey" id="pjKey" value="<c:out value="${pjKey}"/>" />
+			<input type="hidden" name="pjKey" id="ipt_pjKey" value="<c:out value="${pjKey}"/>" />
 			<input type="hidden" name="salesCtFkKey" value="<c:out value="${pjKey}"/>" />
 			<input type="hidden" id="turnNo" value="<c:out value="${length}"/>"/>
 			<input type="hidden" name="statusCd" value="PJST2000" />

@@ -303,10 +303,50 @@
 		function fn_delete(){
 			if($('input[name="index"]').is(':checked')){
 				if(confirm("선택한 내용을 삭제하시겠습니까?")){
-					form = document.listForm;
-					form.pjKey.value = $('input[name="index"]:checked').val();
-					form.action = "<c:url value='/project/deleteProject.do'/>";
-					form.submit(); 
+					
+					var index = $('input[name="index"]:checked').attr("id").replace("check", "");
+					if($("#pjStatusCd"+index).val() >= "PJST2000") {
+						alert("계약 이전 상태인 프로젝트만 삭제 가능합니다.");
+					} else {
+						var form = document.listForm;
+						form.pjKey.value = $('input[name="index"]:checked').val();
+						
+						var object = {};
+						var formData = $("#listForm").serializeArray();
+						
+						for (var i = 0; i<formData.length; i++){
+						    object[formData[i]['name']] = formData[i]['value'];
+						 }
+						
+						var sendData = JSON.stringify(object);
+						
+						console.log(sendData);
+						
+						$.ajax({
+							url:"/project/deleteProject.do",
+						    dataType: 'json', 
+						    type:"POST",  
+						    data: sendData,
+						 	contentType: "application/json; charset=UTF-8", 
+							beforeSend: function(xhr) {
+								xhr.setRequestHeader("AJAX", true);
+								//xhr.setRequestHeader(header, token);
+								
+							},
+						    success:function(response){	
+						    	if(response!= null && response.successYN == 'Y') {
+					    			alert("프로젝트가 삭제되었습니다.");
+						    	} else {
+					    			alert("프로젝트 삭제가 실패하였습니다.");
+						    	}
+						    },
+							error: function(request, status, error) {
+								if(request.status != '0') {
+									alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+								}
+							} 
+						});  
+					}
 				} else {
 					return false;
 				}
@@ -482,7 +522,7 @@
 	<c:set var="pcSum" value=""></c:set>
 	<form:form commandName="searchVO"  id="listForm" name="listForm" method="post" onsubmit="return false">
 		<input type="hidden" value="<c:out value="${resultCode}"/>"/>
-		<input type="hidden" name="pjKey" value=""/>
+		<input type="hidden" id="pjKey" name="pjKey" value=""/>
 		<input type="hidden" name="workClass" value=""/>
 		<!-- <div class="sfcnt"></div>
 		<div class="nav"></div> -->
@@ -544,7 +584,7 @@
 		            				<td onclick="event.cancelBubble = true;"></td>
 		            				<td align="center" class="listtd">
 		            					<c:out value="${result.pjKey}"/>
-		            					<input type="hidden" value="<c:out value="${result.pjKey}"/>" />
+		            					<input type="hidden" id="pjKey${status.index }" value="<c:out value="${result.pjKey}"/>" />
 		            				</td>
 		            				<td align="left" class="listtd"><span style="max-width: 162px;"><c:out value="${result.acNm}"/></span></td>
 		            				<td align="left" class="listtd"><span style="max-width: 397px;"><a href="javascript:fn_detail('${result.pjKey}')" ><c:out value="${result.pjNm}"/></a></span></td>
@@ -560,7 +600,7 @@
 									<td align="right" class="listtd"><c:out value="${displayUtil.commaStr(result.totalBuyAmount) }" /></td>
 									<td align="center" class="listtd"><c:out value="${endDate - startDate + 1}"/>일</td>
 		            				<td align="center" class="listtd"><c:out value="${endDate - nowDate + 1 > 0? endDate - nowDate + 1 : 0}"/>일</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/></td>
+		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCdNm}"/><input type="hidden" id="pjStatusCd${status.count }" value="${result.pjStatusCd }" /></td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/></td>
 		            			</tr>
 		            			<c:set var="salesSum" value="${salesSum + result.totalSalesAmount }" />

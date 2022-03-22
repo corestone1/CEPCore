@@ -26,6 +26,7 @@ import com.cep.project.vo.ProjectContractVO;
 import com.cep.project.vo.ProjectGuarantyBondVO;
 import com.cep.project.vo.ProjectOrderProductVO;
 import com.cep.project.vo.ProjectOrderVO;
+import com.cep.project.vo.ProjectPurchaseVO;
 import com.cep.project.vo.ProjectVO;
 import com.cep.project.vo.ProjectWorkVO;
 import com.cmm.config.DeptInfo;
@@ -33,6 +34,7 @@ import com.cmm.config.EmailInfo;
 import com.cmm.service.ComService;
 import com.cmm.vo.GuarantyBondVO;
 import com.cmm.vo.MailVO;
+import com.cmm.vo.PurchaseVO;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -57,6 +59,9 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 
 	@Resource(name="projectDetailMapper")
 	private ProjectDetailMapper mapper;
+	
+	@Resource(name="projectMapper")
+	private ProjectMapper projectMapper;
 	
 	@Resource(name="comService")
 	private ComService comService;
@@ -359,6 +364,13 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 		
 		//PJ_ORDER_TB
 		mapper.deleteOrder(projectOrderProductVO);
+		
+		ProjectPurchaseVO purchaseVO = new ProjectPurchaseVO();
+		purchaseVO.setBuyOrderFkKey(projectOrderVO.getPjOrderKey());
+		
+		ProjectPurchaseVO resultVO = projectMapper.selectPurchaseDetail(purchaseVO);
+		
+		projectMapper.deletePurchaseInfo(resultVO);
 		
 	}
 	

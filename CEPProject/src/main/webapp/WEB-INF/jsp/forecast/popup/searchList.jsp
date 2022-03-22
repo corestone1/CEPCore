@@ -202,7 +202,7 @@
 	
 	function fn_searchList()
 	{
-		document.forecastForm.action = "/forecast/popup/searchList.do";
+		document.forecastForm.action = "/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=P";
        	document.forecastForm.submit(); 
 	}
 	
@@ -215,13 +215,13 @@
 				<div class="floatL ftw500">Forecast 목록</div>
 			</div>
 			<div class="floatR">
-				<form:select path="spState">
+				<%-- <form:select path="spState">
 					<form:option value="">상태</form:option>
 					<form:option value="A">A</form:option>
 					<form:option value="B">B</form:option>
 					<form:option value="C">C</form:option>
 					<form:option value="ET">기타</form:option>
-				</form:select>
+				</form:select> --%>
 				<form:select path="pmFlag">
 					<form:option value="">구분</form:option>
 					<form:option value="ST">Storage</form:option>
@@ -229,7 +229,7 @@
 					<form:option value="BK">Backup</form:option>
 					<form:option value="SW">S/W</form:option>
 					<form:option value="ET">기타</form:option>
-				</form:select>
+				</form:select> 
 				<form:select path="searchFlag">
 					<form:option value="">검색조건</form:option>
 					<form:option value="AC">거래처명</form:option>
@@ -267,7 +267,7 @@
 	            				<td align="center"   class="listtd">&nbsp;<span title="${result.empNm}"><c:out value="${result.empNm}"/></span>&nbsp;</td>
 	            				<td align="center" class="listtd">&nbsp;<span title="${displayUtil.commaStr(result.fcSalesAmount)}"><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></span>&nbsp;</td>
 	            				<td align="center" class="listtd">&nbsp;<span title="${displayUtil.commaStr(result.fcBuyAmount)}"><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></span>&nbsp;</td>
-	            				<td align="center" class="listtd">&nbsp;<span title="${result.spState}"><c:out value="${result.spState}"/></span>&nbsp;</td>
+	            				<td align="center" class="listtd">&nbsp;<span title="${result.spState}"><c:if test="${result.spState eq 'S' }">계약</c:if><c:if test="${result.spState ne 'S' }"><c:out value="${result.spState}"/></c:if></span>&nbsp;</td>
 	            			</tr>
 	        			</c:forEach>						
 					</tbody>
