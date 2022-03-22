@@ -1017,7 +1017,7 @@
 					
 					
 				}  else {
-					if(''==$('#mtSalesAcNm').val()) {
+					/* if(''==$('#mtSalesAcNm').val()) {
 						alert("저장전 매출처를 선택하세요 !!");
 						$('#mtSalesAcNm').focus();
 					} else if(''==$('#billSalesCd').val()) {
@@ -1032,9 +1032,13 @@
 					} else if(''==$('#mtSalesPayTerms').val()) {
 						alert("저장전 결제조건을 입력하세요 !!");
 						$('#mtSalesPayTerms').focus();
-					}
+					} else {
+						$("#mtBasicForm")[0].reportValidity();
+					} */
+					
+					
 					//Validate Form
-			       // $("#mtBasicForm")[0].reportValidity();	
+			        $("#mtBasicForm")[0].reportValidity();	
 			       
 				}
 			} else {
