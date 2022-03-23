@@ -3,18 +3,20 @@ package com.cep.mngCommon.bill.web;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -29,18 +31,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import com.cep.mngCommon.account.vo.AccountSearchVO;
 import com.cep.mngCommon.bill.service.MngCommonBillService;
 import com.cep.mngCommon.bill.vo.MngCommonBillSearchVO;
 import com.cep.mngCommon.bill.vo.MngCommonBillVO;
 import com.cep.mngProject.fundSchedule.web.MngProjectFundScheduleController;
 import com.cep.mngProject.order.service.MngProjectOrderService;
 import com.cep.project.service.ProjectDetailService;
-import com.cep.project.vo.ProjectVO;
 import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.FileMngUtil;
@@ -548,68 +545,43 @@ public class MngCommonBillController {
             XSSFRow xlsxRow = null;
             List<EgovMap> llExcelValue = new ArrayList<EgovMap>();
             EgovMap lemRow = null;
-            for(int i=1; i<litXlsxRows; i++) {
+            
+            for(int i=2; i<=litXlsxRows; i++) {
             	
-            	
+            	int idx = 0;
             	lemRow  = new EgovMap();
             	xlsxRow = sheet.getRow(i); //셀정보
             	
-            	logger.debug("{} :  1 = {}", i, xlsxRow.getCell(1).toString()); 
-                logger.debug("{} :  2 = {}", i, xlsxRow.getCell(2).toString());
-                logger.debug("{} :  3 = {}", i, xlsxRow.getCell(3).toString());
-                logger.debug("{} :  4 = {}", i, xlsxRow.getCell(4).toString());
-                logger.debug("{} :  5 = {}", i, xlsxRow.getCell(5).toString());
-                logger.debug("{} :  6 = {}", i, xlsxRow.getCell(6).toString());
-                logger.debug("{} :  7 = {}", i, xlsxRow.getCell(7).toString());
-                if(xlsxRow.getCell(8).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-                	logger.debug("{} :  8 = {}", i, xlsxRow.getCell(8).getNumericCellValue());
-				} else {
-					logger.debug("{} :  8 = {}", i, xlsxRow.getCell(8).getStringCellValue());
-				}
-            	if(xlsxRow.getCell(9).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-            		logger.debug("{} :  9 = {}", i, xlsxRow.getCell(9).getNumericCellValue());
-				} else {
-					logger.debug("{} :  9 = {}", i, xlsxRow.getCell(9).getStringCellValue());
-				}
-            	if(xlsxRow.getCell(10).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-            		logger.debug("{} :  10 = {}", i, xlsxRow.getCell(10).getNumericCellValue());
-				} else {
-					logger.debug("{} :  10 = {}", i, xlsxRow.getCell(10).getStringCellValue());
-				}
-                logger.debug("{} : 11 = {}", i, xlsxRow.getCell(11).toString());
-                logger.debug("{} : 12 = {}", i, xlsxRow.getCell(12).toString());
-                logger.debug("{} : 13 = {}", i, xlsxRow.getCell(13).toString());
-                logger.debug("=================================================");
-
-                lemRow.put("gubun",       xlsxRow.getCell(1).toString());
-            	lemRow.put("kind",        xlsxRow.getCell(2).toString());
-            	lemRow.put("writeDt",     xlsxRow.getCell(3).toString());
-            	lemRow.put("acKey",       xlsxRow.getCell(4).toString());
-            	lemRow.put("subAcKey",    xlsxRow.getCell(5).toString());
-            	lemRow.put("acNm",        xlsxRow.getCell(6).toString());
-            	lemRow.put("ceoNm",       xlsxRow.getCell(7).toString());
-            	if(xlsxRow.getCell(8).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-					lemRow.put("billAmount",  xlsxRow.getCell(8).getNumericCellValue());
-				} else {
-					lemRow.put("billAmount",  xlsxRow.getCell(8).getStringCellValue());
-				}
-            	if(xlsxRow.getCell(9).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-					lemRow.put("billTaxAmount",  xlsxRow.getCell(9).getNumericCellValue());
-				} else {
-					lemRow.put("billTaxAmount",  xlsxRow.getCell(9).getStringCellValue());
-				}
-            	if(xlsxRow.getCell(10).getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-					lemRow.put("billTotalAmount",  xlsxRow.getCell(10).getNumericCellValue());
-				} else {
-					lemRow.put("billTotalAmount",  xlsxRow.getCell(10).getStringCellValue());
-				}
-            	lemRow.put("remark",      xlsxRow.getCell(11).toString());
-            	lemRow.put("billNo",      xlsxRow.getCell(12).toString());
-            	lemRow.put("billIssueDt", xlsxRow.getCell(13).toString());
+            	
+            	Iterator<Cell> cellIterator = sheet.getRow(i).iterator();
             	
             	
-            	if(xlsxRow.getCell(1).toString().trim().equals("매입"))
-            		llExcelValue.add(lemRow);
+            	//while (cellIterator.hasNext()) {
+            	for(int j  = 1; j <= sheet.getRow(i).getLastCellNum(); j++) {
+            		String cellString = "";
+                    Cell currentCell = sheet.getRow(i).getCell((short) j);
+                    
+                    if(currentCell == null) {
+                    	
+                    } else if(currentCell.getCellType() == currentCell.CELL_TYPE_STRING) {
+                    	cellString = currentCell.getStringCellValue();
+                    } else if(currentCell.getCellType() == currentCell.CELL_TYPE_NUMERIC) {
+                    	if(DateUtil.isCellDateFormatted(currentCell)) {
+                    		Date date = currentCell.getDateCellValue();
+                    		cellString = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                    	} else {
+                    		currentCell.setCellType(currentCell.CELL_TYPE_STRING);
+                    		cellString = currentCell.getStringCellValue();
+                    	}
+                    } 
+                    
+                	lemRow.put("value"+idx, cellString);
+                	
+                    idx++;
+                }
+            	
+            	//if(xlsxRow.getCell(1).toString().trim().equals("매입"))
+            	llExcelValue.add(lemRow);
             }
             
             returnMap.put("billingList", llExcelValue);

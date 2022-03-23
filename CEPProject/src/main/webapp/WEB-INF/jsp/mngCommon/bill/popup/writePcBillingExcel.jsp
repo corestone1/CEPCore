@@ -100,62 +100,67 @@
 	
 	.popContainer .middle table thead th:first-child, 
 	.popContainer .middle table tbody td:first-child {
-		width: 43px;
+		width: 44px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2) {
-		width: 60px;
+		width: 61px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 60px;
+		width: 61px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
-		width: 86px;
+		width: 87px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 98px;
+		width: 105px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
-		width: 235px;
+		width: 163px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(7), 
 	.popContainer .middle table tbody td:nth-child(7) {
-		width: 80px;
+		width: 79px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(8), 
 	.popContainer .middle table tbody td:nth-child(8) {
-		width: 110px;
+		width: 115px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(9), 
 	.popContainer .middle table tbody td:nth-child(9) {
-		width: 112px;
+		width: 113px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(10), 
 	.popContainer .middle table tbody td:nth-child(10) {
-		width: 109px;
+		width: 120px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(11), 
 	.popContainer .middle table tbody td:nth-child(11) {
-		width: 85px;
+		width: 86px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(12), 
 	.popContainer .middle table tbody td:nth-child(12) {
-		width: 233px;
+		width: 201px;
+	}
+	
+	.popContainer .middle table thead th:nth-child(13), 
+	.popContainer .middle table tbody td:nth-child(13) {
+	    width: 207px;
 	}
 	
 	
@@ -246,17 +251,18 @@
 		for(var i=0; i < pobjBillingList.length; i++) {
 			html += '<tr id="tr_' + i + '">'
 			     + '<td><a href="#" onclick="javascript:fnDelete(' + i + ');" class="btn btn_gray">삭제</a></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="2"  id="bl_gubun_' + i + '"       name="bl_gubun_' + i + '"       style="text-align:center;" value="' + pobjBillingList[i].gubun + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="2"  id="bl_kind_' + i + '"        name="bl_kind_' + i + '"        style="text-align:center;" value="' + pobjBillingList[i].kind + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="6"  id="bl_writeDt_' + i + '"     name="bl_writeDt_' + i + '"     style="text-align:center;" value="' + addDateMinus(pobjBillingList[i].writeDt) + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="8"  id="bl_acKey_' + i + '"       name="bl_acKey_' + i + '"       style="text-align:center;" value="' + pobjBillingList[i].acKey + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="30" id="bl_acNm_' + i + '"        name="bl_acNm_' + i + '"        style="text-align:left;"   value="' + pobjBillingList[i].acNm + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="5"  id="bl_ceoNm_' + i + '"       name="bl_ceoNm_' + i + '"       style="text-align:center;" value="' + pobjBillingList[i].ceoNm + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="10" id="bl_billAmount_' + i + '"  name="bl_billAmount_' + i + '"  style="text-align:right;"  value="' + addCommas(pobjBillingList[i].billAmount) + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="10" id="bl_billTaxAmount_' + i + '"     name="bl_billTaxAmount_' + i + '"     style="text-align:right;"  value="' + addCommas(pobjBillingList[i].billTaxAmount) + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="10" id="bl_billTotalAmount_' + i + '" name="bl_billTotalAmount_' + i + '" style="text-align:right;"  value="' + addCommas(pobjBillingList[i].billTotalAmount) + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="6"  id="bl_billIssueDt_' + i + '" name="bl_billIssueDt_' + i + '" style="text-align:center;" value="' + addDateMinus(pobjBillingList[i].billIssueDt) + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="30" id="bl_billNo_' + i + '"      name="bl_billNo_' + i + '"      style="text-align:left;"   value="' + pobjBillingList[i].billNo + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="1"  id="bl_gubun_' + i + '"       name="bl_gubun_' + i + '"       style="text-align:center;" value="' + pobjBillingList[i].value0 + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="1"  id="bl_kind_' + i + '"        name="bl_kind_' + i + '"        style="text-align:center;" value="' + pobjBillingList[i].value1 + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="5"  id="bl_writeDt_' + i + '"     name="bl_writeDt_' + i + '"     style="text-align:center;" value="' + addDateMinus(pobjBillingList[i].value2) + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="8"  id="bl_acKey_' + i + '"       name="bl_acKey_' + i + '"       style="text-align:center;" value="' + pobjBillingList[i].value3 + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="15" id="bl_acNm_' + i + '"        name="bl_acNm_' + i + '"        style="text-align:left;"   value="' + pobjBillingList[i].value5 + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="4"  id="bl_ceoNm_' + i + '"       name="bl_ceoNm_' + i + '"       style="text-align:center;" value="' + pobjBillingList[i].value6 + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="9" id="bl_billAmount_' + i + '"  name="bl_billAmount_' + i + '"  style="text-align:right;"  value="' + addCommas(pobjBillingList[i].value7) + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="8" id="bl_billTaxAmount_' + i + '"     name="bl_billTaxAmount_' + i + '"     style="text-align:right;"  value="' + addCommas(pobjBillingList[i].value8) + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="9" id="bl_billTotalAmount_' + i + '" name="bl_billTotalAmount_' + i + '" style="text-align:right;"  value="' + addCommas(pobjBillingList[i].value9) + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="5"  id="bl_billIssueDt_' + i + '" name="bl_billIssueDt_' + i + '" style="text-align:center;" value="' + addDateMinus(pobjBillingList[i].value12) + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="21" id="bl_billNo_' + i + '"      name="bl_billNo_' + i + '"      style="text-align:left;"   value="' + pobjBillingList[i].value11 + '" /></td>'
+		         + '<td align="center" class="listtd"><input type="text" size="21" id="bl_remark_' + i + '"      name="bl_remark_' + i + '"      style="text-align:left;"   value="' + pobjBillingList[i].value10 + '" /></td>'
 		         + '</tr>'
 		         ;
 		}
@@ -304,6 +310,7 @@
 	            success:function(data){	
 	            	//console.log("data==>"+data);
 	            	alert('저장되었습니다.');
+	            	opener.location.reload();
 	            	close();
 	            },
 	        	error: function(request, status, error) {
@@ -384,7 +391,7 @@
 							* 반복되는 배열을 담기위해 마지막 값이 나오면 obj객체를 Array에 담고 obj객체를 초기화 시킴
 							* 반복되는 필드값에서 아래부분만 변경사항 있음.
 							*/
-							if(this.name.indexOf("billNo") > 0){
+							if(this.name.indexOf("remark") > 0){
 								objArry.push(obj);
 								obj = {};
 							}
@@ -431,6 +438,7 @@
 							<th scope="row">합계</th>
 							<th scope="row">발급일자</th>
 							<th scope="row">승인번호</th>
+							<th scope="row">비고</th>
 						</tr>
 					</thead>
 					<tbody id="tbodyExcel">

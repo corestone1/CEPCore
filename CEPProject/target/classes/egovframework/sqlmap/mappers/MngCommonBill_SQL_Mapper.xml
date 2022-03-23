@@ -890,6 +890,7 @@
 			, BILL_TOTAL_AMOUNT
 			, BILL_ISSUE_DT
 			, BILL_MAPPING_YN
+			, REMARK
 			, REG_DT
 			, REG_TM
 			, REG_EMP_KEY
@@ -903,6 +904,7 @@
 			, #{billTotalAmount}
 			, #{billIssueDt}
 			, 'N'
+			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')
 			, DATE_FORMAT(NOW(),'%k%i%s')
 			, #{regEmpKey}
