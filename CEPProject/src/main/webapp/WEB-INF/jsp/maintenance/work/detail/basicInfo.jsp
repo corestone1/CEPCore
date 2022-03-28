@@ -471,7 +471,7 @@
 				document.listForm.action = "/maintenance/work/deleteWork.do";
 	           	document.listForm.submit();  */
 	           	var sendData = {
-	           			"selectWorkKey":$('#mtWorkKey').val()
+	           			"selectWorkKey":$('#m_mtWorkKey').val()
 	           	}
 				$.ajax({
 	           		url: "/maintenance/work/deleteWork.do",
@@ -525,8 +525,8 @@
 </head>
 <body>
 	<form id="m_mtBasicForm" name="m_mtBasicForm" method="post">
-		<input type="hidden" id="mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
-		<input type="hidden" id="mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
+		<input type="hidden" id="m_mtIntegrateKey" name="mtIntegrateKey" value="<c:out value="${basicContractInfo.mtIntegrateKey}"/>"/>
+		<input type="hidden" id="m_mtWorkKey" name="mtWorkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
 		<input type="hidden" id="orderCtFkKey" name="orderCtFkKey" value="<c:out value="${basicWorkInfo.mtWorkKey}"/>"/>
 		<input type="hidden" id="editMode" name="editMode"  value="0"/>
 		<!-- <div class="sfcnt"></div>

@@ -174,6 +174,8 @@ public class MtWorkController {
 		HashMap<String, String> sessionMap = null;
 		try {
 			
+			logger.debug("mtWorkVO.getMtIntegrateKey()===>"+mtWorkVO.getMtIntegrateKey()+"/"+mtWorkVO.getSelectIntegrateKey());
+			
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			if(!"".equals(CepStringUtil.getDefaultValue(mtWorkVO.getMtIntegrateKey(), ""))){
@@ -189,10 +191,12 @@ public class MtWorkController {
 			}
 			//유지보수 계약 기본정보 조회
 //			basicContractInfo = mtcService.selectContractBasicDetail(mtWorkVO.getMtIntegrateKey());
-			basicContractInfo = mtcService.selectContractBasicDetail(mtIntegrateKey);
+			
 			
 			//유지보수 작업 기본정보조회
 			basicWorkInfo = mtwService.selectWorkDetail(mtWorkKey);
+			
+			basicContractInfo = mtcService.selectContractBasicDetail(basicWorkInfo.getMtIntegrateKey());
 
 			// 고객정보
 			acDirectorList = mtcService.selectAcDirectorList(basicContractInfo.getMtAcKey());

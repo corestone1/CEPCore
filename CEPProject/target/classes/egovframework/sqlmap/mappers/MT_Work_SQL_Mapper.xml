@@ -87,7 +87,8 @@
 	<update id="updateWorkBasic" parameterType="com.cep.maintenance.work.vo.MtWorkVO">
 		UPDATE MT_WORK_TB
 		SET
-			MT_WORK_EMP_KEY = #{mtWorkEmpKey}
+			MT_INTEGRATE_KEY = #{mtIntegrateKey}
+			, MT_WORK_EMP_KEY = #{mtWorkEmpKey}
 			, MT_WORK_AC_DIRECTOR_KEY = #{mtWorkAcDirectorKey}
 			, MT_WORK_START_DT = #{dbWorkStartDt}
 			, MT_WORK_START_TM = #{dbWorkStartTm} 
