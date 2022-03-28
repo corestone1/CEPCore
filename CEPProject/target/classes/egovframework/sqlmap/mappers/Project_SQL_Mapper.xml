@@ -20,6 +20,7 @@
 		<result property="spKey" column="SP_KEY" />
 		<result property="searchFlag" column="SEARCH_FLAG"/>
 		<result property="searchValue"  column="SEARCH_VALUE"/>
+		<result property="searchEmpNm"  column="SEARCH_EMP_NM"/>
 		<result property="totalSalesAmount" column="SALES_TURN_AMOUNT" />
 		<result property="totalBuyAmount" column="BUY_AMOUNT" />
 	</resultMap>
@@ -66,6 +67,10 @@
 				</if>
 			</if>
 		  
+		  	<if test="searchEmpNm != null and searchEmpNm != ''">
+				AND (SELECT CE.EMP_NM FROM CMM_EMPLOYEE_TB CE WHERE CE.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) LIKE CONCAT('%', #{searchEmpNm}, '%')
+			</if>
+			
 			<if test="pjSaleEmpKey != null and pjSaleEmpKey != ''">
 				AND PJ_SALE_EMP_KEY = #{pjSaleEmpKey}
 			</if>
@@ -635,22 +640,24 @@
 		      	, GROUP_CONCAT(CONCAT(PM.PM_NM_CD, ' / ', FORMAT(OP.ORDER_UPRICE, 0),' / ',OP.ORDER_QUANTITY) SEPARATOR '<![CDATA[<br>]]>' ) AS ORDER_PRODUCT
 				, PC.BILL_PURCHASE_CD
 				, PC.BILL_MF_CD
+				, GROUP_CONCAT(PT.PAYMENT_CALL_DT SEPARATOR '<![CDATA[<br>]]>' ) AS PAYMENT_CALL_DT
+       			, GROUP_CONCAT(PT.PAYMENT_DT SEPARATOR '<![CDATA[<br>]]>' ) AS PAYMENT_DT
 			FROM PJ_ORDER_TB OD
 		    LEFT OUTER JOIN PJ_ORDER_PRODUCT_TB OP
-		    ON OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY
+		    ON OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY	AND OP.DELETE_YN = 'N'
 			LEFT OUTER JOIN CMM_ACCOUNT_TB AC
 			ON OD.ORDER_AC_KEY = AC.AC_KEY
 			LEFT OUTER JOIN PJ_PURCHASE_TB PC
-			ON OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY
+			ON OD.PJ_ORDER_KEY = PC.BUY_ORDER_FK_KEY		AND PC.DELETE_YN = 'N'
 			LEFT OUTER JOIN CMM_PC_BILLING_TB BL
 			ON PC.BUY_KEY = BL.BILL_CT_FK_KEY AND BL.DELETE_YN ='N'
 		    LEFT OUTER JOIN PM_PRODUCT_MNG_TB PM
 		    ON OP.ORDER_PM_FK_KEY = PM.PM_KEY
+		    LEFT OUTER JOIN PJ_PAYMENT_TB PT
+		    ON PC.BUY_KEY = PT.PAYMENT_BUY_FK_KEY	AND PT.DELETE_YN = 'N'
 			
 			WHERE OD.ORDER_CT_FK_KEY=#{pjKey}
-		      	AND OP.DELETE_YN = 'N'
 				AND OD.DELETE_YN='N'
-				AND PC.DELETE_YN='N'
 		      
 			GROUP BY OD.PJ_ORDER_KEY;
 	</select>

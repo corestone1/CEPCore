@@ -165,15 +165,15 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				alarmVO.setAlarmTo(amail);
 				
 				/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
-				/*if(result != 0) {*/
+				if(result != 0) {
 					alarmService.insertAlarm(alarmVO, request);
 					
 					mngProjectBillVO.setBillIssueStatus("R");
 					mapper.insertBillRequest(mngProjectBillVO);
 					
-				/*} else {
+				} else {
 					throw new Exception();
-				}*/
+				}
 			} else {
 				//수정
 				mapper.updateBillRequest(mngProjectBillVO);
@@ -229,46 +229,52 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			userMap.put("empKey", sessionMap.get("empKey"));
 			String name = mainService.selectName(userMap);
 			
-			List<String> toList = new ArrayList<String>();
-			toList.add(mapper.selectBillDetailInfo(mngProjectBillSearchVO).get("regEmpKey").toString());
+			mngProjectBillVO.setModEmpKey(sessionMap.get("empKey"));
 			
-			alarmVO.setAlarmTitle(mngProjectBillVO.getPjNm());
-			alarmVO.setAlarmKind("수금 완료");
-			alarmVO.setPjMtKey(mngProjectBillVO.getPjKey());
-			
-			String tmail = StringUtils.join(toList, ";");
-			mailVO.setEmpKey(tmail);
-			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "mngProject/bill/detail/main.do?pjKey=" + mngProjectBillVO.getPjKey());
-			alarmVO.setAlarmTo(tmail);
-			String subject = mngProjectBillVO.getPjNm() + "건 수금 완료";
-			String content = String.join(
-									System.getProperty("line.separator"), 
-									"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 수금이 완료되었습니다.<br>완료자: " + name + ",",
-									" 완료 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
-			
-			mailVO.setSubject(subject);
-			mailVO.setContent(content);
-			mailVO.setIsNewPw(false);
-			
-			result = comService.sendMail(request, mailVO);
-			
-			/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
-			/*if(result != 0) {*/
-				sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
-				
-				mngProjectBillVO.setModEmpKey(sessionMap.get("empKey"));
-				
-				//계산서 상태 변경
-				mapper.updateBillComplate(mngProjectBillVO);
-				//PJ_SALES_DETAIL_TB UPDATE(수금)
+			if(mngProjectBillVO.getBillIssueStatus().equals("E")) {
 				mapper.updateSalesDetailPayments(mngProjectBillVO);
+			} else {
+			
+				List<String> toList = new ArrayList<String>();
+				toList.add(mapper.selectBillDetailInfo(mngProjectBillSearchVO).get("regEmpKey").toString());
 				
-				alarmService.insertAlarm(alarmVO, request);
-			/*} else {
-				throw new Exception();
-			}*/
+				alarmVO.setAlarmTitle(mngProjectBillVO.getPjNm());
+				alarmVO.setAlarmKind("수금 완료");
+				alarmVO.setPjMtKey(mngProjectBillVO.getPjKey());
+				
+				String tmail = StringUtils.join(toList, ";");
+				mailVO.setEmpKey(tmail);
+				mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "mngProject/bill/detail/main.do?pjKey=" + mngProjectBillVO.getPjKey());
+				alarmVO.setAlarmTo(tmail);
+				String subject = mngProjectBillVO.getPjNm() + "건 수금 완료";
+				String content = String.join(
+										System.getProperty("line.separator"), 
+										"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 수금이 완료되었습니다.<br>완료자: " + name + ",",
+										" 완료 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>");
+				
+				mailVO.setSubject(subject);
+				mailVO.setContent(content);
+				mailVO.setIsNewPw(false);
+				
+				result = comService.sendMail(request, mailVO);
+				
+				/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
+				if(result != 0) {
+					mngProjectBillVO.setBillIssueStatus("E");
+					
+					//계산서 상태 변경
+					mapper.updateBillComplate(mngProjectBillVO);
+					//PJ_SALES_DETAIL_TB UPDATE(수금)
+					mapper.updateSalesDetailPayments(mngProjectBillVO);
+					
+					alarmService.insertAlarm(alarmVO, request);
+				} else {
+					throw new Exception();
+				}
+				
+				returnMap.put("mailList", tmail);
+			}
 			returnMap.put("successYN", "Y");
-			returnMap.put("mailList", tmail);
 		} catch(Exception e) {
 			e.printStackTrace();
 			returnMap.put("successYN", "N");
@@ -326,7 +332,7 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 			result = comService.sendMail(request, mailVO);
 			
 			/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
-			/*if(result != 0) {*/
+			if(result != 0) {
 				sessionMap = (HashMap<String, String>)request.getSession().getAttribute("userInfo");
 				
 				mngProjectBillVO.setModEmpKey(sessionMap.get("empKey"));
@@ -335,9 +341,9 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				
 				alarmService.insertAlarm(alarmVO, request);
 				
-			/*} else {
+			} else {
 				throw new Exception();
-			}*/
+			}
 			
 			returnMap.put("successYN", "Y");
 			returnMap.put("mailList", tmail);

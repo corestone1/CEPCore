@@ -1,6 +1,7 @@
 
 package com.cep.mngCommon.bill.service.impl;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.cep.mngCommon.bill.vo.MngCommonBillSearchVO;
@@ -46,7 +47,7 @@ public interface MngCommonBillMapper {
 	
 	public int selectExistBill(MngCommonBillVO mngCommonBillVO) throws Exception;
 	
-	public void insertPcBillInfo(MngCommonBillVO mngCommonBillVO) throws Exception;
+	public void insertPcBillInfo(MngCommonBillVO mngCommonBillVO) throws SQLException;
 	
 	public void insertPcBillOpInfo(MngCommonBillVO mngCommonBillVO) throws Exception;
 }

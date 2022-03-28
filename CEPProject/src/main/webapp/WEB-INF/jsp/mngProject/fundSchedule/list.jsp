@@ -100,13 +100,13 @@
 		.middle table tbody td:first-child,
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6) {
-			width: 97px;
-			max-width: 97px;
+			width: 85px;
+			max-width: 85px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
-			width: 280px;
-			max-width: 280px;
+			width: 210px;
+			max-width: 210px;
 		}
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
@@ -115,13 +115,23 @@
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 135px;
-			max-width: 135px;
+			width: 112px;
+			max-width: 112px;
 		}
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
 			width: 60px;
 			max-width: 60px;
+		}
+		.middle table thead th:nth-child(7), 
+		.middle table tbody td:nth-child(7) {
+		    width: 85px;
+		    max-width: 85px;
+		}
+		.middle table thead th:nth-child(8), 
+		.middle table tbody td:nth-child(8) {
+		    width: 68px;
+		    max-width: 68px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
@@ -232,7 +242,9 @@
 									<th scope="row">고객사</th>
 									<th scope="row">수금액(VAT별도)</th>
 									<th scope="row">담당자</th>
+									<th scope="row">수금예상일정</th>
 									<th scope="row">수금일정</th>
+									<th scope="row">상태</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -244,7 +256,9 @@
 										<td><span><c:out value="${result.acNm}" /></span></td>
 										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.salesAmount)}" /></span></td>
 										<td><c:out value="${result.empNm}" /></td>
-										<td><c:out value="${displayUtil.displayDate(result.salesCollectDt)}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.salesCollectFcDt)}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.salesCollectFinishDt)}" /></td>
+										<td><c:if test="${result.salesCollectFinishDt eq null}">미완료</c:if><c:if test="${result.salesCollectFinishDt ne null}">완료</c:if></td>
 									</tr>
 									<c:set var = "sdTotal" value="${sdTotal + result.salesAmount }" />
 								</c:forEach>
@@ -281,7 +295,9 @@
 									<th scope="row">매입처</th>
 									<th scope="row">지급액(VAT별도)</th>
 									<th scope="row">담당자</th>
+									<th scope="row">지급예상일정</th>
 									<th scope="row">지급일정</th>
+									<th scope="row">상태</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -294,6 +310,8 @@
 										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.callAmount)}" /></span></td>
 										<td><c:out value="${result.empNm}" /></td>
 										<td><c:out value="${displayUtil.displayDate(result.paymentDt)}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.paymentCallDt)}" /></td>
+										<td><c:if test="${result.paymentDt eq null}">미완료</c:if><c:if test="${result.paymentDt ne null}">완료</c:if></td>
 									</tr>
 									<c:set var = "pcTotal" value="${pcTotal + result.callAmount }" />
 								</c:forEach>

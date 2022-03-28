@@ -37,6 +37,7 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	private String searchFlag;
 	private String searchValue;
 	private String searchAcNm;
+	private String searchEmpNm;
 	
 	private String totalSalesAmount;
 	private String totalBuyAmount;
@@ -201,6 +202,12 @@ public class ProjectVO extends SampleDefaultVO implements Serializable {
 	}
 	public void setSearchAcNm(String searchAcNm) {
 		this.searchAcNm = searchAcNm;
+	}
+	public String getSearchEmpNm() {
+		return searchEmpNm;
+	}
+	public void setSearchEmpNm(String searchEmpNm) {
+		this.searchEmpNm = searchEmpNm;
 	}
 	public String getTotalSalesAmount() {
 		return totalSalesAmount;

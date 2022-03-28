@@ -42,7 +42,7 @@
 			font-size: 15px;
 		}
 		.contentsWrap .contents .top input[type="text"] {
-			width: 200px;
+			width: 106px;
 			height: 38px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
@@ -549,6 +549,7 @@
 						<form:input path="searchToDt" type="text" placeholder="프로젝트종료일(to)" class="calendar toDt" value="${searchToDt}"/>
 						<%-- <input type="text" class="calendar fromDt" placeholder="from" id="searchFromDt" name="searchFromDt" value="${searchFromDt }"/>
 						<input type="text" class="calendar toDt" placeholder="to" id="searchToDt" name="searchToDt" value="${searchToDt }"/> --%>
+						<form:input path="searchEmpNm" type="text" placeholder="영업담당자" class="" value="${searchEmpNm}" onKeyPress="if(event.keyCode==13){fn_search();}"/>
 						<form:select path="searchFlag">
 							<form:option value="">구분</form:option>
 							<form:option value="AC">고객사명</form:option>

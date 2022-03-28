@@ -490,7 +490,6 @@ public class MngProjectBillController {
 			sessionMap =(HashMap<String, String>)request.getSession().getAttribute("userInfo");
 			
 			mngProjectBillVO.setRegEmpKey(sessionMap.get("empKey"));
-			mngProjectBillVO.setBillIssueStatus("E");
 			
 			returnMap = service.updatePaymentsComplate(request, mngProjectBillVO);
 			

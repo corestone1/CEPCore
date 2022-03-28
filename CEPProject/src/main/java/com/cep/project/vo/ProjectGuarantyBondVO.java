@@ -20,6 +20,7 @@ public class ProjectGuarantyBondVO extends ProjectSalesVO implements Serializabl
 	private String gbReqDt;
 	private String gbInspectDt;
 	private int gbAmount;
+	private int gbContractAmount;
 	private int gbRate;
 	private int gbSkAmount;
 	private String ctGbKey;
@@ -115,6 +116,12 @@ public class ProjectGuarantyBondVO extends ProjectSalesVO implements Serializabl
 	}
 	public void setGbAmount(int gbAmount) {
 		this.gbAmount = gbAmount;
+	}
+	public int getGbContractAmount() {
+		return gbContractAmount;
+	}
+	public void setGbContractAmount(int gbContractAmount) {
+		this.gbContractAmount = gbContractAmount;
 	}
 	public int getGbRate() {
 		return gbRate;

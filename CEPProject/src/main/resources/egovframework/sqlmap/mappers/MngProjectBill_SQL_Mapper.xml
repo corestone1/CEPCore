@@ -27,6 +27,7 @@
 		     , PSB.BILL_ISSUE_TYPE         AS BILL_ISSUE_TYPE         /* 발행 타입 */
 		     , PSD.SALES_KEY               AS SALES_KEY               /* 수금완료 처리를 위한 수금테이블 키 */
 		     , PSD.SALES_COLLECT_FINISH_DT AS SALES_COLLECT_FINISH_DT /* 수금완료 일자 */
+		     , PSD.SALES_COLLECT_FC_DT AS SALES_COLLECT_FC_DT /* 수금예상 일자 */
 		     , PSB.BILL_AC_DIRECTOR_NAME          AS BILL_AC_DIRECTOR_NAME     /* 매출처 담당자명 */
 		     , PSB.BILL_ISSUE_EMAIL          AS BILL_ISSUE_EMAIL     /* 발행 이메일 */
 		     , PM.PJ_NM						AS PJ_NM
@@ -275,11 +276,8 @@
 	
 		UPDATE PJ_SALES_DETAIL_TB
 		SET   
-			<if test='billIssueStatus == "E"'>
-				SALES_COLLECT_FINISH_DT = DATE_FORMAT(NOW(),'%Y%m%d')
-			</if>
-			<if test='billIssueStatus == "I"'>
-				SALES_COLLECT_FINISH_DT = null
+			<if test='salesCollectFinishDt != "" and salesCollectFinishDt != ""'>
+				SALES_COLLECT_FINISH_DT = #{salesCollectFinishDt}
 			</if>
 		    , SALES_STATUS_CD         = #{billIssueStatus}
 		    , MOD_DT                  = DATE_FORMAT(NOW(),'%Y%m%d')

@@ -469,7 +469,8 @@
     	<div><img src="<c:url value='/images/ajax_loader.gif'/>" /></div>
 	</div> 
 	<form id="moveForm" name="moveForm">
-		<input type="hidden" id="pjKey" name="pjKey" value="${resultList[0].pjKey }"/>
+		<input type="hidden" id="pjKey" name="pjKey" value="${resultList[0].pjKey }" />
+		<input type="hidden" id="ipt_pjNm" value="${resultList[0].pjNm }"/>
 		<input type="hidden" id="workClass" name="workClass" value=""/>
 	</form>
 	<form id="listForm" name="listForm">

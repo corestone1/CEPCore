@@ -19,6 +19,7 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	private String gbPublishDt;
 	private String gbReqDt;
 	private int gbAmount;
+	private int gbContractAmount;
 	private String ctGbKey;
 	private String dfGbKey;
 	private String ppGbKey;
@@ -105,6 +106,12 @@ public class GuarantyBondVO extends SalesVO implements Serializable {
 	}
 	public void setGbAmount(int gbAmount) {
 		this.gbAmount = gbAmount;
+	}
+	public int getGbContractAmount() {
+		return gbContractAmount;
+	}
+	public void setGbContractAmount(int gbContractAmount) {
+		this.gbContractAmount = gbContractAmount;
 	}
 	public String getCtGbKey() {
 		return ctGbKey;

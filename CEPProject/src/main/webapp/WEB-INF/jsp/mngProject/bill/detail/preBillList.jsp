@@ -7,6 +7,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/datepicker.min.css'/>"/>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -102,21 +103,21 @@
 		}
 		.sdContent .dtl thead th:first-child, 
 		.sdContent .dtl tbody td:first-child {
-		    width: 30px;
+		    width: 25px;
 		}
 		.sdContent .dtl thead th:nth-child(2), 
 		.sdContent .dtl tbody td:nth-child(2) {
-		    width: 89px;
-		    max-width: 89px;
+		    width: 84px;
+		    max-width: 84px;
 		}
 		.sdContent .dtl thead th:nth-child(3), 
 		.sdContent .dtl tbody td:nth-child(3) {
-		    width: 153px;
-		    max-width: 153px;
+		    width: 111px;
+		    max-width: 111px;
 		}
 		.sdContent .dtl thead th:nth-child(4), 
 		.sdContent .dtl tbody td:nth-child(4) {
-		    width: 100px;
+		    width: 89px;
 		}
 		.sdContent .dtl tbody tr td:nth-child(4) {
 		    font-weight: 400;
@@ -130,19 +131,23 @@
 		}
 		.sdContent .dtl thead th:nth-child(5), 
 		.sdContent .dtl tbody td:nth-child(5) {
-		    width: 142px;
+		    width: 145px;
 		}
 		.sdContent .dtl thead th:nth-child(6), 
 		.sdContent .dtl tbody td:nth-child(6) {
-		    width: 121px;
+		    width: 93px;
 		}
 		.sdContent .dtl thead th:nth-child(7), 
 		.sdContent .dtl tbody td:nth-child(7) {
-		    width: 60px;
+		    width: 58px;
 		}
 		.sdContent .dtl thead th:nth-child(8), 
 		.sdContent .dtl tbody td:nth-child(8) {
 	    	width: 58px;
+		}
+		.sdContent .dtl thead th:nth-child(9),
+		.sdContent .dtl tbody td:nth-child(9) {
+		    width: 194px;
 		}
 		
 		.sdContent .dtl tbody td span {
@@ -156,11 +161,22 @@
 		    margin: 0 auto;
 		}
 		
+		input[class^="calendar"] {
+		    width: 96px;
+		    height: 27px;
+		    vertical-align: top;
+		    border: 1px solid #ddd;
+		}
+		
 	</style>
 	<script>
 		$(document).ready(function() {
 			$("._pjNm").each(function() {
 				$(this).val(parent.$("#pjNm").val());
+			});
+			
+			$(".calendar").on("change", function() {
+				$(this).next().next().find("#_salesCollectFinishDt").val($(this).val())
 			});
 			                
 		});
@@ -177,38 +193,55 @@
 	 	
 	 	function fnComplete(obj) {
 	 		var billInfo = {};
-	 		
-	 		$(obj).next().children().each(function() {
-	 			billInfo[$(this).attr('id').replace("_","")] = $(this).val();
-	 		});
-	 		
-			$.ajax({
-	        	url :"/mngProject/bill/detail/writePaymentsComplate.do",
-	        	type:"POST",  
-	            data: billInfo,
-	     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-	     	    dataType: 'json',
-	            //async : false,
-	            beforeSend: function() {
-			 		parent.$(".wrap-loading").removeClass("dpNone");
-			 	}, complete: function() {
-			 		parent.$(".wrap-loading").addClass("dpNone");
-			 	}, success:function(data){		  
-	        		
-	        		if(data.successYN == "Y") {
-	        			alert("수금 완료 처리되었습니다.");
-	        			
-	        			location.reload();
-	        		} else {
-	        			alert("수금 완료 처리에 실패하였습니다.");
-	        		}
-	            },
-	        	error: function(request, status, error) {
-	        		if(request.status != '0') {
-	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
-	        	} 
-		    });  
+
+	 		if($(obj).next().find("#_salesCollectFinishDt").val().length == 0) {
+	 			alert("수금 날짜를 입력해주세요.");
+	 			$(obj).prev().focus();
+	 		} else {
+		 		$(obj).next().children().each(function() {
+		 			if(removeData($(this).attr('id'),"_")   == "salesCollectFinishDt") {
+		 				billInfo[removeData($(this).attr('id'),"_")] = removeData($(this).val(),"-");
+		 			} else {
+		 				billInfo[removeData($(this).attr('id'),"_")] = $(this).val();
+		 			}
+		 		});
+		 		
+				$.ajax({
+		        	url :"/mngProject/bill/detail/writePaymentsComplate.do",
+		        	type:"POST",  
+		            data: billInfo,
+		     	    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		     	    dataType: 'json',
+		            //async : false,
+		            beforeSend: function() {
+				 		parent.$(".wrap-loading").removeClass("dpNone");
+				 	}, complete: function() {
+				 		parent.$(".wrap-loading").addClass("dpNone");
+				 	}, success:function(data){		  
+		        		
+		        		if(data.successYN == "Y") {
+		        			if(billInfo.billIssueStatus == "E") {
+		        				alert("수금 날짜가 수정 되었습니다.")
+		        			} else {
+		        				alert("수금 완료 처리되었습니다.");
+		        			}
+		        			
+		        			location.reload();
+		        		} else {
+		        			if(billInfo.billIssueStatus == "E") {
+		        				alert("수금 날짜 수정이 실패하였습니다.");
+		        			} else {
+		        				alert("수금 완료 처리에 실패하였습니다.");
+		        			}
+		        		}
+		            },
+		        	error: function(request, status, error) {
+		        		if(request.status != '0') {
+		        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+		        		}
+		        	} 
+			    });   
+	 		}
 	 	}
 	 	
 	 	function fnViewBillInsert(billCtFkKey) {
@@ -264,10 +297,10 @@
 						<tr>
 							<td>${status.count }</td>
 							<%-- <td><span>${result.billNo }</span></td> --%>
-							<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td>
+							<td><span>${displayUtil.displayDate(result.billIssueDt) }</span></td> 
 							<td><a href="javascript:fnMoveBillForm('${result.billTurnNo}')"><span><c:out value="${result.billAcNm }"></c:out></span></a></td>
 							<td><span>${result.billAcDirectorName }</span></td>
-							<td><span>${result.billIssueEmail }</span></td>
+							<td><span style="width: 108px;" title="${result.billIssueEmail }">${result.billIssueEmail }</span></td>
 							<td class="textalignR"><span>${displayUtil.commaStr(result.billAmount) }</span></td>
 							<td>
 								<c:choose>
@@ -323,6 +356,7 @@
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'I' }">
 										<c:set var="key" value="${result.salesCollectFinishDt }" />
+										<input type="text" class="calendar" value="${displayUtil.displayDate(result.salesCollectFinishDt) }" />
 										<button type="button" class="btnComp"  onclick="javascript:fnComplete(this);">
 										<%-- onclick="javascript:fnComplete('${result.pjKey }', '${result.billCallKey}' ,'${result.salesKey }');"> --%>
 											<img src='/images/btn_end_col.png' />
@@ -333,10 +367,25 @@
 											<input type="hidden" id="_salesKey" value="${result.salesKey }" />
 											<input type="hidden" id="_billTurnNo" value="${result.billTurnNo }" />
 											<input type="hidden" id="_pjNm" class="_pjNm" value="" />
+											<input type="hidden" id="_salesCollectFinishDt" class="_salesCollectFinishDt" value="<c:if test="${result.salesCollectFinishDt ne null}">${result.salesCollectFinishDt}</c:if>" />
+											<input type="hidden" id="_billIssueStatus" class="_billIssueStatus" value="${result.billIssueStatus}" />
 										</div>
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'E' }">
-										<span>${displayUtil.displayDate(result.salesCollectFinishDt) }</span>
+										<input type="text" class="calendar" value="${displayUtil.displayDate(result.salesCollectFinishDt) }" />
+										<button type="button" class="btnComp"  onclick="javascript:fnComplete(this);">
+										<%-- onclick="javascript:fnComplete('${result.pjKey }', '${result.billCallKey}' ,'${result.salesKey }');"> --%>
+											<img src='/images/btn_blue_mod.png' />
+										</button>
+										<div class="dpNone">
+											<input type="hidden" id="_pjKey" value="${result.pjKey }" />
+											<input type="hidden" id="_billCallKey" value="${result.billCallKey }" />
+											<input type="hidden" id="_salesKey" value="${result.salesKey }" />
+											<input type="hidden" id="_billTurnNo" value="${result.billTurnNo }" />
+											<input type="hidden" id="_pjNm" class="_pjNm" value="" />
+											<input type="hidden" id="_salesCollectFinishDt" class="_salesCollectFinishDt" value="<c:if test="${result.salesCollectFinishDt ne null}">${result.salesCollectFinishDt}</c:if>" />
+											<input type="hidden" id="_billIssueStatus" class="_billIssueStatus" value="${result.billIssueStatus}" />
+										</div>
 									</c:when>
 									<%-- <c:when test="${empty result.salesCollectFinishDt }">
 										<c:set var="key" value="${result.salesCollectFinishDt }" />
@@ -357,16 +406,16 @@
 							<td>
 								<c:choose>
 									<c:when test="${result.billIssueStatus == 'R' }">
-										미수금
+										미수금<br />(예상일자: ${displayUtil.displayDate(result.salesCollectFcDt) })
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'M' }">
-										미수금
+										미수금<br />(예상일자: ${displayUtil.displayDate(result.salesCollectFcDt) })
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'I' }">
-										미수금
+										미수금<br />(예상일자: ${displayUtil.displayDate(result.salesCollectFcDt) })
 									</c:when>
 									<c:when test="${result.billIssueStatus == 'E' }">
-										<span>${displayUtil.displayDate(result.salesCollectFinishDt) }</span>
+										${displayUtil.displayDate(result.salesCollectFinishDt) }<br />(예상일자: ${displayUtil.displayDate(result.salesCollectFcDt) })
 									</c:when>
 								</c:choose>
 							</td>
