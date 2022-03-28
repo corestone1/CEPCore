@@ -337,6 +337,19 @@ public interface MngMaintBillService {
 	public void updatePaymentRequestFinish(MtPaymentVO mtPaymentVO) throws Exception;
 	
 	/**
+	 * 지금완료 처리 날자만 변경하는 서비스.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtPaymentVO
+	 * @throws Exception
+	 * @cdate 2022. 3. 28. 오후 1:10:33
+	 * @author aranghoo
+	 */
+	public void updatePaymentRequestFinishDate(MtPaymentVO mtPaymentVO) throws Exception;
+	
+	
+	/**
 	 * 지급완료 취소처리.
 	 * PAYMENT_STATUS_CD=PYST4000 ==>PYST3000
 	 * <pre>

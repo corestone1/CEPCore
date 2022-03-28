@@ -625,7 +625,7 @@
 			} else {
 				tempCollectFinishDt = $('#ipt_today').val();
 			}
-			//console.log("tempCollectFinishDt========>"+tempCollectFinishDt);
+			console.log("salesStatusCd===============>"+$('#'+rowNum+'-salesStatusCd').val());
 			if(confirm(confirmTitle+" 대한 수금완료처리를 하시겠습니까?")) {
 					/* 수금완료시 시  billIssueStatus 상태값을  E 로 변경한다. */
 					var billInfo = {
@@ -633,6 +633,7 @@
 							, 'billCallKey' :$('#'+rowNum+'-billCallKey').val()
 							, 'mtSalesOrderKey' :$('#'+rowNum+'-mtSalesOrderKey').val()
 							, 'salesKey' : $('#'+rowNum+'-salesKey').val()
+							, 'currentBillIssueStatus' : $('#'+rowNum+'-salesStatusCd').val()
 							, 'billIssueStatus' : 'E'
 							, 'salesCollectFinishDt' :removeData($('#'+rowNum+'-salesCollectFinishDt').val(),'-')
 							, 'mtNm' : $('#'+rowNum+'-mtNm').val()
@@ -934,7 +935,8 @@
 										</c:when>
 										<c:when test="${list.salesStatusCd eq 'E'}">
 											<%-- <button type="button" title="수금취소" class="purpleBtnStyle" onclick="javascript:fnCollectionCompleteCancel(<c:out value="${status.index}"/>)">수금취소</button> --%>
-											<button type="button" title="수금완료" class="grayBtnStyle"><img src="<c:url value='/images/collect_comp.png'/>" /></button>
+											<%-- <button type="button" title="수금완료" class="grayBtnStyle"><img src="<c:url value='/images/collect_comp.png'/>" /></button> --%>
+											<button type="button" title="수금완료" onclick="javascript:fnCollectionComplete(<c:out value="${status.index}"/>)"><img class="cursorP" src="<c:url value='/images/collect_comp.png'/>" /></button>
 										</c:when>
 										<c:when test="${list.salesStatusCd == null }">
 											<button type="button" title="수금대기" class="grayBtnStyle"><img src="<c:url value='/images/collect_wait.png'/>" /></button>
@@ -954,6 +956,7 @@
 								<td style="max-width: 0px; display: none;">
 									<input type="hidden" id="<c:out value="${status.index}"/>-billCallKey" value="<c:out value="${list.billCallKey}"/>"/>
 									<input type="hidden" id="<c:out value="${status.index}"/>-mtSalesOrderKey" value="<c:out value="${list.mtSalesOrderKey}"/>"/>
+									<input type="hidden" id="<c:out value="${status.index}"/>-salesStatusCd" value="<c:out value="${list.salesStatusCd}"/>"/>
 								</td>
 							</tr>
 						</c:forEach>

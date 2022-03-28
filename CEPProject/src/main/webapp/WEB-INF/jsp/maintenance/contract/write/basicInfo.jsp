@@ -216,6 +216,8 @@
 	</style>
 	<script>
 		$(document).ready(function() {
+			
+			
 			'<c:if test="${basicContractInfo != null }">'
 				//고객사 담당자 셋팅
 				$('#mtAcDirectorKey').val("${basicContractInfo.mtAcDirectorKey}").attr("selected", "true");
@@ -252,8 +254,12 @@
 				
 			'</c:if>'
 			
-			
-			
+			'<c:if test="${basicContractInfo == null }">'
+				//초기 등록시 영업담당자는 로그인한 사용자로 한다.
+				$('#mtSaleEmpKey').val("${sessionScope.userInfo.empKey}").attr("selected", "true");
+			'</c:if>'
+			//영업사원 로그인 계정으로 선택된것 말고 안되게 하는 부분.
+			$("#mtSaleEmpKey option").not(":selected").attr("disabled", "disabled");
 			/* '<c:if test="${basicContractInfo.mtForcastLinkVo.mtLinkKey != null }">'
 				$('#sp_delete_forecast').show();
 			'</c:if>' */
@@ -1060,7 +1066,12 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 영업담당</td>
 							<td class="tdContents">
-								<select id="mtSaleEmpKey" name="mtSaleEmpKey" required>
+								<%-- <select id="mtSaleEmpKey" name="mtSaleEmpKey"  required>
+									<c:forEach var="emp" items="${empList}" varStatus="status">										
+									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
+									</c:forEach>	
+								</select> --%>
+								<select id="mtSaleEmpKey" name="mtSaleEmpKey"  required>
 									<c:forEach var="emp" items="${empList}" varStatus="status">										
 									<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
 									</c:forEach>	

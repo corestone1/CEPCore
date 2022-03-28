@@ -271,10 +271,10 @@
 		    height: 26px;
 		    background-color: #91a6f2;
 		    color: #ffffff;
-		    font-weight: bold;
 		    border: 1px solid #91a6f2;
 		    padding-bottom: 2px;
 		    vertical-align: top;
+		    font-size: 12px;
 		}
 		/* 보라버튼이미지  */
 		.purpleBtnStyle {
@@ -282,10 +282,10 @@
 		    height: 26px;
 		    background-color: #eb8282;
 		    color: #ffffff;
-		    font-weight: bold;
 		    border: 1px solid #a392f2;
 		    padding-bottom: 2px;
 		    vertical-align: top;
+		    font-size: 12px;
 		}		
 		/* 보라버튼이미지  */
 		.grayBtnStyle {
@@ -293,11 +293,11 @@
 		    height: 26px;
 		    background-color: #bec3c9;
 		    color: #ffffff;
-		    font-weight: bold;
 		    border: 1px solid #a392f2;
 		    padding-bottom: 2px;
 		    vertical-align: top;
 		    cursor: default;
+		    font-size: 12px;
 		    /* -webkit-filter: grayscale(100%); */
 		}
 	</style>
@@ -379,6 +379,8 @@
 							, 'paymentYearMonth' : $('#'+rowNum+'-paymentYearMonth').val()
 							, 'mtNm' : $('#'+rowNum+'-mtNm').val()
 							, 'paymentBillAcNm' : $('#'+rowNum+'-billAcNm').val()
+							, 'paymentKey' :$('#'+rowNum+'-paymentCallKey').val()							
+							, 'currentStatus' : $('#'+rowNum+'-currentStatus').val()
 					}
 					//console.log("paymentTurn========>"+$('#'+rowNum+'-paymentTurn').val());
 					//console.log("paymentConfirmInfo====>"+JSON.stringify(paymentConfirmInfo));
@@ -777,7 +779,8 @@
 										</c:when>
 										<c:when test="${list.paymentStatusCd eq 'E'}">
 											<%-- <button type="button" title="지급완료취소" class="purpleBtnStyle" onclick="javascript:fnPaymentCompleteCancel(<c:out value="${status.index}"/>)">완료취소</button> --%>
-											<button type="button" title="지급완료" class="grayBtnStyle">지급완료</button>
+											<%-- <button type="button" title="지급완료" class="grayBtnStyle">지급완료</button> --%>
+											<button type="button" title="지급완료" class="blueBtnStyle" onclick="javascript:fnPaymentComplete(<c:out value="${status.index}"/>)">지급완료</button>
 										</c:when>
 										<c:when test="${list.paymentStatusCd == null }">
 											<button type="button" title="지급완료" class="blueBtnStyle" onclick="javascript:fnPaymentComplete(<c:out value="${status.index}"/>)">지급완료</button>
@@ -799,7 +802,7 @@
 								<td style="max-width: 0px; display: none;"><c:out value="${status.index}"/></td>
 								<td style="max-width: 0px; display: none;">
 									<input type="hidden" id="<c:out value="${status.index}"/>-paymentCallKey" value="<c:out value="${list.paymentCallKey}"/>"/>
-									<input type="hidden" id="<c:out value="${status.index}"/>-mtWorkKey" value="<c:out value="${list.mtWorkKey}"/>"/>
+									<input type="hidden" id="<c:out value="${status.index}"/>-mtWorkKey" value="<c:out value="${list.mtWorkKey}"/>"/>									
 								</td>
 							</tr>
 						</c:forEach>

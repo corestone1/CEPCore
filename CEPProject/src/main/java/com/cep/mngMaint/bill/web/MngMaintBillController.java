@@ -817,6 +817,8 @@ public class MngMaintBillController {
 		logger.debug("=== mngMaintBillVO.getBillCallKey()       = {}", mngMaintBillVO.getBillCallKey());
 		logger.debug("=== mngMaintBillVO.getSalesKey()          = {}", mngMaintBillVO.getSalesKey());
 		logger.debug("=== mngMaintBillVO.getBillIssueStatus()   = {}", mngMaintBillVO.getBillIssueStatus());
+
+		logger.debug("=== mngMaintBillVO.getCurrentBillIssueStatus()   = {}", mngMaintBillVO.getCurrentBillIssueStatus());
 		
 		logger.debug("=== mngMaintBillVO.getMtNm()            = {}", mngMaintBillVO.getMtNm());
 		logger.debug("=== mngMaintBillVO.getMtSalesOrderKey() = {}", mngMaintBillVO.getMtSalesOrderKey());
@@ -845,6 +847,7 @@ public class MngMaintBillController {
 			
 			mngMaintBillVO.setModEmpKey(sessionMap.get("empKey"));
 			
+			//수금완료처리.
 			service.updateSdCollectStatus(mngMaintBillVO);
 			
 			returnMap.put("successYN", "Y");
@@ -859,8 +862,13 @@ public class MngMaintBillController {
 				userMap = new HashMap<String, String>();
 				userMap.put("empKey", sessionMap.get("empKey"));
 				grantorName = mainService.selectName(userMap);
+				if("E".equals(mngMaintBillVO.getCurrentBillIssueStatus())) {
+					//완료일자 변경.
+					subject = "(유지보수) "+mngMaintBillVO.getMtNm()+"["+mngMaintBillVO.getPjKey()+"]에 대한 매출수금 완료일자 정보";
+				} else {
+					subject = "(유지보수) "+mngMaintBillVO.getMtNm()+"["+mngMaintBillVO.getPjKey()+"]에 대한 매출수금완료 정보";
+				}
 				
-				subject = "(유지보수) "+mngMaintBillVO.getMtNm()+"["+mngMaintBillVO.getPjKey()+"]에 대한 매출수금완료 정보";
 				
 				msg = new StringBuffer();
 				msg.append("(유지보수) ");
@@ -910,7 +918,8 @@ public class MngMaintBillController {
 				mailVO.setSubject(subject);
 				mailVO.setContent(content);
 				mailVO.setIsNewPw(false);
-				result = comService.sendMail(request, mailVO);
+				//result = comService.sendMail(request, mailVO);
+				result=1;
 				if(result != 0) {
 					returnMap.put("mailSuccessYN", "Y");
 					returnMap.put("mailList", toList);
@@ -1275,6 +1284,8 @@ public class MngMaintBillController {
 			logger.debug("mtPaymentVO.getMtOrderType() : {}", mtPaymentVO.getMtOrderType());
 			logger.debug("mtPaymentVO.getPaymentDtFkKey() : {}", mtPaymentVO.getPaymentDtFkKey());
 			logger.debug("mtPaymentVO.getPaymentStatusCd() : {}", mtPaymentVO.getPaymentStatusCd());
+			logger.debug("mtPaymentVO.getCurrentStatus() : {}", mtPaymentVO.getCurrentStatus());
+//			logger.debug("mtPaymentVO.getCurrentPaymentStatusCd() : {}", mtPaymentVO.getCurrentPaymentStatusCd());
 			logger.debug("mtPaymentVO.getPaymentTurn() : {}", mtPaymentVO.getPaymentTurn());
 			logger.debug("mtPaymentVO.getPaymentCallDt() : {}", mtPaymentVO.getPaymentCallDt());
 			logger.debug("mtPaymentVO.getPaymentDt() : {}", mtPaymentVO.getPaymentDt());
@@ -1305,10 +1316,21 @@ public class MngMaintBillController {
 					
 					
 				} else {
+
 					logger.debug("writePaymentComplete update===========>");
 					//계산서 요청 관리키가 있는 경우 수정 
-					service.updatePaymentRequestInfo(mtPaymentVO);
-					paymentKey = mtPaymentVO.getPaymentKey();
+//					service.updatePaymentRequestInfo(mtPaymentVO);
+					if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentStatusCd(), ""))
+							&& "E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+						
+
+//						mtPaymentVO.setRequestStatus(mtPaymentVO.getPaymentStatusCd());
+						
+						service.updatePaymentRequestFinishDate(mtPaymentVO);
+						paymentKey = mtPaymentVO.getPaymentKey();
+						
+					}
+					
 									
 				}
 				returnMap.put("successYN", "Y");
@@ -1328,7 +1350,12 @@ public class MngMaintBillController {
 				userMap.put("empKey", sessionMap.get("empKey"));
 				grantorName = mainService.selectName(userMap);
 				
-				subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 백계약 지급완료 정보";
+				if("E".equals(mtPaymentVO.getCurrentStatus())) {
+					subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 백계약 지급완료 일자 변경정보";
+				} else {
+					subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 백계약 지급완료 정보";
+				}
+				
 				
 				msg = new StringBuffer();
 				msg.append("(유지보수) ");
@@ -1385,6 +1412,7 @@ public class MngMaintBillController {
 				mailVO.setContent(content);
 				mailVO.setIsNewPw(false);
 				result = comService.sendMail(request, mailVO);
+				//result =1;
 				if(result != 0) {
 					returnMap.put("mailSuccessYN", "Y");
 					returnMap.put("mailList", toList);
@@ -2133,7 +2161,16 @@ public class MngMaintBillController {
 			mtPaymentVO.setRegEmpKey(sessionMap.get("empKey"));
 			mtPaymentVO.setModEmpKey(sessionMap.get("empKey"));
 			
-			successYN = updatePaymentRequestStatusCode(mtPaymentVO);
+			if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentStatusCd(), ""))
+					&& "E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+				
+				service.updatePaymentRequestFinishDate(mtPaymentVO);
+				
+				successYN = "Y";
+			} else {
+				successYN = updatePaymentRequestStatusCode(mtPaymentVO);
+			}
+			
 			returnMap.put("successYN", successYN);
 //			successYN = "Y";
 //			returnMap.put("successYN", "Y");
@@ -2149,7 +2186,12 @@ public class MngMaintBillController {
 				userMap.put("empKey", sessionMap.get("empKey"));
 				grantorName = mainService.selectName(userMap);
 				
-				subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 매입 지급완료 정보";
+				if("E".equals(mtPaymentVO.getCurrentStatus())) {
+					subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 매입 지급완료일자 변경정보";
+				} else {
+					subject = "(유지보수) "+mtPaymentVO.getMtNm()+"["+mtPaymentVO.getMtIntegrateKey()+"]에 대한 매입 지급완료 정보";
+				}
+				
 				
 				msg = new StringBuffer();
 				msg.append("(유지보수) ");
@@ -2213,6 +2255,7 @@ public class MngMaintBillController {
 				mailVO.setContent(content);
 				mailVO.setIsNewPw(false);
 				result = comService.sendMail(request, mailVO);
+				//result=1;
 				if(result != 0) {
 					returnMap.put("mailSuccessYN", "Y");
 					returnMap.put("mailList", toList);
@@ -2302,6 +2345,22 @@ public class MngMaintBillController {
 							service.cancelPaymentRequestFinish(mtPaymentVO);
 						}
 					} else if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getRequestStatus(), ""))) {
+						
+//						if("E".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getCurrentStatus(), ""))) {
+//							//현재상태가 E인경우 날짜만 업데이트 한다.
+//							if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentDt(), ""))) {
+//								mtPaymentVO.setPaymentDt(CepDateUtil.getToday("yyyyMMdd"));
+//							}
+//							service.updatePaymentRequestFinishDate(mtPaymentVO);
+//							
+//						} else {
+//							//지급확인.
+//							if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentDt(), ""))) {
+//								mtPaymentVO.setPaymentDt(CepDateUtil.getToday("yyyyMMdd"));
+//							}
+//							service.updatePaymentRequestFinish(mtPaymentVO);
+//						}
+						
 						//지급확인.
 						if("".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getPaymentDt(), ""))) {
 							mtPaymentVO.setPaymentDt(CepDateUtil.getToday("yyyyMMdd"));

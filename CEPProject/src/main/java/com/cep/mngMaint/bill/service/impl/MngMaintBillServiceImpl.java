@@ -805,6 +805,31 @@ public class MngMaintBillServiceImpl implements MngMaintBillService {
 		}
 		
 	}
+	
+	@Override
+	@Transactional
+	public void updatePaymentRequestFinishDate(MtPaymentVO mtPaymentVO) throws Exception {
+		MtPaymentVO mtPaymentVO2 = null;
+		try {
+			//1. 지급테이블(MT_PAYMENT_TB) 완료처리 : updatePaymentRequestFinish
+			mapper.updatePaymentRequestFinish(mtPaymentVO);
+			
+	
+			if("BO".equals(CepStringUtil.getDefaultValue(mtPaymentVO.getMtOrderType(), ""))) {
+				//백오더인경우만 MT_PAYMENT_DETAIL_TB에 정보 업데이트.
+//				mtPaymentVO2 = new MtPaymentVO();
+//				mtPaymentVO2.setPaymentDtFkKey(mtPaymentVO.getPaymentDtFkKey());
+//				mtPaymentVO2.setPaymentDt(mtPaymentVO.getPaymentDt());
+//				mtPaymentVO2.setPaymentStatusCd(mtPaymentVO.getRequestStatus());
+				logger.debug("mtPaymentVO.getRequestStatus()=====>"+mtPaymentVO.getRequestStatus());
+				mapper.updatePaymentDetailStatusCd(mtPaymentVO);
+			}
+			
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+	}
 
 	@Override
 	@Transactional

@@ -3879,8 +3879,8 @@ public class MtContractController {
 					guarantyBondVO.setGbStartDt(mtContractVO.getMtStartDt());
 					guarantyBondVO.setGbEndDt(mtContractVO.getMtEndDt());
 					guarantyBondVO.setTaxYn(mtContractVO.getTaxYn());
-					guarantyBondVO.setMtAmount(mtContractVO.getMtAmount());
 					guarantyBondVO.setGbIssueYn("N");
+					guarantyBondVO.setMtAmount((int)(mtContractVO.getMtAmount()*1.1));
 					
 					
 					guarantyBondVO.setContractRegEmpKey(mtContractVO.getRegEmpKey());
@@ -3900,7 +3900,8 @@ public class MtContractController {
 			logger.debug("== mtGuarantyBondVO.getContractSalesEmpKey() : {}", mtGuarantyBondVO.getContractSalesEmpKey() );
 			logger.debug("== mtContractVO.getRegEmpKey() : {}", mtContractVO.getRegEmpKey() );
 			logger.debug("== mtContractVO.getMtSaleEmpKey() : {}", mtContractVO.getMtSaleEmpKey() );
-			logger.debug("mtContractVO.getMtNm()===========>"+guarantyBondVO.getMtNm());
+			logger.debug("mtContractVO.getMtNm()===========>"+guarantyBondVO.getMtNm()+"::"+guarantyBondVO.getGbIssueYn());
+			
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -3923,6 +3924,7 @@ public class MtContractController {
 		logger.debug("== mtGuarantyBondVO.getGbEndDt()   : {}", mtGuarantyBondVO.getGbEndDt());
 		logger.debug("== mtGuarantyBondVO.getGbRate()    : {}", mtGuarantyBondVO.getGbRate());
 		logger.debug("== mtGuarantyBondVO.getMtNm()    : {}", mtGuarantyBondVO.getMtNm());
+		logger.debug("== mtGuarantyBondVO.getGbContractAmount()    : {}", mtGuarantyBondVO.getGbContractAmount());
 		
 		HashMap<String, String> sessionMap = null;
 		
@@ -3959,7 +3961,8 @@ public class MtContractController {
 						
 //						logger.debug("email=====>"+email);
 					}
-//					toList.add("ycchoi@corestone.co.kr");
+					//toList = new ArrayList<>();
+					//toList.add("ycchoi@corestone.co.kr");
 					
 					tmail = StringUtils.join(toList, ";");
 					subject = "(유지보수) "+mtGuarantyBondVO.getMtNm()+"["+mtGuarantyBondVO.getMtIntegrateKey()+"]에 대한 보증 증권 요청 정보";

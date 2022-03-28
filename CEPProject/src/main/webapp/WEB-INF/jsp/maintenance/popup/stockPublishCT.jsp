@@ -172,7 +172,7 @@
 					}
 					 
 					//금액
-					if('gbAmount' == formData[i]['name']){
+					if('gbAmount' == formData[i]['name'] || "gbContractAmount" == formData[i]['name']){
 						formData[i]['value'] = removeCommas(formData[i]['value']);
 					}
 					
@@ -243,7 +243,7 @@
 					
 					jsonDate[formData[i]['name']]  = removeData(formData[i]['value'], '-');
 				}
-				else if('gbAmount' == formData[i]['name']){ //금액
+				else if('gbAmount' == formData[i]['name'] || "gbContractAmount" == formData[i]['name']){ //금액
 					if(formData[i]['value'] == '') {
 						//제거
 					}
@@ -302,7 +302,7 @@
 				}
 				 
 				//금액
-				if('gbAmount' == formData[i]['name']){
+				if('gbAmount' == formData[i]['name'] || "gbContractAmount" == formData[i]['name']){
 					formData[i]['value'] = removeCommas(formData[i]['value']);
 				}
 				
@@ -384,7 +384,7 @@
 						<tr id="m_tr_account" >
 							<td class="tdTitle">계약금액</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"  class="readOnly" value="${displayUtil.commaStr(gbInfo.mtAmount)}" disabled/> 
+								<input type="text" id="gbContractAmount" name="gbContractAmount" value="${displayUtil.commaStr(gbInfo.mtAmount)}" style="width: 115px; text-align: right;" amountonly required/> 
 							</td>
 						</tr>
 						
@@ -446,7 +446,22 @@
 							</td>
 						</tr>
 					</c:if>						
+					<c:if test='${gbInfo.gbIssueYn == "Y" and sessionScope.empAuthCd ne "EMAU1001"}'>
+						<tr id="m_tr_account">
+							<td class="tdTitle"><label>*</label>발행일</td>
+							<td id="m_td_account" class="tdContents">
+								<input type="text" class="readOnlyDt" value="${displayUtil.displayDate(gbInfo.gbPublishDt)}" disabled/>
+							</td>
+						</tr>
 						
+						<tr id="m_tr_account">
+							<td class="tdTitle"><label>*</label>증권금액</td>
+							<td id="m_td_account" class="tdContents">
+								<%-- <c:out value="${displayUtil.commaStr(gbInfo.gbAmount)"/> --%>	
+								<input type="text" class="readOnlyDt" value="${displayUtil.commaStr(gbInfo.gbAmount)}" disabled/>
+							</td>
+						</tr>
+					</c:if>							
 						<tr id="m_tr_account" >
 							<td class="tdTitle">발급요청사항</td>
 							<td id="m_td_account" class="tdContents">

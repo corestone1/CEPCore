@@ -39,6 +39,9 @@ public class MtGuarantyBondVO  extends MtDefaultVO implements Serializable{
 	//보증 증권 발급 여부(R요청,Y발급완료,N발행전)
 	private String gbIssueYn;
 	
+	//보증증권 계약금액(유지보수 금액 * 1.1)
+	private int gbContractAmount;
+	
 	//보증증권 금액
 	private int gbAmount;
 	
@@ -382,6 +385,12 @@ public class MtGuarantyBondVO  extends MtDefaultVO implements Serializable{
 	}
 	public void setContractSalesEmpKey(String contractSalesEmpKey) {
 		this.contractSalesEmpKey = contractSalesEmpKey;
+	}
+	public int getGbContractAmount() {
+		return gbContractAmount;
+	}
+	public void setGbContractAmount(int gbContractAmount) {
+		this.gbContractAmount = gbContractAmount;
 	}
    	
    

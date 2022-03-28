@@ -1845,6 +1845,7 @@
 			, GB_END_DT
 			, GB_ISSUE_YN			
 			, GB_RATE
+			, GB_CONTRACT_AMOUNT
 		 <if test="gbPublishDt != null and gbPublishDt != ''">			
 		 	, GB_PUBLISH_DT
 		 </if>
@@ -1863,6 +1864,7 @@
 			, #{gbEndDt}
 			, 'R'
 			, #{gbRate}
+			, #{gbContractAmount}
 		 <if test="gbPublishDt != null and gbPublishDt != ''">			
 		 	, #{gbPublishDt}
 		 </if>
@@ -1900,6 +1902,7 @@
 		    , GB_RATE       = #{gbRate}
 		    , GB_PUBLISH_DT = #{gbPublishDt}
 		    , REMARK        = #{remark}
+		    , GB_CONTRACT_AMOUNT = #{gbContractAmount}
 		    <if test="gbAmount > 0">
 		    , GB_AMOUNT     = #{gbAmount}
 		    </if>
@@ -1927,9 +1930,9 @@
 			, MCT.MT_NM         AS mtNm
 			, MCT.MT_START_DT   AS mtStartDt
 			, MCT.MT_END_DT     AS mtEndDt
-			, MCT.MT_AMOUNT     AS mtAmount
 			, CAT.AC_KEY        AS mtAcKey
 			, CAT.AC_NM         AS mtAcNm
+			, MGT.GB_CONTRACT_AMOUNT     AS mtAmount
 			, MGT.GB_KEY        AS gbKey
 			, MGT.GB_START_DT   AS gbStartDt
 			, MGT.GB_END_DT     AS gbEndDt

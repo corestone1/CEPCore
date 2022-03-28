@@ -31,7 +31,8 @@ public class MngMaintBillVO implements Serializable {
 	private String billIssueDt; //계산서 발급일자
 	private String billIssueEmail;//계산서 발급 이메일
 	private String billIssueType; // 정발행/역발행.
-	private String billIssueStatus; //'계산서 발급 상태 - R:요청, I:발급, M:매핑, E:지급완료', (발급은 필요없고 매핑만 있으면 될듯)
+	private String billIssueStatus; //'요청한 계산서 발급 상태 - R:요청, I:발급, M:매핑, E:지급완료', (발급은 필요없고 매핑만 있으면 될듯)
+	private String currentBillIssueStatus; //현재 계산서 발급상태
 	private String billMappingYn;//계산서 맵핑 여부
 	private String billRequestDt; //계산서 발급요청일자.
 	private String billTaxYn;
@@ -504,6 +505,14 @@ public class MngMaintBillVO implements Serializable {
 
 	public void setMtNm(String mtNm) {
 		this.mtNm = mtNm;
+	}
+
+	public String getCurrentBillIssueStatus() {
+		return currentBillIssueStatus;
+	}
+
+	public void setCurrentBillIssueStatus(String currentBillIssueStatus) {
+		this.currentBillIssueStatus = currentBillIssueStatus;
 	}
 
 }
