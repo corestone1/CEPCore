@@ -347,7 +347,7 @@
 					jsonData[formData[i]['name']]  = removeData(formData[i]['value'], '-');
 				}
 				// 금액
-				else if('gbAmount' == formData[i]['name']){
+				else if('gbAmount' == formData[i]['name'] || 'gbContractAmount' == formData[i]['name']){
 					jsonData[formData[i]['name']]  = removeCommas(formData[i]['value']);
 				}
 				
@@ -406,7 +406,7 @@
 						<tr id="m_tr_account" >
 							<td class="tdTitle">계약금액(VAT포함)</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text"  class="readOnly" value="${displayUtil.commaStr(gbInfo.totalAmount)}(${displayUtil.commaStr(gbInfo.ctAmount)}/${gbInfo.taxYn})" disabled/> 
+								<input type="text"  name="gbContractAmount" value="<c:choose><c:when test="${gbInfo.gbContractAmount eq null }">${displayUtil.commaStr(gbInfo.ctAmount * 1.1)}</c:when><c:otherwise>${displayUtil.commaStr(gbInfo.gbContractAmount)}</c:otherwise></c:choose>" amountonly required/> 
 							</td>
 						</tr>
 						<tr>

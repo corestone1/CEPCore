@@ -3,6 +3,7 @@ package com.cep.mngCommon.bill.web;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,13 +16,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,6 +43,7 @@ import com.cmm.util.CepDateUtil;
 import com.cmm.util.CepDisplayUtil;
 import com.cmm.util.FileMngUtil;
 import com.cmm.vo.FileVO;
+import com.mysql.jdbc.MysqlErrorNumbers;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
@@ -59,6 +61,9 @@ public class MngCommonBillController {
 	
 	@Resource(name="projectDetailService")
 	private ProjectDetailService projectDetailService;
+	
+	@Value("#{comProps['fileStorePath']}")
+	private String filePath;
 	
 	@RequestMapping(value="/list.do")
 	public String selectBill(@ModelAttribute("searchVO") MngCommonBillSearchVO searchVO, ModelMap model) throws Exception {
@@ -515,9 +520,15 @@ public class MngCommonBillController {
 		
 		MultipartFile lmpfExcel = multiRequest.getFile("excelFile");
 		
-		String lstExcelPath = "D:/tmp/" + CepDateUtil.getToday("yyyyMMddHHmmssSSS");
+		String lstExcelPath = filePath + "pcBill" + File.separator;
+				//"D:/tmp/" + "pcBill" + File.separator;
 		
-		File lfExcel = new File(lstExcelPath);
+		File pathFile = new File(lstExcelPath);
+		if(pathFile.exists() == false) {
+			pathFile.mkdirs();
+		}
+		
+		File lfExcel = new File(lstExcelPath + CepDateUtil.getToday("yyyyMMddHHmmssSSS"));
 		
 		logger.debug("file path : {}", lfExcel.getAbsolutePath());
 		logger.debug("lmpfExcel : {}", lmpfExcel);
@@ -529,8 +540,8 @@ public class MngCommonBillController {
 			
 			lmpfExcel.transferTo(lfExcel);
 			
-			File file = new File(lstExcelPath);
-			inputStream = new FileInputStream(file);
+			//File file = new File(lstExcelPath + CepDateUtil.getToday("yyyyMMddHHmmssSSS"));
+			inputStream = new FileInputStream(lfExcel);
             
 			// 파일 스트림을 XSSFWorkbook 객체로 생성
 			// xlsx 파일만 등록
@@ -641,7 +652,7 @@ public class MngCommonBillController {
 			returnMap = service.insertBillingExcelBatch(billVO);
 			
 		} catch(Exception e) {
-			logger.error("{}", e);
+        	e.printStackTrace();
 			throw e;
 		}
 		

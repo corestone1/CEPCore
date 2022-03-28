@@ -14,7 +14,8 @@
 		     , DAT.SALES_TURN_AMOUNT     AS SALES_TURN_AMOUNT
 		     , DAT.SALES_AMOUNT          AS SALES_AMOUNT
 		     , DAT.EMP_NM                AS EMP_NM
-		     , DAT.SALES_COLLECT_DT      AS SALES_COLLECT_DT
+		     , DAT.SALES_COLLECT_FC_DT      AS SALES_COLLECT_FC_DT
+		     , DAT.SALES_COLLECT_FINISH_DT      AS SALES_COLLECT_FINISH_DT
 		FROM (
 				SELECT PMT.PJ_KEY              AS PJ_KEY
 				     , PSD.SALES_KEY           AS SALES_KEY
@@ -28,14 +29,16 @@
 				            ELSE  -->PSD.SALES_TURN_AMOUNT
 				       <!-- END   -->                   AS SALES_AMOUNT        /* 수금액(부가세별도) */
 				     , CET.EMP_NM              AS EMP_NM              /* 영업담당자 */
-				     , PSD.SALES_COLLECT_FC_DT AS SALES_COLLECT_FC_DT /* 수금예상일정 */
+				    <!--  , PSD.SALES_COLLECT_FC_DT AS SALES_COLLECT_FC_DT /* 수금예상일정 */
 				     /*
 					  , CASE WHEN PSD.SALES_STATUS_CD = 'E'
 					  */
 					  , CASE WHEN PSD.SALES_COLLECT_FINISH_DT IS NOT NULL
 				            THEN PSD.SALES_COLLECT_FINISH_DT
 				            ELSE PSD.SALES_COLLECT_FC_DT
-				       END                     AS SALES_COLLECT_DT    /* 수금 일정 */
+				       END                     AS SALES_COLLECT_DT    /* 수금 일정 */ -->
+				     , PSD.SALES_COLLECT_FC_DT AS 		SALES_COLLECT_FC_DT
+				     , PSD.SALES_COLLECT_FINISH_DT AS 		SALES_COLLECT_FINISH_DT
 				      
 				FROM   PJ_SALES_DETAIL_TB    PSD
 				JOIN   PJ_MAIN_TB            PMT  ON PSD.SALES_CT_FK_KEY = PMT.PJ_KEY AND PMT.DELETE_YN = 'N'
@@ -59,10 +62,10 @@
 		) DAT
 		WHERE 1=1
 		<if test=" (fundStatus == null or fundStatus == '') and searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != '' ">
-			AND DAT.SALES_COLLECT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+			AND DAT.SALES_COLLECT_FC_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
 		</if>
 		
-		ORDER BY DAT.SALES_COLLECT_DT ASC		  
+		ORDER BY DAT.SALES_COLLECT_FC_DT ASC		  
 				  
 		
 	</select>
@@ -79,6 +82,7 @@
 			 , DAT.EMP_NM              AS EMP_NM
 			 , DAT.CALL_AMOUNT         AS CALL_AMOUNT
 			 , DAT.PAYMENT_DT          AS PAYMENT_DT
+			 , DAT.PAYMENT_CALL_DT		AS PAYMENT_CALL_DT
 		FROM (
 				SELECT PMT.PJ_KEY              AS PJ_KEY
 				     , PUR.BUY_KEY             AS BUY_KEY
@@ -92,10 +96,13 @@
 					        THEN FLOOR(PPT.CALL_AMOUNT/1.1)
 							ELSE --> PPT.CALL_AMOUNT
 					   <!-- END    -->                  AS CALL_AMOUNT	     /* 지급액(부가세별도) */
-					 , CASE WHEN PPT.PAYMENT_DT IS NOT NULL
+					 <!-- , CASE WHEN PPT.PAYMENT_DT IS NOT NULL
 				            THEN PPT.PAYMENT_DT
 				            ELSE PPT.PAYMENT_CALL_DT
-				       END                     AS PAYMENT_DT
+				       END                     AS PAYMENT_DT -->
+				     , PPT.PAYMENT_DT		AS PAYMENT_DT
+				     , PPT.PAYMENT_CALL_DT			AS PAYMENT_CALL_DT
+				       
 				FROM   PJ_PAYMENT_TB    PPT
 				JOIN   PJ_PURCHASE_TB   PUR ON PUR.BUY_KEY           = PPT.PAYMENT_BUY_FK_KEY    AND PUR.DELETE_YN = 'N'
 				JOIN   PJ_MAIN_TB       PMT ON PMT.PJ_KEY            = PUR.BUY_FK_PJ_KEY         AND PMT.DELETE_YN = 'N'
@@ -120,7 +127,7 @@
 		) DAT
 		WHERE 1=1
 		<if test=" (fundStatus == null or fundStatus == '') and searchFromDt != null and searchFromDt != '' and searchToDt != null and searchToDt != '' ">
-			AND DAT.PAYMENT_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
+			AND DAT.PAYMENT_CALL_DT BETWEEN REPLACE(#{searchFromDt}, '-', '') AND REPLACE(#{searchToDt}, '-', '')
 		</if>
 		ORDER BY DAT.PAYMENT_DT ASC		  
 				

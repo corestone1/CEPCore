@@ -181,7 +181,7 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			
 			String tmail = StringUtils.join(toList, ";");
 			mailVO.setEmpKey(tmail);
-			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
+			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin.do?pjKey="+guarantyBondVO.getPjKey()+ "");
 			String subject = pjNm + "건 보증 증권 요청";
 			String content = String.join(
 					                System.getProperty("line.separator"),
@@ -195,13 +195,13 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			result = comService.sendMail(request, mailVO);
 			
 			/* 테스트 서버 운영 종료 후 주석 해제*/
-			/*if(result != 0) { */
+			if(result != 0) { 
 				returnMap.put("mailSuccessYN", "Y");
 				returnMap.put("successYN", "Y");
 				mapper.requestGuarantyBond(guarantyBondVO);
-			/*} else {
+			} else {
 				throw new Exception();
-			}*/
+			}
 			
 			returnMap.put("mailList", toList);
 			
@@ -238,7 +238,7 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			pjNm = mapper.selectProjectDetail(projectVO).get("pjNm").toString();
 					
 			mailVO.setEmpKey(salesEmpKey);
-			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin2.do?pjKey="+guarantyBondVO.getPjKey()+ "");
+			mailVO.setLink(EmailInfo.PAGE_URL.getValue() + "project/detail/contractMin.do?pjKey="+guarantyBondVO.getPjKey()+ "");
 			String subject = pjNm + "건 보증 증권 발행 완료";
 			String content = String.join(
 					                System.getProperty("line.separator"),
@@ -252,13 +252,13 @@ public class ProjectDetailServiceImpl implements ProjectDetailService {
 			result = comService.sendMail(request, mailVO);
 			
 			/* 테스트 서버 운영 종료 후 주석 해제*/
-			/*if(result != 0) {*/
+			if(result != 0) {
 				returnMap.put("mailSuccessYN", "Y");
 				returnMap.put("successYN", "Y");
 				mapper.endGuarantyBond(guarantyBondVO);
-			/*} else {
+			} else {
 				throw new Exception();
-			}*/
+			}
 			
 			returnMap.put("mailList", salesEmpKey);
 			

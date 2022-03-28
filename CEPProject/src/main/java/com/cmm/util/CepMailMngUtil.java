@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -95,7 +96,13 @@ public class CepMailMngUtil {
 		properties.put("mail.smtp.ssl.trust", mailServer);
 		properties.put("mail.smtp.socketFactory.port", port);
 		properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		session = Session.getDefaultInstance(properties);
+		//session = Session.getDefaultInstance(properties);
+		session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() { 
+			protected PasswordAuthentication getPasswordAuthentication() { 
+				return new PasswordAuthentication(fromEmail, senderPassword); 
+			} 
+		});
+
 		message = new MimeMessage(session);
 	}
 	
@@ -127,9 +134,12 @@ public class CepMailMngUtil {
 		message.setContent(content, "text/html;charset=euc-kr");
 		message.setSentDate(new java.util.Date());
 		
-		Transport transport = session.getTransport("smtps");
+		/*Transport transport = session.getTransport("smtps");
 		transport.connect(mailServer, senderName, senderPassword);
 		transport.sendMessage(message, message.getAllRecipients());
+		
+		*/
+		Transport.send(message);
 	}
 	
 	public void setMailServer(String mailServer) {

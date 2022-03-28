@@ -200,8 +200,9 @@
 								<thead>
 									<tr>
 										<th>계산서 매핑 여부</th>
-										<th>계산서 번호</th>
 										<th>매입처</th>
+										<th>지급 예상 일자</th>
+										<th>지급 일자</th>
 										<th>매입구분</th>
 										<th>제조사</th>
 										<th>매입제품 / 단가 / 수량</th>
@@ -212,8 +213,9 @@
 								<c:forEach var="result" items="${purchaseList}" varStatus="status">
 									<tr>
 										<td>${result.billMappingYn}</td>
-										<td>${result.billNo}</td>
 										<td>${result.acNm }</td>
+										<td>${result.paymentCallDt }</td>
+										<td>${result.paymentDt }</td>
 										<td>${result.billPurchaseCd }</td>
 										<td>${result.billMfCd }</td>
 										<td>

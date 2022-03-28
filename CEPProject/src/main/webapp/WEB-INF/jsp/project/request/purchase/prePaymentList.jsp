@@ -198,6 +198,9 @@
 			object['yetPaymentAmount'] = Number(pYet) - Number(amount);
 			object['buyKey'] = $('#buyKey').val();
 			object['billFkKey'] = billNo;
+			object['pjKey'] = parent.document.getElementById("pjKey").value;
+			object['pjNm'] = parent.document.getElementById("ipt_pjNm").value;
+			object['link'] = window.location.pathname.replace("/","");
 
 			var sendData = JSON.stringify(object);
 			/* console.log(sendData); */
@@ -207,13 +210,15 @@
 					dataType: 'json', 
 				    type:"POST",  
 				    data: sendData,
-				    async:false, 
+				    async:true, 
 				 	contentType: "application/json; charset=UTF-8", 
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-						//xhr.setRequestHeader(header, token);
-						
-					},
+				 	beforeSend:function(){
+				        $('.wrap-loading', parent.document).removeClass('dpNone');
+				    },
+	
+				   	complete:function(){
+				        $('.wrap-loading', parent.document).addClass('dpNone');
+				    }, 
 				    success:function(response){	
 				    	if(response!= null && response.successYN == 'Y') {
 				    		alert('지급 완료 처리되었습니다.');

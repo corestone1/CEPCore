@@ -296,7 +296,7 @@
 		
 		var sendData = JSON.stringify(object);
 		
-		if(fnCheckExist(sendData) == true) {
+		if(fnCheckExist(sendData) == true && fnCheckListExist(billingInfo).length == 0) {
 			$.ajax({
 	        	url:"/mngCommon/bill/saveExcelBilling.do",
 	            dataType: 'text', 
@@ -309,18 +309,25 @@
 	        	},
 	            success:function(data){	
 	            	//console.log("data==>"+data);
-	            	alert('저장되었습니다.');
-	            	opener.location.reload();
-	            	close();
+	            	var result = JSON.parse(data);
+	            	if(result.successYN == 'Y') {
+	            		alert('저장되었습니다.');
+	            		opener.location.reload();
+		            	close();
+	            	} else {
+	            		alert('저장이 실패하였습니다.');
+	            	}
 	            },
 	        	error: function(request, status, error) {
 	        		if(request.status != '0') {
 	        			alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-	        		}
+	        		} 
 	        	} 
 	        });
 		} else if(fnCheckExist(sendData) == false){
 			alert("이미 등록된 계산서입니다.(계산서 승인번호 중복)");
+		} else if(fnCheckListExist(billingInfo).length != 0){
+			window.prompt("계산서 승인번호가 중복됩니다. \n중복되는 승인번호: ",  fnCheckListExist(billingInfo));
 		} else {
 			alert("계산서 중복 체크에 실패하였습니다.")
 		}
@@ -353,6 +360,27 @@
         		returnValue = 'error';
         	} 
         });
+		
+		return returnValue;
+		
+	}
+	
+	function fnCheckListExist(billInfo) {
+		var returnValue = "";
+		for(var i = 0; i < billInfo.length; i++) {
+			var current = billInfo[i].billNo;
+			
+			for(var j = i+1; j < billInfo.length; j++) {
+				if(current == billInfo[j].billNo) {
+					returnValue = current;
+					break;
+				}
+			} 
+			
+			if(returnValue.length != 0) {
+				break;
+			}
+		}
 		
 		return returnValue;
 		

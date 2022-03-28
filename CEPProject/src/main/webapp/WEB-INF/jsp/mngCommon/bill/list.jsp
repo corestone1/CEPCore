@@ -95,8 +95,8 @@
 		.middle table tbody td:first-child,
 		.middle table thead th:nth-child(3),
 		.middle table tbody td:nth-child(3) {
-			width: 50px;
-			max-width: 50px;
+			width: 27px;
+			max-width: 27px;
 		}
 		.middle table thead th:nth-child(2),
 		.middle table tbody td:nth-child(2) {
@@ -393,18 +393,18 @@
 										<c:if test="${result.classCd eq 'PC' }">매입</c:if>
 										<c:if test="${result.classCd eq 'SD' }">매출</c:if> 
 									</td>
-									<td><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></td>
-									<td><c:out value="${result.acKey}"/></td>
-									<td align="left"><span title="${result.acNm}"><c:out value="${result.acNm}"/></span></td>
+									<td><span style="width:83px;"><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></span></td>
+									<td><span title="${result.acKey}" style="width:124px;"><c:out value="${result.acKey}"/></span></td>
+									<td align="left"><span title="${result.acNm}" style="width:160px;"><c:out value="${result.acNm}"/></span></td>
 									<%-- onclick="javascript:fnViewDetail('${result.billNo}', '${result.billFkPjKey }');" --%>
-									<td><c:out value="${result.acCeoNm}"/></td>
-									<td align="right"><span><c:out value="${displayUtil.commaStr(result.billAmount)}"/></span></td>
-									<td align="right"><span><c:out value="${displayUtil.commaStr(result.billTaxAmount)}"/></span></td>
-									<td align="right"><span><c:out value="${displayUtil.commaStr(result.billTotalAmount)}"/></span></td>
-									<td align="left"><span title="${result.remark}"><c:out value="${result.remark}"/></span></td>
-									<td align="left"><span title="${result.billNo}"><c:out value="${result.billNo}"/></span><input type="hidden" name="billNo" value="${result.billNo }" /></td>
-									<td><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></td>
-									<td><c:out value="${result.billCtClassCd }" /><input type="hidden" name="billMappingYn" value=${result.billMappingYn } /></td>
+									<td><span title="${result.acCeoNm}" style="width:95px;"><c:out value="${result.acCeoNm}"/></span></td>
+									<td align="right"><span style="width:93px;"><c:out value="${displayUtil.commaStr(result.billAmount)}"/></span></td>
+									<td align="right"><span style="width:93px;"><c:out value="${displayUtil.commaStr(result.billTaxAmount)}"/></span></td>
+									<td align="right"><span style="width: 93px;"><c:out value="${displayUtil.commaStr(result.billTotalAmount)}"/></span></td>
+									<td align="left"><span title="${result.remark}" style="width:200px;"><c:out value="${result.remark}"/></span></td>
+									<td align="left"><span title="${result.billNo}" style="width: 103px;"><c:out value="${result.billNo}"/></span><input type="hidden" name="billNo" value="${result.billNo }" /></td>
+									<td><span style="width:83px;"><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></span></td>
+									<td><span style="width:40px;"><c:out value="${result.billCtClassCd }" /><input type="hidden" name="billMappingYn" value=${result.billMappingYn } /></span></td>
 								</tr>
 							</c:forEach>
 							<!-- 

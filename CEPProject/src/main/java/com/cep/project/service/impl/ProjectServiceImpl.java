@@ -358,15 +358,15 @@ public class ProjectServiceImpl implements ProjectService {
 							updateList.add(contractSalesVO);
 							
 							updateSalesInfo(projectContractSalesVO.getModEmpKey(), updateList);
-							updateContractInfo(projectContractSalesVO);
 							updateBillOpInfo(projectContractSalesVO.getModEmpKey(), updateList, projectContractSalesVO.getPjKey());
 						} else {
 							// 신규등록
 							insertList.add(contractSalesVO);
 							writeSalesInfo(projectContractSalesVO.getRegEmpKey(), projectContractSalesVO.getPjKey(), insertList);
-							writeContractInfo(projectContractSalesVO);
 						}
 					}
+					
+					updateContractInfo(projectContractSalesVO);
 				}
 				
 				/*if(insertList != null && insertList.size() > 0) {

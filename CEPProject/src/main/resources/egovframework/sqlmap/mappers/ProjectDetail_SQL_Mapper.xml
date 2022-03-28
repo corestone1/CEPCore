@@ -420,6 +420,7 @@
 		     , PGB.GB_END_DT      AS GB_END_DT         /* 보증기간 종료일 */
 		     , PGB.GB_PUBLISH_DT  AS GB_PUBLISH_DT     /* 보증증권 발행일 */
 		     , PGB.GB_AMOUNT      AS GB_AMOUNT         /* 보증증권 금액 */
+		     , PGB.GB_CONTRACT_AMOUNT		AS GB_CONTRACT_AMOUNT		/*보증증권 계약 금액*/
 		     /*, PGB.REMARK         AS REMARK*/            /* 요청사항 */
 		     , CAT.AC_NM          AS AC_NM             /* 고객사명 */
 		     , PGB.GB_ISSUE_STATUS    AS GB_ISSUE_STATUS
@@ -435,17 +436,17 @@
 		  AND  PGB.GB_KEY = #{gbKey}
 	</select>
 	
-	<select id="selectBdGuarantyBondInfo" parameterType="com.cmm.vo.GuarantyBondVO" resultType="egovMap">
+	<!-- <select id="selectBdGuarantyBondInfo" parameterType="com.cmm.vo.GuarantyBondVO" resultType="egovMap">
 	
 		SELECT PGB.GB_KEY         AS GB_KEY
 		     , PGB.CT_KEY         AS CT_KEY
 		     , PGB.SALES_KEY      AS SALES_KEY
 		     , PGB.GB_KIND_CD     AS GB_KIND_CD
 		     , PCT.CT_AMOUNT      AS CT_AMOUNT         /* 계약금약 */
-		    <!--  , PCT.TAX_YN         AS TAX_YN   -->          /* 부가세 포함 여부 */
-		    <!--  , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
+		     , PCT.TAX_YN         AS TAX_YN            /* 부가세 포함 여부 */
+		     , CASE WHEN TAX_YN = 'Y' THEN PCT.CT_AMOUNT 
 		            WHEN TAX_YN = 'N' THEN FLOOR(PCT.CT_AMOUNT * 1.1)
-		       END                AS TOTAL_AMOUNT   -->    /* 부가세 포함 전체 금액 */ 
+		       END                AS TOTAL_AMOUNT      /* 부가세 포함 전체 금액 */ 
 		     , PMT.PJ_NM          AS PJ_NM             /* 프로젝트 명 */
 		     , PMT.PJ_START_DT    AS PJ_START_DT       /* 계약 시작일 */
 		     , PMT.PJ_END_DT      AS PJ_END_DT         /* 계약 종료일 */
@@ -466,7 +467,7 @@
 		JOIN   CMM_ACCOUNT_TB       CAT  ON PMT.AC_KEY          = CAT.AC_KEY
 		WHERE  PGB.DELETE_YN = 'N'
 		  AND  PGB.GB_KEY = #{gbKey}
-	</select>
+	</select> -->
 	
 	<update id="requestGuarantyBond" parameterType="guarantyBondVO">
 	
@@ -486,6 +487,9 @@
 		     <if test="gbAmount != null and gbAmount != ''">
 		     , GB_AMOUNT     = #{gbAmount}
 		     </if>
+		     <if test="gbContractAmount != null and gbContractAmount != ''">
+		     , GB_CONTRACT_AMOUNT     = #{gbContractAmount}
+		     </if>
 		WHERE GB_KEY = #{gbKey}
 		
 	</update>
@@ -496,6 +500,7 @@
 		UPDATE PJ_GUARANTY_BOND_TB
 		SET    GB_PUBLISH_DT = #{gbPublishDt}
 		     , GB_AMOUNT     = #{gbAmount}
+		     , GB_CONTRACT_AMOUNT = #{gbContractAmount}
 		     , GB_ISSUE_STATUS = 'Y'
 		WHERE GB_KEY = #{gbKey}
 		
@@ -514,6 +519,9 @@
 		     , GB_REQ_DT = #{gbReqDt}
 		     <if test="gbAmount != null and gbAmount != ''">
 		     , GB_AMOUNT     = #{gbAmount}
+		     </if>
+		     <if test="gbContractAmount != null and gbContractAmount != ''">
+		     , GB_CONTRACT_AMOUNT     = #{gbContractAmount}
 		     </if>
 		     , GB_SK_AMOUNT     = #{gbSkAmount}
 		WHERE GB_KEY = #{gbKey}

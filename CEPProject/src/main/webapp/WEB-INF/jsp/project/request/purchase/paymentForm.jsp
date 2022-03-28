@@ -402,7 +402,7 @@
 			
 			$('a[id^=A_TOPMenu_]').click(function(event){ location.href = this.title; });
 			
-			$("#link").val(parent.document.location.href);
+			$("#link").val(window.location.pathname.replace("/",""));
 			
 			var total = 0;			
 			$("input[name='callAmount']").each(function() {

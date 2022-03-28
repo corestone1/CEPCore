@@ -43,6 +43,7 @@ private static final long serialVersionUID = 6249212047489119229L;
 	private String modEmpKey;
 	
 	private String salesKey;
+	private String salesCollectFinishDt;
 	private String salesStatusCd;
 	
 	private List<MngCommonBillVO> mngBillInsertVOList;
@@ -350,6 +351,14 @@ private static final long serialVersionUID = 6249212047489119229L;
 	 */
 	public void setSalesKey(String salesKey) {
 		this.salesKey = salesKey;
+	}
+	
+	public String getSalesCollectFinishDt() {
+		return salesCollectFinishDt;
+	}
+	
+	public void setSalesCollectFinishDt(String salesCollectFinishDt) {
+		this.salesCollectFinishDt = salesCollectFinishDt;
 	}
 	
 	public String getSalesStatusCd() {

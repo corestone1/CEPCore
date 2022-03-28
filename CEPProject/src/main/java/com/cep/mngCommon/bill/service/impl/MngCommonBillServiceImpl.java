@@ -200,20 +200,25 @@ public class MngCommonBillServiceImpl implements MngCommonBillService {
 		int litListSize = lltBillVO.size();
 		
 		MngCommonBillVO billVO;
-		for(int i = 0; i < litListSize; i++) {
-			billVO = lltBillVO.get(i);
+		try {
+			for(int i = 0; i < litListSize; i++) {
+				billVO = lltBillVO.get(i);
+				
+				billVO.setRegEmpKey(mngCommonBillVO.getRegEmpKey());
+				
+				logger.debug("billVO.getBillNo()          : {}", billVO.getBillNo());
+				logger.debug("billVO.getAcKey()           : {}", billVO.getAcKey());
+				logger.debug("billVO.getBillAmount()      : {}", billVO.getBillAmount());
+				logger.debug("billVO.getBillIssueDt()     : {}", billVO.getBillIssueDt());
+				logger.debug("billVO.getBillIssueStatus() : {}", billVO.getBillIssueStatus());
+				
+				
+				//CMM_PC_BILLING_TB Insert
+				mapper.insertPcBillInfo(billVO);
+			} 
+			returnMap.put("successYN","Y");
+		}catch(Exception e) {
 			
-			billVO.setRegEmpKey(mngCommonBillVO.getRegEmpKey());
-			
-			logger.debug("billVO.getBillNo()          : {}", billVO.getBillNo());
-			logger.debug("billVO.getAcKey()           : {}", billVO.getAcKey());
-			logger.debug("billVO.getBillAmount()      : {}", billVO.getBillAmount());
-			logger.debug("billVO.getBillIssueDt()     : {}", billVO.getBillIssueDt());
-			logger.debug("billVO.getBillIssueStatus() : {}", billVO.getBillIssueStatus());
-			
-			
-			//CMM_PC_BILLING_TB Insert
-			mapper.insertPcBillInfo(billVO);
 		} 
 		
 		return returnMap;

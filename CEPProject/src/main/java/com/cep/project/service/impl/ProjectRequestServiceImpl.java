@@ -191,12 +191,14 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			name = (String)request.getSession().getAttribute("name");
 			dept = DeptInfo.DEPT_OPER_L2.getValue();
-			url = paymentVO.getLink();
-			subject = paymentVO.getPjNm() + "건 매입금 지급 요청";
+			url = EmailInfo.PAGE_URL.getValue() + paymentVO.getLink();
 			paymentVO.setModEmpKey(session.get("empKey"));
 			
-			mailVO.setSubject(subject);
+			alarmVO.setAlarmTitle(paymentVO.getPjNm());
+			alarmVO.setPjMtKey(paymentVO.getPjKey());
+			
 			mailVO.setLink(url);
+			
 			if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST2000")) {
 				
 				content = String.join(
@@ -215,16 +217,14 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 				List<String> alarmList = new ArrayList<String>(mailList);
 				alarmList.add(session.get("empKey"));
 				String amail = StringUtils.join(alarmList, ";");
-				alarmVO.setAlarmTitle(paymentVO.getPjNm());
 				alarmVO.setAlarmKind("매입금 지급 요청");
 				alarmVO.setAlarmTo(amail);
-				alarmVO.setPjMtKey(paymentVO.getPjKey());
 				
 				result = comService.sendMail(request, mailVO);
 				/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
-				/*if(result == 0) {
+				if(result == 0) {
 					throw new Exception();
-				} else {*/
+				} else {
 					alarmService.insertAlarm(alarmVO, request);
 					
 					mapper.updatePaymentInfo(paymentVO);
@@ -236,18 +236,16 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
 					purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
 					mapper.updatePurchaseInfo(purchaseVO);*/
-				/*}*/
+				}
 			} else {
 				if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST4000")) {
 					mailList.add(mapper.selectPaymentDetail(paymentVO).get("regEmpKey").toString());
 					
-					alarmVO.setAlarmTitle(paymentVO.getPjNm());
 					alarmVO.setAlarmKind("지급 완료");
-					alarmVO.setPjMtKey(paymentVO.getPjKey());
 					
 					String tmail = StringUtils.join(mailList, ";");
 					mailVO.setEmpKey(tmail);
-					mailVO.setLink(url);
+					
 					alarmVO.setAlarmTo(tmail);
 					
 					subject = paymentVO.getPjNm() + "건 매입금 지급 완료";
@@ -263,7 +261,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					result = comService.sendMail(request, mailVO);
 					
 					/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
-					/*if(result != 0) {*/
+					if(result != 0) {
 					
 						purchaseVO.setDonePaymentAmount(paymentVO.getDonePaymentAmount());
 						purchaseVO.setYetPaymentAmount(paymentVO.getYetPaymentAmount());
@@ -278,20 +276,18 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 						mngPjMapper.updatePcBillingOpInfo(purchaseBillOpVO);
 						
 						alarmService.insertAlarm(alarmVO, request);
-					/*} else {
+					} else {
 						throw new Exception();
-					}*/
+					}
 					
 				} else if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("")) {
 					mailList.add(mapper.selectPaymentDetail(paymentVO).get("regEmpKey").toString());
 					
-					alarmVO.setAlarmTitle(paymentVO.getPjNm());
 					alarmVO.setAlarmKind("매입금 지급 승인");
-					alarmVO.setPjMtKey(paymentVO.getPjKey());
 					
 					String tmail = StringUtils.join(mailList, ";");
 					mailVO.setEmpKey(tmail);
-					mailVO.setLink(url);
+
 					alarmVO.setAlarmTo(tmail);
 					
 					subject = paymentVO.getPjNm() + "건 매입금 지급 승인";
@@ -300,15 +296,16 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 			                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 승인하였습니다. <br>(확인자: " +name+",",
 			                " 확인 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 					
+					mailVO.setSubject(subject);
 					mailVO.setContent(content);
 					mailVO.setEmpKey(paymentVO.getPjSaleEmpKey());
 					
 					result = comService.sendMail(request, mailVO);
 					
 					/* 테스트 서버 운영 종료 후 주석 해제(if~else) */
-					/*if(result == 0) {
+					if(result == 0) {
 						throw new Exception();
-					} else {*/
+					} else {
 						alarmService.insertAlarm(alarmVO, request);
 						
 						/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
@@ -318,7 +315,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 						purchaseVO.setBillPurchaseCd(paymentVO.getBillPurchaseCd());
 						purchaseVO.setBillMfCd(paymentVO.getBillMfCd());
 						mapper.updatePurchaseInfo(purchaseVO);*/
-					/*}*/
+					}
 				} else {
 					/*purchaseVO.setBuyKey(paymentVO.getPaymentBuyFkKey());
 					purchaseVO.setModEmpKey(session.get("empKey"));

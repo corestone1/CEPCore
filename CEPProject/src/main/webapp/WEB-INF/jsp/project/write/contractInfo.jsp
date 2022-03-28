@@ -633,19 +633,25 @@
 						<tr class="ftw200">
 							<td class="tdTitle">계약 금액</td>
 							<td colspan="3">
+								<c:set var="isFinished" value="N" />
+								<c:forEach var="result" items="${sdBillList }" varStatus="status">
+									<c:if test="${result.billIssueStatus ==  'M' or result.billIssueStatus == 'E'}">
+										<c:set var="isFinished" value="Y" />
+									</c:if>
+								</c:forEach>
 								<input type="hidden" id="beforeTurn" value="${contractVO.collectTurn eq null ? 0 : contractVO.collectTurn }">
 								<c:set var="turnNo" value="${contractVO.collectTurn eq null ? 0 : contractVO.collectTurn }" />
 								<select id="turnInfo" onchange="fn_turnChange()" placeholder="계약금액">
 									<option value="0" <c:if test="${contractVO.collectTurn > 0 }">style='display: none;'</c:if>>수금회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 1}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 1 }">style='display: none;'</c:if> value="1">1회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 2}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 2 }">style='display: none;'</c:if> value="2">2회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 3}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 3 }">style='display: none;'</c:if> value="3">3회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 4}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 4 }">style='display: none;'</c:if> value="4">4회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 5}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 5 }">style='display: none;'</c:if> value="5">5회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 6}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 6 }">style='display: none;'</c:if> value="6">6회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 7}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 7 }">style='display: none;'</c:if> value="7">7회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 8}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 8 }">style='display: none;'</c:if> value="8">8회차</option>
-									<option <c:if test="${!empty salesList && contractVO.collectTurn == 9}">selected</c:if> <c:if test="${turnNo !=0 && turnNo != 9 }">style='display: none;'</c:if> value="9">9회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 1}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 1 and isFinished eq 'Y'}">style='display: none;'</c:if> value="1">1회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 2}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 2 and isFinished eq 'Y'}">style='display: none;'</c:if> value="2">2회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 3}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 3 and isFinished eq 'Y'}">style='display: none;'</c:if> value="3">3회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 4}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 4 and isFinished eq 'Y'}">style='display: none;'</c:if> value="4">4회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 5}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 5 and isFinished eq 'Y'}">style='display: none;'</c:if> value="5">5회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 6}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 6 and isFinished eq 'Y'}">style='display: none;'</c:if> value="6">6회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 7}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 7 and isFinished eq 'Y'}">style='display: none;'</c:if> value="7">7회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 8}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 8 and isFinished eq 'Y'}">style='display: none;'</c:if> value="8">8회차</option>
+									<option <c:if test="${!empty salesList && contractVO.collectTurn == 9}">selected</c:if> <c:if test="${turnNo !=0 and turnNo != 9 and isFinished eq 'Y'}">style='display: none;'</c:if> value="9">9회차</option>
 								</select>
 							</td>
 						</tr>
