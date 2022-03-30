@@ -54,7 +54,8 @@
 		
 		.popContainer .contents > div:last-child {
 			width: 583px;
-			margin-right: 50px;
+			margin-right: 62px;
+    		margin-top: 4px;
 		}
 		.popContainer .contents > div > table {
 			border-collapse: separate; 
@@ -171,34 +172,119 @@
 		    border-style: solid;
 		}
 		
+		#fileForm {
+			position: absolute;
+			left: 38px;
+			z-index: 99;
+			bottom: 17px;
+			width: 330px;
+		}
+		#fileForm .exFileLabel {
+			background-image: url('/images/btn_file_upload.png');
+			background-repeat: no-repeat;
+			width: 119px;
+			height: 31px;
+			cursor: pointer;
+			float: left;
+			margin-top: 1px;
+			margin-right: 7px;
+		}
+		#fileForm .uploadName {
+			font-size: 12px; 
+			font-weight: 200;
+			font-family: inherit; 
+			line-height: normal; 
+			vertical-align: middle; 
+			border: 1px solid #ebebeb; 
+			width: 184px;
+			height: 26px;
+		}
+		#fileForm .exFile {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
+		#fileForm .upload-name {
+		    background: transparent;
+		    border: none;
+		    font-size: 13px;
+		    width: 160px;
+		    height: 17px;
+		    text-overflow: ellipsis;
+		}
+		#fileForm .upload-name:hover {
+			text-decoration: underline;
+		}
+		#fileForm .close {
+			vertical-align: middle;
+		}
+		#fileWrap {
+			height: 41px;
+			overflow-y: auto;
+		}
+		#fileWrap::-webkit-scrollbar-button {
+		    width: 0;
+		    height: 0;
+		}
+		#fileWrap::-webkit-scrollbar-thumb {
+		    border-radius: 3px;
+		    background-color: #7F7F7F;
+		    height: 3px;
+		}
+		#fileWrap::-webkit-scrollbar-track {
+		    background-color: transparent;
+		}
+		#fileWrap::-webkit-scrollbar {
+		    width: 6px;
+		    height: 31px;
+		}
+		
 	</style>
 	<script>
 				
 		$(document).ready(function() {
-			$(".altMail").mouseover(function() {
+			/* $(".altMail").mouseover(function() {
 				var html = '<div id="altBox" style="left:'+($(this).offset().left - 120)+'px">'
 							+ '관리자에게 알림 메일이 전송됩니다.</div>'
 				$(".altMail").after(html);
 			});
 			$(".altMail").mouseout(function() {
 				$("#altBox").remove();
-			});   
+			});    */
 			
+			var fileTarget = $(".exFile");
+			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename)
+			});
 		});	
 		
 		function fn_chkVali() {
 			if ($("#m_frm_gb")[0].checkValidity()){
-	            if ($("#m_frm_gb")[0].checkValidity()){
-	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               return true;
-	            } else {
-	                $("#m_frm_gb")[0].reportValidity();   
-	            }            
-	            
-	         }  else {
-	             //Validate Form
-	              $("#m_frm_gb")[0].reportValidity();   
-	         }
+				if($(".uploadName").val() != null && $(".uploadName").val().length != 0) {
+					var maxSize = 20 * 1024 * 1024;
+					var fileSize = $("#exFile")[0].files[0].size;
+            	   
+					if(fileSize > maxSize) {
+						alert("첨부파일 사이즈는 20MB 이내로 등록 가능합니다.");
+						return false;
+					} else {
+						return true;
+					}
+				} else {
+					return true;
+				}
+				
+			} else {
+				//Validate Form
+				$("#m_frm_gb")[0].reportValidity();   
+			}
 		}
 		
 		
@@ -232,7 +318,34 @@
 				    	}
 				    	 
 				    	if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'Y') {
-				    		alert("보증 증권 발행이 요청되었습니다." + mailList);
+				    		if($(".uploadName").val() != null && $(".uploadName").val() != "" && $(".uploadName").length != 0) {
+				    			
+				    			var formData = new FormData($('#fileForm')[0]); 
+				       			
+				    			$.ajax({ 
+				       				type: "POST", 
+				       				enctype: 'multipart/form-data',  
+				       				url: '/file/upload.do', 
+				       				data: formData, // 필수 
+				       				processData: false, // 필수 
+				       				contentType: false, // 필수 
+				       				cache: false, 
+				       				success: function (data) { 
+				       					if(data.successYN=='Y') {
+							    			alert("보증 증권 발행이 요청되었습니다." + mailList);
+				       					} else {
+				       						alert("첨부파일 저장이 실패하였습니다.(보증 증권 발행 요청은 완료)");
+				       					}
+				       				}, 
+				       				error: function(request, status, error) {
+				       					if(request.status != '0') {
+				       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				       					}
+				       				} 
+				    			});
+				    		} else {
+				    			alert("보증 증권 발행이 요청되었습니다." + mailList);
+				    		}
 				    	} else if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'N') {
 			    			alert("메일 전송이 실패했습니다.(발행 요청 정보 저장은 완료)");
 				    	} else {
@@ -267,7 +380,35 @@
 		            async : false,
 		        	success:function(data){		  
 		        		if(data.successYN == "Y") {
-		        			alert("보증증권 정보가 수정되었습니다.");
+		        			if($(".uploadName").val() != null && $(".uploadName").val() != "" && $(".uploadName").length != 0) {
+				    			
+				    			var formData = new FormData($('#fileForm')[0]); 
+				       			
+				    			$.ajax({ 
+				       				type: "POST", 
+				       				enctype: 'multipart/form-data',  
+				       				url: '/file/upload.do', 
+				       				data: formData, // 필수 
+				       				processData: false, // 필수 
+				       				contentType: false, // 필수 
+				       				cache: false, 
+				       				success: function (data) { 
+				       					if(data.successYN=='Y') {
+				       						alert("보증증권 정보가 수정되었습니다.");
+				       					} else {
+				       						alert("첨부파일 저장이 실패하였습니다.(보증 증권 정보 수정은 완료)");
+				       					}
+				       				}, 
+				       				error: function(request, status, error) {
+				       					if(request.status != '0') {
+				       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				       					}
+				       				} 
+				    			});
+		        			} else {
+		        				alert("보증증권 정보가 수정되었습니다.");
+		        			}
+		        			
 		        			location.reload();
 		        		} else {
 		        			alert("보증증권 정보 수정이 실패하였습니다.")
@@ -312,7 +453,34 @@
 				    		mailList = "\n메일 수신인:" + data.mailList + "\n";
 				    	}
 				    	if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'Y') {
-				    		alert("보증 증권 발행이 완료 처리되었습니다." + mailList);
+				    		if($(".uploadName").val() != null && $(".uploadName").val() != "" && $(".uploadName").length != 0) {
+				    			
+				    			var formData = new FormData($('#fileForm')[0]); 
+				       			
+				    			$.ajax({ 
+				       				type: "POST", 
+				       				enctype: 'multipart/form-data',  
+				       				url: '/file/upload.do', 
+				       				data: formData, // 필수 
+				       				processData: false, // 필수 
+				       				contentType: false, // 필수 
+				       				cache: false, 
+				       				success: function (data) { 
+				       					if(data.successYN=='Y') {
+				       						alert("보증 증권 발행이 완료 처리되었습니다." + mailList);
+				       					} else {
+				       						alert("첨부파일 저장이 실패하였습니다.(보증 증권 발행은 완료)");
+				       					}
+				       				}, 
+				       				error: function(request, status, error) {
+				       					if(request.status != '0') {
+				       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+				       					}
+				       				} 
+				    			});
+		        			} else {
+				    			alert("보증 증권 발행이 완료 처리되었습니다." + mailList);
+		        			}
 				    	} else if(data!= null && data.successYN == 'Y' && data.mailSuccessYN == 'N') {
 			    			alert("메일 전송이 실패했습니다.(발행 완료 정보 저장은 완료)");
 				    	} else {
@@ -374,6 +542,45 @@
 			opener.window.location.reload();
 		}
 		
+		function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
+		}
+		
+		function fn_deleteFile(fileKey, fileNm) {
+			var result = confirm("첨부파일 " + fileNm + " 을 삭제하시겠습니까?");
+			if(result) {
+				var form = document.viewForm;
+				form.fileKey.value = fileKey;
+				var data = JSON.stringify({"fileKey":fileKey});
+				$.ajax({ 
+	   				url: '/file/delete.do', 
+	   				dataType:'json',
+	   				type: "POST", 
+	   				data: data, // 필수 
+	   				contentType: "application/json; charset=UTF-8", 
+	   				success: function (response) { 
+		   				if(response.successYN=='Y') {
+							alert('첨부파일이 삭제되었습니다.');
+							$("#file"+fileKey).next().next().remove();
+							$("#file"+fileKey).next().remove();
+							$("#file"+fileKey).remove();
+						} else {
+							alert('첨부파일 삭제가 실패되었습니다.');
+						}
+	   				},
+	   				error: function(request, status, error) {
+	   					if(request.status != '0') {
+	   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	   					}
+	   				}
+	   			});
+			}
+		}
+		
 	</script>
 </head>
 <body>
@@ -391,9 +598,9 @@
 				<div>
 					<table  style="width: 551px;">
 						<tr id="m_tr_account" >
-							<td class="tdTitle">고객사</td>
+							<td class="tdTitle">피보험자</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text" class="readOnly" value="${gbInfo.acNm}" disabled/> 
+								<input type="text" class="readOnly" value="${gbInfo.salesAcNm}" disabled/> 
 							</td>
 						</tr>
 						
@@ -508,6 +715,34 @@
 			</div>
 		</div>	
 	</form>
+	<form id="fileForm" method="post" enctype="multipart/form-data"> 
+    	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
+		<input type="hidden" name="docTypeNm" value="보증증권_선급금" />
+		<input type="hidden" name="fileCtKey" id="fileCtKey" value="${gbInfo.pjKey}" />
+		<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${gbInfo.pjNm}"/>"/> 
+		<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+		<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+		<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+		<div class="floatL uploadContainer">
+			<input class="uploadName" placeholder="파일선택" disabled="disabled" />
+			<label for="exFile" class="exFileLabel"></label>
+			<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+		</div>
+		<div style="width: 307px; clear:both;" id="fileWrap">
+			<c:forEach var="result" items="${fileList }" varStatus="status">
+				<input class="upload-name cursorP ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+				<c:if test='${gbInfo.gbIssueStatus ne "Y"}'>
+					<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+				</c:if>
+				<c:if test="${status.last eq false}"><br /></c:if>
+			</c:forEach>
+		</div>
+		<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
+	</form>
+	<form:form id="viewForm" name="viewForm" method="POST">
+		<input type="hidden" name="fileKey" value=""/>
+		<input type="hidden" name="fileOrgNm" value=""/>
+	</form:form>
 	<div class="wrap-loading dpNone">
 		<div>
 			<img src="<c:url value='/images/ajax_loader.gif'/>" />

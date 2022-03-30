@@ -49,111 +49,330 @@
 	<select id="selectFocecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultMap="forecastVO">				
 	 -->
 	 
-	 <select id="selectForecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultType="egovMap">	
-		SELECT SM.SP_KEY              AS SP_KEY
-		     , SM.AC_KEY              AS AC_KEY
-		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
-		     , SM.PM_KEY              AS PM_KEY
-		     , SM.PM_DETAIL           AS PM_DETAIL
-		     , SM.PM_DETAIL2          AS PM_DETAIL2
-		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
-		    <!--  , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT -->
-		     <!-- , SM.FC_SALES_DT         AS FC_SALES_DT
-		     , SM.FC_COLLECT_DT       AS FC_COLLECT_DT
-		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT -->
-		     , SM.SP_STATE            AS SP_STATE
-		  <!--    , SM.SALES_AC_KEY        AS SALES_AC_KEY
-		     , SM.BUY_AC_KEY          AS BUY_AC_KEY -->
-		     , SM.REMARK              AS REMARK
-		     , SM.BD_YN					AS BD_YN
-		     , SM.REG_TM              AS REG_TM
-		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
-		     , SM.MOD_DT              AS MOD_DT
-		     , SM.MOD_TM              AS MOD_TM
-		     , SM.MOD_EMP_KEY         AS MOD_EMP_KEY
-			 , AC.AC_NM               AS MF_AC_NM
-			 /*, PM.PM_NM_CD            AS PM_NM */
-			 /*, PM.PM_DETAIL_CLASS_CD  AS PM_DETAIL_CLASS_CD */
-			<!--  , SAC.AC_NM              AS SALES_AC_NM
-			 , BAC.AC_NM              AS BUY_AC_NM -->
-			 , SM.SALES_CT_CLASS      AS SALES_CT_CLASS
-			 , EP.EMP_NM				AS EMP_NM
-			 , (SELECT SUM(SL.FC_SALES_AMOUNT) FROM SP_SALES_TB SL WHERE SM.SP_KEY = SL.SALES_SP_FK_KEY AND SL.DELETE_YN = 'N') AS FC_SALES_AMOUNT
-	         , (SELECT SUM(SL.FC_BUY_AMOUNT) FROM SP_PURCHASE_TB SL WHERE SM.SP_KEY = SL.BUY_SP_FK_KEY AND SL.DELETE_YN = 'N') AS FC_BUY_AMOUNT
-	         , SS.SALES_AC_KEY			AS SALES_AC_KEY
-	         , (SELECT AC.AC_NM FROM CMM_ACCOUNT_TB AC WHERE AC.AC_KEY = SS.SALES_AC_KEY)		AS SALES_AC_NM
-	         , SM.FC_SALES_PROFIT AS FC_SALES_PROFIT
-	         , SM.SP_START_DT			AS SP_START_DT
-	         , SM.SP_END_DT				AS SP_END_DT
-		FROM SP_MAIN_TB          SM
-			 LEFT OUTER JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
-			 /* JOIN PM_PRODUCT_MNG_TB PM ON SM.PM_KEY = PM.PM_KEY */
-			 <!-- LEFT JOIN CMM_ACCOUNT_TB SAC   ON SM.SALES_AC_KEY = SAC.AC_KEY
-			 LEFT JOIN CMM_ACCOUNT_TB BAC   ON SM.BUY_AC_KEY = BAC.AC_KEY -->
-			 LEFT OUTER JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
-			 LEFT OUTER JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
-			 LEFT OUTER JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
-		WHERE SM.DELETE_YN = 'N'
+	 <select id="selectForecastList" parameterType="com.cep.forecast.vo.ForecastSearchVO" resultType="egovMap">
+	 	
+	 	SELECT 
+	 		DAT.SP_KEY						AS SP_KEY
+	 		, DAT.AC_KEY					AS AC_KEY
+	 		, DAT.SP_BUSI_NM				AS SP_BUSI_NM
+			, DAT.PM_KEY					AS PM_KEY
+	 		, DAT.PM_DETAIL				AS PM_DETAIL
+	 		, DAT.PM_DETAIL2				AS PM_DETAIL2
+	 		, DAT.FC_SJ_CONF_QT       	AS FC_SJ_CONF_QT
+	 		, DAT.SP_STATE					AS SP_STATE
+	 		, DAT.REMARK					AS REMARK
+	 		, DAT.BD_YN						AS BD_YN
+	 		, DAT.REG_DT					AS REG_DT
+	 		, DAT.REG_TM              		AS REG_TM
+	 		, DAT.REG_EMP_KEY         	AS REG_EMP_KEY
+	 		, DAT.MOD_DT              	AS MOD_DT
+		    , DAT.MOD_TM              	AS MOD_TM
+		    , DAT.MOD_EMP_KEY        	AS MOD_EMP_KEY
+		    , DAT.AC_NM               		AS MF_AC_NM
+		    , DAT.SALES_CT_CLASS      	AS SALES_CT_CLASS
+			, DAT.EMP_NM					AS EMP_NM
+			, DAT.TOT_SALE_AMOUNT	AS TOT_SALE_AMOUNT
+			, DAT.TOT_ORDER_AMOUNT	AS TOT_ORDER_AMOUNT  
+			, DAT.SP_START_DT			AS SP_START_DT
+			, DAT.SP_END_DT				AS SP_END_DT
+			, DAT.FC_SALES_DT				AS FC_SALES_DT
+			, DAT.DEPT_KEY					AS DEPT_KEY
+			, DAT.DEPT_UP_KEY				AS DEPT_UP_KEY
+		FROM (
+			<if test='spState == null or spState == ""' >
+				SELECT
+					PM.PJ_KEY              			AS SP_KEY
+				    , PM.AC_KEY              		AS AC_KEY
+				    , PM.PJ_NM         				AS SP_BUSI_NM
+			     	, SM.PM_KEY              		AS PM_KEY
+				    , SM.PM_DETAIL          		AS PM_DETAIL
+				    , SM.PM_DETAIL2          		AS PM_DETAIL2
+				    , SM.FC_SJ_CONF_QT       	AS FC_SJ_CONF_QT
+				    , SM.SP_STATE           		AS SP_STATE
+				    , PM.REMARK              		AS REMARK
+				    , SM.BD_YN						AS BD_YN
+				    , PM.REG_DT              		AS REG_DT
+				    , PM.REG_TM              		AS REG_TM
+				    , PM.REG_EMP_KEY         	AS REG_EMP_KEY
+				    , PM.MOD_DT              		AS MOD_DT
+				    , PM.MOD_TM              		AS MOD_TM
+				    , PM.MOD_EMP_KEY         	AS MOD_EMP_KEY
+					, AC.AC_NM               		AS AC_NM
+					, "P"      							AS SALES_CT_CLASS
+					, EP.EMP_NM					AS EMP_NM
+					, (SELECT SUM(SALES_TURN_AMOUNT) FROM PJ_SALES_DETAIL_TB SD WHERE PM.PJ_KEY = SD.SALES_CT_FK_KEY AND SD.DELETE_YN='N') AS TOT_SALE_AMOUNT
+			        , (SELECT SUM(BUY_AMOUNT) FROM PJ_PURCHASE_TB PP WHERE PM.PJ_KEY = PP.BUY_FK_PJ_KEY AND PP.DELETE_YN='N') AS TOT_ORDER_AMOUNT
+			        , PM.PJ_START_DT				AS SP_START_DT
+			        , PM.PJ_END_DT					AS SP_END_DT
+			        , SS.FC_SALES_DT				AS FC_SALES_DT
+			        , DP.DEPT_KEY					AS DEPT_KEY
+			        , DP.DEPT_UP_KEY				AS DEPT_UP_KEY
+				FROM SP_MAIN_TB          SM
+					 JOIN PJ_MAIN_TB	PM				ON SM.SP_KEY = PM.SP_KEY					AND PM.DELETE_YN = 'N'
+					 JOIN CMM_EMPLOYEE_TB EP		ON PM.PJ_SALE_EMP_KEY = EP.EMP_KEY 
+					 JOIN CMM_ACCOUNT_TB AC		ON PM.AC_KEY = AC.AC_KEY 
+					 JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+					 JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+				WHERE SM.DELETE_YN = 'N'
+					AND SM.SP_STATE = 'S'
+				
+				UNION
+					SELECT 
+				        MT.MT_INTEGRATE_KEY    AS SP_KEY
+				        , MT.MT_AC_KEY         AS AC_KEY
+				        , MT.MT_NM             AS SP_BUSI_NM
+				        , SM.PM_KEY                    AS PM_KEY
+				        , SM.PM_DETAIL                AS PM_DETAIL
+				        , SM.PM_DETAIL2                AS PM_DETAIL2
+				        , SM.FC_SJ_CONF_QT          AS FC_SJ_CONF_QT
+				        , SM.SP_STATE                 AS SP_STATE
+				        , MT.REMARK                    AS REMARK
+				        , SM.BD_YN                  AS BD_YN
+				        , MT.REG_DT                    AS REG_DT
+				        , MT.REG_TM                    AS REG_TM
+				        , MT.REG_EMP_KEY            AS REG_EMP_KEY
+				        , MT.MOD_DT                    AS MOD_DT
+				        , MT.MOD_TM                 AS MOD_TM
+				        , MT.MOD_EMP_KEY            AS MOD_EMP_KEY
+				        , AC.AC_NM                     AS AC_NM
+				        , "M"                       AS SALES_CT_CLASS
+				        , EP.EMP_NM               AS EMP_NM
+				        , (SELECT SUM(MT_SALES_AMOUNT) FROM MT_SALES_ORDER_TB  SD WHERE SD.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND SD.DELETE_YN='N') AS TOT_SALE_AMOUNT
+				        , (SELECT SUM(BO.MT_ORDER_AMOUNT) FROM MT_BACK_ORDER_TB BO WHERE BO.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND BO.DELETE_YN='N') + (SELECT SUM(BO.ORDER_AMOUNT) FROM MT_ORDER_TB BO WHERE BO.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND BO.DELETE_YN='N') AS TOT_ORDER_AMOUNT        
+				        , MT.MT_START_DT            AS SP_START_DT
+				        , MT.MT_END_DT               AS SP_END_DT
+				        , SS.FC_SALES_DT				AS FC_SALES_DT
+				        , DP.DEPT_KEY					AS DEPT_KEY
+				        , DP.DEPT_UP_KEY				AS DEPT_UP_KEY
+					FROM SP_MAIN_TB SM
+						JOIN MT_CONTRACT_LINK_TB CL ON SM.SP_KEY = CL.MT_LINK_CT_KEY AND CL.DELETE_YN='N' AND CL.MT_LINK_CT_CLASS_CD='S' 
+						JOIN MT_CONTRACT_TB MT ON CL.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND MT.DELETE_YN='N' 
+						JOIN CMM_ACCOUNT_TB AC   ON SM.AC_KEY = AC.AC_KEY 
+						JOIN CMM_EMPLOYEE_TB EP      ON MT.MT_SALE_EMP_KEY = EP.EMP_KEY 
+						JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+						JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+					WHERE SM.DELETE_YN = 'N'
+					       AND SM.SP_STATE = 'S'
+					       AND SM.SALES_CT_CLASS='M'
+				
+				UNION	       
+					SELECT
+					SM.SP_KEY              			AS SP_KEY
+				    , SM.AC_KEY              		AS AC_KEY
+				    , SM.SP_BUSI_NM         		AS SP_BUSI_NM
+			     	, SM.PM_KEY              		AS PM_KEY
+				    , SM.PM_DETAIL          		AS PM_DETAIL
+				    , SM.PM_DETAIL2          		AS PM_DETAIL2
+				    , SM.FC_SJ_CONF_QT       	AS FC_SJ_CONF_QT
+				    , SM.SP_STATE           		AS SP_STATE
+				    , SM.REMARK              		AS REMARK
+				    , SM.BD_YN						AS BD_YN
+				    , SM.REG_DT              		AS REG_DT
+				    , SM.REG_TM              		AS REG_TM
+				    , SM.REG_EMP_KEY         	AS REG_EMP_KEY
+				    , SM.MOD_DT              		AS MOD_DT
+				    , SM.MOD_TM              		AS MOD_TM
+				    , SM.MOD_EMP_KEY         	AS MOD_EMP_KEY
+					, AC.AC_NM               		AS AC_NM
+					, SM.SALES_CT_CLASS      	AS SALES_CT_CLASS
+					, EP.EMP_NM					AS EMP_NM
+					, (SELECT SUM(SL.FC_SALES_AMOUNT) FROM SP_SALES_TB SL WHERE SM.SP_KEY = SL.SALES_SP_FK_KEY AND SL.DELETE_YN = 'N') AS	TOT_SALE_AMOUNT
+			        , (SELECT SUM(SL.FC_BUY_AMOUNT) FROM SP_PURCHASE_TB SL WHERE SM.SP_KEY = SL.BUY_SP_FK_KEY AND SL.DELETE_YN = 'N') AS TOT_ORDER_AMOUNT
+			        , SM.SP_START_DT				AS SP_START_DT
+			        , SM.SP_END_DT				AS SP_END_DT
+			        , SS.FC_SALES_DT				AS FC_SALES_DT
+			        , DP.DEPT_KEY					AS DEPT_KEY
+			        , DP.DEPT_UP_KEY				AS DEPT_UP_KEY
+				FROM SP_MAIN_TB          SM
+					 JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
+					 JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
+					 JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+					 JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+				WHERE SM.DELETE_YN = 'N'
+					AND SM.SP_STATE != 'S' AND SM.SP_STATE != 'F'
+					
+			</if>
+			
+			<if test=' spState != "" and spState != null and spState.equals("S") '>
+				SELECT
+					PM.PJ_KEY              			AS SP_KEY
+				    , PM.AC_KEY              		AS AC_KEY
+				    , PM.PJ_NM         				AS SP_BUSI_NM
+			     	, SM.PM_KEY              		AS PM_KEY
+				    , SM.PM_DETAIL          		AS PM_DETAIL
+				    , SM.PM_DETAIL2          		AS PM_DETAIL2
+				    , SM.FC_SJ_CONF_QT       	AS FC_SJ_CONF_QT
+				    , SM.SP_STATE           		AS SP_STATE
+				    , PM.REMARK              		AS REMARK
+				    , SM.BD_YN						AS BD_YN
+				    , PM.REG_DT              		AS REG_DT
+				    , PM.REG_TM              		AS REG_TM
+				    , PM.REG_EMP_KEY         	AS REG_EMP_KEY
+				    , PM.MOD_DT              		AS MOD_DT
+				    , PM.MOD_TM              		AS MOD_TM
+				    , PM.MOD_EMP_KEY         	AS MOD_EMP_KEY
+					, AC.AC_NM               		AS AC_NM
+					, "P"      							AS SALES_CT_CLASS
+					, EP.EMP_NM					AS EMP_NM
+					, (SELECT SUM(SALES_TURN_AMOUNT) FROM PJ_SALES_DETAIL_TB SD WHERE PM.PJ_KEY = SD.SALES_CT_FK_KEY AND SD.DELETE_YN='N') AS TOT_SALE_AMOUNT
+			        , (SELECT SUM(BUY_AMOUNT) FROM PJ_PURCHASE_TB PP WHERE PM.PJ_KEY = PP.BUY_FK_PJ_KEY AND PP.DELETE_YN='N') AS TOT_ORDER_AMOUNT
+			        , PM.PJ_START_DT				AS SP_START_DT
+			        , PM.PJ_END_DT					AS SP_END_DT
+			        , SS.FC_SALES_DT				AS FC_SALES_DT
+			        , DP.DEPT_KEY					AS DEPT_KEY
+			        , DP.DEPT_UP_KEY				AS DEPT_UP_KEY
+				FROM SP_MAIN_TB          SM
+					 JOIN PJ_MAIN_TB	PM				ON SM.SP_KEY = PM.SP_KEY					AND PM.DELETE_YN = 'N'
+					 JOIN CMM_EMPLOYEE_TB EP		ON PM.PJ_SALE_EMP_KEY = EP.EMP_KEY 
+					 JOIN CMM_ACCOUNT_TB AC		ON PM.AC_KEY = AC.AC_KEY 
+					 JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+					 JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+				WHERE SM.DELETE_YN = 'N'
+					AND SM.SP_STATE = 'S'
+				
+				UNION
+					SELECT 
+				        MT.MT_INTEGRATE_KEY    AS SP_KEY
+				        , MT.MT_AC_KEY         AS AC_KEY
+				        , MT.MT_NM             AS SP_BUSI_NM
+				        , SM.PM_KEY                    AS PM_KEY
+				        , SM.PM_DETAIL                AS PM_DETAIL
+				        , SM.PM_DETAIL2                AS PM_DETAIL2
+				        , SM.FC_SJ_CONF_QT          AS FC_SJ_CONF_QT
+				        , SM.SP_STATE                 AS SP_STATE
+				        , MT.REMARK                    AS REMARK
+				        , SM.BD_YN                  AS BD_YN
+				        , MT.REG_DT                    AS REG_DT
+				        , MT.REG_TM                    AS REG_TM
+				        , MT.REG_EMP_KEY            AS REG_EMP_KEY
+				        , MT.MOD_DT                    AS MOD_DT
+				        , MT.MOD_TM                 AS MOD_TM
+				        , MT.MOD_EMP_KEY            AS MOD_EMP_KEY
+				        , AC.AC_NM                     AS AC_NM
+				        , "M"                       AS SALES_CT_CLASS
+				        , EP.EMP_NM               AS EMP_NM
+				        , (SELECT SUM(MT_SALES_AMOUNT) FROM MT_SALES_ORDER_TB  SD WHERE SD.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND SD.DELETE_YN='N') AS TOT_SALE_AMOUNT
+				        , (SELECT SUM(BO.MT_ORDER_AMOUNT) FROM MT_BACK_ORDER_TB BO WHERE BO.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND BO.DELETE_YN='N') + (SELECT SUM(BO.ORDER_AMOUNT) FROM MT_ORDER_TB BO WHERE BO.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND BO.DELETE_YN='N') AS TOT_ORDER_AMOUNT        
+				        , MT.MT_START_DT            AS SP_START_DT
+				        , MT.MT_END_DT               AS SP_END_DT
+				        , SS.FC_SALES_DT				AS FC_SALES_DT
+				        , DP.DEPT_KEY					AS DEPT_KEY
+				        , DP.DEPT_UP_KEY				AS DEPT_UP_KEY
+					FROM SP_MAIN_TB SM
+						JOIN MT_CONTRACT_LINK_TB CL ON SM.SP_KEY = CL.MT_LINK_CT_KEY AND CL.DELETE_YN='N' AND CL.MT_LINK_CT_CLASS_CD='S' 
+						JOIN MT_CONTRACT_TB MT ON CL.MT_INTEGRATE_KEY = MT.MT_INTEGRATE_KEY AND MT.DELETE_YN='N' 
+						JOIN CMM_ACCOUNT_TB AC   ON SM.AC_KEY = AC.AC_KEY 
+						JOIN CMM_EMPLOYEE_TB EP      ON MT.MT_SALE_EMP_KEY = EP.EMP_KEY 
+						JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+						JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+					WHERE SM.DELETE_YN = 'N'
+					       AND SM.SP_STATE = 'S'
+					       AND SM.SALES_CT_CLASS='M'
+			</if>
+			<if test='spState != "" and spState != null and !spState.equals("S") '>
+				SELECT
+					SM.SP_KEY              			AS SP_KEY
+				    , SM.AC_KEY              		AS AC_KEY
+				    , SM.SP_BUSI_NM         		AS SP_BUSI_NM
+			     	, SM.PM_KEY              		AS PM_KEY
+				    , SM.PM_DETAIL          		AS PM_DETAIL
+				    , SM.PM_DETAIL2          		AS PM_DETAIL2
+				    , SM.FC_SJ_CONF_QT       	AS FC_SJ_CONF_QT
+				    , SM.SP_STATE           		AS SP_STATE
+				    , SM.REMARK              		AS REMARK
+				    , SM.BD_YN						AS BD_YN
+				    , SM.REG_DT              		AS REG_DT
+				    , SM.REG_TM              		AS REG_TM
+				    , SM.REG_EMP_KEY         	AS REG_EMP_KEY
+				    , SM.MOD_DT              		AS MOD_DT
+				    , SM.MOD_TM              		AS MOD_TM
+				    , SM.MOD_EMP_KEY         	AS MOD_EMP_KEY
+					, AC.AC_NM               		AS AC_NM
+					, SM.SALES_CT_CLASS      	AS SALES_CT_CLASS
+					, EP.EMP_NM					AS EMP_NM
+					, (SELECT SUM(SL.FC_SALES_AMOUNT) FROM SP_SALES_TB SL WHERE SM.SP_KEY = SL.SALES_SP_FK_KEY AND SL.DELETE_YN = 'N') AS	TOT_SALE_AMOUNT
+			        , (SELECT SUM(SL.FC_BUY_AMOUNT) FROM SP_PURCHASE_TB SL WHERE SM.SP_KEY = SL.BUY_SP_FK_KEY AND SL.DELETE_YN = 'N') AS TOT_ORDER_AMOUNT
+			        , SM.SP_START_DT				AS SP_START_DT
+			        , SM.SP_END_DT				AS SP_END_DT
+			        , SS.FC_SALES_DT				AS FC_SALES_DT
+			        , DP.DEPT_KEY					AS DEPT_KEY
+			        , DP.DEPT_UP_KEY				AS DEPT_UP_KEY
+				FROM SP_MAIN_TB          SM
+					 JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
+					 JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
+					 JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+					 JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+				WHERE SM.DELETE_YN = 'N'
+						AND SM.SP_STATE=#{spState}
+			</if>
+			
+		) DAT
+			WHERE 1=1
 			
 			<if test="salesEmpKey != null and salesEmpKey != ''">
-				AND SM.REG_EMP_KEY = #{salesEmpKey}
+				AND DAT.REG_EMP_KEY = #{salesEmpKey}
 			</if>
 		
-		  	<if test="spState != null and spState != ''" >
-		  		AND SM.SP_STATE = #{spState}
-		  	</if>
+		  	<!-- <if test="spState != null and spState != ''" >
+		  		AND DAT.SP_STATE = #{spState}
+		  	</if> -->
 		  	
-		  	<if test="spState == null or spState == ''" >
-		  		<!-- 2차 오픈 -->
+		  	<!-- <if test="spState == null or spState == ''" >
+		  		2차 오픈
 		  		AND SP_STATE NOT IN ("S")
 		  		AND SP_STATE NOT IN ("F")
-		  	</if>
+		  	</if> -->
 		  	
 		  	<!-- <if test="searchFromDt == null or searchFromDt == ''">
 		  		AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = YEAR(NOW()), YEAR(NOW()) BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4))
 		  	</if> -->
 		  	
 		  	<if test="searchFromDt != null and searchFromDt != ''">
-		  		AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = #{searchFromDt}, #{searchFromDt} BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4))
+		  		<!-- AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = #{searchFromDt}, #{searchFromDt} BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4)) -->
+		  		AND 
+		  			IF (DAT.SALES_CT_CLASS='P', 
+		  			IF(DAT.SP_STATE != 'S', LEFT(DAT.FC_SALES_DT, 4) = #{searchFromDt}, #{searchFromDt} BETWEEN LEFT(DAT.SP_START_DT, 4) AND LEFT(DAT.SP_END_DT, 4)),
+		  			#{searchFromDt} BETWEEN LEFT(DAT.SP_START_DT, 4) AND LEFT(DAT.SP_END_DT, 4))
 		  	</if>
 		  	
-		  	<if test="fcSjConfQt != null and fcSjConfQt != 0">
-		  		AND SM.FC_SJ_CONF_QT = #{fcSjConfQt}
-		  	</if>
+		  	<!-- <if test="fcSjConfQt != null and fcSjConfQt != 0">
+		  		AND DAT.FC_SJ_CONF_QT = #{fcSjConfQt}
+		  	</if> -->
 		  
 		  	<if test="pjFlag != null and pjFlag != ''" >
-		  		AND SM.SALES_CT_CLASS = #{pjFlag}
+		  		AND DAT.SALES_CT_CLASS = #{pjFlag}
 		  	</if>
 		  	
 		  	<if test="pmFlag != null and pmFlag != ''" >
-		  		AND SM.PM_KEY = #{pmFlag}
+		  		AND DAT.PM_KEY = #{pmFlag}
 		  	</if>
 		  	
 		  	<if test="deptKey != null and deptKey != ''" >
-		  		AND (DP.DEPT_KEY = #{deptKey} OR DP.DEPT_UP_KEY = #{deptKey})
+		  		AND (DAT.DEPT_KEY = #{deptKey} OR DAT.DEPT_UP_KEY = #{deptKey})
 		  	</if>
 		  
 		  	<if test="searchFlag != null and searchFlag != ''" >
 			
 				<if test="searchFlag.equals('AC')" >
-	  				AND AC.AC_NM LIKE CONCAT('%', #{searchValue}, '%')
+	  				AND DAT.AC_NM LIKE CONCAT('%', #{searchValue}, '%')
 	  			</if>
 			  	
 				<if test="searchFlag.equals('BN')" >
-		  			AND SM.SP_BUSI_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  			AND DAT.SP_BUSI_NM LIKE CONCAT('%', #{searchValue}, '%')
 		  		</if>
 		  		
 		  		<if test="searchFlag.equals('SE')" >
-		  			AND EP.EMP_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  			AND DAT.EMP_NM LIKE CONCAT('%', #{searchValue}, '%')
 		  		</if>
 		  		
 		  		<if test="searchFlag.equals('SP')" >
-		  			AND SM.SP_KEY LIKE CONCAT('%', #{searchValue}, '%')
+		  			AND DAT.SP_KEY LIKE CONCAT('%', #{searchValue}, '%')
 		  		</if>
 		  		
 		  </if>
 		  
-		ORDER BY SM.SP_STATE ASC, SM.FC_SJ_CONF_QT DESC
+		ORDER BY FIELD(DAT.SP_STATE,'S','A','B','C','D','Z'), DAT.REG_DT DESC
+		<!-- , DAT.FC_SJ_CONF_QT DESC -->
 		
 	</select>
 	

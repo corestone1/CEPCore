@@ -10,7 +10,7 @@ public class MngProjectBillScheduleVO implements Serializable {
 	private static final long serialVersionUID = 7131092188616582062L;
 
 	private String billType;     //매출 매출 구분(매출 : SD, 매입 : PC)
-	private int    quarter;      //분기(1~4분기)
+	private String quarter;      //분기(1~4분기)
 	private String searchFromDt; //조회 시작일
 	private String searchToDt;   //조회 종료일
 	private String searchAcNm;   //거래처명
@@ -30,13 +30,13 @@ public class MngProjectBillScheduleVO implements Serializable {
 	/**
 	 * @return the quarter
 	 */
-	public int getQuarter() {
+	public String getQuarter() {
 		return quarter;
 	}
 	/**
 	 * @param quarter the quarter to set
 	 */
-	public void setQuarter(int quarter) {
+	public void setQuarter(String quarter) {
 		this.quarter = quarter;
 	}
 	

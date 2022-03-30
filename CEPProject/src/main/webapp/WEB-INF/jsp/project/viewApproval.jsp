@@ -199,7 +199,8 @@
 							<table class="dtl excelSheet" style="width: 100%;">
 								<thead>
 									<tr>
-										<th>계산서 매핑 여부</th>
+										<th width="80px">계산서 매핑</th>
+										<th>계산서 발행일자</th>
 										<th>매입처</th>
 										<th>지급 예상 일자</th>
 										<th>지급 일자</th>
@@ -212,7 +213,8 @@
 								<c:set var = "pSum" value = "0" />
 								<c:forEach var="result" items="${purchaseList}" varStatus="status">
 									<tr>
-										<td>${result.billMappingYn}</td>
+										<td width="80px">${result.billMappingYn}</td>
+										<td>${result.billIssueDt }</td>
 										<td>${result.acNm }</td>
 										<td>${result.paymentCallDt }</td>
 										<td>${result.paymentDt }</td>
@@ -223,10 +225,10 @@
 										</td>
 										<td class="textalignR">${displayUtil.commaStr(result.orderSum) }</td>
 									</tr>
-									<c:set var= "pSum" value="${pSum + result.orderAmount}"/>
+									<c:set var= "pSum" value="${pSum + result.orderSum}"/>
 								</c:forEach>
 								<tr>
-									<td colspan="6" class="textalignR">매입액 합계</td>
+									<td colspan="8" class="textalignR">매입액 합계</td>
 									<td class="textalignR">${displayUtil.commaStr(pSum)}</td>
 								</tr> 
 							</table>

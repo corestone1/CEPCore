@@ -511,7 +511,7 @@
 								</thead>
 								<tbody>
 									<c:forEach var="orderList" items="${orderList}" varStatus="status">
-										<tr>
+										<tr onclick='javascript:fnSearchProductList("${orderList.pjOrderKey}");'>
 											<td class="textalignC" onclick="event.cancelBubble = true;">
 												<input type="radio" class="tRadio" name="m_gubun" id="check${status.count}" value="${orderList.pjOrderKey}"/>
 												<label for="check${status.count}" class="cursorP"/>
@@ -519,7 +519,7 @@
 											<td class="textalignC"><c:out value="${status.count}"/></td>
 											<td class="textalignC"><c:out value="${orderList.pjOrderKey}"/></td>
 											<td class="textalignC"><c:out value="${displayUtil.displayDate(orderList.orderDt)}" /></td>
-											<td class="textalignC"><span title="" onclick='javascript:fnSearchProductList("${orderList.pjOrderKey}");'><c:out value="${orderList.orderAcNm}"/></span></td>
+											<td class="textalignC"><span title=""><c:out value="${orderList.orderAcNm}"/></span></td>
 											<td class="textalignC"><c:out value="${orderList.orderAcDirectorNm}"/></td>
 											<td class="textalignR"><c:out value="${orderList.orderProductCnt}"/></td>
 											<td class="textalignC"><c:out value="${displayUtil.commaStr(orderList.orderAmount)}"/></td>

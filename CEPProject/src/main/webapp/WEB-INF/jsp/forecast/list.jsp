@@ -296,15 +296,34 @@
 			$('#fl tbody tr > td:not(:nth-child(1))').click(function() {
 				
 				var litIdx   = parseInt($(this).parent().children().eq(0).children().eq(0).val());
-				var spKey = $('input[name="spKey"]').eq(litIdx).val()
+				var spKey = $('input[name="lt_spKey"]').eq(litIdx).val();
+				var spState = $('input[name="lt_spState"]').eq(litIdx).val();
+				var salesCtClass = $('input[name="lt_salesCtClass"]').eq(litIdx).val();
 				
-				var url = '/forecast/write/basic.do';
-				var dialogId = 'program_layer';
-				var varParam = {'spKey' : spKey};
+				var form;
 				
-				var button = new Array;
-				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+				if(spState == 'S' && salesCtClass == 'P') {
+					form = document.detailForm;
+					form.pjKey.value = spKey;
+					form.workClass.value = "입찰_첨부파일";
+					form.action = "<c:url value='/project/detail/main.do'/>";
+					
+					form.submit(); 
+				} else if(spState == 'S' && salesCtClass == 'M') {
+					form = document.detailForm;
+					form.mtIntegrateKey.value=spKey;
+					form.action = "/maintenance/contract/detail/productInfo.do";
+					
+					form.submit();  
+				} else {
+					var url = '/forecast/write/basic.do';
+					var dialogId = 'program_layer';
+					var varParam = {'spKey' : spKey};
+					
+					var button = new Array;
+					button = [];
+					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');  
+				}
 				
 				/* var obj = this;
 				var salesAcNmList = new Array();
@@ -379,7 +398,7 @@
 						
 						var litIdx = parseInt($('input[name="gubun"]:checked').val());
 						
-						var jsonData = {'spKey' : $('input[name="spKey"]').eq(litIdx).val()};
+						var jsonData = {'spKey' : $('input[name="lt_spKey"]').eq(litIdx).val()};
 						
 			           $.ajax({
 				        	url :"/forecast/delete.do",
@@ -426,7 +445,7 @@
 						alert($('input[name="gubun"]:checked').parent().next().next().next().children().eq(0).html() + "의 매출/매입 정보를 입력해주세요.");
 						
 						var litIdx   = parseInt($('input[name="gubun"]:checked').val());
-						var spKey = $('input[name="spKey"]').eq(litIdx).val()
+						var spKey = $('input[name="lt_spKey"]').eq(litIdx).val()
 						
 						var url = '/forecast/write/fundInfo.do';
 						var dialogId = 'program_layer';
@@ -440,7 +459,7 @@
 							
 							var litIdx = parseInt($('input[name="gubun"]:checked').val());
 							
-							var jsonData = {'spKey' : $('input[name="spKey"]').eq(litIdx).val(), 'spState':'S'};
+							var jsonData = {'spKey' : $('input[name="lt_spKey"]').eq(litIdx).val(), 'spState':'S'};
 							
 				           $.ajax({
 					        	url :"/forecast/changeStatus.do",
@@ -488,7 +507,7 @@
 					if(confirm($('input[name="gubun"]:checked').parent().next().next().next().children().eq(0).html() + "을(를) 실주 등록 하시겠습니까?")) {
 						var litIdx = parseInt($('input[name="gubun"]:checked').val());
 						
-						var jsonData = {'spKey' : $('input[name="spKey"]').eq(litIdx).val(), 'spState':'F'};
+						var jsonData = {'spKey' : $('input[name="lt_spKey"]').eq(litIdx).val(), 'spState':'F'};
 						
 						$.ajax({
 				        	url :"/forecast/changeStatus.do",
@@ -717,20 +736,30 @@
 								<%-- <td><c:out value="${result.fcSjConfQt}"/> Q</td> --%>
 								<td class="textalignR">
 									<label id="salesAmount">
-										<c:if test="${result.fcSalesAmount eq null }">0</c:if>
-										<c:if test="${result.fcSalesAmount ne null }"><c:out value="${displayUtil.commaStr(result.fcSalesAmount)}"/></c:if>
+										<c:if test="${result.totSaleAmount eq null }">0</c:if>
+										<c:if test="${result.totSaleAmount ne null }"><c:out value="${displayUtil.commaStr(result.totSaleAmount)}"/></c:if>
 									</label>
 								</td>
 								<td class="textalignR">
 									<label id="buyAmount">
-										<c:if test="${result.fcBuyAmount eq null }">0</c:if>
-										<c:if test="${result.fcBuyAmount ne null }"><c:out value="${displayUtil.commaStr(result.fcBuyAmount)}"/></c:if>
+										<c:if test="${result.totOrderAmount eq null }">0</c:if>
+										<c:if test="${result.totOrderAmount ne null }"><c:out value="${displayUtil.commaStr(result.totOrderAmount)}"/></c:if>
 									</label>
 								</td>
 								<td class="textalignR">
 									<label id="profitAmount">
-										<c:if test="${result.fcSalesProfit eq null }">0</c:if>
-										<c:if test="${result.fcSalesProfit ne null }"><c:out value="${displayUtil.commaStr(result.fcSalesAmount - result.fcBuyAmount)}"/></c:if>
+										<c:if test="${result.totOrderAmount eq null and result.totSaleAmount ne null}">
+											<c:out value="${displayUtil.commaStr(result.totSaleAmount - 0)}"/>
+										</c:if>
+										<c:if test="${result.totSaleAmount eq null and result.totOrderAmount ne null}">
+											<c:out value="${displayUtil.commaStr(0 - result.totOrderAmount)}"/>
+										</c:if>
+										<c:if test="${result.totSaleAmount eq null and result.totOrderAmount eq null}">
+											0
+										</c:if>
+										<c:if test="${result.totSaleAmount ne null and result.totOrderAmount ne null}">
+											<c:out value="${displayUtil.commaStr(result.totSaleAmount - result.totOrderAmount)}"/>
+										</c:if>
 									</label>
 								</td>
 								<td><label id="empNm"><c:out value="${result.empNm}"/></label></td>
@@ -749,9 +778,11 @@
 									<input type="hidden" value="${result.spState }" id="resultSpState" />
 								</td>
 							</tr>
-							<input type='hidden' name='spKey' value='<c:out value="${result.spKey}"/>' />
-							<c:set var="salesSum" value="${salesSum + result.fcSalesAmount }" />
-							<c:set var="pcSum" value="${pcSum + result.fcBuyAmount }" />
+							<input type='hidden' name='lt_spKey' value='<c:out value="${result.spKey}"/>' />
+							<input type='hidden' name='lt_spState' value='<c:out value="${result.spState}"/>' />
+							<input type='hidden' name='lt_salesCtClass' value='<c:out value="${result.salesCtClass}"/>' />
+							<c:set var="salesSum" value="${salesSum + result.totSaleAmount }" />
+							<c:set var="pcSum" value="${pcSum + result.totOrderAmount }" />
 						</c:forEach>
 						</tbody>
 					</table>
@@ -818,5 +849,10 @@
 			</td>
 		</tr> --%>
 	</form:form>
+	<form id="detailForm" name="detailForm" class="dpNone">
+		<input type="hidden" name="pjKey" />
+		<input type="hidden" name="workClass" />
+		<input type="hidden" name="mtIntegrateKey" />
+	</form>
 </body>
 </html>

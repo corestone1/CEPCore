@@ -423,19 +423,19 @@
 		    	{
 		    		lstStatus  = '발행완료';
 		    		lstBtnImg  = "/images/btn_stock_view.png";
-		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstOnclick = "javascript:fnViewModal('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    	}
 		    	else if(pltGBList[i].gbIssueStatus == 'R')
 		    	{
 		    		lstStatus = '발행요청중';
 		    		lstBtnImg  = "/images/btn_stock_end.png";
-		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstOnclick = "javascript:fnViewModal('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    	}	
 		    	else
 		    	{
 		    		lstStatus = '발행전';
 		    		lstBtnImg  = "/images/btn_stock_publish.png";
-		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstOnclick = "javascript:fnViewModal('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    	}
 		    	
 		    	lstBtn     = '<img onclick="' + lstOnclick + '" src="' + lstBtnImg + '" style="cursor:hand;"/>';
@@ -477,9 +477,7 @@
 			alert("수금계획은 삭제할 수 없습니다.!");
 		}
 		
-		function fnShowStock(pstGbKey, pstGbKindCd) {
-			//alert('fnShowStockMod(' + pstGbKey + ')');
-			
+		function fnViewModal(pstGbKey, pstGbKindCd){
 			var lstUrl;
 			
 			if(pstGbKindCd == '계약')
@@ -494,19 +492,6 @@
 			{
 				lstUrl = "/project/detail/viewStockPublishSK.do";
 			}
-			
-			fnViewModal(lstUrl, pstGbKey);
-		}
-		
-		function fnViewModal(pstUrl, pstGbKey){
-			
-			/* var dialogId = 'program_layer';
-			
-			var varParam = {'gbKey' : pstGbKey};
-			
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, pstUrl, varParam, button, '', 'width:648px;height:575px');  */
 			
 			var nWidth = "654";
 			var nHeight = "549";
@@ -525,9 +510,9 @@
 			strOption += "width=" + nWidth + "px,";
 			strOption += "height=" + nHeight + "px,";
 			strOption += "toolbar=no,menubar=no,location=no,";
-			strOption += "resizable=yes,status=yes";
+			strOption += "resizable=no,status=yes";
 			
-			window.open(pstUrl + "?gbKey="+ pstGbKey,'GUARANTY_INFO', strOption);
+			window.open(pstUrl + "?gbKey="+ pstGbKey + "&workClass='보증증권_'",'GUARANTY_INFO', strOption);
 		}
 	</script>
 </head>

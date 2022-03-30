@@ -253,6 +253,18 @@
 			} else {
 				$('#bidding_menu').hide();
 			}		
+			
+			$('#remarkCnt').html("("+$("#m_ipt_pmDetail").val().length+" / 2000)");
+			
+			$('#m_ipt_pmDetail').on('keyup', function() {
+				$('#remarkCnt').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt').html("(2000 / 2000)");
+				}
+				
+			});
 		});
 		
 		function fnSearchAccoutList(pObject, pstAccountNm)
@@ -532,7 +544,8 @@
 						<tr>
 							<td class="tdTitle">제품설명</td>
 							<td class="tdContents">
-								<textarea id="m_ipt_pmDetail" name="pmDetail"><c:out value="${forecast.pmDetail}" /></textarea>
+								<textarea id="m_ipt_pmDetail" name="pmDetail" ><c:out value="${forecast.pmDetail}" /></textarea>
+								<div id="remarkCnt" class="ftw200">(0 / 2000)</div>
 							</td>
 						</tr>
 						<!-- 

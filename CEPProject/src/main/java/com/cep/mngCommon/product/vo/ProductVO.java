@@ -45,6 +45,10 @@ public class ProductVO implements Serializable{
 	//제조사명을 포기하기 위한 CMM_ACCOUNT_TB.AC_NM
 	private String acNm;
 	
+	private String orderAcNm;
+	private String orderUprice;
+	private String orderQuantity;
+	
 	public int getRowNum() {
 		return rowNum;
 	}
@@ -155,6 +159,24 @@ public class ProductVO implements Serializable{
 	}
 	public void setAcNm(String acNm) {
 		this.acNm = acNm;
+	}
+	public String getOrderAcNm() {
+		return orderAcNm;
+	}
+	public void setOrderAcNm(String orderAcNm) {
+		this.orderAcNm = orderAcNm;
+	}
+	public String getOrderUprice() {
+		return orderUprice;
+	}
+	public void setOrderUprice(String orderUprice) {
+		this.orderUprice = orderUprice;
+	}
+	public String getOrderQuantity() {
+		return orderQuantity;
+	}
+	public void setOrderQuantity(String orderQuantity) {
+		this.orderQuantity = orderQuantity;
 	}
 	
 	

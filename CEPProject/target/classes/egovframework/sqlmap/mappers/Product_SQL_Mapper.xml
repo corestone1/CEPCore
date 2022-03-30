@@ -23,6 +23,9 @@
 		<result property="modTm"           column="MOD_TM"/>
 		<result property="modEmpKey"       column="MOD_EMP_KEY"/>
 		<result property="acNm"            column="AC_NM" />
+		<result property="orderAcNm"            column="ORDER_AC_NM" />
+		<result property="orderUprice"			column="ORDER_UPRICE" />
+		<result property="orderQuantity"		column="ORDER_QUANTITY" />
 	</resultMap>
 	
 	
@@ -124,17 +127,22 @@
 		     , PM.MOD_DT
 		     , PM.MOD_TM
 		     , PM.MOD_EMP_KEY
-			 , AC.AC_NM
+		     , AC1.AC_NM	AS AC_NM
+			 , AC2.AC_NM	AS ORDER_AC_NM
+			 , POP.ORDER_UPRICE
+			 , POP.ORDER_QUANTITY
 		FROM PM_PRODUCT_MNG_TB PM
-			 JOIN CMM_ACCOUNT_TB AC 
-			 ON PM.MF_AC_KEY = AC.AC_KEY
-			 JOIN PJ_ORDER_PRODUCT_TB POP
-			 ON PM.PM_KEY = POP.ORDER_PM_FK_KEY
-			 JOIN PJ_ORDER_TB PO
-			 ON PO.PJ_ORDER_KEY = POP.PJ_ORDER_KEY
+			 LEFT OUTER JOIN CMM_ACCOUNT_TB AC1 
+			 ON PM.MF_AC_KEY = AC1.AC_KEY AND AC1.DELETE_YN = 'N'
+			 LEFT OUTER JOIN PJ_ORDER_PRODUCT_TB POP
+			 ON PM.PM_KEY = POP.ORDER_PM_FK_KEY AND POP.DELETE_YN = 'N'
+			 LEFT OUTER JOIN PJ_ORDER_TB PO
+			 ON PO.PJ_ORDER_KEY = POP.PJ_ORDER_KEY AND PO.DELETE_YN = 'N'
+			 JOIN CMM_ACCOUNT_TB AC2
+			 ON PO.ORDER_AC_KEY = AC2.AC_KEY AND AC2.DELETE_YN = 'N'
 		WHERE 1=1	
 			AND PO.ORDER_CT_FK_KEY = #{searchKey}
-			AND POP.DELETE_YN = 'N'
+			AND PM.DELETE_YN = 'N'
 		<if test="productDivision != null and productDivision != ''">
 			AND PM.PM_CLASS_CD = #{productDivision}
 		</if>
@@ -156,7 +164,7 @@
 		
 		<if test="productMake != null and productMake != ''">
 			<![CDATA[
-				AND AC.AC_NM LIKE CONCAT('%', CONCAT(#{productMake}, '%'))
+				AND AC1.AC_NM LIKE CONCAT('%', CONCAT(#{productMake}, '%'))
 			]]>
 		</if>
 		

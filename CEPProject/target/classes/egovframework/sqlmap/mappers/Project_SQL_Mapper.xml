@@ -37,7 +37,7 @@
 				, (SELECT c.CD_NM FROM CMM_CODE_MNG_TB c WHERE c.CD_KEY = PJ_MAIN_TB.PJ_STATUS_CD) AS pjStatusCdNm
 				, PJ_STATUS_CD
 				, (SELECT e.EMP_NM FROM CMM_EMPLOYEE_TB e WHERE e.EMP_KEY = PJ_MAIN_TB.PJ_SALE_EMP_KEY) AS pjSaleEmpKey
-				, (SELECT SUM(SALES_TURN_AMOUNT) FROM PJ_SALES_DETAIL_TB SD WHERE PJ_MAIN_TB.PJ_KEY = SD.SALES_CT_FK_KEY) AS totalSalesAmount
+				, (SELECT SUM(SALES_TURN_AMOUNT) FROM PJ_SALES_DETAIL_TB SD WHERE PJ_MAIN_TB.PJ_KEY = SD.SALES_CT_FK_KEY AND SD.DELETE_YN='N') AS totalSalesAmount
 				, (SELECT SUM(BUY_AMOUNT) FROM PJ_PURCHASE_TB PP WHERE PJ_MAIN_TB.PJ_KEY = PP.BUY_FK_PJ_KEY AND PP.DELETE_YN='N') AS totalBuyAmount
 			FROM PJ_MAIN_TB
 			WHERE 1=1
@@ -637,11 +637,12 @@
 				, GROUP_CONCAT(DISTINCT BL.BILL_NO SEPARATOR ', ') AS BILL_NO
 				, PC.BUY_KEY
 		      	, SUM(OP.ORDER_QUANTITY * OP.ORDER_UPRICE) AS ORDER_SUM
-		      	, GROUP_CONCAT(CONCAT(PM.PM_NM_CD, ' / ', FORMAT(OP.ORDER_UPRICE, 0),' / ',OP.ORDER_QUANTITY) SEPARATOR '<![CDATA[<br>]]>' ) AS ORDER_PRODUCT
+		      	, GROUP_CONCAT(DISTINCT CONCAT(PM.PM_NM_CD, ' / ', FORMAT(OP.ORDER_UPRICE, 0),' / ',OP.ORDER_QUANTITY) SEPARATOR '<![CDATA[<br>]]>' ) AS ORDER_PRODUCT
 				, PC.BILL_PURCHASE_CD
 				, PC.BILL_MF_CD
-				, GROUP_CONCAT(PT.PAYMENT_CALL_DT SEPARATOR '<![CDATA[<br>]]>' ) AS PAYMENT_CALL_DT
-       			, GROUP_CONCAT(PT.PAYMENT_DT SEPARATOR '<![CDATA[<br>]]>' ) AS PAYMENT_DT
+				, GROUP_CONCAT(DISTINCT DATE_FORMAT(PT.PAYMENT_CALL_DT, "%Y-%m-%d") SEPARATOR '<![CDATA[<br>]]>' ) AS PAYMENT_CALL_DT
+       			, GROUP_CONCAT(DISTINCT DATE_FORMAT(PT.PAYMENT_DT, "%Y-%m-%d") SEPARATOR '<![CDATA[<br>]]>' ) AS PAYMENT_DT
+       			, GROUP_CONCAT(DISTINCT DATE_FORMAT(BL.BILL_ISSUE_DT, "%Y-%m-%d") SEPARATOR '<![CDATA[<br>]]>' ) AS BILL_ISSUE_DT
 			FROM PJ_ORDER_TB OD
 		    LEFT OUTER JOIN PJ_ORDER_PRODUCT_TB OP
 		    ON OD.PJ_ORDER_KEY = OP.PJ_ORDER_KEY	AND OP.DELETE_YN = 'N'
@@ -1187,31 +1188,17 @@
 		UPDATE PJ_INSTALL_AND_BUILD_TB 
 		SET
 			INB_PM_TYPE = #{inbPmType}
-			<if test="inbPlace != null and inbPlace != ''">
 			, INB_PLACE = #{inbPlace}
-			</if>
 			, INB_CLASS = #{inbClass}
 			, INB_PM_KEY = #{inbPmKey}
 			, INB_PM_SERIAL_NO = #{inbPmSerialNo}
 			, INB_DELIVERY_DT = #{inbDeliveryDt}
-			<if test="inbPmVer != null and inbPmVer != ''">
 			, INB_PM_VER = #{inbPmVer}
-			</if>
-			<if test="inbSpecInfo != null and inbSpecInfo != ''">
 			, INB_SPEC_INFO = #{inbSpecInfo}
-			</if>
-			<if test="inbCacheMem != null and inbCacheMem != '' and inbCacheMem != 0">
 			, INB_CACHE_MEM = #{inbCacheMem}
-			</if>
-			<if test="inbPortInfo != null and inbPortInfo != ''">
 			, INB_PORT_INFO = #{inbPortInfo}
-			</if>
-			<if test="inbMngIp != null and inbMngIp != ''">
 			, INB_MNG_IP = #{inbMngIp}
-			</if>
-			<if test="remark != null and remark != ''">
 			, REMARK = #{remark}
-			</if>
 			, MOD_DT = DATE_FORMAT(NOW(),'%Y%m%d')
 			, MOD_TM = DATE_FORMAT(NOW(),'%H%i%s')
 			, MOD_EMP_KEY = #{modEmpKey}

@@ -577,8 +577,8 @@
 	<update id="deleteBill" parameterType="com.cep.mngCommon.bill.vo.MngCommonBillSearchVO">
 	
 		UPDATE CMM_PC_BILLING_TB
-		SET    DELETE_YN = 'Y',
-				BILL_NO = DATE_FORMAT(NOW(),'%Y%m%d%k%i%s')
+		SET    DELETE_YN = 'Y'
+				<!-- , BILL_NO = DATE_FORMAT(NOW(),'%Y%m%d%k%i%s') -->
 		WHERE  BILL_NO = #{billNo}
 	
 	</update>
@@ -884,8 +884,7 @@
 		
 		INSERT INTO CMM_PC_BILLING_TB
 		(
-			BILL_NO
-			, BILL_AMOUNT
+			BILL_AMOUNT
 			, BILL_TAX_AMOUNT
 			, BILL_TOTAL_AMOUNT
 			, BILL_ISSUE_DT
@@ -898,8 +897,7 @@
 		)
 		VALUES
 		(
-			#{billNo}
-			, #{billAmount}
+			#{billAmount}
 			, #{billTaxAmount}
 			, #{billTotalAmount}
 			, #{billIssueDt}

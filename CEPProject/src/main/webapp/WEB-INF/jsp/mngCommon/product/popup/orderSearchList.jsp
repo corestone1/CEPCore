@@ -100,26 +100,36 @@
 	}
 	.popContainer .middle table thead th:nth-child(2), 
 	.popContainer .middle table tbody td:nth-child(2) {
-		width: 50px;
+		width: 159px;
 	}
 	.popContainer .middle table thead th:nth-child(3), 
 	.popContainer .middle table tbody td:nth-child(3) {
-		width: 100px;
+		width: 49px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(4), 
 	.popContainer .middle table tbody td:nth-child(4) {
-	    width: 135px;
+	    width: 80px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(5),
 	.popContainer .middle table tbody td:nth-child(5) {
-		width: 180px;
+		width: 148px;
 	}
 	
 	.popContainer .middle table thead th:nth-child(6),
 	.popContainer .middle table tbody td:nth-child(6) {
 		width: 156px;
+	}
+	
+	.popContainer .middle table thead th:nth-child(7), 
+	.popContainer .middle table tbody td:nth-child(7) {
+	    width: 85px;
+	}
+	
+	.popContainer .middle table thead th:nth-child(8), 
+	.popContainer .middle table tbody td:nth-child(8) {
+	    width: 40px;
 	}
 	
 	.popContainer .middle table tbody tr td span {
@@ -213,7 +223,13 @@
 	
 	function fn_searchList()
 	{
-		document.productForm.action = "/mngCommon/product/popup/orderSearchListPopup.do";
+		var request = new Request();
+		
+		var lstReturnType = request.getParameter("returnType");
+		var pmKeyDomId = request.getParameter("pmKeyDomId");
+		var pmNmDomId = request.getParameter("pmNmDomId");
+		
+		document.productForm.action = "/mngCommon/product/popup/orderSearchListPopup.do?pmNmDomId="+pmNmDomId+"&pmKeyDomId="+pmKeyDomId+"&returnType="+lstReturnType;
        	document.productForm.submit(); 
 	}
 
@@ -241,7 +257,7 @@
 					<form:option value="EOL">EOL</form:option>
 					<form:option value="EOSL">EOSL</form:option>
 				</form:select>
-				<form:input path="productMake" type="text" placeholder="제조사" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
+				<%-- <form:input path="productMake" type="text" placeholder="제조사" onKeyPress="if(event.keyCode==13){fn_searchList();}"/> --%>
 				<form:input path="productName" type="text" placeholder="모델명" class="veralignB" onKeyPress="if(event.keyCode==13){fn_searchList();}"/>
 				<span id="span_search" class="veralignB" onclick="javascript:fn_searchList()"><img src="/images/icon_search.png" /></span>
 			</div>
@@ -253,18 +269,20 @@
 					<thead class="ftw400">
 						<tr>
 							<th scope="row">선택</th>
+							<th scope="row">매입처</th>
 							<th scope="row">구분</th>
 							<th scope="row">상세구분</th>
-							<th scope="row">제조사</th>
 							<th scope="row">모델명</th>
 							<th scope="row">세부모델명</th>
-							<th scope="row">출시일</th>
+							<th scope="row">단가</th>
+							<th scope="row">수량</th>
 						</tr>
 					</thead>
 					<tbody>
 						<c:forEach var="result" items="${productList}" varStatus="status">
 	            			<tr>
 	            				<td><a href="#"    onclick="javascript:fn_ProductSelect('${result.pmKey}', '${result.pmNmCd}');" class="btn btn_gray">선택</a></td>
+	            				<td align="center"   class="listtd"><span style="max-width: 156px;" title="${result.orderAcNm }"><c:out value="${result.orderAcNm}"/></span></td>
 	            				<td align="center" class="listtd">
 	            					<c:choose>
 										<c:when test="${result.pmClassCd eq 'PROD1000'}">H/W</c:when>
@@ -287,10 +305,10 @@
 										<c:when test="${result.pmDetailClassCd eq 'PROD4099'}">기타</c:when>
 									</c:choose>
 	            				</td>
-	            				<td align="center"   class="listtd"><span style="max-width: 133px;" title="${result.acNm }"><c:out value="${result.acNm}"/></span></td>
 	            				<td align="left"   class="listtd"><span style="max-width: 179px;" title="${result.pmLineCd }"><c:out value="${result.pmLineCd}"/></span></td>
 	            				<td align="left"   class="listtd"><span style="max-width: 155px;" title="${result.pmNmCd }"><c:out value="${result.pmNmCd}"/></span></td>
-	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pmReleaseDt)}"/>&nbsp;</td>
+	            				<td align="right"   class="listtd"><span style="max-width: 155px;" title="${displayUtil.commaStr(result.orderUprice) }"><c:out value="${displayUtil.commaStr(result.orderUprice) }"/></span></td>
+	            				<td align="center"   class="listtd"><span style="max-width: 155px;" title="${result.orderQuantity }"><c:out value="${result.orderQuantity}"/></span></td>
 	            			</tr>
 	        			</c:forEach>						
 					</tbody>

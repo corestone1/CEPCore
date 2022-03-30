@@ -666,7 +666,20 @@ public class ProjectController {
 		String pjKey = buildVO.getPjKey();
 		int inbSeq = buildVO.getInbSeq();
 		
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
 		List<?> buildInfo = service.selectBuildDetail(buildVO);
+		
+		fileVO.setFileCtKey(buildVO.getPjKey());
+		fileVO.setFileWorkClass(buildVO.getWorkClass());
+		
+		fileResult = fileMngService.selectFileList(fileVO);
+		
+		model.addAttribute("fileList", fileResult);
+		model.addAttribute("maxFileCnt", maxFileCnt);
+		model.addAttribute("fileExtn", fileExtn);		
+		model.addAttribute("maxFileSize", maxFileSize);	
 		
 		model.addAttribute("pjKey", pjKey);
 		model.addAttribute("resultList", buildInfo);

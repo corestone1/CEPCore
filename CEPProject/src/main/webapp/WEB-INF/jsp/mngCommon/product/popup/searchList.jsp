@@ -212,7 +212,13 @@
 	
 	function fn_searchList()
 	{
-		document.productForm.action = "/mngCommon/product/popup/searchListPopup.do";
+		var request = new Request();
+		
+		var lstReturnType = request.getParameter("returnType");
+		var pmKeyDomId = request.getParameter("pmKeyDomId");
+		var pmNmDomId = request.getParameter("pmNmDomId");
+		
+		document.productForm.action = "/mngCommon/product/popup/searchListPopup.do?pmNmDomId="+pmNmDomId+"&pmKeyDomId="+pmKeyDomId+"&returnType="+lstReturnType;
        	document.productForm.submit(); 
 	}
 

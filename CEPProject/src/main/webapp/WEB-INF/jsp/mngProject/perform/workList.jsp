@@ -216,6 +216,13 @@
 				}
 			});
 			
+			$("#fl tr td").click(function(index, item) {
+				if($(this).parent().find("td").index(this) != 0) {
+					var pjKey = $(this).parent().find("td:nth-child(3)").children().eq(0).val();
+					var workSeq = $(this).parent().find("td:nth-child(3)").children().eq(1).val();
+					fn_detailPop(pjKey, workSeq);
+				}
+			});
 			
 			$('#btnModify').click(function() {
 				
@@ -374,7 +381,7 @@
 						</thead>
 						<tbody>
 							<c:forEach var="result" items="${workList}" varStatus="status">
-								<tr onclick="javascript:fn_detailPop('${result.pjKey}', '${result.pjWorkSeq }')">
+								<tr>
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
 									<td>

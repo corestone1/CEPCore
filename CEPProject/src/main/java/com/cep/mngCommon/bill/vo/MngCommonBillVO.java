@@ -11,7 +11,7 @@ public class MngCommonBillVO implements Serializable {
 	
 	private static final long serialVersionUID = 6249212047489119229L;
 	
-	private String billNo;
+	private int billNo;
 	private String billCtFkKey;
 	
 	private String pjKey;
@@ -46,13 +46,13 @@ public class MngCommonBillVO implements Serializable {
 	/**
 	 * @return the billNo
 	 */
-	public String getBillNo() {
+	public int getBillNo() {
 		return billNo;
 	}
 	/**
 	 * @param billNo the billNo to set
 	 */
-	public void setBillNo(String billNo) {
+	public void setBillNo(int billNo) {
 		this.billNo = billNo;
 	}
 	/**

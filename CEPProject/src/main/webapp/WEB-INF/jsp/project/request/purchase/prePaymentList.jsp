@@ -7,6 +7,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/common.css'/>"/>
 	<link type="text/css" rel="stylesheet" href="<c:url value='/css/reset.css'/>"/>
+	<link type="text/css" rel="stylesheet" href="<c:url value='/css/datepicker.min.css'/>"/>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -115,18 +116,18 @@
 		}
 		#compForm .dtl thead th:first-child, 
 		#compForm .dtl tbody td:first-child {
-		    width: 51px;
-		    max-width: 51px;
+		    width: 41px;
+		    max-width: 41px;
 		}
 		#compForm .dtl thead th:nth-child(7), 
 		#compForm .dtl tbody td:nth-child(7) {
-		    width: 127px;
-		    max-width: 127px;
+		    width: 181px;
+		    max-width: 181px;
 		}
 		#compForm .dtl thead th:nth-child(6), 
 		#compForm .dtl tbody td:nth-child(6) {
-		    width: 100px;
-		    max-width: 100px;
+		    width: 139px;
+		    max-width: 139px;
 		}
 		#compForm .dtl thead th:nth-child(5), 
 		#compForm .dtl tbody td:nth-child(5) {
@@ -135,8 +136,8 @@
 		}
 		#compForm .dtl thead th:nth-child(4), 
 		#compForm .dtl tbody td:nth-child(4) {
-		    width: 142px;
-		    max-width: 142px;
+		    width: 122px;
+		    max-width: 122px;
 		}
 		#compForm .dtl thead th:nth-child(3), 
 		#compForm .dtl tbody td:nth-child(3) {
@@ -145,13 +146,8 @@
 		}
 		#compForm .dtl thead th:nth-child(2), 
 		#compForm .dtl tbody td:nth-child(2) {
-		    width: 166px;
-		    max-width: 166px;
-		}
-		#compForm .dtl thead th:nth-child(8), 
-		#compForm .dtl tbody td:nth-child(8) {
-		    width: 105px;
-		    max-width: 105px;
+		    width: 100px;
+		    max-width: 100px;
 		}
 		#compForm .dtl tbody {
 		    height: 545px;
@@ -174,64 +170,81 @@
 			white-space:nowrap;
 			width: 90%;
 		}
+		
+		input[class^="calendar"] {
+		    width: 96px;
+		    height: 27px;
+		    vertical-align: top;
+		    border: 1px solid #ddd;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
+			
 			$('a[id^=A_TOPMenu_]').each(function() {
 				var title = $(this).attr("title");	
 				$(this).attr("title", title + location.search);
 			})
 			
 			$('a[id^=A_TOPMenu_]').click(function(event){ location.href = this.title; });
-
+			
 		});
-		function fn_comp(key, amount, billNo) {
-			var pSum = parent.document.getElementById("buyAmount").value;
-			var pDone = parent.document.getElementById("originDonePaymentAmount").value;
-			var pYet = parent.document.getElementById("originYetPaymentAmount").value;
-			
-			var object = {};
-			
-			object['paymentKey'] = key;
-			object['paymentStatusCd'] = "PYST4000";
-			object['donePaymentAmount'] = Number(pDone) + Number(amount);
-			object['yetPaymentAmount'] = Number(pYet) - Number(amount);
-			object['buyKey'] = $('#buyKey').val();
-			object['billFkKey'] = billNo;
-			object['pjKey'] = parent.document.getElementById("pjKey").value;
-			object['pjNm'] = parent.document.getElementById("ipt_pjNm").value;
-			object['link'] = window.location.pathname.replace("/","");
-
-			var sendData = JSON.stringify(object);
-			/* console.log(sendData); */
-			if(confirm("지급 완료 처리하시겠습니까?")) {
-				$.ajax({
-					url:"/project/request/update/paymentInfo.do",
-					dataType: 'json', 
-				    type:"POST",  
-				    data: sendData,
-				    async:true, 
-				 	contentType: "application/json; charset=UTF-8", 
-				 	beforeSend:function(){
-				        $('.wrap-loading', parent.document).removeClass('dpNone');
-				    },
+		function fn_comp(key, amount, obj) {
+			if($("input[id="+key+"]").val().length == 0) {
+	 			alert("지급 날짜를 입력해주세요.");
+	 			$("input[id="+key+"]").focus();
+	 		} else {
+				var pSum = parent.document.getElementById("buyAmount").value;
+				var pDone = parent.document.getElementById("originDonePaymentAmount").value;
+				var pYet = parent.document.getElementById("originYetPaymentAmount").value;
+				
+				var object = {};
+				
+				object['paymentKey'] = key;
+				if($(obj).next().val() !="PYST4000") {
+					object['paymentStatusCd'] = "PYST4000";
+				}
+				object['donePaymentAmount'] = Number(pDone) + Number(amount);
+				object['yetPaymentAmount'] = Number(pYet) - Number(amount);
+				object['buyKey'] = $('#buyKey').val();
+				object['paymentDt'] = removeData($("input[id="+key+"]").val(),"-");
+				object['pjKey'] = parent.document.getElementById("pjKey").value;
+				object['pjNm'] = parent.document.getElementById("ipt_pjNm").value;
+				object['link'] = window.location.pathname.replace("/","");
 	
-				   	complete:function(){
-				        $('.wrap-loading', parent.document).addClass('dpNone');
-				    }, 
-				    success:function(response){	
-				    	if(response!= null && response.successYN == 'Y') {
-				    		alert('지급 완료 처리되었습니다.');
-				    		parent.document.location.reload()
-				    	}
-				    },
-					error: function(request, status, error) {
-						if(request.status != '0') {
-							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
-						}
-					} 
-				});     
-			}
+				var sendData = JSON.stringify(object);
+				if(confirm("지급 " +$(obj).val()+ " 처리하시겠습니까?")) {
+					$.ajax({
+						url:"/project/request/update/paymentInfo.do",
+						dataType: 'json', 
+					    type:"POST",  
+					    data: sendData,
+					    async:true, 
+					 	contentType: "application/json; charset=UTF-8", 
+					 	beforeSend:function(){
+					        $('.wrap-loading', parent.document).removeClass('dpNone');
+					    },
+		
+					   	complete:function(){
+					        $('.wrap-loading', parent.document).addClass('dpNone');
+					    }, 
+					    success:function(response){	
+					    	if(response!= null && response.successYN == 'Y') {
+					    		alert('지급 '+ $(obj).val() +' 처리되었습니다.');
+					    		parent.document.location.reload()
+					    	} else {
+					    		alert('지급 '+ $(obj).val() +' 처리에 실패하였습니다.');
+					    		parent.document.location.reload()
+					    	} 
+					    },
+						error: function(request, status, error) {
+							if(request.status != '0') {
+								alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+							}
+						} 
+					});     
+				}  
+	 		}
 		}
 	</script>
 </head>
@@ -250,7 +263,6 @@
 				<thead>
 					<tr>
 						<th>No</th>
-						<th>계산서 번호</th>
 						<th>계산서 발행일자</th>
 						<th>계산서 금액</th>
 						<th>지급 금액</th>
@@ -269,7 +281,6 @@
 					<c:forEach var="result" items="${prePaymentList }" varStatus="status">
 						<tr>
 							<td>${status.count }</td>
-							<td><span title="${result.billNo }">${result.billNo }</span></td>
 							<td><span title="${displayUtil.displayDate(result.billIssueDt) }">${displayUtil.displayDate(result.billIssueDt) }</span></td>
 							<td><span title="${displayUtil.commaStr(result.billAmount) }">${displayUtil.commaStr(result.billAmount) }</span></td>
 							<td><span title="${displayUtil.commaStr(result.callAmount) }">${displayUtil.commaStr(result.callAmount) }</span></td>
@@ -280,7 +291,7 @@
 							%>
 							<td>
 								<c:choose>
-									<c:when test="${empty result.paymentDt }">
+									<c:when test="${result.paymentStatusCd ne 'PYST4000'}">
 										<c:choose>
 											<c:when test="${result.billIssueStatus eq null }">
 												<span>계산서 요청을 해주세요.</span>
@@ -290,20 +301,25 @@
 												<c:if test="${result.billIssueStatus eq 'I' }">계산서 매핑을 해주세요.</c:if>
 												<c:if test="${result.billIssueStatus eq 'M' }">
 													<c:set var="key" value="${result.paymentKey }" />
-													<button type="button" class="btnComp" onclick="fn_comp('${result.paymentKey }',  '${result.callAmount }', '${result.billNo }')"><img src="<c:url value='/images/btn_end_pay.png'/>" /></button>
+													<input type="text" class="calendar" value="${displayUtil.displayDate(result.paymentDt) }" id="${result.paymentKey }"/>
+													<button type="button" class="btnComp" value="완료" onclick="fn_comp('${result.paymentKey }',  '${result.callAmount }', this)"><img src="<c:url value='/images/btn_end_pay.png'/>" /></button>
+													<input type="hidden" value="${result.paymentStatusCd }" />
 												</c:if>
 											</c:otherwise>
 										</c:choose>
 									</c:when>
 									<c:otherwise>
-										<span>${displayUtil.displayDate(result.paymentDt) }</span>
+										<input type="text" class="calendar" value="${displayUtil.displayDate(result.paymentDt) }" id="${result.paymentKey }"/>
+										<button type="button" class="btnComp" value="수정" onclick="fn_comp('${result.paymentKey }',  '${result.callAmount }', this)"><img src="<c:url value='/images/btn_blue_mod.png'/>" /></button>
+										<input type="hidden" value="${result.paymentStatusCd }" />
 									</c:otherwise>
 								</c:choose>
 							</td>
 							<% } else { %>
 							<td>
 								<c:if test="${result.paymentStatusCd eq 'PYST3000' }">
-									승인
+									미지급<br />
+									(예상 일자: ${displayUtil.displayDate(result.paymentCallDt) })
 								</c:if>
 								<c:if test="${result.paymentStatusCd eq 'PYST4000' }">
 									지급 완료

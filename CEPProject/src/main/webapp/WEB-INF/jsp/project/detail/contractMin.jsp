@@ -475,14 +475,14 @@
 		    	{
 		    		lstStatus  = '발행 완료';
 		    		lstBtnImg  = "/images/btn_stock_detail.png";
-		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstOnclick = "javascript:fnViewModal('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    		lstStyle='';
 		    	}
 		    	else if(pltGBList[i].gbIssueStatus == 'R')
 		    	{
 		    		lstStatus = '승인 중';
 		    		lstBtnImg  = "/images/btn_blue_reqInfo.png";
-		    		lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    		lstOnclick = "javascript:fnViewModal('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    		lstStyle='';
 		    	}	
 		    	else
@@ -491,7 +491,7 @@
 	    			lstBtnImg  = "/images/btn_stock_publish.png";
 	    			
 	    			if($("#empAuthCd").val() != "EMAU1001") {
-		    			lstOnclick = "javascript:fnShowStock('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
+		    			lstOnclick = "javascript:fnViewModal('" + pltGBList[i].gbKey + "', '" + pltGBList[i].gbKindCd + "');";
 		    			lstStyle = "cursor:hand";
 	    			} else {
 	    				lstOnclick = "";
@@ -519,8 +519,7 @@
 			$('#div_guarantyBondList').append(html);
 		}
 		
-		function fnShowStock(pstGbKey, pstGbKindCd) {
-			//alert('fnShowStockMod(' + pstGbKey + ')');
+		function fnViewModal(pstGbKey, pstGbKindCd){
 			
 			var lstUrl;
 			
@@ -537,21 +536,8 @@
 				lstUrl = "/project/detail/viewStockPublishSK.do";
 			}
 			
-			fnViewModal(lstUrl, pstGbKey);
-		}
-		
-		function fnViewModal(pstUrl, pstGbKey){
-			
-			/* var dialogId = 'program_layer';
-			
-			var varParam = {'gbKey' : pstGbKey};
-			
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, pstUrl, varParam, button, '', 'width:648px;height:575px');  */
-			
 			var nWidth = "654";
-			var nHeight = "600";
+			var nHeight = "615";
 			  
 			var curX = window.screenLeft;
 			var curY = window.screenTop;
@@ -567,9 +553,9 @@
 			strOption += "width=" + nWidth + "px,";
 			strOption += "height=" + nHeight + "px,";
 			strOption += "toolbar=no,menubar=no,location=no,";
-			strOption += "resizable=yes,status=yes";
+			strOption += "resizable=no,status=yes";
 			
-			window.open(pstUrl + "?gbKey="+ pstGbKey,'GUARANTY_INFO', strOption);
+			window.open(lstUrl + "?gbKey="+ pstGbKey + "&workClass=보증증권_"+pstGbKindCd,'GUARANTY_INFO', strOption);
 		}
 		
 		

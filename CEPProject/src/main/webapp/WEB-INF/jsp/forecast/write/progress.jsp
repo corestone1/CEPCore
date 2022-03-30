@@ -149,25 +149,26 @@
 			$('#isUpdate').val("Y");
 		}
 		
-		$('#remarkCnt1').html("("+$("#m_tta_pmDetail2").val().length+" / 500)");
-		$('#remarkCnt2').html("("+$("#m_tta_remark").val().length+" / 500)");
+		$('#remarkCnt1').html("("+$("#m_tta_pmDetail2").val().length+" / 2000)");
+		$('#remarkCnt2').html("("+$("#m_tta_remark").val().length+" / 2000)");
 		
 		$('#m_tta_pmDetail2').on('keyup', function() {
-			$('#remarkCnt1').html("("+$(this).val().length+" / 500)");
+			$('#remarkCnt1').html("("+$(this).val().length+" / 2000)");
 			
-			if($(this).val().length > 500) {
-				$(this).val($(this).val().substring(0, 500));
-				$('#remarkCnt1').html("(500 / 500)");
+			if($(this).val().length > 2000) {
+				$(this).val($(this).val().substring(0, 2000));
+				$('#remarkCnt1').html("(2000 / 2000)");
 			}
 			
-			$('#m_tta_remark').on('keyup', function() {
-				$('#remarkCnt2').html("("+$(this).val().length+" / 500)");
-				
-				if($(this).val().length > 500) {
-					$(this).val($(this).val().substring(0, 500));
-					$('#remarkCnt2').html("(500 / 500)");
-				}
-			});
+		});
+		
+		$('#m_tta_remark').on('keyup', function() {
+			$('#remarkCnt2').html("("+$(this).val().length+" / 2000)");
+			
+			if($(this).val().length > 2000) {
+				$(this).val($(this).val().substring(0, 2000));
+				$('#remarkCnt2').html("(2000 / 2000)");
+			}
 		});
 		
 		
@@ -286,7 +287,7 @@
 						</td>
 						<td class="tdContents">
 							<textarea id="m_tta_pmDetail2" name="pmDetail2" rows="5" cols="45"><c:out value="${forecast.pmDetail2}"></c:out></textarea>
-							<div id="remarkCnt1" class="ftw200">(0 / 500)</div>
+							<div id="remarkCnt1" class="ftw200">(0 / 2000)</div>
 						</td>
 					</tr>
 					<tr>
@@ -295,7 +296,7 @@
 						</td>
 						<td class="tdContents">
 							<textarea id="m_tta_remark" name="remark" rows="5" cols="45"><c:out value="${forecast.remark }"></c:out></textarea>
-							<div id="remarkCnt2" class="ftw200">(0 / 500)</div>
+							<div id="remarkCnt2" class="ftw200">(0 / 2000)</div>
 						</td>
 					</tr>
 				</table>

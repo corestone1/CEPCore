@@ -104,9 +104,7 @@
 			max-width: 48px;
 		}
 		.middle table thead th:nth-child(4),
-		.middle table tbody td:nth-child(4),
-		.middle table thead th:nth-child(13),
-		.middle table tbody td:nth-child(13) {
+		.middle table tbody td:nth-child(4) {
 			width: 83px;
 			max-width: 83px;
 		}
@@ -117,12 +115,15 @@
 		}
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6) {
-			width: 170px;
-			max-width: 170px;
+			width: 185px;
+			max-width: 185px;
 		}
 		.middle table thead th:nth-child(7),
+		.middle table tbody td:nth-child(7) {
+			width: 80px;
+			max-width: 80px;
+		}
 		.middle table thead th:nth-child(8),
-		.middle table tbody td:nth-child(7),
 		.middle table tbody td:nth-child(8),
 		.middle table thead th:nth-child(9),
 		.middle table tbody td:nth-child(9),
@@ -138,11 +139,11 @@
 		}
 		.middle table thead th:nth-child(12),
 		.middle table tbody td:nth-child(12) {
-			width: 105px;
-			max-width: 105px;
+			width: 82px;
+			max-width: 82px;
 		}
-		.middle table thead th:nth-child(14),
-		.middle table tbody td:nth-child(14) {
+		.middle table thead th:nth-child(13),
+		.middle table tbody td:nth-child(13) {
 			width: 50px;
 			max-width: 50px;
 		}
@@ -379,7 +380,7 @@
 								<th scope="row">세액</th>
 								<th scope="row">합계</th>
 								<th scope="row">비고</th>
-								<th scope="row">승인번호</th>
+								<!-- <th scope="row">승인번호</th> -->
 								<th scope="row">발급일자</th>
 								<th scope="row">유형</th>
 							</tr>
@@ -402,7 +403,7 @@
 									<td align="right"><span style="width:93px;"><c:out value="${displayUtil.commaStr(result.billTaxAmount)}"/></span></td>
 									<td align="right"><span style="width: 93px;"><c:out value="${displayUtil.commaStr(result.billTotalAmount)}"/></span></td>
 									<td align="left"><span title="${result.remark}" style="width:200px;"><c:out value="${result.remark}"/></span></td>
-									<td align="left"><span title="${result.billNo}" style="width: 103px;"><c:out value="${result.billNo}"/></span><input type="hidden" name="billNo" value="${result.billNo }" /></td>
+									<%-- <td align="left"><span title="${result.billNo}" style="width: 103px;"><c:out value="${result.billNo}"/></span><input type="hidden" name="billNo" value="${result.billNo }" /></td> --%>
 									<td><span style="width:83px;"><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></span></td>
 									<td><span style="width:40px;"><c:out value="${result.billCtClassCd }" /><input type="hidden" name="billMappingYn" value=${result.billMappingYn } /></span></td>
 								</tr>

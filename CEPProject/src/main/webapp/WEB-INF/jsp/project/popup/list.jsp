@@ -245,7 +245,14 @@
 	            				<td align="left" class="listtd"><span title="${result.pjNm }"><c:out value="${result.pjNm}"/></span></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjStartDt)}"/></td>
 	            				<td align="center" class="listtd"><c:out value="${displayUtil.displayDate(result.pjEndDt)}"/></td>
-	            				<td align="center" class="listtd"><c:out value="${result.pjStatusCd}"/></td>
+	            				<td align="center" class="listtd">
+	            					<c:if test="${result.pjStatusCd eq 'PJST1000' }">입찰</c:if>
+	            					<c:if test="${result.pjStatusCd eq 'PJST2000' }">계약</c:if>
+	            					<c:if test="${result.pjStatusCd eq 'PJST3000' }">발주</c:if>
+	            					<c:if test="${result.pjStatusCd eq 'PJST4000' }">수행</c:if>
+	            					<c:if test="${result.pjStatusCd eq 'PJST5000' }">완료</c:if>
+	            					<c:if test="${result.pjStatusCd eq 'PJST6000' }">실주</c:if>
+	            				</td>
 	            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/></td>
 	            			</tr>
 	        			</c:forEach>

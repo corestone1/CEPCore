@@ -229,6 +229,15 @@
 				}
 			});
 			
+			$("#fl tr td").click(function(index, item) {
+				if($(this).parent().find("td").index(this) != 0) {
+					var pjKey = $(this).parent().find("td:nth-child(3)").children().eq(0).val();
+					var inbSeq = $(this).parent().find("td:nth-child(3)").children().eq(1).val();
+					fn_detailPop(pjKey, inbSeq);
+				}
+			});
+			
+			
 			
 			$('#btnModify').click(function() {
 				
@@ -302,7 +311,7 @@
 			var dialogId = 'program_layer';
 			
 			//var varParam = {'pjKey' : $('#ipt_pjKey').val(), "inbSeq" :  $('input[name="inbSeq"]').eq(litIdx).val()};
-			var varParam = {};
+			var varParam = { 'workClass': $("#workClass").val() };
 			
 			var button = new Array;
 			button = [];
@@ -323,7 +332,8 @@
 			var dialogId = 'program_layer';
 			var varParam = {
 					"pjKey": pjKey,
-					"inbSeq":inbSeq
+					"inbSeq":inbSeq,
+					"workClass":$("#workClass").val()
 			}
 			var button = new Array;
 			button = [];
@@ -342,7 +352,7 @@
 </head>
 <body>
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
-		<input type="hidden" id="workClass" name="workClass" />
+		<input type="hidden" id="workClass" name="workClass" value="수행_첨부파일"/>
 		<input type="hidden" id="pjKey" name="pjKey" />
 		<div class="contentsWrap">
 			<div class="contents mgauto">
@@ -388,7 +398,7 @@
 						<tbody>
 						
 							<c:forEach var="result" items="${installbaseList}" varStatus="status">
-								<tr onclick="javascript:fn_detailPop('${result.pjKey}', '${result.inbSeq }')">
+								<tr>
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
 									<td>
@@ -401,7 +411,7 @@
 									<td><span title="${result.inbPlace }"><c:out value="${result.inbPlace}"/></span></td>
 									<td><c:out value="${result.inbClass}"/></td>
 									<td><c:out value="${result.inbSeq}"/></td>
-									<td><span title="${result.inbPmKey }"><c:out value="${result.inbPmKey}"/></span></td>
+									<td><span title="${result.inbPmKey }"><c:out value="${result.pmNm}"/></span></td>
 									<td><span title="${result.inbPmSerialNo }"><c:out value="${result.inbPmSerialNo}"/></span></td>
 									<td><c:out value="${displayUtil.displayDate(result.inbDeliveryDt)}"/></td>
 									<td><span title="${result.inbPmType }"><c:out value="${result.inbPmType}"/></span></td>

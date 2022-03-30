@@ -236,6 +236,17 @@
 			}); 
 			
 			$("#ipt_pjNm").val(parent.$("#pjNm").val());
+			
+			$('#remarkCnt').html("("+$("#txt_remark").val().length+" / 2000)");
+			
+			$('#txt_remark').on('keyup', function() {
+				$('#remarkCnt').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt').html("(2000 / 2000)");
+				}
+			});
 		});
 			
 		/* 
@@ -668,7 +679,10 @@
 				</tr>
 				<tr>
 					<td class="backgroundpurple">요청사항</td>
-					<td><textarea id="txt_remark" name="remark"><c:out value="${billInfo.remark}"/></textarea></td>
+					<td>
+						<textarea id="txt_remark" name="remark"><c:out value="${billInfo.remark}"/></textarea>
+						<div id="remarkCnt" class="ftw200">(0 / 2000)</div>
+					</td>
 				</tr>
 				
 				<%-- <tr>

@@ -82,7 +82,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 20px);
-			height: 96px;
+			height: 84px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -127,7 +127,7 @@
 			position: absolute;
 			right: 12px;
 			z-index: 99;
-			bottom: 5px;
+			bottom: 4px;
 			width: 359px;
 		}
 		
@@ -225,6 +225,37 @@
 			fileTarget.on('change', function() {
 				var filename = $(this)[0].files[0].name;
 				$(this).siblings('.uploadName').val(filename);
+			});
+			
+			$('#remarkCnt1').html("("+$("#ct_remark").val().length+" / 2000)");
+			$('#remarkCnt2').html("("+$("#rs_remark").val().length+" / 2000)");
+			$('#remarkCnt3').html("("+$("#etc_remark").val().length+" / 2000)");
+			
+			$('#ct_remark').on('keyup', function() {
+				$('#remarkCnt1').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt1').html("(2000 / 2000)");
+				}
+			});
+			
+			$('#rs_remark').on('keyup', function() {
+				$('#remarkCnt2').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt2').html("(2000 / 2000)");
+				}
+			});
+			
+			$('#etc_remark').on('keyup', function() {
+				$('#remarkCnt3').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt3').html("(2000 / 2000)");
+				}
 			});
 		});
 		
@@ -502,15 +533,15 @@
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT"><label>*</label>내용</td>
-							<td class="tdContents"><textarea name="pjWorkCont" required><c:out value="${resultList[0].pjWorkCont}"/></textarea></td>
+							<td class="tdContents"><textarea name="pjWorkCont" id="ct_remark" required><c:out value="${resultList[0].pjWorkCont}"/></textarea><div id="remarkCnt1">(0 / 2000)</div></td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT"><label>*</label>처리결과</td>
-							<td class="tdContents"><textarea name="pjWorkResult" required><c:out value="${resultList[0].pjWorkResult}"/></textarea></td>
+							<td class="tdContents"><textarea name="pjWorkResult" id="rs_remark" required><c:out value="${resultList[0].pjWorkResult}"/></textarea><div id="remarkCnt2">(0 / 2000)</div></td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">기타</td>
-							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}"/></textarea></td>
+							<td class="tdContents"><textarea name="remark" id="etc_remark"><c:out value="${resultList[0].remark}"/></textarea><div id="remarkCnt3">(0 / 2000)</div></td>
 						</tr>
 						<%-- <tr>
 							<td class="tdTitle">첨부파일</td>

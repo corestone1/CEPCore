@@ -701,10 +701,23 @@ public class ProjectDetailController {
 		logger.debug("=============== viewStockPublishCT ======================");
 		logger.debug("== guarantyBondVO.getGbKey() : {}", guarantyBondVO.getGbKey() );
 		
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
 		try{
 			//보증증권 정보 조회 - 고객사 명, 프로젝트 명, 계약금액
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			model.addAttribute("gbInfo",  service.selectGuarantyBondInfo(guarantyBondVO));
+			
+			fileVO.setFileCtKey(service.selectGuarantyBondInfo(guarantyBondVO).get("pjKey").toString());
+			fileVO.setFileWorkClass(guarantyBondVO.getWorkClass());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
+			
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
 			
 			
 		}catch(Exception e){
@@ -722,11 +735,23 @@ public class ProjectDetailController {
 		logger.debug("=============== viewStockPublishHJ ======================");
 		logger.debug("== guarantyBondVO.getGbKey() : {}", guarantyBondVO.getGbKey() );
 		
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
 		try{
 			//보증증권 정보 조회 - 고객사 명, 프로젝트 명, 계약금액
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			model.addAttribute("gbInfo",  service.selectGuarantyBondInfo(guarantyBondVO));
 			
+			fileVO.setFileCtKey(service.selectGuarantyBondInfo(guarantyBondVO).get("pjKey").toString());
+			fileVO.setFileWorkClass(guarantyBondVO.getWorkClass());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
+			
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
 			
 		}catch(Exception e){
 			logger.error("{}", e);
@@ -744,10 +769,23 @@ public class ProjectDetailController {
 		logger.debug("=============== viewStockPublishHJ ======================");
 		logger.debug("== guarantyBondVO.getGbKey() : {}", guarantyBondVO.getGbKey() );
 		
+		FileVO fileVO = new FileVO();
+		List<?> fileResult = null;
+		
 		try{
 			//보증증권 정보 조회 - 고객사 명, 프로젝트 명, 계약금액
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			model.addAttribute("gbInfo",  service.selectGuarantyBondInfo(guarantyBondVO));
+			
+			fileVO.setFileCtKey(service.selectGuarantyBondInfo(guarantyBondVO).get("pjKey").toString());
+			fileVO.setFileWorkClass(guarantyBondVO.getWorkClass());
+			
+			fileResult = fileMngService.selectFileList(fileVO);
+			
+			model.addAttribute("fileList", fileResult);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
 			
 			
 		}catch(Exception e){

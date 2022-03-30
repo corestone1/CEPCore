@@ -261,7 +261,7 @@
 		         + '<td align="center" class="listtd"><input type="text" size="8" id="bl_billTaxAmount_' + i + '"     name="bl_billTaxAmount_' + i + '"     style="text-align:right;"  value="' + addCommas(pobjBillingList[i].value8) + '" /></td>'
 		         + '<td align="center" class="listtd"><input type="text" size="9" id="bl_billTotalAmount_' + i + '" name="bl_billTotalAmount_' + i + '" style="text-align:right;"  value="' + addCommas(pobjBillingList[i].value9) + '" /></td>'
 		         + '<td align="center" class="listtd"><input type="text" size="5"  id="bl_billIssueDt_' + i + '" name="bl_billIssueDt_' + i + '" style="text-align:center;" value="' + addDateMinus(pobjBillingList[i].value12) + '" /></td>'
-		         + '<td align="center" class="listtd"><input type="text" size="21" id="bl_billNo_' + i + '"      name="bl_billNo_' + i + '"      style="text-align:left;"   value="' + pobjBillingList[i].value11 + '" /></td>'
+		         //+ '<td align="center" class="listtd"><input type="text" size="21" id="bl_billNo_' + i + '"      name="bl_billNo_' + i + '"      style="text-align:left;"   value="' + pobjBillingList[i].value11 + '" /></td>'
 		         + '<td align="center" class="listtd"><input type="text" size="21" id="bl_remark_' + i + '"      name="bl_remark_' + i + '"      style="text-align:left;"   value="' + pobjBillingList[i].value10 + '" /></td>'
 		         + '</tr>'
 		         ;
@@ -296,7 +296,8 @@
 		
 		var sendData = JSON.stringify(object);
 		
-		if(fnCheckExist(sendData) == true && fnCheckListExist(billingInfo).length == 0) {
+		if(fnCheckExist(sendData) == true) {
+				//&& fnCheckListExist(billingInfo).length == 0) {
 			$.ajax({
 	        	url:"/mngCommon/bill/saveExcelBilling.do",
 	            dataType: 'text', 
@@ -326,9 +327,9 @@
 	        });
 		} else if(fnCheckExist(sendData) == false){
 			alert("이미 등록된 계산서입니다.(계산서 승인번호 중복)");
-		} else if(fnCheckListExist(billingInfo).length != 0){
+		} /* else if(fnCheckListExist(billingInfo).length != 0){
 			window.prompt("계산서 승인번호가 중복됩니다. \n중복되는 승인번호: ",  fnCheckListExist(billingInfo));
-		} else {
+		}  */else {
 			alert("계산서 중복 체크에 실패하였습니다.")
 		}
 		
@@ -465,7 +466,7 @@
 							<th scope="row">세액</th>
 							<th scope="row">합계</th>
 							<th scope="row">발급일자</th>
-							<th scope="row">승인번호</th>
+							<!-- <th scope="row">승인번호</th> -->
 							<th scope="row">비고</th>
 						</tr>
 					</thead>

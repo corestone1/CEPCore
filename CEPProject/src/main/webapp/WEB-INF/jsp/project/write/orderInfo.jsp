@@ -443,7 +443,7 @@
 						$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
 					}
 				} 
-				console.log(prodLength);
+				//console.log(prodLength);
 			} else {
 				alert("제품정보는 한개 이상 존재해야 합니다.");
 			}			
@@ -607,10 +607,41 @@
 				sum = sum + removeCommas($(this).val()) * 1;
 			});
 			
-			console.log(sum, removeCommas($("#orderTotalAmount").val()) * 1)
+			var isSame = false;
+			var entValue = new Array();
+			$(".prodTable").each(function() {
+				var pmNm = $(this).find("input[id*='pmNmCd']").val();
+				var pmKey = $(this).find("input[id*='orderPmFkKey']").val();
+				var orderUprice = $(this).find("input[id*='orderUprice']").val();
+				var orderQuantity = $(this).find("input[id*='orderQuantity']").val();
+				
+				var nowValue = {pmNm : pmNm, pmKey : pmKey, orderUprice: orderUprice, orderQuantity : orderQuantity}
+				entValue.push(nowValue);
+				
+			});
+			
+			var dupli = false;
+
+			for(var i = 0; i < entValue.length; i++) {
+			    var curElem = Object.entries(entValue[i]).toString();
+			    
+			    for(var j = i + 1; j < entValue.length; j++) {
+			        if(curElem == Object.entries(entValue[j]).toString()) {
+			            dupli = true;
+			            break;
+			        }
+			    }
+			    if(dupli) {
+			        break;
+			    }
+			}
+			
+			//console.log(sum, removeCommas($("#orderTotalAmount").val()) * 1)
 			if(sum != removeCommas($("#orderTotalAmount").val()) * 1) {
 				alert("발주 합계와 제품별 합계가 일치하지 않습니다.");
 				$("#orderTotalAmount").focus();
+			} else if(dupli){
+				alert("정보가 같은 제품이 존재합니다. ");
 			} else {
 				if ($("#orderBasicForm")[0].checkValidity()){
 					if ($("#orderProductForm")[0].checkValidity()){
@@ -621,7 +652,7 @@
 				}  else {
 			        $("#orderBasicForm")[0].reportValidity();	
 				}
-			}
+			} 
 		}
 
 		var countSave = 0;

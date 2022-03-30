@@ -53,6 +53,9 @@
 		.popContainer .contents > div:first-child {
 			min-height: 519px;
 		}
+		.popContainer .contents .btnWrap {
+		    margin: 17px 40px 23px 40px;
+		}
 		.popContainer .contents > div > form > table {
 			border-collapse: separate;
 	  		border-spacing: 0 3px;
@@ -138,6 +141,78 @@
       		position: relative !important;
       		bottom: 0 !important;
       	}
+      	#fileForm {
+			position: absolute;
+			left: 23px;
+			z-index: 99;
+			width: 336px;
+			margin-top: -12px;
+		}
+		#fileForm .exFileLabel {
+			background-image: url('/images/btn_file_upload.png');
+			background-repeat: no-repeat;
+			width: 119px;
+			height: 31px;
+			cursor: pointer;
+			float: left;
+			margin-top: 1px;
+			margin-right: 7px;
+		}
+		#fileForm .uploadName {
+			font-size: 12px; 
+			font-weight: 200;
+			font-family: inherit; 
+			line-height: normal; 
+			vertical-align: middle; 
+			border: 1px solid #ebebeb; 
+			width: 184px;
+			margin-bottom: 0;
+    		height: 31px;
+		}
+		#fileForm .exFile {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0,0,0,0);
+			border: 0;
+		}
+		#fileForm .upload-name {
+		    background: transparent;
+		    border: none;
+		    font-size: 13px;
+		    width: 160px;
+		    height: 17px;
+		    text-overflow: ellipsis;
+		}
+		#fileForm .upload-name:hover {
+			text-decoration: underline;
+		}
+		#fileForm .close {
+			vertical-align: middle;
+		}
+		#fileWrap {
+			height: 41px;
+			overflow-y: auto;
+		}
+		#fileWrap::-webkit-scrollbar-button {
+		    width: 0;
+		    height: 0;
+		}
+		#fileWrap::-webkit-scrollbar-thumb {
+		    border-radius: 3px;
+		    background-color: #7F7F7F;
+		    height: 3px;
+		}
+		#fileWrap::-webkit-scrollbar-track {
+		    background-color: transparent;
+		}
+		#fileWrap::-webkit-scrollbar {
+		    width: 6px;
+		    height: 31px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -150,6 +225,44 @@
 			
 			$("#projectConnect").click(function() {
 				window.open('/project/popup/list.do?returnType=F&returnFunctionNm=pop_projectCall&pjFlag=P', 'PROJECT_LIST', 'width=1000px,height=750px,left=600');
+			});
+			
+			var fileTarget = $(".exFile");
+			
+			fileTarget.on('change', function() {
+				var filename = $(this)[0].files[0].name;
+				$(this).siblings('.uploadName').val(filename)
+			});
+			
+			$('#remarkCnt1').html("("+$("#sp_remark").val().length+" / 2000)");
+			$('#remarkCnt2').html("("+$("#ip_remark").val().length+" / 2000)");
+			$('#remarkCnt3').html("("+$("#ib_remark").val().length+" / 2000)");
+			
+			$('#sp_remark').on('keyup', function() {
+				$('#remarkCnt1').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt1').html("(2000 / 2000)");
+				}
+			});
+			
+			$('#ip_remark').on('keyup', function() {
+				$('#remarkCnt2').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt2').html("(2000 / 2000)");
+				}
+			});
+			
+			$('#ib_remark').on('keyup', function() {
+				$('#remarkCnt3').html("("+$(this).val().length+" / 2000)");
+				
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt3').html("(2000 / 2000)");
+				}
 			});
 		});
 		
@@ -187,17 +300,24 @@
 		
 		function fn_chkVali() {
 			if ($("#infoForm")[0].checkValidity()){
-	            if ($("#infoForm")[0].checkValidity()){
-	               //필수값 모두 통과하여 저장 프로세스 호출.
-	               fn_save();
-	            } else {
-	                $("#infoForm")[0].reportValidity();   
-	            }            
-	            
-	         }  else {
-	             //Validate Form
-	              $("#infoForm")[0].reportValidity();   
-	         }
+				if($(".uploadName").val() != null && $(".uploadName").val().length != 0) {
+					var maxSize = 20 * 1024 * 1024;
+	            	var fileSize = $("#exFile")[0].files[0].size;
+	            	   
+	            	if(fileSize > maxSize) {
+	            		alert("첨부파일 사이즈는 20MB 이내로 등록 가능합니다.");
+	            		return false;
+	            	} else {
+	            		fn_save();
+	            	}
+				} else {
+					fn_save();
+				}
+			} else {
+				//Validate Form
+				$("#infoForm")[0].reportValidity();   
+			}
+				
 		}
 		
 		var countSave = 0;
@@ -230,24 +350,74 @@
 				},
 			    success:function(response){	
 			    	if(response!= null && response.successYN == 'Y') {
-			    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
-				    		alert("프로젝트 installbase 정보가 등록되었습니다.");
-				    		$("#selectKey").val(response.inbSeq);
-				    		countSave++;
-			    		} else {
-			    			alert("프로젝트 installbase 정보가 수정되었습니다.");
-			    		}
+			    		if($(".uploadName").val() != null && $(".uploadName").val() != "" && $(".uploadName").length != 0) {
+			    			if($("#m_pjKey").val() == null || $("#m_pjKey").val() == "" || $("#m_pjKey").val().length == 0) {
+				    			$("#fileCtKey").val(response.pjKey);
+				    			$("#filePjNm").val($("#projectConnect").val());
+				    		}
 			    		
-			    		var inbSeq = $("#selectKey").val();
-			    		var url='/project/write/buildInfo.do';
-		    			var dialogId = 'program_layer';
-		    			var varParam = {
-							"pjKey":$("#m_pjKey").val(),
-							"inbSeq":inbSeq
-		    			}
-		    			var button = new Array;
-		    			button = [];
-		    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    			var formData = new FormData($('#fileForm')[0]); 
+			    			
+			    			$.ajax({ 
+			       				type: "POST", 
+			       				enctype: 'multipart/form-data',  
+			       				url: '/file/upload.do', 
+			       				data: formData, // 필수 
+			       				processData: false, // 필수 
+			       				contentType: false, // 필수 
+			       				cache: false, 
+			       				success: function (data) { 
+			       					if(data.successYN=='Y') {
+			       						if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+			       							alert("프로젝트 installbase 정보가 등록되었습니다.");
+			       							$("#selectKey").val(response.inbSeq);
+			    				    		countSave++;
+			    				    		
+			    			    		} else {
+		    				    			alert("프로젝트 installbase 정보가 수정되었습니다.");
+			    			    		}
+			       					} else {
+			       						alert("첨부파일 저장이 실패하였습니다.(프로젝트 installbase 정보는 저장은 완료)");
+			       					}
+			       					
+			       					var inbSeq = $("#selectKey").val();
+						    		var url='/project/write/buildInfo.do';
+					    			var dialogId = 'program_layer';
+					    			var varParam = {
+										"pjKey":$("#m_pjKey").val(),
+										"inbSeq":inbSeq,
+										"workClass":$("input[name='docTypeNm']").val()
+					    			}
+					    			var button = new Array;
+					    			button = [];
+					    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			       				}, 
+			       				error: function(request, status, error) {
+			       					if(request.status != '0') {
+			       						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+			       					}
+			       				} 
+			       			});
+			    		} else {
+			    			if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
+			    				alert("프로젝트 installbase 정보가 등록되었습니다.");
+			    				$("#selectKey").val(response.inbSeq);
+				    		} else {
+				    			alert("프로젝트 installbase 정보가 수정되었습니다.");
+				    		}
+			    			
+			    			var inbSeq = $("#selectKey").val();
+				    		var url='/project/write/buildInfo.do';
+			    			var dialogId = 'program_layer';
+			    			var varParam = {
+								"pjKey":$("#m_pjKey").val(),
+								"inbSeq":inbSeq,
+								"workClass":$("input[name='docTypeNm']").val()
+			    			}
+			    			var button = new Array;
+			    			button = [];
+			    			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px');
+			    		}
 			    	} else {
 			    		if($("#selectKey").val() == null || $("#selectKey").val() == "" || $("#selectKey").val().length == 0) {
 			    			alert("프로젝트 installbase 정보 등록이 실패하였습니다.");
@@ -263,44 +433,45 @@
 				} 
 			});  
 		}
-	
-		/* function fn_next(link) {
-			if(countSave > 0) {
-				var url = '/project/write/'+link+'.do';
-				var dialogId = 'program_layer';
-				var varParam = {
-						"pjKey": $("#pjKey").val()
-				}
-				var button = new Array;
-				button = [];
-				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
-			}
-			else {
-				if($('#selectKey').val() != "" || $('#selectKey').val().length != 0) {
-					var url = '/project/write/'+link+'.do';
-					var dialogId = 'program_layer';
-					var varParam = {
-							"pjKey": $("#pjKey").val()
-					}
-					var button = new Array;
-					button = [];
-					showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:673px');
-				} else {
-					alert('저장을 해주세요.');
-				}
-			}
+
+		function fn_downFile(fileKey, fileOrgNm) {
+			var form = document.viewForm;
+			form.fileKey.value = fileKey;
+			form.fileOrgNm.value = fileOrgNm; 
+			var data = $('#viewForm').serialize();
+			fileDownload("<c:url value='/file/download.do'/>", data);  
 		}
 		
-		function fn_prevView(){
-			var url = '/project/write/orderInfo.do';
-			var dialogId = 'program_layer';
-			var varParam = {
-				"pjKey" : $('#pjKey').val()
+		function fn_deleteFile(fileKey, fileNm) {
+			var result = confirm("첨부파일 " + fileNm + " 을 삭제하시겠습니까?");
+			if(result) {
+				var form = document.viewForm;
+				form.fileKey.value = fileKey;
+				var data = JSON.stringify({"fileKey":fileKey});
+				$.ajax({ 
+	   				url: '/file/delete.do', 
+	   				dataType:'json',
+	   				type: "POST", 
+	   				data: data, // 필수 
+	   				contentType: "application/json; charset=UTF-8", 
+	   				success: function (response) { 
+		   				if(response.successYN=='Y') {
+							alert('첨부파일이 삭제되었습니다.');
+							$("#file"+fileKey).next().next().remove();
+							$("#file"+fileKey).next().remove();
+							$("#file"+fileKey).remove();
+						} else {
+							alert('첨부파일 삭제가 실패되었습니다.');
+						}
+	   				},
+	   				error: function(request, status, error) {
+	   					if(request.status != '0') {
+	   						alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+	   					}
+	   				}
+	   			});
 			}
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
-		} */
+		}
 	</script>
 </head>
 <body>
@@ -357,9 +528,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="tdTitle"><label>*</label>시리얼번호</td>
+							<td class="tdTitle">시리얼번호</td>
 							<td class="tdContents">
-								<input type="text" name="inbPmSerialNo" value="<c:out value="${resultList[0].inbPmSerialNo}"/>" required/>
+								<input type="text" name="inbPmSerialNo" value="<c:out value="${resultList[0].inbPmSerialNo}"/>" />
 							</td>
 						</tr>
 						<tr>
@@ -376,7 +547,7 @@
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">주요 스펙</td>
-							<td class="tdContents"><textarea name="inbSpecInfo"><c:out value="${resultList[0].inbSpecInfo}"/></textarea></td>
+							<td class="tdContents"><textarea name="inbSpecInfo" id="sp_remark"><c:out value="${resultList[0].inbSpecInfo}"/></textarea><div id="remarkCnt1">(0 / 2000)</div></td>
 						</tr>
 						<tr>
 							<td class="tdTitle">캐쉬메모리</td>
@@ -392,15 +563,41 @@
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">관리 IP</td>
-							<td class="tdContents"><textarea name="inbMngIp"><c:out value="${resultList[0].inbMngIp}"/></textarea></td>
+							<td class="tdContents"><textarea name="inbMngIp" id="ip_remark"><c:out value="${resultList[0].inbMngIp}"/></textarea><div id="remarkCnt2">(0 / 2000)</div></td>
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">비고</td>
-							<td class="tdContents"><textarea name="remark"><c:out value="${resultList[0].remark}"/></textarea></td>
+							<td class="tdContents"><textarea name="remark" id="ib_remark"><c:out value="${resultList[0].remark}"/></textarea><div id="remarkCnt3">(0 / 2000)</div></td>
 						</tr>
 					</table>
 				</form>
 			</div>
+			<form id="fileForm" method="post" enctype="multipart/form-data"> 
+		    	<!-- <button type="button" id="add" style="border: 1px solid #000; padding: 5px 10px; ">추가</button><br /> -->
+				<input type="hidden" name="docTypeNm" value="수행_첨부파일" />
+				<input type="hidden" name="fileCtKey" id="fileCtKey" value="${pjKey}" />
+				<input type="hidden" name="pjNm" id="filePjNm" value=""/> 
+				<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
+				<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
+				<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />
+				<div class="floatL uploadContainer">
+					<input class="uploadName" placeholder="파일선택" disabled="disabled" />
+					<label for="exFile" class="exFileLabel"></label>
+					<input type="file" id="exFile" class="exFile" multiple="multiple" name="file"/>
+				</div>
+				<div style="width: 307px; clear:both;" id="fileWrap">
+					<c:forEach var="result" items="${fileList }" varStatus="status">
+						<input class="upload-name cursorP ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
+						<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
+						<c:if test="${status.last eq false}"><br /></c:if>
+					</c:forEach>
+				</div>
+				<!-- <button type="button" id="save" style="border: 1px solid #000; padding: 5px 10px;">저장</button> -->
+			</form>
+			<form:form id="viewForm" name="viewForm" method="POST">
+				<input type="hidden" name="fileKey" value=""/>
+				<input type="hidden" name="fileOrgNm" value=""/>
+			</form:form>
 			<div class="btnWrap floatR">
 				<%-- <div class="floatL btnPrev">
 					<button type="button" onclick="fn_prevView();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>

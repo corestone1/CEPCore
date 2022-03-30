@@ -413,14 +413,14 @@
 		
 		$(document).ready(function() {
 			
-			$('#remarkCnt').html("("+$("#remark").val().length+" / 500)");
+			$('#remarkCnt').html("("+$("#remark").val().length+" / 2000)");
 			
 			$('#remark').on('keyup', function() {
-				$('#remarkCnt').html("("+$(this).val().length+" / 500)");
+				$('#remarkCnt').html("("+$(this).val().length+" / 2000)");
 				
-				if($(this).val().length > 500) {
-					$(this).val($(this).val().substring(0, 500));
-					$('#remarkCnt').html("(500 / 500)");
+				if($(this).val().length > 2000) {
+					$(this).val($(this).val().substring(0, 2000));
+					$('#remarkCnt').html("(2000 / 2000)");
 				}
 			});
 			
@@ -644,6 +644,7 @@
             		$("#salesAcNm").val(data.forecastVO.salesAcNm);
             		$("#salesAcKey").val(data.forecastVO.salesAcKey);
             		$("#pjSaleEmpKey").val(data.forecastVO.regEmpKey);
+            		$("#remark").val(data.forecastVO.remark);
             		
             		fn_selectAc();
 	            },
@@ -787,7 +788,7 @@
 							<td class="tdTitle veralignT">비고</td>
 							<td class="tdContents">
 								<textarea name="remark" id="remark"><c:out value="${resultList[0].remark}" /></textarea>
-								<div id="remarkCnt" class="ftw200">(0 / 500)</div>
+								<div id="remarkCnt" class="ftw200">(0 / 2000)</div>
 							</td>
 						</tr>
 					</table>

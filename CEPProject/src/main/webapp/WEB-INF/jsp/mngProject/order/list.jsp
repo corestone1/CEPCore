@@ -257,6 +257,13 @@
 				}
 			});
 			
+			$("#fl tr td").click(function(index, item) {
+				if($(this).parent().find("td").index(this) != 0) {
+					var pjKey = $(this).parent().find("td:nth-child(4)").children().eq(0).val();
+					fn_viewDetail(pjKey);
+				}
+			});
+			
 			
 			
 			$('#btnModify').click(function() {
@@ -419,7 +426,8 @@
 						<tbody>
 						
 							<c:forEach var="result" items="${orderList}" varStatus="status">
-								<tr onclick="javascript:fn_viewDetail('${result.pjKey}')">
+								<tr>
+								<%-- onclick="javascript:fn_viewDetail('${result.pjKey}')"> --%>
 									<td></td>
 									<td><c:out value="${status.count}"/></td>
 									<td class="textalignL"><span title="${result.acNm }"><c:out value="${result.acNm}"/></span></td>
@@ -455,7 +463,7 @@
 				<div class="bottom">
 					<div class="floatR">
 						<%-- <button type="button" id="btnModify" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> --%>
-						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
+						<%-- <button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 						<button type="button" value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>

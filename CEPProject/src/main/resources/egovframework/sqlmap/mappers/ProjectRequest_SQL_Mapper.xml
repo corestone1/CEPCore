@@ -275,8 +275,8 @@
 			<if test="paymentCallDt != null and paymentCallDt != ''">
 				PM.PAYMENT_CALL_DT = #{paymentCallDt},
 			</if>
-			<if test="paymentStatusCd.equals('PYST4000') ">
-				PM.PAYMENT_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			<if test="paymentDt != null and paymentDt != ''">
+				PM.PAYMENT_DT = #{paymentDt},
 			</if>
 			<if test="callAmount != null and callAmount != ''">
 				PM.CALL_AMOUNT = #{callAmount},
@@ -312,6 +312,7 @@
 			, PM.CALL_AMOUNT_TAX_YN
 			, PM.PAYMENT_STATUS_CD
 			, PM.PAYMENT_DT
+			, PM.PAYMENT_CALL_DT
 			, PM.PAYMENT_BUY_FK_KEY
 			, PM.CALL_AMOUNT_TAX_YN
 		FROM CMM_PC_BILLING_TB BL, PJ_PAYMENT_TB PM, CMM_PC_BILLING_OP_TB BO, CMM_ACCOUNT_TB CA

@@ -190,11 +190,44 @@
 		}
 	</style>
 	<script>
-	
+		$(document).ready(function() {
+			$("#quarter").on("change", function() {
+				var value = Number($(this).val());
+				var year = new Date().getFullYear();
+				switch(value){
+					case 1:
+						$("#searchFromDt").val(year+"-01-01");
+						$("#searchToDt").val(year+"-03-31");break;
+					case 2:
+						$("#searchFromDt").val(year+"-04-01");
+						$("#searchToDt").val(year+"-06-30");break;
+					case 3:
+						$("#searchFromDt").val(year+"-07-01");
+						$("#searchToDt").val(year+"-09-30");break;
+					default :
+						$("#searchFromDt").val(year+"-10-01");
+						$("#searchToDt").val(year+"-12-31");break;
+				}
+				fn_searchList();
+				
+			});
+		});
 		function fn_searchList()
 		{                
 			document.listForm.action = "/mngProject/billSchedule/list.do";
 	       	document.listForm.submit(); 
+		}
+		
+		function fn_detail(pjKey) {
+			form = document.listForm;
+			form.pjKey.value = pjKey;
+			form.workClass.value = "입찰_첨부파일";
+			/* form.action = "<c:url value='/project/detail/bidding.do'/>"; */
+			form.action = "<c:url value='/project/detail/main.do'/>";
+			
+			// 첨부파일 예제
+			/* form.action = "<c:url value='/egovSampleList2.do'/>"; */
+			form.submit(); 
 		}
 	</script>
 </head>
@@ -202,6 +235,8 @@
 	<form:form modelAttribute="searchVO" id="listForm" name="listForm" method="post">
 		<!-- <div class="sfcnt"></div>
 		<div class="nav"></div> -->
+		<input type="hidden" id="pjKey" name="pjKey" value=""/>
+		<input type="hidden" name="workClass" value=""/>
 		<div class="contentsWrap">
 			<div class="contents mgauto">
 				<div class="top">
@@ -214,12 +249,12 @@
 							<form:option value="SD">매출</form:option>
 							<form:option value="PC">매입</form:option>
 						</form:select>
-						<form:select path="">
-							<option value="">선택</option>
-							<option value="1">1분기</option>
-							<option value="2">2분기</option>
-							<option value="3">3분기</option>
-							<option value="4">4분기</option>
+						<form:select path="quarter">
+							<form:option value="">선택</form:option>
+							<form:option value="1">1분기</form:option>
+							<form:option value="2">2분기</form:option>
+							<form:option value="3">3분기</form:option>
+							<form:option value="4">4분기</form:option>
 						</form:select>
 						<form:input type="text" path="searchFromDt" class="calendar" placeholder="from" value="${searchParam.searchFromDt}"/>
 						<label><img class="veralignM" src="/images/icon_fromTo.png" /></label>
@@ -248,9 +283,9 @@
 							<c:set var="totalAmount" value="0" />
 							<c:set var="totalTax" value="0" />
 							<c:forEach var="result" items="${billList}" varStatus="status">
-								<tr>
+								<tr onclick="javascript:fn_detail('${result.pjKey}')">
 									<td><c:out value="${displayUtil.displayDate(result.regDt)}" /></td>
-									<td align="left"><span class="textalignL" title="${result.pjNm }" style="max-width: 320px;"><c:out value="${result.pjNm}" /></span></td>
+									<td align="left"><span class="textalignL ftw500" title="${result.pjNm }" onclick="" style="max-width: 320px;"><c:out value="${result.pjNm}" /></span></td>
 									<td><span title="${result.acNm }" style="max-width: 200px;"><c:out value="${result.acNm}" /></span></td>
 									<td>
 										<c:choose>
