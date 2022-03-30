@@ -210,7 +210,7 @@ public class MtContractController {
 					
 //					보증보험정보	
 					logger.debug("보증보험정보 조회===>"+mtContractVO.getMtIntegrateKey());
-					guarantyBondVO = service.selectMtGuarantyBondInfo(mtContractVO.getMtIntegrateKey());
+					guarantyBondVO = service.selectMtGuarantyBondInfoList(mtContractVO.getMtIntegrateKey());
 //					이익정보
 					
 					if(null != guarantyBondVO) {
@@ -1045,8 +1045,18 @@ public class MtContractController {
 					
 					mtPmTotalAmount = service.selectMtPmTotalAmount(mtSalesOrderVO.getMtIntegrateKey());
 					
-					//보증증권
-					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesOrderVO.getMtIntegrateKey());
+					logger.debug("product total amount======================>"+mtContractCountInfo.get("productTotalAmount"));
+					
+					if(null !=mtContractCountInfo && !"0".equals(CepStringUtil.getDefaultValue(mtContractCountInfo.get("productTotalAmount"), "0"))) {
+						//매출정보가 있어야 보증증권 정보가 존재함.
+						logger.debug("mtGuarantyBondVO call======================>"+mtContractCountInfo.get("productTotalAmount"));
+						//보증증권
+						mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtSalesOrderVO.getMtIntegrateKey());
+					} else {
+						mtGuarantyBondVO = new MtGuarantyBondVO();
+						mtGuarantyBondVO.setGbIssueYn("N");
+					}
+					
 					
 //					logger.debug("mtBiddingVO.getGbIssueYn()========>"+mtGuarantyBondVO.getGbIssueYn());
 					//기본정보 첨부파일
@@ -1079,8 +1089,10 @@ public class MtContractController {
 			
 			//보증증권
 			model.put("mtGuarantyBondInfo", mtGuarantyBondVO);
+			if(null != searchVO) {
+				model.put("selectKey", searchVO.getSelectMtSalesOrderKey());	
+			}
 			
-			model.put("selectKey", searchVO.getSelectMtSalesOrderKey());	
 			model.put("mtSalesAcNm", mtSalesAcNm);	
 			model.put("mtSalesAcKey", mtSalesAcKey);
 			
@@ -1306,8 +1318,16 @@ public class MtContractController {
 				mtSalesTotalAmount = service.selectMtSalesTotalAmount(searchVO);
 				
 				//보증증권
-				mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesAmountVO.getMtIntegrateKey());
-				
+//				mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtSalesAmountVO.getMtIntegrateKey());
+				if(null !=mtContractCountInfo && !"0".equals(CepStringUtil.getDefaultValue(mtContractCountInfo.get("productTotalAmount"), "0"))) {
+					//매출정보가 있어야 보증증권 정보가 존재함.
+//					logger.debug("mtGuarantyBondVO call======================>"+mtContractCountInfo.get("productTotalAmount"));
+					//보증증권
+					mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtSalesAmountVO.getMtIntegrateKey());
+				} else {
+					mtGuarantyBondVO = new MtGuarantyBondVO();
+					mtGuarantyBondVO.setGbIssueYn("N");
+				}
 				//첨부파일
 				fileVO.setFileCtKey(mtSalesAmountVO.getMtIntegrateKey());
 				fileVO.setFileWorkClass("mtContract");
@@ -1668,7 +1688,17 @@ public class MtContractController {
 					mtContractCountInfo = service.selectMtContractCount(mtSalesPlanVO.getMtIntegrateKey());
 									
 					//보증증권
-					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtSalesPlanVO.getMtIntegrateKey());
+//					mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtSalesPlanVO.getMtIntegrateKey());
+					
+					if(null !=mtContractCountInfo && !"0".equals(CepStringUtil.getDefaultValue(mtContractCountInfo.get("productTotalAmount"), "0"))) {
+						//매출정보가 있어야 보증증권 정보가 존재함.
+						logger.debug("mtGuarantyBondVO call======================>"+mtContractCountInfo.get("productTotalAmount"));
+						//보증증권
+						mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtSalesPlanVO.getMtIntegrateKey());
+					} else {
+						mtGuarantyBondVO = new MtGuarantyBondVO();
+						mtGuarantyBondVO.setGbIssueYn("N");
+					}
 					
 					//첨부파일
 					fileVO.setFileCtKey(mtSalesPlanVO.getMtIntegrateKey());
@@ -2312,8 +2342,16 @@ public class MtContractController {
 					mtContractCountInfo = service.selectMtContractCount(mtBackOrderVO.getMtIntegrateKey());
 					
 					//보증증권
-					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtBackOrderVO.getMtIntegrateKey());
-					
+//					mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtBackOrderVO.getMtIntegrateKey());
+					if(null !=mtContractCountInfo && !"0".equals(CepStringUtil.getDefaultValue(mtContractCountInfo.get("productTotalAmount"), "0"))) {
+						//매출정보가 있어야 보증증권 정보가 존재함.
+//						logger.debug("mtGuarantyBondVO call======================>"+mtContractCountInfo.get("productTotalAmount"));
+						//보증증권
+						mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtBackOrderVO.getMtIntegrateKey());
+					} else {
+						mtGuarantyBondVO = new MtGuarantyBondVO();
+						mtGuarantyBondVO.setGbIssueYn("N");
+					}
 					//첨부파일
 					fileVO.setFileCtKey(mtBackOrderVO.getMtIntegrateKey());
 					fileVO.setFileWorkClass("mtContract");
@@ -2946,7 +2984,7 @@ public class MtContractController {
 				}
 				
 				//보증증권
-				mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtBuyAmountVO.getMtIntegrateKey());		
+				mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtBuyAmountVO.getMtIntegrateKey());		
 				
 				//첨부파일
 				fileVO.setFileCtKey(mtBuyAmountVO.getMtIntegrateKey());
@@ -3486,8 +3524,15 @@ public class MtContractController {
 					mtContractCountInfo = service.selectMtContractCount(mtPaymentPlanVO.getMtIntegrateKey());
 									
 					//보증증권
-					mtGuarantyBondVO = service.selectMtGuarantyBondInfo(mtPaymentPlanVO.getMtIntegrateKey());
-					
+//					mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtPaymentPlanVO.getMtIntegrateKey());
+					if(null !=mtContractCountInfo && !"0".equals(CepStringUtil.getDefaultValue(mtContractCountInfo.get("productTotalAmount"), "0"))) {
+						//매출정보가 있어야 보증증권 정보가 존재함.
+						//보증증권
+						mtGuarantyBondVO = service.selectMtGuarantyBondInfoList(mtPaymentPlanVO.getMtIntegrateKey());
+					} else {
+						mtGuarantyBondVO = new MtGuarantyBondVO();
+						mtGuarantyBondVO.setGbIssueYn("N");
+					}
 					//첨부파일
 					fileVO.setFileCtKey(mtPaymentPlanVO.getMtIntegrateKey());
 					fileVO.setFileWorkClass("mtContract");
@@ -3857,15 +3902,30 @@ public class MtContractController {
 		
 		logger.debug("=============== viewStockPublishCT ======================");
 		logger.debug("== mtGuarantyBondVO.getMtIntegrateKey() : {}", mtGuarantyBondVO.getMtIntegrateKey() );
+		logger.debug("== mtGuarantyBondVO.getMtAcKey() : {}", mtGuarantyBondVO.getMtAcKey() );
+		
 		MtGuarantyBondVO guarantyBondVO = null;
 		MtContractVO mtContractVO = null;
+		
+		//첨부파일 관련
+		FileVO fileVO = new FileVO();
+		List<?> mtBondFileList = null;
+		HashMap<String, String> sessionMap = null;
+		String mtSalesAcKey = null;
 		try{
 			
-			guarantyBondVO = service.selectMtGuarantyBondInfo(mtGuarantyBondVO.getMtIntegrateKey());
+			if(!"".equals(CepStringUtil.getDefaultValue(mtGuarantyBondVO.getMtAcKey(), ""))) {
+				mtSalesAcKey = mtGuarantyBondVO.getMtAcKey();
+			} else {
+				
+			}
+			guarantyBondVO = service.selectMtGuarantyBondInfo(mtGuarantyBondVO.getMtIntegrateKey(), mtSalesAcKey);
 			
-			mtContractVO = service.selectContractBasicDetail(mtGuarantyBondVO.getMtIntegrateKey());
+//			mtContractVO = service.selectContractBasicDetail(mtGuarantyBondVO.getMtIntegrateKey());
 			
-			if("N".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGbIssueYn(), "N"))) {			
+			mtContractVO = service.selectInitGuarantyBondInfo(mtGuarantyBondVO.getMtIntegrateKey());
+			
+			if("N".equals(CepStringUtil.getDefaultValue(guarantyBondVO.getGbIssueYn(), "N"))) {		
 				
 				
 				if(null != mtContractVO) {
@@ -3890,11 +3950,26 @@ public class MtContractController {
 				} else {
 					logger.error("{}", mtGuarantyBondVO.getMtIntegrateKey()+"에 대한 기본정보가 존재하지 않습니다. 관리자에게 문의하세요.");
 				}
+				
+				
+			} else {
+				
+				//첨부파일
+				fileVO.setFileCtKey(guarantyBondVO.getGbKey());
+				fileVO.setFileWorkClass("mtBond");
+				mtBondFileList = fileMngService.selectFileList(fileVO);
+				
 			}
 			//보증증권 정보 조회 - 고객사 명, 프로젝트 명, 계약금액
 			model.addAttribute("displayUtil", new CepDisplayUtil());
 			model.addAttribute("gbInfo",  guarantyBondVO);
 			model.addAttribute("mtContractVO",  mtContractVO);
+			
+			//유지보수 보증증권 첨부파일
+			model.addAttribute("mtBondFileList", mtBondFileList);
+			model.addAttribute("maxFileCnt", maxFileCnt);
+			model.addAttribute("fileExtn", fileExtn);		
+			model.addAttribute("maxFileSize", maxFileSize);	
 			
 			logger.debug("== mtGuarantyBondVO.getContractRegEmpKey() : {}", mtGuarantyBondVO.getContractRegEmpKey() );
 			logger.debug("== mtGuarantyBondVO.getContractSalesEmpKey() : {}", mtGuarantyBondVO.getContractSalesEmpKey() );
@@ -3979,6 +4054,7 @@ public class MtContractController {
 					mailVO.setIsNewPw(false);
 					
 					result = comService.sendMail(request, mailVO);
+//					result=1;
 					if(result != 0) {
 						returnMap.put("mailSuccessYN", "Y");
 					} else {
@@ -4105,6 +4181,7 @@ public class MtContractController {
 				mailVO.setContent(content);
 				mailVO.setIsNewPw(false);
 				result = comService.sendMail(request, mailVO);
+				//result=1;
 				if(result != 0) {
 					returnMap.put("mailSuccessYN", "Y");
 					returnMap.put("mailList", toList);

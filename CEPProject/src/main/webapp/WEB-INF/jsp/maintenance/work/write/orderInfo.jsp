@@ -160,7 +160,7 @@
 			padding-bottom: 0px;
 		}
 		.popContainer .contents .btnWrap {
-			margin : 20px 0px -14px -1px;			
+			margin: 20px 0px 14px 49px;			
 			width : 842px;
 			height : 32px;
 		}
@@ -207,10 +207,11 @@
 			/* height: 307px; */
 			width: 870px;
 			overflow-y: auto;
+			margin: 0px 47px 0 45px;
 		}
 		.btnWrap {
 			/* margin : 20px 0px -14px 49px;			
-			width : 842px; */
+			width : 842px;
 			height : 50px;
 			background-color: #f6f7fc;
 			width: calc(100% - 246px);
@@ -219,7 +220,7 @@
 			padding-top:20px;
 			padding-left: 45px;
 			top:25px;
-			
+			 */
 		}
       	/* .accountList li {
 			text-align: left;
@@ -228,6 +229,9 @@
 			font-size: 14px;
 			color: #21a17e;
 		} */
+		.popContainer .contents #secondTitle {
+			margin: -15px 47px 0 45px;
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -1148,7 +1152,9 @@
 						</tr>
 					</table>
 				</form>
-				<form action="/" id="mtListForm" name="mtListForm"  method="post">				
+			</div>	
+			<form action="/" id="mtListForm" name="mtListForm"  method="post">			
+				<div id="secondTitle">	
 					<table class="subject2">
 						<tr>		
 							<td class="subTitle" style="border-top: none;"  colspan="5">
@@ -1159,7 +1165,8 @@
 							</td>
 						</tr>
 					</table>
-					<div id="prodWrap">
+				</div>
+				<div id="prodWrap">
 					<c:choose>
 						<c:when test="${mtWorkOrderVO.mtOrderProductVoList eq null ||  mtWorkOrderVO.mtOrderProductVoList == ''||  mtWorkOrderVO.mtOrderProductVoList.size()== 0}">
 						<div class="prodTable">
@@ -1268,20 +1275,20 @@
 					</c:choose>
 					</div>
 			</form>
-			</div>
 			
-		<div class="btnWrap floatL">
-			<div class="floatL">
-				<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+			
+			<div class="btnWrap floatL">
+				<div class="floatL">
+					<button type="button" onclick="fn_prevBtn();"><img src="<c:url value='/images/btn_prev.png'/>" /></button>
+				</div>
+				<div class="floatL btnCenter">
+					<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
+					<c:if test="${not empty mtWorkOrderVO.selectKey}">						
+					<button type="button" onclick="fn_deleteWorkOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
+					</c:if>
+				</div>
+				<div class="floatN floatC"></div>
 			</div>
-			<div class="floatL btnCenter">
-				<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
-				<c:if test="${not empty mtWorkOrderVO.selectKey}">						
-				<button type="button" onclick="fn_deleteWorkOrderBtn();"><img src="<c:url value='/images/btn_del.png'/>" /></button>						
-				</c:if>
-			</div>
-			<div class="floatN floatC"></div>
-		</div>
 		</div>
 	</div>
 </body>

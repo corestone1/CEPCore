@@ -1044,14 +1044,18 @@
 		
 		//보증증권
 		function fnShowStock() {
+			if("${mtContractCountInfo.mtProductCnt}" > 0){
+				var dialogId = 'program_layer';
+				
+				var varParam = {'mtIntegrateKey' : $('#m1_mtIntegrateKey').val(), 'bdKey' : $('#bdKey').val()};
+				
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:700px');
+			} else {
+				alert("매출정보가 등록되지 않아 보증증권 신청을 할 수 없습니다.!! 매출정보를 먼저 등록하세요!!");
+			}
 			
-			var dialogId = 'program_layer';
-			
-			var varParam = {'mtIntegrateKey' : $('#m1_mtIntegrateKey').val(), 'bdKey' : $('#bdKey').val()};
-			
-			var button = new Array;
-			button = [];
-			showModalPop(dialogId, "/maintenance/contract/detail/viewStockPublishCT.do", varParam, button, '', 'width:648px;height:650px');
 		}
 		//계산서 발생요청
 		function fnMoveBillDetail() {
@@ -1244,6 +1248,11 @@
 													신청 전 ) &nbsp;&nbsp;
 													<c:choose>
 														<c:when test='${sessionScope.empAuthCd == "EMAU1001"}'>
+															<span style="cursor: hand;display: contents;">
+																<img src="/images/btn_stock_publish.png" style="vertical-align: middle;cursor:default; filter:grayscale(1);"/>
+															</span>
+														</c:when>
+														<c:when test='${sessionScope.userInfo.empKey != basicContractInfo.regEmpKey}'>
 															<span style="cursor: hand;display: contents;">
 																<img src="/images/btn_stock_publish.png" style="vertical-align: middle;cursor:default; filter:grayscale(1);"/>
 															</span>

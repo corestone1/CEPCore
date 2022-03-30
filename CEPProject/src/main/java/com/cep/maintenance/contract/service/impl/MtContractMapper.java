@@ -865,7 +865,7 @@ public interface MtContractMapper {
 	 * @cdate 2021. 8. 18. 오후 3:03:13
 	 * @author aranghoo
 	 */
-	public MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey) throws Exception;
+	public MtGuarantyBondVO selectMtGuarantyBondInfo(Map<String, Object> selectParam) throws Exception;
 	//////////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
@@ -917,5 +917,18 @@ public interface MtContractMapper {
 	 * @author aranghoo
 	 */
 	public List<EgovMap> selectManufacturerList() throws Exception;
+	
+	/**
+	 * 보증증권 초기 신청시 가져오는 정보.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 3. 30. 오후 1:46:51
+	 * @author aranghoo
+	 */
+	public MtContractVO selectInitGuarantyBondInfo(String mtIntegrateKey) throws Exception;
 	
 }

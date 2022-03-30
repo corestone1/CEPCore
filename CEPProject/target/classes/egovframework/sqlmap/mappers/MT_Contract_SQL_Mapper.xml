@@ -1925,7 +1925,7 @@
 	</update>	
 	
 	<!-- 유지보수 보증증권 상세보기   -->
-	<select id="selectMtGuarantyBondInfo" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">	
+<!-- 	<select id="selectMtGuarantyBondInfo" parameterType="java.util.HashMap" resultType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">	
 		SELECT MGT.MT_INTEGRATE_KEY       AS mtIntegrateKey
 			, MCT.MT_NM         AS mtNm
 			, MCT.MT_START_DT   AS mtStartDt
@@ -1944,10 +1944,50 @@
 			, MGT.GB_KIND_CD    AS gbKindCd
 		FROM MT_CONTRACT_TB MCT
 			JOIN MT_GUARANTY_BOND_TB MGT ON MCT.MT_INTEGRATE_KEY = MGT.MT_INTEGRATE_KEY 
-			JOIN CMM_ACCOUNT_TB CAT ON MCT.MT_AC_KEY = CAT.AC_KEY
+			JOIN MT_SALES_ORDER_TB MSO ON MSO.MT_INTEGRATE_KEY = MCT.MT_INTEGRATE_KEY AND MSO.DELETE_YN='N'
+			JOIN CMM_ACCOUNT_TB CAT ON MSO.MT_SALES_AC_KEY = CAT.AC_KEY
 		WHERE MGT.MT_INTEGRATE_KEY = #{mtIntegrateKey}
 			AND MCT.DELETE_YN = 'N'
-			AND MGT.DELETE_YN = 'N'	
+			AND MGT.DELETE_YN = 'N'	  
+			<if test="mtSalesAcKey != null and mtSalesAcKey != ''">
+				AND MSO.MT_SALES_AC_KEY= #{mtSalesAcKey}
+			</if>
+			
+	</select> -->
+	
+	<select id="selectMtGuarantyBondInfo" parameterType="java.util.HashMap" resultType="com.cep.maintenance.contract.vo.MtGuarantyBondVO">	
+		SELECT * FROM (
+			SELECT MGT.MT_INTEGRATE_KEY       AS mtIntegrateKey
+				, MCT.MT_NM         AS mtNm
+				, MCT.MT_START_DT   AS mtStartDt
+				, MCT.MT_END_DT     AS mtEndDt
+				, CAT.AC_KEY        AS mtAcKey
+				, CAT.AC_NM         AS mtAcNm
+				, MGT.GB_CONTRACT_AMOUNT     AS mtAmount
+				, MGT.GB_KEY        AS gbKey
+				, MGT.GB_START_DT   AS gbStartDt
+				, MGT.GB_END_DT     AS gbEndDt
+				, MGT.GB_ISSUE_YN   AS gbIssueYn
+				, MGT.GB_AMOUNT     AS gbAmount
+				, MGT.GB_RATE       AS gbRate
+				, MGT.GB_PUBLISH_DT AS gbPublishDt
+				, MGT.REMARK        AS remark
+				, MGT.GB_KIND_CD    AS gbKindCd
+				, @rownum:=@rownum+1 AS ROW_NUM
+			FROM MT_CONTRACT_TB MCT
+				JOIN MT_GUARANTY_BOND_TB MGT ON MCT.MT_INTEGRATE_KEY = MGT.MT_INTEGRATE_KEY 
+				JOIN MT_SALES_ORDER_TB MSO ON MSO.MT_INTEGRATE_KEY = MCT.MT_INTEGRATE_KEY AND MSO.DELETE_YN='N'
+				JOIN CMM_ACCOUNT_TB CAT ON MSO.MT_SALES_AC_KEY = CAT.AC_KEY
+				,(SELECT @ROWNUM := 0) AS R
+			WHERE MGT.MT_INTEGRATE_KEY = #{mtIntegrateKey}
+				AND MCT.DELETE_YN = 'N'
+				AND MGT.DELETE_YN = 'N'	  
+				<if test="mtSalesAcKey != null and mtSalesAcKey != ''">
+					AND MSO.MT_SALES_AC_KEY= #{mtSalesAcKey}
+				</if>
+		) TEP
+      WHERE ROW_NUM=1
+			
 	</select>
 	
 	
@@ -1986,4 +2026,22 @@
 		ORDER BY CODE_KEY
 	</select>
 	
+	
+	<select id="selectInitGuarantyBondInfo" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtContractVO">		
+		SELECT 
+		  MC.MT_NM AS mtNm
+		  , MC.MT_START_DT AS mtStartDt
+		  , MC.MT_END_DT AS mtEndDt
+		  , MC.REG_EMP_KEY AS regEmpKey
+		  , MC.MT_SALE_EMP_KEY AS mtSaleEmpKey
+		  , MS.MT_SALES_AC_KEY AS mtAcKey		  
+		  , MS.MT_SALES_AMOUNT AS mtAmount
+		  , CA.AC_NM AS mtAcNm
+		FROM MT_CONTRACT_TB MC, MT_SALES_ORDER_TB MS, CMM_ACCOUNT_TB CA
+		WHERE MC.MT_INTEGRATE_KEY= #{mtIntegrateKey}
+		  AND MC.MT_INTEGRATE_KEY = MS.MT_INTEGRATE_KEY
+		  AND MS.MT_SALES_AC_KEY = CA.AC_KEY
+		  AND MC.DELETE_YN ='N'
+		  AND MS.DELETE_YN ='N'
+	</select>			
 </mapper>

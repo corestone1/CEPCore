@@ -216,6 +216,7 @@
 				//조치결과
 				$('#mtWorkResultCd').val("${basicWorkInfo.mtWorkResultCd}").attr("selected", "true");
 				
+				console.log("======>${basicWorkInfo.mtWorkResultCd}");
 				//제품등록여부
 				//$('#mtWorkPmYn').val("${basicWorkInfo.mtWorkPmYn}").attr("selected", "true");
 				$("input:radio[name='mtWorkPmYn']:radio[value='${basicWorkInfo.mtWorkPmYn}']").prop('checked', true);
@@ -275,23 +276,56 @@
 		
 		
 		function fn_saveBtn(){
-			
-			//필수값 체크를 완료하면 저장 프로세스 시작.
-			if ($("#mtBasicForm")[0].checkValidity()){
-				if($('#mtWorkKey').val() !=''){
-					if(confirm("유지보수작업 기본정보를 수정하시겠습니까?")) {
-						fn_basicInfo();
+			//파일싸이즈 체크.
+			if($("#upFileName").val() == null || $("#upFileName").val() == "" || $("#upFileName").val().length == 0) {
+				//필수값 체크를 완료하면 저장 프로세스 시작.
+				if ($("#mtBasicForm")[0].checkValidity()){
+					if($('#mtWorkKey').val() !=''){
+						if(confirm("유지보수작업 기본정보를 수정하시겠습니까?")) {
+							fn_basicInfo();
+						}
+					} else {
+						if(confirm("유지보수작업 기본정보를 저장하시겠습니까?")) {
+							fn_basicInfo();
+						}
+					}
+					
+				}  else {
+					 //Validate Form
+			        $("#mtBasicForm")[0].reportValidity();	
+				}
+			} else {
+				//업로드할 파일이 존재하는 경우 파일싸이즈를 체크한다..
+				if($("#fileForm")[0].checkValidity()) {
+					var maxSize = 20 * 1024 * 1024;
+		        	var fileSize = $("#exFile")[0].files[0].size;
+		        	   
+					if(fileSize > maxSize){
+						alert("첨부파일 사이즈는 20MB 이내로 등록 가능합니다.");
+						return false;
+					} else {
+						if ($("#mtBasicForm")[0].checkValidity()){
+							if($('#mtWorkKey').val() !=''){
+								if(confirm("유지보수작업 기본정보를 수정하시겠습니까?")) {
+									fn_basicInfo();
+								}
+							} else {
+								if(confirm("유지보수작업 기본정보를 저장하시겠습니까?")) {
+									fn_basicInfo();
+								}
+							}
+							
+						}  else {
+							 //Validate Form
+					        $("#mtBasicForm")[0].reportValidity();	
+						}
 					}
 				} else {
-					if(confirm("유지보수작업 기본정보를 저장하시겠습니까?")) {
-						fn_basicInfo();
-					}
+					$("#fileForm")[0].reportValidity()
 				}
-				
-			}  else {
-				 //Validate Form
-		        $("#mtBasicForm")[0].reportValidity();	
 			}
+			
+			
            	
 		}
 		function fn_basicInfo(){

@@ -789,7 +789,9 @@ public interface MtContractService {
 	 * @cdate 2021. 8. 19. 오후 3:06:09
 	 * @author aranghoo
 	 */
-	MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey) throws Exception;
+	MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey, String mtSalesAcKe) throws Exception;
+	
+	MtGuarantyBondVO selectMtGuarantyBondInfoList(String mtIntegrateKey) throws Exception;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -844,4 +846,17 @@ public interface MtContractService {
 	  * @throws Exception
 	 */
 	public String makePrimaryKey(PrimaryKeyType keyType) throws Exception;
+	
+	/**
+	 * 보증증권 초기 신청시 가져오는 정보.
+	 * <pre>
+	 * </pre>
+	 * 
+	 * @param mtIntegrateKey
+	 * @return
+	 * @throws Exception
+	 * @cdate 2022. 3. 30. 오후 1:47:59
+	 * @author aranghoo
+	 */
+	public MtContractVO selectInitGuarantyBondInfo(String mtIntegrateKey) throws Exception;
 }

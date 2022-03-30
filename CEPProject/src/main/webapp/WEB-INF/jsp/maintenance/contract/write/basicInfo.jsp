@@ -548,21 +548,55 @@
 			//필수값 체크를 완료하면 저장 프로세스 시작.
 			
 			if($('#sp_mtLinkCtKeyNm').val() != '') {
-				if ($("#mtBasicForm")[0].checkValidity()){
-					if($('#mtIntegrateKey').val() !=''){
-						if(confirm("유지보수계약 기본정보를 수정하시겠습니까?")) {
-							saveBasicInfo();
+				
+				if($("#upFileName").val() == null || $("#upFileName").val() == "" || $("#upFileName").val().length == 0) {
+					if ($("#mtBasicForm")[0].checkValidity()){
+						if($('#mtIntegrateKey').val() !=''){
+							if(confirm("유지보수계약 기본정보를 수정하시겠습니까?")) {
+								saveBasicInfo();
+							}
+						} else {
+							if(confirm("유지보수계약 기본정보를 저장하시겠습니까?")) {
+								saveBasicInfo();
+							}
+						}
+						
+					}  else {
+						 //Validate Form
+				        $("#mtBasicForm")[0].reportValidity();	
+					}
+				} else {
+					//업로드할 파일이 존재하는 경우 파일싸이즈를 체크한다..
+					if($("#fileForm")[0].checkValidity()) {
+						var maxSize = 20 * 1024 * 1024;
+			        	var fileSize = $("#exFile")[0].files[0].size;
+			        	   
+						if(fileSize > maxSize){
+							alert("첨부파일 사이즈는 20MB 이내로 등록 가능합니다.");
+							return false;
+						} else {
+							if ($("#mtBasicForm")[0].checkValidity()){
+								if($('#mtIntegrateKey').val() !=''){
+									if(confirm("유지보수계약 기본정보를 수정하시겠습니까?")) {
+										saveBasicInfo();
+									}
+								} else {
+									if(confirm("유지보수계약 기본정보를 저장하시겠습니까?")) {
+										saveBasicInfo();
+									}
+								}
+								
+							}  else {
+								 //Validate Form
+						        $("#mtBasicForm")[0].reportValidity();	
+							}
 						}
 					} else {
-						if(confirm("유지보수계약 기본정보를 저장하시겠습니까?")) {
-							saveBasicInfo();
-						}
+						$("#fileForm")[0].reportValidity()
 					}
-					
-				}  else {
-					 //Validate Form
-			        $("#mtBasicForm")[0].reportValidity();	
 				}
+				
+				
 			} else {				
 			
 				alert("Forecast연계가 되지 않았습니다. \nForecast에서 가져오기 버튼을 이용하여 연계하세요!!");
@@ -1164,7 +1198,7 @@
 				<form id="fileForm" method="post" enctype="multipart/form-data"> 
 					<input type="hidden" name="docTypeNm" value="mtContract" />
 					<input type="hidden" name="fileCtKey" id="fileCtKey" value="${basicContractInfo.mtIntegrateKey}" />
-					<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${resultList[0].pjNm}"/>"/> 
+					<input type="hidden" name="pjNm" id="filePjNm" value="<c:out value="${fileList[0].pjNm}"/>"/> 
 					<input type="hidden" name="atchFileCnt" id="atchFileCnt" title="첨부된갯수" value="${fn:length(fileList)}" />
 					<input type="hidden" name="maxFileCnt" id="maxFileCnt" title="첨부가능최대갯수" value="<c:out value='${maxFileCnt}'/>" />
 					<input type="hidden" name="maxFileSize" id="maxFileSize" title="파일사이즈" value="<c:out value='${maxFileSize}'/>" />

@@ -1703,10 +1703,39 @@ public class MtContractServiceImpl implements MtContractService {
 
 
 	@Override
-	public MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey) throws Exception {
+	public MtGuarantyBondVO selectMtGuarantyBondInfo(String mtIntegrateKey, String mtSalesAcKey) throws Exception {
 		MtGuarantyBondVO mtGuarantyBondVO = null;
+		Map<String, Object> selectParam = null;
 		try {
-			mtGuarantyBondVO = mtMapper.selectMtGuarantyBondInfo(mtIntegrateKey);
+			
+			selectParam = new HashMap<>();
+			selectParam.put("mtIntegrateKey", mtIntegrateKey);
+			selectParam.put("mtSalesAcKey", mtSalesAcKey);
+			
+			mtGuarantyBondVO = mtMapper.selectMtGuarantyBondInfo(selectParam);
+			if(null == mtGuarantyBondVO) {
+				//계약정보가 없는 경우 진행상태를 발행전으로 전달한다.
+				mtGuarantyBondVO = new MtGuarantyBondVO();
+				mtGuarantyBondVO.setGbIssueYn("N");
+			}
+			logger.debug("mtGuarantyBondVO.getGbIssueYn()=====================>"+mtGuarantyBondVO.getGbIssueYn());
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return mtGuarantyBondVO;
+	}
+	
+	
+	public MtGuarantyBondVO selectMtGuarantyBondInfoList(String mtIntegrateKey) throws Exception {
+		MtGuarantyBondVO mtGuarantyBondVO = null;
+		Map<String, Object> selectParam = null;
+		try {
+			
+			selectParam = new HashMap<>();
+			selectParam.put("mtIntegrateKey", mtIntegrateKey);
+			selectParam.put("mtSalesAcKey", "");
+			
+			mtGuarantyBondVO = mtMapper.selectMtGuarantyBondInfo(selectParam);
 			if(null == mtGuarantyBondVO) {
 				//계약정보가 없는 경우 진행상태를 발행전으로 전달한다.
 				mtGuarantyBondVO = new MtGuarantyBondVO();
@@ -2581,8 +2610,13 @@ public class MtContractServiceImpl implements MtContractService {
 	}
 
 
-
-
+	/*
+	 * (non-Javadoc)
+	 * @see com.cep.maintenance.contract.service.MtContractService#selectInitGuarantyBondInfo(java.lang.String)
+	 */
+	 public MtContractVO selectInitGuarantyBondInfo(String mtIntegrateKey) throws Exception {
+		 return mtMapper.selectInitGuarantyBondInfo(mtIntegrateKey);
+	 }
 
 
 	

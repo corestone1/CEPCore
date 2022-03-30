@@ -297,21 +297,21 @@
 				}					
 			}
 			//지원담당자정보 셋팅
-			$('#mtWorkEmpKey').val("${basicWorkInfo.mtWorkEmpKey}").attr("selected", "true");
+			$('#m_mtWorkEmpKey').val("${basicWorkInfo.mtWorkEmpKey}").attr("selected", "true");
 			
 			//작업유형 셋팅
-			$('#mtWorkTypeCd').val("${basicWorkInfo.mtWorkTypeCd}").attr("selected", "true");
+			$('#m_mtWorkTypeCd').val("${basicWorkInfo.mtWorkTypeCd}").attr("selected", "true");
 			
 			//조치결과
-			$('#mtWorkResultCd').val("${basicWorkInfo.mtWorkResultCd}").attr("selected", "true");
+			$('#m_mtWorkResultCd').val("${basicWorkInfo.mtWorkResultCd}").attr("selected", "true");
 			
 			//제품등록여부
 			//$('#mtWorkPmYn').val("${basicWorkInfo.mtWorkPmYn}").attr("selected", "true");
-			$("input:radio[name='mtWorkPmYn']:radio[value='${basicWorkInfo.mtWorkPmYn}']").prop('checked', true);
+			//$("input:radio[name='m_mtWorkPmYn']:radio[value='${basicWorkInfo.mtWorkPmYn}']").prop('checked', true);
 			
 			//추가발주여부
 			//$('#mtWorkOrderYn').val("${basicWorkInfo.mtWorkOrderYn}").attr("selected", "true");
-			$("input:radio[name='mtWorkOrderYn']:radio[value='${basicWorkInfo.mtWorkOrderYn}']").prop('checked', true);
+			//$("input:radio[name='mtWorkOrderYn']:radio[value='${basicWorkInfo.mtWorkOrderYn}']").prop('checked', true);
 			
 			//장비별작업정보 커서 생성
 			if("Y"=="${basicWorkInfo.mtWorkPmYn}"){
@@ -710,7 +710,7 @@
 								<tr>
 									<td>지원담당자</td>
 									<td>
-										<select id="mtWorkEmpKey" name="mtWorkEmpKey">
+										<select id="m_mtWorkEmpKey" name="mtWorkEmpKey">
 											<!-- <option value="">선택</option> -->
 											<c:forEach var="emp" items="${empList}" varStatus="status">										
 											<option value="<c:out value="${emp.empKey}"/>"><c:out value="${emp.empNm}"/></option>
@@ -721,7 +721,7 @@
 								<tr>
 									<td>작업유형</td>
 									<td>
-										<select id="mtWorkTypeCd" name="mtWorkTypeCd">
+										<select id="m_mtWorkTypeCd" name="mtWorkTypeCd">
 											<option value="정기점검">정기점검</option>
 											<option value="장애처리">장애처리</option>
 											<option value="기술지원">기술지원</option>
@@ -738,7 +738,7 @@
 								<tr>
 									<td>조치결과</td>
 									<td>
-										<select id="mtWorkResultCd" name="mtWorkResultCd">
+										<select id="m_mtWorkResultCd" name="mtWorkResultCd">
 											<option value="준비">준비</option>
 											<option value="진행">진행</option>
 											<option value="완료">완료</option>
@@ -792,7 +792,7 @@
 								<%-- <button type="button" value="삭제" onclick="fn_deleteBtn();"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button> --%>
 								<%-- <button type="button" value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button> --%>
 								
-								<input type="hidden" id="mtWorkEmpKey"  name="mtWorkEmpKey" value="${basicWorkInfo.mtWorkEmpKey}" />
+								<input type="hidden" id="m_mtWorkEmpKey"  name="mtWorkEmpKey" value="${basicWorkInfo.mtWorkEmpKey}" />
 								<input type="hidden" id="regEmpKey"  name="regEmpKey" value="${basicWorkInfo.regEmpKey}" />
 							</div>
 						</div>
