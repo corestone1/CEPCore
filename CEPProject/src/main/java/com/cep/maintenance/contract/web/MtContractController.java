@@ -4039,8 +4039,8 @@ public class MtContractController {
 						
 //						logger.debug("email=====>"+email);
 					}
-					//toList = new ArrayList<>();
-					//toList.add("ycchoi@corestone.co.kr");
+//					toList = new ArrayList<>();
+//					toList.add("ycchoi@corestone.co.kr");
 					
 					tmail = StringUtils.join(toList, ";");
 					subject = "(유지보수) "+mtGuarantyBondVO.getMtNm()+"["+mtGuarantyBondVO.getMtIntegrateKey()+"]에 대한 보증 증권 요청 정보";
@@ -4167,13 +4167,13 @@ public class MtContractController {
 				
 				tmail = StringUtils.join(toList, ";");
 				
-				System.out.println("tmail=====>"+tmail);
+//				System.out.println("tmail=====>"+tmail);
 				
 //				toList = new ArrayList<>();
 //				toList.add("ycchoi@corestone.co.kr");
 //				
 //				
-//				tmail = StringUtils.join(toList, ";");
+				tmail = StringUtils.join(toList, ";");
 				
 //				System.out.println("tmail=====>"+tmail);
 

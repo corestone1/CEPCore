@@ -109,13 +109,13 @@
 		.middle table tbody td:nth-child(3),
 		.middle table thead th:nth-child(5),
 		.middle table tbody td:nth-child(5) {
-			width: 175px;
-			max-width: 175px;
+			width: 190px;
+			max-width: 190px;
 		}
 		.middle table thead th:nth-child(4),
 		.middle table tbody td:nth-child(4) {
-			width: 320px;
-			max-width: 320px;
+			width: 430px;
+			max-width: 430px;
 		}
 		.middle table thead th:nth-child(6),
 		.middle table tbody td:nth-child(6) {
