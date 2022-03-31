@@ -2028,20 +2028,24 @@
 	
 	
 	<select id="selectInitGuarantyBondInfo" parameterType="String" resultType="com.cep.maintenance.contract.vo.MtContractVO">		
-		SELECT 
-		  MC.MT_NM AS mtNm
-		  , MC.MT_START_DT AS mtStartDt
-		  , MC.MT_END_DT AS mtEndDt
-		  , MC.REG_EMP_KEY AS regEmpKey
-		  , MC.MT_SALE_EMP_KEY AS mtSaleEmpKey
-		  , MS.MT_SALES_AC_KEY AS mtAcKey		  
-		  , MS.MT_SALES_AMOUNT AS mtAmount
-		  , CA.AC_NM AS mtAcNm
-		FROM MT_CONTRACT_TB MC, MT_SALES_ORDER_TB MS, CMM_ACCOUNT_TB CA
-		WHERE MC.MT_INTEGRATE_KEY= #{mtIntegrateKey}
-		  AND MC.MT_INTEGRATE_KEY = MS.MT_INTEGRATE_KEY
-		  AND MS.MT_SALES_AC_KEY = CA.AC_KEY
-		  AND MC.DELETE_YN ='N'
-		  AND MS.DELETE_YN ='N'
+		SELECT * FROM ( 
+			SELECT 
+			  MC.MT_NM AS mtNm
+			  , MC.MT_START_DT AS mtStartDt
+			  , MC.MT_END_DT AS mtEndDt
+			  , MC.REG_EMP_KEY AS regEmpKey
+			  , MC.MT_SALE_EMP_KEY AS mtSaleEmpKey
+			  , MS.MT_SALES_AC_KEY AS mtAcKey		  
+			  , MS.MT_SALES_AMOUNT AS mtAmount
+			  , CA.AC_NM AS mtAcNm
+			  , @rownum:=@rownum+1 AS ROW_NUM
+			FROM MT_CONTRACT_TB MC, MT_SALES_ORDER_TB MS, CMM_ACCOUNT_TB CA, (SELECT @ROWNUM := 0) AS R
+			WHERE MC.MT_INTEGRATE_KEY= #{mtIntegrateKey}
+			  AND MC.MT_INTEGRATE_KEY = MS.MT_INTEGRATE_KEY
+			  AND MS.MT_SALES_AC_KEY = CA.AC_KEY
+			  AND MC.DELETE_YN ='N'
+			  AND MS.DELETE_YN ='N'
+		)TEP
+		WHERE ROW_NUM=1
 	</select>			
 </mapper>

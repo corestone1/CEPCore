@@ -328,7 +328,7 @@
 					    		mailList = "\n메일 수신인: " + data.mailList.join("\n");
 					    	}
 					    	
-			        		if(data!= null && data.successYN == 'Y' && data.gbKey !='' && data.gbKey.length >0) {
+			        		if(data!= null && data.successYN == 'Y' ) {
 			        			if($("#upFileName").val() != null && $("#upFileName").val() != "" && $("#upFileName").val().length != 0) {
 			        				console.log("UPLOAD FILE..............=========>"+data.gbKey);
 				        			$("#fileCtKey").val(data.gbKey);
@@ -818,11 +818,8 @@
 								<div style="width: 416px; height: 25px; clear:both;">
 									<c:forEach var="result" items="${mtBondFileList }" varStatus="status">
 										<input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFilePopUp('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
-										<c:if test='${gbInfo.gbIssueYn ne "Y"}'>
-											<c:if test='${sessionScope.userInfo.empKey == mtContractVO.regEmpKey || sessionScope.empAuthCd == "EMAU1001"}'>
-												<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
-											</c:if>
-											
+										<c:if test='${sessionScope.userInfo.empKey == mtContractVO.regEmpKey || sessionScope.empAuthCd == "EMAU1001"}'>
+											<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
 										</c:if>
 										
 										<c:if test="${status.last eq false}"><br /></c:if>
@@ -867,6 +864,13 @@
 										</button>
 									</c:if>
 									
+								</c:when>
+								<c:when test='${gbInfo.gbIssueYn eq "Y"}'>
+									<c:if test='${sessionScope.empAuthCd == "EMAU1001"}'>
+										<button type="button" onclick="javascript:fnGbEnd();">
+											<img src="<c:url value='/images/btn_stock_end.png'/>" />
+										</button>
+									</c:if>									
 								</c:when>
 								<%-- <c:otherwise>
 									<button type="button" onclick="javascript:fnGbModify();">

@@ -3900,7 +3900,7 @@ public class MtContractController {
 	@RequestMapping(value="/detail/viewStockPublishCT.do")
 	public String viewStockPublishCT(@ModelAttribute("mtGuarantyBondVO")MtGuarantyBondVO mtGuarantyBondVO , ModelMap model, HttpServletRequest request, HttpServletResponse respone) throws Exception {
 		
-		logger.debug("=============== viewStockPublishCT ======================");
+		logger.debug("=============== mt viewStockPublishCT ====================== ");
 		logger.debug("== mtGuarantyBondVO.getMtIntegrateKey() : {}", mtGuarantyBondVO.getMtIntegrateKey() );
 		logger.debug("== mtGuarantyBondVO.getMtAcKey() : {}", mtGuarantyBondVO.getMtAcKey() );
 		
@@ -3919,7 +3919,10 @@ public class MtContractController {
 			} else {
 				
 			}
+			//추후 매출처 여러곳을 등록하여 사용하는 경우 해당 매출처의 사업자 코드 또는 매출키를 이용하여 처리할 수 있도록 수정하자.
 			guarantyBondVO = service.selectMtGuarantyBondInfo(mtGuarantyBondVO.getMtIntegrateKey(), mtSalesAcKey);
+			
+			guarantyBondVO = service.selectMtGuarantyBondInfoList(mtGuarantyBondVO.getMtIntegrateKey());
 			
 //			mtContractVO = service.selectContractBasicDetail(mtGuarantyBondVO.getMtIntegrateKey());
 			
@@ -4181,7 +4184,7 @@ public class MtContractController {
 				mailVO.setContent(content);
 				mailVO.setIsNewPw(false);
 				result = comService.sendMail(request, mailVO);
-				//result=1;
+//				result=1;
 				if(result != 0) {
 					returnMap.put("mailSuccessYN", "Y");
 					returnMap.put("mailList", toList);
