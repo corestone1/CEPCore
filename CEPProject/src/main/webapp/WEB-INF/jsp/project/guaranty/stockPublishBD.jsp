@@ -386,9 +386,11 @@
 						</tr>
 						
 						<tr id="m_tr_account" >
-							<td class="tdTitle">입찰금액</td>
+							<td class="tdTitle">입찰금액(VAT 포함)</td>
 							<td id="m_td_account" class="tdContents">
-								<input type="text" id="ipt_bdGbBdAmount" name="bdGbBdAmount" value="${displayUtil.commaStr(gbInfo.bdGbBdAmount)}" amountonly/> 
+								<input type="text" id="ipt_bdGbBdAmount" name="bdGbBdAmount" 
+									value="<c:if test="${gbInfo.bdGbBdAmount eq null }">${displayUtil.commaStr(gbInfo.bdGbBdAmount)}</c:if><c:if test="${gbInfo.bdGbBdAmount ne null }">${displayUtil.commaStr(gbInfo.fcSalesAmount)}</c:if>" 
+								amountonly/> 
 							</td>
 						</tr>
 						

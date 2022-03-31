@@ -41,6 +41,18 @@ public interface ForecastService {
 	  */
 	public List<EgovMap> selectForecastList(ForecastSearchVO searchVO) throws Exception;
 	
+	/**
+	  * @Method Name : selectForecastList
+	  * @Cdate       : 2020. 12. 1.
+	  * @Author      : ynk
+	  * @Modification: 
+	  * @Method Description :
+	  * @param searchVO
+	  * @return
+	  * @throws Exception
+	  */
+	public List<EgovMap> selectForecastPopList(ForecastSearchVO searchVO) throws Exception;
+	
 	
 	/**
 	  * @Method Name : insertBasic

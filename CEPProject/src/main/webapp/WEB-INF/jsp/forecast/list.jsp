@@ -699,7 +699,7 @@
 						</thead>
 						<tbody>
 						<c:forEach var="result" items="${forecastList}" varStatus="status">
-							<tr class="mchkbox" <c:if test="${result.spState eq 'S' }">style="background-color:#ccf4d7;"</c:if>>
+							<tr class="mchkbox">
 								<td></td>
 								<td>
 									<c:choose>
@@ -766,7 +766,7 @@
 								<td>
 									<c:choose>
 										<c:when test="${result.spState eq 'S' }">
-											계약
+											<label class="ftw500" style="color:#00ded6;">계약</label>
 										</c:when>		
 										<c:when test="${result.spState eq 'F' }">
 											실주

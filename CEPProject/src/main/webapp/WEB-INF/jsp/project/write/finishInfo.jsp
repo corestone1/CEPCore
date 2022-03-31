@@ -269,6 +269,16 @@
             }            
 		}
 		
+		function fnBackProcess() {
+			if(confirm("발주 상태로 되돌리겠습니까?")) {
+				var form = document.infoForm;
+				form.pjStatusCd.value = "PJST3000";
+				
+				fn_save();
+			}
+			
+		}
+		
 		
 		function fn_save() {
 			var object = {};
@@ -467,6 +477,7 @@
 		</div>
 		<div class="contents">
 			<div>
+				<div onclick="javascript:fnBackProcess();" class="" style="position:absolute; right: 42px;">이전 단계로 되돌리기</div>
 				<form id="infoForm" name="infoForm" method="post">
 					<input type="hidden" id="ipt_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="PJST5000" />

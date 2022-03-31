@@ -371,9 +371,118 @@
 		  		
 		  </if>
 		  
-		ORDER BY FIELD(DAT.SP_STATE,'S','A','B','C','D','Z'), DAT.REG_DT DESC
-		<!-- , DAT.FC_SJ_CONF_QT DESC -->
+		ORDER BY FIELD(DAT.SP_STATE,'S') DESC, DAT.SP_STATE, DAT.REG_DT DESC
+		<!-- FIELD(DAT.SP_STATE,'S','A','B','C','D','Z'), DAT.REG_DT DESC -->
 		
+	</select>
+	
+	<select id="selectForecastPopList"  parameterType="com.cep.forecast.vo.ForecastSearchVO" resultType="egovMap">
+		SELECT 
+			SM.SP_KEY              AS SP_KEY
+		     , SM.AC_KEY              AS AC_KEY
+		     , SM.SP_BUSI_NM          AS SP_BUSI_NM
+		     , SM.PM_KEY              AS PM_KEY
+		     , SM.PM_DETAIL           AS PM_DETAIL
+		     , SM.PM_DETAIL2          AS PM_DETAIL2
+		     , SM.FC_SJ_CONF_QT       AS FC_SJ_CONF_QT
+		    <!--  , SM.FC_BUY_AMOUNT       AS FC_BUY_AMOUNT -->
+		     <!-- , SM.FC_SALES_DT         AS FC_SALES_DT
+		     , SM.FC_COLLECT_DT       AS FC_COLLECT_DT
+		     , SM.FC_BUY_PAY_DT       AS FC_BUY_PAY_DT -->
+		     , SM.SP_STATE            AS SP_STATE
+		  <!--    , SM.SALES_AC_KEY        AS SALES_AC_KEY
+		     , SM.BUY_AC_KEY          AS BUY_AC_KEY -->
+		     , SM.REMARK              AS REMARK
+		     , SM.BD_YN					AS BD_YN
+		     , SM.REG_TM              AS REG_TM
+		     , SM.REG_EMP_KEY         AS REG_EMP_KEY
+		     , SM.MOD_DT              AS MOD_DT
+		     , SM.MOD_TM              AS MOD_TM
+		     , SM.MOD_EMP_KEY         AS MOD_EMP_KEY
+			 , AC.AC_NM               AS MF_AC_NM
+			 /*, PM.PM_NM_CD            AS PM_NM */
+			 /*, PM.PM_DETAIL_CLASS_CD  AS PM_DETAIL_CLASS_CD */
+			<!--  , SAC.AC_NM              AS SALES_AC_NM
+			 , BAC.AC_NM              AS BUY_AC_NM -->
+			 , SM.SALES_CT_CLASS      AS SALES_CT_CLASS
+			 , EP.EMP_NM				AS EMP_NM
+			 , (SELECT SUM(SL.FC_SALES_AMOUNT) FROM SP_SALES_TB SL WHERE SM.SP_KEY = SL.SALES_SP_FK_KEY AND SL.DELETE_YN = 'N') AS FC_SALES_AMOUNT
+	         , (SELECT SUM(SL.FC_BUY_AMOUNT) FROM SP_PURCHASE_TB SL WHERE SM.SP_KEY = SL.BUY_SP_FK_KEY AND SL.DELETE_YN = 'N') AS FC_BUY_AMOUNT
+	         , SS.SALES_AC_KEY			AS SALES_AC_KEY
+	         , (SELECT AC.AC_NM FROM CMM_ACCOUNT_TB AC WHERE AC.AC_KEY = SS.SALES_AC_KEY)		AS SALES_AC_NM
+	         , SM.FC_SALES_PROFIT AS FC_SALES_PROFIT
+	         , SM.SP_START_DT			AS SP_START_DT
+	         , SM.SP_END_DT				AS SP_END_DT
+		FROM SP_MAIN_TB          SM
+			 LEFT OUTER JOIN CMM_ACCOUNT_TB AC    ON SM.AC_KEY = AC.AC_KEY 
+			 /* JOIN PM_PRODUCT_MNG_TB PM ON SM.PM_KEY = PM.PM_KEY */
+			 <!-- LEFT JOIN CMM_ACCOUNT_TB SAC   ON SM.SALES_AC_KEY = SAC.AC_KEY
+			 LEFT JOIN CMM_ACCOUNT_TB BAC   ON SM.BUY_AC_KEY = BAC.AC_KEY -->
+			 LEFT OUTER JOIN CMM_EMPLOYEE_TB EP   ON SM.REG_EMP_KEY = EP.EMP_KEY 
+			 LEFT OUTER JOIN CMM_DEPARTMENT_TB DP	ON EP.DEPT_KEY = DP.DEPT_KEY
+			 LEFT OUTER JOIN SP_SALES_TB SS ON SM.SP_KEY = SS.SALES_SP_FK_KEY
+		WHERE SM.DELETE_YN = 'N'
+			
+			<if test="salesEmpKey != null and salesEmpKey != ''">
+				AND SM.REG_EMP_KEY = #{salesEmpKey}
+			</if>
+		
+		  	<if test="spState != null and spState != ''" >
+		  		AND SM.SP_STATE = #{spState}
+		  	</if>
+		  	
+		  	<if test="spState == null or spState == ''" >
+		  		<!-- 2차 오픈 -->
+		  		AND SP_STATE NOT IN ("S")
+		  		AND SP_STATE NOT IN ("F")
+		  	</if>
+		  	
+		  	<!-- <if test="searchFromDt == null or searchFromDt == ''">
+		  		AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = YEAR(NOW()), YEAR(NOW()) BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4))
+		  	</if> -->
+		  	
+		  	<if test="searchFromDt != null and searchFromDt != ''">
+		  		AND IF (SALES_CT_CLASS = 'P', LEFT(SS.FC_SALES_DT, 4) = #{searchFromDt}, #{searchFromDt} BETWEEN LEFT(SM.SP_START_DT, 4) AND LEFT(SM.SP_END_DT, 4))
+		  	</if>
+		  	
+		  	<if test="fcSjConfQt != null and fcSjConfQt != 0">
+		  		AND SM.FC_SJ_CONF_QT = #{fcSjConfQt}
+		  	</if>
+		  
+		  	<if test="pjFlag != null and pjFlag != ''" >
+		  		AND SM.SALES_CT_CLASS = #{pjFlag}
+		  	</if>
+		  	
+		  	<if test="pmFlag != null and pmFlag != ''" >
+		  		AND SM.PM_KEY = #{pmFlag}
+		  	</if>
+		  	
+		  	<if test="deptKey != null and deptKey != ''" >
+		  		AND (DP.DEPT_KEY = #{deptKey} OR DP.DEPT_UP_KEY = #{deptKey})
+		  	</if>
+		  
+		  	<if test="searchFlag != null and searchFlag != ''" >
+			
+				<if test="searchFlag.equals('AC')" >
+	  				AND AC.AC_NM LIKE CONCAT('%', #{searchValue}, '%')
+	  			</if>
+			  	
+				<if test="searchFlag.equals('BN')" >
+		  			AND SM.SP_BUSI_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
+		  		<if test="searchFlag.equals('SE')" >
+		  			AND EP.EMP_NM LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
+		  		<if test="searchFlag.equals('SP')" >
+		  			AND SM.SP_KEY LIKE CONCAT('%', #{searchValue}, '%')
+		  		</if>
+		  		
+		  </if>
+		  
+		ORDER BY SM.SP_STATE ASC, SM.FC_SJ_CONF_QT DESC
+	
 	</select>
 	
 	<select id="makeSpKey" resultType="String">
@@ -1093,6 +1202,7 @@
 			, SBT.BD_GB_FINISH_YN		AS BD_GB_FINISH_YN
 			, SBT.BD_GB_REQ_DT			AS BD_GB_REQ_DT
 			, SBT.REG_EMP_KEY				AS REG_EMP_KEY
+			, SST.FC_SALES_AMOUNT		AS FC_SALES_AMOUNT
 		FROM SP_MAIN_TB	 SMT
 		LEFT OUTER JOIN SP_BIDDING_TB SBT ON SMT.SP_KEY = SBT.SP_KEY AND SBT.DELETE_YN = 'N'
 		LEFT OUTER JOIN SP_SALES_TB SST ON SMT.SP_KEY = SST.SALES_SP_FK_KEY

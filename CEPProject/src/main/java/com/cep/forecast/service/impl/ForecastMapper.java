@@ -16,6 +16,8 @@ public interface ForecastMapper {
 	
 	public List<EgovMap> selectForecastList(ForecastSearchVO searchVO) throws Exception;
 	
+	public List<EgovMap> selectForecastPopList(ForecastSearchVO searchVO) throws Exception;
+	
 	public String makeSpKey() throws Exception;
 	
 	public void insertBasic(ForecastVO forecastVO) throws Exception;

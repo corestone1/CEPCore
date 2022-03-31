@@ -72,6 +72,12 @@ public class ForecastServiceImpl implements ForecastService {
 	}
 	
 	@Override
+	public List<EgovMap> selectForecastPopList(ForecastSearchVO searchVO) throws Exception {
+		
+		return mapper.selectForecastPopList(searchVO);
+	}
+	
+	@Override
 	public String insertBasic(ForecastVO forecastVO) throws Exception {
 		
 		

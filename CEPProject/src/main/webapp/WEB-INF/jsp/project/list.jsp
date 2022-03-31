@@ -601,7 +601,10 @@
 									<td align="right" class="listtd"><c:out value="${displayUtil.commaStr(result.totalBuyAmount) }" /></td>
 									<td align="center" class="listtd"><c:out value="${endDate - startDate + 1}"/>일</td>
 		            				<td align="center" class="listtd"><c:out value="${endDate - nowDate + 1 > 0? endDate - nowDate + 1 : 0}"/>일</td>
-		            				<td align="center" class="listtd"><c:out value="${result.pjStatusCdNm}"/><input type="hidden" id="pjStatusCd${status.count }" value="${result.pjStatusCd }" /></td>
+		            				<td align="center" class="listtd">
+		            					<c:out value="${result.pjStatusCdNm}"/>
+		            					<input type="hidden" id="pjStatusCd${status.count }" value="${result.pjStatusCd }" />
+		            				</td>
 		            				<td align="center" class="listtd"><c:out value="${result.pjSaleEmpKey}"/></td>
 		            			</tr>
 		            			<c:set var="salesSum" value="${salesSum + result.totalSalesAmount }" />

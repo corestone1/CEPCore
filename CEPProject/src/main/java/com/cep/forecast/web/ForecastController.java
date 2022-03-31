@@ -527,7 +527,7 @@ public class ForecastController {
 				// 최초 조회 시 자신의 건만 보이게...
 				model.put("empKey", sessionMap.get("empKey"));
 			}
-			model.put("forecastList", service.selectForecastList(searchVO));
+			model.put("forecastList", service.selectForecastPopList(searchVO));
 			model.put("displayUtil", new CepDisplayUtil());
 	//		model.put("spKeyDomId", searchVO.getSpKeyDomId());
 	//		model.put("spBusiNmDomId", searchVO.getSpBusiNmDomId());

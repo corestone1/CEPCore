@@ -692,22 +692,24 @@
 						<c:choose>
 							<c:when test='${gbInfo.gbIssueStatus eq "I"}'>
 								<button type="button" class="altMail veralingB" onclick="javascript:fnGbPublish();">
-									<img src="<c:url value='/images/pop_btn_req.png'/>" />
-								</button>
-								<button type="button" class="veralingB" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/pop_btn_mod.png'/>" />
+									<img src="<c:url value='/images/btn_stock_publish.png'/>" />
 								</button>
 							</c:when>
 							<c:when test='${gbInfo.gbIssueStatus eq "R"}'>
 								<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
 								<button type="button" class="altMail veralingB" onclick="javascript:fnGbEnd();">
-									<img src="<c:url value='/images/pop_btn_fin.png'/>" />
+									<img src="<c:url value='/images/btn_stock_end.png'/>" />
 								</button>
 								<% } %>
 								<button type="button" class="veralingB" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/pop_btn_mod.png'/>" />
+									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
 								</button>
 							</c:when>
+							<c:otherwise>
+								<button type="button" onclick="javascript:fnGbModify();">
+									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
+								</button>
+							</c:otherwise>
 						</c:choose>
 					</div>
 					<div class="floatN floatC"></div>
