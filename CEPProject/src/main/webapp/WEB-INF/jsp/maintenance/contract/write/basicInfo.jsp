@@ -106,7 +106,7 @@
 		}
 		.popContainer .contents textarea {
 			width: calc(100% - 43px);
-			height: 60px;
+			height: 100px;
 			border: 1px solid #e9e9e9;
 			padding: 0 10px;
 			background-color: #fff;
@@ -162,7 +162,7 @@
 
 	/* 파일업로드 관련 */
 		#fileForm {
-			position: absolute;
+			/* position: absolute; */
 			bottom: -248px;;
 			left: 46px;
 			z-index: 99;
@@ -801,7 +801,8 @@
 		//Forecast연계
 		function fn_forecastPop() {
 			//window.open('/forecast/popup/searchList.do?returnType=F&returnKey=mtLinkCtKey&returnNm=mtLinkCtKeyNm&pjFlag=M','FORECAST_LIST','width=1000px,height=713px,left=600');
-			window.open('/forecast/popup/searchList.do?returnType=F2&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1372px,height=713px,left=600');
+			//window.open('/forecast/popup/searchList.do?returnType=F2&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1372px,height=713px,left=600');
+			window.open('/forecast/popup/searchList.do?returnType=F&returnFunctionNm=pop_forecastCall&pjFlag=M','FORECAST_LIST','width=1372px,height=713px,left=600');
 		}
 		
 		function pop_forecastCall(returnKey,returnNm, salesAmount) {
@@ -855,6 +856,11 @@
 		            	
 		            	//매출금액 셋팅
 		            	$('#mtAmount').val(addCommas(salesAmount));
+		            	//비고 셋팅
+		            	console.log("=============>"+data.forecastVO.remark);
+		            	$("#mtStartDt").val(addDateMinus(data.forecastVO.spStartDt));
+		            	$("#mtEndDt").val(addDateMinus(data.forecastVO.spEndDt));
+		            	$("#remark").val(data.forecastVO.remark);
 		            	
 		            },
 		        	error: function(request, status, error) {
@@ -1122,8 +1128,8 @@
 						<tr>
 							<td class="tdTitle"><label>*</label> 유지보수기간</td>
 							<td class="tdContents">
-								<input type="text" name="mtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/>" required/> ~ 
-								<input type="text" name="mtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/>" required/>
+								<input type="text" id="mtStartDt" name="mtStartDt" placeholder="from" class="calendar fromDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtStartDt)}"/>" required/> ~ 
+								<input type="text" id="mtEndDt" name="mtEndDt" placeholder="to" class="calendar toDt" value="<c:out value="${displayUtil.displayDate(basicContractInfo.mtEndDt)}"/>" required/>
 							</td>
 						</tr>
 						<tr>
@@ -1190,7 +1196,7 @@
 						</tr>
 						<tr>
 							<td class="tdTitle veralignT">&nbsp; 비고</td>
-							<td class="tdContents" ><textarea name="remark"><c:out value="${basicContractInfo.remark}"/></textarea></td>
+							<td class="tdContents" ><textarea id="remark" name="remark"><c:out value="${basicContractInfo.remark}"/></textarea></td>
 						</tr>				
 								
 					</table>

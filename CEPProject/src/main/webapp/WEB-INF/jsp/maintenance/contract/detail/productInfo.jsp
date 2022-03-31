@@ -429,6 +429,17 @@
 			width: 180px;
 			max-width: 180px;
 		}
+		/* 파랑버튼이미지  */
+		.blueBtnStyle2 {
+			width: 100px;
+		    height: 22px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
+		    border-radius: 35px
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -1134,7 +1145,7 @@
 		}
 		
 		//매출처별 계약 추가.
-		function fn_addView(btnOption){
+		function fn_addView_go(btnOption){
 			var url = '/maintenance/contract/write/productInfoView.do';
 			var dialogId = 'program_layer';
 			var varParam = {
@@ -1154,6 +1165,32 @@
 		}
 		function fnViewApproval(mtIntegrateKey) {
 			window.open("/maintenance/contract/viewApproval.do?mtIntegrateKey="+mtIntegrateKey);
+		}
+		
+		function goForcast(spKey) {
+			var url1 = '/forecast/write/basic.do';
+			var dialogId1 = 'program_layer';
+			var varParam1 = {'spKey' : spKey};
+			
+			var button1 = new Array;
+			button1 = [];
+			showModalPop(dialogId1, url1, varParam1, button1, '', 'width:1144px;height:708px');
+		}
+		
+		function fn_addView(link){
+			
+			if(link == "forecastList") {
+				location.href="<c:url value='/forecast/list.do'/>";
+			} else {
+				var url = '/forecast/write/'+link+'.do';
+				var dialogId = 'program_layer';
+				
+				var varParam = {'spKey' : $('#m_ipt_spKey').val(), "workClass":$("#workClass").val()};
+				
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			}
 		}
 	</script>
 </head>
@@ -1190,7 +1227,10 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+									<td>
+										<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>										
+										<%-- <button type="button" title="forecast정보" class="blueBtnStyle2" onclick="goForcast('${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}')">forecast정보</button> --%>						
+									</td>
 								</tr>
 								<tr>
 									<td>PROJECT명</td>
@@ -1510,7 +1550,7 @@
 					<div class="stitle cg colorBlack">
 						매출계약정보
 						<%-- <c:if test='${sessionScope.userInfo.empKey == basicContractInfo.regEmpKey}'>
-						<img class="veralignT" src="<c:url value='/images/btn_add-pop.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addView('newOrder')"/>
+						<img class="veralignT" src="<c:url value='/images/btn_add-pop.png'/>" style="cursor: pointer;vertical-align: middle;" onclick="fn_addView_go('newOrder')"/>
 						</c:if> --%>
 						
 					</div>
@@ -1636,7 +1676,7 @@
 					</div>
 					<div class="stitle cg colorBlack floatL">
 						제품정보
-						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/> --%>
+						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView_go()"/> --%>
 					</div>
 					<%-- <div class="stitle2 floatR">
 						제품총 합계 : <input type="text" id="productTotalAmout" class="pname" value="<c:out value="${displayUtil.commaStr(mtPmTotalAmount)}"/>" readonly/>

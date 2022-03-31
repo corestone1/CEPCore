@@ -392,6 +392,17 @@
 			background-color: #fff;
 			/* color: #0e8a67; */
 		}
+		/* 파랑버튼이미지  */
+		.blueBtnStyle2 {
+			width: 100px;
+		    height: 22px;
+		    background-color: #91a6f2;
+		    color: #ffffff;
+		    border: 1px solid #91a6f2;
+		    padding-bottom: 2px;
+		    vertical-align: top;
+		    border-radius: 35px
+		}
 	</style>
 	<script>
 		$(document).ready(function() {
@@ -1001,7 +1012,33 @@
 		function fnViewApproval(mtIntegrateKey) {
 			window.open("/maintenance/contract/viewApproval.do?mtIntegrateKey="+mtIntegrateKey);
 		}
+
 		
+		function goForcast(spKey) {
+			var url1 = '/forecast/write/basic.do';
+			var dialogId1 = 'program_layer';
+			var varParam1 = {'spKey' : spKey};
+			
+			var button1 = new Array;
+			button1 = [];
+			showModalPop(dialogId1, url1, varParam1, button1, '', 'width:1144px;height:708px');
+		}
+		
+		function fn_addView(link){
+			
+			if(link == "forecastList") {
+				location.href="<c:url value='/forecast/list.do'/>";
+			} else {
+				var url = '/forecast/write/'+link+'.do';
+				var dialogId = 'program_layer';
+				
+				var varParam = {'spKey' : $('#m_ipt_spKey').val(), "workClass":$("#workClass").val()};
+				
+				var button = new Array;
+				button = [];
+				showModalPop(dialogId, url, varParam, button, '', 'width:1144px;height:708px'); 
+			}
+		}
 	</script>
 </head>
 <body>
@@ -1026,7 +1063,10 @@
 							<table class="bsc" id="selectBasicTable">
 								<tr>
 									<td>FORECAST명</td>
-									<td><c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/></td>
+									<td>
+										<c:out value="${basicContractInfo.mtForcastLinkVo.mtLinkCtKeyNm}"/>										
+										<%-- <button type="button" title="forecast정보" class="blueBtnStyle2" onclick="goForcast('${basicContractInfo.mtForcastLinkVo.mtLinkCtKey}')">forecast정보</button> --%>						
+									</td>
 								</tr>
 								<tr>
 									<td>PROJECT명</td>
@@ -1338,7 +1378,7 @@
 				<div id="prodList">
 					<div class="stitle cg colorBlack floatL" style="margin-top: 26px;">
 						매출정보
-						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView()"/> --%>
+						<%-- <img class="veralignT" src="<c:url value='/images/btn_add.png'/>" style="cursor: pointer;" onclick="fn_addView2()"/> --%>
 						<c:if test="${null !=salesOrderSelectBox && salesOrderSelectBox.size()>1}">
 						<select id="m_mtSaveOrderAcKey" name="m_mtSaveOrderAcKey" style="width:200px;height: 30px;">
 							<option value="">전체</option>														

@@ -112,7 +112,7 @@
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			/* resize: none; */
+			resize: vertical;
 		}
 		.popContainer .contents td.btnFc {			
 			padding-bottom: 12px;
@@ -141,19 +141,20 @@
 			vertical-align: middle;
       	} 
 		.popContainer .contents .btnWrap {
-			margin : 10px 48px 9px 48px;
+			margin : 22px 48px 9px 48px;
 			height : 10px;
-			width: calc(100% - 86px);
+			width: calc(100% - 46px);
+			position: inherit !important;
 		}
 		.btnCenter {
 			width : calc(100% - 49px);
 			text-align: center;
-			margin-left: 19px;
+			margin-left: 4px;
 		}
 
 	/* 파일업로드 관련 */
 		#fileForm {
-			position: absolute;
+			/* position: absolute; */
 			bottom: 75px;;
 			left: 41px;
 			z-index: 99;
@@ -976,8 +977,7 @@
 				<input type="hidden" name="fileKey" value=""/>
 				<input type="hidden" name="fileOrgNm" value=""/>
 			</form:form>
-		</div>
-		<div class="btnWrap floatL">
+			<div class="btnWrap floatL">
 			<div class="floatL btnCenter">				
 				<button type="button" onclick="fn_saveBtn();"><img src="<c:url value='/images/btn_save.png'/>" /></button>
 			</div>
@@ -995,6 +995,8 @@
 			</div> --%>
 			<div class="floatN floatC"></div>
 		</div>
+		</div>
+		
 	</div>
 </div>	
 	

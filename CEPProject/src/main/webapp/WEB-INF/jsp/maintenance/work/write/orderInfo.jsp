@@ -160,9 +160,10 @@
 			padding-bottom: 0px;
 		}
 		.popContainer .contents .btnWrap {
-			margin: 20px 0px 14px 49px;			
+			margin: 20px 0px 14px 45px;			
 			width : 842px;
-			height : 32px;
+			height : 32px;			
+			position: static !important;
 		}
 		.calculate {
 			text-align: right !important;

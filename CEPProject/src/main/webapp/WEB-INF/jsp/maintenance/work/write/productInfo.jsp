@@ -126,7 +126,7 @@
 			background-color: #fff;
 			font-size: 14px;
 			margin-bottom: 0px;
-			/* resize: none; */
+			resize: vertical; 
 		}
 		.popContainer .bottomBtn {
 			position: absolute;
@@ -171,12 +171,12 @@
 		.btnWrap {
 			/* margin : 20px 0px -14px 49px;			
 			width : 842px; */
-			height : 50px;
+			height : 54px;
 			background-color: #f6f7fc;
 			width: calc(100% - 290px);
 			margin-top: 613px;
 			margin-left: 200px;
-			padding-top:20px;
+			padding-top:16px;
 			padding-left: 45px;
 			padding-right: 45px;
 			top:25px;
