@@ -4030,7 +4030,7 @@ public class MtContractController {
 				if(!"".equals(CepStringUtil.getDefaultValue(gbKey, ""))) {
 					//메일전송
 					
-					dept = DeptInfo.DEPT_OPER_L2.getValue();
+					dept = DeptInfo.DEPT_OPER_L3.getValue();
 					toList = new ArrayList<String>();
 					
 					for(Object obj : comService.selectDeptEmployeeList(dept)) {
