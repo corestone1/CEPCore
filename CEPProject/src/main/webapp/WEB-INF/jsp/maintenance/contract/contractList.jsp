@@ -163,7 +163,11 @@
 		.middle table tbody td:nth-child(13),
 		.middle table thead th:nth-child(14),
 		.middle table tbody td:nth-child(14) {
-			width: 130px;
+			width: 124px;
+		}
+		.middle table thead th:nth-child(14),
+		.middle table tbody td:nth-child(14) {
+			padding-right: 16px;
 		}
 		.middle table tbody tr td > img {
 			width: 25px;
