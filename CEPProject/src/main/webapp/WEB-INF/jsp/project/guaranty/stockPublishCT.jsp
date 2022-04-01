@@ -699,14 +699,13 @@
 									<img src="<c:url value='/images/btn_stock_end.png'/>" />
 								</button>
 								<% } %>
-								<button type="button" class="veralignB" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
-								</button>
 							</c:when>
 							<c:otherwise>
-								<button type="button" onclick="javascript:fnGbModify();">
+								<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
+								<button type="button" onclick="javascript:fnGbEnd();">
 									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
 								</button>
+								<% } %>
 							</c:otherwise>
 						</c:choose>
 					</div>
@@ -731,9 +730,7 @@
 		<div style="width: 307px; clear:both;" id="fileWrap">
 			<c:forEach var="result" items="${fileList }" varStatus="status">
 				<input class="upload-name cursorP ftw200" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/>
-				<c:if test='${gbInfo.gbIssueStatus ne "Y"}'>
-					<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
-				</c:if>
+				<a class="close cursorP" onclick="fn_deleteFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm }" />')"><img src="/images/btn_close.png" /></a>
 				<c:if test="${status.last eq false}"><br /></c:if>
 			</c:forEach>
 		</div>

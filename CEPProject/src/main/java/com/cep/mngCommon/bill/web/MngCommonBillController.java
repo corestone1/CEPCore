@@ -521,6 +521,7 @@ public class MngCommonBillController {
 		MultipartFile lmpfExcel = multiRequest.getFile("excelFile");
 		
 		String lstExcelPath = filePath + "pcBill" + File.separator;
+				//filePath + "pcBill" + File.separator;
 				//"D:/tmp/" + "pcBill" + File.separator;
 		
 		File pathFile = new File(lstExcelPath);

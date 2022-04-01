@@ -26,6 +26,7 @@ public class MngCommonBillVO implements Serializable {
 	private int	 billTotalAmount;
 	
 	private String billIssueDt;
+	private String writeDt;
 	private String billIssueEmail;
 	private String billIssueType; 
 	private String billIssueStatus;
@@ -189,6 +190,14 @@ public class MngCommonBillVO implements Serializable {
 	 */
 	public void setBillIssueDt(String billIssueDt) {
 		this.billIssueDt = billIssueDt;
+	}
+	
+	public String getWriteDt() {
+		return writeDt;
+	}
+	
+	public void setWriteDt(String writeDt) {
+		this.writeDt = writeDt;
 	}
 	/**
 	 * @return the billIssueEmail

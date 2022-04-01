@@ -149,7 +149,7 @@ public class MngProjectBillServiceImpl implements MngProjectBillService {
 				String subject = mngProjectBillVO.getPjNm() + "건 계산서 발행 요청";
 				String content = String.join(
 										System.getProperty("line.separator"), 
-										"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 계산서 발행 요청 정보가 있습니다.<br>요청인: " + name + ",",
+										"[" + mngProjectBillVO.getPjKey() + "]" + mngProjectBillVO.getPjNm() + "Project 건에 계산서 발행 요청 정보가 있습니다.<br>(요청인: " + name + ",",
 										" 요청 일자: " + format.format(System.currentTimeMillis()) + ")<br><br>"); 
 				
 				mailVO.setSubject(subject);

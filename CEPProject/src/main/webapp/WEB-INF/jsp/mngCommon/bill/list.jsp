@@ -366,7 +366,7 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="middle">
-					<table class="textalignC ftw200" id="fl">
+					<table class="textalignC ftw200 excelSheet" id="fl">
 						<thead class="ftw400">
 							<tr>
 								<th scope="row">선택</th>
@@ -388,13 +388,13 @@
 						<tbody>
 							<c:forEach var="result" items="${billList}" varStatus="status">
 								<tr>
-									<td></td>
+									<td><input type="hidden" name="billNo" value="${result.billNo }" /></td>
 									<td><c:out value="${status.count}"/></td>
 									<td>
 										<c:if test="${result.classCd eq 'PC' }">매입</c:if>
 										<c:if test="${result.classCd eq 'SD' }">매출</c:if> 
 									</td>
-									<td><span style="width:83px;"><c:out value="${displayUtil.displayDate(result.billIssueDt)}"/></span></td>
+									<td><span style="width:83px;"><c:out value="${displayUtil.displayDate(result.writeDt)}"/></span></td>
 									<td><span title="${result.acKey}" style="width:124px;"><c:out value="${result.acKey}"/></span></td>
 									<td align="left"><span title="${result.acNm}" style="width:160px;"><c:out value="${result.acNm}"/></span></td>
 									<%-- onclick="javascript:fnViewDetail('${result.billNo}', '${result.billFkPjKey }');" --%>
@@ -437,7 +437,7 @@
 						<button type="button" value="계산서 일괄 등록" onclick="javascript:fnViewBillbatchInsertPop();"><img class="cursorP" src="<c:url value='/images/btn_bill_batch.png'/>" /></button>
 						<!-- <button type="button" value="수정"><img class="cursorP" src="<c:url value='/images/btn_mod.png'/>" /></button> -->
 						<button type="button" id="btnDelete" value="삭제"><img class="cursorP" src="<c:url value='/images/btn_del.png'/>" /></button>
-						<button type="button" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+						<button type="button" id="excelExport" value="엑셀 다운로드"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
 					</div>
 				</div>
 			</div>

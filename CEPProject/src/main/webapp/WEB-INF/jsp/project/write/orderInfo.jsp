@@ -375,6 +375,8 @@
 				clone.find('label[for="'+ type + 'List-' + lastNum + '-' + splitName+'"]').attr('for', name + splitName);				
 	    	} 
 	    	
+	    	clone.find('input[name="orderReceiptDt"]').removeClass("hasDatepicker");
+	    	
 	    	//복제하는 필드에 값 추가(신규 생성 제품인지 판별)
 	    	clone.find('input[name="orderSeq"]').after("<input type='hidden' name='isNew' value='' />")
 	    	
@@ -426,7 +428,7 @@
 				var totalProductAmount = deleteUprice*deleteQuantity;
 				
 				if(confirm(productName+" 제품정보를 삭제하시겠습니까?")) {
-					if(totalProductAmount > (removeCommas($("#yetPaymentAmount").val()) * 1)) {
+					if(totalProductAmount > (removeCommas($("#yetPaymentAmount").val()) * 1) && $("#pjOrderKey").val().length != 0) {
 						alert("해당 발주의 미 지급 금액보다 삭제하고자 하는 발주 제품 금액이 더 큽니다.");
 					} else {
 						//삭제key list를 만든다.
@@ -441,6 +443,7 @@
 						table.remove();
 						
 						$('#'+type+'Length').val($('#'+type+'Length').val()*1 - 1);
+						
 					}
 				} 
 				//console.log(prodLength);
@@ -456,11 +459,23 @@
 			deleteUprice = removeCommas($('#prodList-'+num+'-orderUprice').val())*1;
 			deleteQuantity = removeCommas($('#prodList-'+num+'-orderQuantity').val())*1;
 			
-			//전체금액에서 삭제금액을 뺀다.
-			$('#orderTotalAmount').val(addCommas(totalAmount-(deleteUprice*deleteQuantity)));
 			
-			// 미 지급금액에서 삭제 금액을 뺀다.
-			$("#yetPaymentAmount").val(Number($("#yetPaymentAmount").val().replaceAll(",","")) - (deleteUprice*deleteQuantity));
+			var updateSum = 0;
+			$("input[name='totalAmount']").each(function() {
+				updateSum += removeCommas($(this).val()) * 1;
+			});
+			
+			if(totalAmount == updateSum) {
+				//전체금액에서 삭제금액을 뺀다.
+				$('#orderTotalAmount').val(addCommas(totalAmount-(deleteUprice*deleteQuantity)));
+				
+				// 미 지급금액에서 삭제 금액을 뺀다.
+				$("#yetPaymentAmount").val(Number($("#yetPaymentAmount").val().replaceAll(",","")) - (deleteUprice*deleteQuantity));
+				
+			}
+			
+			$("#productSumWrap").html("<label style='font-size:14px; color:#f59348'>&nbsp;&nbsp;※ 제품합계 : </label><input type='text' id='productSum' value='" + addCommas(updateSum-(deleteUprice*deleteQuantity)) + "' readonly />");
+			
 			
 		}
 		
@@ -562,10 +577,14 @@
 					
 				} else {
 					//발주합계 금액 계산
-					$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
+					//$('#orderTotalAmount').val(addCommas(orderTotalAmount+(orderAmount-beforeAmount)));
+					$('#orderTotalAmount').val(addCommas(updateSum));
+					$('#yetPaymentAmount').val(updateSum);
 				}
 				
-				$("#productSum").val(addCommas(updateSum));
+				//$("#productSum").val(addCommas(updateSum));
+				
+				$("#productSumWrap").html("<label style='font-size:14px; color:#f59348'>&nbsp;&nbsp;※ 제품합계 : </label><input type='text' id='productSum' value='" + addCommas(updateSum) + "' readonly />");
 			});
 			
 		}
@@ -834,8 +853,7 @@
 				
 			} else {
 				$("#productSumWrap").html("<label style='font-size:14px; color:#f59348'>&nbsp;&nbsp;※ 제품합계 : </label><input type='text' id='productSum' value='" + addCommas(totalOrderUprice) + "' readonly />");
-			}
-			
+			} 
 			
 			fn_calculate();
 			

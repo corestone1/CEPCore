@@ -657,7 +657,8 @@
 				url = "finish";
 			}
 			
-			if(!(statusCd).includes(pstId.substr(pstId.length-2,2)) && pstId.substr(pstId.length-2,2) != 'WK' && pstId.substr(pstId.length-2,2) != 'CT') {
+			if(!(statusCd).includes(pstId.substr(pstId.length-2,2)) && pstId.substr(pstId.length-2,2) != 'WK') {
+					//&& pstId.substr(pstId.length-2,2) != 'CT') {
 				if(confirm(pstNm + " 정보가 없습니다. 프로젝트 정보 등록 화면으로 이동하시겠습니까?")) {
 					var url = '/project/write/'+url+'Info.do';
 					var dialogId = 'program_layer';

@@ -669,14 +669,13 @@
 									<img src="<c:url value='/images/btn_stock_end.png'/>" />
 								</button>
 								<% } %>
-								<button type="button" onclick="javascript:fnGbModify();">
-									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
-								</button>
 							</c:when>
 							<c:otherwise>
-								<button type="button" onclick="javascript:fnGbModify();">
+								<% if(session.getAttribute("empAuthCd").equals("EMAU1001")) { %>
+								<button type="button" onclick="javascript:fnGbEnd();">
 									<img src="<c:url value='/images/btn_stock_mod.png'/>" />
 								</button>
+								<% } %>
 							</c:otherwise>
 						</c:choose>
 						</c:if>

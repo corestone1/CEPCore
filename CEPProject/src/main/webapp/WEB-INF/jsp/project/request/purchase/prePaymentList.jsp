@@ -322,7 +322,7 @@
 									(예상 일자: ${displayUtil.displayDate(result.paymentCallDt) })
 								</c:if>
 								<c:if test="${result.paymentStatusCd eq 'PYST4000' }">
-									지급 완료
+									지급 완료(${displayUtil.displayDate(result.paymentDt) })
 								</c:if>
 							</td>
 							<% } %>

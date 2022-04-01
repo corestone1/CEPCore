@@ -223,9 +223,9 @@
 										<td>
 											${result.orderProduct }
 										</td>
-										<td class="textalignR">${displayUtil.commaStr(result.orderSum) }</td>
+										<td class="textalignR">${displayUtil.commaStr(result.orderAmount) }</td>
 									</tr>
-									<c:set var= "pSum" value="${pSum + result.orderSum}"/>
+									<c:set var= "pSum" value="${pSum + result.orderAmount}"/>
 								</c:forEach>
 								<tr>
 									<td colspan="8" class="textalignR">매입액 합계</td>
