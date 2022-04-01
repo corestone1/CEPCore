@@ -635,7 +635,7 @@ public class ForecastServiceImpl implements ForecastService {
 			String subject = forecastBiddingVO.getSpBusiNm() + " 건 입찰 보증 증권 발행 완료";
 			String content = String.join(
 									System.getProperty("line.separator"), 
-									"["+forecastBiddingVO.getSpKey()+"] " +forecastBiddingVO.getSpBusiNm()+" Forecast 건에 보증 증권 발행이 완료되었습니다. 완료인: "+name+",",
+									"["+forecastBiddingVO.getSpKey()+"] " +forecastBiddingVO.getSpBusiNm()+" Forecast 건에 보증 증권 발행이 완료되었습니다.<br>(완료인: "+name+",",
 									" 완료 일자: "+format.format (System.currentTimeMillis())+")<br><br>");
 			
 			mailVO.setSubject(subject);

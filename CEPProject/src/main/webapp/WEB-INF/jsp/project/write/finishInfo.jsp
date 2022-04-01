@@ -270,11 +270,49 @@
 		}
 		
 		function fnBackProcess() {
-			if(confirm("발주 상태로 되돌리겠습니까?")) {
+			if(confirm("발주 상태로 되돌리겠습니까? \n(등록한 정보는 추후 재등록 시 확인 가능)")) {
+				var object = {};
 				var form = document.infoForm;
 				form.pjStatusCd.value = "PJST3000";
 				
-				fn_save();
+				var formData = $("#infoForm").serializeArray();
+				
+				for (var i = 0; i<formData.length; i++){
+				    object[formData[i]['name']] = formData[i]['value'];
+				    if("pjInspectDt" == formData[i]['name']) {
+	                	//날짜 - 제거
+	                	object[formData[i]['name']] = removeData(formData[i]['value'],"-");
+	                } else {
+	                	object[formData[i]['name']] = formData[i]['value'];
+	                }     
+				 }
+				
+				var sendData = JSON.stringify(object);
+				
+				$.ajax({
+					url:"/project/update/basicInfo.do",
+				    dataType: 'json', 
+				    type:"POST",  
+				    data: sendData,
+				 	contentType: "application/json; charset=UTF-8", 
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("AJAX", true);
+						//xhr.setRequestHeader(header, token);
+						
+					},
+				    success:function(response){	
+				    	if(response!= null && response.successYN == 'Y') {
+				    		fn_prevView();
+				    	} else {
+				    		alert("단계 수정이 실패하였습니다.");
+				    	}
+				    },
+					error: function(request, status, error) {
+						if(request.status != '0') {
+							alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
+						}
+					} 
+				});
 			}
 			
 		}
@@ -330,26 +368,27 @@
 			    						} else {
 			    							alert("프로젝트 완료 정보가 수정되었습니다.")
 			    						}
+			    						
+			    						var varParam = {
+											"pjKey":$("#ipt_pjKey").val(),
+											"workClass":$("#workClass").val()
+						    			}
+						    			
+						    			fn_addView(varParam);
+
 			    					} else {
 			    						alert("첨부파일 저장이 실패하였습니다.");
 			    					}
 					    			
-					    			var varParam = {
-										"pjKey":$("#ipt_pjKey").val(),
-										"workClass":$("#workClass").val()
-					    			}
-					    			
-					    			fn_addView(varParam);
-
 			    				}
 			    			});  
 			    		} else {
-			    			if($("#pjInspectDt").val() == null || $("#pjInspectDt").val() == "" || $("#pjInspectDt").val().length == 0) {
+    						if($("#pjInspectDt").val() == null || $("#pjInspectDt").val() == "" || $("#pjInspectDt").val().length == 0) {
 					    		alert("프로젝트 완료 정보가 등록되었습니다.");
 				    		} else {
 				    			alert("프로젝트 완료 정보가 수정되었습니다.");
 				    		}
-			    			
+    						
 			    			var varParam = {
 								"pjKey":$("#ipt_pjKey").val(),
 								"workClass":$("#workClass").val()
@@ -477,7 +516,9 @@
 		</div>
 		<div class="contents">
 			<div>
-				<div onclick="javascript:fnBackProcess();" class="" style="position:absolute; right: 42px;">이전 단계로 되돌리기</div>
+				<c:if test="${resultList[0].pjStatusCd eq 'PJST5000'}">
+					<div onclick="javascript:fnBackProcess();" class="cursorP" style="position:absolute; right: 42px; top: 20px;"><img src="/images/btn_back_status.png" /></div>
+				</c:if>
 				<form id="infoForm" name="infoForm" method="post">
 					<input type="hidden" id="ipt_pjKey" name="pjKey" value="<c:out value="${pjKey}"/>"/>
 					<input type="hidden" id="pjStatusCd" name="pjStatusCd" value="PJST5000" />

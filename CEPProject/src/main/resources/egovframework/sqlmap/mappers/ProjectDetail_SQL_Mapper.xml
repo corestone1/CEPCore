@@ -501,9 +501,22 @@
 	<update id="endGuarantyBond" parameterType="com.cmm.vo.GuarantyBondVO">
 	
 		UPDATE PJ_GUARANTY_BOND_TB
-		SET    GB_PUBLISH_DT = #{gbPublishDt}
+		SET 
+			GB_START_DT   = #{gbStartDt}
+		     , GB_END_DT     = #{gbEndDt}
+		     , GB_RATE       = #{gbRate}
+		     <if test="gbPublishDt != null and gbPublishDt != ''">
+		     , GB_PUBLISH_DT = #{gbPublishDt}
+		     </if>
+		     , GB_INSPECT_DT = #{gbInspectDt}
+		     , GB_REQ_DT = #{gbReqDt}
+		     <if test="gbAmount != null and gbAmount != ''">
 		     , GB_AMOUNT     = #{gbAmount}
-		     , GB_CONTRACT_AMOUNT = #{gbContractAmount}
+		     </if>
+		     <if test="gbContractAmount != null and gbContractAmount != ''">
+		     , GB_CONTRACT_AMOUNT     = #{gbContractAmount}
+		     </if>
+		     , GB_SK_AMOUNT     = #{gbSkAmount}
 		     , GB_ISSUE_STATUS = 'Y'
 		WHERE GB_KEY = #{gbKey}
 		

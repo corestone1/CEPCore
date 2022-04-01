@@ -296,6 +296,7 @@
 		
 		var sendData = JSON.stringify(object);
 		
+		console.log(sendData);
 		if(fnCheckExist(sendData) == true) {
 				//&& fnCheckListExist(billingInfo).length == 0) {
 			$.ajax({

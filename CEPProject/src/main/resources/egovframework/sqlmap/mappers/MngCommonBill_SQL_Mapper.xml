@@ -16,6 +16,7 @@
 			 , BILL_TAX_AMOUNT             /* 세액 - 부가세 포함여부에 따라 계산 필요 , 등록시 포함 필요 */
 			 , BILL_TOTAL_AMOUNT     /* 합계 */
 			 , BILL_ISSUE_DT         /* 계산서 발행일자 */
+			 , WRITE_DT
 			 , BILL_MAPPING_YN
 			 , REMARK                /* 비고 */
 			 , BILL_CT_CLASS_CD                /* 유형 */
@@ -39,6 +40,7 @@
 			 , CBT.BILL_TAX_AMOUNT        AS BILL_TAX_AMOUNT    /* 세액 - 부가세 포함여부에 따라 계산 필요 , 등록시 포함 필요 */
 			 , CBT.BILL_TOTAL_AMOUNT     AS BILL_TOTAL_AMOUNT/* 합계 */
 			 , CBT.BILL_ISSUE_DT            AS BILL_ISSUE_DT         /* 계산서 발행일자 */
+			 , CBT.WRITE_DT            AS WRITE_DT         /* 계산서 작성일자 */
 			 , CBT.BILL_MAPPING_YN          AS BILL_MAPPING_YN
 			 , CBT.REMARK                   AS REMARK                /* 비고 */
 			 , 'PJ'     AS BILL_CT_CLASS_CD                /* 구분 */
@@ -121,6 +123,7 @@
 			 , CBT.BILL_TAX_AMOUNT			AS BILL_TAX_AMOUNT              /* 세액 - 부가세 포함여부에 따라 계산 필요 , 등록시 포함 필요 */
 			 , CBT.BILL_TOTAL_AMOUNT		AS BILL_TOTAL_AMOUNT     /* 합계 */
 			 , CBT.BILL_ISSUE_DT            AS BILL_ISSUE_DT         /* 계산서 발행일자 */
+			 , CBT.WRITE_DT            AS WRITE_DT         /* 계산서 작성일자 */
 			 , CBT.BILL_MAPPING_YN          AS BILL_MAPPING_YN
 			 , CBT.REMARK                   AS REMARK                /* 비고 */
 			 , 'MT'     AS BILL_CT_CLASS_CD                /* 구분 */
@@ -202,6 +205,7 @@
 			 , CBT.BILL_TAX_AMOUNT			AS BILL_TAX_AMOUNT              /* 세액 - 부가세 포함여부에 따라 계산 필요 , 등록시 포함 필요 */
 			 , CBT.BILL_TOTAL_AMOUNT 	AS BILL_TOTAL_AMOUNT     /* 합계 */
 			 , CBT.BILL_ISSUE_DT            AS BILL_ISSUE_DT         /* 계산서 발행일자 */
+			 , CBT.WRITE_DT            AS WRITE_DT         /* 계산서 작성일자 */
 			 , CBT.BILL_MAPPING_YN          AS BILL_MAPPING_YN
 			 , CBT.REMARK                   AS REMARK                /* 비고 */
 			 , CBT.BILL_CT_CLASS_CD     AS BILL_CT_CLASS_CD                /* 구분 */
@@ -414,6 +418,7 @@
 			 , CBT.BILL_TAX_AMOUNT 		AS BILL_TAX_AMOUNT              /* 세액 - 부가세 포함여부에 따라 계산 필요 , 등록시 포함 필요 */
 			 , CBT.BILL_TOTAL_AMOUNT AS BILL_TOTAL_AMOUNT     /* 합계 */
 			 , CBT.BILL_ISSUE_DT            AS BILL_ISSUE_DT         /* 계산서 발행일자 */
+			 , CBT.WRITE_DT            AS WRITE_DT         /* 계산서 작성일자 */
 			 , CBT.BILL_MAPPING_YN          AS BILL_MAPPING_YN
 			 , CBT.REMARK                   AS REMARK                /* 비고 */
 			 , CBT.BILL_CT_CLASS_CD     AS BILL_CT_CLASS_CD                /* 구분 */
@@ -888,6 +893,7 @@
 			, BILL_TAX_AMOUNT
 			, BILL_TOTAL_AMOUNT
 			, BILL_ISSUE_DT
+			, WRITE_DT
 			, BILL_MAPPING_YN
 			, REMARK
 			, REG_DT
@@ -901,6 +907,7 @@
 			, #{billTaxAmount}
 			, #{billTotalAmount}
 			, #{billIssueDt}
+			, #{writeDt}
 			, 'N'
 			, #{remark}
 			, DATE_FORMAT(NOW(),'%Y%m%d')

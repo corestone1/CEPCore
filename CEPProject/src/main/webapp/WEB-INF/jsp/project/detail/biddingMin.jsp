@@ -971,6 +971,17 @@
 	    	fn_check_file('N');
 	    } 
 	             
+	    
+	    function fn_viewBidding() {
+	    	var url = '/forecast/write/biddingInfo.do';
+			var dialogId = 'program_layer';
+			var varParam = {
+				'spKey':"SP220048"
+			}
+			var button = new Array;
+			button = [];
+			showModalPop(dialogId, url, varParam, button, '', 'width:726px;height:495px');
+	    }
 	</script>
 	<form:form id="viewForm" name="viewForm" method="POST">
 		<input type="hidden" name="checkedDel" value="" />

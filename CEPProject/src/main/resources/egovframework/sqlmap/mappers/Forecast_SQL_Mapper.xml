@@ -946,10 +946,10 @@
 			, BD_PROPOSAL_PRESENT_YN = #{bdProposalPresentYn}
 			, BD_PROPOSAL_YN = #{bdProposalYn}
 			, BD_ORIGIN_FILE_YN = #{bdOriginFileYn}
-			<if test='bdGbYn == "Y"'>
+			<!-- <if test='bdGbYn == "Y"'>
 				, BD_GB_FINISH_YN = 'N'
-			</if>
-			<if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
+			</if> -->
+			<!-- <if test="bdGbAmount != null and bdGbAmount != '' and bdGbAmount != 0">
 				, BD_GB_AMOUNT=#{bdGbAmount}
 			</if>
 			<if test="bdGbStartDt != null and bdGbStartDt != ''">
@@ -960,7 +960,7 @@
 			</if>
 			<if test="bdGbFinishDt != null and bdGbFinishDt != ''">
 				, BD_GB_FINISH_DT=#{bdGbFinishDt}
-			</if>
+			</if> -->
 			<if test="bdLimitTm != null and bdLimitTm != ''">
 				, BD_LIMIT_TM=#{bdLimitTm}
 			</if>

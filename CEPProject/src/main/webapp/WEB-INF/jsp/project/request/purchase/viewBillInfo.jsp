@@ -142,7 +142,8 @@
 			var paymentKey = params.get("paymentKey")
 			
 			
-			if(confirm("계산서 "+ $("#billNo").val() + "을 매핑 취소 하시겠습니까?")) {
+			if(confirm("계산서 매핑을 취소하시겠습니까?")) {
+					//+ $("#billNo").val() + "을 매핑 취소 하시겠습니까?")) {
 				var object =  { "pjOrderKey" : orderKey, "billNo" : $("#billNo").val() };
 				
 				var sendData = JSON.stringify(object);
@@ -156,7 +157,8 @@
 					success:function(response) {
 						if(response != null && response.successYN == 'Y') {
 							
-							alert($("#billNo").val() +' 계산서와 매핑이 취소되었습니다.');
+							alert('계산서 매핑이 취소되었습니다.');
+									//$("#billNo").val() +' 계산서와 매핑이 취소되었습니다.');
 							
 							window.close();
 						} else {

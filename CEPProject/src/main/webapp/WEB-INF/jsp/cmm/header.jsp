@@ -305,24 +305,26 @@
 		        async: false,
 		        dataType: "json",
 	        	success:function(data){		  
-	        		var form = document.listForm;
+	        		var form = document.querySelector("form");
 	    			if(key != 'undefined' && key != null && key != "") {
 	    				if(key.substring(0,2) == "PJ") {
-	    					if(document.getElementsByName('pjKey').length != 0) {
+	    					/* if(document.getElementsByName('pjKey').length != 0) {
 	    						form.pjKey.value = key;
 	    					} else {
 	    						$(form).append("<input type='hidden' name='pjKey' value='"+ key +"' />");
 	    					}
 	    					form.action = "<c:url value='/project/detail/main.do'/>";
-	    					form.submit();  
+	    					form.submit();   */
+	    					location.href="/project/detail/main.do?pjKey="+key
 	    				} else if(key.substring(0,2) == "MA") {
-	    					if(document.getElementsByName('selectKey').length != 0) {
+	    					/* if(document.getElementsByName('selectKey').length != 0) {
 	    						form.selectKey.value = key;
 	    					} else {
 	    						$(form).append("<input type='hidden' name='selectKey' value='"+ key +"' />");
 	    					}
 	    					form.action = "/maintenance/contract/detail/productInfo.do";
-	    					form.submit();   
+	    					form.submit();    */
+	    					location.href="/maintenance/contract/detail/productInfo.do?mtIntegrateKey="+key
 	    				} else if(key.substring(0,2) == "SP") {
 	    					location.href = "/forecast/list.do?searchFlag=SP&searchValue="+key+"";
 	    				}

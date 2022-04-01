@@ -131,12 +131,12 @@
 		}
 		.contents1 table thead th:nth-child(3),
 		.contents1 table tbody td:nth-child(3) {
-			width: 240px;
-			max-width: 240px;
+			width: 230px;
+			max-width: 230px;
 		}
 		.contents1 table thead th:nth-child(4),
 		.contents1 table tbody td:nth-child(4) {
-			width: 160px;
+			width: 170px;
 		}
 		.contents1 table thead th:nth-child(5),
 		.contents1 table tbody td:nth-child(5) {
@@ -145,12 +145,12 @@
 		}
 		.contents1 table thead th:nth-child(6),
 		.contents1 table tbody td:nth-child(6) {
-			width: 141px;
+			width: 125px;
 		}
 		.contents1 table thead th:nth-child(7),
 		.contents1 table tbody td:nth-child(7) {
-			width: 91px;
-			max-width: 91px;
+			width: 101px;
+			max-width: 101px;
 		}
 		.contents1 table thead th:nth-child(8),
 		.contents1 table tbody td:nth-child(8) {
@@ -198,11 +198,11 @@
 		}	
 		.contents2 table thead th:first-child,
 		.contents2 table tbody td:first-child {
-			width: 46px;
+			width: 47px;
 		}	
 		.contents2 table thead th:nth-child(2),
 		.contents2 table tbody td:nth-child(2) {
-			width: 103px;
+			width: 109px;
 		}
 		.contents2 table thead th:nth-child(3),
 		.contents2 table tbody td:nth-child(3) {
@@ -210,27 +210,23 @@
 		}
 		.contents2 table thead th:nth-child(4),
 		.contents2 table tbody td:nth-child(4) {
-			width: 158px;
+			width: 231px;
 		}
 		.contents2 table thead th:nth-child(5),
 		.contents2 table tbody td:nth-child(5) {
-			width: 140px;
+			width: 148px;
 		}
 		.contents2 table thead th:nth-child(6),
 		.contents2 table tbody td:nth-child(6) {
-			width: 123px;
+			width: 128px;
 		}
 		.contents2 table thead th:nth-child(7),
 		.contents2 table tbody td:nth-child(7) {
-			width: 157px;
+			width: 224px;
 		}
 		.contents2 table thead th:nth-child(8), 
 		.contents2 table tbody td:nth-child(8) {
-		    width: 189px;
-		}
-		.contents2 table thead th:nth-child(9), 
-		.contents2 table tbody td:nth-child(9) {
-		    width: 73px;
+		    width: 104px;
 		}
 		.popContainer .bottomBtn {
 			margin-top: 10px;
@@ -302,7 +298,8 @@
 		
 		function fn_cancelMappingBill(obj, billNo, paymentKey) {
 			
-			if(confirm("계산서 "+ $(obj).parent().prev().prev().children().val() + "을 매핑 취소 하시겠습니까?")) {
+			if(confirm("계산서를 매핑 취소 하시겠습니까?")) {
+					//"+ $(obj).parent().prev().prev().children().val() + "을 매핑 취소 하시겠습니까?")) {
 				var object =  { "pjOrderKey" : $("#pjOrderKey").val(), "billNo" : billNo };
 				
 				var sendData = JSON.stringify(object);
@@ -371,7 +368,8 @@
 					if(Number($("#orderAmount").val()) < Number(originBillMappedAmount) + Number(totalBillMappedAmount)) {
 						alert("발주 금액과 계산서 금액이 맞지 않습니다. (현재 매핑된 금액: " + addCommas(originBillMappedAmount) + "원)");
 					} else {
-						if(confirm("계산서 "+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
+						if(confirm("계산서를 매핑하시겠습니까?")) {
+								//+ $("input:radio[name=isCheck]:checked").prev().attr("value") + "을 매핑하시겠습니까?")) {
 							$("#billMappedAmount").val(totalBillMappedAmount);
 							
 							var formData = $("#orderInfoForm").serializeArray();
@@ -396,9 +394,10 @@
 								success:function(response) {
 									if(response != null && response.successYN == 'Y') {
 										
-										alert($("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
+										alert("계산서가 매핑되었습니다.");
+												//$("input:radio[name=isCheck]:checked").prev().attr("value") +' 계산서와 매핑되었습니다.');
 										
-										 var url = '/mngProject/mapping/mappingBill.do';
+										var url = '/mngProject/mapping/mappingBill.do';
 										var dialogId = 'program_layer';
 										var varParam = {
 											"pjOrderKey":$("input[name='pjOrderKey']").val(),
@@ -417,7 +416,7 @@
 										alert("code: " + request.status + "\r\nmessage: " + request.responseText + "\r\nerror: " + error);
 									}
 								}
-							});  
+							});   
 						}
 					}
 				}
@@ -467,9 +466,11 @@
 								</td>
 								<td><span class="textalignL" title="${orderVO.pjNm }">${orderVO.pjNm }</span></td>
 								<td>
+									<span>
 									<c:forEach var="pResult" items="${orderVO.productList }" varStatus="pStatus">
 										${pResult.pmNmCd }<c:if test="${pStatus.last eq false}">,</c:if>
 									</c:forEach>
+									</span>
 								</td>
 								<td><span title="${orderVO.orderAcNm }">${orderVO.orderAcNm }</span></td>
 								<td><span title="${orderVO.orderAcKey }">${orderVO.orderAcKey }</span></td>
@@ -504,7 +505,6 @@
 									<th scope="row">매입처</th>
 									<th scope="row">사업자번호</th>
 									<th scope="row">합계금액</th>
-									<th scope="row">계산서번호</th>
 									<th scope="row">비고</th>
 									<th scope="row">매핑 취소</th>
 								</tr>
@@ -513,7 +513,7 @@
 								<c:forEach var="result" items="${billList }" varStatus="status">
 									<tr>
 										<td>
-											<input type="hidden" value="<c:out value="${result.billNo }" />" />
+											<input type="hidden" name="billNo" value="<c:out value="${result.billNo }" />" />
 											<c:choose>
 												<c:when test="${result.billMappingYn eq 'N' }">
 													<input type="radio" class="tRadio" name="isCheck" id="popCheck${status.count }"/>
@@ -526,10 +526,9 @@
 										</td>
 										<td>${displayUtil.displayDate(result.billIssueDt) }</td>
 										<td><input type="text" name="billMappingYn" value="${result.billMappingYn }" title="${result.billMappingYn }" readOnly style="width: 30px;"/></td>
-										<td><input type="text" name="acNm" value="${result.acNm }" title="${result.acNm }" readOnly style="width: 138px;"/></td>
+										<td><input type="text" name="acNm" value="${result.acNm }" title="${result.acNm }" readOnly style="width: 205px;"/></td>
 										<td><input type="text" name="billAcKey" value="${result.billAcKey }" title="${result.billAcKey }" readOnly style="width: 108px;"/></td>
 										<td><input type="text" name="billAmount" value="${displayUtil.commaStr(result.billAmount) }" title="${displayUtil.commaStr(result.billAmount) }" readOnly style="width: 103px;"/></td>
-										<td><input type="text" name="billNo"  value="${result.billNo }" title="${result.billNo }" readOnly style="width: 120px;" /></td>
 										<td><input type="text" name="remark"  value="${result.remark }" title="${result.remark }" readOnly  /></td>
 										<td style="font-size: 13px;">
 											<c:if test="${result.billMappingYn eq 'Y' and (result.paymentStatusCd eq 'PYST1000')}">
