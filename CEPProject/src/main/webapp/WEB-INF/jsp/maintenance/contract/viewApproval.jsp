@@ -468,7 +468,7 @@
 								
 								<tr>
 									<td>마진율</td>
-									<td class="textalignR"><input type="text" value="${(salesTotalAmount-purchaseTotalAmount) / salesTotalAmount * 100 } %" readonly /></td>									
+									<td class="textalignR"><input type="text" value="${String.format("%.1f",(salesTotalAmount-purchaseTotalAmount-gSum) / salesTotalAmount * 100 ) } %" readonly /></td>									
 								</tr>
 								<tr></tr>
 							</table>
