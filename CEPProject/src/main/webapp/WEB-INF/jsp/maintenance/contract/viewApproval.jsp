@@ -12,6 +12,7 @@
 		}
 		.btnWrap {
 			padding-bottom: 10px;
+			margin-top: 13px;
 		}
 		form .nav {
 			width: 100%;
@@ -178,7 +179,7 @@
 	<form id="listForm" name="listForm" method="post">
 		<!-- <div class="sfcnt"></div>
 		<div class="nav"></div> -->
-		<div class="contentsWrap">
+		<div class="contentsWrap excelSheet">
 			<div class="contents mgauto">
 				<div class="">
 					<div class="title"><label class="ftw500">판매품의서</label></div>
@@ -459,16 +460,19 @@
 								</thead>
 								<tr>
 									<td>매출총이익</td>
-									<td class="textalignR"><input type="text" value="${displayUtil.commaStr(salesTotalAmount - purchaseTotalAmount) } 원" readonly /></td>									
+									<%-- <td class="textalignR"><input type="text" value="${displayUtil.commaStr(salesTotalAmount - purchaseTotalAmount) } 원" readonly /></td> --%>		
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(salesTotalAmount - purchaseTotalAmount) } 원" /></td>							
 								</tr>
 								<tr>
 									<td>영업이익</td>
-									<td class="textalignR"><input type="text" value="${displayUtil.commaStr(salesTotalAmount - purchaseTotalAmount - gSum ) } 원" readonly /> </td>									
+									<%-- <td class="textalignR"><input type="text" value="${displayUtil.commaStr(salesTotalAmount - purchaseTotalAmount - gSum ) } 원" readonly /> </td> --%>									
+									<td class="textalignR"><c:out value="${displayUtil.commaStr(salesTotalAmount - purchaseTotalAmount - gSum ) } 원" /> </td>
 								</tr>
 								
 								<tr>
 									<td>마진율</td>
-									<td class="textalignR"><input type="text" value="${String.format("%.1f",(salesTotalAmount-purchaseTotalAmount-gSum) / salesTotalAmount * 100 ) } %" readonly /></td>									
+									<%-- <td class="textalignR"><input type="text" value="${String.format("%.1f",(salesTotalAmount-purchaseTotalAmount-gSum) / salesTotalAmount * 100 ) } %" readonly /></td> --%>									
+									<td class="textalignR"><c:out value="${String.format('%.1f',(salesTotalAmount-purchaseTotalAmount-gSum) / salesTotalAmount * 100 ) } %" /></td>
 								</tr>
 								<tr></tr>
 							</table>
@@ -477,9 +481,9 @@
 					<div class="floatC"></div>
 				</div>
 				<div class="btnWrap rt floatR">
-					<%-- <div>
-						<button value="Excel"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
-					</div> --%>
+					<div>
+						<button value="엑셀 다운로드" id="excelExport"><img class="cursorP" src="<c:url value='/images/btn_excel.png'/>" /></button>
+					</div> 
 				</div>
 			</div>
 		</div>	
