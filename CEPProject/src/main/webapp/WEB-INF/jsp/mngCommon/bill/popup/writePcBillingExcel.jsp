@@ -278,27 +278,23 @@
 	}
 	
 	
-	function fnBillingSave(){
+	var nonAcData = "";
+	
+	function fnBillingSave() {
+		nonAcData = "";
 		
 		//입력 정합성 체크 추가
 		var object = {};
 		
 		var billingInfo  = $("#billingForm").serializeObject();
 		
-		
-		//console.log("------------------------------------------------------------");
-		//console.log('======= billingInfo =======\n' + billingInfo)
-		
-			
         object["mngBillInsertVOList"] = billingInfo;
-		
-		//console.log(object);
 		
 		var sendData = JSON.stringify(object);
 		
-		console.log(sendData);
-		if(fnCheckExist(sendData) == true) {
-				//&& fnCheckListExist(billingInfo).length == 0) {
+		
+		if(fnCheckListAcKey(billingInfo) == true) {
+			//fnCheckExist(sendData) == true && 
 			$.ajax({
 	        	url:"/mngCommon/bill/saveExcelBilling.do",
 	            dataType: 'text', 
@@ -326,13 +322,13 @@
 	        		} 
 	        	} 
 	        });
-		} else if(fnCheckExist(sendData) == false){
+		} /* else if(fnCheckExist(sendData) == false){
 			alert("이미 등록된 계산서입니다.(계산서 승인번호 중복)");
-		} /* else if(fnCheckListExist(billingInfo).length != 0){
-			window.prompt("계산서 승인번호가 중복됩니다. \n중복되는 승인번호: ",  fnCheckListExist(billingInfo));
-		}  */else {
+		}  */else if(fnCheckListAcKey(billingInfo) == false){
+			window.prompt("등록되지 않은 거래처가 있습니다. \사업자 번호: ",  nonAcData);
+		}  else {
 			alert("계산서 중복 체크에 실패하였습니다.")
-		}
+		}  
 		
 		
 	}
@@ -380,6 +376,43 @@
 			} 
 			
 			if(returnValue.length != 0) {
+				break;
+			}
+		}
+		
+		return returnValue;
+		
+	}
+	
+	function fnCheckListAcKey(billInfo) {
+	
+		var returnValue;
+		for(var i = 0; i < billInfo.length; i++) {
+			$.ajax({
+	        	url:"/mngCommon/account/isExist.do",
+	            dataType: 'json', 
+	            type:"post",  
+				data: JSON.stringify({'acKey':billInfo[i].acKey}),
+				traditional : true, //배열 및 리스트로 값을 넘기기 이해서 꼭 선언해야함.
+				async: false,
+	            contentType: "application/json; charset=UTF-8", 
+	     	  	beforeSend: function(xhr) {
+	     	  		xhr.setRequestHeader("AJAX", true);	        		
+	        	},
+	            success:function(data){	
+	            	if(data.acCount != 0) {
+	            		returnValue = true;
+	            	} else {
+	            		returnValue = false;
+	            		nonAcData = billInfo[i].acKey;
+	            	}
+	            },
+	        	error: function(request, status, error) {
+	        		returnValue = 'error';
+	        	} 
+	        });
+			
+			if (returnValue == false) {
 				break;
 			}
 		}

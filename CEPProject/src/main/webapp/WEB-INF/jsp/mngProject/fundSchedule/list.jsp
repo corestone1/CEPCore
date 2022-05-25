@@ -309,8 +309,8 @@
 										<td><span><c:out value="${result.acNm}" /></span></td>
 										<td><span class="textalignR"><c:out value="${displayUtil.commaStr(result.callAmount)}" /></span></td>
 										<td><c:out value="${result.empNm}" /></td>
-										<td><c:out value="${displayUtil.displayDate(result.paymentDt)}" /></td>
 										<td><c:out value="${displayUtil.displayDate(result.paymentCallDt)}" /></td>
+										<td><c:out value="${displayUtil.displayDate(result.paymentDt)}" /></td>
 										<td><c:if test="${result.paymentDt eq null}">미완료</c:if><c:if test="${result.paymentDt ne null}">완료</c:if></td>
 									</tr>
 									<c:set var = "pcTotal" value="${pcTotal + result.callAmount }" />

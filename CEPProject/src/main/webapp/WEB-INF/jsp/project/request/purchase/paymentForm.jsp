@@ -649,6 +649,7 @@
 						<input type="hidden" name="pjNm" value="${resultList[0].pjNm }" />
 						<input type="hidden" id="pjKey" name="pjKey" value="${mainKey }" />
 						<input type="hidden" name="pjSaleEmpKey" value="${resultList[0].pjSaleEmpKey }" />
+						<input type="hidden" name="buyOrderFkKey" value="${orderKey }" />
 						<input type="hidden" name="link" id="link" value="" />
 						<c:set var="total" value="0" />
 						<div class="pmWrap">

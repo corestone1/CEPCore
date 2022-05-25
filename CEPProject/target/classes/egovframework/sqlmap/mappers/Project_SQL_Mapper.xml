@@ -685,9 +685,7 @@
 			<if test="item.salesCollectRate != null and item.salesCollectRate != '' and item.salesCollectRate != 0">
 				SALES_COLLECT_RATE=#{item.salesCollectRate},
 			</if>
-			<if test="item.salesTurnAmount != null and item.salesTurnAmount != '' and item.salesTurnAmount != 0">
 				SALES_TURN_AMOUNT=#{item.salesTurnAmount},
-			</if>
 			<if test="item.salesChargeDt != null and item.salesChargeDt != ''">
 				SALES_CHARGE_DT=#{item.salesChargeDt},
 			</if>

@@ -191,7 +191,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 			session = (HashMap<String, String>) request.getSession().getAttribute("userInfo");
 			name = (String)request.getSession().getAttribute("name");
 			dept = DeptInfo.DEPT_OPER_L2.getValue();
-			url = EmailInfo.PAGE_URL.getValue() + paymentVO.getLink();
+			url = EmailInfo.PAGE_URL.getValue() + "project/request/purchase/main.do?mainKey="+paymentVO.getPjKey()+"&orderKey="+paymentVO.getBuyOrderFkKey();
 			paymentVO.setModEmpKey(session.get("empKey"));
 			
 			alarmVO.setAlarmTitle(paymentVO.getPjNm());
@@ -201,6 +201,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 			
 			if(!CepStringUtil.getDefaultValue(paymentVO.getPaymentStatusCd(), "").equals("") && paymentVO.getPaymentStatusCd().equals("PYST2000")) {
 				
+				subject = paymentVO.getPjNm() + "건 매입금 지급 요청";
 				content = String.join(
 		                System.getProperty("line.separator"),
 		                "["+paymentVO.getPjKey()+"] "+ paymentVO.getPjNm() + " 프로젝트 건 매입금 지급을 요청하였습니다. <br>(요청자: " +name+",",
@@ -211,6 +212,7 @@ public class ProjectRequestServiceImpl implements ProjectRequestService {
 					mailList.add(email);
 				}
 				
+				mailVO.setSubject(subject);
 				mailVO.setContent(content);
 				mailVO.setEmpKey(StringUtils.join(mailList, ";"));
 				

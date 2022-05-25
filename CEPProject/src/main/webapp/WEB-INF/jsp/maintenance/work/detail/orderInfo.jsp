@@ -686,8 +686,8 @@
 										<c:forEach var="result" items="${fileList }" varStatus="status">
 											<%-- <input class="upload-name cursorP" id="file${result.fileKey }" value="<c:out value="${result.fileOrgNm}"/>" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')" readonly/> --%>
 											<%-- <a href="javascript:fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>')"><c:out value="${result.fileOrgNm}"/></a> --%>
-											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;">
-												<B><I><u><c:out value="${result.fileOrgNm}"/></u></I></B>
+											<button type="button" onclick="fn_downFile('<c:out value="${result.fileKey}"/>', '<c:out value="${result.fileOrgNm}"/>');" style="color: #26a07d;text-align: left;">
+												<u style="font-weight: 200;font-size: 15px;"><c:out value="${result.fileOrgNm}"/></u>
 											</button>
 											<c:if test="${status.last eq false}"><br /></c:if>
 										</c:forEach>

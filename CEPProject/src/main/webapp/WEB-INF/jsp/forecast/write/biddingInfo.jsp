@@ -261,7 +261,7 @@
 	position: absolute;
 	right: 16px;
 	z-index: 99;
-	top: 472px;
+	top: 494px;
 	width: 359px;
 }
 

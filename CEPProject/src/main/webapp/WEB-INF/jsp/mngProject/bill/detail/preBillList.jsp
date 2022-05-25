@@ -175,9 +175,6 @@
 				$(this).val(parent.$("#pjNm").val());
 			});
 			
-			$(".calendar").on("change", function() {
-				$(this).next().next().find("#_salesCollectFinishDt").val($(this).val())
-			});
 			                
 		});
 		
@@ -194,10 +191,12 @@
 	 	function fnComplete(obj) {
 	 		var billInfo = {};
 
-	 		if($(obj).next().find("#_salesCollectFinishDt").val().length == 0) {
+	 		if($(obj).prev().val().length == 0) {
 	 			alert("수금 날짜를 입력해주세요.");
 	 			$(obj).prev().focus();
 	 		} else {
+	 			$(obj).next().find("#_salesCollectFinishDt").val($(obj).prev().val())
+	 			
 		 		$(obj).next().children().each(function() {
 		 			if(removeData($(this).attr('id'),"_")   == "salesCollectFinishDt") {
 		 				billInfo[removeData($(this).attr('id'),"_")] = removeData($(this).val(),"-");

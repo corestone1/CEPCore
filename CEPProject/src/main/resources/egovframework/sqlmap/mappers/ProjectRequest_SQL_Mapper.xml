@@ -365,6 +365,7 @@
 		SELECT 
 			BILL_NO
 			, BILL_ISSUE_DT 
+			, WRITE_DT
 			, BILL_AMOUNT 
 			, BILL_ISSUE_DT
 			, REMARK 

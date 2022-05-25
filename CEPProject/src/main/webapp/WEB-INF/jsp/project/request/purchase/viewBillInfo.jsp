@@ -192,16 +192,22 @@
 				<input type="hidden" id="dialogId" />
 				<div>  
 					<table>
-						<tr>
+						<%-- <tr>
 							<td class="tdTitle">계산서번호</td>
 							<td class="tdContents">
 								<input type="text" name="billNo" id="billNo" value="${billList[0].billNo }" readOnly/>
 							</td>
-						</tr>
+						</tr> --%>
 						<tr>
 							<td class="tdTitle">발행일자</td>
 							<td class="tdContents">
 								<input type="text"  name="billIssueDt" id="billIssueDt" value="${displayUtil.displayDate(billList[0].billIssueDt) }"readOnly/>	
+							</td>
+						</tr>
+						<tr>
+							<td class="tdTitle">작성일자</td>
+							<td class="tdContents">
+								<input type="text"  name="writeDt" id="writeDt" value="${displayUtil.displayDate(billList[0].writeDt) }" readOnly/>	
 							</td>
 						</tr>
 						<tr>

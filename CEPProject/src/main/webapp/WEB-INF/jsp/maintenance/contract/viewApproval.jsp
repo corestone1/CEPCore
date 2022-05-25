@@ -12,6 +12,7 @@
 		}
 		.btnWrap {
 			padding-bottom: 10px;
+			margin-top: 13px;
 		}
 		form .nav {
 			width: 100%;
